@@ -27,10 +27,6 @@ export function TripManagerScreen({
   const pastTrips = trips.filter((t) => getTripTiming(t).status === "past");
 
   async function handleDelete(trip: Trip) {
-    if (trips.length === 1) {
-      alert("Không thể xóa chuyến đi cuối cùng. Vui lòng tạo chuyến đi mới trước khi xóa.");
-      return;
-    }
     if (window.confirm(`Bạn có chắc chắn muốn xóa chuyến đi "${trip.title}" không? Dữ liệu không thể khôi phục.`)) {
       if (trip.id) {
         await db.trips.delete(trip.id);
