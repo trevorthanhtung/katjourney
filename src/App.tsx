@@ -47,9 +47,6 @@ function App() {
       <header className="sticky top-0 z-40 bg-sand/90 px-4 pb-3 pt-3 backdrop-blur-xl border-b border-emerald-900/5 shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 shadow-md ring-1 ring-white/20">
-              <span className="text-white font-bold text-lg leading-none">K</span>
-            </div>
             <h1 className="text-xl font-extrabold tracking-tight text-slate-800">KAT Journey</h1>
           </div>
           
