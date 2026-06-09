@@ -83,13 +83,17 @@ function App() {
                 }} />
               </div>
             </div>
-          ) : (
+          ) : trip && tripId ? (
             <div className="animate-fadeIn">
               {activeTab === "home" && <HomeScreen trip={trip} members={members} events={events} expenses={expenses} checklist={checklist} totalExpense={totalExpense} perPerson={perPerson} onNavigateTab={setActiveTab} onNavigateMore={navigateToMore} />}
               {activeTab === "timeline" && <TimelineScreen trip={trip} events={events} />}
               {activeTab === "expenses" && <ExpensesScreen expenses={expenses} members={members} totalExpense={totalExpense} perPerson={perPerson} tripId={tripId} />}
               {activeTab === "checklist" && <ChecklistScreen checklist={checklist} tripId={tripId} />}
               {activeTab === "more" && <MoreScreen trip={trip} members={members} events={events} expenses={expenses} checklist={checklist} journals={journals} packingItems={packingItems} onTripDeleted={() => setSelectedTripId(null)} onTripSelected={setSelectedTripId} section={moreSection} setSection={setMoreSection} />}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center py-20">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-500"></div>
             </div>
           )}
         </div>
