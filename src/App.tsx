@@ -44,17 +44,25 @@ function App() {
 
   return (
     <div className="font-sans text-slate-900 antialiased selection:bg-emerald-100 selection:text-emerald-900">
-      <header className="sticky top-0 z-40 bg-sand/80 px-4 pb-3 backdrop-blur-md" style={{ paddingTop: "calc(1.25rem + env(safe-area-inset-top))" }}>
+      <header className="sticky top-0 z-40 bg-sand/90 px-4 pb-3 pt-3 backdrop-blur-xl border-b border-emerald-900/5 shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
         <div className="mx-auto flex max-w-5xl items-center justify-between">
-          <h1 className="text-[22px] font-bold tracking-tight text-forest-900">KAT Journey</h1>
-          {!(isManagingTrips || (!tripId && !isCreatingTrip)) && (
-            <button
-              onClick={() => setIsManagingTrips(true)}
-              className="max-w-[160px] truncate rounded-full bg-white px-4 py-2 text-[15px] font-semibold text-emerald-800 shadow-sm outline-none ring-1 ring-inset ring-emerald-950/5 hover:bg-emerald-50 focus:ring-2 focus:ring-emerald-500 transition-colors"
-            >
-              Trang chủ
-            </button>
-          )}
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 shadow-md ring-1 ring-white/20">
+              <span className="text-white font-bold text-lg leading-none">K</span>
+            </div>
+            <h1 className="text-xl font-extrabold tracking-tight text-slate-800">KAT Journey</h1>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            {!(isManagingTrips || (!tripId && !isCreatingTrip)) && (
+              <button
+                onClick={() => setIsManagingTrips(true)}
+                className="flex items-center justify-center truncate rounded-full bg-slate-900 px-5 py-2 text-[14px] font-medium text-white shadow-md hover:bg-slate-800 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all"
+              >
+                Trang chủ
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
