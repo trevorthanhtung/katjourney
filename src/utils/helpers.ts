@@ -9,11 +9,11 @@ export const sectionLabels: Record<import("../db").ChecklistSection, string> = {
 export const expenseCategories = ["Di chuyển", "Ăn uống", "Lưu trú", "Vé tham quan", "Khác"];
 export const moods: JournalMood[] = ["very_bad", "bad", "okay", "good", "great"];
 export const moodLabels: Record<JournalMood, string> = {
-  very_bad: "Rất tệ",
-  bad: "Không vui",
-  okay: "Ổn",
+  very_bad: "Mệt",
+  bad: "Bất ngờ",
+  okay: "Bình yên",
   good: "Vui",
-  great: "Tuyệt"
+  great: "Hào hứng"
 };
 export const packingTripTypes: PackingTripType[] = ["Biển", "Núi", "Thành phố", "Camping", "Gia đình"];
 export const packingSuggestions: Record<PackingTripType, string[]> = {
@@ -106,9 +106,10 @@ export function roundVnd(value: number) {
 
 export function getSettlementSuggestions(members: Member[], expenses: Expense[]) {
   if (!members.length || !expenses.length) return [];
-  const total = expenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const sharedExpenses = expenses.filter((e) => e.splitType !== "personal");
+  const total = sharedExpenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
   const share = total / members.length;
-  const paidByMember = sumBy(expenses, (item) => item.payer, (item) => Number(item.amount || 0));
+  const paidByMember = sumBy(sharedExpenses, (item) => item.payer, (item) => Number(item.amount || 0));
   
   const balances = members.map((member) => ({
     name: member.name,
@@ -213,7 +214,16 @@ export function createTripExport({ trip, members, events, expenses, checklist, j
 }
 
 export function safeFileName(value: string, fallback = "kat-trip") {
-  return value.trim().toLowerCase().replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") || fallback;
+  if (!value) return fallback;
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .replace(/[^a-zA-Z0-9_-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .toLowerCase() || fallback;
 }
 
 export function downloadBlob(blob: Blob, fileName: string) {

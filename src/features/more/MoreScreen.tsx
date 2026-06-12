@@ -1,34 +1,103 @@
 import React, { useEffect, useState } from "react";
-import { Backpack, BookOpen, ChevronRight, Download, Edit3, FileText, Settings, Sparkles, Table2, Trash2, Upload, Users, MapPin, Calendar, WalletCards, Map, Sun, Camera, Smile } from "lucide-react";
+import { 
+  Backpack, 
+  BookOpen, 
+  ChevronRight, 
+  Download, 
+  Edit3, 
+  FileText, 
+  Settings, 
+  Sparkles, 
+  Table2, 
+  Trash2, 
+  Upload, 
+  Users, 
+  MapPin, 
+  Calendar, 
+  WalletCards, 
+  Map, 
+  Sun, 
+  Camera, 
+  Smile, 
+  X, 
+  ShieldAlert, 
+  Check, 
+  Plus, 
+  User, 
+  Edit2, 
+  AlertCircle,
+  Luggage,
+  ArrowLeft,
+  Coffee,
+  Compass
+} from "lucide-react";
 import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "../../db";
-import { checklistSections, createTripExport, formatDate, formatMoney, getWrappedStats, moodLabels, packingTripTypes, safeFileName, today, TripData, downloadBlob } from "../../utils/helpers";
+import { 
+  checklistSections, 
+  createTripExport, 
+  formatDate, 
+  formatMoney, 
+  getWrappedStats, 
+  moodLabels, 
+  packingTripTypes, 
+  safeFileName, 
+  today, 
+  TripData, 
+  downloadBlob,
+  getChecklistStats,
+  getTripTiming
+} from "../../utils/helpers";
 import { exportTripExcel, exportTripPdf } from "../../utils/exports";
-import { BottomSheet, EmptyCard, FormActions, IconButton, Input, ScreenTitle } from "../../components/ui";
+import { BottomSheet, FormActions, Input, ScreenTitle, classNames } from "../../components/ui";
 import { JournalSection } from "../journal/JournalSection";
-import { PackingSection } from "../packing/PackingSection";
 
 function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boolean; onClose: () => void; onSaved: (id: number) => void }) {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    title: string;
+    location: string;
+    tripType: "dayTrip" | "multiDay";
+    startDate: string;
+    endDate: string;
+  }>({
     title: trip?.title ?? "",
     location: trip?.location ?? "",
+    tripType: trip?.tripType ?? (trip?.startDate === trip?.endDate ? "dayTrip" : "multiDay"),
     startDate: trip?.startDate ?? today,
     endDate: trip?.endDate ?? today
   });
+
+  const [dirty, setDirty] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setForm({
         title: trip?.title ?? "",
         location: trip?.location ?? "",
+        tripType: trip?.tripType ?? (trip?.startDate === trip?.endDate ? "dayTrip" : "multiDay"),
         startDate: trip?.startDate ?? today,
         endDate: trip?.endDate ?? today
       });
+      setDirty(false);
+      setSubmitAttempted(false);
     }
   }, [trip, isOpen]);
 
+  const titleError = !form.title.trim() ? "Vui lòng nhập tên chuyến đi." : "";
+  const startDateError = !form.startDate ? "Vui lòng chọn ngày bắt đầu." : "";
+  const endDateError = form.tripType === "multiDay" && !form.endDate ? "Vui lòng chọn ngày kết thúc." : "";
+  const dateCompareError = form.tripType === "multiDay" && form.endDate && form.startDate && form.endDate < form.startDate ? "Ngày kết thúc không thể trước ngày bắt đầu." : "";
+  const hasError = !!titleError || !!startDateError || !!endDateError || !!dateCompareError;
+
   async function save() {
-    if (!form.title.trim()) return;
-    const payload = { ...form, createdAt: trip?.createdAt ?? new Date().toISOString() };
+    setSubmitAttempted(true);
+    if (hasError) return;
+
+    const payload = { 
+      ...form, 
+      endDate: form.tripType === "dayTrip" ? form.startDate : form.endDate,
+      createdAt: trip?.createdAt ?? new Date().toISOString() 
+    };
     if (trip?.id) {
       await db.trips.update(trip.id, payload);
       onSaved(trip.id);
@@ -41,57 +110,417 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
   }
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title={trip ? "Sửa chuyến đi" : "Tạo chuyến đi"}>
-      <div className="space-y-4">
-        <Input label="Tên chuyến đi" value={form.title} onChange={(title) => setForm({ ...form, title })} placeholder="VD: Mùa hè rực rỡ" />
-        <Input label="Địa điểm" value={form.location} onChange={(location) => setForm({ ...form, location })} placeholder="VD: Phú Quốc" />
-        <div className="grid grid-cols-2 gap-4">
-          <Input label="Ngày đi" type="date" value={form.startDate} onChange={(startDate) => setForm({ ...form, startDate })} />
-          <Input label="Ngày về" type="date" value={form.endDate} onChange={(endDate) => setForm({ ...form, endDate })} />
+    <BottomSheet 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      title={trip ? "Sửa chuyến đi" : "Tạo chuyến đi"}
+      subtitle={trip ? undefined : "Điền thông tin cơ bản trước, lịch trình và chi phí có thể thêm sau."}
+    >
+      <div className="space-y-4 md:space-y-5">
+        <div>
+          <Input 
+            label="Tên chuyến đi" 
+            value={form.title} 
+            onChange={(title) => { setForm({ ...form, title }); setDirty(true); }} 
+            placeholder="VD: Du lịch Đà Lạt" 
+          />
+          {(dirty || submitAttempted) && titleError && (
+            <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{titleError}</p>
+          )}
         </div>
+        <Input 
+          label="Địa điểm" 
+          value={form.location} 
+          onChange={(location) => setForm({ ...form, location })} 
+          placeholder="VD: Phú Quốc" 
+        />
+        
+        <div>
+          <span className="mb-1.5 block text-sm font-semibold text-slate-600">Kiểu chuyến đi</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, tripType: "dayTrip" })}
+              className={classNames(
+                "flex flex-col items-start justify-center rounded-[14px] px-4 py-3 text-left transition-all min-h-[64px]",
+                form.tripType === "dayTrip"
+                  ? "bg-kat-primary/10 ring-2 ring-inset ring-kat-primary"
+                  : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100"
+              )}
+            >
+              <span className={classNames("text-[15px] font-bold", form.tripType === "dayTrip" ? "text-kat-primary" : "text-slate-700")}>Đi trong ngày</span>
+              <span className={classNames("text-[12px] font-medium mt-0.5", form.tripType === "dayTrip" ? "text-kat-primary/80" : "text-slate-500")}>Đi và về cùng ngày</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, tripType: "multiDay" })}
+              className={classNames(
+                "flex flex-col items-start justify-center rounded-[14px] px-4 py-3 text-left transition-all min-h-[64px]",
+                form.tripType === "multiDay"
+                  ? "bg-kat-primary/10 ring-2 ring-inset ring-kat-primary"
+                  : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100"
+              )}
+            >
+              <span className={classNames("text-[15px] font-bold", form.tripType === "multiDay" ? "text-kat-primary" : "text-slate-700")}>Đi dài ngày</span>
+              <span className={classNames("text-[12px] font-medium mt-0.5", form.tripType === "multiDay" ? "text-kat-primary/80" : "text-slate-500")}>Có ngày đi và ngày về</span>
+            </button>
+          </div>
+        </div>
+
+        {form.tripType === "dayTrip" ? (
+          <div>
+            <Input 
+              label="Ngày bắt đầu" 
+              type="date" 
+              value={form.startDate} 
+              onChange={(startDate) => setForm({ ...form, startDate })} 
+            />
+            {(dirty || submitAttempted) && startDateError && (
+              <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{startDateError}</p>
+            )}
+            <p className="mt-2 text-[13px] font-medium text-slate-500">Ngày kết thúc sẽ được tính cùng ngày bắt đầu.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Input 
+                label="Ngày bắt đầu" 
+                type="date" 
+                value={form.startDate} 
+                onChange={(startDate) => setForm({ ...form, startDate })} 
+              />
+              {(dirty || submitAttempted) && startDateError && (
+                <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{startDateError}</p>
+              )}
+            </div>
+            <div>
+              <Input 
+                label="Ngày kết thúc" 
+                type="date" 
+                value={form.endDate} 
+                onChange={(endDate) => setForm({ ...form, endDate })} 
+              />
+              {(dirty || submitAttempted) && (endDateError || dateCompareError) && (
+                <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{endDateError || dateCompareError}</p>
+              )}
+            </div>
+          </div>
+        )}
         <div className="pt-2">
-          <FormActions onSave={save} saveLabel={trip ? "Lưu thay đổi" : "Bắt đầu hành trình"} />
+          <FormActions 
+            onSave={save} 
+            saveLabel={trip ? "Lưu thay đổi" : "Tạo chuyến đi"} 
+            disabled={hasError}
+          />
         </div>
       </div>
     </BottomSheet>
   );
 }
 
-function MemberForm({ tripId, editing, isOpen, onClose }: { tripId: number; editing: Member | null; isOpen: boolean; onClose: () => void }) {
-  const [form, setForm] = useState({ name: "", phone: "", role: "" });
+function MemberForm({ 
+  tripId, 
+  editing, 
+  isOpen, 
+  onClose,
+  onShowToast
+}: { 
+  tripId: number; 
+  editing: Member | null; 
+  isOpen: boolean; 
+  onClose: () => void;
+  onShowToast?: (msg: string) => void;
+}) {
+  const PRESETS = ["Bạn đồng hành", "Trưởng đoàn", "Thủ quỹ", "Tài xế", "Người chuẩn bị"];
+  
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [selectedPreset, setSelectedPreset] = useState("Bạn đồng hành");
+  const [customRole, setCustomRole] = useState("");
+  const [note, setNote] = useState("");
+  
+  const [dirty, setDirty] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      setForm(editing ? { name: editing.name, phone: editing.phone, role: editing.role } : { name: "", phone: "", role: "" });
+      if (editing) {
+        setName(editing.name ?? "");
+        setPhone(editing.phone ?? "");
+        setNote(editing.note ?? "");
+        
+        const currentRole = editing.role ?? "Bạn đồng hành";
+        if (PRESETS.includes(currentRole)) {
+          setSelectedPreset(currentRole);
+          setCustomRole("");
+        } else {
+          setSelectedPreset("Khác");
+          setCustomRole(currentRole);
+        }
+      } else {
+        setName("");
+        setPhone("");
+        setSelectedPreset("Bạn đồng hành");
+        setCustomRole("");
+        setNote("");
+      }
+      setDirty(false);
+      setSubmitAttempted(false);
     }
   }, [editing, isOpen]);
 
+  const nameError = !name.trim() ? "Vui lòng nhập tên thành viên." : "";
+  
+  const phoneClean = phone.trim();
+  const isPhoneInvalid = phoneClean !== "" && !/^(0[3|5|7|8|9])[0-9]{8}$/.test(phoneClean);
+  const phoneError = isPhoneInvalid ? "Số điện thoại không đúng định dạng (VD: 0987654321)." : "";
+  
+  const customRoleError = selectedPreset === "Khác" && !customRole.trim() ? "Vui lòng nhập vai trò khác." : "";
+  
+  const hasError = !!nameError || !!phoneError || !!customRoleError;
+
   async function save() {
-    if (!form.name.trim()) return;
+    setSubmitAttempted(true);
+    if (hasError) return;
+
+    const finalRole = selectedPreset === "Khác" ? customRole.trim() : selectedPreset;
+    const payload = {
+      tripId,
+      name: name.trim(),
+      phone: phone.trim(),
+      role: finalRole,
+      note: note.trim(),
+      updatedAt: new Date().toISOString()
+    };
+
     if (editing?.id) {
-      await db.members.update(editing.id, form);
+      await db.members.update(editing.id, payload);
+      onShowToast?.("Đã cập nhật thành viên");
       onClose();
     } else {
-      await db.members.add({ ...form, tripId });
+      await db.members.add({
+        ...payload,
+        createdAt: new Date().toISOString()
+      });
+      onShowToast?.("Đã thêm thành viên");
       onClose();
     }
   }
 
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} title={editing ? "Sửa thành viên" : "Thêm thành viên"}>
-      <div className="space-y-4">
-        <Input label="Tên" value={form.name} onChange={(name) => setForm({ ...form, name })} placeholder="Tên người đi cùng" />
-        <Input label="Số điện thoại (không bắt buộc)" type="tel" value={form.phone} onChange={(phone) => setForm({ ...form, phone })} placeholder="VD: 0987..." />
-        <Input label="Vai trò (không bắt buộc)" value={form.role} onChange={(role) => setForm({ ...form, role })} placeholder="VD: Trưởng đoàn, Thủ quỹ..." />
-        <div className="pt-2">
-          <FormActions onSave={save} saveLabel={editing ? "Lưu thay đổi" : "Thêm thành viên"} />
+      <div className="space-y-5">
+        <div>
+          <Input 
+            label="Tên *" 
+            value={name} 
+            onChange={(val) => { setName(val); setDirty(true); }} 
+            placeholder="VD: Tùng" 
+          />
+          {(dirty || submitAttempted) && nameError && (
+            <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{nameError}</p>
+          )}
+        </div>
+
+        <div>
+          <Input 
+            label="Số điện thoại" 
+            type="tel"
+            value={phone} 
+            onChange={(val) => { setPhone(val); setDirty(true); }} 
+            placeholder="VD: 0987654321" 
+          />
+          {(dirty || submitAttempted) && phoneError ? (
+            <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{phoneError}</p>
+          ) : (
+            <p className="mt-1.5 px-1 text-[12.5px] font-medium text-slate-400">Dùng để hiển thị liên hệ khi cần thiết.</p>
+          )}
+        </div>
+
+        <div>
+          <span className="mb-2 block text-sm font-semibold text-slate-600">Vai trò</span>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {[...PRESETS, "Khác"].map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => {
+                  setSelectedPreset(preset);
+                  setDirty(true);
+                }}
+                className={classNames(
+                  "rounded-full px-4 py-2 text-[13.5px] font-extrabold transition-all duration-200 active:scale-95 border",
+                  selectedPreset === preset
+                    ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#00BFB7]"
+                    : "bg-[#FFFDF8] border-[#E8E1D8] text-slate-600 hover:bg-slate-50"
+                )}
+              >
+                {preset}
+              </button>
+            ))}
+          </div>
+
+          {selectedPreset === "Khác" && (
+            <div className="mt-2.5 animate-fadeIn">
+              <Input
+                label="Vai trò khác *"
+                value={customRole}
+                onChange={(val) => { setCustomRole(val); setDirty(true); }}
+                placeholder="VD: Nhiếp ảnh, Hậu cần..."
+              />
+              {(dirty || submitAttempted) && customRoleError && (
+                <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{customRoleError}</p>
+              )}
+            </div>
+          )}
+          <p className="mt-1.5 px-1 text-[12.5px] font-medium text-slate-400">
+            Vai trò giúp phân công chi phí, hành lý và ghi chú dễ hơn.
+          </p>
+        </div>
+
+        <div className="pt-1">
+          <label className="block">
+            <span className="text-sm font-semibold text-slate-600">Ghi chú</span>
+            <textarea
+              className="mt-1.5 min-h-[90px] w-full rounded-2xl border-0 bg-slate-50 px-4 py-3 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] placeholder-slate-400"
+              value={note}
+              onChange={(event) => { setNote(event.target.value); setDirty(true); }}
+              placeholder="VD: Ăn chay, dễ say xe, phụ trách đặt phòng..."
+            />
+          </label>
+        </div>
+
+        <div className="pt-3 border-t border-slate-100 flex gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            disabled={hasError}
+            onClick={save}
+            className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#00BFB7] text-[#030D2E] px-6 font-black hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          >
+            <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
+            {editing ? "Lưu thay đổi" : "Thêm thành viên"}
+          </button>
         </div>
       </div>
     </BottomSheet>
   );
 }
 
+function DeleteMemberConfirmModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  memberName,
+  hasExpenses,
+  hasChecklist
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  memberName: string;
+  hasExpenses: boolean;
+  hasChecklist: boolean;
+}) {
+  return (
+    <BottomSheet isOpen={isOpen} onClose={onClose} title="Xóa thành viên này?">
+      <div className="space-y-5">
+        <p className="text-[15px] font-medium leading-relaxed text-slate-600">
+          Thành viên <span className="font-extrabold text-[#030D2E]">{memberName}</span> sẽ không còn xuất hiện trong danh sách chuyến đi. Các dữ liệu liên quan như chi phí hoặc phân công có thể cần được kiểm tra lại.
+        </p>
+
+        {(hasExpenses || hasChecklist) && (
+          <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed animate-fadeIn">
+            Thành viên này đang liên quan đến chi phí hoặc checklist. Hãy kiểm tra trước khi xóa.
+          </div>
+        )}
+
+        <div className="pt-2 flex flex-col sm:flex-row gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 active:scale-[0.98] transition-all duration-200 shadow-sm"
+          >
+            Xóa thành viên
+          </button>
+        </div>
+      </div>
+    </BottomSheet>
+  );
+}
+
+function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  return (
+    <BottomSheet isOpen={isOpen} onClose={onClose} title="Ủng hộ tác giả">
+      <div className="space-y-5 flex flex-col items-center text-center pb-4">
+        {/* Coffee Icon */}
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 border border-amber-100 shadow-sm">
+          <Coffee className="h-5 w-5" />
+        </div>
+        
+        {/* Texts */}
+        <div className="space-y-2 max-w-md">
+          <h4 className="text-[18px] font-black text-[#030D2E]">Đồng hành cùng KAT Journey</h4>
+          <p className="text-[14px] font-semibold leading-relaxed text-slate-500">
+            Nếu KAT Journey hữu ích với bạn, bạn có thể gửi một ly cà phê nhỏ để ủng hộ tác giả tiếp tục phát triển ứng dụng.
+          </p>
+          <p className="text-[12px] font-medium text-slate-400">
+            Ủng hộ là tùy chọn. Cảm ơn bạn đã sử dụng KAT Journey.
+          </p>
+        </div>
+
+        {/* QR Code Card */}
+        <div className="w-[85%] max-w-[280px] p-4 bg-[#FFFDF8] border border-[#E8E1D8] rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
+          <img 
+            src="/donates.webp" 
+            alt="Donate QR Code" 
+            className="w-full h-auto rounded-[16px] object-contain aspect-square" 
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          <span className="mt-3 text-[11px] font-extrabold text-[#030D2E] uppercase tracking-wider bg-slate-50/80 px-3 py-1 rounded-full border border-slate-100">
+            Quét mã QR để chuyển khoản
+          </span>
+        </div>
+
+        {/* Save QR action */}
+        <a 
+          href="/donates.webp" 
+          download="kat-journey-donate-qr.webp"
+          className="text-[13px] font-bold text-[#00BFB7] hover:underline flex items-center gap-1 active:scale-95 transition-all"
+        >
+          Lưu mã QR về máy
+        </a>
+
+        {/* Close button */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="w-full inline-flex min-h-[48px] items-center justify-center rounded-[16px] bg-[#FFFDF8] border border-[#E8E1D8] text-[#030D2E] px-6 font-bold hover:bg-slate-50 active:scale-[0.98] transition-all duration-200"
+        >
+          Đóng
+        </button>
+      </div>
+    </BottomSheet>
+  );
+}
+
 function WrappedSection({ data, setSection }: { data: TripData; setSection: (section: any) => void }) {
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const stats = getWrappedStats(data);
   const mood = stats.mostCommonMood ? moodLabels[stats.mostCommonMood] : undefined;
 
@@ -134,109 +563,194 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
 
   const uniqueLocations = Array.from(new Set(data.events.filter(e => e.location.trim() !== "").map(e => e.location.trim())));
 
+  async function handleExportPdf() {
+    setIsGeneratingPdf(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      await exportTripPdf(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  }
+
   return (
-    <div className="mx-auto max-w-3xl space-y-8 pb-24">
-      <ScreenTitle title="Travel Wrapped" subtitle="Nhìn lại những dấu ấn đáng nhớ trong chuyến đi của bạn." />
+    <div className="mx-auto max-w-[1120px] px-1 md:px-0 space-y-6 md:space-y-8 pb-24">
+      {/* Title */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setSection("overview")}
+            className="flex h-11 items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-4 text-[14px] font-bold text-kat-text transition-all hover:bg-kat-primary/20 active:scale-95 shadow-sm shrink-0"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Quay lại quản lý</span>
+            <span className="sm:hidden">Quay lại</span>
+          </button>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-[#030D2E]">Tổng kết chuyến đi</h2>
+              <span className="inline-flex items-center rounded-full bg-kat-primary/10 border border-kat-primary/20 px-2 py-0.5 text-[10px] font-black text-kat-primary uppercase tracking-wider">
+                Travel Wrapped
+              </span>
+            </div>
+            <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Nhìn lại những dấu ấn đáng nhớ trong chuyến đi của bạn.</p>
+          </div>
+        </div>
+      </div>
       
       {/* Hero Recap Card */}
-      <section className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-600 p-8 text-white shadow-soft">
-        <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px] pointer-events-none" />
+      <section 
+        className="relative overflow-hidden rounded-[32px] p-8 text-white shadow-soft"
+        style={{ background: "linear-gradient(135deg, #030D2E 0%, #003D4A 60%, #007C78 100%)" }}
+      >
         <div className="relative z-10 flex flex-col items-center text-center">
-          <Sparkles className="h-10 w-10 text-emerald-200 mb-4" />
-          <h2 className="text-[32px] font-bold leading-tight tracking-tight drop-shadow-sm">{data.trip.title}</h2>
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2 text-[14px] font-medium backdrop-blur-md border border-white/20">
-              <MapPin className="h-4 w-4" />
-              {data.trip.location || "Đang lên kế hoạch"}
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/8 text-kat-primary mb-4 ring-4 ring-white/5 animate-pulse border border-white/14">
+            <Sparkles className="h-6 w-6" />
+          </div>
+          <h2 className="text-[30px] md:text-[36px] font-black leading-tight tracking-tight drop-shadow-sm">{data.trip.title}</h2>
+          <div className="mt-4 flex flex-wrap justify-center gap-2.5">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 border border-white/14 px-4 py-2 text-[14px] font-semibold backdrop-blur-md text-white/92">
+              <MapPin className="h-4 w-4 text-kat-primary" />
+              {data.trip.location || "Chưa có địa điểm"}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2 text-[14px] font-medium backdrop-blur-md border border-white/20">
-              <Calendar className="h-4 w-4" />
-              {formatDate(data.trip.startDate)} - {formatDate(data.trip.endDate)}
-            </span>
+            {data.trip.tripType === "dayTrip" || data.trip.startDate === data.trip.endDate ? (
+              <>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 border border-white/14 px-4 py-2 text-[14px] font-semibold backdrop-blur-md text-white/92">
+                  <Calendar className="h-4 w-4 text-kat-primary" />
+                  {formatDate(data.trip.startDate)}
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-kat-primary/20 border border-kat-primary/40 px-3 py-1 text-[12.5px] font-bold text-white/95 backdrop-blur-md">
+                  Đi trong ngày
+                </span>
+              </>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 border border-white/14 px-4 py-2 text-[14px] font-semibold backdrop-blur-md text-white/92">
+                <Calendar className="h-4 w-4 text-kat-primary" />
+                {formatDate(data.trip.startDate)} – {formatDate(data.trip.endDate)}
+              </span>
+            )}
           </div>
         </div>
       </section>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="rounded-[24px] bg-white p-6 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center min-h-[140px] transition-all hover:-translate-y-1 hover:shadow-md">
-          <Sun className="h-6 w-6 text-slate-300 mb-3" />
-          <span className="text-[32px] font-bold text-emerald-600 leading-none">{stats.totalDays}</span>
-          <span className="mt-2 text-[12px] font-bold text-slate-400 uppercase tracking-widest">Ngày khám phá</span>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
+            <Sun className="h-6 w-6" />
+          </div>
+          <div className="min-w-0">
+            <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.totalDays}</span>
+            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Ngày khám phá</span>
+          </div>
         </div>
-        <div className="rounded-[24px] bg-white p-6 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center min-h-[140px] transition-all hover:-translate-y-1 hover:shadow-md">
-          <Map className="h-6 w-6 text-slate-300 mb-3" />
-          <span className="text-[32px] font-bold text-sunset-600 leading-none">{stats.activityCount}</span>
-          <span className="mt-2 text-[12px] font-bold text-slate-400 uppercase tracking-widest">Hoạt động</span>
+
+        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#00BFB7]/10 text-[#00BFB7] border border-[#00BFB7]/20">
+            <Map className="h-6 w-6" />
+          </div>
+          <div className="min-w-0">
+            <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.activityCount}</span>
+            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Hoạt động</span>
+          </div>
         </div>
-        <div className="rounded-[24px] bg-white p-6 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center min-h-[140px] transition-all hover:-translate-y-1 hover:shadow-md">
-          <Backpack className="h-6 w-6 text-slate-300 mb-3" />
-          <span className="text-[32px] font-bold text-emerald-600 leading-none">{stats.checklistPercent}%</span>
-          <span className="mt-2 text-[12px] font-bold text-slate-400 uppercase tracking-widest">Chuẩn bị</span>
+
+        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
+            <Backpack className="h-6 w-6" />
+          </div>
+          <div className="min-w-0">
+            <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.checklistPercent}%</span>
+            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Chuẩn bị</span>
+          </div>
         </div>
-        <div className="rounded-[24px] bg-white p-6 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center min-h-[140px] transition-all hover:-translate-y-1 hover:shadow-md">
-          <BookOpen className="h-6 w-6 text-slate-300 mb-3" />
-          <span className="text-[32px] font-bold text-sunset-600 leading-none">{stats.journalCount}</span>
-          <span className="mt-2 text-[12px] font-bold text-slate-400 uppercase tracking-widest">Trang nhật ký</span>
+
+        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#00BFB7]/10 text-[#00BFB7] border border-[#00BFB7]/20">
+            <BookOpen className="h-6 w-6" />
+          </div>
+          <div className="min-w-0">
+            <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.journalCount}</span>
+            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Trang nhật ký</span>
+          </div>
         </div>
       </div>
 
       {/* Finance Recap */}
-      <div className="rounded-[32px] bg-slate-900 p-8 text-white shadow-soft">
-        <h3 className="text-[14px] font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
-          <WalletCards className="h-5 w-5 text-emerald-500" />
-          Tài chính chuyến đi
-        </h3>
-        
-        {data.expenses.length > 0 ? (
-          <div className="space-y-6">
-            <div>
-              <p className="text-[14px] font-medium text-slate-400">Tổng đã chi</p>
-              <p className="mt-1 text-[32px] font-bold text-emerald-400">{formatMoney(stats.totalExpense)}</p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 border-t border-slate-800 pt-6">
+      <div 
+        className="rounded-[32px] p-8 text-white shadow-soft relative overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #030D2E 0%, #003D4A 60%, #007C78 100%)" }}
+      >
+        <div className="relative z-10">
+          <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
+            <WalletCards className="h-5 w-5 text-kat-primary" />
+            Tài chính chuyến đi
+          </h3>
+          
+          {data.expenses.length > 0 ? (
+            <div className="space-y-6">
               <div>
-                <p className="text-[13px] font-medium text-slate-400">Chi chung</p>
-                <p className="mt-1 text-[18px] font-bold text-white">{formatMoney(sharedTotal)}</p>
+                <p className="text-[14px] font-semibold text-slate-400">Tổng đã chi</p>
+                <p className="mt-1 text-[36px] font-black text-white leading-none">{formatMoney(stats.totalExpense)}</p>
               </div>
-              <div>
-                <p className="text-[13px] font-medium text-slate-400">Tự trả riêng</p>
-                <p className="mt-1 text-[18px] font-bold text-white">{formatMoney(personalTotal)}</p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-white/15 pt-6 max-w-md">
+                <div>
+                  <p className="text-[13px] font-bold text-slate-400 uppercase tracking-wider">Chi chung nhóm</p>
+                  <p className="mt-1 text-[18px] font-black text-white">{formatMoney(sharedTotal)}</p>
+                </div>
+                <div>
+                  <p className="text-[13px] font-bold text-slate-400 uppercase tracking-wider">Tự trả riêng</p>
+                  <p className="mt-1 text-[18px] font-black text-slate-300">{formatMoney(personalTotal)}</p>
+                </div>
               </div>
+              
+              {data.members.length === 0 ? (
+                <div className="border-t border-white/15 pt-6">
+                  <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 text-[13.5px] text-slate-300 font-semibold leading-relaxed">
+                    Chưa có thành viên nào khác tham gia chuyến đi để đề xuất chia tiền.
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {stats.topPayer && (
+                    <div className="border-t border-white/15 pt-6">
+                      <p className="text-[14px] font-semibold text-slate-400">Nhà tài trợ chính</p>
+                      <p className="mt-1 text-[14.5px] font-medium leading-relaxed text-slate-300">
+                        <span className="font-extrabold text-white">{stats.topPayer.name}</span> là người chi nhiều nhất với <span className="font-extrabold text-kat-primary">{formatMoney(stats.topPayer.amount)}</span>.
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
-            
-            {stats.topPayer && (
-              <div className="border-t border-slate-800 pt-6">
-                <p className="text-[14px] font-medium text-slate-400">Nhà tài trợ chính</p>
-                <p className="mt-1 text-[15px] font-medium leading-relaxed text-slate-300">
-                  <span className="font-bold text-white">{stats.topPayer.name}</span> là người chi nhiều nhất với <span className="font-bold text-emerald-400">{formatMoney(stats.topPayer.amount)}</span>.
-                </p>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="text-center py-4">
-            <p className="text-[15px] font-medium text-slate-500">Chưa có dữ liệu chi phí.</p>
-          </div>
-        )}
+          ) : (
+            <div className="text-center py-6 border border-white/10 rounded-2xl bg-white/5">
+              <p className="text-[14.5px] font-semibold text-slate-400">Chưa có dữ liệu chi phí cho chuyến đi này.</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Memory / Mood Section */}
-      <div className="rounded-[32px] bg-white p-8 shadow-sm border border-slate-100 text-center flex flex-col items-center">
-        <Smile className="h-8 w-8 text-sunset-400 mb-4" />
-        <h3 className="text-[14px] font-bold text-slate-400 uppercase tracking-wider mb-2">Cảm xúc chủ đạo</h3>
+      <div className="rounded-[32px] border border-[#E8E1D8] bg-[#FFFDF8] p-8 shadow-soft text-center flex flex-col items-center justify-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-500 mb-4 ring-4 ring-amber-500/5">
+          <Smile className="h-6 w-6" />
+        </div>
+        <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-wider mb-2">Cảm xúc chủ đạo</h3>
         {mood ? (
-          <p className="mt-2 text-[28px] font-bold text-slate-900">{mood}</p>
+          <p className="mt-2 text-[26px] md:text-[30px] font-black text-[#030D2E]">{mood}</p>
         ) : (
           <div className="flex flex-col items-center mt-2">
-            <p className="text-[16px] font-bold text-slate-900 mb-2">Chưa có đủ kỷ niệm để tổng kết cảm xúc.</p>
-            <p className="text-[14px] text-slate-500 mb-6 max-w-sm">Viết thêm nhật ký để Travel Wrapped trở nên sống động hơn.</p>
+            <p className="text-[16px] font-extrabold text-[#030D2E] mb-1.5">Chưa có đủ kỷ niệm để tổng kết cảm xúc.</p>
+            <p className="text-[14px] font-semibold text-slate-500 mb-5 max-w-sm">Viết thêm nhật ký để nhìn lại cảm xúc chuyến đi.</p>
             <button 
               onClick={() => setSection("journal")}
-              className="flex items-center justify-center gap-2 rounded-full bg-emerald-50 px-6 py-2.5 text-[14px] font-bold text-emerald-700 transition-colors hover:bg-emerald-100"
+              className="flex items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-5 py-2.5 text-[14px] font-extrabold text-kat-text hover:bg-kat-primary/20 active:scale-[0.98] transition-all"
             >
-              <BookOpen className="h-4 w-4" />
+              <BookOpen className="h-4.5 w-4.5" />
               Viết nhật ký đầu tiên
             </button>
           </div>
@@ -244,91 +758,184 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       </div>
 
       {/* Storytelling Blocks */}
-      {(firstMomentText || maxEventsDate || uniqueLocations.length > 0) && (
-        <div className="grid gap-4 md:grid-cols-2">
-          {firstMomentText && (
-            <div className="rounded-[24px] bg-white p-6 shadow-sm border border-slate-100 flex flex-col md:col-span-2">
-              <div className="flex items-center gap-2 mb-3">
-                <Camera className="h-5 w-5 text-sunset-500" />
-                <h4 className="text-[14px] font-bold text-slate-400 uppercase tracking-wider">Khoảnh khắc đầu tiên</h4>
-              </div>
-              <p className="text-[16px] font-medium text-slate-900 leading-relaxed">{firstMomentText}</p>
-            </div>
-          )}
-
-          {maxEventsDate && (
-            <div className="rounded-[24px] bg-white p-6 shadow-sm border border-slate-100 flex flex-col">
-              <div className="flex items-center gap-2 mb-3">
-                <Sun className="h-5 w-5 text-amber-500" />
-                <h4 className="text-[14px] font-bold text-slate-400 uppercase tracking-wider">Ngày đáng nhớ nhất</h4>
-              </div>
-              <p className="text-[15px] font-medium text-slate-900 leading-relaxed">
-                <span className="font-bold text-amber-600">{formatDate(maxEventsDate)}</span> là ngày bận rộn nhất với {maxEventsCount} hoạt động được ghi nhận.
-              </p>
-            </div>
-          )}
-
-          {uniqueLocations.length > 0 && (
-            <div className="rounded-[24px] bg-white p-6 shadow-sm border border-slate-100 flex flex-col">
-              <div className="flex items-center gap-2 mb-3">
-                <MapPin className="h-5 w-5 text-emerald-500" />
-                <h4 className="text-[14px] font-bold text-slate-400 uppercase tracking-wider">Bạn đã đi qua</h4>
-              </div>
-              <p className="text-[15px] font-medium text-slate-900 leading-relaxed">
-                {uniqueLocations.join(", ")}
-              </p>
-            </div>
-          )}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* First Moment */}
+        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between md:col-span-2">
+          <div className="flex items-center gap-2 mb-3">
+            <Camera className="h-5 w-5 text-sunset-500" />
+            <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">Khoảnh khắc đầu tiên</h4>
+          </div>
+          <p className="text-[15.5px] font-extrabold text-[#030D2E] leading-relaxed">
+            {firstMomentText || "Hành trình của bạn chưa bắt đầu. Hãy thêm hoạt động trong lịch trình hoặc viết nhật ký để lưu dấu ấn đầu tiên."}
+          </p>
         </div>
-      )}
+
+        {/* Most Eventful Day */}
+        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between">
+          <div className="flex items-center gap-2 mb-3">
+            <Sun className="h-5 w-5 text-amber-500" />
+            <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">Ngày đáng nhớ nhất</h4>
+          </div>
+          <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
+            {maxEventsDate ? (
+              <>
+                <span className="font-extrabold text-amber-600">{formatDate(maxEventsDate)}</span> là ngày bận rộn nhất với <span className="font-bold text-[#030D2E]">{maxEventsCount} hoạt động</span> được ghi nhận.
+              </>
+            ) : (
+              "Chưa có ngày nào có nhiều hoạt động nổi bật."
+            )}
+          </p>
+        </div>
+
+        {/* Locations Visited */}
+        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between">
+          <div className="flex items-center gap-2 mb-3">
+            <MapPin className="h-5 w-5 text-kat-primary" />
+            <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">Địa điểm đã ghé qua</h4>
+          </div>
+          <p className="text-[14.5px] font-extrabold text-[#030D2E] leading-relaxed">
+            {uniqueLocations.length > 0 ? uniqueLocations.join(", ") : "Chưa ghi nhận địa điểm cụ thể nào trong lịch trình."}
+          </p>
+        </div>
+      </div>
 
       {/* Share / Export CTA */}
       <div className="pt-8 flex justify-center">
         <button 
-          onClick={() => exportTripPdf(data)}
-          className="flex items-center justify-center gap-2 rounded-full bg-slate-900 px-8 py-3.5 text-[15px] font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg active:scale-95"
+          onClick={handleExportPdf}
+          disabled={isGeneratingPdf}
+          className="flex items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-6 py-3.5 text-[14px] font-extrabold text-kat-text shadow-sm hover:bg-kat-primary/20 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
         >
-          <FileText className="h-5 w-5" />
-          Xuất PDF tổng kết
+          <FileText className="h-5 w-5 animate-bounce" />
+          {isGeneratingPdf ? "Đang tạo PDF..." : "Xuất PDF tổng kết"}
         </button>
       </div>
     </div>
   );
 }
 
-function SettingsRow({ icon, label, subtitle, onClick, value, danger = false }: { icon: React.ReactNode; label: string; subtitle?: string; onClick?: () => void; value?: string; danger?: boolean }) {
+function HubActionRow({ 
+  icon: Icon, 
+  label, 
+  subtitle, 
+  onClick, 
+  value, 
+  danger = false,
+  disabled = false
+}: { 
+  icon: React.ElementType; 
+  label: string; 
+  subtitle?: string; 
+  onClick?: () => void; 
+  value?: string; 
+  danger?: boolean;
+  disabled?: boolean;
+}) {
   const content = (
-    <>
-      <div className="flex items-center gap-3">
-        <div className={`flex shrink-0 h-8 w-8 items-center justify-center rounded-lg ${danger ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-600'}`}>
-          {icon}
+    <div className="flex items-center justify-between w-full min-h-[56px] py-3 text-left">
+      <div className="flex items-center gap-3.5 min-w-0 flex-1">
+        <div className={classNames(
+          "flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl transition-colors",
+          danger 
+            ? "bg-rose-50 text-rose-600 border border-rose-100" 
+            : "bg-kat-primary/10 text-kat-primary border border-kat-primary/20"
+        )}>
+          <Icon className="h-5.5 w-5.5" strokeWidth={2.2} />
         </div>
-        <div className="flex flex-col text-left">
-          <span className={`text-[16px] font-medium ${danger ? 'text-rose-600' : 'text-slate-900'}`}>{label}</span>
-          {subtitle && <span className="text-[13px] text-slate-500">{subtitle}</span>}
+        
+        <div className="min-w-0 flex-1">
+          <span className={classNames(
+            "block text-[15.5px] font-extrabold leading-snug", 
+            danger ? "text-rose-600" : "text-[#030D2E]",
+            disabled && "text-slate-400"
+          )}>
+            {label}
+          </span>
+          {subtitle && (
+            <span className={classNames("block text-[13px] font-semibold mt-0.5 leading-snug", disabled ? "text-slate-300" : "text-slate-500")}>
+              {subtitle}
+            </span>
+          )}
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        {value && <span className="text-[15px] text-slate-500">{value}</span>}
-        {onClick && <ChevronRight className="h-5 w-5 text-slate-300" />}
+
+      <div className="flex items-center gap-2 shrink-0 pl-2">
+        {value && <span className="text-[14px] font-bold text-slate-500">{value}</span>}
+        {onClick && !disabled && <ChevronRight className="h-5 w-5 text-slate-300 transition-transform group-hover:translate-x-0.5" />}
       </div>
-    </>
+    </div>
   );
 
-  if (onClick) {
+  if (onClick && !disabled) {
     return (
-      <button onClick={onClick} className="flex w-full items-center justify-between bg-white px-4 py-3 transition-colors hover:bg-slate-50 active:bg-slate-100">
+      <button 
+        type="button"
+        onClick={onClick} 
+        className="group flex w-full items-center justify-between bg-[#FFFDF8] px-5 transition-all hover:bg-slate-50/80 active:scale-[0.99] focus:outline-none"
+      >
         {content}
       </button>
     );
   }
 
   return (
-    <div className="flex w-full items-center justify-between bg-white px-4 py-3">
+    <div className="flex w-full items-center justify-between bg-[#FFFDF8] px-5 border-b border-slate-100 last:border-b-0">
       {content}
     </div>
   );
 }
+
+function MiniStatCard({ 
+  label, 
+  value, 
+  colorClass 
+}: { 
+  label: string; 
+  value: string | number; 
+  colorClass: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-slate-100/60 bg-white p-3.5 shadow-inner flex flex-col justify-center min-h-[72px] transition-all hover:scale-[1.01]">
+      <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider leading-none">{label}</span>
+      <span className={classNames("text-[15.5px] font-black mt-1.5 truncate leading-none", colorClass)}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function ActionCard({
+  icon: Icon,
+  title,
+  description,
+  onClick,
+  iconBgColor = "bg-[#00BFB7]/10",
+  iconTextColor = "text-[#00BFB7]"
+}: {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  onClick: () => void;
+  iconBgColor?: string;
+  iconTextColor?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group flex flex-col justify-between items-start text-left p-5 rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] shadow-soft hover:bg-slate-50/60 active:scale-[0.99] transition-all w-full min-h-[140px] focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/50"
+    >
+      <div className="flex items-center gap-3">
+        <div className={`flex shrink-0 h-10 w-10 items-center justify-center rounded-xl border ${iconBgColor} ${iconTextColor}`}>
+          <Icon className="h-5 w-5" strokeWidth={2.2} />
+        </div>
+        <h4 className="text-[16px] font-extrabold text-[#030D2E] leading-snug">{title}</h4>
+      </div>
+      <p className="mt-4 text-[13px] font-semibold text-slate-500 leading-relaxed">{description}</p>
+    </button>
+  );
+}
+
 
 export function MoreScreen({
   trip,
@@ -340,6 +947,7 @@ export function MoreScreen({
   packingItems,
   onTripDeleted,
   onTripSelected,
+  onShowToast,
   section,
   setSection
 }: {
@@ -352,6 +960,7 @@ export function MoreScreen({
   packingItems: PackingItem[];
   onTripDeleted: () => void;
   onTripSelected: (id: number) => void;
+  onShowToast?: (msg: string) => void;
   section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members";
   setSection: (section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members") => void;
 }) {
@@ -359,10 +968,31 @@ export function MoreScreen({
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [isMemberFormOpen, setIsMemberFormOpen] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [isDataSectionOpen, setIsDataSectionOpen] = useState(false);
+  const [isDonateOpen, setIsDonateOpen] = useState(false);
+
+  // Modal confirmations states
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
+  const [isRestoreConfirmOpen, setIsRestoreConfirmOpen] = useState(false);
+  const [selectedFileForRestore, setSelectedFileForRestore] = useState<File | null>(null);
+
+  // Delete Member Confirm Dialog states
+  const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
+  const [isDeleteMemberConfirmOpen, setIsDeleteMemberConfirmOpen] = useState(false);
+
   const tripData = { trip, members, events, expenses, checklist, journals, packingItems };
 
-  async function deleteTrip() {
-    if (!trip.id || !window.confirm("Xóa chuyến đi này khỏi thiết bị?")) return;
+  async function executeDeleteMember() {
+    if (!memberToDelete?.id) return;
+    await db.members.delete(memberToDelete.id);
+    onShowToast?.("Đã xóa thành viên");
+    setIsDeleteMemberConfirmOpen(false);
+    setMemberToDelete(null);
+  }
+
+  async function executeDeleteTrip() {
+    if (!trip.id) return;
     await db.transaction("rw", [db.trips, db.members, db.events, db.expenses, db.checklist, db.journals, db.packingItems], async () => {
       await db.members.where("tripId").equals(trip.id!).delete();
       await db.events.where("tripId").equals(trip.id!).delete();
@@ -376,9 +1006,14 @@ export function MoreScreen({
   }
 
   function exportTrip() {
-    const payload = createTripExport(tripData);
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-    downloadBlob(blob, `${safeFileName(trip.title)}.kattrip`);
+    try {
+      const payload = createTripExport(tripData);
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      downloadBlob(blob, `${safeFileName(trip.title)}.kattrip`);
+      onShowToast?.("Đã tạo bản sao lưu thành công");
+    } catch {
+      onShowToast?.("Đã xảy ra lỗi khi tạo sao lưu");
+    }
   }
 
   async function importTrip(file?: File) {
@@ -421,7 +1056,8 @@ export function MoreScreen({
             amount: Number(expense.amount || 0),
             payer: expense.payer ?? "",
             category: expense.category ?? "Khác",
-            description: expense.description ?? ""
+            description: expense.description ?? "",
+            splitType: expense.splitType ?? "shared"
           }));
         const importedChecklist = (parsed.checklist ?? []).map((item) => ({
             tripId: id,
@@ -453,9 +1089,9 @@ export function MoreScreen({
       });
 
       onTripSelected(newTripId);
-      window.alert("Đã import chuyến đi vào dữ liệu cục bộ.");
+      onShowToast?.("Đã nhập bản sao lưu thành công.");
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : "Không thể import tệp này.");
+      alert(error instanceof Error ? error.message : "Không thể import tệp này.");
     } finally {
       setImporting(false);
     }
@@ -466,13 +1102,13 @@ export function MoreScreen({
     if (confirmation === "XOA TAT CA") {
       try {
         await db.delete();
-        window.alert("Đã xóa dữ liệu. Trang sẽ tải lại.");
+        alert("Đã xóa dữ liệu thành công. Đang tải lại trang...");
         window.location.reload();
       } catch (e) {
-        window.alert("Đã xảy ra lỗi khi xóa dữ liệu.");
+        alert("Đã xảy ra lỗi khi xóa dữ liệu.");
       }
     } else if (confirmation !== null) {
-      window.alert("Xác nhận không đúng. Đã hủy khôi phục cài đặt gốc.");
+      alert("Xác nhận không đúng. Đã hủy khôi phục cài đặt gốc.");
     }
   }
 
@@ -486,175 +1122,489 @@ export function MoreScreen({
     setIsMemberFormOpen(true);
   }
 
-  if (section === "journal") return <JournalSection tripId={trip.id!} journals={journals} />;
-  if (section === "packing") return <PackingSection tripId={trip.id!} packingItems={packingItems} />;
+  const getTripDurationText = () => {
+    const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
+    if (isDayTrip) return "Đi trong ngày";
+    try {
+      const start = new Date(trip.startDate);
+      const end = new Date(trip.endDate);
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) return "Dài ngày";
+      const diffTime = Math.abs(end.getTime() - start.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      const diffNights = diffDays > 1 ? diffDays - 1 : 0;
+      return `${diffDays} ngày ${diffNights} đêm`;
+    } catch {
+      return "Dài ngày";
+    }
+  };
+
+  if (section === "journal") return <JournalSection tripId={trip.id!} journals={journals} onShowToast={onShowToast} onBack={() => setSection("overview")} />;
   if (section === "wrapped") return <WrappedSection data={tripData} setSection={setSection} />;
+  
   if (section === "members") {
+    const membersWithTasks = members.filter(m => checklist.some(c => c.assignedTo === m.name)).length;
+    const membersWithExpenses = members.filter(m => expenses.some(e => e.payer === m.name)).length;
+
     return (
-      <div className="mx-auto max-w-3xl space-y-6 pb-8">
-        <ScreenTitle title="Thành viên" subtitle="Quản lý những người cùng tham gia chuyến đi." />
-        
-        <div className="flex items-center justify-between px-2">
-          <h3 className="text-[15px] font-bold text-slate-900">Danh sách ({members.length})</h3>
+      <div className="mx-auto max-w-[960px] space-y-6 pb-24">
+        {/* Header / Title Row */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSection("overview")}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 active:scale-95 transition-all shadow-sm"
+              title="Quay lại"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <div>
+              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-[#030D2E]">Thành viên</h2>
+              <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Quản lý những người cùng tham gia chuyến đi.</p>
+            </div>
+          </div>
           <button 
-            className="flex items-center justify-center rounded-full bg-emerald-50 px-4 py-2 text-[13px] font-bold text-emerald-700 transition-colors hover:bg-emerald-100" 
+            className="flex h-11 sm:h-12 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] px-5 text-[14px] font-black text-[#030D2E] transition-all hover:brightness-105 active:scale-[0.98] shadow-sm w-full sm:w-auto shrink-0"
             onClick={openNewMember}
           >
-            Thêm
+            <Plus className="w-4.5 h-4.5" strokeWidth={2.5} />
+            Thêm thành viên
           </button>
         </div>
-        
-        <div className="overflow-hidden rounded-2xl shadow-sm border border-slate-100 bg-white">
+
+        {/* Overview Card */}
+        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft">
           {members.length ? (
-            members.map((member, index) => (
-              <React.Fragment key={member.id}>
-                <div className="flex items-center justify-between px-4 py-3 hover:bg-slate-50">
-                  <div className="min-w-0">
-                    <p className="text-[16px] font-medium text-slate-900">{member.name}</p>
-                    <p className="text-[14px] text-slate-500">{member.role || "Bạn đồng hành"}</p>
-                  </div>
-                  <div className="flex gap-1 shrink-0">
-                    <button className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors" onClick={() => openEditMember(member)}>
-                      <Edit3 className="h-4 w-4" />
-                    </button>
-                    <button className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" onClick={() => db.members.delete(member.id!)}>
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Thành viên</span>
+                  <span className="text-[18px] md:text-[20px] font-black text-[#030D2E] mt-1">{members.length} người</span>
                 </div>
-                {index < members.length - 1 && <div className="h-px bg-slate-100 mx-4" />}
-              </React.Fragment>
-            ))
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Được phân công</span>
+                  <span className="text-[18px] md:text-[20px] font-black text-[#030D2E] mt-1">{membersWithTasks} người</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Đã chi trả</span>
+                  <span className="text-[18px] md:text-[20px] font-black text-[#030D2E] mt-1">{membersWithExpenses} người</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Chia chi phí</span>
+                  <span className={classNames(
+                    "text-[12.5px] font-black mt-1 inline-flex items-center px-3 py-1 rounded-full w-fit leading-none border", 
+                    members.length >= 2 
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-100" 
+                      : "bg-slate-50 text-slate-500 border-slate-100"
+                  )}>
+                    {members.length >= 2 ? "Sẵn sàng" : "Cần ≥ 2 người"}
+                  </span>
+                </div>
+              </div>
+              {members.length < 2 && (
+                <p className="pt-3 border-t border-slate-100 text-[13px] font-medium text-slate-500">
+                  Thêm người đồng hành để chia chi phí và phân công chuẩn bị.
+                </p>
+              )}
+            </div>
           ) : (
-            <div className="p-6 text-center text-[15px] text-slate-500">
-              Chưa có thành viên nào.
+            <div className="text-left py-1 text-[14px] md:text-[15px] font-medium text-slate-500 leading-relaxed">
+              Thêm người đồng hành để chia chi phí và phân công chuẩn bị hành trình.
             </div>
           )}
         </div>
-        
+
+        {/* Member List Section */}
+        <section className="space-y-4">
+          <h3 className="text-[17px] font-extrabold text-[#030D2E] px-1">Danh sách {members.length > 0 && `(${members.length})`}</h3>
+          
+          {members.length ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {members.map((member) => {
+                const initial = member.name.trim().charAt(0).toUpperCase() || "?";
+                
+                // Helper computations
+                const assignedTasksCount = checklist.filter(c => c.assignedTo === member.name).length;
+                const memberExpenses = expenses.filter(e => e.payer === member.name);
+                const paidExpensesCount = memberExpenses.length;
+                const totalSpent = memberExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+
+                return (
+                  <div key={member.id} className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-4">
+                    <div className="flex items-start gap-4">
+                      {/* Avatar Initials */}
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#00BFB7]/10 text-[#00BFB7] text-[18px] font-black shadow-inner">
+                        {initial}
+                      </div>
+
+                      {/* Member details */}
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <div className="flex items-center flex-wrap gap-2">
+                          <h4 className="text-[17px] font-extrabold text-[#030D2E] truncate">{member.name}</h4>
+                          <span className="inline-flex items-center rounded-full bg-[#00BFB7]/10 border border-[#00BFB7]/20 px-2.5 py-0.5 text-[11px] font-bold text-[#00BFB7]">
+                            {member.role || "Bạn đồng hành"}
+                          </span>
+                        </div>
+                        {member.phone && (
+                          <p className="text-[13.5px] font-semibold text-slate-500">
+                            SĐT: <span className="text-[#030D2E]">{member.phone}</span>
+                          </p>
+                        )}
+                        {member.note && (
+                          <p className="text-[13px] font-medium text-slate-400 italic mt-1 bg-slate-50/70 p-2.5 rounded-xl border border-slate-100/50 break-words">
+                            "{member.note}"
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Mini Stats & Actions Row */}
+                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-4 flex-wrap">
+                      <div className="flex flex-wrap gap-2 text-[12px] font-bold">
+                        <span className="bg-slate-50 text-slate-600 border border-slate-100 px-2.5 py-1 rounded-lg">
+                          {assignedTasksCount} việc
+                        </span>
+                        <span className="bg-slate-50 text-slate-600 border border-slate-100 px-2.5 py-1 rounded-lg">
+                          Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
+                        </span>
+                      </div>
+
+                      {/* Action buttons (Touch target 44px) */}
+                      <div className="flex gap-2 shrink-0">
+                        <button 
+                          className="flex h-11 w-11 items-center justify-center rounded-full text-slate-500 bg-slate-50 hover:bg-slate-100 hover:text-slate-600 active:scale-90 transition-all shadow-sm border border-slate-200/40" 
+                          onClick={() => openEditMember(member)}
+                          title="Sửa thành viên"
+                        >
+                          <Edit2 className="h-4.5 w-4.5" />
+                        </button>
+                        <button 
+                          className="flex h-11 w-11 items-center justify-center rounded-full text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-90 transition-all shadow-sm border border-rose-200/40" 
+                          onClick={() => {
+                            setMemberToDelete(member);
+                            setIsDeleteMemberConfirmOpen(true);
+                          }}
+                          title="Xóa thành viên"
+                        >
+                          <Trash2 className="h-4.5 w-4.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            /* Empty State Layout */
+            <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
+                <Users className="h-6 w-6" />
+              </div>
+              <h3 className="text-[16px] font-bold text-[#030D2E]">Chưa có thành viên nào.</h3>
+              <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
+                Thêm người đồng hành để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ hơn.
+              </p>
+              <button
+                onClick={openNewMember}
+                className="mt-5 inline-flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-6 text-[14px] font-black transition-all hover:brightness-105 active:scale-95 shadow-sm animate-pulse"
+              >
+                <Plus className="w-4.5 h-4.5" strokeWidth={2.5} />
+                Thêm thành viên đầu tiên
+              </button>
+            </div>
+          )}
+        </section>
+
         <MemberForm
           tripId={trip.id!}
           editing={editingMember}
           isOpen={isMemberFormOpen}
           onClose={() => setIsMemberFormOpen(false)}
+          onShowToast={onShowToast}
+        />
+        
+        <DeleteMemberConfirmModal
+          isOpen={isDeleteMemberConfirmOpen}
+          onClose={() => {
+            setIsDeleteMemberConfirmOpen(false);
+            setMemberToDelete(null);
+          }}
+          onConfirm={executeDeleteMember}
+          memberName={memberToDelete?.name ?? ""}
+          hasExpenses={memberToDelete ? expenses.some(e => e.payer === memberToDelete.name) : false}
+          hasChecklist={memberToDelete ? checklist.some(c => c.assignedTo === memberToDelete.name) : false}
         />
       </div>
     );
   }
+
   if (section === "settings") {
     return (
-      <div className="mx-auto max-w-3xl space-y-6 pb-8">
-        <ScreenTitle title="Cài đặt" subtitle="Quản lý ứng dụng và dữ liệu cục bộ." />
-        
-        <div className="overflow-hidden rounded-2xl shadow-sm border border-slate-100">
-          <SettingsRow icon={<Settings className="h-4 w-4" />} label="Phiên bản" value="1.0.0" />
-          <div className="h-px bg-slate-100 mx-4" />
-          <SettingsRow icon={<Trash2 className="h-4 w-4" />} label="Khôi phục cài đặt gốc" onClick={() => void factoryReset()} danger />
+      <div className="mx-auto max-w-[640px] space-y-6 pb-24">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-[32px] font-extrabold tracking-tight text-[#030D2E]">Cài đặt</h2>
+            <p className="mt-1 text-[15px] font-medium text-slate-500">Quản lý ứng dụng và cấu hình dữ liệu.</p>
+          </div>
+          <button
+            onClick={() => setSection("overview")}
+            className="flex h-10 items-center justify-center rounded-full bg-[#EDEAE2] border border-[#C8BDB0] px-4 text-[13.5px] font-bold text-[#030D2E] transition-all hover:bg-[#E2DDD3] active:scale-95 shadow-sm"
+          >
+            Quay lại
+          </button>
         </div>
         
-        <div className="mt-8 text-center">
-          <p className="text-[13px] font-medium text-slate-400">Thực hiện bởi thanhtungg.</p>
+        <div className="overflow-hidden rounded-3xl border border-slate-100 bg-[#FFFDF8] shadow-sm">
+          <HubActionRow icon={Settings} label="Phiên bản ứng dụng" value="1.0.0" />
+          <HubActionRow icon={Trash2} label="Khôi phục cài đặt gốc" subtitle="Xóa sạch toàn bộ dữ liệu trên thiết bị." onClick={() => void factoryReset()} danger />
+        </div>
+        
+        <div className="mt-12 text-center">
+          <p className="text-[13.5px] font-bold text-slate-400">Thực hiện bởi thanhtungg.</p>
         </div>
       </div>
     );
   }
 
+  const checklistPercent = getChecklistStats(checklist).percent;
+  const totalExpense = expenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const tripDurationText = getTripDurationText();
+
   return (
-    <div className="mx-auto max-w-3xl">
-      <div className="space-y-8 pb-24">
-        <ScreenTitle title="Quản lý chuyến đi" subtitle="Quản lý thông tin, dữ liệu và các công cụ hỗ trợ cho chuyến đi." />
+    <div className="mx-auto max-w-[800px] px-2 md:px-0">
+      <div className="flex flex-col gap-6 pb-24">
         
-        {/* Trip Overview Card */}
-        <section className="rounded-[24px] bg-white p-5 shadow-sm border border-slate-100 flex flex-col gap-2">
-          <h3 className="text-[18px] font-bold text-slate-900">{trip.title}</h3>
-          <div className="flex items-center gap-2 text-[14px] text-slate-500">
-            <MapPin className="flex-none h-4 w-4 text-rose-500" strokeWidth={2.5} />
-            <span className="truncate">{trip.location || "Chưa có địa điểm"}</span>
-          </div>
-          <div className="flex items-center gap-2 text-[14px] text-slate-500">
-            <Calendar className="flex-none h-4 w-4 text-indigo-400" strokeWidth={2.5} />
-            <span>{formatDate(trip.startDate)} – {formatDate(trip.endDate)}</span>
-          </div>
-          <div className="flex items-center gap-2 text-[14px] text-slate-500">
-            <Users className="flex-none h-4 w-4 text-indigo-600" strokeWidth={2.5} />
-            <span>{members.length} thành viên</span>
+        {/* Title Block */}
+        <div>
+          <h2 className="text-[32px] font-extrabold tracking-tight text-[#030D2E]">Cài đặt</h2>
+          <p className="mt-1 text-[15px] font-medium text-slate-500">
+            Quản lý thông tin và thành viên chuyến đi.
+          </p>
+        </div>
+
+        {/* Hero chuyến đi compact hơn */}
+        <section className="relative overflow-hidden rounded-[28px] bg-[#FFFDF8] border border-[#E8E1D8] p-5 md:p-6 text-kat-text shadow-soft">
+          <Compass className="absolute -right-6 -bottom-6 w-32 h-32 text-kat-primary/[0.04] rotate-12 pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col gap-4">
+            {/* Header info */}
+            <div>
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Chuyến đi hiện tại</p>
+              <h3 className="mt-1 break-words text-[24px] md:text-[28px] font-black leading-tight tracking-tight text-[#030D2E]">
+                {trip.title}
+              </h3>
+            </div>
+            
+            {/* Metadata tags */}
+            <div className="flex flex-wrap gap-2 text-[12.5px] font-bold text-slate-600">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5">
+                <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+                {trip.location || "Chưa có địa điểm"}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5">
+                <Calendar className="h-3.5 w-3.5 text-kat-primary" />
+                {trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}`}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5">
+                <Sun className="h-3.5 w-3.5 text-kat-primary" />
+                {tripDurationText}
+              </span>
+            </div>
+
+            {/* Compact inline stats pills */}
+            <div className="flex flex-wrap gap-2 pt-2.5 border-t border-slate-200/60 mt-1">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-kat-primary-soft border border-kat-primary/20 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable">
+                <Users className="h-3.5 w-3.5" />
+                {members.length} người
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0081BE]/8 border border-[#0081BE]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#0081BE]">
+                <Calendar className="h-3.5 w-3.5" />
+                {events.length} hoạt động
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/8 border border-emerald-500/15 px-3 py-1.5 text-[12.5px] font-extrabold text-emerald-600">
+                <WalletCards className="h-3.5 w-3.5" />
+                {formatMoney(totalExpense)}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F89B02]/8 border border-[#F89B02]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#F89B02]">
+                <Backpack className="h-3.5 w-3.5" />
+                {checklistPercent}% chuẩn bị
+              </span>
+            </div>
           </div>
         </section>
 
-        {/* A. Current Trip Settings */}
+        {/* Thao tác chính */}
         <section className="space-y-3">
-          <h3 className="px-2 text-[15px] font-bold text-slate-900">Chuyến đi hiện tại</h3>
-          <div className="overflow-hidden rounded-2xl shadow-sm border border-slate-100">
-            <SettingsRow icon={<Edit3 className="h-4 w-4" />} label="Sửa thông tin" onClick={() => setEditingTrip(true)} />
-            <div className="h-px bg-slate-100 mx-4" />
-            <SettingsRow icon={<Users className="h-4 w-4" />} label="Quản lý thành viên" subtitle="Thêm hoặc chỉnh sửa người đồng hành." onClick={() => setSection("members")} />
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">Thao tác chính</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <ActionCard
+              icon={Edit3}
+              title="Sửa thông tin"
+              description="Cập nhật tên, địa điểm và thời gian."
+              onClick={() => setEditingTrip(true)}
+              iconBgColor="bg-sky-50"
+              iconTextColor="text-sky-600 border-sky-100"
+            />
+            <ActionCard
+              icon={Users}
+              title="Quản lý thành viên"
+              description="Thêm hoặc chỉnh sửa người đồng hành."
+              onClick={() => setSection("members")}
+              iconBgColor="bg-amber-50"
+              iconTextColor="text-amber-600 border-amber-100"
+            />
+            <ActionCard
+              icon={Sparkles}
+              title="Tổng kết chuyến đi"
+              description="Xem Travel Wrapped và báo cáo."
+              onClick={() => setSection("wrapped")}
+              iconBgColor="bg-indigo-50"
+              iconTextColor="text-indigo-600 border-indigo-100"
+            />
+            <ActionCard
+              icon={BookOpen}
+              title="Nhật ký chuyến đi"
+              description="Lưu lại kỷ niệm và ghi chú."
+              onClick={() => setSection("journal")}
+              iconBgColor="bg-emerald-50"
+              iconTextColor="text-emerald-600 border-emerald-100"
+            />
           </div>
         </section>
 
-        {/* C. Tools */}
+        {/* Dữ liệu & xuất file Accordion */}
         <section className="space-y-3">
-          <h3 className="px-2 text-[15px] font-bold text-slate-900">Công cụ chuyến đi</h3>
-          <div className="overflow-hidden rounded-2xl shadow-sm border border-slate-100">
-            <SettingsRow icon={<Sparkles className="h-4 w-4" />} label="Tổng kết chuyến đi" onClick={() => setSection("wrapped")} />
-            <div className="h-px bg-slate-100 mx-4" />
-            <SettingsRow icon={<BookOpen className="h-4 w-4" />} label="Nhật ký chuyến đi" onClick={() => setSection("journal")} />
-            <div className="h-px bg-slate-100 mx-4" />
-            <SettingsRow icon={<Backpack className="h-4 w-4" />} label="Gợi ý hành lý" onClick={() => setSection("packing")} />
-            <div className="h-px bg-slate-100 mx-4" />
-            <SettingsRow icon={<Settings className="h-4 w-4" />} label="Cài đặt hệ thống" onClick={() => setSection("settings")} />
+          <div className="overflow-hidden rounded-3xl border border-[#E8E1D8] bg-[#FFFDF8] shadow-sm">
+            <button
+              type="button"
+              onClick={() => setIsDataSectionOpen(!isDataSectionOpen)}
+              className="w-full text-left p-5 flex items-center justify-between hover:bg-slate-50/40 transition-colors focus:outline-none"
+            >
+              <div>
+                <h4 className="text-[16px] font-extrabold text-[#030D2E]">Dữ liệu & xuất file</h4>
+                <p className="text-[13px] font-semibold text-slate-500 mt-0.5">Sao lưu, khôi phục và xuất dữ liệu khi cần.</p>
+              </div>
+              <ChevronRight className={classNames("h-5 w-5 text-slate-400 transition-transform duration-200", isDataSectionOpen ? "rotate-90" : "")} />
+            </button>
+            
+            {isDataSectionOpen && (
+              <div className="border-t border-slate-100 divide-y divide-slate-100 animate-fadeIn">
+                <HubActionRow icon={Download} label="Sao lưu chuyến đi" subtitle="Tạo bản sao lưu dữ liệu local (.kattrip)." onClick={exportTrip} />
+                
+                {/* Custom Restore Input Row */}
+                <label className="group flex w-full cursor-pointer items-center justify-between bg-[#FFFDF8] px-5 py-3 transition-colors hover:bg-slate-50/80 active:scale-[0.99]">
+                  <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                    <div className="flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
+                      <Upload className="h-5.5 w-5.5" strokeWidth={2.2} />
+                    </div>
+                    <div className="flex flex-col text-left min-w-0 flex-1">
+                      <span className="text-[15.5px] font-extrabold text-[#030D2E]">{importing ? "Đang nhập..." : "Khôi phục dữ liệu"}</span>
+                      <span className="text-[13px] text-slate-500 truncate">Khôi phục dữ liệu từ tệp sao lưu.</span>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-slate-300 transition-transform group-hover:translate-x-0.5" />
+                  <input
+                    className="sr-only"
+                    type="file"
+                    accept=".kattrip,application/json"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (file) {
+                        setSelectedFileForRestore(file);
+                        setIsRestoreConfirmOpen(true);
+                      }
+                      event.target.value = "";
+                    }}
+                  />
+                </label>
+
+                <HubActionRow icon={FileText} label="Xuất báo cáo PDF" subtitle="Tạo báo cáo tóm tắt chi tiết lịch trình và chi tiêu." onClick={() => exportTripPdf(tripData)} />
+                <HubActionRow icon={Table2} label="Xuất bảng tính Excel" subtitle="Lưu dữ liệu chi phí và checklist sang bảng tính." onClick={() => exportTripExcel(tripData)} />
+              </div>
+            )}
           </div>
         </section>
 
-        {/* D. Export / Import */}
+        {/* Phiên bản & Ủng hộ */}
         <section className="space-y-3">
-          <div className="px-2">
-            <h3 className="text-[15px] font-bold text-slate-900">Sao lưu & Chia sẻ</h3>
-            <p className="mt-0.5 text-[13px] text-slate-500">Lưu trữ hoặc chia sẻ dữ liệu chuyến đi khi cần.</p>
-          </div>
-          <div className="overflow-hidden rounded-2xl shadow-sm border border-slate-100">
-            <SettingsRow icon={<Download className="h-4 w-4" />} label="Sao lưu chuyến đi" subtitle="Tạo bản sao dữ liệu (.kattrip)" onClick={exportTrip} />
-            <div className="h-px bg-slate-100 mx-4" />
-            <label className="flex w-full cursor-pointer items-center justify-between bg-white px-4 py-3 transition-colors hover:bg-slate-50 active:bg-slate-100">
-              <div className="flex items-center gap-3">
-                <div className="flex shrink-0 h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
-                  <Upload className="h-4 w-4" />
+          <div className="overflow-hidden rounded-3xl border border-[#E8E1D8] bg-[#FFFDF8] shadow-sm divide-y divide-slate-100">
+            {/* Version Row */}
+            <div className="flex items-center justify-between px-5 py-4 min-h-[56px]">
+              <div className="flex items-center gap-3.5">
+                <div className="flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
+                  <Settings className="h-5.5 w-5.5" strokeWidth={2.2} />
                 </div>
-                <div className="flex flex-col text-left">
-                  <span className="text-[16px] font-medium text-slate-900">{importing ? "Đang nhập..." : "Khôi phục dữ liệu"}</span>
-                  <span className="text-[13px] text-slate-500">Nhập dữ liệu từ bản sao lưu</span>
+                <div>
+                  <span className="block text-[15.5px] font-extrabold text-[#030D2E]">Phiên bản ứng dụng</span>
+                  <span className="block text-[13px] font-semibold text-slate-500 mt-0.5">Phiên bản hiện tại trên thiết bị.</span>
                 </div>
               </div>
-              <ChevronRight className="h-5 w-5 text-slate-300" />
-              <input
-                className="sr-only"
-                type="file"
-                accept=".kattrip,application/json"
-                onChange={(event) => {
-                  void importTrip(event.target.files?.[0]);
-                  event.target.value = "";
-                }}
-              />
-            </label>
-            <div className="h-px bg-slate-100 mx-4" />
-            <SettingsRow icon={<FileText className="h-4 w-4" />} label="Xuất báo cáo PDF" onClick={() => exportTripPdf(tripData)} />
-            <div className="h-px bg-slate-100 mx-4" />
-            <SettingsRow icon={<Table2 className="h-4 w-4" />} label="Xuất bảng tính Excel" onClick={() => exportTripExcel(tripData)} />
+              <span className="text-[14px] font-black text-[#00BFB7] bg-[#00BFB7]/10 px-3 py-1 rounded-full border border-[#00BFB7]/25">
+                1.0.0
+              </span>
+            </div>
+
+            {/* Donate Row */}
+            <button
+              type="button"
+              onClick={() => setIsDonateOpen(true)}
+              className="group flex w-full items-center justify-between bg-[#FFFDF8] px-5 py-4 transition-colors hover:bg-slate-50/80 active:scale-[0.99] focus:outline-none"
+            >
+              <div className="flex items-center gap-3.5 text-left">
+                <div className="flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 border border-amber-100">
+                  <Coffee className="h-5.5 w-5.5" strokeWidth={2.2} />
+                </div>
+                <div>
+                  <span className="block text-[15.5px] font-extrabold text-[#030D2E]">Ủng hộ tác giả</span>
+                  <span className="block text-[13px] font-semibold text-slate-500 mt-0.5">Mời tác giả tách cà phê để duy trì dự án.</span>
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 text-slate-300 transition-transform group-hover:translate-x-0.5" />
+            </button>
           </div>
         </section>
 
-        {/* E. Danger Zone */}
-        <section className="space-y-3 pt-4">
-          <h3 className="px-2 text-[15px] font-bold text-rose-600">Vùng nguy hiểm</h3>
-          <div className="overflow-hidden rounded-2xl border border-rose-100 bg-rose-50/30 shadow-sm">
-            <SettingsRow icon={<Trash2 className="h-4 w-4" />} label="Xóa chuyến đi" onClick={() => void deleteTrip()} danger />
+        {/* Vùng nguy hiểm */}
+        <section className="space-y-3 pt-2">
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-rose-500/80">Khu vực nguy hiểm</h3>
+          <div className="overflow-hidden rounded-3xl border border-rose-100/50 bg-rose-50/10 shadow-sm">
+            <button 
+              type="button"
+              onClick={() => setIsDeleteConfirmOpen(true)} 
+              className="group flex w-full items-center justify-between bg-rose-50/5 hover:bg-rose-50/30 px-5 transition-all active:scale-[0.99] focus:outline-none"
+            >
+              <div className="flex items-center justify-between w-full min-h-[56px] py-3 text-left">
+                <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                  <div className="flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 border border-rose-100/60">
+                    <Trash2 className="h-5.5 w-5.5" strokeWidth={2.2} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="block text-[15.5px] font-extrabold text-rose-600">
+                      Xóa chuyến đi này
+                    </span>
+                    <span className="block text-[13px] font-semibold mt-0.5 text-rose-500/70">
+                      Xóa toàn bộ dữ liệu của chuyến đi này. Không thể hoàn tác.
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0 pl-2">
+                  <ChevronRight className="h-5 w-5 text-rose-300 transition-transform group-hover:translate-x-0.5" />
+                </div>
+              </div>
+            </button>
           </div>
         </section>
 
-        {/* F. Footer */}
-        <div className="mt-12 text-center">
-          <p className="text-[13px] font-medium text-slate-400">Thực hiện bởi thanhtungg.</p>
+        {/* Footer */}
+        <div className="mt-8 text-center">
+          <p className="text-[13.5px] font-bold text-slate-400">Thực hiện bởi thanhtungg.</p>
         </div>
+
       </div>
+
+      <DonateModal
+        isOpen={isDonateOpen}
+        onClose={() => setIsDonateOpen(false)}
+      />
 
       <TripForm
         trip={trip}
@@ -668,9 +1618,120 @@ export function MoreScreen({
         editing={editingMember}
         isOpen={isMemberFormOpen}
         onClose={() => setIsMemberFormOpen(false)}
+        onShowToast={onShowToast}
       />
+
+      <DeleteMemberConfirmModal
+        isOpen={isDeleteMemberConfirmOpen}
+        onClose={() => {
+          setIsDeleteMemberConfirmOpen(false);
+          setMemberToDelete(null);
+        }}
+        onConfirm={executeDeleteMember}
+        memberName={memberToDelete?.name ?? ""}
+        hasExpenses={memberToDelete ? expenses.some(e => e.payer === memberToDelete.name) : false}
+        hasChecklist={memberToDelete ? checklist.some(c => c.assignedTo === memberToDelete.name) : false}
+      />
+
+      {/* Delete Trip Confirmation Modal */}
+      <BottomSheet 
+        isOpen={isDeleteConfirmOpen} 
+        onClose={() => {
+          setIsDeleteConfirmOpen(false);
+          setDeleteConfirmationText("");
+        }} 
+        title="Xóa chuyến đi này?"
+      >
+        <div className="space-y-5">
+          <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed">
+            Hành động này có thể làm chuyến đi không còn hiển thị trong danh sách. Dữ liệu sẽ không bị xóa vễn viễn nếu ứng dụng đang sử dụng cơ chế lưu trữ an toàn.
+          </div>
+          
+          <div className="space-y-2">
+            <label className="text-[13.5px] font-bold text-slate-600 block">
+              Để xác nhận xóa, vui lòng nhập chính xác chữ <span className="font-extrabold text-rose-600">XÓA</span> dưới đây:
+            </label>
+            <input
+              type="text"
+              className="w-full rounded-[14px] border border-slate-200/60 bg-slate-50 px-4 h-[50px] text-[15px] font-bold text-[#030D2E] outline-none transition-all focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              value={deleteConfirmationText}
+              onChange={(e) => setDeleteConfirmationText(e.target.value)}
+              placeholder="Nhập XÓA"
+            />
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setIsDeleteConfirmOpen(false);
+                setDeleteConfirmationText("");
+              }}
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:bg-slate-300 transition-colors"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              disabled={deleteConfirmationText !== "XÓA"}
+              onClick={async () => {
+                setIsDeleteConfirmOpen(false);
+                setDeleteConfirmationText("");
+                await executeDeleteTrip();
+              }}
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+            >
+              <Trash2 className="h-5 w-5" />
+              Xóa chuyến đi
+            </button>
+          </div>
+        </div>
+      </BottomSheet>
+
+      {/* Import Trip Confirmation Modal */}
+      <BottomSheet 
+        isOpen={isRestoreConfirmOpen} 
+        onClose={() => {
+          setIsRestoreConfirmOpen(false);
+          setSelectedFileForRestore(null);
+        }} 
+        title="Khôi phục dữ liệu?"
+      >
+        <div className="space-y-5">
+          <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-[13.5px] text-amber-800 font-semibold leading-relaxed">
+            Dữ liệu hiện tại có thể bị thay đổi sau khi nhập bản sao lưu. Vui lòng đảm bảo tệp của bạn là hợp lệ trước khi tiến hành.
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setIsRestoreConfirmOpen(false);
+                setSelectedFileForRestore(null);
+              }}
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+            >
+              Hủy
+            </button>
+             <button
+              type="button"
+              onClick={async () => {
+                setIsRestoreConfirmOpen(false);
+                if (selectedFileForRestore) {
+                  await importTrip(selectedFileForRestore);
+                }
+                setSelectedFileForRestore(null);
+              }}
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-6 font-bold text-kat-text hover:bg-kat-primary/20 active:scale-98 transition-all duration-200 shadow-sm"
+            >
+              <Upload className="h-5 w-5" />
+              Khôi phục
+            </button>
+          </div>
+        </div>
+      </BottomSheet>
+
     </div>
   );
 }
-
 export { TripForm };
