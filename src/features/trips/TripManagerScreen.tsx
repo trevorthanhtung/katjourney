@@ -50,7 +50,7 @@ export function TripManagerScreen({
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="text-[17px] font-bold text-slate-900 truncate">{trip.title}</h4>
                       {timing.status === "active" && (
-                        <span className="flex-none rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">Đang đi</span>
+                        <span className="flex-none rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">Đang diễn ra</span>
                       )}
                       {timing.status === "upcoming" && (
                         <span className="flex-none rounded-full bg-sky-100 px-2 py-0.5 text-[11px] font-bold text-sky-700">Sắp tới</span>
@@ -67,10 +67,10 @@ export function TripManagerScreen({
                       </div>
                       <div className="flex items-center gap-1.5 text-[13px] text-slate-500">
                         <Calendar className="h-3.5 w-3.5 text-slate-400" />
-                        <span>{formatDate(trip.startDate)} - {formatDate(trip.endDate)}</span>
+                        <span>{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-[13px] text-slate-500">
-                        <span className="font-medium text-slate-700">{memberCounts[trip.id!] || 1}</span> thành viên
+                        <span className="font-medium text-slate-700">{memberCounts[trip.id!] || 1}</span> người tham gia
                       </div>
                     </div>
                   </div>
@@ -102,17 +102,17 @@ export function TripManagerScreen({
 
   return (
     <div className="mx-auto max-w-3xl pb-24">
-      <ScreenTitle title="Quản lý chuyến đi" subtitle="Tất cả những hành trình tuyệt vời của bạn." />
+      <ScreenTitle title="Chuyến đi của bạn" subtitle="Lưu lịch trình, thành viên, chi phí và việc cần chuẩn bị cho từng chuyến đi." />
       
       <div className="mt-6">
         <button
           onClick={onCreateNew}
           className="mb-8 flex w-full items-center justify-center gap-2 rounded-[20px] border-2 border-dashed border-emerald-200 bg-emerald-50/50 p-4 font-bold text-emerald-700 transition-colors hover:bg-emerald-50 hover:border-emerald-300 active:bg-emerald-100"
         >
-          + Tạo chuyến đi mới
+          + Tạo chuyến đi
         </button>
 
-        <TripList title="Chuyến đi hiện tại" items={activeTrips} />
+        <TripList title="Đang diễn ra" items={activeTrips} />
         <TripList title="Sắp diễn ra" items={upcomingTrips} />
         <TripList title="Đã hoàn thành" items={pastTrips} />
       </div>
