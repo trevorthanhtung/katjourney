@@ -4,6 +4,25 @@ export default {
   theme: {
     extend: {
       colors: {
+        kat: {
+          bg: "#FAF7F1",
+          surface: "#FFFDF8",
+          border: "#E8E1D8",
+          primary: "#00BFB7",
+          "primary-light": "#02EDE4",
+          "primary-usable": "#00AFA8",
+          "primary-soft": "rgba(0, 191, 183, 0.10)",
+          "hero-start": "#030D2E",
+          "hero-end": "#004E5A",
+          text: "#030D2E",
+          muted: "#64748B",
+          "accent-yellow": "#F89B02",
+          "accent-pink": "#E50A62",
+          "accent-blue": "#0081BE",
+          yellow: "#F89B02",
+          pink: "#E50A62",
+          blue: "#0081BE",
+        },
         sand: "#F8F5EF",
         emerald: {
           DEFAULT: "#0F766E",
@@ -52,8 +71,8 @@ export default {
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"]
       },
       boxShadow: {
-        soft: "0 8px 30px rgba(15, 23, 42, 0.08)",
-        floating: "0 20px 40px rgba(15, 23, 42, 0.12)"
+        soft: "0 8px 32px rgba(3, 13, 46, 0.04)",
+        floating: "0 16px 36px rgba(3, 13, 46, 0.08)"
       },
       keyframes: {
         slideUp: {

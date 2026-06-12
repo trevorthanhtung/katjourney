@@ -19,8 +19,25 @@
 }
 
 :root {
-  color: #16211f;
-  background: #fffaf3;
+  --kat-bg: #FAF7F1;
+  --kat-surface: #FFFDF8;
+  --kat-text: #030D2E;
+  --kat-muted: #64748B;
+  --kat-border: #E8E1D8;
+
+  --kat-primary: #00BFB7;
+  --kat-primary-usable: #00AFA8;
+  --kat-primary-soft: rgba(0, 191, 183, 0.10);
+
+  --kat-hero-start: #030D2E;
+  --kat-hero-end: #004E5A;
+
+  --kat-yellow: #F89B02;
+  --kat-pink: #E50A62;
+  --kat-blue: #0081BE;
+
+  color: #030D2E;
+  background: #FAF7F1;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -31,7 +48,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
-  background-color: #F8F5EF;
+  background-color: #FAF7F1;
 }
 
 button,

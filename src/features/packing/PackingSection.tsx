@@ -66,15 +66,15 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
         <ScreenTitle title="Hành lý" subtitle="Gợi ý thông minh, không lo bỏ sót." />
         
         {/* Progress Card Hero */}
-        <section className="flex flex-col items-center justify-center rounded-[32px] bg-emerald-50 p-8 shadow-sm border border-emerald-100">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-emerald-600 mb-4 shadow-sm">
-            <Luggage className="h-8 w-8" />
+        <section className="flex flex-col items-center justify-center rounded-[24px] bg-kat-surface p-8 shadow-soft border border-kat-border/60">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5">
+            <Luggage className="h-6 w-6" />
           </div>
-          <h3 className="text-[20px] font-bold text-emerald-900 mb-1">Chuẩn bị hành lý</h3>
-          <p className="text-[15px] font-bold text-emerald-700 bg-white px-4 py-1.5 rounded-full mb-3 shadow-sm">
+          <h3 className="text-[18px] font-bold text-kat-text mb-1">Chuẩn bị hành lý</h3>
+          <p className="text-[13px] font-bold text-kat-primary bg-kat-primary/10 px-4 py-1.5 rounded-full mb-3 shadow-sm">
             {stats.completed} / {stats.total} món đã sẵn sàng
           </p>
-          <p className="text-[14px] font-medium text-emerald-600 text-center">
+          <p className="text-[13.5px] font-medium text-kat-muted text-center">
             {stats.completed === stats.total && stats.total > 0 
               ? "Tuyệt vời! Hành lý đã sẵn sàng."
               : stats.total === 0 
@@ -118,7 +118,7 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
               ))}
             </div>
           ) : (
-            <EmptyCard text="Chưa có món đồ nào. Nhận gợi ý để bắt đầu chuẩn bị nhé!" />
+            <EmptyCard text="Chưa có món đồ nào. Nhận gợi ý để bắt đầu chuẩn bị nhé!" icon={<Luggage className="h-6 w-6" />} />
           )}
         </section>
       </div>

@@ -30,7 +30,7 @@ export function Input({
     <label className="block">
       <span className="text-sm font-semibold text-slate-600">{label}</span>
       <input
-        className="mt-1.5 w-full rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200 transition-shadow focus:bg-white focus:ring-2 focus:ring-emerald-500"
+        className="mt-1.5 w-full rounded-[14px] border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00A59E]"
         type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -90,17 +90,19 @@ export function Select({
 export function FormActions({
   onSave,
   saveLabel,
-  onCancel
+  onCancel,
+  disabled
 }: {
   onSave: () => void;
   saveLabel: string;
   onCancel?: () => void;
+  disabled?: boolean;
 }) {
   return (
-    <div className="flex gap-3 pt-2">
+    <div className="flex gap-3 pt-2 sticky bottom-0 bg-white md:static">
       {onCancel && (
         <button
-          className="inline-flex min-h-[48px] items-center justify-center rounded-xl bg-slate-100 px-6 font-bold text-slate-700 transition-colors hover:bg-slate-200 active:bg-slate-300"
+          className="inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 transition-all duration-200 hover:bg-slate-200 active:scale-[0.98]"
           type="button"
           onClick={onCancel}
         >
@@ -108,11 +110,12 @@ export function FormActions({
         </button>
       )}
       <button
-        className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 font-bold text-white transition-colors hover:bg-emerald-700 active:bg-emerald-800 shadow-sm"
+        className="inline-flex min-h-[50px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-6 font-bold text-kat-text shadow-sm hover:bg-kat-primary/20 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         type="button"
         onClick={onSave}
+        disabled={disabled}
       >
-        <Plus className="h-5 w-5" />
+        <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
         {saveLabel}
       </button>
     </div>
@@ -138,9 +141,13 @@ export function IconButton({ label, onClick, children, danger = false }: { label
 
 export function EmptyCard({ text, icon }: { text: string; icon?: React.ReactNode }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl bg-white px-6 py-10 text-center shadow-sm">
-      {icon && <div className="mb-4 text-slate-300">{icon}</div>}
-      <p className="text-[15px] font-medium text-slate-500">{text}</p>
+    <div className="flex flex-col items-center justify-center rounded-[24px] bg-kat-surface p-8 text-center border border-kat-border/60 shadow-soft max-w-md mx-auto">
+      {icon && (
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5">
+          {icon}
+        </div>
+      )}
+      <p className="text-[14px] font-semibold text-kat-text/80">{text}</p>
     </div>
   );
 }
@@ -210,24 +217,32 @@ export function ProgressRing({ value, size = 120, strokeWidth = 10, children }: 
   );
 }
 
-export function BottomSheet({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
+export function BottomSheet({ isOpen, onClose, title, subtitle, children }: { isOpen: boolean; onClose: () => void; title: string; subtitle?: string; children: React.ReactNode }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-end">
+    <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center p-0 md:p-6">
       {/* Backdrop */}
-      <div className="absolute inset-0 animate-fadeIn bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 animate-fadeIn bg-slate-900/35 backdrop-blur-sm" onClick={onClose} />
       
-      {/* Sheet */}
-      <div className="relative z-10 w-full animate-slideUp rounded-t-[32px] bg-white pb-safe shadow-floating sm:mx-auto sm:max-w-[640px]">
-        <div className="flex h-1.5 w-12 mx-auto mt-3 rounded-full bg-slate-200" />
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-          <h3 className="text-[22px] font-bold text-slate-900">{title}</h3>
-          <button className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200" onClick={onClose}>
+      {/* Sheet / Dialog */}
+      <div className="relative z-10 flex w-full flex-col max-h-[90vh] md:max-h-[min(720px,calc(100vh-48px))] animate-slideUp md:animate-fadeIn rounded-t-[32px] md:rounded-[24px] bg-white pb-safe shadow-floating md:mx-auto md:w-full md:max-w-[600px] overflow-hidden">
+        {/* Drag handle (mobile only) */}
+        <div className="flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 md:hidden" />
+        
+        {/* Header */}
+        <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-5 md:px-6 py-4">
+          <div className="pr-4">
+            <h3 className="text-[20px] md:text-[22px] font-bold text-slate-900">{title}</h3>
+            {subtitle && <p className="mt-1.5 text-[14px] text-slate-500">{subtitle}</p>}
+          </div>
+          <button className="flex shrink-0 h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200" onClick={onClose}>
             <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="max-h-[80vh] overflow-y-auto px-6 py-6 pb-20">
+        
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto px-5 md:px-6 py-5 md:py-6">
           {children}
         </div>
       </div>

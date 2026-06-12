@@ -8,6 +8,7 @@ export interface Trip {
   id?: number;
   title: string;
   location: string;
+  tripType?: "dayTrip" | "multiDay";
   startDate: string;
   endDate: string;
   createdAt: string;
@@ -19,6 +20,11 @@ export interface Member {
   name: string;
   phone: string;
   role: string;
+  note?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string;
+  isDeleted?: boolean;
 }
 
 export interface EventItem {
@@ -31,6 +37,7 @@ export interface EventItem {
   notes: string;
   mapLink: string;
   completed: boolean;
+  type?: string;
 }
 
 export interface Expense {
@@ -49,6 +56,13 @@ export interface ChecklistItem {
   section: ChecklistSection;
   title: string;
   completed: boolean;
+  category?: string;
+  quantity?: number;
+  assignedTo?: string;
+  priority?: "normal" | "important" | "required";
+  note?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface JournalEntry {
