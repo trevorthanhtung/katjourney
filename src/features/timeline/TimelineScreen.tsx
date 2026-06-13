@@ -28,7 +28,7 @@ import {
 import { db, EventItem, Trip } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { classNames, daysBetween, formatDate, today, getTripTiming } from "../../utils/helpers";
-import { BottomSheet, FormActions, Input, Textarea, Select } from "../../components/ui";
+import { BottomSheet, FormActions, Input, Textarea, Select, TypedDeleteConfirmModal } from "../../components/ui";
 import { BackupPlansSheet } from "./BackupPlansSheet";
 
 // Define categories for PWA Travel 2027
@@ -239,6 +239,7 @@ function EventForm({
   defaultDate?: string;
   onSaved?: (date: string) => void;
 }) {
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [form, setForm] = useState({
     time: "",
     title: "",
@@ -295,11 +296,11 @@ function EventForm({
     }
   }
 
-  async function remove() {
-    if (editing?.id && window.confirm("Xóa mục lịch trình này?\nMục lịch trình sẽ không còn xuất hiện trong lịch trình.")) {
-      await db.events.delete(editing.id);
-      onClose();
-    }
+  async function executeDelete() {
+    if (!editing?.id) return;
+    await db.events.delete(editing.id);
+    setIsDeleteConfirmOpen(false);
+    onClose();
   }
 
   const dateLabels = tripDays.reduce((acc, date, idx) => {
@@ -313,31 +314,32 @@ function EventForm({
     : "";
 
   return (
-    <BottomSheet 
-      isOpen={isOpen} 
-      onClose={onClose} 
-      title={editing ? "Sửa mục lịch trình" : "Thêm mục lịch trình"}
-      footer={
-        <div className="flex flex-col gap-2.5 w-full">
-          <FormActions 
-            onSave={save} 
-            saveLabel={editing ? "Lưu thông tin" : "Thêm mục lịch trình"} 
-            onCancel={onClose}
-            disabled={!form.title.trim()}
-          />
-          {editing && (
-            <button
-              onClick={remove}
-              className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-[16px] bg-rose-50 border border-rose-200 px-6 font-bold text-rose-600 transition-colors hover:bg-rose-100 active:scale-[0.98] transition-all duration-200"
-            >
-              <Trash2 className="h-4.5 w-4.5" />
-              Xóa mục lịch trình
-            </button>
-          )}
-        </div>
-      }
-    >
-      <div className="space-y-5">
+    <>
+      <BottomSheet 
+        isOpen={isOpen} 
+        onClose={onClose} 
+        title={editing ? "Sửa mục lịch trình" : "Thêm mục lịch trình"}
+        footer={
+          <div className="flex flex-col gap-2.5 w-full">
+            <FormActions 
+              onSave={save} 
+              saveLabel={editing ? "Lưu thông tin" : "Thêm mục lịch trình"} 
+              onCancel={onClose}
+              disabled={!form.title.trim()}
+            />
+            {editing && (
+              <button
+                onClick={() => setIsDeleteConfirmOpen(true)}
+                className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-[16px] bg-rose-50 border border-rose-200 px-6 font-bold text-rose-600 transition-colors hover:bg-rose-100 active:scale-[0.98] transition-all duration-200"
+              >
+                <Trash2 className="h-4.5 w-4.5" />
+                Xóa mục lịch trình
+              </button>
+            )}
+          </div>
+        }
+      >
+        <div className="space-y-5">
         {/* Title Input */}
         <Input 
           label={
@@ -462,8 +464,19 @@ function EventForm({
           onChange={(notes) => setForm({ ...form, notes })} 
           placeholder="Lưu ý quan trọng, mã phòng, số điện thoại liên hệ..." 
         />
-      </div>
-    </BottomSheet>
+        </div>
+      </BottomSheet>
+
+      <TypedDeleteConfirmModal
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={executeDelete}
+        title="Xóa mục lịch trình này?"
+        itemName={editing?.title}
+        description="Mục lịch trình này sẽ không còn xuất hiện trong lịch trình. Sau khi xóa, không thể hoàn tác."
+        confirmLabel="Xóa mục lịch trình"
+      />
+    </>
   );
 }
 

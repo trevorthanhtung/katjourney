@@ -16,6 +16,9 @@ import { ChecklistScreen } from "./features/checklist/ChecklistScreen";
 import { MoreScreen, TripForm } from "./features/more/MoreScreen";
 import { TripManagerScreen } from "./features/trips/TripManagerScreen";
 
+// Lazy load SharedTripScreen to avoid bundling it when not needed
+const SharedTripScreen = React.lazy(() => import("./features/share/SharedTripScreen"));
+
 function NavButton({ 
   isActive, 
   onClick, 
@@ -55,6 +58,11 @@ function App() {
   const [successToast, setSuccessToast] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Check for share link route
+  const pathname = window.location.pathname;
+  const isShareRoute = pathname.startsWith("/share/");
+  const shareToken = isShareRoute ? pathname.replace("/share/", "") : null;
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
@@ -80,12 +88,27 @@ function App() {
     setActiveTab("more");
   }
 
+  if (isShareRoute && shareToken) {
+    return (
+      <React.Suspense fallback={
+        <div className="flex min-h-screen items-center justify-center bg-[#FFFDF8]">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/30 border-t-kat-primary"></div>
+        </div>
+      }>
+        <SharedTripScreen token={shareToken} />
+      </React.Suspense>
+    );
+  }
+
   return (
     <div className="font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text">
       <header className="sticky top-0 z-40 bg-kat-bg/90 px-4 pb-3 pt-3 backdrop-blur-xl border-b border-kat-border shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
         <div className="mx-auto flex max-w-[1120px] items-center justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-[20px] font-extrabold tracking-tight text-kat-text">KAT Journey</h1>
+            <div className="flex items-center gap-2">
+              <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[28px] w-[28px] object-contain drop-shadow-sm" />
+              <h1 className="text-[20px] font-extrabold tracking-tight text-kat-text">KAT Journey</h1>
+            </div>
             
             {/* Desktop Navigation */}
             {!isManagingTrips && tripId && (
@@ -164,6 +187,7 @@ function App() {
                   setIsManagingTrips(false);
                   setIsCreatingTrip(true);
                 }}
+                onShowToast={showToast}
               />
             </div>
           ) : isCreatingTrip ? (

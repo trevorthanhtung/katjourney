@@ -167,3 +167,31 @@ export class KatJourneyDB extends Dexie {
 }
 
 export const db = new KatJourneyDB();
+
+export async function deleteTripCascade(tripId: number) {
+  await db.transaction(
+    "rw",
+    [
+      db.trips,
+      db.members,
+      db.events,
+      db.expenses,
+      db.checklist,
+      db.journals,
+      db.packingItems,
+      db.travelDocuments,
+      db.backupPlans,
+    ],
+    async () => {
+      await db.members.where("tripId").equals(tripId).delete();
+      await db.events.where("tripId").equals(tripId).delete();
+      await db.expenses.where("tripId").equals(tripId).delete();
+      await db.checklist.where("tripId").equals(tripId).delete();
+      await db.journals.where("tripId").equals(tripId).delete();
+      await db.packingItems.where("tripId").equals(tripId).delete();
+      await db.travelDocuments.where("tripId").equals(tripId).delete();
+      await db.backupPlans.where("tripId").equals(tripId).delete();
+      await db.trips.delete(tripId);
+    }
+  );
+}

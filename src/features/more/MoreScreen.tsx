@@ -53,9 +53,11 @@ import {
   Phone,
   Car,
   BadgeCheck,
-  StickyNote
+  StickyNote,
+  Share2
 } from "lucide-react";
-import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "../../db";
+import { ChecklistItem, db, deleteTripCascade, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "../../db";
+import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
 import { 
   checklistSections, 
   createTripExport, 
@@ -72,7 +74,7 @@ import {
   getTripTiming
 } from "../../utils/helpers";
 import { exportTripExcel, exportTripPdf } from "../../utils/exports";
-import { BottomSheet, FormActions, Input, ScreenTitle, classNames } from "../../components/ui";
+import { BottomSheet, FormActions, Input, ScreenTitle, TypedDeleteConfirmModal, classNames } from "../../components/ui";
 import { JournalSection } from "../journal/JournalSection";
 import { TravelDocumentsSection } from "./TravelDocumentsSection";
 
@@ -520,36 +522,24 @@ function DeleteMemberConfirmModal({
   hasChecklist: boolean;
 }) {
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Xóa người đồng hành này?">
-      <div className="space-y-5">
-        <p className="text-[15px] font-medium leading-relaxed text-slate-600">
+    <TypedDeleteConfirmModal
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      title="Xóa người đồng hành này?"
+      itemName={memberName}
+      warning={
+        hasExpenses || hasChecklist
+          ? "Người đồng hành này đang liên quan đến chi phí hoặc checklist. Hãy kiểm tra trước khi xóa."
+          : undefined
+      }
+      description={
+        <>
           Người đồng hành <span className="font-extrabold text-[#030D2E]">{memberName}</span> sẽ không còn xuất hiện trong danh sách chuyến đi. Các dữ liệu liên quan như chi phí hoặc phân công có thể cần được kiểm tra lại.
-        </p>
-
-        {(hasExpenses || hasChecklist) && (
-          <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed animate-fadeIn">
-            Người đồng hành này đang liên quan đến chi phí hoặc checklist. Hãy kiểm tra trước khi xóa.
-          </div>
-        )}
-
-        <div className="pt-2 flex flex-col sm:flex-row gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
-          >
-            Hủy
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 active:scale-[0.98] transition-all duration-200 shadow-sm"
-          >
-            Xóa người đồng hành
-          </button>
-        </div>
-      </div>
-    </BottomSheet>
+        </>
+      }
+      confirmLabel="Xóa người đồng hành"
+    />
   );
 }
 
@@ -1029,6 +1019,8 @@ function ActionCard({
 }
 
 
+import { ensureAnonymousUser, firebaseEnabled } from "../../lib/firebase";
+
 export function MoreScreen({
   trip,
   members,
@@ -1067,15 +1059,73 @@ export function MoreScreen({
 
   // Modal confirmations states
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
   const [isRestoreConfirmOpen, setIsRestoreConfirmOpen] = useState(false);
   const [selectedFileForRestore, setSelectedFileForRestore] = useState<File | null>(null);
+  const [isFactoryResetConfirmOpen, setIsFactoryResetConfirmOpen] = useState(false);
 
   // Delete Member Confirm Dialog states
   const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
   const [isDeleteMemberConfirmOpen, setIsDeleteMemberConfirmOpen] = useState(false);
 
+  // Cloud share states
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareLoading, setShareLoading] = useState(false);
+  const [shareOptions, setShareOptions] = useState({
+    includeExpenses: true,
+    includeJournals: true,
+    includeChecklist: true,
+    includeBackupPlans: true,
+    includeDocuments: false,
+  });
+  const [activeShareLink, setActiveShareLink] = useState<{ token: string; url: string } | null>(null);
+
   const tripData = { trip, members, events, expenses, checklist, journals, packingItems, travelDocuments };
+
+  async function handleShareTrip() {
+    if (!firebaseEnabled) {
+      alert("Chưa cấu hình Firebase. Vui lòng kiểm tra môi trường (env).");
+      return;
+    }
+    setShareLoading(true);
+    try {
+      await ensureAnonymousUser();
+      setIsShareModalOpen(true);
+    } catch (e: any) {
+      alert("Không thể kết nối Firebase: " + e.message);
+    } finally {
+      setShareLoading(false);
+    }
+  }
+
+  async function handleCreateLink() {
+    try {
+      setShareLoading(true);
+      const { createViewShareLink } = await import("../../services/cloudShareService");
+      const result = await createViewShareLink(trip.id!, shareOptions);
+      setActiveShareLink(result);
+    } catch (e: any) {
+      alert("Lỗi khi tạo link chia sẻ. Vui lòng thử lại sau.");
+      console.error(e);
+    } finally {
+      setShareLoading(false);
+    }
+  }
+
+  async function handleRevokeLink() {
+    if (!activeShareLink) return;
+    try {
+      setShareLoading(true);
+      const { revokeShareLink } = await import("../../services/cloudShareService");
+      await revokeShareLink(activeShareLink.token);
+      setActiveShareLink(null);
+      alert("Đã tắt link chia sẻ.");
+    } catch (e: any) {
+      alert("Lỗi khi tắt link chia sẻ. Vui lòng thử lại sau.");
+      console.error(e);
+    } finally {
+      setShareLoading(false);
+    }
+  }
 
   async function executeDeleteMember() {
     if (!memberToDelete?.id) return;
@@ -1087,17 +1137,8 @@ export function MoreScreen({
 
   async function executeDeleteTrip() {
     if (!trip.id) return;
-    await db.transaction("rw", [db.trips, db.members, db.events, db.expenses, db.checklist, db.journals, db.packingItems, db.travelDocuments], async () => {
-      await db.members.where("tripId").equals(trip.id!).delete();
-      await db.events.where("tripId").equals(trip.id!).delete();
-      await db.expenses.where("tripId").equals(trip.id!).delete();
-      await db.checklist.where("tripId").equals(trip.id!).delete();
-      await db.journals.where("tripId").equals(trip.id!).delete();
-      await db.packingItems.where("tripId").equals(trip.id!).delete();
-      await db.travelDocuments.where("tripId").equals(trip.id!).delete();
-      await db.backupPlans.where("tripId").equals(trip.id!).delete();
-      await db.trips.delete(trip.id!);
-    });
+    await deleteTripCascade(trip.id);
+    onShowToast?.("Đã xóa chuyến đi khỏi thiết bị này.");
     onTripDeleted();
   }
 
@@ -1215,17 +1256,12 @@ export function MoreScreen({
   }
 
   async function factoryReset() {
-    const confirmation = window.prompt("CẢNH BÁO: Hành động này sẽ xóa toàn bộ chuyến đi, lịch trình, chi phí, nhật ký và dữ liệu cục bộ trên thiết bị này. Không thể hoàn tác. Để tiếp tục, vui lòng nhập chính xác: XOA TAT CA");
-    if (confirmation === "XOA TAT CA") {
-      try {
-        await db.delete();
-        alert("Đã xóa dữ liệu thành công. Đang tải lại trang...");
-        window.location.reload();
-      } catch (e) {
-        alert("Đã xảy ra lỗi khi xóa dữ liệu.");
-      }
-    } else if (confirmation !== null) {
-      alert("Xác nhận không đúng. Đã hủy khôi phục cài đặt gốc.");
+    try {
+      await db.delete();
+      alert("Đã xóa dữ liệu thành công. Đang tải lại trang...");
+      window.location.reload();
+    } catch (e) {
+      alert("Đã xảy ra lỗi khi xóa dữ liệu.");
     }
   }
 
@@ -1486,7 +1522,7 @@ export function MoreScreen({
         
         <div className="overflow-hidden rounded-3xl border border-slate-100 bg-[#FFFDF8] shadow-sm">
           <HubActionRow icon={BadgeInfo} label="Phiên bản ứng dụng" value="2.0.0" />
-          <HubActionRow icon={Trash2} label="Khôi phục cài đặt gốc" subtitle="Xóa sạch toàn bộ dữ liệu trên thiết bị." onClick={() => void factoryReset()} danger />
+            <HubActionRow icon={Trash2} label="Khôi phục cài đặt gốc" subtitle="Xóa sạch toàn bộ dữ liệu trên thiết bị." onClick={() => setIsFactoryResetConfirmOpen(true)} danger />
         </div>
         
         <div className="mt-12 text-center">
@@ -1616,6 +1652,14 @@ export function MoreScreen({
               onClick={() => setSection("documents")}
               iconBgColor="bg-teal-50"
               iconTextColor="text-teal-600 border-teal-100"
+            />
+            <ActionCard
+              icon={Share2}
+              title="Chia sẻ chuyến đi"
+              description="Tạo link để người khác xem lịch trình và thông tin chuyến đi."
+              onClick={handleShareTrip}
+              iconBgColor="bg-violet-50"
+              iconTextColor="text-violet-600 border-violet-100"
               className="sm:col-span-2"
             />
           </div>
@@ -1793,58 +1837,143 @@ export function MoreScreen({
         hasChecklist={memberToDelete ? checklist.some(c => c.assignedTo === memberToDelete.name) : false}
       />
 
-      {/* Delete Trip Confirmation Modal */}
-      <BottomSheet 
-        isOpen={isDeleteConfirmOpen} 
-        onClose={() => {
+      <ConfirmDeleteTripDialog
+        open={isDeleteConfirmOpen}
+        tripName={trip.title}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={async () => {
           setIsDeleteConfirmOpen(false);
-          setDeleteConfirmationText("");
-        }} 
-        title="Xóa chuyến đi vĩnh viễn?"
+          await executeDeleteTrip();
+        }}
+      />
+
+      <TypedDeleteConfirmModal
+        isOpen={isFactoryResetConfirmOpen}
+        onClose={() => setIsFactoryResetConfirmOpen(false)}
+        onConfirm={async () => {
+          setIsFactoryResetConfirmOpen(false);
+          await factoryReset();
+        }}
+        title="Khôi phục cài đặt gốc?"
+        description="Hành động này sẽ xóa toàn bộ dữ liệu KAT Journey trên thiết bị hiện tại, bao gồm chuyến đi, lịch trình, chi phí, nhật ký và dữ liệu liên quan. Không thể hoàn tác."
+        confirmLabel="Xóa toàn bộ dữ liệu"
+      />
+
+      <BottomSheet
+        isOpen={isShareModalOpen}
+        onClose={() => {
+          setIsShareModalOpen(false);
+          // Do not reset activeShareLink here so it persists if reopened during the same session
+        }}
+        title="Chia sẻ chuyến đi"
+        subtitle="Tạo link để người khác xem lịch trình và thông tin chuyến đi."
       >
-        <div className="space-y-5">
-          <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed">
-            Hành động này sẽ xóa toàn bộ lịch trình, chi phí, ghi chú và dữ liệu liên quan đến chuyến đi. Sau khi xóa, không thể hoàn tác.
-          </div>
-          
-          <div className="space-y-2">
-            <label className="text-[13.5px] font-bold text-slate-600 block">
-              Nhập <span className="text-rose-500 font-black">XÓA</span> để xác nhận thao tác này.
-            </label>
-            <input
-              type="text"
-              className="w-full rounded-[14px] border border-slate-200/60 bg-slate-50 px-4 h-[50px] text-[15px] font-bold text-[#030D2E] outline-none transition-all focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-              value={deleteConfirmationText}
-              onChange={(e) => setDeleteConfirmationText(e.target.value)}
-              placeholder="Gõ XÓA để xác nhận"
-            />
+        <div className="space-y-5 px-1 pb-4">
+          {/* Mode label */}
+          <div className="flex justify-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-100 px-3 py-1 text-sm font-extrabold text-violet-700">
+              Chế độ: Chỉ xem
+            </span>
           </div>
 
-          <div className="pt-2 flex flex-col sm:flex-row gap-3">
-            <button
-              type="button"
-              onClick={() => {
-                setIsDeleteConfirmOpen(false);
-                setDeleteConfirmationText("");
-              }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:bg-slate-300 transition-colors"
-            >
-              Hủy
-            </button>
-            <button
-              type="button"
-              disabled={deleteConfirmationText !== "XÓA"}
-              onClick={async () => {
-                setIsDeleteConfirmOpen(false);
-                setDeleteConfirmationText("");
-                await executeDeleteTrip();
-              }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
-            >
-              <Trash2 className="h-5 w-5" />
-              Xóa vĩnh viễn
-            </button>
-          </div>
+          {!activeShareLink ? (
+            <>
+              <div className="space-y-3 rounded-2xl bg-slate-50 border border-slate-200 p-4">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input type="checkbox" checked={shareOptions.includeExpenses} onChange={(e) => setShareOptions({...shareOptions, includeExpenses: e.target.checked})} className="w-5 h-5 rounded border-slate-300 text-kat-primary focus:ring-kat-primary" />
+                  <span className="text-[15px] font-semibold text-slate-700">Bao gồm chi phí</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input type="checkbox" checked={shareOptions.includeJournals} onChange={(e) => setShareOptions({...shareOptions, includeJournals: e.target.checked})} className="w-5 h-5 rounded border-slate-300 text-kat-primary focus:ring-kat-primary" />
+                  <span className="text-[15px] font-semibold text-slate-700">Bao gồm nhật ký</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input type="checkbox" checked={shareOptions.includeChecklist} onChange={(e) => setShareOptions({...shareOptions, includeChecklist: e.target.checked})} className="w-5 h-5 rounded border-slate-300 text-kat-primary focus:ring-kat-primary" />
+                  <span className="text-[15px] font-semibold text-slate-700">Bao gồm danh sách chuẩn bị</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input type="checkbox" checked={shareOptions.includeBackupPlans} onChange={(e) => setShareOptions({...shareOptions, includeBackupPlans: e.target.checked})} className="w-5 h-5 rounded border-slate-300 text-kat-primary focus:ring-kat-primary" />
+                  <span className="text-[15px] font-semibold text-slate-700">Bao gồm phương án dự phòng</span>
+                </label>
+                
+                <div className="pt-2 border-t border-slate-200">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input type="checkbox" checked={shareOptions.includeDocuments} onChange={(e) => setShareOptions({...shareOptions, includeDocuments: e.target.checked})} className="w-5 h-5 rounded border-slate-300 text-rose-500 focus:ring-rose-500 mt-0.5" />
+                    <div>
+                      <span className="text-[15px] font-semibold text-slate-700">Bao gồm giấy tờ & đặt chỗ</span>
+                      {shareOptions.includeDocuments && (
+                        <p className="mt-1 text-sm font-medium text-rose-600 leading-snug">
+                          Giấy tờ có thể chứa mã đặt chỗ, vé, số điện thoại hoặc liên kết riêng tư. Chỉ bật nếu bạn tin tưởng người nhận link.
+                        </p>
+                      )}
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsShareModalOpen(false)}
+                  className="flex-1 rounded-xl bg-slate-100 py-3.5 font-bold text-slate-700 hover:bg-slate-200 transition-colors"
+                >
+                  Đóng
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCreateLink}
+                  disabled={shareLoading}
+                  className="flex-[2] rounded-xl bg-kat-primary py-3.5 font-bold text-white hover:brightness-105 transition-colors disabled:opacity-50"
+                >
+                  {shareLoading ? "Đang tạo link..." : "Tạo link chia sẻ"}
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="space-y-6">
+              <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-5 text-center">
+                <div className="flex justify-center mb-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                    <Check className="h-6 w-6" strokeWidth={3} />
+                  </div>
+                </div>
+                <h4 className="text-[16px] font-bold text-emerald-800 mb-2">Đã tạo link chia sẻ</h4>
+                <div className="bg-white border border-emerald-100 rounded-xl p-3 select-all cursor-text break-all text-[14px] font-medium text-slate-700 shadow-sm">
+                  {activeShareLink.url}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(activeShareLink.url);
+                    alert("Đã sao chép link!");
+                  }}
+                  className="w-full rounded-xl bg-kat-primary py-3.5 font-bold text-white hover:brightness-105 transition-colors shadow-sm"
+                >
+                  Sao chép link
+                </button>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsShareModalOpen(false)}
+                    className="flex-1 rounded-xl bg-slate-100 py-3.5 font-bold text-slate-700 hover:bg-slate-200 transition-colors"
+                  >
+                    Đóng
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleRevokeLink}
+                    disabled={shareLoading}
+                    className="flex-1 rounded-xl bg-rose-50 text-rose-600 py-3.5 font-bold hover:bg-rose-100 transition-colors disabled:opacity-50"
+                  >
+                    {shareLoading ? "Đang xử lý..." : "Tắt chia sẻ"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </BottomSheet>
 

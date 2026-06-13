@@ -7,21 +7,33 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["logo.png", "icons/icon.svg"],
+      includeAssets: ["asset/favicon.ico", "asset/apple-touch-icon.png"],
       manifest: {
         name: "KAT Journey",
-        short_name: "KAT",
-        description: "Sổ tay du lịch offline-first cho cá nhân và nhóm bạn.",
+        short_name: "KAT Journey",
+        description: "Lên kế hoạch chuyến đi gọn gàng, theo dõi lịch trình, checklist, chi phí và lưu lại kỷ niệm du lịch.",
         theme_color: "#0f766e",
         background_color: "#fffaf3",
         display: "standalone",
         start_url: "/",
         icons: [
           {
-            src: "/logo.png",
-            sizes: "192x192 512x512",
+            src: "/asset/icon-192.png",
+            sizes: "192x192",
             type: "image/png",
-            purpose: "any maskable"
+            purpose: "any"
+          },
+          {
+            src: "/asset/icon-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any"
+          },
+          {
+            src: "/asset/maskable-icon-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable"
           }
         ]
       },

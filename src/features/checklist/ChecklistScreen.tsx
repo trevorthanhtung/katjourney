@@ -3,6 +3,7 @@ import { Check, Plus, Trash2, Luggage, Edit2, AlertCircle, User, X, Minus, Spark
 import { ChecklistItem, db } from "../../db";
 import { getChecklistStats } from "../../utils/helpers";
 import { useLiveQuery } from "dexie-react-hooks";
+import { TypedDeleteConfirmModal } from "../../components/ui";
 
 const CATEGORIES = [
   "Giấy tờ",
@@ -52,6 +53,7 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
   // Modal & Form State
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<ChecklistItem | null>(null);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Giấy tờ");
   const [quantity, setQuantity] = useState(1);
@@ -167,10 +169,11 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
   }
 
   // Delete item
-  async function deleteItem(item: ChecklistItem) {
-    if (item.id) {
-      await db.checklist.delete(item.id);
-      showToastMessage(`Đã xóa: ${item.title}`);
+  async function executeDeleteItem() {
+    if (itemToDelete?.id) {
+      await db.checklist.delete(itemToDelete.id);
+      showToastMessage(`Đã xóa: ${itemToDelete.title}`);
+      setItemToDelete(null);
     }
   }
 
@@ -474,7 +477,7 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
                             <Edit2 className="h-4 w-4" />
                           </button>
                           <button
-                            onClick={() => deleteItem(item)}
+                            onClick={() => setItemToDelete(item)}
                             className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-200/60 text-slate-400 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all motion-press"
                             title="Xóa"
                           >
@@ -762,6 +765,16 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
           <Plus className="h-6 w-6" strokeWidth={2.5} />
         </button>
       )}
+
+      <TypedDeleteConfirmModal
+        isOpen={Boolean(itemToDelete)}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={executeDeleteItem}
+        title="Xóa món chuẩn bị này?"
+        itemName={itemToDelete?.title}
+        description="Món chuẩn bị này sẽ bị xóa khỏi danh sách của chuyến đi. Sau khi xóa, không thể hoàn tác."
+        confirmLabel="Xóa món"
+      />
 
       {/* Toast Notification popup */}
       {toast && (
