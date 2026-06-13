@@ -211,7 +211,7 @@ function ActivityCard({
                     setIsMenuOpen(false);
                   }} 
                 />
-                <div className="absolute right-0 top-12 z-40 w-36 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
+                <div className="absolute right-0 bottom-full mb-1 z-40 w-36 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
                   <button
                     type="button"
                     onClick={(e) => {

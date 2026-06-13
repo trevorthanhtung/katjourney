@@ -261,7 +261,7 @@ export function SharedActivitiesSection({
                               setActiveMenuId(null);
                             }}
                           />
-                          <div className="absolute right-0 mt-1 z-40 w-32 rounded-xl bg-white border border-slate-200/80 shadow-floating py-1.5 animate-fadeIn">
+                          <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-xl bg-white border border-slate-200/80 shadow-floating py-1.5 animate-fadeIn">
                             <button
                               onClick={() => {
                                 setActiveMenuId(null);
