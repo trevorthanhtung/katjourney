@@ -1,9 +1,36 @@
 import React, { useState } from 'react';
-import { Route, Clock, MapPin, MapPinned, Plus, MoreVertical } from 'lucide-react';
+import { 
+  Route, 
+  Clock, 
+  MapPin, 
+  MapPinned, 
+  Plus, 
+  MoreVertical,
+  Type,
+  CalendarDays,
+  Map,
+  StickyNote,
+  Utensils,
+  Camera,
+  Hotel,
+  Coffee,
+  ShoppingBag,
+  CircleEllipsis
+} from 'lucide-react';
 import { EventItem } from '../../../db';
 import { formatDate, classNames } from '../../../utils/helpers';
 import { submitChangeRequest } from '../../../services/sharedTripRequestService';
 import { BottomSheet, Input, Textarea } from '../../../components/ui';
+
+const ACTIVITY_CATEGORIES = [
+  { id: "transport", label: "Di chuyển", icon: Route, bgColor: "bg-blue-50 text-blue-600 border-blue-100", activeBg: "bg-blue-100 border-blue-400 text-blue-700" },
+  { id: "dining", label: "Ăn uống", icon: Utensils, bgColor: "bg-rose-50 text-rose-600 border-rose-100", activeBg: "bg-rose-100 border-rose-400 text-rose-700" },
+  { id: "sightseeing", label: "Tham quan", icon: Camera, bgColor: "bg-amber-50 text-amber-600 border-amber-100", activeBg: "bg-amber-100 border-amber-400 text-amber-700" },
+  { id: "accommodation", label: "Lưu trú", icon: Hotel, bgColor: "bg-slate-100 text-[#030D2E] border-slate-200", activeBg: "bg-[#030D2E]/10 border-[#030D2E] text-[#030D2E]" },
+  { id: "relaxation", label: "Nghỉ ngơi", icon: Coffee, bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100", activeBg: "bg-emerald-100 border-emerald-400 text-emerald-700" },
+  { id: "shopping", label: "Mua sắm", icon: ShoppingBag, bgColor: "bg-purple-50 text-purple-600 border-purple-100", activeBg: "bg-purple-100 border-purple-400 text-purple-700" },
+  { id: "other", label: "Khác", icon: CircleEllipsis, bgColor: "bg-slate-50 text-slate-600 border-slate-100", activeBg: "bg-slate-100 border-slate-400 text-slate-700" }
+];
 
 export function SharedActivitiesSection({ 
   token, 
@@ -19,7 +46,15 @@ export function SharedActivitiesSection({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
-  const [form, setForm] = useState({ title: '', date: '', time: '', location: '', notes: '' });
+  const [form, setForm] = useState({ 
+    title: '', 
+    date: '', 
+    time: '', 
+    location: '', 
+    notes: '', 
+    mapLink: '', 
+    type: 'other' 
+  });
 
   const isRequestEdit = mode === 'request_edit';
 
@@ -65,10 +100,24 @@ export function SharedActivitiesSection({
   }, [activities, changeRequests]);
 
   function startAdd() {
-    setForm({ title: '', date: '', time: '', location: '', notes: '' });
+    setForm({ 
+      title: '', 
+      date: '', 
+      time: '', 
+      location: '', 
+      notes: '', 
+      mapLink: '', 
+      type: 'other' 
+    });
     setIsFormOpen(true);
     setEditingId(null);
   }
+
+  const activeDays = React.useMemo(() => {
+    // Collect all unique dates from activities
+    const dates = Array.from(new Set(activities.map(a => a.date))).filter(Boolean).sort();
+    return dates;
+  }, [activities]);
 
   function startEdit(item: EventItem) {
     setForm({
@@ -76,15 +125,17 @@ export function SharedActivitiesSection({
       date: item.date,
       time: item.time || '',
       location: item.location || '',
-      notes: item.notes || ''
+      notes: item.notes || '',
+      mapLink: item.mapLink || '',
+      type: item.type || 'other'
     });
     setEditingId(String(item.id));
     setIsFormOpen(true);
   }
 
   async function handleSave() {
-    if (!form.title || !form.date) {
-      alert('Vui lòng nhập tên hoạt động và ngày.');
+    if (!form.title.trim() || !form.date) {
+      alert('Vui lòng nhập tên hoạt động và chọn ngày.');
       return;
     }
     
@@ -295,45 +346,114 @@ export function SharedActivitiesSection({
         title={editingId ? "Đề xuất sửa hoạt động" : "Đề xuất thêm hoạt động"}
       >
         <div className="flex flex-col gap-5 py-2">
+          {/* Item Name */}
           <Input
-            label="Tên hoạt động"
+            label={
+              <span className="flex items-center gap-1.5">
+                <Type className="h-4 w-4 text-slate-500" />
+                Tên hoạt động *
+              </span>
+            }
             value={form.title}
             onChange={val => setForm({ ...form, title: val })}
-            placeholder="Ví dụ: Ăn trưa tại quán ngon, Di chuyển đến khách sạn..."
+            placeholder="VD: Ăn trưa tại quán ngon, Di chuyển đến khách sạn..."
           />
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <Input
-                label="Ngày thực hiện"
-                type="date"
-                value={form.date}
-                onChange={val => setForm({ ...form, date: val })}
-              />
-            </div>
-            <div className="w-1/3">
-              <Input
-                label="Giờ"
-                type="time"
-                value={form.time}
-                onChange={val => setForm({ ...form, time: val })}
-              />
+
+          {/* Category Selector Grid */}
+          <div className="space-y-2">
+            <span className="text-sm font-semibold text-slate-600">Loại lịch trình</span>
+            <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+              {ACTIVITY_CATEGORIES.map(cat => {
+                const Icon = cat.icon;
+                const isSelected = form.type === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setForm({ ...form, type: cat.id })}
+                    className={classNames(
+                      "flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border transition-all text-center h-[64px] cursor-pointer active:scale-95",
+                      isSelected 
+                        ? cat.activeBg 
+                        : "border-slate-200 hover:bg-slate-50 text-slate-500 bg-white"
+                    )}
+                  >
+                    <Icon className="h-5 w-5" strokeWidth={2.2} />
+                    <span className="text-[10px] font-bold leading-none">{cat.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
-          <Input
-            label="Địa điểm"
-            value={form.location}
-            onChange={val => setForm({ ...form, location: val })}
-            placeholder="Ví dụ: Nhà hàng Sen Tây Hồ, Hà Nội..."
-          />
+
+          {/* Date & Time Selectors */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label={
+                <span className="flex items-center gap-1.5">
+                  <CalendarDays className="h-4 w-4 text-slate-500" />
+                  Ngày thực hiện *
+                </span>
+              }
+              type="date"
+              value={form.date}
+              onChange={val => setForm({ ...form, date: val })}
+            />
+            <Input
+              label={
+                <span className="flex items-center gap-1.5">
+                  <Clock className="h-4 w-4 text-slate-500" />
+                  Giờ khởi hành / thời gian
+                </span>
+              }
+              type="time"
+              value={form.time}
+              onChange={val => setForm({ ...form, time: val })}
+            />
+          </div>
+
+          {/* Location & Map Link */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label={
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="h-4 w-4 text-slate-500" />
+                  Địa điểm
+                </span>
+              }
+              value={form.location}
+              onChange={val => setForm({ ...form, location: val })}
+              placeholder="Ví dụ: Nhà hàng Sen Tây Hồ, Hà Nội..."
+            />
+            <Input
+              label={
+                <span className="flex items-center gap-1.5">
+                  <Map className="h-4 w-4 text-slate-500" />
+                  Link bản đồ
+                </span>
+              }
+              value={form.mapLink}
+              onChange={val => setForm({ ...form, mapLink: val })}
+              placeholder="https://maps.google.com/..."
+            />
+          </div>
+
+          {/* Notes */}
           <Textarea
-            label="Ghi chú thêm"
+            label={
+              <span className="flex items-center gap-1.5">
+                <StickyNote className="h-4 w-4 text-slate-500" />
+                Ghi chú thêm
+              </span>
+            }
             value={form.notes}
             onChange={val => setForm({ ...form, notes: val })}
             placeholder="Mô tả chi tiết hoặc lưu ý cho hoạt động này..."
           />
+
           <button
             onClick={handleSave}
-            className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-primary font-black text-white hover:brightness-105 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2"
+            className="mt-2 w-full h-[50px] rounded-[16px] bg-[#00BFB7] font-black text-[#030D2E] hover:brightness-105 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
           >
             Gửi đề xuất
           </button>

@@ -224,6 +224,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                mode={canRequestEdit ? 'request_edit' : 'view'} 
                expenses={expenses} 
                changeRequests={changeRequests}
+               members={members}
              />
           )}
 
@@ -233,6 +234,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                mode={canRequestEdit ? 'request_edit' : 'view'} 
                checklist={checklist} 
                changeRequests={changeRequests}
+               members={members}
              />
           )}
 

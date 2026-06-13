@@ -52,12 +52,28 @@ export async function submitChangeRequest(token: string, payload: ChangeRequestP
     throw new Error('Mục này không được phép chỉnh sửa.');
   }
 
+function removeUndefined(obj: any): any {
+  if (obj === undefined) return null;
+  if (typeof obj !== 'object' || obj === null) return obj;
+  if (Array.isArray(obj)) return obj.map(removeUndefined);
+  const newObj: any = {};
+  for (const key in obj) {
+    if (obj[key] !== undefined) {
+      newObj[key] = removeUndefined(obj[key]);
+    }
+  }
+  return newObj;
+}
+
+  const sanitizedPayload = removeUndefined(payload);
+
   const changeRequestsRef = collection(shareRef, 'changeRequests');
   await addDoc(changeRequestsRef, {
     token,
-    ...payload,
+    ...sanitizedPayload,
     requesterUid: user.uid,
     status: 'pending',
     createdAt: serverTimestamp()
   });
 }
+

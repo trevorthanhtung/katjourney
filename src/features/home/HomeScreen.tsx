@@ -30,8 +30,6 @@ import { ChecklistItem, EventItem, Expense, Member, Trip, db, TravelDocument } f
 import { formatDate, formatMoney, getChecklistStats, getTripTiming, today } from "../../utils/helpers";
 import { getTripReminders } from "../../utils/reminderRules";
 import { exportTripPdf, exportTripExcel } from "../../utils/exports";
-import { useShareChangeRequests } from "../../hooks/useShareChangeRequests";
-import { ShareChangeRequestsSheet } from "../share/components/ShareChangeRequestsSheet";
 
 function QuickAction({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
   return (
@@ -57,7 +55,8 @@ export function HomeScreen({
   totalExpense,
   perPerson,
   onNavigateTab,
-  onNavigateMore
+  onNavigateMore,
+  onOpenInbox
 }: {
   trip: Trip;
   members: Member[];
@@ -69,12 +68,11 @@ export function HomeScreen({
   perPerson: number;
   onNavigateTab: (tab: "timeline" | "expenses" | "checklist") => void;
   onNavigateMore: (section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents") => void;
+  onOpenInbox?: () => void;
 }) {
-  const [isInboxOpen, setIsInboxOpen] = React.useState(false);
   const journals = useLiveQuery(() => db.journals.where("tripId").equals(trip.id!).toArray(), [trip.id]) ?? [];
   const packingItems = useLiveQuery(() => db.packingItems.where("tripId").equals(trip.id!).toArray(), [trip.id]) ?? [];
   const backupPlans = useLiveQuery(() => db.backupPlans.where("tripId").equals(trip.id!).toArray(), [trip.id]) ?? [];
-  const { pendingRequests, activeToken } = useShareChangeRequests(trip);
 
   const timing = getTripTiming(trip);
   const checklistStats = getChecklistStats(checklist);
@@ -848,36 +846,9 @@ export function HomeScreen({
     <div className="space-y-6 md:space-y-8 animate-fadeIn mx-auto w-full max-w-[1120px]">
       {renderHero()}
       
-      {pendingRequests.length > 0 && (
-        <div className="rounded-2xl bg-rose-50 border border-rose-200 p-4 flex items-center justify-between cursor-pointer" onClick={() => setIsInboxOpen(true)}>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm text-rose-500">
-              <AlertTriangle className="h-5 w-5" />
-            </div>
-            <div>
-              <h4 className="text-[14px] font-bold text-rose-800">Yêu cầu chỉnh sửa</h4>
-              <p className="text-[13px] font-medium text-rose-700 leading-snug mt-0.5">Có {pendingRequests.length} yêu cầu đang chờ duyệt</p>
-            </div>
-          </div>
-          <button className="text-[13px] font-bold text-rose-700 bg-white border border-rose-100 shadow-sm px-3 py-1.5 rounded-lg active:scale-95 transition-transform">
-            Xem yêu cầu
-          </button>
-        </div>
-      )}
-
-      
       {status === "past" && renderPastLayout()}
       {status === "active" && renderActiveLayout()}
       {(status !== "past" && status !== "active") && renderUpcomingLayout()}
-
-      {activeToken && (
-        <ShareChangeRequestsSheet
-          isOpen={isInboxOpen}
-          onClose={() => setIsInboxOpen(false)}
-          token={activeToken}
-          requests={pendingRequests}
-        />
-      )}
     </div>
   );
 }

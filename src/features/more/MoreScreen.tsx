@@ -60,8 +60,6 @@ import {
   AlertTriangle,
   Copy
 } from "lucide-react";
-import { useShareChangeRequests } from "../../hooks/useShareChangeRequests";
-import { ShareChangeRequestsSheet } from "../share/components/ShareChangeRequestsSheet";
 
 function ShareSwitch({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) {
   return (
@@ -1162,7 +1160,8 @@ export function MoreScreen({
   onTripSelected,
   onShowToast,
   section,
-  setSection
+  setSection,
+  onOpenInbox
 }: {
   trip: Trip;
   members: Member[];
@@ -1177,6 +1176,7 @@ export function MoreScreen({
   onShowToast?: (msg: string) => void;
   section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents";
   setSection: (section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents") => void;
+  onOpenInbox?: () => void;
 }) {
   const [editingTrip, setEditingTrip] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
@@ -1206,9 +1206,6 @@ export function MoreScreen({
     includeDocuments: false,
   });
   const [copiedLink, setCopiedLink] = useState(false);
-  const [isRequestsSheetOpen, setIsRequestsSheetOpen] = useState(false);
-
-  const { pendingRequests, activeToken } = useShareChangeRequests(trip);
 
   const activeShareLink = trip.shareToken ? {
     token: trip.shareToken,
@@ -1735,13 +1732,6 @@ export function MoreScreen({
               onClick={handleShareTrip}
               iconBgColor="bg-violet-50"
               iconTextColor="text-violet-600 border-violet-100"
-              rightElement={
-                pendingRequests.length > 0 && (
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-500 text-[12px] font-bold text-white shadow-sm ring-4 ring-white">
-                    {pendingRequests.length}
-                  </span>
-                )
-              }
             />
           </div>
         </section>
@@ -1941,24 +1931,6 @@ export function MoreScreen({
             <p className="text-[13.5px] text-slate-500 leading-relaxed">
               Tạo link để người khác xem lịch trình và thông tin chuyến đi.
             </p>
-            {pendingRequests.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setIsRequestsSheetOpen(true)}
-                className="w-full mt-3 flex items-center justify-between rounded-xl bg-rose-50 border border-rose-100 p-3 hover:bg-rose-100/50 transition-colors"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-500 text-white">
-                    <AlertTriangle className="h-4.5 w-4.5" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-[13.5px] font-bold text-rose-700">Có {pendingRequests.length} đề xuất mới</p>
-                    <p className="text-[12px] font-medium text-rose-600/80">Nhấn để xem và duyệt</p>
-                  </div>
-                </div>
-                <ChevronRight className="h-5 w-5 text-rose-400" />
-              </button>
-            )}
             <div className="flex justify-start">
               <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 border border-violet-100 px-2.5 py-0.5 text-[11px] font-bold text-violet-700">
                 Chế độ: Xem & đề xuất chỉnh sửa
@@ -2185,14 +2157,7 @@ export function MoreScreen({
         </div>
       </BottomSheet>
 
-      {activeToken && (
-        <ShareChangeRequestsSheet
-          isOpen={isRequestsSheetOpen}
-          onClose={() => setIsRequestsSheetOpen(false)}
-          token={activeToken}
-          requests={pendingRequests}
-        />
-      )}
+
 
     </div>
   );
