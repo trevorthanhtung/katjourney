@@ -1,5 +1,6 @@
 import React from "react";
-import { Plus, X } from "lucide-react";
+import { createPortal } from "react-dom";
+import { Plus, X, Check } from "lucide-react";
 import { classNames } from "../../utils/helpers";
 
 export { classNames };
@@ -20,7 +21,7 @@ export function Input({
   type = "text",
   placeholder
 }: {
-  label: string;
+  label: React.ReactNode;
   value: string;
   onChange: (value: string) => void;
   type?: string;
@@ -28,9 +29,9 @@ export function Input({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-semibold text-slate-600">{label}</span>
+      <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
       <input
-        className="mt-1.5 w-full rounded-[14px] border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00A59E]"
+        className="mt-1.5 w-full rounded-[14px] border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] placeholder-slate-400"
         type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -40,12 +41,22 @@ export function Input({
   );
 }
 
-export function Textarea({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (value: string) => void; placeholder?: string }) {
+export function Textarea({ 
+  label, 
+  value, 
+  onChange, 
+  placeholder 
+}: { 
+  label: React.ReactNode; 
+  value: string; 
+  onChange: (value: string) => void; 
+  placeholder?: string 
+}) {
   return (
     <label className="block">
-      <span className="text-sm font-semibold text-slate-600">{label}</span>
+      <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
       <textarea
-        className="mt-1.5 min-h-[120px] w-full rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200 transition-shadow focus:bg-white focus:ring-2 focus:ring-emerald-500"
+        className="mt-1.5 min-h-[120px] w-full rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] placeholder-slate-400"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
@@ -62,7 +73,7 @@ export function Select({
   placeholder,
   labels
 }: {
-  label: string;
+  label: React.ReactNode;
   value: string;
   onChange: (value: string) => void;
   options: string[];
@@ -71,9 +82,9 @@ export function Select({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-semibold text-slate-600">{label}</span>
+      <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
       <select
-        className="mt-1.5 w-full appearance-none rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200 transition-shadow focus:bg-white focus:ring-2 focus:ring-emerald-500"
+        className="mt-1.5 w-full appearance-none rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7]"
         value={value}
         onChange={(event) => onChange(event.target.value)}
       >
@@ -99,10 +110,10 @@ export function FormActions({
   disabled?: boolean;
 }) {
   return (
-    <div className="flex gap-3 pt-2 sticky bottom-0 bg-white md:static">
+    <div className="flex gap-3 pt-2 w-full">
       {onCancel && (
         <button
-          className="inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 transition-all duration-200 hover:bg-slate-200 active:scale-[0.98]"
+          className="inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200 motion-press"
           type="button"
           onClick={onCancel}
         >
@@ -110,12 +121,12 @@ export function FormActions({
         </button>
       )}
       <button
-        className="inline-flex min-h-[50px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-6 font-bold text-kat-text shadow-sm hover:bg-kat-primary/20 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="inline-flex min-h-[50px] flex-1 items-center justify-center gap-2 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-6 font-black shadow-sm hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100"
         type="button"
         onClick={onSave}
         disabled={disabled}
       >
-        <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
+        <Check className="h-4.5 w-4.5" strokeWidth={2.5} />
         {saveLabel}
       </button>
     </div>
@@ -126,7 +137,7 @@ export function IconButton({ label, onClick, children, danger = false }: { label
   return (
     <button
       className={classNames(
-        "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors active:scale-95",
+        "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors motion-press",
         danger ? "bg-rose-50 text-rose-600 hover:bg-rose-100" : "bg-slate-50 text-slate-500 hover:bg-slate-100"
       )}
       type="button"
@@ -217,36 +228,63 @@ export function ProgressRing({ value, size = 120, strokeWidth = 10, children }: 
   );
 }
 
-export function BottomSheet({ isOpen, onClose, title, subtitle, children }: { isOpen: boolean; onClose: () => void; title: string; subtitle?: string; children: React.ReactNode }) {
+export function BottomSheet({ 
+  isOpen, 
+  onClose, 
+  title, 
+  subtitle, 
+  children,
+  footer
+}: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  title: string; 
+  subtitle?: string; 
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+}) {
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center p-0 md:p-6">
       {/* Backdrop */}
-      <div className="absolute inset-0 animate-fadeIn bg-slate-900/35 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 motion-modal-overlay bg-slate-900/35 backdrop-blur-sm" onClick={onClose} />
       
       {/* Sheet / Dialog */}
-      <div className="relative z-10 flex w-full flex-col max-h-[90vh] md:max-h-[min(720px,calc(100vh-48px))] animate-slideUp md:animate-fadeIn rounded-t-[32px] md:rounded-[24px] bg-white pb-safe shadow-floating md:mx-auto md:w-full md:max-w-[600px] overflow-hidden">
+      <div className="relative z-10 flex w-full flex-col max-h-[90vh] md:max-h-[min(720px,calc(100vh-48px))] motion-sheet-dialog md:motion-modal-dialog rounded-t-[32px] md:rounded-[24px] bg-white pb-safe shadow-floating md:mx-auto md:w-full md:max-w-[600px] overflow-hidden">
         {/* Drag handle (mobile only) */}
         <div className="flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 md:hidden" />
         
         {/* Header */}
-        <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-5 md:px-6 py-4">
+        <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-5 md:px-6 py-3.5 md:py-4">
           <div className="pr-4">
-            <h3 className="text-[20px] md:text-[22px] font-bold text-slate-900">{title}</h3>
-            {subtitle && <p className="mt-1.5 text-[14px] text-slate-500">{subtitle}</p>}
+            <h3 className="text-[20px] md:text-[22px] font-bold text-slate-900 leading-snug">{title}</h3>
+            {subtitle && <p className="mt-1 text-[13.5px] text-slate-500 leading-relaxed">{subtitle}</p>}
           </div>
-          <button className="flex shrink-0 h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200" onClick={onClose}>
+          <button 
+            className="flex shrink-0 h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200" 
+            onClick={onClose}
+            title="Đóng"
+            aria-label="Đóng"
+          >
             <X className="h-5 w-5" />
           </button>
         </div>
         
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-5 md:px-6 py-5 md:py-6">
+        <div className="flex-1 overflow-y-auto px-5 md:px-6 py-4 md:py-5 custom-scrollbar">
           {children}
         </div>
+
+        {/* Footer */}
+        {footer && (
+          <div className="flex-none border-t border-slate-100 bg-[#FFFDF8] px-5 md:px-6 py-3.5 md:py-4">
+            {footer}
+          </div>
+        )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -254,7 +292,7 @@ export function FAB({ icon, label, onClick, className }: { icon: React.ReactNode
   return (
     <button
       className={classNames(
-        "fixed bottom-[100px] right-4 z-30 flex items-center justify-center rounded-full text-white shadow-floating transition-all duration-200 active:scale-95 lg:right-[calc(max(1rem,50vw-512px+1rem))] lg:hover:-translate-y-1 lg:hover:shadow-lg",
+        "fixed bottom-[100px] right-4 z-30 flex items-center justify-center rounded-full text-white shadow-floating lg:right-[calc(max(1rem,50vw-512px+1rem))] motion-press lg:motion-hover-lift",
         className || "h-14 w-14 bg-sunset-600 hover:scale-105"
       )}
       style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}

@@ -29,7 +29,31 @@ import {
   Luggage,
   ArrowLeft,
   Coffee,
-  Compass
+  Compass,
+  FileCheck,
+  CalendarDays,
+  Clock3,
+  UsersRound,
+  Route,
+  MapPinned,
+  Trophy,
+  BookOpenText,
+  TicketCheck,
+  DatabaseBackup,
+  ArchiveRestore,
+  BadgeInfo,
+  UserPlus,
+  UserRound,
+  Crown,
+  SunMedium,
+  SmilePlus,
+  Heart,
+  Star,
+  FileDown,
+  Phone,
+  Car,
+  BadgeCheck,
+  StickyNote
 } from "lucide-react";
 import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "../../db";
 import { 
@@ -50,6 +74,7 @@ import {
 import { exportTripExcel, exportTripPdf } from "../../utils/exports";
 import { BottomSheet, FormActions, Input, ScreenTitle, classNames } from "../../components/ui";
 import { JournalSection } from "../journal/JournalSection";
+import { TravelDocumentsSection } from "./TravelDocumentsSection";
 
 function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boolean; onClose: () => void; onSaved: (id: number) => void }) {
   const [form, setForm] = useState<{
@@ -113,13 +138,26 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
     <BottomSheet 
       isOpen={isOpen} 
       onClose={onClose} 
-      title={trip ? "Sửa chuyến đi" : "Tạo chuyến đi"}
+      title={trip ? "Thông tin chuyến đi" : "Tạo chuyến đi"}
       subtitle={trip ? undefined : "Điền thông tin cơ bản trước, lịch trình và chi phí có thể thêm sau."}
+      footer={
+        <FormActions 
+          onSave={save} 
+          saveLabel={trip ? "Lưu thông tin" : "Tạo chuyến đi"} 
+          disabled={hasError}
+          onCancel={onClose}
+        />
+      }
     >
       <div className="space-y-4 md:space-y-5">
         <div>
           <Input 
-            label="Tên chuyến đi" 
+            label={
+              <span className="flex items-center gap-1.5">
+                <Compass className="h-4 w-4 text-slate-500" />
+                Tên chuyến đi
+              </span>
+            } 
             value={form.title} 
             onChange={(title) => { setForm({ ...form, title }); setDirty(true); }} 
             placeholder="VD: Du lịch Đà Lạt" 
@@ -129,14 +167,22 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
           )}
         </div>
         <Input 
-          label="Địa điểm" 
+          label={
+            <span className="flex items-center gap-1.5">
+              <MapPin className="h-4 w-4 text-slate-500" />
+              Điểm đến
+            </span>
+          } 
           value={form.location} 
           onChange={(location) => setForm({ ...form, location })} 
           placeholder="VD: Phú Quốc" 
         />
         
         <div>
-          <span className="mb-1.5 block text-sm font-semibold text-slate-600">Kiểu chuyến đi</span>
+          <span className="mb-1.5 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
+            <Clock3 className="h-4 w-4 text-slate-500" />
+            Thời lượng chuyến đi
+          </span>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <button
               type="button"
@@ -149,7 +195,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
               )}
             >
               <span className={classNames("text-[15px] font-bold", form.tripType === "dayTrip" ? "text-kat-primary" : "text-slate-700")}>Đi trong ngày</span>
-              <span className={classNames("text-[12px] font-medium mt-0.5", form.tripType === "dayTrip" ? "text-kat-primary/80" : "text-slate-500")}>Đi và về cùng ngày</span>
+              <span className={classNames("text-[12px] font-medium mt-0.5", form.tripType === "dayTrip" ? "text-kat-primary/80" : "text-slate-500")}>Đi và về trong cùng ngày</span>
             </button>
             <button
               type="button"
@@ -161,8 +207,8 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
                   : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100"
               )}
             >
-              <span className={classNames("text-[15px] font-bold", form.tripType === "multiDay" ? "text-kat-primary" : "text-slate-700")}>Đi dài ngày</span>
-              <span className={classNames("text-[12px] font-medium mt-0.5", form.tripType === "multiDay" ? "text-kat-primary/80" : "text-slate-500")}>Có ngày đi và ngày về</span>
+              <span className={classNames("text-[15px] font-bold", form.tripType === "multiDay" ? "text-kat-primary" : "text-slate-700")}>Nhiều ngày</span>
+              <span className={classNames("text-[12px] font-medium mt-0.5", form.tripType === "multiDay" ? "text-kat-primary/80" : "text-slate-500")}>Có ngày khởi hành và ngày kết thúc</span>
             </button>
           </div>
         </div>
@@ -170,7 +216,12 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
         {form.tripType === "dayTrip" ? (
           <div>
             <Input 
-              label="Ngày bắt đầu" 
+              label={
+                <span className="flex items-center gap-1.5">
+                  <CalendarDays className="h-4 w-4 text-slate-500" />
+                  Ngày khởi hành
+                </span>
+              } 
               type="date" 
               value={form.startDate} 
               onChange={(startDate) => setForm({ ...form, startDate })} 
@@ -184,7 +235,12 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Input 
-                label="Ngày bắt đầu" 
+                label={
+                  <span className="flex items-center gap-1.5">
+                    <CalendarDays className="h-4 w-4 text-slate-500" />
+                    Ngày khởi hành
+                  </span>
+                } 
                 type="date" 
                 value={form.startDate} 
                 onChange={(startDate) => setForm({ ...form, startDate })} 
@@ -195,7 +251,12 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
             </div>
             <div>
               <Input 
-                label="Ngày kết thúc" 
+                label={
+                  <span className="flex items-center gap-1.5">
+                    <CalendarDays className="h-4 w-4 text-slate-500" />
+                    Ngày kết thúc
+                  </span>
+                } 
                 type="date" 
                 value={form.endDate} 
                 onChange={(endDate) => setForm({ ...form, endDate })} 
@@ -206,13 +267,6 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
             </div>
           </div>
         )}
-        <div className="pt-2">
-          <FormActions 
-            onSave={save} 
-            saveLabel={trip ? "Lưu thay đổi" : "Tạo chuyến đi"} 
-            disabled={hasError}
-          />
-        </div>
       </div>
     </BottomSheet>
   );
@@ -231,11 +285,11 @@ function MemberForm({
   onClose: () => void;
   onShowToast?: (msg: string) => void;
 }) {
-  const PRESETS = ["Bạn đồng hành", "Trưởng đoàn", "Thủ quỹ", "Tài xế", "Người chuẩn bị"];
+  const PRESETS = ["Người đồng hành", "Trưởng nhóm", "Quản lý chi phí", "Tài xế", "Phụ trách hành lý"];
   
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [selectedPreset, setSelectedPreset] = useState("Bạn đồng hành");
+  const [selectedPreset, setSelectedPreset] = useState("Người đồng hành");
   const [customRole, setCustomRole] = useState("");
   const [note, setNote] = useState("");
   
@@ -249,7 +303,7 @@ function MemberForm({
         setPhone(editing.phone ?? "");
         setNote(editing.note ?? "");
         
-        const currentRole = editing.role ?? "Bạn đồng hành";
+        const currentRole = editing.role ?? "Người đồng hành";
         if (PRESETS.includes(currentRole)) {
           setSelectedPreset(currentRole);
           setCustomRole("");
@@ -260,7 +314,7 @@ function MemberForm({
       } else {
         setName("");
         setPhone("");
-        setSelectedPreset("Bạn đồng hành");
+        setSelectedPreset("Người đồng hành");
         setCustomRole("");
         setNote("");
       }
@@ -269,7 +323,7 @@ function MemberForm({
     }
   }, [editing, isOpen]);
 
-  const nameError = !name.trim() ? "Vui lòng nhập tên thành viên." : "";
+  const nameError = !name.trim() ? "Vui lòng nhập tên người đồng hành." : "";
   
   const phoneClean = phone.trim();
   const isPhoneInvalid = phoneClean !== "" && !/^(0[3|5|7|8|9])[0-9]{8}$/.test(phoneClean);
@@ -295,24 +349,68 @@ function MemberForm({
 
     if (editing?.id) {
       await db.members.update(editing.id, payload);
-      onShowToast?.("Đã cập nhật thành viên");
+      onShowToast?.("Đã cập nhật người đồng hành");
       onClose();
     } else {
       await db.members.add({
         ...payload,
         createdAt: new Date().toISOString()
       });
-      onShowToast?.("Đã thêm thành viên");
+      onShowToast?.("Đã thêm người đồng hành");
       onClose();
     }
   }
 
+  const getPresetIcon = (preset: string) => {
+    switch (preset) {
+      case "Người đồng hành": return <UsersRound className="h-3.5 w-3.5" />;
+      case "Trưởng nhóm": return <Crown className="h-3.5 w-3.5 text-amber-500" />;
+      case "Quản lý chi phí": return <WalletCards className="h-3.5 w-3.5 text-emerald-500" />;
+      case "Tài xế": return <Car className="h-3.5 w-3.5 text-blue-500" />;
+      case "Phụ trách hành lý": return <Luggage className="h-3.5 w-3.5 text-indigo-500" />;
+      default: return null;
+    }
+  };
+
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title={editing ? "Sửa thành viên" : "Thêm thành viên"}>
+    <BottomSheet 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      title={editing ? "Sửa người đồng hành" : "Thêm người đồng hành"}
+      footer={
+        <div className="flex gap-3 w-full">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            disabled={hasError}
+            onClick={save}
+            className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#00BFB7] text-[#030D2E] px-6 font-black hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
+          >
+            {editing ? (
+              <Check className="h-4.5 w-4.5" strokeWidth={2.5} />
+            ) : (
+              <UserPlus className="h-4.5 w-4.5" strokeWidth={2.5} />
+            )}
+            {editing ? "Lưu thông tin" : "Thêm người đồng hành"}
+          </button>
+        </div>
+      }
+    >
       <div className="space-y-5">
         <div>
           <Input 
-            label="Tên *" 
+            label={
+              <span className="flex items-center gap-1.5">
+                <UserRound className="h-4 w-4 text-slate-500" />
+                Tên người đồng hành *
+              </span>
+            } 
             value={name} 
             onChange={(val) => { setName(val); setDirty(true); }} 
             placeholder="VD: Tùng" 
@@ -324,7 +422,12 @@ function MemberForm({
 
         <div>
           <Input 
-            label="Số điện thoại" 
+            label={
+              <span className="flex items-center gap-1.5">
+                <Phone className="h-4 w-4 text-slate-500" />
+                Số điện thoại
+              </span>
+            } 
             type="tel"
             value={phone} 
             onChange={(val) => { setPhone(val); setDirty(true); }} 
@@ -333,12 +436,15 @@ function MemberForm({
           {(dirty || submitAttempted) && phoneError ? (
             <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{phoneError}</p>
           ) : (
-            <p className="mt-1.5 px-1 text-[12.5px] font-medium text-slate-400">Dùng để hiển thị liên hệ khi cần thiết.</p>
+            <p className="mt-1.5 px-1 text-[12.5px] font-medium text-slate-400">Dùng để liên hệ nhanh trong chuyến đi khi cần.</p>
           )}
         </div>
 
         <div>
-          <span className="mb-2 block text-sm font-semibold text-slate-600">Vai trò</span>
+          <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
+            <BadgeCheck className="h-4 w-4 text-slate-500" />
+            Vai trò trong chuyến đi
+          </span>
           <div className="flex flex-wrap gap-2 mb-3">
             {[...PRESETS, "Khác"].map((preset) => (
               <button
@@ -349,13 +455,14 @@ function MemberForm({
                   setDirty(true);
                 }}
                 className={classNames(
-                  "rounded-full px-4 py-2 text-[13.5px] font-extrabold transition-all duration-200 active:scale-95 border",
+                  "rounded-full px-4 py-2 text-[13.5px] font-extrabold transition-all duration-200 active:scale-95 border flex items-center gap-1.5",
                   selectedPreset === preset
                     ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#00BFB7]"
                     : "bg-[#FFFDF8] border-[#E8E1D8] text-slate-600 hover:bg-slate-50"
                 )}
               >
-                {preset}
+                {getPresetIcon(preset)}
+                <span>{preset}</span>
               </button>
             ))}
           </div>
@@ -374,13 +481,16 @@ function MemberForm({
             </div>
           )}
           <p className="mt-1.5 px-1 text-[12.5px] font-medium text-slate-400">
-            Vai trò giúp phân công chi phí, hành lý và ghi chú dễ hơn.
+            Vai trò giúp chia chi phí, chuẩn bị hành lý và ghi chú rõ ràng hơn.
           </p>
         </div>
 
         <div className="pt-1">
           <label className="block">
-            <span className="text-sm font-semibold text-slate-600">Ghi chú</span>
+            <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">
+              <StickyNote className="h-4 w-4 text-slate-500" />
+              Ghi chú
+            </span>
             <textarea
               className="mt-1.5 min-h-[90px] w-full rounded-2xl border-0 bg-slate-50 px-4 py-3 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] placeholder-slate-400"
               value={note}
@@ -388,25 +498,6 @@ function MemberForm({
               placeholder="VD: Ăn chay, dễ say xe, phụ trách đặt phòng..."
             />
           </label>
-        </div>
-
-        <div className="pt-3 border-t border-slate-100 flex gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
-          >
-            Hủy
-          </button>
-          <button
-            type="button"
-            disabled={hasError}
-            onClick={save}
-            className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#00BFB7] text-[#030D2E] px-6 font-black hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-          >
-            <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
-            {editing ? "Lưu thay đổi" : "Thêm thành viên"}
-          </button>
         </div>
       </div>
     </BottomSheet>
@@ -429,15 +520,15 @@ function DeleteMemberConfirmModal({
   hasChecklist: boolean;
 }) {
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Xóa thành viên này?">
+    <BottomSheet isOpen={isOpen} onClose={onClose} title="Xóa người đồng hành này?">
       <div className="space-y-5">
         <p className="text-[15px] font-medium leading-relaxed text-slate-600">
-          Thành viên <span className="font-extrabold text-[#030D2E]">{memberName}</span> sẽ không còn xuất hiện trong danh sách chuyến đi. Các dữ liệu liên quan như chi phí hoặc phân công có thể cần được kiểm tra lại.
+          Người đồng hành <span className="font-extrabold text-[#030D2E]">{memberName}</span> sẽ không còn xuất hiện trong danh sách chuyến đi. Các dữ liệu liên quan như chi phí hoặc phân công có thể cần được kiểm tra lại.
         </p>
 
         {(hasExpenses || hasChecklist) && (
           <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed animate-fadeIn">
-            Thành viên này đang liên quan đến chi phí hoặc checklist. Hãy kiểm tra trước khi xóa.
+            Người đồng hành này đang liên quan đến chi phí hoặc checklist. Hãy kiểm tra trước khi xóa.
           </div>
         )}
 
@@ -454,7 +545,7 @@ function DeleteMemberConfirmModal({
             onClick={onConfirm}
             className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 active:scale-[0.98] transition-all duration-200 shadow-sm"
           >
-            Xóa thành viên
+            Xóa người đồng hành
           </button>
         </div>
       </div>
@@ -585,14 +676,15 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             className="flex h-11 items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-4 text-[14px] font-bold text-kat-text transition-all hover:bg-kat-primary/20 active:scale-95 shadow-sm shrink-0"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">Quay lại quản lý</span>
+            <span className="hidden sm:inline">Quay lại không gian chuyến đi</span>
             <span className="sm:hidden">Quay lại</span>
           </button>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-[#030D2E]">Tổng kết chuyến đi</h2>
-              <span className="inline-flex items-center rounded-full bg-kat-primary/10 border border-kat-primary/20 px-2 py-0.5 text-[10px] font-black text-kat-primary uppercase tracking-wider">
-                Travel Wrapped
+              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-[#030D2E]">Tổng kết hành trình</h2>
+              <span className="inline-flex items-center gap-1 rounded-full bg-kat-primary/10 border border-kat-primary/20 px-2 py-0.5 text-[10px] font-black text-kat-primary uppercase tracking-wider">
+                <Sparkles className="h-3 w-3" />
+                BẢN TỔNG KẾT
               </span>
             </div>
             <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Nhìn lại những dấu ấn đáng nhớ trong chuyến đi của bạn.</p>
@@ -601,33 +693,31 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       </div>
       
       {/* Hero Recap Card */}
-      <section 
-        className="relative overflow-hidden rounded-[32px] p-8 text-white shadow-soft"
-        style={{ background: "linear-gradient(135deg, #030D2E 0%, #003D4A 60%, #007C78 100%)" }}
-      >
+      <section className="relative overflow-hidden rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-8 text-kat-text shadow-soft">
         <div className="relative z-10 flex flex-col items-center text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/8 text-kat-primary mb-4 ring-4 ring-white/5 animate-pulse border border-white/14">
-            <Sparkles className="h-6 w-6" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5 border border-kat-primary/20">
+            <Compass className="h-6 w-6" />
           </div>
-          <h2 className="text-[30px] md:text-[36px] font-black leading-tight tracking-tight drop-shadow-sm">{data.trip.title}</h2>
+          <h2 className="text-[30px] md:text-[36px] font-black leading-tight tracking-tight text-[#030D2E]">{data.trip.title}</h2>
           <div className="mt-4 flex flex-wrap justify-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 border border-white/14 px-4 py-2 text-[14px] font-semibold backdrop-blur-md text-white/92">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-4 py-2 text-[14px] font-bold text-slate-700">
               <MapPin className="h-4 w-4 text-kat-primary" />
               {data.trip.location || "Chưa có địa điểm"}
             </span>
             {data.trip.tripType === "dayTrip" || data.trip.startDate === data.trip.endDate ? (
               <>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 border border-white/14 px-4 py-2 text-[14px] font-semibold backdrop-blur-md text-white/92">
-                  <Calendar className="h-4 w-4 text-kat-primary" />
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-4 py-2 text-[14px] font-bold text-slate-700">
+                  <CalendarDays className="h-4 w-4 text-[#0081BE]" />
                   {formatDate(data.trip.startDate)}
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-kat-primary/20 border border-kat-primary/40 px-3 py-1 text-[12.5px] font-bold text-white/95 backdrop-blur-md">
-                  Đi trong ngày
+                <span className="inline-flex items-center gap-1 rounded-full bg-kat-primary-soft border border-kat-primary/15 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable">
+                  <Clock3 className="h-3.5 w-3.5" />
+                  Chuyến đi trong ngày
                 </span>
               </>
             ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 border border-white/14 px-4 py-2 text-[14px] font-semibold backdrop-blur-md text-white/92">
-                <Calendar className="h-4 w-4 text-kat-primary" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-4 py-2 text-[14px] font-bold text-slate-700">
+                <CalendarDays className="h-4 w-4 text-[#0081BE]" />
                 {formatDate(data.trip.startDate)} – {formatDate(data.trip.endDate)}
               </span>
             )}
@@ -639,37 +729,37 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
-            <Sun className="h-6 w-6" />
+            <SunMedium className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.totalDays}</span>
-            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Ngày khám phá</span>
+            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Ngày hành trình</span>
           </div>
         </div>
 
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#00BFB7]/10 text-[#00BFB7] border border-[#00BFB7]/20">
-            <Map className="h-6 w-6" />
+            <Route className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.activityCount}</span>
-            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Hoạt động</span>
+            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Mục lịch trình</span>
           </div>
         </div>
 
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
-            <Backpack className="h-6 w-6" />
+            <Luggage className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.checklistPercent}%</span>
-            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Chuẩn bị</span>
+            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Hành lý</span>
           </div>
         </div>
 
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#00BFB7]/10 text-[#00BFB7] border border-[#00BFB7]/20">
-            <BookOpen className="h-6 w-6" />
+            <BookOpenText className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.journalCount}</span>
@@ -679,47 +769,44 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       </div>
 
       {/* Finance Recap */}
-      <div 
-        className="rounded-[32px] p-8 text-white shadow-soft relative overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #030D2E 0%, #003D4A 60%, #007C78 100%)" }}
-      >
+      <div className="rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-8 text-kat-text shadow-soft relative overflow-hidden">
         <div className="relative z-10">
           <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
             <WalletCards className="h-5 w-5 text-kat-primary" />
-            Tài chính chuyến đi
+            CHI PHÍ CHUYẾN ĐI
           </h3>
           
           {data.expenses.length > 0 ? (
             <div className="space-y-6">
               <div>
-                <p className="text-[14px] font-semibold text-slate-400">Tổng đã chi</p>
-                <p className="mt-1 text-[36px] font-black text-white leading-none">{formatMoney(stats.totalExpense)}</p>
+                <p className="text-[14px] font-semibold text-slate-500">Tổng chi phí</p>
+                <p className="mt-1 text-[36px] font-black text-[#030D2E] leading-none">{formatMoney(stats.totalExpense)}</p>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-white/15 pt-6 max-w-md">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-[#E8E1D8]/60 pt-6 max-w-md">
                 <div>
-                  <p className="text-[13px] font-bold text-slate-400 uppercase tracking-wider">Chi chung nhóm</p>
-                  <p className="mt-1 text-[18px] font-black text-white">{formatMoney(sharedTotal)}</p>
+                  <p className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">Chi chung chuyến đi</p>
+                  <p className="mt-1 text-[18px] font-black text-kat-primary-usable">{formatMoney(sharedTotal)}</p>
                 </div>
                 <div>
-                  <p className="text-[13px] font-bold text-slate-400 uppercase tracking-wider">Tự trả riêng</p>
-                  <p className="mt-1 text-[18px] font-black text-slate-300">{formatMoney(personalTotal)}</p>
+                  <p className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">Chi cá nhân</p>
+                  <p className="mt-1 text-[18px] font-black text-[#030D2E]">{formatMoney(personalTotal)}</p>
                 </div>
               </div>
               
               {data.members.length === 0 ? (
-                <div className="border-t border-white/15 pt-6">
-                  <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 text-[13.5px] text-slate-300 font-semibold leading-relaxed">
-                    Chưa có thành viên nào khác tham gia chuyến đi để đề xuất chia tiền.
+                <div className="border-t border-[#E8E1D8]/60 pt-6">
+                  <div className="rounded-2xl border border-[#E8E1D8] bg-[#FAF7F1]/50 px-4 py-3.5 text-[13.5px] text-slate-500 font-semibold leading-relaxed">
+                    Chưa có người đồng hành để gợi ý cân đối chia tiền.
                   </div>
                 </div>
               ) : (
                 <>
                   {stats.topPayer && (
-                    <div className="border-t border-white/15 pt-6">
-                      <p className="text-[14px] font-semibold text-slate-400">Nhà tài trợ chính</p>
-                      <p className="mt-1 text-[14.5px] font-medium leading-relaxed text-slate-300">
-                        <span className="font-extrabold text-white">{stats.topPayer.name}</span> là người chi nhiều nhất với <span className="font-extrabold text-kat-primary">{formatMoney(stats.topPayer.amount)}</span>.
+                    <div className="border-t border-[#E8E1D8]/60 pt-6">
+                      <p className="text-[14px] font-semibold text-slate-500">Nhà tài trợ chính</p>
+                      <p className="mt-1 text-[14.5px] font-medium leading-relaxed text-slate-600">
+                        <span className="font-extrabold text-[#030D2E]">{stats.topPayer.name}</span> là người chi nhiều nhất với <span className="font-extrabold text-kat-primary-usable">{formatMoney(stats.topPayer.amount)}</span>.
                       </p>
                     </div>
                   )}
@@ -727,8 +814,8 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
               )}
             </div>
           ) : (
-            <div className="text-center py-6 border border-white/10 rounded-2xl bg-white/5">
-              <p className="text-[14.5px] font-semibold text-slate-400">Chưa có dữ liệu chi phí cho chuyến đi này.</p>
+            <div className="text-center py-6 border border-[#E8E1D8]/60 rounded-2xl bg-[#FAF7F1]/40">
+              <p className="text-[14.5px] font-semibold text-slate-500">Chưa có dữ liệu chi phí cho chuyến đi này.</p>
             </div>
           )}
         </div>
@@ -737,21 +824,21 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       {/* Memory / Mood Section */}
       <div className="rounded-[32px] border border-[#E8E1D8] bg-[#FFFDF8] p-8 shadow-soft text-center flex flex-col items-center justify-center">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-500 mb-4 ring-4 ring-amber-500/5">
-          <Smile className="h-6 w-6" />
+          <SmilePlus className="h-6 w-6" />
         </div>
-        <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-wider mb-2">Cảm xúc chủ đạo</h3>
+        <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-wider mb-2">DẤU ẤN CẢM XÚC</h3>
         {mood ? (
           <p className="mt-2 text-[26px] md:text-[30px] font-black text-[#030D2E]">{mood}</p>
         ) : (
           <div className="flex flex-col items-center mt-2">
-            <p className="text-[16px] font-extrabold text-[#030D2E] mb-1.5">Chưa có đủ kỷ niệm để tổng kết cảm xúc.</p>
-            <p className="text-[14px] font-semibold text-slate-500 mb-5 max-w-sm">Viết thêm nhật ký để nhìn lại cảm xúc chuyến đi.</p>
+            <p className="text-[16px] font-extrabold text-[#030D2E] mb-1.5">Chưa có đủ nhật ký để tổng kết cảm xúc chuyến đi.</p>
+            <p className="text-[14px] font-semibold text-slate-500 mb-5 max-w-sm">Viết thêm nhật ký để lưu lại cảm xúc và khoảnh khắc đáng nhớ.</p>
             <button 
               onClick={() => setSection("journal")}
               className="flex items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-5 py-2.5 text-[14px] font-extrabold text-kat-text hover:bg-kat-primary/20 active:scale-[0.98] transition-all"
             >
-              <BookOpen className="h-4.5 w-4.5" />
-              Viết nhật ký đầu tiên
+              <BookOpenText className="h-4.5 w-4.5 text-blue-500" />
+              Ghi nhật ký đầu tiên
             </button>
           </div>
         )}
@@ -762,27 +849,27 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         {/* First Moment */}
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between md:col-span-2">
           <div className="flex items-center gap-2 mb-3">
-            <Camera className="h-5 w-5 text-sunset-500" />
-            <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">Khoảnh khắc đầu tiên</h4>
+            <Camera className="h-5 w-5 text-amber-500" />
+            <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">DẤU ẤN ĐẦU TIÊN</h4>
           </div>
           <p className="text-[15.5px] font-extrabold text-[#030D2E] leading-relaxed">
-            {firstMomentText || "Hành trình của bạn chưa bắt đầu. Hãy thêm hoạt động trong lịch trình hoặc viết nhật ký để lưu dấu ấn đầu tiên."}
+            {firstMomentText || "Chưa có dấu ấn đầu tiên. Hãy thêm mục lịch trình hoặc ghi nhật ký để lưu lại khoảnh khắc mở đầu."}
           </p>
         </div>
 
         {/* Most Eventful Day */}
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
-            <Sun className="h-5 w-5 text-amber-500" />
-            <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">Ngày đáng nhớ nhất</h4>
+            <Star className="h-5 w-5 text-amber-500" />
+            <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">NGÀY NỔI BẬT NHẤT</h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
             {maxEventsDate ? (
               <>
-                <span className="font-extrabold text-amber-600">{formatDate(maxEventsDate)}</span> là ngày bận rộn nhất với <span className="font-bold text-[#030D2E]">{maxEventsCount} hoạt động</span> được ghi nhận.
+                <span className="font-extrabold text-amber-600">{formatDate(maxEventsDate)}</span> là ngày bận rộn nhất với <span className="font-bold text-[#030D2E]">{maxEventsCount} mục lịch trình</span> được ghi nhận.
               </>
             ) : (
-              "Chưa có ngày nào có nhiều hoạt động nổi bật."
+              "Chưa có ngày nào đủ dữ liệu để chọn làm ngày nổi bật."
             )}
           </p>
         </div>
@@ -790,11 +877,11 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         {/* Locations Visited */}
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
-            <MapPin className="h-5 w-5 text-kat-primary" />
-            <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">Địa điểm đã ghé qua</h4>
+            <MapPinned className="h-5 w-5 text-kat-primary" />
+            <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">ĐIỂM ĐẾN ĐÃ GHÉ QUA</h4>
           </div>
           <p className="text-[14.5px] font-extrabold text-[#030D2E] leading-relaxed">
-            {uniqueLocations.length > 0 ? uniqueLocations.join(", ") : "Chưa ghi nhận địa điểm cụ thể nào trong lịch trình."}
+            {uniqueLocations.length > 0 ? uniqueLocations.join(", ") : "Chưa có điểm đến cụ thể nào trong lịch trình."}
           </p>
         </div>
       </div>
@@ -804,10 +891,10 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <button 
           onClick={handleExportPdf}
           disabled={isGeneratingPdf}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-6 py-3.5 text-[14px] font-extrabold text-kat-text shadow-sm hover:bg-kat-primary/20 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-blue-50 border border-blue-200/60 px-6 py-3.5 text-[14px] font-extrabold text-blue-600 shadow-sm hover:bg-blue-100/60 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
         >
-          <FileText className="h-5 w-5 animate-bounce" />
-          {isGeneratingPdf ? "Đang tạo PDF..." : "Xuất PDF tổng kết"}
+          <FileDown className="h-5 w-5 text-blue-500 animate-bounce" />
+          {isGeneratingPdf ? "Đang xuất bản PDF..." : "Xuất bản tổng kết PDF"}
         </button>
       </div>
     </div>
@@ -871,7 +958,7 @@ function HubActionRow({
       <button 
         type="button"
         onClick={onClick} 
-        className="group flex w-full items-center justify-between bg-[#FFFDF8] px-5 transition-all hover:bg-slate-50/80 active:scale-[0.99] focus:outline-none"
+        className="group flex w-full items-center justify-between bg-[#FFFDF8] px-5 transition-all hover:bg-slate-50/80 focus:outline-none motion-press"
       >
         {content}
       </button>
@@ -910,7 +997,8 @@ function ActionCard({
   description,
   onClick,
   iconBgColor = "bg-[#00BFB7]/10",
-  iconTextColor = "text-[#00BFB7]"
+  iconTextColor = "text-[#00BFB7]",
+  className = ""
 }: {
   icon: React.ElementType;
   title: string;
@@ -918,12 +1006,16 @@ function ActionCard({
   onClick: () => void;
   iconBgColor?: string;
   iconTextColor?: string;
+  className?: string;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group flex flex-col justify-between items-start text-left p-5 rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] shadow-soft hover:bg-slate-50/60 active:scale-[0.99] transition-all w-full min-h-[140px] focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/50"
+      className={classNames(
+        "group flex flex-col justify-between items-start text-left p-5 rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] shadow-soft hover:bg-slate-50/60 transition-all w-full min-h-[140px] focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/50 motion-press md:motion-hover-lift",
+        className
+      )}
     >
       <div className="flex items-center gap-3">
         <div className={`flex shrink-0 h-10 w-10 items-center justify-center rounded-xl border ${iconBgColor} ${iconTextColor}`}>
@@ -945,6 +1037,7 @@ export function MoreScreen({
   checklist,
   journals,
   packingItems,
+  travelDocuments,
   onTripDeleted,
   onTripSelected,
   onShowToast,
@@ -958,11 +1051,12 @@ export function MoreScreen({
   checklist: ChecklistItem[];
   journals: JournalEntry[];
   packingItems: PackingItem[];
+  travelDocuments?: import("../../db").TravelDocument[];
   onTripDeleted: () => void;
   onTripSelected: (id: number) => void;
   onShowToast?: (msg: string) => void;
-  section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members";
-  setSection: (section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members") => void;
+  section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents";
+  setSection: (section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents") => void;
 }) {
   const [editingTrip, setEditingTrip] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
@@ -981,25 +1075,27 @@ export function MoreScreen({
   const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
   const [isDeleteMemberConfirmOpen, setIsDeleteMemberConfirmOpen] = useState(false);
 
-  const tripData = { trip, members, events, expenses, checklist, journals, packingItems };
+  const tripData = { trip, members, events, expenses, checklist, journals, packingItems, travelDocuments };
 
   async function executeDeleteMember() {
     if (!memberToDelete?.id) return;
     await db.members.delete(memberToDelete.id);
-    onShowToast?.("Đã xóa thành viên");
+    onShowToast?.("Đã xóa người đồng hành");
     setIsDeleteMemberConfirmOpen(false);
     setMemberToDelete(null);
   }
 
   async function executeDeleteTrip() {
     if (!trip.id) return;
-    await db.transaction("rw", [db.trips, db.members, db.events, db.expenses, db.checklist, db.journals, db.packingItems], async () => {
+    await db.transaction("rw", [db.trips, db.members, db.events, db.expenses, db.checklist, db.journals, db.packingItems, db.travelDocuments], async () => {
       await db.members.where("tripId").equals(trip.id!).delete();
       await db.events.where("tripId").equals(trip.id!).delete();
       await db.expenses.where("tripId").equals(trip.id!).delete();
       await db.checklist.where("tripId").equals(trip.id!).delete();
       await db.journals.where("tripId").equals(trip.id!).delete();
       await db.packingItems.where("tripId").equals(trip.id!).delete();
+      await db.travelDocuments.where("tripId").equals(trip.id!).delete();
+      await db.backupPlans.where("tripId").equals(trip.id!).delete();
       await db.trips.delete(trip.id!);
     });
     onTripDeleted();
@@ -1025,7 +1121,7 @@ export function MoreScreen({
         throw new Error("Tệp không đúng định dạng KAT Journey.");
       }
 
-      const newTripId = await db.transaction("rw", [db.trips, db.members, db.events, db.expenses, db.checklist, db.journals, db.packingItems], async () => {
+      const newTripId = await db.transaction("rw", [db.trips, db.members, db.events, db.expenses, db.checklist, db.journals, db.packingItems, db.travelDocuments, db.backupPlans], async () => {
         const importedTrip = parsed.trip!;
         const id = await db.trips.add({
           title: `${importedTrip.title} (import)`,
@@ -1078,6 +1174,25 @@ export function MoreScreen({
             title: item.title ?? "",
             completed: Boolean(item.completed)
           }));
+        const importedDocuments = (parsed.travelDocuments ?? []).map((doc) => ({
+            tripId: id,
+            title: doc.title ?? "",
+            type: doc.type ?? "other",
+            code: doc.code ?? "",
+            date: doc.date ?? "",
+            link: doc.link ?? "",
+            note: doc.note ?? ""
+          }));
+        const importedBackupPlans = (parsed.backupPlans ?? []).map((plan) => ({
+            tripId: id,
+            title: plan.title ?? "",
+            type: plan.type ?? "other",
+            reason: plan.reason ?? "",
+            location: plan.location ?? "",
+            note: plan.note ?? "",
+            activityId: plan.activityId,
+            date: plan.date
+          }));
 
         if (importedMembers.length) await db.members.bulkAdd(importedMembers);
         if (importedEvents.length) await db.events.bulkAdd(importedEvents);
@@ -1085,6 +1200,8 @@ export function MoreScreen({
         if (importedChecklist.length) await db.checklist.bulkAdd(importedChecklist);
         if (importedJournals.length) await db.journals.bulkAdd(importedJournals);
         if (importedPackingItems.length) await db.packingItems.bulkAdd(importedPackingItems);
+        if (importedDocuments.length) await db.travelDocuments.bulkAdd(importedDocuments);
+        if (importedBackupPlans.length) await db.backupPlans.bulkAdd(importedBackupPlans);
         return id;
       });
 
@@ -1124,7 +1241,7 @@ export function MoreScreen({
 
   const getTripDurationText = () => {
     const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
-    if (isDayTrip) return "Đi trong ngày";
+    if (isDayTrip) return "Chuyến đi trong ngày";
     try {
       const start = new Date(trip.startDate);
       const end = new Date(trip.endDate);
@@ -1140,13 +1257,14 @@ export function MoreScreen({
 
   if (section === "journal") return <JournalSection tripId={trip.id!} journals={journals} onShowToast={onShowToast} onBack={() => setSection("overview")} />;
   if (section === "wrapped") return <WrappedSection data={tripData} setSection={setSection} />;
+  if (section === "documents") return <TravelDocumentsSection tripId={trip.id!} onBack={() => setSection("overview")} onShowToast={onShowToast} />;
   
   if (section === "members") {
     const membersWithTasks = members.filter(m => checklist.some(c => c.assignedTo === m.name)).length;
     const membersWithExpenses = members.filter(m => expenses.some(e => e.payer === m.name)).length;
 
     return (
-      <div className="mx-auto max-w-[960px] space-y-6 pb-24">
+      <div className="mx-auto max-w-[960px] space-y-6 pb-0 md:pb-8">
         {/* Header / Title Row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -1158,16 +1276,16 @@ export function MoreScreen({
               <ArrowLeft className="h-5 w-5" />
             </button>
             <div>
-              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-[#030D2E]">Thành viên</h2>
-              <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Quản lý những người cùng tham gia chuyến đi.</p>
+              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-[#030D2E]">Người đồng hành</h2>
+              <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Quản lý những người cùng tham gia và chia sẻ hành trình.</p>
             </div>
           </div>
           <button 
             className="flex h-11 sm:h-12 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] px-5 text-[14px] font-black text-[#030D2E] transition-all hover:brightness-105 active:scale-[0.98] shadow-sm w-full sm:w-auto shrink-0"
             onClick={openNewMember}
           >
-            <Plus className="w-4.5 h-4.5" strokeWidth={2.5} />
-            Thêm thành viên
+            <UserPlus className="w-4.5 h-4.5" strokeWidth={2.5} />
+            Thêm người đồng hành
           </button>
         </div>
 
@@ -1177,7 +1295,7 @@ export function MoreScreen({
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                 <div className="flex flex-col">
-                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Thành viên</span>
+                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Người đồng hành</span>
                   <span className="text-[18px] md:text-[20px] font-black text-[#030D2E] mt-1">{members.length} người</span>
                 </div>
                 <div className="flex flex-col">
@@ -1201,21 +1319,23 @@ export function MoreScreen({
                 </div>
               </div>
               {members.length < 2 && (
-                <p className="pt-3 border-t border-slate-100 text-[13px] font-medium text-slate-500">
-                  Thêm người đồng hành để chia chi phí và phân công chuẩn bị.
-                </p>
+                <div className="pt-3 border-t border-slate-100 flex items-start gap-2.5 text-[13px] font-semibold text-slate-500">
+                  <UsersRound className="h-4.5 w-4.5 text-[#00BFB7] shrink-0 mt-0.5" />
+                  <p>Thêm người đồng hành để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ ràng hơn.</p>
+                </div>
               )}
             </div>
           ) : (
-            <div className="text-left py-1 text-[14px] md:text-[15px] font-medium text-slate-500 leading-relaxed">
-              Thêm người đồng hành để chia chi phí và phân công chuẩn bị hành trình.
+            <div className="flex items-start gap-2.5 py-1 text-[14px] md:text-[15px] font-semibold text-slate-500 leading-relaxed">
+              <UsersRound className="h-5 w-5 text-[#00BFB7] shrink-0 mt-0.5" />
+              <span>Thêm người đồng hành để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ ràng hơn.</span>
             </div>
           )}
         </div>
 
         {/* Member List Section */}
         <section className="space-y-4">
-          <h3 className="text-[17px] font-extrabold text-[#030D2E] px-1">Danh sách {members.length > 0 && `(${members.length})`}</h3>
+          <h3 className="text-[17px] font-extrabold text-[#030D2E] px-1">Danh sách người đồng hành {members.length > 0 && `(${members.length})`}</h3>
           
           {members.length ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1239,10 +1359,19 @@ export function MoreScreen({
                       {/* Member details */}
                       <div className="min-w-0 flex-1 space-y-1">
                         <div className="flex items-center flex-wrap gap-2">
-                          <h4 className="text-[17px] font-extrabold text-[#030D2E] truncate">{member.name}</h4>
-                          <span className="inline-flex items-center rounded-full bg-[#00BFB7]/10 border border-[#00BFB7]/20 px-2.5 py-0.5 text-[11px] font-bold text-[#00BFB7]">
-                            {member.role || "Bạn đồng hành"}
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <UserRound className="h-4.5 w-4.5 text-[#030D2E]/60 shrink-0" />
+                            <h4 className="text-[17px] font-extrabold text-[#030D2E] truncate">{member.name}</h4>
+                          </div>
+                          {(() => {
+                            const isLeader = member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện";
+                            return (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-[#00BFB7]/10 border border-[#00BFB7]/20 px-2.5 py-0.5 text-[11px] font-bold text-[#00BFB7]">
+                                {isLeader && <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
+                                {member.role || "Bạn đồng hành"}
+                              </span>
+                            );
+                          })()}
                         </div>
                         {member.phone && (
                           <p className="text-[13.5px] font-semibold text-slate-500">
@@ -1260,10 +1389,12 @@ export function MoreScreen({
                     {/* Mini Stats & Actions Row */}
                     <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-4 flex-wrap">
                       <div className="flex flex-wrap gap-2 text-[12px] font-bold">
-                        <span className="bg-slate-50 text-slate-600 border border-slate-100 px-2.5 py-1 rounded-lg">
+                        <span className="flex items-center gap-1 bg-slate-50 text-slate-600 border border-slate-100 px-2.5 py-1 rounded-lg">
+                          <Luggage className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                           {assignedTasksCount} việc
                         </span>
-                        <span className="bg-slate-50 text-slate-600 border border-slate-100 px-2.5 py-1 rounded-lg">
+                        <span className="flex items-center gap-1 bg-slate-50 text-slate-600 border border-slate-100 px-2.5 py-1 rounded-lg">
+                          <WalletCards className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                           Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
                         </span>
                       </div>
@@ -1273,7 +1404,7 @@ export function MoreScreen({
                         <button 
                           className="flex h-11 w-11 items-center justify-center rounded-full text-slate-500 bg-slate-50 hover:bg-slate-100 hover:text-slate-600 active:scale-90 transition-all shadow-sm border border-slate-200/40" 
                           onClick={() => openEditMember(member)}
-                          title="Sửa thành viên"
+                          title="Sửa người đồng hành"
                         >
                           <Edit2 className="h-4.5 w-4.5" />
                         </button>
@@ -1283,7 +1414,7 @@ export function MoreScreen({
                             setMemberToDelete(member);
                             setIsDeleteMemberConfirmOpen(true);
                           }}
-                          title="Xóa thành viên"
+                          title="Xóa người đồng hành"
                         >
                           <Trash2 className="h-4.5 w-4.5" />
                         </button>
@@ -1297,18 +1428,18 @@ export function MoreScreen({
             /* Empty State Layout */
             <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
-                <Users className="h-6 w-6" />
+                <UsersRound className="h-6 w-6" />
               </div>
-              <h3 className="text-[16px] font-bold text-[#030D2E]">Chưa có thành viên nào.</h3>
+              <h3 className="text-[16px] font-bold text-[#030D2E]">Chưa có người đồng hành nào</h3>
               <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
-                Thêm người đồng hành để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ hơn.
+                Thêm người đồng hành để cùng chia chi phí, chuẩn bị hành lý và lưu lại vai trò trong chuyến đi.
               </p>
               <button
                 onClick={openNewMember}
-                className="mt-5 inline-flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-6 text-[14px] font-black transition-all hover:brightness-105 active:scale-95 shadow-sm animate-pulse"
+                className="mt-5 inline-flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-6 text-[14px] font-black transition-all hover:brightness-105 active:scale-95 shadow-sm"
               >
-                <Plus className="w-4.5 h-4.5" strokeWidth={2.5} />
-                Thêm thành viên đầu tiên
+                <UserPlus className="w-4.5 h-4.5" strokeWidth={2.5} />
+                Thêm người đồng hành đầu tiên
               </button>
             </div>
           )}
@@ -1339,10 +1470,10 @@ export function MoreScreen({
 
   if (section === "settings") {
     return (
-      <div className="mx-auto max-w-[640px] space-y-6 pb-24">
+      <div className="mx-auto max-w-[640px] space-y-6 pb-0 md:pb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-[32px] font-extrabold tracking-tight text-[#030D2E]">Cài đặt</h2>
+            <h2 className="text-[32px] font-extrabold tracking-tight text-[#030D2E]">Không gian chuyến đi</h2>
             <p className="mt-1 text-[15px] font-medium text-slate-500">Quản lý ứng dụng và cấu hình dữ liệu.</p>
           </div>
           <button
@@ -1354,12 +1485,22 @@ export function MoreScreen({
         </div>
         
         <div className="overflow-hidden rounded-3xl border border-slate-100 bg-[#FFFDF8] shadow-sm">
-          <HubActionRow icon={Settings} label="Phiên bản ứng dụng" value="1.0.0" />
+          <HubActionRow icon={BadgeInfo} label="Phiên bản ứng dụng" value="2.0.0" />
           <HubActionRow icon={Trash2} label="Khôi phục cài đặt gốc" subtitle="Xóa sạch toàn bộ dữ liệu trên thiết bị." onClick={() => void factoryReset()} danger />
         </div>
         
         <div className="mt-12 text-center">
-          <p className="text-[13.5px] font-bold text-slate-400">Thực hiện bởi thanhtungg.</p>
+          <p className="text-[13.5px] font-bold text-slate-400">
+            thực hiện bởi{" "}
+            <a
+              href="https://www.youtube.com/@kat.thanhtungg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline text-slate-500"
+            >
+              thanhtungg.
+            </a>
+          </p>
         </div>
       </div>
     );
@@ -1371,13 +1512,13 @@ export function MoreScreen({
 
   return (
     <div className="mx-auto max-w-[800px] px-2 md:px-0">
-      <div className="flex flex-col gap-6 pb-24">
+      <div className="flex flex-col gap-6 pb-0 md:pb-8">
         
         {/* Title Block */}
         <div>
-          <h2 className="text-[32px] font-extrabold tracking-tight text-[#030D2E]">Cài đặt</h2>
+          <h2 className="text-[32px] font-extrabold tracking-tight text-[#030D2E]">Không gian chuyến đi</h2>
           <p className="mt-1 text-[15px] font-medium text-slate-500">
-            Quản lý thông tin và thành viên chuyến đi.
+            Tùy chỉnh thông tin, người đồng hành và dữ liệu cho hành trình của bạn.
           </p>
         </div>
 
@@ -1388,7 +1529,7 @@ export function MoreScreen({
           <div className="relative z-10 flex flex-col gap-4">
             {/* Header info */}
             <div>
-              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Chuyến đi hiện tại</p>
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Hành trình hiện tại</p>
               <h3 className="mt-1 break-words text-[24px] md:text-[28px] font-black leading-tight tracking-tight text-[#030D2E]">
                 {trip.title}
               </h3>
@@ -1401,11 +1542,11 @@ export function MoreScreen({
                 {trip.location || "Chưa có địa điểm"}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5">
-                <Calendar className="h-3.5 w-3.5 text-kat-primary" />
+                <CalendarDays className="h-3.5 w-3.5 text-kat-primary" />
                 {trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}`}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5">
-                <Sun className="h-3.5 w-3.5 text-kat-primary" />
+                <Clock3 className="h-3.5 w-3.5 text-kat-primary" />
                 {tripDurationText}
               </span>
             </div>
@@ -1413,20 +1554,20 @@ export function MoreScreen({
             {/* Compact inline stats pills */}
             <div className="flex flex-wrap gap-2 pt-2.5 border-t border-slate-200/60 mt-1">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-kat-primary-soft border border-kat-primary/20 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable">
-                <Users className="h-3.5 w-3.5" />
-                {members.length} người
+                <UsersRound className="h-3.5 w-3.5" />
+                {members.length} người đồng hành
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0081BE]/8 border border-[#0081BE]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#0081BE]">
-                <Calendar className="h-3.5 w-3.5" />
-                {events.length} hoạt động
+                <Route className="h-3.5 w-3.5" />
+                {events.length} lịch trình
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/8 border border-emerald-500/15 px-3 py-1.5 text-[12.5px] font-extrabold text-emerald-600">
                 <WalletCards className="h-3.5 w-3.5" />
-                {formatMoney(totalExpense)}
+                {formatMoney(totalExpense)} chi phí
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F89B02]/8 border border-[#F89B02]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#F89B02]">
-                <Backpack className="h-3.5 w-3.5" />
-                {checklistPercent}% chuẩn bị
+                <Luggage className="h-3.5 w-3.5" />
+                Chuẩn bị {checklistPercent}%
               </span>
             </div>
           </div>
@@ -1434,39 +1575,48 @@ export function MoreScreen({
 
         {/* Thao tác chính */}
         <section className="space-y-3">
-          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">Thao tác chính</h3>
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">Công cụ hành trình</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <ActionCard
-              icon={Edit3}
-              title="Sửa thông tin"
-              description="Cập nhật tên, địa điểm và thời gian."
+              icon={MapPinned}
+              title="Thông tin chuyến đi"
+              description="Chỉnh sửa tên chuyến đi, điểm đến và thời gian khởi hành."
               onClick={() => setEditingTrip(true)}
               iconBgColor="bg-sky-50"
               iconTextColor="text-sky-600 border-sky-100"
             />
             <ActionCard
-              icon={Users}
-              title="Quản lý thành viên"
-              description="Thêm hoặc chỉnh sửa người đồng hành."
+              icon={UsersRound}
+              title="Người đồng hành"
+              description="Quản lý người đồng hành cùng tham gia hành trình."
               onClick={() => setSection("members")}
               iconBgColor="bg-amber-50"
               iconTextColor="text-amber-600 border-amber-100"
             />
             <ActionCard
-              icon={Sparkles}
-              title="Tổng kết chuyến đi"
-              description="Xem Travel Wrapped và báo cáo."
+              icon={Trophy}
+              title="Tổng kết hành trình"
+              description="Nhìn lại những điểm nổi bật sau chuyến đi."
               onClick={() => setSection("wrapped")}
               iconBgColor="bg-indigo-50"
               iconTextColor="text-indigo-600 border-indigo-100"
             />
             <ActionCard
-              icon={BookOpen}
-              title="Nhật ký chuyến đi"
-              description="Lưu lại kỷ niệm và ghi chú."
+              icon={BookOpenText}
+              title="Nhật ký hành trình"
+              description="Ghi lại khoảnh khắc, cảm xúc và ghi chú đáng nhớ."
               onClick={() => setSection("journal")}
               iconBgColor="bg-emerald-50"
               iconTextColor="text-emerald-600 border-emerald-100"
+            />
+            <ActionCard
+              icon={TicketCheck}
+              title="Vé, đặt chỗ & giấy tờ"
+              description="Lưu vé, khách sạn, booking và giấy tờ quan trọng."
+              onClick={() => setSection("documents")}
+              iconBgColor="bg-teal-50"
+              iconTextColor="text-teal-600 border-teal-100"
+              className="sm:col-span-2"
             />
           </div>
         </section>
@@ -1480,25 +1630,25 @@ export function MoreScreen({
               className="w-full text-left p-5 flex items-center justify-between hover:bg-slate-50/40 transition-colors focus:outline-none"
             >
               <div>
-                <h4 className="text-[16px] font-extrabold text-[#030D2E]">Dữ liệu & xuất file</h4>
-                <p className="text-[13px] font-semibold text-slate-500 mt-0.5">Sao lưu, khôi phục và xuất dữ liệu khi cần.</p>
+                <h4 className="text-[16px] font-extrabold text-[#030D2E]">Dữ liệu chuyến đi</h4>
+                <p className="text-[13px] font-semibold text-slate-500 mt-0.5">Sao lưu, khôi phục và xuất dữ liệu hành trình khi cần.</p>
               </div>
               <ChevronRight className={classNames("h-5 w-5 text-slate-400 transition-transform duration-200", isDataSectionOpen ? "rotate-90" : "")} />
             </button>
             
             {isDataSectionOpen && (
               <div className="border-t border-slate-100 divide-y divide-slate-100 animate-fadeIn">
-                <HubActionRow icon={Download} label="Sao lưu chuyến đi" subtitle="Tạo bản sao lưu dữ liệu local (.kattrip)." onClick={exportTrip} />
+                <HubActionRow icon={DatabaseBackup} label="Sao lưu hành trình" subtitle="Tạo bản sao lưu an toàn cho toàn bộ dữ liệu chuyến đi." onClick={exportTrip} />
                 
                 {/* Custom Restore Input Row */}
-                <label className="group flex w-full cursor-pointer items-center justify-between bg-[#FFFDF8] px-5 py-3 transition-colors hover:bg-slate-50/80 active:scale-[0.99]">
+                <label className="group flex w-full cursor-pointer items-center justify-between bg-[#FFFDF8] px-5 py-3 transition-colors hover:bg-slate-50/80 motion-press">
                   <div className="flex items-center gap-3.5 min-w-0 flex-1">
                     <div className="flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
-                      <Upload className="h-5.5 w-5.5" strokeWidth={2.2} />
+                      <ArchiveRestore className="h-5.5 w-5.5" strokeWidth={2.2} />
                     </div>
                     <div className="flex flex-col text-left min-w-0 flex-1">
-                      <span className="text-[15.5px] font-extrabold text-[#030D2E]">{importing ? "Đang nhập..." : "Khôi phục dữ liệu"}</span>
-                      <span className="text-[13px] text-slate-500 truncate">Khôi phục dữ liệu từ tệp sao lưu.</span>
+                      <span className="text-[15.5px] font-extrabold text-[#030D2E]">{importing ? "Đang nhập..." : "Khôi phục hành trình"}</span>
+                      <span className="text-[13px] text-slate-500 truncate">Nhập lại dữ liệu từ tệp sao lưu đã tạo trước đó.</span>
                     </div>
                   </div>
                   <ChevronRight className="h-5 w-5 text-slate-300 transition-transform group-hover:translate-x-0.5" />
@@ -1517,8 +1667,8 @@ export function MoreScreen({
                   />
                 </label>
 
-                <HubActionRow icon={FileText} label="Xuất báo cáo PDF" subtitle="Tạo báo cáo tóm tắt chi tiết lịch trình và chi tiêu." onClick={() => exportTripPdf(tripData)} />
-                <HubActionRow icon={Table2} label="Xuất bảng tính Excel" subtitle="Lưu dữ liệu chi phí và checklist sang bảng tính." onClick={() => exportTripExcel(tripData)} />
+                <HubActionRow icon={FileText} label="Xuất báo cáo PDF" subtitle="Tạo bản tổng hợp lịch trình, chi phí và ghi chú chuyến đi." onClick={() => exportTripPdf(tripData)} />
+                <HubActionRow icon={Table2} label="Xuất bảng tính Excel" subtitle="Xuất chi phí, checklist và dữ liệu chuyến đi ra bảng tính." onClick={() => exportTripExcel(tripData)} />
               </div>
             )}
           </div>
@@ -1531,15 +1681,15 @@ export function MoreScreen({
             <div className="flex items-center justify-between px-5 py-4 min-h-[56px]">
               <div className="flex items-center gap-3.5">
                 <div className="flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
-                  <Settings className="h-5.5 w-5.5" strokeWidth={2.2} />
+                  <BadgeInfo className="h-5.5 w-5.5" strokeWidth={2.2} />
                 </div>
                 <div>
                   <span className="block text-[15.5px] font-extrabold text-[#030D2E]">Phiên bản ứng dụng</span>
-                  <span className="block text-[13px] font-semibold text-slate-500 mt-0.5">Phiên bản hiện tại trên thiết bị.</span>
+                  <span className="block text-[13px] font-semibold text-slate-500 mt-0.5">Thông tin phiên bản KAT Journey đang sử dụng.</span>
                 </div>
               </div>
-              <span className="text-[14px] font-black text-[#00BFB7] bg-[#00BFB7]/10 px-3 py-1 rounded-full border border-[#00BFB7]/25">
-                1.0.0
+              <span className="text-[14px] font-black text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">
+                2.0.0
               </span>
             </div>
 
@@ -1554,8 +1704,8 @@ export function MoreScreen({
                   <Coffee className="h-5.5 w-5.5" strokeWidth={2.2} />
                 </div>
                 <div>
-                  <span className="block text-[15.5px] font-extrabold text-[#030D2E]">Ủng hộ tác giả</span>
-                  <span className="block text-[13px] font-semibold text-slate-500 mt-0.5">Mời tác giả tách cà phê để duy trì dự án.</span>
+                  <span className="block text-[15.5px] font-extrabold text-[#030D2E]">Ủng hộ dự án</span>
+                  <span className="block text-[13px] font-semibold text-slate-500 mt-0.5">Gửi một ly cà phê nhỏ để tiếp sức cho KAT Journey.</span>
                 </div>
               </div>
               <ChevronRight className="h-5 w-5 text-slate-300 transition-transform group-hover:translate-x-0.5" />
@@ -1565,7 +1715,7 @@ export function MoreScreen({
 
         {/* Vùng nguy hiểm */}
         <section className="space-y-3 pt-2">
-          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-rose-500/80">Khu vực nguy hiểm</h3>
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-rose-500/80">Vùng thao tác cẩn trọng</h3>
           <div className="overflow-hidden rounded-3xl border border-rose-100/50 bg-rose-50/10 shadow-sm">
             <button 
               type="button"
@@ -1579,10 +1729,10 @@ export function MoreScreen({
                   </div>
                   <div className="min-w-0 flex-1">
                     <span className="block text-[15.5px] font-extrabold text-rose-600">
-                      Xóa chuyến đi này
+                      Xóa vĩnh viễn chuyến đi
                     </span>
                     <span className="block text-[13px] font-semibold mt-0.5 text-rose-500/70">
-                      Xóa toàn bộ dữ liệu của chuyến đi này. Không thể hoàn tác.
+                      Hành động này sẽ xóa toàn bộ lịch trình, chi phí, ghi chú và dữ liệu liên quan. Không thể hoàn tác.
                     </span>
                   </div>
                 </div>
@@ -1596,7 +1746,17 @@ export function MoreScreen({
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-[13.5px] font-bold text-slate-400">Thực hiện bởi thanhtungg.</p>
+          <p className="text-[13.5px] font-bold text-slate-400">
+            thực hiện bởi{" "}
+            <a
+              href="https://www.youtube.com/@kat.thanhtungg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline text-slate-500"
+            >
+              thanhtungg.
+            </a>
+          </p>
         </div>
 
       </div>
@@ -1640,23 +1800,23 @@ export function MoreScreen({
           setIsDeleteConfirmOpen(false);
           setDeleteConfirmationText("");
         }} 
-        title="Xóa chuyến đi này?"
+        title="Xóa chuyến đi vĩnh viễn?"
       >
         <div className="space-y-5">
           <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed">
-            Hành động này có thể làm chuyến đi không còn hiển thị trong danh sách. Dữ liệu sẽ không bị xóa vễn viễn nếu ứng dụng đang sử dụng cơ chế lưu trữ an toàn.
+            Hành động này sẽ xóa toàn bộ lịch trình, chi phí, ghi chú và dữ liệu liên quan đến chuyến đi. Sau khi xóa, không thể hoàn tác.
           </div>
           
           <div className="space-y-2">
             <label className="text-[13.5px] font-bold text-slate-600 block">
-              Để xác nhận xóa, vui lòng nhập chính xác chữ <span className="font-extrabold text-rose-600">XÓA</span> dưới đây:
+              Nhập <span className="text-rose-500 font-black">XÓA</span> để xác nhận thao tác này.
             </label>
             <input
               type="text"
               className="w-full rounded-[14px] border border-slate-200/60 bg-slate-50 px-4 h-[50px] text-[15px] font-bold text-[#030D2E] outline-none transition-all focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
               value={deleteConfirmationText}
               onChange={(e) => setDeleteConfirmationText(e.target.value)}
-              placeholder="Nhập XÓA"
+              placeholder="Gõ XÓA để xác nhận"
             />
           </div>
 
@@ -1682,7 +1842,7 @@ export function MoreScreen({
               className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
             >
               <Trash2 className="h-5 w-5" />
-              Xóa chuyến đi
+              Xóa vĩnh viễn
             </button>
           </div>
         </div>
@@ -1695,7 +1855,7 @@ export function MoreScreen({
           setIsRestoreConfirmOpen(false);
           setSelectedFileForRestore(null);
         }} 
-        title="Khôi phục dữ liệu?"
+        title="Khôi phục hành trình?"
       >
         <div className="space-y-5">
           <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-[13.5px] text-amber-800 font-semibold leading-relaxed">

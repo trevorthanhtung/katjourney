@@ -82,6 +82,37 @@ export interface PackingItem {
   completed: boolean;
 }
 
+export interface TravelDocument {
+  id?: number;
+  tripId: number;
+  title: string;
+  type?: "ticket" | "hotel" | "booking" | "contact" | "map" | "document" | "other";
+  code?: string;
+  date?: string;
+  link?: string;
+  note?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type BackupPlanType = "food" | "place" | "transport" | "hotel" | "indoor" | "weather" | "other";
+
+export interface BackupPlan {
+  id?: number;
+  tripId: number;
+  activityId?: number;
+  date?: string;
+  title: string;
+  type?: BackupPlanType;
+  reason?: string;
+  location?: string;
+  mapLink?: string;
+  estimatedCost?: number;
+  note?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export class KatJourneyDB extends Dexie {
   trips!: Table<Trip, number>;
   members!: Table<Member, number>;
@@ -90,6 +121,8 @@ export class KatJourneyDB extends Dexie {
   checklist!: Table<ChecklistItem, number>;
   journals!: Table<JournalEntry, number>;
   packingItems!: Table<PackingItem, number>;
+  travelDocuments!: Table<TravelDocument, number>;
+  backupPlans!: Table<BackupPlan, number>;
 
   constructor() {
     super("katJourneyDB");
@@ -108,6 +141,27 @@ export class KatJourneyDB extends Dexie {
       checklist: "++id, tripId, section, completed",
       journals: "++id, tripId, date, mood",
       packingItems: "++id, tripId, tripType, completed"
+    });
+    this.version(3).stores({
+      trips: "++id, title, startDate, endDate, createdAt",
+      members: "++id, tripId, name",
+      events: "++id, tripId, date, completed",
+      expenses: "++id, tripId, category, payer",
+      checklist: "++id, tripId, section, completed",
+      journals: "++id, tripId, date, mood",
+      packingItems: "++id, tripId, tripType, completed",
+      travelDocuments: "++id, tripId, type"
+    });
+    this.version(4).stores({
+      trips: "++id, title, startDate, endDate, createdAt",
+      members: "++id, tripId, name",
+      events: "++id, tripId, date, completed",
+      expenses: "++id, tripId, category, payer",
+      checklist: "++id, tripId, section, completed",
+      journals: "++id, tripId, date, mood",
+      packingItems: "++id, tripId, tripType, completed",
+      travelDocuments: "++id, tripId, type",
+      backupPlans: "++id, tripId, activityId, date"
     });
   }
 }
