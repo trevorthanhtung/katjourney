@@ -114,7 +114,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   return (
     <div className="font-sans text-kat-text bg-[#FAF7F1] min-h-screen">
       <header className="sticky top-0 z-40 bg-kat-bg/90 px-4 pb-3 pt-3 backdrop-blur-xl border-b border-kat-border shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
-        <div className="mx-auto flex max-w-3xl items-center justify-between">
+        <div className="mx-auto flex max-w-3xl items-center justify-between h-9 md:h-11">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 select-none">
               <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[28px] w-[28px] object-contain drop-shadow-sm" />
