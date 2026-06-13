@@ -34,7 +34,10 @@ export function toDateInputValue(date: Date) {
 export const today = toDateInputValue(new Date());
 
 export function formatMoney(value: number) {
-  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value);
+  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" })
+    .format(value)
+    .replace(/\s+/g, "")
+    .replace(/[đĐVNDvnd]/g, "₫");
 }
 
 export function formatDate(value: string) {
@@ -70,12 +73,15 @@ export function getTripTiming(trip: Trip) {
   const totalDays = Math.ceil((end - start) / 86400000) + 1;
   
   if (now >= start && now <= end) {
+    if (now === start) {
+      return { label: "Hôm nay là ngày đi", status: "active" };
+    }
     const currentDay = Math.ceil((now - start) / 86400000) + 1;
     return { label: `Ngày ${currentDay} / ${totalDays}`, status: "active" };
   }
   
   const daysSinceEnd = Math.ceil((now - end) / 86400000);
-  return { label: `Kết thúc ${daysSinceEnd} ngày trước`, status: "past" };
+  return { label: `Đã kết thúc ${daysSinceEnd} ngày trước`, status: "past" };
 }
 
 export function getChecklistStats(checklist: ChecklistItem[]) {
@@ -155,6 +161,8 @@ export interface TripData {
   checklist: ChecklistItem[];
   journals: JournalEntry[];
   packingItems: PackingItem[];
+  travelDocuments?: import("../db").TravelDocument[];
+  backupPlans?: import("../db").BackupPlan[];
 }
 
 export function getWrappedStats({ trip, members, events, expenses, checklist, journals, packingItems }: TripData) {
@@ -188,6 +196,7 @@ export function getWrappedStats({ trip, members, events, expenses, checklist, jo
 export interface TripExport {
   app: "KAT Journey";
   version: 1;
+  appVersion?: string;
   exportedAt: string;
   trip: Trip;
   members: Member[];
@@ -196,12 +205,15 @@ export interface TripExport {
   checklist: ChecklistItem[];
   journals?: JournalEntry[];
   packingItems?: PackingItem[];
+  travelDocuments?: import("../db").TravelDocument[];
+  backupPlans?: import("../db").BackupPlan[];
 }
 
-export function createTripExport({ trip, members, events, expenses, checklist, journals, packingItems }: TripData): TripExport {
+export function createTripExport({ trip, members, events, expenses, checklist, journals, packingItems, travelDocuments, backupPlans }: TripData): TripExport {
   return {
     app: "KAT Journey",
     version: 1,
+    appVersion: "1.0.0",
     exportedAt: new Date().toISOString(),
     trip,
     members,
@@ -209,7 +221,9 @@ export function createTripExport({ trip, members, events, expenses, checklist, j
     expenses,
     checklist,
     journals,
-    packingItems
+    packingItems,
+    travelDocuments,
+    backupPlans
   };
 }
 
@@ -244,4 +258,15 @@ export function groupedByDate<T extends { date: string }>(items: T[]) {
     result[item.date] = [...(result[item.date] ?? []), item];
     return result;
   }, {});
+}
+
+export function normalizeSearchText(text: string): string {
+  if (!text) return "";
+  return text
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
 }

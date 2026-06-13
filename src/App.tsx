@@ -1,11 +1,12 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { Backpack, CalendarDays, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft } from "lucide-react";
+import { Backpack, CalendarDays, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft, Search } from "lucide-react";
 import React, { useState } from "react";
 import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "./db";
 
 // Components & Helpers
 import { FormCard, ScreenTitle } from "./components/ui";
 import { classNames } from "./utils/helpers";
+import { TripSearchModal } from "./components/TripSearchModal";
 
 // Screens
 import { HomeScreen } from "./features/home/HomeScreen";
@@ -31,13 +32,13 @@ function NavButton({
       onClick={onClick}
       aria-label={label}
       className={classNames(
-        "relative flex items-center justify-center rounded-full transition-all duration-200 overflow-hidden",
+        "relative flex items-center justify-center rounded-full transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden motion-press",
         isActive 
           ? "bg-kat-primary/10 text-kat-primary px-4 sm:px-5 h-[52px] gap-2" 
           : "text-kat-text/60 hover:text-kat-text/80 w-[52px] h-[52px]"
       )}
     >
-      <Icon className="h-[22px] w-[22px] shrink-0" strokeWidth={isActive ? 2.5 : 2} />
+      <Icon className={classNames("h-[22px] w-[22px] shrink-0 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]", isActive ? "scale-100" : "scale-[0.94]")} strokeWidth={isActive ? 2.5 : 2} />
       {isActive && <span className="text-[14px] font-bold whitespace-nowrap">{label}</span>}
     </button>
   );
@@ -45,7 +46,8 @@ function NavButton({
 
 function App() {
   const [activeTab, setActiveTab] = useState<"home" | "timeline" | "expenses" | "checklist" | "more">("home");
-  const [moreSection, setMoreSection] = useState<"overview" | "journal" | "packing" | "wrapped" | "settings" | "members">("overview");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [moreSection, setMoreSection] = useState<"overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents">("overview");
   const trips = useLiveQuery(() => db.trips.toArray()) ?? [];
   const [selectedTripId, setSelectedTripId] = useState<number | null>(null);
   const [isCreatingTrip, setIsCreatingTrip] = useState(false);
@@ -66,13 +68,14 @@ function App() {
   const checklist = useLiveQuery(() => (tripId ? db.checklist.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
   const journals = useLiveQuery(() => (tripId ? db.journals.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
   const packingItems = useLiveQuery(() => (tripId ? db.packingItems.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
+  const travelDocuments = useLiveQuery(() => (tripId ? db.travelDocuments.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
 
   const sharedExpenses = expenses.filter(e => e.splitType !== "personal");
   const totalSharedExpense = sharedExpenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
   const totalExpense = expenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
   const perPerson = members.length ? totalSharedExpense / members.length : 0;
 
-  function navigateToMore(section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members") {
+  function navigateToMore(section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents") {
     setMoreSection(section);
     setActiveTab("more");
   }
@@ -124,37 +127,47 @@ function App() {
             )}
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
+            {!isManagingTrips && tripId && (
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
+                title="Tìm trong chuyến đi"
+              >
+                <Search className="h-4.5 w-4.5" />
+              </button>
+            )}
             {!(isManagingTrips || (!tripId && !isCreatingTrip)) && (
               <button
                 onClick={() => setIsManagingTrips(true)}
-                className="flex items-center justify-center gap-1.5 rounded-full bg-kat-surface border border-kat-border/60 px-4 py-1.5 text-[13px] font-semibold text-kat-text shadow-sm hover:bg-kat-bg hover:border-kat-border active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-kat-border/50 focus:ring-offset-2"
+                className="flex items-center justify-center rounded-full bg-[#030D2E] text-white px-4 py-1.5 text-[13.5px] font-bold shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-[#030D2E]/30 focus:ring-offset-2"
               >
-                <ArrowLeft className="h-3.5 w-3.5" />
-                <span>Tất cả chuyến đi</span>
+                <span>Trang chủ</span>
               </button>
             )}
           </div>
         </div>
       </header>
 
-      <main className="mx-auto flex min-h-screen w-full max-w-[1120px] flex-col" style={{ paddingBottom: "calc(7rem + env(safe-area-inset-bottom))" }}>
+      <main className="mx-auto flex min-h-screen w-full max-w-[1120px] flex-col mobile-page-content">
         <div className="flex-1 px-4 md:px-6 py-6 md:py-8">
           {isManagingTrips || (!tripId && !isCreatingTrip) ? (
-            <TripManagerScreen
-              trips={trips}
-              onOpenTrip={(id) => {
-                setSelectedTripId(id);
-                setIsManagingTrips(false);
-                setIsCreatingTrip(false);
-              }}
-              onCreateNew={() => {
-                setIsManagingTrips(false);
-                setIsCreatingTrip(true);
-              }}
-            />
+            <div key="manager" className="motion-page-enter">
+              <TripManagerScreen
+                trips={trips}
+                onOpenTrip={(id) => {
+                  setSelectedTripId(id);
+                  setIsManagingTrips(false);
+                  setIsCreatingTrip(false);
+                }}
+                onCreateNew={() => {
+                  setIsManagingTrips(false);
+                  setIsCreatingTrip(true);
+                }}
+              />
+            </div>
           ) : isCreatingTrip ? (
-            <div className="space-y-6 animate-fadeIn">
+            <div key="creating" className="space-y-6 motion-page-enter">
               <ScreenTitle title="Chuyến đi mới" subtitle="Bắt đầu hành trình tiếp theo của bạn." />
               <div className="rounded-2xl border border-emerald-950/5 bg-white p-5 shadow-soft">
                 <TripForm isOpen={true} onClose={() => setIsCreatingTrip(false)} onSaved={(id) => {
@@ -166,12 +179,12 @@ function App() {
               </div>
             </div>
           ) : trip && tripId ? (
-            <div className="animate-fadeIn">
-              {activeTab === "home" && <HomeScreen trip={trip} members={members} events={events} expenses={expenses} checklist={checklist} totalExpense={totalExpense} perPerson={perPerson} onNavigateTab={setActiveTab} onNavigateMore={navigateToMore} />}
+            <div key={activeTab} className="motion-page-enter">
+              {activeTab === "home" && <HomeScreen trip={trip} members={members} events={events} expenses={expenses} checklist={checklist} travelDocuments={travelDocuments} totalExpense={totalExpense} perPerson={perPerson} onNavigateTab={setActiveTab} onNavigateMore={navigateToMore} />}
               {activeTab === "timeline" && <TimelineScreen trip={trip} events={events} />}
               {activeTab === "expenses" && <ExpensesScreen expenses={expenses} members={members} totalExpense={totalExpense} perPerson={perPerson} tripId={tripId} />}
               {activeTab === "checklist" && <ChecklistScreen checklist={checklist} tripId={tripId} />}
-              {activeTab === "more" && <MoreScreen trip={trip} members={members} events={events} expenses={expenses} checklist={checklist} journals={journals} packingItems={packingItems} onTripDeleted={() => { setSelectedTripId(null); setIsManagingTrips(true); showToast("Đã xóa chuyến đi khỏi danh sách."); }} onTripSelected={setSelectedTripId} onShowToast={showToast} section={moreSection} setSection={setMoreSection} />}
+              {activeTab === "more" && <MoreScreen trip={trip} members={members} events={events} expenses={expenses} checklist={checklist} journals={journals} packingItems={packingItems} travelDocuments={travelDocuments} onTripDeleted={() => { setSelectedTripId(null); setIsManagingTrips(true); showToast("Đã xóa chuyến đi khỏi danh sách."); }} onTripSelected={setSelectedTripId} onShowToast={showToast} section={moreSection} setSection={setMoreSection} />}
             </div>
           ) : (
             <div className="flex items-center justify-center py-20">
@@ -246,7 +259,7 @@ function App() {
       )}
 
       {successToast && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
+        <div className="fixed bottom-24 left-1/2 z-50 motion-toast-enter">
           <div className="bg-kat-text text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-4">
             <span className="text-[14px] font-medium">Đã tạo chuyến đi thành công</span>
             <button 
@@ -267,11 +280,21 @@ function App() {
       )}
 
       {toastMessage && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
+        <div className="fixed bottom-24 left-1/2 z-50 motion-toast-enter">
           <div className="bg-[#030D2E] text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2 border border-slate-200/10">
             <span className="text-[14px] font-bold">{toastMessage}</span>
           </div>
         </div>
+      )}
+
+      {tripId && (
+        <TripSearchModal 
+          tripId={tripId}
+          isOpen={isSearchOpen}
+          onClose={() => setIsSearchOpen(false)}
+          onNavigateTab={setActiveTab}
+          onNavigateMore={navigateToMore}
+        />
       )}
     </div>
   );

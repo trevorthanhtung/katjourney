@@ -62,7 +62,7 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="space-y-6 pb-28">
+      <div className="space-y-6 pb-0 md:pb-8">
         <ScreenTitle title="Hành lý" subtitle="Gợi ý thông minh, không lo bỏ sót." />
         
         {/* Progress Card Hero */}

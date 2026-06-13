@@ -9,7 +9,7 @@ function pdfSafeText(value: string | number) {
 }
 
 export function exportTripPdf(data: TripData) {
-  const { trip, members, events, expenses, checklist, journals } = data;
+  const { trip, members, events, expenses, checklist, journals, travelDocuments, backupPlans } = data;
   const doc = new jsPDF({
     orientation: "portrait",
     unit: "mm",
@@ -104,22 +104,22 @@ export function exportTripPdf(data: TripData) {
     doc.text(label, x + 30, y + 11);
   }
 
-  drawStatBox(20, currentY, String(stats.totalDays), "Ngày khám phá");
-  drawStatBox(108, currentY, String(stats.activityCount), "Hoạt động");
+  drawStatBox(20, currentY, String(stats.totalDays), "Ngày hành trình");
+  drawStatBox(108, currentY, String(stats.activityCount), "Mục lịch trình");
   currentY += 22;
-  drawStatBox(20, currentY, stats.checklistPercent + "%", "Chuẩn bị hành lý");
+  drawStatBox(20, currentY, stats.checklistPercent + "%", "Hành lý");
   drawStatBox(108, currentY, String(stats.journalCount), "Trang nhật ký");
   currentY += 26;
 
   // Members Section
-  drawSectionTitle("Thành viên đồng hành");
+  drawSectionTitle("Người đồng hành");
   if (members.length === 0) {
     checkSpace(12);
     doc.setFillColor(250, 247, 241);
     doc.rect(20, currentY, 170, 8, "F");
     doc.setFontSize(8.5);
     doc.setTextColor(100, 116, 139);
-    doc.text("Chưa có thành viên đồng hành.", 24, currentY + 5);
+    doc.text("Chưa có người đồng hành.", 24, currentY + 5);
     currentY += 12;
   } else {
     checkSpace(10);
@@ -380,6 +380,133 @@ export function exportTripPdf(data: TripData) {
     currentY += 4;
   }
 
+  // Travel Documents Section
+  drawSectionTitle("Giấy tờ & thông tin đặt chỗ");
+  const docs = travelDocuments ?? [];
+  if (docs.length === 0) {
+    checkSpace(12);
+    doc.setFillColor(250, 247, 241);
+    doc.rect(20, currentY, 170, 8, "F");
+    doc.setFontSize(8.5);
+    doc.setTextColor(100, 116, 139);
+    doc.text("Chưa có giấy tờ hay thông tin đặt chỗ nào được lưu.", 24, currentY + 5);
+    currentY += 12;
+  } else {
+    checkSpace(8);
+    doc.setFillColor(250, 247, 241);
+    doc.rect(20, currentY, 170, 7, "F");
+    doc.setFontSize(8.5);
+    doc.setTextColor(3, 13, 46);
+    doc.text("Tên giấy tờ", 23, currentY + 4.5);
+    doc.text("Phân loại", 83, currentY + 4.5);
+    doc.text("Mã xác nhận / Code", 123, currentY + 4.5);
+    doc.text("Ngày liên quan", 163, currentY + 4.5);
+    currentY += 7;
+
+    const docTypeLabels: Record<string, string> = {
+      ticket: "Vé xe/máy bay",
+      hotel: "Khách sạn",
+      booking: "Vé tham quan",
+      document: "Giấy tờ cá nhân",
+      contact: "Liên hệ khẩn",
+      map: "Bản đồ",
+      other: "Khác"
+    };
+
+    docs.forEach((d) => {
+      const noteLines = d.note ? (doc.splitTextToSize(d.note, 140) as string[]) : [];
+      const linkLines = d.link ? (doc.splitTextToSize(`Link: ${d.link}`, 140) as string[]) : [];
+      const rowHeight = 7 + (noteLines.length * 4) + (linkLines.length * 4);
+      checkSpace(rowHeight + 2);
+      
+      doc.setDrawColor(232, 225, 216);
+      doc.setLineWidth(0.2);
+      doc.line(20, currentY + rowHeight, 190, currentY + rowHeight);
+      
+      doc.setFontSize(8);
+      doc.setTextColor(3, 13, 46);
+      doc.text(pdfSafeText(d.title), 23, currentY + 4.5);
+      
+      doc.setTextColor(100, 116, 139);
+      doc.text(pdfSafeText(docTypeLabels[d.type || "other"] || "Khác"), 83, currentY + 4.5);
+      doc.text(pdfSafeText(d.code || "—"), 123, currentY + 4.5);
+      doc.text(d.date ? formatDate(d.date) : "—", 163, currentY + 4.5);
+      
+      let localY = currentY + 8;
+      if (noteLines.length > 0) {
+        doc.setFontSize(7.5);
+        doc.setTextColor(120, 120, 120);
+        noteLines.forEach((line) => {
+          doc.text(`Ghi chú: ${line}`, 25, localY);
+          localY += 3.5;
+        });
+      }
+      if (linkLines.length > 0) {
+        doc.setFontSize(7.5);
+        doc.setTextColor(0, 120, 150);
+        linkLines.forEach((line) => {
+          doc.text(line, 25, localY);
+          localY += 3.5;
+        });
+      }
+      currentY = localY;
+    });
+    currentY += 4;
+  }
+
+  // Backup Plans Section
+  drawSectionTitle("Phương án dự phòng");
+  const plans = backupPlans ?? [];
+  if (plans.length === 0) {
+    checkSpace(12);
+    doc.setFillColor(250, 247, 241);
+    doc.rect(20, currentY, 170, 8, "F");
+    doc.setFontSize(8.5);
+    doc.setTextColor(100, 116, 139);
+    doc.text("Chưa có phương án dự phòng nào được lưu.", 24, currentY + 5);
+    currentY += 12;
+  } else {
+    checkSpace(8);
+    doc.setFillColor(250, 247, 241);
+    doc.rect(20, currentY, 170, 7, "F");
+    doc.setFontSize(8.5);
+    doc.setTextColor(3, 13, 46);
+    doc.text("Tên phương án", 23, currentY + 4.5);
+    doc.text("Trường hợp", 83, currentY + 4.5);
+    doc.text("Địa điểm thay thế", 133, currentY + 4.5);
+    currentY += 7;
+
+    plans.forEach((p) => {
+      const noteLines = p.note ? (doc.splitTextToSize(p.note, 140) as string[]) : [];
+      const rowHeight = 7 + (noteLines.length * 4);
+      checkSpace(rowHeight + 2);
+      
+      doc.setDrawColor(232, 225, 216);
+      doc.setLineWidth(0.2);
+      doc.line(20, currentY + rowHeight, 190, currentY + rowHeight);
+      
+      doc.setFontSize(8);
+      doc.setTextColor(3, 13, 46);
+      doc.text(pdfSafeText(p.title), 23, currentY + 4.5);
+      
+      doc.setTextColor(100, 116, 139);
+      doc.text(pdfSafeText(p.reason || "—"), 83, currentY + 4.5);
+      doc.text(pdfSafeText(p.location || "—"), 133, currentY + 4.5);
+      
+      let localY = currentY + 8;
+      if (noteLines.length > 0) {
+        doc.setFontSize(7.5);
+        doc.setTextColor(120, 120, 120);
+        noteLines.forEach((line) => {
+          doc.text(`Ghi chú: ${line}`, 25, localY);
+          localY += 3.5;
+        });
+      }
+      currentY = localY;
+    });
+    currentY += 4;
+  }
+
   // Journals Section
   drawSectionTitle("Nhật ký & Kỷ niệm");
   if (journals.length === 0) {
@@ -443,7 +570,7 @@ export function exportTripPdf(data: TripData) {
     
     // Footer
     doc.line(20, 280, 190, 280);
-    doc.text("Thực hiện bởi thanhtungg.", 20, 285);
+    doc.text("thực hiện bởi thanhtungg.", 20, 285);
     doc.text(`Trang ${i} / ${totalPages}`, 190, 285, { align: "right" });
   }
 
@@ -451,7 +578,7 @@ export function exportTripPdf(data: TripData) {
 }
 
 export function exportTripExcel(data: TripData) {
-  const { trip, members, events, expenses, checklist, journals, packingItems } = data;
+  const { trip, members, events, expenses, checklist, journals, packingItems, travelDocuments, backupPlans } = data;
   const workbook = XLSX.utils.book_new();
   const checklistStats = getChecklistStats(checklist);
   const packingStats = getPackingStats(packingItems);
@@ -535,33 +662,35 @@ export function exportTripExcel(data: TripData) {
     [],
     ["Thông tin chuyến đi", "", "Số liệu tài chính"],
     ["Tên chuyến đi", trip.title, "Tổng chi phí", totalExpense],
-    ["Địa điểm", trip.location || "—", "Chi chung nhóm", sharedTotal],
-    ["Thời gian", dateText, "Tự trả riêng", personalTotal],
+    ["Địa điểm", trip.location || "—", "Chi chung chuyến đi", sharedTotal],
+    ["Thời gian", dateText, "Chi cá nhân", personalTotal],
     ["Loại chuyến", durationText, "Trung bình/người", perPersonShare],
-    ["Thành viên", `${members.length} người`, "Số khoản chi", expenses.length],
+    ["Người đồng hành", `${members.length} người`, "Số khoản chi", expenses.length],
     [],
-    ["Thống kê hoạt động"],
-    ["Lịch trình", `${events.length} hoạt động`],
-    ["Chuẩn bị hành lý", `${checklistStats.completed}/${checklistStats.total} món (${checklistStats.percent}%)`],
-    ["Nhật ký", `${journals.length} trang`]
+    ["Thống kê hành trình"],
+    ["Lịch trình", `${events.length} mục lịch trình`],
+    ["Hành lý", `${checklistStats.completed}/${checklistStats.total} món (${checklistStats.percent}%)`],
+    ["Nhật ký", `${journals.length} trang`],
+    ["Giấy tờ & đặt chỗ", `${(travelDocuments ?? []).length} tài liệu`],
+    ["Phương án dự phòng", `${(backupPlans ?? []).length} phương án`]
   ];
 
   const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
-  setCellFormat(wsSummary, "D4", '#,##0" đ"');
-  setCellFormat(wsSummary, "D5", '#,##0" đ"');
-  setCellFormat(wsSummary, "D6", '#,##0" đ"');
-  setCellFormat(wsSummary, "D7", '#,##0" đ"');
+  setCellFormat(wsSummary, "D4", '#,##0" ₫"');
+  setCellFormat(wsSummary, "D5", '#,##0" ₫"');
+  setCellFormat(wsSummary, "D6", '#,##0" ₫"');
+  setCellFormat(wsSummary, "D7", '#,##0" ₫"');
   autofitColumns(wsSummary);
   XLSX.utils.book_append_sheet(workbook, wsSummary, "Tổng quan");
 
-  // 2. SHEET: THÀNH VIÊN
+  // 2. SHEET: NGƯỜI ĐỒNG HÀNH
   const memberData: any[][] = [
-    ["Danh sách thành viên đồng hành"],
+    ["Danh sách người đồng hành"],
     ["STT", "Họ tên", "Vai trò", "Số điện thoại", "Ghi chú"]
   ];
   const hasMembers = members.length > 0;
   if (!hasMembers) {
-    memberData.push(["—", "Chưa có thành viên nào", "—", "—", "—"]);
+    memberData.push(["—", "Chưa có người đồng hành nào", "—", "—", "—"]);
   } else {
     members.forEach((m, idx) => {
       memberData.push([
@@ -576,16 +705,16 @@ export function exportTripExcel(data: TripData) {
   const wsMembers = XLSX.utils.aoa_to_sheet(memberData);
   autofitColumns(wsMembers);
   setupViewsAndFilters(wsMembers, 1, 5, memberData.length, hasMembers);
-  XLSX.utils.book_append_sheet(workbook, wsMembers, "Thành viên");
+  XLSX.utils.book_append_sheet(workbook, wsMembers, "Người đồng hành");
 
   // 3. SHEET: LỊCH TRÌNH
   const eventData: any[][] = [
-    ["Lịch trình hoạt động chuyến đi"],
-    ["STT", "Ngày", "Giờ", "Hoạt động", "Địa điểm", "Link bản đồ", "Ghi chú", "Trạng thái"]
+    ["Lịch trình chi tiết chuyến đi"],
+    ["STT", "Ngày", "Giờ", "Mục lịch trình", "Địa điểm", "Link bản đồ", "Ghi chú", "Trạng thái"]
   ];
   const hasEvents = events.length > 0;
   if (!hasEvents) {
-    eventData.push(["—", "—", "—", "Chưa có hoạt động nào trong lịch trình.", "—", "—", "—", "—"]);
+    eventData.push(["—", "—", "—", "Chưa có mục lịch trình nào.", "—", "—", "—", "—"]);
   } else {
     const sortedEvents = [...events].sort((a, b) => a.date.localeCompare(b.date) || (a.time || "").localeCompare(b.time || ""));
     sortedEvents.forEach((e, idx) => {
@@ -622,7 +751,7 @@ export function exportTripExcel(data: TripData) {
         Number(e.amount || 0),
         e.category,
         e.description || "—",
-        isPersonal ? "Tự trả riêng" : "Chi chung nhóm",
+        isPersonal ? "Chi cá nhân" : "Chi chung chuyến đi",
         isPersonal ? (e.payer || "Khoản cá nhân") : (e.payer || "Chưa rõ người trả")
       ]);
     });
@@ -632,8 +761,8 @@ export function exportTripExcel(data: TripData) {
   expenseData.push([]);
   expenseData.push(["Thống kê chi phí tổng hợp"]);
   expenseData.push(["Tổng chi phí", totalExpense]);
-  expenseData.push(["Chi chung nhóm", sharedTotal]);
-  expenseData.push(["Tự trả riêng", personalTotal]);
+  expenseData.push(["Chi chung chuyến đi", sharedTotal]);
+  expenseData.push(["Chi cá nhân", personalTotal]);
   expenseData.push(["Trung bình mỗi người", perPersonShare]);
   expenseData.push(["Số khoản chi", expenses.length]);
 
@@ -642,18 +771,18 @@ export function exportTripExcel(data: TripData) {
   // Format table data cells
   if (hasExpenses) {
     for (let i = 3; i <= 2 + expenses.length; i++) {
-      setCellFormat(wsExpenses, `B${i}`, '#,##0" đ"');
+      setCellFormat(wsExpenses, `B${i}`, '#,##0" ₫"');
     }
   } else {
-    setCellFormat(wsExpenses, "B3", '#,##0" đ"');
+    setCellFormat(wsExpenses, "B3", '#,##0" ₫"');
   }
 
   // Format summary cells
   const summaryStartRow = 2 + (hasExpenses ? expenses.length : 1) + 3;
-  setCellFormat(wsExpenses, `B${summaryStartRow}`, '#,##0" đ"');
-  setCellFormat(wsExpenses, `B${summaryStartRow + 1}`, '#,##0" đ"');
-  setCellFormat(wsExpenses, `B${summaryStartRow + 2}`, '#,##0" đ"');
-  setCellFormat(wsExpenses, `B${summaryStartRow + 3}`, '#,##0" đ"');
+  setCellFormat(wsExpenses, `B${summaryStartRow}`, '#,##0" ₫"');
+  setCellFormat(wsExpenses, `B${summaryStartRow + 1}`, '#,##0" ₫"');
+  setCellFormat(wsExpenses, `B${summaryStartRow + 2}`, '#,##0" ₫"');
+  setCellFormat(wsExpenses, `B${summaryStartRow + 3}`, '#,##0" ₫"');
 
   autofitColumns(wsExpenses);
   setupViewsAndFilters(wsExpenses, 1, 6, 2 + (hasExpenses ? expenses.length : 1), hasExpenses);
@@ -751,6 +880,69 @@ export function exportTripExcel(data: TripData) {
   autofitColumns(wsLuggage);
   setupViewsAndFilters(wsLuggage, 1, 4, 2 + (hasLuggage ? packingItems.length : 1), hasLuggage);
   XLSX.utils.book_append_sheet(workbook, wsLuggage, "Hành lý");
+
+  // 8. SHEET: GIẤY TỜ & ĐẶT CHỖ
+  const docTypeLabels: Record<string, string> = {
+    ticket: "Vé máy bay / tàu xe",
+    hotel: "Khách sạn / lưu trú",
+    booking: "Vé tham quan / đặt chỗ",
+    document: "Giấy tờ cá nhân / hộ chiếu",
+    contact: "Liên hệ khẩn cấp",
+    map: "Bản đồ / địa chỉ",
+    other: "Khác"
+  };
+  const docData: any[][] = [
+    ["Danh sách giấy tờ & đặt chỗ du lịch"],
+    ["STT", "Loại", "Tên mục", "Mã / thông tin", "Ngày liên quan", "Link", "Ghi chú"]
+  ];
+  const docsList = travelDocuments ?? [];
+  const hasDocs = docsList.length > 0;
+  if (!hasDocs) {
+    docData.push(["—", "—", "Chưa có thông tin giấy tờ nào được lưu.", "—", "—", "—", "—"]);
+  } else {
+    docsList.forEach((d, idx) => {
+      docData.push([
+        idx + 1,
+        docTypeLabels[d.type || "other"] || "Khác",
+        d.title,
+        d.code || "—",
+        d.date ? formatDate(d.date) : "—",
+        d.link || "—",
+        d.note || "—"
+      ]);
+    });
+  }
+  const wsDocs = XLSX.utils.aoa_to_sheet(docData);
+  autofitColumns(wsDocs);
+  setupViewsAndFilters(wsDocs, 1, 7, docData.length, hasDocs);
+  XLSX.utils.book_append_sheet(workbook, wsDocs, "Giấy tờ & Đặt chỗ");
+
+  // 9. SHEET: PHƯƠNG ÁN DỰ PHÒNG
+  const planData: any[][] = [
+    ["Danh sách phương án dự phòng"],
+    ["STT", "Tên phương án", "Trường hợp áp dụng", "Loại", "Địa điểm thay thế", "Ngày", "Ghi chú"]
+  ];
+  const plansList = backupPlans ?? [];
+  const hasPlans = plansList.length > 0;
+  if (!hasPlans) {
+    planData.push(["—", "Chưa có phương án dự phòng nào.", "—", "—", "—", "—", "—"]);
+  } else {
+    plansList.forEach((p, idx) => {
+      planData.push([
+        idx + 1,
+        p.title,
+        p.reason || "—",
+        p.type === "food" ? "Ăn uống" : p.type === "place" ? "Địa điểm" : p.type === "transport" ? "Di chuyển" : "Khác",
+        p.location || "—",
+        p.date ? formatDate(p.date) : "—",
+        p.note || "—"
+      ]);
+    });
+  }
+  const wsPlans = XLSX.utils.aoa_to_sheet(planData);
+  autofitColumns(wsPlans);
+  setupViewsAndFilters(wsPlans, 1, 7, planData.length, hasPlans);
+  XLSX.utils.book_append_sheet(workbook, wsPlans, "Phương án dự phòng");
 
   XLSX.writeFile(workbook, excelFileName);
 }
