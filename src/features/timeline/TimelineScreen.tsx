@@ -1011,14 +1011,6 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
         </div>
       </div>
 
-      {/* Mobile Floating Action Button (FAB) (min 44x44px touch area) */}
-      <button
-        onClick={() => openNewForm()}
-        className="fixed bottom-20 right-6 z-40 md:hidden flex h-14 w-14 items-center justify-center rounded-full bg-[#00BFB7] text-[#030D2E] shadow-lg hover:scale-105 active:scale-95 focus:outline-none transition-all motion-press"
-        aria-label="Thêm mục lịch trình"
-      >
-        <Plus className="h-7 w-7" strokeWidth={2.5} />
-      </button>
 
       <EventForm
         tripId={trip.id!}
