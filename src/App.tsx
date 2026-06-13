@@ -195,16 +195,16 @@ function App() {
 
   return (
     <div className="font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text">
-      <header className="sticky top-0 z-40 bg-kat-bg/90 px-4 pb-3 pt-3 backdrop-blur-xl border-b border-kat-border shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
+      <header className="sticky top-0 z-40 bg-kat-bg/90 px-3 py-2 md:px-4 md:py-3 backdrop-blur-xl border-b border-kat-border shadow-sm" style={{ paddingTop: "calc(0.5rem + env(safe-area-inset-top))" }}>
         <GlobalToast />
         <div className="mx-auto flex max-w-[1120px] items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button 
               onClick={() => setIsManagingTrips(true)}
-              className="flex items-center gap-2 hover:opacity-80 active:scale-98 transition-all focus:outline-none"
+              className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 active:scale-98 transition-all focus:outline-none"
             >
-              <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[28px] w-[28px] object-contain drop-shadow-sm" />
-              <h1 className="text-[20px] font-extrabold tracking-tight text-kat-text">KAT Journey</h1>
+              <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-6 w-6 sm:h-7 sm:w-7 object-contain drop-shadow-sm" />
+              <h1 className="text-base sm:text-lg md:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap">KAT Journey</h1>
             </button>
             
             {/* Desktop Navigation */}
