@@ -173,39 +173,39 @@ export function HomeScreen({
 
     return (
       <section 
-        className="relative overflow-hidden rounded-[24px] text-white shadow-soft transition-all duration-300 motion-page-enter p-5 md:p-6"
+        className="relative overflow-hidden rounded-[24px] text-white shadow-soft transition-all duration-300 motion-page-enter py-4 px-4 md:p-6"
         style={{ background: "linear-gradient(135deg, #030D2E 0%, #003D4A 60%, #007C78 100%)" }}
       >
         <Globe className="absolute -bottom-24 -right-12 w-[300px] h-[300px] text-white opacity-[0.04] pointer-events-none stroke-[1]" />
         
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6">
           <div className="flex flex-col items-start text-left max-w-2xl w-full">
-            <p className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold tracking-wider text-white/90 shadow-sm backdrop-blur-md border border-white/10 mb-3">
+            <p className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold tracking-wider text-white/90 shadow-sm backdrop-blur-md border border-white/10 mb-2">
               {badge}
             </p>
-            <h2 className="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight drop-shadow-sm">{trip.title}</h2>
+            <h2 className="text-2xl md:text-4xl font-extrabold leading-tight tracking-tight drop-shadow-sm">{trip.title}</h2>
             
-            <div className="mt-4 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-[13px] font-semibold backdrop-blur-md border border-white/10 shadow-inner text-white/90">
-                <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1 text-[12px] font-semibold backdrop-blur-md border border-white/10 shadow-inner text-white/90">
+                <MapPin className="h-3 w-3 text-kat-primary" />
                 {trip.location || "Đang lên kế hoạch"}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-[13px] font-semibold backdrop-blur-md border border-white/10 shadow-inner text-white/90">
-                <CalendarDays className="h-3.5 w-3.5 text-kat-primary" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1 text-[12px] font-semibold backdrop-blur-md border border-white/10 shadow-inner text-white/90">
+                <CalendarDays className="h-3 w-3 text-kat-primary" />
                 {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-[13px] font-semibold backdrop-blur-md border border-white/10 shadow-inner text-white/90">
-                <Clock className="h-3.5 w-3.5 text-kat-primary" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1 text-[12px] font-semibold backdrop-blur-md border border-white/10 shadow-inner text-white/90">
+                <Clock className="h-3 w-3 text-kat-primary" />
                 {durationText}
               </span>
             </div>
           </div>
 
-          <div className="flex w-full md:w-auto flex-col items-center justify-center rounded-xl bg-white/8 p-4 md:px-6 backdrop-blur-md border border-white/10 shadow-sm shrink-0">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-white/80">
+          <div className="flex w-full md:w-auto flex-col items-center justify-center rounded-xl bg-white/8 py-2.5 px-4 md:px-6 md:py-4 backdrop-blur-md border border-white/10 shadow-sm shrink-0">
+            <p className="text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-white/80">
               {statusLabel}
             </p>
-            <p className="mt-0.5 text-[22px] md:text-[26px] font-extrabold tracking-tight text-white/95">{statusValue}</p>
+            <p className="mt-0.5 text-[20px] md:text-[26px] font-extrabold tracking-tight text-white/95">{statusValue}</p>
           </div>
         </div>
       </section>
@@ -219,7 +219,7 @@ export function HomeScreen({
   // 3. Layout for completed trips
   const renderPastLayout = () => {
     return (
-      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-6 md:space-y-0">
+      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
         {/* Left Column: Nhìn lại chuyến đi */}
         <section className="space-y-4">
           <h3 className="text-[17px] font-extrabold text-[#030D2E] px-1 motion-title-enter">Nhìn lại chuyến đi</h3>
@@ -373,9 +373,9 @@ export function HomeScreen({
     const reminders = getTripReminders({ trip, members, events, expenses, checklist, travelDocuments });
 
     return (
-      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-6 md:space-y-0">
+      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
         {/* Left Column: Hoạt động tiếp theo & Nhắc việc trước chuyến đi */}
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {/* Hoạt động tiếp theo */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Hoạt động tiếp theo</h3>
@@ -594,21 +594,11 @@ export function HomeScreen({
     const todayBackupPlans = backupPlans.filter(p => p.date === today || (p.activityId && todayEvents.some(e => e.id === p.activityId)));
 
     return (
-      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-6 md:space-y-0">
+      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
         {/* Left Column: Hôm nay focus */}
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {/* Day Mode Top Card */}
-          <section id="today-widget" className="rounded-3xl bg-white p-6 border border-slate-100 shadow-sm space-y-5 motion-card-enter motion-delay-1">
-            <div className="border-b border-slate-100 pb-4">
-              <h3 className="text-[17px] font-extrabold text-[#030D2E] flex items-center gap-2">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-ping" style={{ animationDuration: "2s" }} />
-                Hôm nay là ngày đi
-              </h3>
-              <p className="text-[13px] font-semibold text-slate-500 mt-1 leading-relaxed">
-                Kiểm tra nhanh lịch trình, giấy tờ và những món cần mang theo.
-              </p>
-            </div>
-
+          <section id="today-widget" className="rounded-3xl bg-white p-4 md:p-6 border border-slate-100 shadow-sm space-y-4 md:space-y-5 motion-card-enter motion-delay-1">
             {/* Phương án dự phòng hôm nay */}
             {todayBackupPlans.length > 0 && (
               <div className="p-4 bg-kat-primary/5 rounded-2xl border border-kat-primary/20 flex items-start gap-3">
@@ -843,7 +833,7 @@ export function HomeScreen({
   };
 
   return (
-    <div className="space-y-6 md:space-y-8 animate-fadeIn mx-auto w-full max-w-[1120px]">
+    <div className="space-y-4 md:space-y-6 animate-fadeIn mx-auto w-full max-w-[1120px]">
       {renderHero()}
       
       {status === "past" && renderPastLayout()}

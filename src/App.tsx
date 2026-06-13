@@ -302,21 +302,13 @@ function App() {
                 </div>
               </>
             )}
-            {!(isManagingTrips || (!tripId && !isCreatingTrip)) && (
-              <button
-                onClick={() => setIsManagingTrips(true)}
-                className="flex items-center justify-center rounded-full bg-[#030D2E] text-white px-4 py-1.5 text-[13.5px] font-bold shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-[#030D2E]/30 focus:ring-offset-2"
-              >
-                <span>Trang chủ</span>
-              </button>
-            )}
           </div>
         </div>
       </header>
 
       <main className={classNames(
         "mx-auto flex min-h-screen w-full max-w-[1120px] flex-col",
-        (!isManagingTrips && tripId) ? "mobile-page-content" : "pb-12"
+        (!isManagingTrips && tripId) ? "pb-24 md:pb-12" : "pb-12"
       )}>
         <div className="flex-1 px-4 md:px-6 py-6 md:py-8">
           {isManagingTrips || (!tripId && !isCreatingTrip) ? (
@@ -366,8 +358,8 @@ function App() {
 
 
       {!isManagingTrips && tripId && (
-        <nav className="fixed inset-x-4 z-40 mx-auto max-w-[520px] md:hidden" style={{ bottom: "calc(1.5rem + env(safe-area-inset-bottom))" }}>
-          <div className="flex h-[68px] items-center justify-between rounded-full bg-kat-surface/95 px-2 shadow-floating backdrop-blur-xl ring-1 ring-kat-primary/20">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-slate-200/50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden pb-[env(safe-area-inset-bottom)]">
+          <div className="mx-auto max-w-[520px] flex h-[68px] items-center justify-between px-6">
             <NavButton
               isActive={activeTab === "home"}
               onClick={() => setActiveTab("home")}

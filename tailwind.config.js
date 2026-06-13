@@ -4,6 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        background: "#FAF7F1",
         kat: {
           bg: "#FAF7F1",
           surface: "#FFFDF8",
