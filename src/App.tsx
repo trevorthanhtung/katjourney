@@ -248,14 +248,6 @@ function App() {
             {!isManagingTrips && tripId && (
               <>
                 <button
-                  onClick={() => setIsManagingTrips(true)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
-                  title="Trang chủ (Danh sách chuyến đi)"
-                >
-                  <Home className="h-4.5 w-4.5" />
-                </button>
-
-                <button
                   onClick={() => setIsSearchOpen(true)}
                   className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
                   title="Tìm trong chuyến đi"
@@ -305,6 +297,14 @@ function App() {
                     </>
                   )}
                 </div>
+
+                <button
+                  onClick={() => setIsManagingTrips(true)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
+                  title="Trang chủ (Danh sách chuyến đi)"
+                >
+                  <Home className="h-4.5 w-4.5" />
+                </button>
               </>
             )}
           </div>
