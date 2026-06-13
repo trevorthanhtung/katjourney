@@ -12,8 +12,8 @@ export default defineConfig({
         name: "KAT Journey",
         short_name: "KAT Journey",
         description: "Lên kế hoạch chuyến đi gọn gàng, theo dõi lịch trình, checklist, chi phí và lưu lại kỷ niệm du lịch.",
-        theme_color: "#0f766e",
-        background_color: "#fffaf3",
+        theme_color: "#FAF7F1",
+        background_color: "#FAF7F1",
         display: "standalone",
         start_url: "/",
         icons: [
