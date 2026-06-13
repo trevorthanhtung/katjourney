@@ -74,7 +74,7 @@ export function HomeScreen({
   const journals = useLiveQuery(() => db.journals.where("tripId").equals(trip.id!).toArray(), [trip.id]) ?? [];
   const packingItems = useLiveQuery(() => db.packingItems.where("tripId").equals(trip.id!).toArray(), [trip.id]) ?? [];
   const backupPlans = useLiveQuery(() => db.backupPlans.where("tripId").equals(trip.id!).toArray(), [trip.id]) ?? [];
-  const { pendingRequests, activeToken } = useShareChangeRequests(trip.id ? String(trip.id) : "");
+  const { pendingRequests, activeToken } = useShareChangeRequests(trip);
 
   const timing = getTripTiming(trip);
   const checklistStats = getChecklistStats(checklist);

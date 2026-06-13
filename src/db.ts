@@ -12,6 +12,7 @@ export interface Trip {
   startDate: string;
   endDate: string;
   createdAt: string;
+  shareToken?: string;
 }
 
 export interface Member {

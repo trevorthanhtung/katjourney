@@ -1205,11 +1205,15 @@ export function MoreScreen({
     includeBackupPlans: true,
     includeDocuments: false,
   });
-  const [activeShareLink, setActiveShareLink] = useState<{ token: string; url: string } | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
   const [isRequestsSheetOpen, setIsRequestsSheetOpen] = useState(false);
 
-  const { pendingRequests, activeToken } = useShareChangeRequests(String(trip.id!));
+  const { pendingRequests, activeToken } = useShareChangeRequests(trip);
+
+  const activeShareLink = trip.shareToken ? {
+    token: trip.shareToken,
+    url: `${window.location.origin}/share/${trip.shareToken}`
+  } : null;
 
   const tripData = { trip, members, events, expenses, checklist, journals, packingItems, travelDocuments };
 
@@ -1233,8 +1237,7 @@ export function MoreScreen({
     try {
       setShareLoading(true);
       const { createShareLink } = await import("../../services/cloudShareService");
-      const result = await createShareLink(trip.id!, { ...shareOptions, mode: "request_edit" });
-      setActiveShareLink(result);
+      await createShareLink(trip.id!, { ...shareOptions, mode: "request_edit" });
     } catch (e: any) {
       alert("Lỗi khi tạo link chia sẻ. Vui lòng thử lại sau.");
       console.error(e);
@@ -1248,8 +1251,7 @@ export function MoreScreen({
     try {
       setShareLoading(true);
       const { revokeShareLink } = await import("../../services/cloudShareService");
-      await revokeShareLink(activeShareLink.token);
-      setActiveShareLink(null);
+      await revokeShareLink(trip.id!, activeShareLink.token);
       alert("Đã tắt link chia sẻ.");
     } catch (e: any) {
       alert("Lỗi khi tắt link chia sẻ. Vui lòng thử lại sau.");
