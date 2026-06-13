@@ -199,13 +199,10 @@ function App() {
         <GlobalToast />
         <div className="mx-auto flex max-w-[1120px] items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
-            <button 
-              onClick={() => setIsManagingTrips(true)}
-              className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 active:scale-98 transition-all focus:outline-none"
-            >
+            <div className="flex items-center gap-1.5 sm:gap-2 select-none">
               <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-6 w-6 sm:h-7 sm:w-7 object-contain drop-shadow-sm" />
               <h1 className="text-base sm:text-lg md:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap">KAT Journey</h1>
-            </button>
+            </div>
             
             {/* Desktop Navigation */}
             {!isManagingTrips && tripId && (
