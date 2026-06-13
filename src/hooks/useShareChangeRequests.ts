@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc } from 'firebase/firestore';
 import { firebaseEnabled, initFirebase } from '../lib/firebase';
+import { Trip } from '../db';
 
 export interface AppChangeRequest {
   id: string;
@@ -17,23 +18,26 @@ export interface AppChangeRequest {
   reviewedByUid?: string;
 }
 
-export function useShareChangeRequests(tripId: string) {
+export function useShareChangeRequests(trip: Trip | undefined) {
   const [pendingRequests, setPendingRequests] = useState<AppChangeRequest[]>([]);
   const [activeToken, setActiveToken] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!firebaseEnabled || !tripId) return;
+    if (!firebaseEnabled || !trip || !trip.shareToken) {
+      setActiveToken(null);
+      setPendingRequests([]);
+      return;
+    }
 
     let unsubShare: (() => void) | undefined;
     let unsubRequests: (() => void) | undefined;
 
     initFirebase().then(({ db: firestoreDb }) => {
-      const qShare = query(collection(firestoreDb, 'publicShares'), where('sourceTripId', '==', tripId));
+      const shareRef = doc(firestoreDb, 'publicShares', trip.shareToken!);
       
-      unsubShare = onSnapshot(qShare, (snap) => {
-        if (!snap.empty) {
-          const shareDoc = snap.docs[0];
-          const shareData = shareDoc.data();
+      unsubShare = onSnapshot(shareRef, (shareSnap) => {
+        if (shareSnap.exists()) {
+          const shareData = shareSnap.data();
           
           if (shareData.revoked) {
             setActiveToken(null);
@@ -42,7 +46,7 @@ export function useShareChangeRequests(tripId: string) {
             return;
           }
 
-          const token = shareData.token || shareDoc.id;
+          const token = shareData.token || shareSnap.id;
           setActiveToken(token);
 
           if (unsubRequests) unsubRequests(); // cleanup previous
@@ -73,7 +77,7 @@ export function useShareChangeRequests(tripId: string) {
       if (unsubShare) unsubShare();
       if (unsubRequests) unsubRequests();
     };
-  }, [tripId]);
+  }, [trip?.id, trip?.shareToken]);
 
   return { pendingRequests, activeToken };
 }

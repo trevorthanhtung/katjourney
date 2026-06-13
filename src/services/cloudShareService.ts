@@ -99,9 +99,14 @@ export async function createShareLink(
       destination: trip.location,
       startDate: trip.startDate,
       endDate: trip.endDate,
+      tripType: trip.tripType || "multiDay",
     }
   });
-  console.log("[CloudShare] Parent document created successfully.");
+
+  // 4. Update local trip with shareToken
+  await localDb.trips.update(tripId, { shareToken: token });
+
+  console.log("[CloudShare] Done creating link:", token);
 
   const writes: { ref: any; data: any }[] = [];
 
@@ -141,16 +146,24 @@ export async function createShareLink(
 /**
  * Revokes an existing share link by setting revoked = true.
  */
-export async function revokeShareLink(token: string): Promise<void> {
+export async function revokeShareLink(tripId: number, token: string): Promise<void> {
   await ensureCloudShareReady();
-  await ensureAnonymousUser();
+  const user = await ensureAnonymousUser();
   const { db } = await initFirebase();
+  const { doc, getDoc, updateDoc, serverTimestamp } = await import('firebase/firestore');
+
   const shareRef = doc(db, 'publicShares', token);
+  const snap = await getDoc(shareRef);
   
-  await updateDoc(shareRef, {
-    revoked: true,
-    updatedAt: serverTimestamp()
-  });
+  if (snap.exists() && snap.data().ownerUid === user.uid) {
+    await updateDoc(shareRef, {
+      revoked: true,
+      updatedAt: serverTimestamp()
+    });
+  }
+
+  // Clear local shareToken
+  await localDb.trips.update(tripId, { shareToken: undefined });
 }
 
 /**
