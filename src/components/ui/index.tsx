@@ -234,14 +234,16 @@ export function BottomSheet({
   title, 
   subtitle, 
   children,
-  footer
+  footer,
+  headerAction
 }: { 
   isOpen: boolean; 
   onClose: () => void; 
   title: string; 
-  subtitle?: string; 
+  subtitle?: React.ReactNode; 
   children: React.ReactNode;
   footer?: React.ReactNode;
+  headerAction?: React.ReactNode;
 }) {
   if (!isOpen) return null;
 
@@ -256,19 +258,22 @@ export function BottomSheet({
         <div className="flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 md:hidden" />
         
         {/* Header */}
-        <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-5 md:px-6 py-3.5 md:py-4">
-          <div className="pr-4">
-            <h3 className="text-[20px] md:text-[22px] font-bold text-slate-900 leading-snug">{title}</h3>
-            {subtitle && <p className="mt-1 text-[13.5px] text-slate-500 leading-relaxed">{subtitle}</p>}
+        <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-5 md:px-6 py-3.5 md:py-4 gap-3">
+          <div className="pr-2 min-w-0 flex-1">
+            <h3 className="text-[20px] md:text-[22px] font-bold text-slate-900 leading-snug truncate">{title}</h3>
+            {subtitle && <div className="mt-1 text-[13.5px] text-slate-500 leading-relaxed">{subtitle}</div>}
           </div>
-          <button 
-            className="flex shrink-0 h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200" 
-            onClick={onClose}
-            title="Đóng"
-            aria-label="Đóng"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            {headerAction}
+            <button 
+              className="flex shrink-0 h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 focus:outline-none" 
+              onClick={onClose}
+              title="Đóng"
+              aria-label="Đóng"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
         
         {/* Content */}
@@ -389,6 +394,79 @@ export function TypedDeleteConfirmModal({
     </BottomSheet>
   );
 }
+
+export function DeleteConfirmModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  description,
+  itemName,
+  confirmLabel = "Xóa"
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void | Promise<void>;
+  title: string;
+  description: React.ReactNode;
+  itemName?: string;
+  confirmLabel?: string;
+}) {
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setIsSubmitting(false);
+    }
+  }, [isOpen]);
+
+  async function handleConfirm() {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await onConfirm();
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <BottomSheet isOpen={isOpen} onClose={onClose} title={title}>
+      <div className="space-y-5">
+        <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed">
+          {description}
+        </div>
+
+        {itemName && (
+          <div className="rounded-2xl border border-slate-200/70 bg-slate-50 px-4 py-3">
+            <p className="text-[12px] font-black uppercase tracking-wide text-slate-400">Mục sẽ xóa</p>
+            <p className="mt-1 break-words text-[15px] font-extrabold text-[#030D2E]">{itemName}</p>
+          </div>
+        )}
+
+        <div className="pt-2 flex flex-col sm:flex-row gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200 motion-press"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            disabled={isSubmitting}
+            onClick={handleConfirm}
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:bg-rose-200 disabled:border-rose-200 disabled:cursor-not-allowed transition-all active:scale-[0.98] disabled:active:scale-100 motion-press"
+          >
+            <Trash2 className="h-5 w-5" />
+            {isSubmitting ? "Đang xóa..." : confirmLabel}
+          </button>
+        </div>
+      </div>
+    </BottomSheet>
+  );
+}
+
 
 export function FAB({ icon, label, onClick, className }: { icon: React.ReactNode; label: string; onClick: () => void; className?: string }) {
   return (

@@ -20,13 +20,18 @@ import {
   Sparkles,
   FileText,
   Table2,
-  GitBranch
+  GitBranch,
+  Circle,
+  CheckCircle2,
+  Receipt
 } from "lucide-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { ChecklistItem, EventItem, Expense, Member, Trip, db, TravelDocument } from "../../db";
 import { formatDate, formatMoney, getChecklistStats, getTripTiming, today } from "../../utils/helpers";
 import { getTripReminders } from "../../utils/reminderRules";
 import { exportTripPdf, exportTripExcel } from "../../utils/exports";
+import { useShareChangeRequests } from "../../hooks/useShareChangeRequests";
+import { ShareChangeRequestsSheet } from "../share/components/ShareChangeRequestsSheet";
 
 function QuickAction({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
   return (
@@ -65,9 +70,11 @@ export function HomeScreen({
   onNavigateTab: (tab: "timeline" | "expenses" | "checklist") => void;
   onNavigateMore: (section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents") => void;
 }) {
+  const [isInboxOpen, setIsInboxOpen] = React.useState(false);
   const journals = useLiveQuery(() => db.journals.where("tripId").equals(trip.id!).toArray(), [trip.id]) ?? [];
   const packingItems = useLiveQuery(() => db.packingItems.where("tripId").equals(trip.id!).toArray(), [trip.id]) ?? [];
   const backupPlans = useLiveQuery(() => db.backupPlans.where("tripId").equals(trip.id!).toArray(), [trip.id]) ?? [];
+  const { pendingRequests, activeToken } = useShareChangeRequests(trip.id ? String(trip.id) : "");
 
   const timing = getTripTiming(trip);
   const checklistStats = getChecklistStats(checklist);
@@ -94,6 +101,60 @@ export function HomeScreen({
   const tripData = { trip, members, events, expenses, checklist, journals, packingItems, travelDocuments };
   const status = timing.status;
 
+  // Reusable helper to render visual Avatar Group + concise description for companions
+  const renderCompanions = () => {
+    if (members.length === 0) {
+      return <span className="font-semibold text-slate-400">Chưa có người đồng hành</span>;
+    }
+    
+    // First member's first name
+    const firstMemberName = members[0].name.trim().split(" ").pop() || members[0].name;
+    let text = "";
+    if (members.length === 1) {
+      text = firstMemberName;
+    } else {
+      text = `${firstMemberName} và ${members.length - 1} người khác`;
+    }
+
+    // Get first 3 members for avatars
+    const displayMembers = members.slice(0, 3);
+    const remainingCount = members.length - displayMembers.length;
+
+    const bgColors = [
+      "bg-blue-100 text-blue-600",
+      "bg-emerald-100 text-emerald-600",
+      "bg-purple-100 text-purple-600",
+      "bg-amber-100 text-amber-600",
+      "bg-rose-100 text-rose-600"
+    ];
+
+    return (
+      <div className="flex items-center gap-3">
+        <div className="flex -space-x-2 overflow-hidden">
+          {displayMembers.map((member, i) => {
+            const initials = member.name.charAt(0).toUpperCase();
+            const colorClass = bgColors[i % bgColors.length];
+            return (
+              <div 
+                key={member.id || i} 
+                className={`inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-white text-[12px] font-bold ${colorClass}`}
+                title={member.name}
+              >
+                {initials}
+              </div>
+            );
+          })}
+          {remainingCount > 0 && (
+            <div className="inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-slate-100 text-[11px] font-extrabold text-slate-600">
+              +{remainingCount}
+            </div>
+          )}
+        </div>
+        <span className="text-[14.5px] font-semibold text-slate-800">{text}</span>
+      </div>
+    );
+  };
+
   // 1. Hero rendering helper
   const renderHero = () => {
     let badge = "Sắp diễn ra";
@@ -107,134 +168,55 @@ export function HomeScreen({
       statusValue = timing.label;
     } else if (status === "past") {
       badge = "Đã kết thúc";
-      statusLabel = "Trạng thái hành trình";
+      statusLabel = "Trạng thái";
       statusValue = timing.label;
       isPast = true;
     }
 
     return (
       <section 
-        className={`relative overflow-hidden rounded-[32px] text-white shadow-soft transition-all duration-300 motion-page-enter ${
-          isPast ? "p-5 py-6 md:p-6 md:px-8" : "p-6 pt-8 md:p-8 md:px-10"
-        }`}
+        className="relative overflow-hidden rounded-[24px] text-white shadow-soft transition-all duration-300 motion-page-enter p-5 md:p-6"
         style={{ background: "linear-gradient(135deg, #030D2E 0%, #003D4A 60%, #007C78 100%)" }}
       >
-        <Globe className="absolute -bottom-24 -right-12 w-[360px] h-[360px] text-white opacity-[0.04] pointer-events-none stroke-[1]" />
+        <Globe className="absolute -bottom-24 -right-12 w-[300px] h-[300px] text-white opacity-[0.04] pointer-events-none stroke-[1]" />
         
-        <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
           <div className="flex flex-col items-start text-left max-w-2xl w-full">
-            <p className="inline-flex items-center rounded-full bg-white/8 px-3 py-1 text-[12px] font-bold tracking-widest text-white/92 shadow-sm backdrop-blur-md border border-white/14 mb-4 md:mb-5">
+            <p className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold tracking-wider text-white/90 shadow-sm backdrop-blur-md border border-white/10 mb-3">
               {badge}
             </p>
-            <h2 className="text-[32px] md:text-[44px] font-extrabold leading-tight tracking-tight drop-shadow-sm">{trip.title}</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight drop-shadow-sm">{trip.title}</h2>
             
-            <div className="mt-5 md:mt-6 flex flex-wrap gap-2 md:gap-3">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-4 py-2 text-[14px] font-medium backdrop-blur-md border border-white/14 shadow-inner text-white/92">
-                <MapPin className="h-4 w-4 text-kat-primary" />
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-[13px] font-semibold backdrop-blur-md border border-white/10 shadow-inner text-white/90">
+                <MapPin className="h-3.5 w-3.5 text-kat-primary" />
                 {trip.location || "Đang lên kế hoạch"}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-4 py-2 text-[14px] font-medium backdrop-blur-md border border-white/14 shadow-inner text-white/92">
-                <CalendarDays className="h-4 w-4 text-kat-primary" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-[13px] font-semibold backdrop-blur-md border border-white/10 shadow-inner text-white/90">
+                <CalendarDays className="h-3.5 w-3.5 text-kat-primary" />
                 {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-4 py-2 text-[14px] font-medium backdrop-blur-md border border-white/14 shadow-inner text-white/92">
-                <Clock className="h-4 w-4 text-kat-primary" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1.5 text-[13px] font-semibold backdrop-blur-md border border-white/10 shadow-inner text-white/90">
+                <Clock className="h-3.5 w-3.5 text-kat-primary" />
                 {durationText}
               </span>
             </div>
           </div>
 
-          <div className="flex w-full md:w-auto flex-col items-center justify-center rounded-2xl bg-white/8 p-5 md:px-8 backdrop-blur-md border border-white/14 shadow-sm shrink-0 mt-2 md:mt-0">
-            <p className="text-[12px] font-bold uppercase tracking-wider text-white/80">
+          <div className="flex w-full md:w-auto flex-col items-center justify-center rounded-xl bg-white/8 p-4 md:px-6 backdrop-blur-md border border-white/10 shadow-sm shrink-0">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-white/80">
               {statusLabel}
             </p>
-            <p className="mt-1 text-[26px] md:text-[32px] font-extrabold tracking-tight text-white/95">{statusValue}</p>
+            <p className="mt-0.5 text-[22px] md:text-[26px] font-extrabold tracking-tight text-white/95">{statusValue}</p>
           </div>
         </div>
       </section>
     );
   };
 
-  // 2. Quick Actions helper
-  const renderQuickActions = () => {
-    if (status === "active") {
-      return (
-        <section className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-          <div className="motion-card-enter motion-delay-1">
-            <QuickAction 
-              icon={<CalendarDays className="h-7 w-7" />} 
-              label="Hôm nay" 
-              onClick={() => {
-                const todayEl = document.getElementById("today-widget");
-                if (todayEl) {
-                  todayEl.scrollIntoView({ behavior: "smooth", block: "center" });
-                } else {
-                  onNavigateTab("timeline");
-                }
-              }} 
-            />
-          </div>
-          <div className="motion-card-enter motion-delay-2">
-            <QuickAction icon={<CalendarDays className="h-7 w-7" />} label="Lịch trình" onClick={() => onNavigateTab("timeline")} />
-          </div>
-          <div className="motion-card-enter motion-delay-3">
-            <QuickAction icon={<FileText className="h-7 w-7" />} label="Giấy tờ" onClick={() => onNavigateMore("documents")} />
-          </div>
-          <div className="motion-card-enter motion-delay-4">
-            <QuickAction icon={<WalletCards className="h-7 w-7" />} label="Chi phí" onClick={() => onNavigateTab("expenses")} />
-          </div>
-        </section>
-      );
-    }
 
-    if (status === "past") {
-      return (
-        <section className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-          <div className="motion-card-enter motion-delay-1">
-            <QuickAction icon={<Trophy className="h-7 w-7" />} label="Tổng kết" onClick={() => onNavigateMore("wrapped")} />
-          </div>
-          <div className="motion-card-enter motion-delay-2">
-            <QuickAction icon={<BookOpen className="h-7 w-7" />} label="Nhật ký" onClick={() => onNavigateMore("journal")} />
-          </div>
-          <div className="motion-card-enter motion-delay-3">
-            <QuickAction icon={<WalletCards className="h-7 w-7" />} label="Chi phí" onClick={() => onNavigateTab("expenses")} />
-          </div>
-          <div className="motion-card-enter motion-delay-4">
-            <QuickAction 
-              icon={<FileDown className="h-7 w-7" />} 
-              label="Xuất báo cáo" 
-              onClick={() => {
-                const reportEl = document.getElementById("report-card");
-                if (reportEl) {
-                  reportEl.scrollIntoView({ behavior: "smooth", block: "center" });
-                } else {
-                  exportTripPdf(tripData);
-                }
-              }} 
-            />
-          </div>
-        </section>
-      );
-    }
 
-    // Default: Upcoming
-    return (
-      <section className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-        <div className="motion-card-enter motion-delay-1">
-          <QuickAction icon={<CalendarDays className="h-7 w-7" />} label="Lịch trình" onClick={() => onNavigateTab("timeline")} />
-        </div>
-        <div className="motion-card-enter motion-delay-2">
-          <QuickAction icon={<WalletCards className="h-7 w-7" />} label="Chi phí" onClick={() => onNavigateTab("expenses")} />
-        </div>
-        <div className="motion-card-enter motion-delay-3">
-          <QuickAction icon={<CheckCircle className="h-7 w-7" />} label="Chuẩn bị" onClick={() => onNavigateTab("checklist")} />
-        </div>
-        <div className="motion-card-enter motion-delay-4">
-          <QuickAction icon={<FileText className="h-7 w-7" />} label="Giấy tờ" onClick={() => onNavigateMore("documents")} />
-        </div>
-      </section>
-    );
-  };
+
 
   // 3. Layout for completed trips
   const renderPastLayout = () => {
@@ -323,22 +305,20 @@ export function HomeScreen({
           <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 motion-card-enter motion-delay-2">
             <ul className="space-y-6">
               <li className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0081BE]/10 text-[#0081BE] border border-[#0081BE]/15">
-                  <Users className="h-5.5 w-5.5" />
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 border border-blue-100/50">
+                  <Users className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-[13px] font-semibold text-kat-muted">Người đồng hành</p>
-                  <p className="mt-0.5 text-[15px] font-extrabold text-[#030D2E] truncate">
-                    {members.length > 0 
-                      ? `${members.length} người đồng hành: ${members.map(m => m.name.split(' ')[0]).join(", ")}` 
-                      : "Chưa có người đồng hành"}
-                  </p>
+                  <div className="mt-1.5">
+                    {renderCompanions()}
+                  </div>
                 </div>
               </li>
 
               <li className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#E50A62]/10 text-[#E50A62] border border-[#E50A62]/15">
-                  <CalendarDays className="h-5.5 w-5.5" />
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-100/50">
+                  <CalendarDays className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-[13px] font-semibold text-kat-muted">Lịch trình đã ghi</p>
@@ -361,8 +341,8 @@ export function HomeScreen({
               </li>
 
               <li className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/15">
-                  <CheckCircle className="h-5.5 w-5.5" />
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600 border border-rose-100/50">
+                  <Briefcase className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
@@ -375,8 +355,8 @@ export function HomeScreen({
               </li>
 
               <li className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary border border-kat-primary/15">
-                  <WalletCards className="h-5.5 w-5.5" />
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/50">
+                  <Receipt className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-[13px] font-semibold text-kat-muted">Tổng đã chi chuyến đi</p>
@@ -498,19 +478,19 @@ export function HomeScreen({
             <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 motion-card-enter motion-delay-3">
               <ul className="space-y-6">
                 <li className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0081BE]/10 text-[#0081BE] border border-[#0081BE]/15">
-                    <Users className="h-[22px] w-[22px]" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 border border-blue-100/50">
+                    <Users className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Người đồng hành</p>
-                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text truncate">
-                      {members.length > 0 ? `${members.length} người: ${members.map(m => m.name.split(' ')[0]).join(", ")}` : "Chưa có người đồng hành"}
-                    </p>
+                    <div className="mt-1.5">
+                      {renderCompanions()}
+                    </div>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#E50A62]/10 text-[#E50A62] border border-[#E50A62]/15">
-                    <Briefcase className="h-[22px] w-[22px]" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600 border border-rose-100/50">
+                    <Briefcase className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
@@ -520,8 +500,8 @@ export function HomeScreen({
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F89B02]/10 text-[#F89B02] border border-[#F89B02]/15">
-                    <CalendarDays className="h-[22px] w-[22px]" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-100/50">
+                    <CalendarDays className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Lịch trình kế tiếp</p>
@@ -531,8 +511,8 @@ export function HomeScreen({
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary border border-kat-primary/15">
-                    <WalletCards className="h-[22px] w-[22px]" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/50">
+                    <Receipt className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Dự kiến chi phí</p>
@@ -599,6 +579,12 @@ export function HomeScreen({
   const renderActiveLayout = () => {
     const todayEvents = events.filter(e => e.date === today);
     const incompleteChecklist = checklist.filter(c => !c.completed);
+    const displayChecklist = [...checklist]
+      .sort((a, b) => {
+        if (a.completed === b.completed) return 0;
+        return a.completed ? 1 : -1; // incomplete first
+      })
+      .slice(0, 5);
     const idDocs = travelDocuments.filter(d => 
       d.type === "ticket" || 
       d.type === "booking" || 
@@ -661,35 +647,33 @@ export function HomeScreen({
                   </button>
                 </div>
               ) : (
-                <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+                <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
                   {todayEvents
                     .sort((a, b) => (a.time || "").localeCompare(b.time || ""))
                     .map((item, idx) => (
-                      <div 
+                      <button 
                         key={item.id}
-                        className={`flex items-start justify-between p-3 rounded-2xl border transition-all ${
+                        onClick={() => item.id && db.events.update(item.id, { completed: !item.completed })}
+                        className={`w-full min-h-[46px] flex items-center justify-between p-3 px-4 rounded-2xl border transition-all text-left group motion-press ${
                           item.completed 
-                            ? "bg-slate-50/45 border-slate-100/60 text-slate-400" 
-                            : "bg-[#FFFDF8] border-slate-200/60 text-slate-700 hover:border-kat-primary/30"
+                            ? "bg-slate-50/45 border-slate-100/60 text-slate-400/80" 
+                            : "bg-[#FFFDF8] border-slate-200/60 text-slate-700 hover:bg-slate-50/60 hover:border-kat-primary/30"
                         }`}
                       >
-                        <button 
-                          onClick={() => item.id && db.events.update(item.id, { completed: !item.completed })}
-                          className="flex items-start gap-2.5 text-left min-w-0 flex-1 motion-press"
-                        >
-                          <div className="shrink-0 mt-0.5">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <div className="shrink-0">
                             {item.completed ? (
-                              <CheckSquare className="h-4.5 w-4.5 text-emerald-500" />
+                              <CheckCircle2 className="h-5.5 w-5.5 text-emerald-500 fill-emerald-50" />
                             ) : (
-                              <Square className="h-4.5 w-4.5 text-slate-300 hover:text-slate-500" />
+                              <Circle className="h-5.5 w-5.5 text-slate-300 group-hover:text-slate-400 transition-colors" />
                             )}
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className={`text-[13.5px] font-bold ${item.completed ? "line-through text-slate-400" : "text-slate-800"}`}>{item.title}</p>
                             {item.time && <p className="text-[11px] font-semibold text-slate-400 mt-0.5">{item.time}</p>}
                           </div>
-                        </button>
-                      </div>
+                        </div>
+                      </button>
                     ))}
                 </div>
               )}
@@ -698,29 +682,35 @@ export function HomeScreen({
             {/* Chuẩn bị còn thiếu (Món còn thiếu) */}
             <div className="space-y-3">
               <h4 className="text-[12.5px] font-black uppercase tracking-wider text-slate-400">Chuẩn bị còn thiếu</h4>
-              {incompleteChecklist.length === 0 ? (
+              {checklist.length === 0 ? (
                 <div className="p-4 rounded-2xl border border-slate-100/80 bg-slate-50/20 text-center">
-                  <p className="text-[13px] font-semibold text-slate-400">Tất cả đồ dùng đã chuẩn bị xong!</p>
+                  <p className="text-[13px] font-semibold text-slate-400">Chưa có món nào được lên checklist.</p>
                 </div>
               ) : (
-                <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
-                  {incompleteChecklist.slice(0, 5).map((item, idx) => (
-                    <div 
+                <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+                  {displayChecklist.map((item, idx) => (
+                    <button 
                       key={item.id}
-                      className="flex items-start justify-between p-3 rounded-2xl border bg-[#FFFDF8] border-slate-200/60 text-slate-750 hover:border-kat-primary/30 transition-all"
+                      onClick={() => item.id && db.checklist.update(item.id, { completed: !item.completed })}
+                      className={`w-full min-h-[46px] flex items-center justify-between p-3 px-4 rounded-2xl border transition-all text-left group motion-press ${
+                        item.completed 
+                          ? "bg-slate-50/45 border-slate-100/60 text-slate-400/80" 
+                          : "bg-[#FFFDF8] border-slate-200/60 text-slate-700 hover:bg-slate-50/60 hover:border-kat-primary/30"
+                      }`}
                     >
-                      <button 
-                        onClick={() => item.id && db.checklist.update(item.id, { completed: !item.completed })}
-                        className="flex items-start gap-2.5 text-left min-w-0 flex-1 motion-press"
-                      >
-                        <div className="shrink-0 mt-0.5">
-                          <Square className="h-4.5 w-4.5 text-slate-300 hover:text-slate-500" />
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="shrink-0">
+                          {item.completed ? (
+                            <CheckCircle2 className="h-5.5 w-5.5 text-emerald-500 fill-emerald-50" />
+                          ) : (
+                            <Circle className="h-5.5 w-5.5 text-slate-300 group-hover:text-slate-400 transition-colors" />
+                          )}
                         </div>
-                        <span className="text-[13.5px] font-bold text-slate-800 truncate">
+                        <span className={`text-[13.5px] font-bold truncate ${item.completed ? "line-through text-slate-400" : "text-slate-800"}`}>
                           {item.title}
                         </span>
-                      </button>
-                    </div>
+                      </div>
+                    </button>
                   ))}
                   {incompleteChecklist.length > 5 && (
                     <button 
@@ -786,19 +776,19 @@ export function HomeScreen({
             <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 motion-card-enter motion-delay-3">
               <ul className="space-y-6">
                 <li className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0081BE]/10 text-[#0081BE] border border-[#0081BE]/15">
-                    <Users className="h-[22px] w-[22px]" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 border border-blue-100/50">
+                    <Users className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Người đồng hành</p>
-                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text truncate">
-                      {members.length > 0 ? `${members.length} người: ${members.map(m => m.name.split(' ')[0]).join(", ")}` : "Chưa có người đồng hành"}
-                    </p>
+                    <div className="mt-1.5">
+                      {renderCompanions()}
+                    </div>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#E50A62]/10 text-[#E50A62] border border-[#E50A62]/15">
-                    <Briefcase className="h-[22px] w-[22px]" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600 border border-rose-100/50">
+                    <Briefcase className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
@@ -808,8 +798,8 @@ export function HomeScreen({
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F89B02]/10 text-[#F89B02] border border-[#F89B02]/15">
-                    <CalendarDays className="h-[22px] w-[22px]" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-100/50">
+                    <CalendarDays className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Hoạt động tiếp theo</p>
@@ -819,8 +809,8 @@ export function HomeScreen({
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary border border-kat-primary/15">
-                    <WalletCards className="h-[22px] w-[22px]" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/50">
+                    <Receipt className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Tổng đã chi chuyến đi</p>
@@ -854,15 +844,40 @@ export function HomeScreen({
     );
   };
 
-  // 6. Main render
   return (
     <div className="space-y-6 md:space-y-8 animate-fadeIn mx-auto w-full max-w-[1120px]">
       {renderHero()}
-      {renderQuickActions()}
+      
+      {pendingRequests.length > 0 && (
+        <div className="rounded-2xl bg-rose-50 border border-rose-200 p-4 flex items-center justify-between cursor-pointer" onClick={() => setIsInboxOpen(true)}>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm text-rose-500">
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <div>
+              <h4 className="text-[14px] font-bold text-rose-800">Yêu cầu chỉnh sửa</h4>
+              <p className="text-[13px] font-medium text-rose-700 leading-snug mt-0.5">Có {pendingRequests.length} yêu cầu đang chờ duyệt</p>
+            </div>
+          </div>
+          <button className="text-[13px] font-bold text-rose-700 bg-white border border-rose-100 shadow-sm px-3 py-1.5 rounded-lg active:scale-95 transition-transform">
+            Xem yêu cầu
+          </button>
+        </div>
+      )}
+
       
       {status === "past" && renderPastLayout()}
       {status === "active" && renderActiveLayout()}
       {(status !== "past" && status !== "active") && renderUpcomingLayout()}
+
+      {activeToken && (
+        <ShareChangeRequestsSheet
+          isOpen={isInboxOpen}
+          onClose={() => setIsInboxOpen(false)}
+          token={activeToken}
+          requests={pendingRequests}
+        />
+      )}
     </div>
   );
 }
