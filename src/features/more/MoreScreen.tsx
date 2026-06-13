@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { 
+  MoreVertical,
   Backpack, 
   BookOpen, 
   ChevronRight, 
@@ -54,8 +55,36 @@ import {
   Car,
   BadgeCheck,
   StickyNote,
-  Share2
+  Share2,
+  CheckCircle2,
+  AlertTriangle,
+  Copy
 } from "lucide-react";
+import { useShareChangeRequests } from "../../hooks/useShareChangeRequests";
+import { ShareChangeRequestsSheet } from "../share/components/ShareChangeRequestsSheet";
+
+function ShareSwitch({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={(e) => {
+        e.stopPropagation();
+        onChange(!checked);
+      }}
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-kat-primary focus:ring-offset-2 ${
+        checked ? "bg-[#030D2E]" : "bg-slate-200"
+      }`}
+    >
+      <span
+        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+          checked ? "translate-x-5" : "translate-x-0"
+        }`}
+      />
+    </button>
+  );
+}
 import { ChecklistItem, db, deleteTripCascade, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "../../db";
 import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
 import { 
@@ -663,11 +692,10 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <div className="flex items-center gap-3">
           <button
             onClick={() => setSection("overview")}
-            className="flex h-11 items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-4 text-[14px] font-bold text-kat-text transition-all hover:bg-kat-primary/20 active:scale-95 shadow-sm shrink-0"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 text-slate-700 active:scale-95 transition-all shrink-0 motion-press"
+            title="Quay lại"
           >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">Quay lại không gian chuyến đi</span>
-            <span className="sm:hidden">Quay lại</span>
+            <ArrowLeft className="h-5 w-5" />
           </button>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -680,6 +708,14 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Nhìn lại những dấu ấn đáng nhớ trong chuyến đi của bạn.</p>
           </div>
         </div>
+        <button
+          onClick={handleExportPdf}
+          disabled={isGeneratingPdf}
+          className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-blue-50 border border-blue-200/60 text-blue-600 px-5 text-[13.5px] font-bold hover:bg-blue-100/60 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <FileDown className={classNames("h-4 w-4 text-blue-500", !isGeneratingPdf && "animate-bounce")} />
+          <span>{isGeneratingPdf ? "Đang xuất..." : "Xuất PDF"}</span>
+        </button>
       </div>
       
       {/* Hero Recap Card */}
@@ -716,7 +752,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       </section>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
             <SunMedium className="h-6 w-6" />
@@ -835,14 +871,14 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       </div>
 
       {/* Storytelling Blocks */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* First Moment */}
-        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between md:col-span-2">
+        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <Camera className="h-5 w-5 text-amber-500" />
             <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">DẤU ẤN ĐẦU TIÊN</h4>
           </div>
-          <p className="text-[15.5px] font-extrabold text-[#030D2E] leading-relaxed">
+          <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
             {firstMomentText || "Chưa có dấu ấn đầu tiên. Hãy thêm mục lịch trình hoặc ghi nhật ký để lưu lại khoảnh khắc mở đầu."}
           </p>
         </div>
@@ -870,97 +906,16 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             <MapPinned className="h-5 w-5 text-kat-primary" />
             <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">ĐIỂM ĐẾN ĐÃ GHÉ QUA</h4>
           </div>
-          <p className="text-[14.5px] font-extrabold text-[#030D2E] leading-relaxed">
+          <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
             {uniqueLocations.length > 0 ? uniqueLocations.join(", ") : "Chưa có điểm đến cụ thể nào trong lịch trình."}
           </p>
         </div>
       </div>
-
-      {/* Share / Export CTA */}
-      <div className="pt-8 flex justify-center">
-        <button 
-          onClick={handleExportPdf}
-          disabled={isGeneratingPdf}
-          className="flex items-center justify-center gap-2 rounded-2xl bg-blue-50 border border-blue-200/60 px-6 py-3.5 text-[14px] font-extrabold text-blue-600 shadow-sm hover:bg-blue-100/60 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-        >
-          <FileDown className="h-5 w-5 text-blue-500 animate-bounce" />
-          {isGeneratingPdf ? "Đang xuất bản PDF..." : "Xuất bản tổng kết PDF"}
-        </button>
-      </div>
     </div>
   );
 }
 
-function HubActionRow({ 
-  icon: Icon, 
-  label, 
-  subtitle, 
-  onClick, 
-  value, 
-  danger = false,
-  disabled = false
-}: { 
-  icon: React.ElementType; 
-  label: string; 
-  subtitle?: string; 
-  onClick?: () => void; 
-  value?: string; 
-  danger?: boolean;
-  disabled?: boolean;
-}) {
-  const content = (
-    <div className="flex items-center justify-between w-full min-h-[56px] py-3 text-left">
-      <div className="flex items-center gap-3.5 min-w-0 flex-1">
-        <div className={classNames(
-          "flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl transition-colors",
-          danger 
-            ? "bg-rose-50 text-rose-600 border border-rose-100" 
-            : "bg-kat-primary/10 text-kat-primary border border-kat-primary/20"
-        )}>
-          <Icon className="h-5.5 w-5.5" strokeWidth={2.2} />
-        </div>
-        
-        <div className="min-w-0 flex-1">
-          <span className={classNames(
-            "block text-[15.5px] font-extrabold leading-snug", 
-            danger ? "text-rose-600" : "text-[#030D2E]",
-            disabled && "text-slate-400"
-          )}>
-            {label}
-          </span>
-          {subtitle && (
-            <span className={classNames("block text-[13px] font-semibold mt-0.5 leading-snug", disabled ? "text-slate-300" : "text-slate-500")}>
-              {subtitle}
-            </span>
-          )}
-        </div>
-      </div>
 
-      <div className="flex items-center gap-2 shrink-0 pl-2">
-        {value && <span className="text-[14px] font-bold text-slate-500">{value}</span>}
-        {onClick && !disabled && <ChevronRight className="h-5 w-5 text-slate-300 transition-transform group-hover:translate-x-0.5" />}
-      </div>
-    </div>
-  );
-
-  if (onClick && !disabled) {
-    return (
-      <button 
-        type="button"
-        onClick={onClick} 
-        className="group flex w-full items-center justify-between bg-[#FFFDF8] px-5 transition-all hover:bg-slate-50/80 focus:outline-none motion-press"
-      >
-        {content}
-      </button>
-    );
-  }
-
-  return (
-    <div className="flex w-full items-center justify-between bg-[#FFFDF8] px-5 border-b border-slate-100 last:border-b-0">
-      {content}
-    </div>
-  );
-}
 
 function MiniStatCard({ 
   label, 
@@ -984,40 +939,213 @@ function MiniStatCard({
 function ActionCard({
   icon: Icon,
   title,
-  description,
   onClick,
   iconBgColor = "bg-[#00BFB7]/10",
   iconTextColor = "text-[#00BFB7]",
-  className = ""
+  className = "",
+  titleClassName = "text-[#030D2E]",
+  rightElement
 }: {
   icon: React.ElementType;
   title: string;
-  description: string;
-  onClick: () => void;
+  onClick?: () => void;
   iconBgColor?: string;
   iconTextColor?: string;
   className?: string;
+  titleClassName?: string;
+  rightElement?: React.ReactNode;
 }) {
+  const content = (
+    <>
+      <div className="flex items-center gap-3.5 min-w-0 flex-1">
+        <div className={classNames(
+          "flex shrink-0 h-10 w-10 items-center justify-center rounded-xl border transition-colors",
+          iconBgColor,
+          iconTextColor
+        )}>
+          <Icon className="h-5.5 w-5.5" strokeWidth={2.2} />
+        </div>
+        <span className={classNames("text-base font-medium truncate leading-none", titleClassName)}>
+          {title}
+        </span>
+      </div>
+      <div className="flex items-center gap-2 shrink-0 pl-2">
+        {rightElement !== undefined ? (
+          rightElement
+        ) : (
+          onClick && <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+        )}
+      </div>
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className={classNames(
+          "group flex w-full items-center justify-between bg-[#FFFDF8] border border-[#E8E1D8] px-4 py-3 rounded-2xl min-h-[56px] text-left hover:bg-slate-50/60 transition-all focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/50 motion-press md:motion-hover-lift",
+          className
+        )}
+      >
+        {content}
+      </button>
+    );
+  }
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
+    <div
       className={classNames(
-        "group flex flex-col justify-between items-start text-left p-5 rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] shadow-soft hover:bg-slate-50/60 transition-all w-full min-h-[140px] focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/50 motion-press md:motion-hover-lift",
+        "flex w-full items-center justify-between bg-[#FFFDF8] border border-[#E8E1D8] px-4 py-3 rounded-2xl min-h-[56px]",
         className
       )}
     >
-      <div className="flex items-center gap-3">
-        <div className={`flex shrink-0 h-10 w-10 items-center justify-center rounded-xl border ${iconBgColor} ${iconTextColor}`}>
-          <Icon className="h-5 w-5" strokeWidth={2.2} />
-        </div>
-        <h4 className="text-[16px] font-extrabold text-[#030D2E] leading-snug">{title}</h4>
-      </div>
-      <p className="mt-4 text-[13px] font-semibold text-slate-500 leading-relaxed">{description}</p>
-    </button>
+      {content}
+    </div>
   );
 }
 
+
+
+
+function MemberCardRow({
+  member,
+  checklist,
+  expenses,
+  openEditMember,
+  onDeleteMember
+}: {
+  member: Member;
+  checklist: ChecklistItem[];
+  expenses: Expense[];
+  openEditMember: (member: Member) => void;
+  onDeleteMember: (member: Member) => void;
+}) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const initial = member.name.trim().charAt(0).toUpperCase() || "?";
+                
+  // Helper computations
+  const assignedTasksCount = checklist.filter(c => c.assignedTo === member.name).length;
+  const memberExpenses = expenses.filter(e => e.payer === member.name);
+  const paidExpensesCount = memberExpenses.length;
+  const totalSpent = memberExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+
+  return (
+    <div className="relative rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-4">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-4 min-w-0 flex-1">
+          {/* Avatar Initials */}
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#00BFB7]/10 text-[#00BFB7] text-[18px] font-black shadow-inner">
+            {initial}
+          </div>
+
+          {/* Member details */}
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="flex items-center flex-wrap gap-2">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <UserRound className="h-4.5 w-4.5 text-[#030D2E]/60 shrink-0" />
+                <h4 className="text-[17px] font-extrabold text-[#030D2E] truncate">{member.name}</h4>
+              </div>
+              {(() => {
+                const isLeader = member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện";
+                return (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#00BFB7]/10 border border-[#00BFB7]/20 px-2.5 py-0.5 text-[11px] font-bold text-[#00BFB7]">
+                    {isLeader && <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
+                    {member.role || "Bạn đồng hành"}
+                  </span>
+                );
+              })()}
+            </div>
+            {member.phone && (
+              <p className="text-[13.5px] font-semibold text-slate-500">
+                SĐT: <span className="text-[#030D2E]">{member.phone}</span>
+              </p>
+            )}
+            {member.note && (
+              <p className="text-[13px] font-medium text-slate-400 italic mt-1 bg-slate-50/70 p-2.5 rounded-xl border border-slate-100/50 break-words">
+                "{member.note}"
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Dropdown Menu Trigger (min 44x44px target) */}
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMenuOpen(!isMenuOpen);
+            }}
+            title="Tùy chọn"
+          >
+            <MoreVertical className="h-5 w-5" />
+          </button>
+
+          {isMenuOpen && (
+            <>
+              <div
+                className="fixed inset-0 z-30 cursor-default"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMenuOpen(false);
+                }}
+              />
+              <div className="absolute right-0 top-12 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg text-left">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMenuOpen(false);
+                    openEditMember(member);
+                  }}
+                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+                >
+                  <Edit2 className="h-4 w-4 text-slate-500" />
+                  Sửa
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMenuOpen(false);
+                    onDeleteMember(member);
+                  }}
+                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Xóa
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Mini Stats Row */}
+      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex flex-wrap gap-2 text-[12px]">
+          <span className={classNames(
+            "flex items-center gap-1 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg",
+            assignedTasksCount === 0 ? "text-slate-400 font-medium" : "text-slate-700 font-bold"
+          )}>
+            <Luggage className="h-3.5 w-3.5 text-current shrink-0" />
+            {assignedTasksCount} việc
+          </span>
+          <span className={classNames(
+            "flex items-center gap-1 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg",
+            totalSpent === 0 ? "text-slate-400 font-medium" : "text-slate-700 font-bold"
+          )}>
+            <WalletCards className="h-3.5 w-3.5 text-current shrink-0" />
+            Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 import { ensureAnonymousUser, firebaseEnabled } from "../../lib/firebase";
 
@@ -1078,6 +1206,10 @@ export function MoreScreen({
     includeDocuments: false,
   });
   const [activeShareLink, setActiveShareLink] = useState<{ token: string; url: string } | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [isRequestsSheetOpen, setIsRequestsSheetOpen] = useState(false);
+
+  const { pendingRequests, activeToken } = useShareChangeRequests(String(trip.id!));
 
   const tripData = { trip, members, events, expenses, checklist, journals, packingItems, travelDocuments };
 
@@ -1100,8 +1232,8 @@ export function MoreScreen({
   async function handleCreateLink() {
     try {
       setShareLoading(true);
-      const { createViewShareLink } = await import("../../services/cloudShareService");
-      const result = await createViewShareLink(trip.id!, shareOptions);
+      const { createShareLink } = await import("../../services/cloudShareService");
+      const result = await createShareLink(trip.id!, { ...shareOptions, mode: "request_edit" });
       setActiveShareLink(result);
     } catch (e: any) {
       alert("Lỗi khi tạo link chia sẻ. Vui lòng thử lại sau.");
@@ -1306,7 +1438,7 @@ export function MoreScreen({
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSection("overview")}
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 active:scale-95 transition-all shadow-sm"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 text-slate-700 active:scale-95 transition-all shrink-0"
               title="Quay lại"
             >
               <ArrowLeft className="h-5 w-5" />
@@ -1356,7 +1488,7 @@ export function MoreScreen({
               </div>
               {members.length < 2 && (
                 <div className="pt-3 border-t border-slate-100 flex items-start gap-2.5 text-[13px] font-semibold text-slate-500">
-                  <UsersRound className="h-4.5 w-4.5 text-[#00BFB7] shrink-0 mt-0.5" />
+                  <UsersRound className="h-4.5 w-4.5 text-[#00BFB7] shrink-0" />
                   <p>Thêm người đồng hành để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ ràng hơn.</p>
                 </div>
               )}
@@ -1375,90 +1507,19 @@ export function MoreScreen({
           
           {members.length ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {members.map((member) => {
-                const initial = member.name.trim().charAt(0).toUpperCase() || "?";
-                
-                // Helper computations
-                const assignedTasksCount = checklist.filter(c => c.assignedTo === member.name).length;
-                const memberExpenses = expenses.filter(e => e.payer === member.name);
-                const paidExpensesCount = memberExpenses.length;
-                const totalSpent = memberExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
-
-                return (
-                  <div key={member.id} className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-4">
-                    <div className="flex items-start gap-4">
-                      {/* Avatar Initials */}
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#00BFB7]/10 text-[#00BFB7] text-[18px] font-black shadow-inner">
-                        {initial}
-                      </div>
-
-                      {/* Member details */}
-                      <div className="min-w-0 flex-1 space-y-1">
-                        <div className="flex items-center flex-wrap gap-2">
-                          <div className="flex items-center gap-1.5">
-                            <UserRound className="h-4.5 w-4.5 text-[#030D2E]/60 shrink-0" />
-                            <h4 className="text-[17px] font-extrabold text-[#030D2E] truncate">{member.name}</h4>
-                          </div>
-                          {(() => {
-                            const isLeader = member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện";
-                            return (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-[#00BFB7]/10 border border-[#00BFB7]/20 px-2.5 py-0.5 text-[11px] font-bold text-[#00BFB7]">
-                                {isLeader && <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
-                                {member.role || "Bạn đồng hành"}
-                              </span>
-                            );
-                          })()}
-                        </div>
-                        {member.phone && (
-                          <p className="text-[13.5px] font-semibold text-slate-500">
-                            SĐT: <span className="text-[#030D2E]">{member.phone}</span>
-                          </p>
-                        )}
-                        {member.note && (
-                          <p className="text-[13px] font-medium text-slate-400 italic mt-1 bg-slate-50/70 p-2.5 rounded-xl border border-slate-100/50 break-words">
-                            "{member.note}"
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Mini Stats & Actions Row */}
-                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-4 flex-wrap">
-                      <div className="flex flex-wrap gap-2 text-[12px] font-bold">
-                        <span className="flex items-center gap-1 bg-slate-50 text-slate-600 border border-slate-100 px-2.5 py-1 rounded-lg">
-                          <Luggage className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                          {assignedTasksCount} việc
-                        </span>
-                        <span className="flex items-center gap-1 bg-slate-50 text-slate-600 border border-slate-100 px-2.5 py-1 rounded-lg">
-                          <WalletCards className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                          Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
-                        </span>
-                      </div>
-
-                      {/* Action buttons (Touch target 44px) */}
-                      <div className="flex gap-2 shrink-0">
-                        <button 
-                          className="flex h-11 w-11 items-center justify-center rounded-full text-slate-500 bg-slate-50 hover:bg-slate-100 hover:text-slate-600 active:scale-90 transition-all shadow-sm border border-slate-200/40" 
-                          onClick={() => openEditMember(member)}
-                          title="Sửa người đồng hành"
-                        >
-                          <Edit2 className="h-4.5 w-4.5" />
-                        </button>
-                        <button 
-                          className="flex h-11 w-11 items-center justify-center rounded-full text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-90 transition-all shadow-sm border border-rose-200/40" 
-                          onClick={() => {
-                            setMemberToDelete(member);
-                            setIsDeleteMemberConfirmOpen(true);
-                          }}
-                          title="Xóa người đồng hành"
-                        >
-                          <Trash2 className="h-4.5 w-4.5" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              {members.map((member) => (
+                <MemberCardRow
+                  key={member.id}
+                  member={member}
+                  checklist={checklist}
+                  expenses={expenses}
+                  openEditMember={openEditMember}
+                  onDeleteMember={(m) => {
+                    setMemberToDelete(m);
+                    setIsDeleteMemberConfirmOpen(true);
+                  }}
+                />
+              ))}
             </div>
           ) : (
             /* Empty State Layout */
@@ -1520,9 +1581,27 @@ export function MoreScreen({
           </button>
         </div>
         
-        <div className="overflow-hidden rounded-3xl border border-slate-100 bg-[#FFFDF8] shadow-sm">
-          <HubActionRow icon={BadgeInfo} label="Phiên bản ứng dụng" value="2.0.0" />
-            <HubActionRow icon={Trash2} label="Khôi phục cài đặt gốc" subtitle="Xóa sạch toàn bộ dữ liệu trên thiết bị." onClick={() => setIsFactoryResetConfirmOpen(true)} danger />
+        <div className="flex flex-col gap-2">
+          <ActionCard
+            icon={BadgeInfo}
+            title="Phiên bản ứng dụng"
+            iconBgColor="bg-slate-50"
+            iconTextColor="text-slate-600 border-slate-100"
+            rightElement={
+              <span className="text-sm font-black text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">
+                2.0.0
+              </span>
+            }
+          />
+          <ActionCard
+            icon={Trash2}
+            title="Khôi phục cài đặt gốc"
+            onClick={() => setIsFactoryResetConfirmOpen(true)}
+            iconBgColor="bg-rose-50"
+            iconTextColor="text-rose-600 border-rose-100/60"
+            titleClassName="text-rose-600 font-semibold"
+            className="border-rose-100 bg-rose-50/10 hover:bg-rose-50/20 text-rose-600 focus:ring-rose-500/50"
+          />
         </div>
         
         <div className="mt-12 text-center">
@@ -1612,11 +1691,10 @@ export function MoreScreen({
         {/* Thao tác chính */}
         <section className="space-y-3">
           <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">Công cụ hành trình</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
             <ActionCard
               icon={MapPinned}
               title="Thông tin chuyến đi"
-              description="Chỉnh sửa tên chuyến đi, điểm đến và thời gian khởi hành."
               onClick={() => setEditingTrip(true)}
               iconBgColor="bg-sky-50"
               iconTextColor="text-sky-600 border-sky-100"
@@ -1624,7 +1702,6 @@ export function MoreScreen({
             <ActionCard
               icon={UsersRound}
               title="Người đồng hành"
-              description="Quản lý người đồng hành cùng tham gia hành trình."
               onClick={() => setSection("members")}
               iconBgColor="bg-amber-50"
               iconTextColor="text-amber-600 border-amber-100"
@@ -1632,7 +1709,6 @@ export function MoreScreen({
             <ActionCard
               icon={Trophy}
               title="Tổng kết hành trình"
-              description="Nhìn lại những điểm nổi bật sau chuyến đi."
               onClick={() => setSection("wrapped")}
               iconBgColor="bg-indigo-50"
               iconTextColor="text-indigo-600 border-indigo-100"
@@ -1640,7 +1716,6 @@ export function MoreScreen({
             <ActionCard
               icon={BookOpenText}
               title="Nhật ký hành trình"
-              description="Ghi lại khoảnh khắc, cảm xúc và ghi chú đáng nhớ."
               onClick={() => setSection("journal")}
               iconBgColor="bg-emerald-50"
               iconTextColor="text-emerald-600 border-emerald-100"
@@ -1648,7 +1723,6 @@ export function MoreScreen({
             <ActionCard
               icon={TicketCheck}
               title="Vé, đặt chỗ & giấy tờ"
-              description="Lưu vé, khách sạn, booking và giấy tờ quan trọng."
               onClick={() => setSection("documents")}
               iconBgColor="bg-teal-50"
               iconTextColor="text-teal-600 border-teal-100"
@@ -1656,135 +1730,130 @@ export function MoreScreen({
             <ActionCard
               icon={Share2}
               title="Chia sẻ chuyến đi"
-              description="Tạo link để người khác xem lịch trình và thông tin chuyến đi."
               onClick={handleShareTrip}
               iconBgColor="bg-violet-50"
               iconTextColor="text-violet-600 border-violet-100"
-              className="sm:col-span-2"
+              rightElement={
+                pendingRequests.length > 0 && (
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-500 text-[12px] font-bold text-white shadow-sm ring-4 ring-white">
+                    {pendingRequests.length}
+                  </span>
+                )
+              }
             />
           </div>
         </section>
 
-        {/* Dữ liệu & xuất file Accordion */}
+        {/* Hệ thống */}
         <section className="space-y-3">
-          <div className="overflow-hidden rounded-3xl border border-[#E8E1D8] bg-[#FFFDF8] shadow-sm">
-            <button
-              type="button"
-              onClick={() => setIsDataSectionOpen(!isDataSectionOpen)}
-              className="w-full text-left p-5 flex items-center justify-between hover:bg-slate-50/40 transition-colors focus:outline-none"
-            >
-              <div>
-                <h4 className="text-[16px] font-extrabold text-[#030D2E]">Dữ liệu chuyến đi</h4>
-                <p className="text-[13px] font-semibold text-slate-500 mt-0.5">Sao lưu, khôi phục và xuất dữ liệu hành trình khi cần.</p>
-              </div>
-              <ChevronRight className={classNames("h-5 w-5 text-slate-400 transition-transform duration-200", isDataSectionOpen ? "rotate-90" : "")} />
-            </button>
-            
-            {isDataSectionOpen && (
-              <div className="border-t border-slate-100 divide-y divide-slate-100 animate-fadeIn">
-                <HubActionRow icon={DatabaseBackup} label="Sao lưu hành trình" subtitle="Tạo bản sao lưu an toàn cho toàn bộ dữ liệu chuyến đi." onClick={exportTrip} />
-                
-                {/* Custom Restore Input Row */}
-                <label className="group flex w-full cursor-pointer items-center justify-between bg-[#FFFDF8] px-5 py-3 transition-colors hover:bg-slate-50/80 motion-press">
-                  <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                    <div className="flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
-                      <ArchiveRestore className="h-5.5 w-5.5" strokeWidth={2.2} />
-                    </div>
-                    <div className="flex flex-col text-left min-w-0 flex-1">
-                      <span className="text-[15.5px] font-extrabold text-[#030D2E]">{importing ? "Đang nhập..." : "Khôi phục hành trình"}</span>
-                      <span className="text-[13px] text-slate-500 truncate">Nhập lại dữ liệu từ tệp sao lưu đã tạo trước đó.</span>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-5 w-5 text-slate-300 transition-transform group-hover:translate-x-0.5" />
-                  <input
-                    className="sr-only"
-                    type="file"
-                    accept=".kattrip,application/json"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (file) {
-                        setSelectedFileForRestore(file);
-                        setIsRestoreConfirmOpen(true);
-                      }
-                      event.target.value = "";
-                    }}
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">HỆ THỐNG</h3>
+          <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
+            <div className="flex flex-col gap-2 md:col-span-2">
+              <ActionCard
+                icon={DatabaseBackup}
+                title="Dữ liệu chuyến đi"
+                onClick={() => setIsDataSectionOpen(!isDataSectionOpen)}
+                iconBgColor="bg-blue-50"
+                iconTextColor="text-blue-600 border-blue-100"
+                rightElement={
+                  <ChevronRight 
+                    className={classNames(
+                      "h-5 w-5 text-muted-foreground transition-transform duration-200", 
+                      isDataSectionOpen ? "rotate-90" : ""
+                    )} 
                   />
-                </label>
+                }
+              />
+              
+              {isDataSectionOpen && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pl-4 border-l border-slate-200 mt-1 animate-fadeIn">
+                  <ActionCard
+                    icon={Download}
+                    title="Sao lưu hành trình"
+                    onClick={exportTrip}
+                    iconBgColor="bg-sky-50"
+                    iconTextColor="text-sky-600 border-sky-100"
+                  />
+                  
+                  <label className="group flex w-full cursor-pointer items-center justify-between bg-[#FFFDF8] border border-[#E8E1D8] px-4 py-3 rounded-2xl min-h-[56px] text-left hover:bg-slate-50/60 transition-all focus-within:ring-2 focus-within:ring-[#00BFB7]/50 motion-press md:motion-hover-lift">
+                    <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                      <div className="flex shrink-0 h-10 w-10 items-center justify-center rounded-xl border bg-indigo-50 text-indigo-600 border-indigo-100">
+                        <ArchiveRestore className="h-5.5 w-5.5" strokeWidth={2.2} />
+                      </div>
+                      <span className="text-base font-medium text-[#030D2E] truncate leading-none">
+                        {importing ? "Đang nhập..." : "Khôi phục hành trình"}
+                      </span>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                    <input
+                      className="sr-only"
+                      type="file"
+                      accept=".kattrip,application/json"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (file) {
+                          setSelectedFileForRestore(file);
+                          setIsRestoreConfirmOpen(true);
+                        }
+                        event.target.value = "";
+                      }}
+                    />
+                  </label>
 
-                <HubActionRow icon={FileText} label="Xuất báo cáo PDF" subtitle="Tạo bản tổng hợp lịch trình, chi phí và ghi chú chuyến đi." onClick={() => exportTripPdf(tripData)} />
-                <HubActionRow icon={Table2} label="Xuất bảng tính Excel" subtitle="Xuất chi phí, checklist và dữ liệu chuyến đi ra bảng tính." onClick={() => exportTripExcel(tripData)} />
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Phiên bản & Ủng hộ */}
-        <section className="space-y-3">
-          <div className="overflow-hidden rounded-3xl border border-[#E8E1D8] bg-[#FFFDF8] shadow-sm divide-y divide-slate-100">
-            {/* Version Row */}
-            <div className="flex items-center justify-between px-5 py-4 min-h-[56px]">
-              <div className="flex items-center gap-3.5">
-                <div className="flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
-                  <BadgeInfo className="h-5.5 w-5.5" strokeWidth={2.2} />
+                  <ActionCard
+                    icon={FileText}
+                    title="Xuất báo cáo PDF"
+                    onClick={() => exportTripPdf(tripData)}
+                    iconBgColor="bg-rose-50"
+                    iconTextColor="text-rose-600 border-rose-100"
+                  />
+                  
+                  <ActionCard
+                    icon={Table2}
+                    title="Xuất bảng tính Excel"
+                    onClick={() => exportTripExcel(tripData)}
+                    iconBgColor="bg-emerald-50"
+                    iconTextColor="text-emerald-600 border-emerald-100"
+                  />
                 </div>
-                <div>
-                  <span className="block text-[15.5px] font-extrabold text-[#030D2E]">Phiên bản ứng dụng</span>
-                  <span className="block text-[13px] font-semibold text-slate-500 mt-0.5">Thông tin phiên bản KAT Journey đang sử dụng.</span>
-                </div>
-              </div>
-              <span className="text-[14px] font-black text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">
-                2.0.0
-              </span>
+              )}
             </div>
 
-            {/* Donate Row */}
-            <button
-              type="button"
+            <ActionCard
+              icon={BadgeInfo}
+              title="Phiên bản ứng dụng"
+              iconBgColor="bg-slate-50"
+              iconTextColor="text-slate-600 border-slate-100"
+              rightElement={
+                <span className="text-sm font-black text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">
+                  2.0.0
+                </span>
+              }
+            />
+
+            <ActionCard
+              icon={Coffee}
+              title="Ủng hộ dự án"
               onClick={() => setIsDonateOpen(true)}
-              className="group flex w-full items-center justify-between bg-[#FFFDF8] px-5 py-4 transition-colors hover:bg-slate-50/80 active:scale-[0.99] focus:outline-none"
-            >
-              <div className="flex items-center gap-3.5 text-left">
-                <div className="flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 border border-amber-100">
-                  <Coffee className="h-5.5 w-5.5" strokeWidth={2.2} />
-                </div>
-                <div>
-                  <span className="block text-[15.5px] font-extrabold text-[#030D2E]">Ủng hộ dự án</span>
-                  <span className="block text-[13px] font-semibold text-slate-500 mt-0.5">Gửi một ly cà phê nhỏ để tiếp sức cho KAT Journey.</span>
-                </div>
-              </div>
-              <ChevronRight className="h-5 w-5 text-slate-300 transition-transform group-hover:translate-x-0.5" />
-            </button>
+              iconBgColor="bg-amber-50"
+              iconTextColor="text-amber-600 border-amber-100"
+            />
           </div>
         </section>
 
         {/* Vùng nguy hiểm */}
         <section className="space-y-3 pt-2">
           <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-rose-500/80">Vùng thao tác cẩn trọng</h3>
-          <div className="overflow-hidden rounded-3xl border border-rose-100/50 bg-rose-50/10 shadow-sm">
-            <button 
-              type="button"
-              onClick={() => setIsDeleteConfirmOpen(true)} 
-              className="group flex w-full items-center justify-between bg-rose-50/5 hover:bg-rose-50/30 px-5 transition-all active:scale-[0.99] focus:outline-none"
-            >
-              <div className="flex items-center justify-between w-full min-h-[56px] py-3 text-left">
-                <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                  <div className="flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 border border-rose-100/60">
-                    <Trash2 className="h-5.5 w-5.5" strokeWidth={2.2} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <span className="block text-[15.5px] font-extrabold text-rose-600">
-                      Xóa vĩnh viễn chuyến đi
-                    </span>
-                    <span className="block text-[13px] font-semibold mt-0.5 text-rose-500/70">
-                      Hành động này sẽ xóa toàn bộ lịch trình, chi phí, ghi chú và dữ liệu liên quan. Không thể hoàn tác.
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 shrink-0 pl-2">
-                  <ChevronRight className="h-5 w-5 text-rose-300 transition-transform group-hover:translate-x-0.5" />
-                </div>
-              </div>
-            </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <ActionCard
+              icon={Trash2}
+              title="Xóa vĩnh viễn chuyến đi"
+              onClick={() => setIsDeleteConfirmOpen(true)}
+              iconBgColor="bg-rose-50"
+              iconTextColor="text-rose-600 border-rose-100/60"
+              titleClassName="text-rose-600 font-semibold"
+              className="border-rose-100 bg-rose-50/10 hover:bg-rose-50/20 text-rose-600 focus:ring-rose-500/50 md:col-span-2"
+            />
           </div>
         </section>
 
@@ -1863,59 +1932,143 @@ export function MoreScreen({
         isOpen={isShareModalOpen}
         onClose={() => {
           setIsShareModalOpen(false);
-          // Do not reset activeShareLink here so it persists if reopened during the same session
         }}
         title="Chia sẻ chuyến đi"
-        subtitle="Tạo link để người khác xem lịch trình và thông tin chuyến đi."
+        subtitle={
+          <div className="space-y-2.5 mt-1">
+            <p className="text-[13.5px] text-slate-500 leading-relaxed">
+              Tạo link để người khác xem lịch trình và thông tin chuyến đi.
+            </p>
+            {pendingRequests.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setIsRequestsSheetOpen(true)}
+                className="w-full mt-3 flex items-center justify-between rounded-xl bg-rose-50 border border-rose-100 p-3 hover:bg-rose-100/50 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-500 text-white">
+                    <AlertTriangle className="h-4.5 w-4.5" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-[13.5px] font-bold text-rose-700">Có {pendingRequests.length} đề xuất mới</p>
+                    <p className="text-[12px] font-medium text-rose-600/80">Nhấn để xem và duyệt</p>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-rose-400" />
+              </button>
+            )}
+            <div className="flex justify-start">
+              <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 border border-violet-100 px-2.5 py-0.5 text-[11px] font-bold text-violet-700">
+                Chế độ: Xem & đề xuất chỉnh sửa
+              </span>
+            </div>
+          </div>
+        }
       >
         <div className="space-y-5 px-1 pb-4">
-          {/* Mode label */}
-          <div className="flex justify-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-100 px-3 py-1 text-sm font-extrabold text-violet-700">
-              Chế độ: Chỉ xem
-            </span>
-          </div>
-
           {!activeShareLink ? (
             <>
-              <div className="space-y-3 rounded-2xl bg-slate-50 border border-slate-200 p-4">
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input type="checkbox" checked={shareOptions.includeExpenses} onChange={(e) => setShareOptions({...shareOptions, includeExpenses: e.target.checked})} className="w-5 h-5 rounded border-slate-300 text-kat-primary focus:ring-kat-primary" />
-                  <span className="text-[15px] font-semibold text-slate-700">Bao gồm chi phí</span>
-                </label>
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input type="checkbox" checked={shareOptions.includeJournals} onChange={(e) => setShareOptions({...shareOptions, includeJournals: e.target.checked})} className="w-5 h-5 rounded border-slate-300 text-kat-primary focus:ring-kat-primary" />
-                  <span className="text-[15px] font-semibold text-slate-700">Bao gồm nhật ký</span>
-                </label>
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input type="checkbox" checked={shareOptions.includeChecklist} onChange={(e) => setShareOptions({...shareOptions, includeChecklist: e.target.checked})} className="w-5 h-5 rounded border-slate-300 text-kat-primary focus:ring-kat-primary" />
-                  <span className="text-[15px] font-semibold text-slate-700">Bao gồm danh sách chuẩn bị</span>
-                </label>
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input type="checkbox" checked={shareOptions.includeBackupPlans} onChange={(e) => setShareOptions({...shareOptions, includeBackupPlans: e.target.checked})} className="w-5 h-5 rounded border-slate-300 text-kat-primary focus:ring-kat-primary" />
-                  <span className="text-[15px] font-semibold text-slate-700">Bao gồm phương án dự phòng</span>
-                </label>
-                
-                <div className="pt-2 border-t border-slate-200">
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input type="checkbox" checked={shareOptions.includeDocuments} onChange={(e) => setShareOptions({...shareOptions, includeDocuments: e.target.checked})} className="w-5 h-5 rounded border-slate-300 text-rose-500 focus:ring-rose-500 mt-0.5" />
-                    <div>
-                      <span className="text-[15px] font-semibold text-slate-700">Bao gồm giấy tờ & đặt chỗ</span>
-                      {shareOptions.includeDocuments && (
-                        <p className="mt-1 text-sm font-medium text-rose-600 leading-snug">
-                          Giấy tờ có thể chứa mã đặt chỗ, vé, số điện thoại hoặc liên kết riêng tư. Chỉ bật nếu bạn tin tưởng người nhận link.
-                        </p>
-                      )}
-                    </div>
-                  </label>
+              {/* Option Rows */}
+              <div className="space-y-2.5">
+                {/* Row: Bao gồm chi phí */}
+                <div 
+                  onClick={() => setShareOptions({ ...shareOptions, includeExpenses: !shareOptions.includeExpenses })}
+                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-150/60 rounded-2xl cursor-pointer transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-500">
+                      <WalletCards className="h-4.5 w-4.5" />
+                    </span>
+                    <span className="text-[14.5px] font-bold text-slate-700">Bao gồm chi phí</span>
+                  </div>
+                  <ShareSwitch 
+                    checked={shareOptions.includeExpenses} 
+                    onChange={(val) => setShareOptions({ ...shareOptions, includeExpenses: val })} 
+                  />
                 </div>
+
+                {/* Row: Bao gồm nhật ký */}
+                <div 
+                  onClick={() => setShareOptions({ ...shareOptions, includeJournals: !shareOptions.includeJournals })}
+                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-150/60 rounded-2xl cursor-pointer transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-50 text-violet-500">
+                      <BookOpenText className="h-4.5 w-4.5" />
+                    </span>
+                    <span className="text-[14.5px] font-bold text-slate-700">Bao gồm nhật ký</span>
+                  </div>
+                  <ShareSwitch 
+                    checked={shareOptions.includeJournals} 
+                    onChange={(val) => setShareOptions({ ...shareOptions, includeJournals: val })} 
+                  />
+                </div>
+
+                {/* Row: Bao gồm danh sách chuẩn bị */}
+                <div 
+                  onClick={() => setShareOptions({ ...shareOptions, includeChecklist: !shareOptions.includeChecklist })}
+                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-150/60 rounded-2xl cursor-pointer transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+                      <CheckCircle2 className="h-4.5 w-4.5" />
+                    </span>
+                    <span className="text-[14.5px] font-bold text-slate-700">Bao gồm danh sách chuẩn bị</span>
+                  </div>
+                  <ShareSwitch 
+                    checked={shareOptions.includeChecklist} 
+                    onChange={(val) => setShareOptions({ ...shareOptions, includeChecklist: val })} 
+                  />
+                </div>
+
+                {/* Row: Bao gồm phương án dự phòng */}
+                <div 
+                  onClick={() => setShareOptions({ ...shareOptions, includeBackupPlans: !shareOptions.includeBackupPlans })}
+                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-150/60 rounded-2xl cursor-pointer transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-50 text-sky-500">
+                      <AlertTriangle className="h-4.5 w-4.5" />
+                    </span>
+                    <span className="text-[14.5px] font-bold text-slate-700">Bao gồm phương án dự phòng</span>
+                  </div>
+                  <ShareSwitch 
+                    checked={shareOptions.includeBackupPlans} 
+                    onChange={(val) => setShareOptions({ ...shareOptions, includeBackupPlans: val })} 
+                  />
+                </div>
+
+                {/* Row: Bao gồm giấy tờ & đặt chỗ */}
+                <div 
+                  onClick={() => setShareOptions({ ...shareOptions, includeDocuments: !shareOptions.includeDocuments })}
+                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-150/60 rounded-2xl cursor-pointer transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-50 text-rose-500">
+                      <FileText className="h-4.5 w-4.5" />
+                    </span>
+                    <span className="text-[14.5px] font-bold text-slate-700">Bao gồm giấy tờ & đặt chỗ</span>
+                  </div>
+                  <ShareSwitch 
+                    checked={shareOptions.includeDocuments} 
+                    onChange={(val) => setShareOptions({ ...shareOptions, includeDocuments: val })} 
+                  />
+                </div>
+
+                {shareOptions.includeDocuments && (
+                  <div className="rounded-2xl bg-rose-50/70 border border-rose-100 p-4 text-[13px] text-rose-800 font-semibold flex gap-2 animate-fadeIn">
+                    <ShieldAlert className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
+                    <span>Giấy tờ có thể chứa mã đặt chỗ, vé, số điện thoại hoặc liên kết riêng tư. Chỉ bật nếu bạn thực sự tin tưởng người nhận link.</span>
+                  </div>
+                )}
               </div>
 
-              <div className="flex gap-3 pt-2">
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-3">
                 <button
                   type="button"
                   onClick={() => setIsShareModalOpen(false)}
-                  className="flex-1 rounded-xl bg-slate-100 py-3.5 font-bold text-slate-700 hover:bg-slate-200 transition-colors"
+                  className="flex-1 rounded-xl bg-slate-100 py-3 font-bold text-slate-700 hover:bg-slate-200 transition-colors min-h-[44px] text-[13.5px] focus:outline-none"
                 >
                   Đóng
                 </button>
@@ -1923,54 +2076,64 @@ export function MoreScreen({
                   type="button"
                   onClick={handleCreateLink}
                   disabled={shareLoading}
-                  className="flex-[2] rounded-xl bg-kat-primary py-3.5 font-bold text-white hover:brightness-105 transition-colors disabled:opacity-50"
+                  className="flex-[2] rounded-xl bg-kat-primary py-3 font-bold text-white hover:brightness-105 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none"
                 >
                   {shareLoading ? "Đang tạo link..." : "Tạo link chia sẻ"}
                 </button>
               </div>
             </>
           ) : (
-            <div className="space-y-6">
-              <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-5 text-center">
-                <div className="flex justify-center mb-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                    <Check className="h-6 w-6" strokeWidth={3} />
-                  </div>
-                </div>
-                <h4 className="text-[16px] font-bold text-emerald-800 mb-2">Đã tạo link chia sẻ</h4>
-                <div className="bg-white border border-emerald-100 rounded-xl p-3 select-all cursor-text break-all text-[14px] font-medium text-slate-700 shadow-sm">
-                  {activeShareLink.url}
-                </div>
+            <div className="space-y-5 animate-fadeIn">
+              {/* Success layout */}
+              <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-100/80 p-3.5">
+                <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+                <span className="text-[14px] font-bold text-emerald-800">Đã tạo link chia sẻ</span>
               </div>
 
-              <div className="flex flex-col gap-3">
+              {/* Copy Link field inside an Input container with inline Copy button */}
+              <div className="relative flex items-center rounded-xl bg-slate-100 border border-slate-200 px-3 py-2.5">
+                <input
+                  type="text"
+                  readOnly
+                  value={activeShareLink.url}
+                  onClick={(e) => (e.target as HTMLInputElement).select()}
+                  className="flex-1 bg-transparent border-none outline-none text-slate-600 text-[13.5px] font-medium pr-10 truncate cursor-text"
+                />
                 <button
                   type="button"
                   onClick={() => {
                     navigator.clipboard.writeText(activeShareLink.url);
-                    alert("Đã sao chép link!");
+                    setCopiedLink(true);
+                    setTimeout(() => setCopiedLink(false), 2000);
                   }}
-                  className="w-full rounded-xl bg-kat-primary py-3.5 font-bold text-white hover:brightness-105 transition-colors shadow-sm"
+                  className="absolute right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-slate-800 transition-all shadow-sm active:scale-95"
+                  title="Sao chép link"
                 >
-                  Sao chép link
+                  {copiedLink ? (
+                    <Check className="h-4 w-4 text-emerald-500" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
                 </button>
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setIsShareModalOpen(false)}
-                    className="flex-1 rounded-xl bg-slate-100 py-3.5 font-bold text-slate-700 hover:bg-slate-200 transition-colors"
-                  >
-                    Đóng
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleRevokeLink}
-                    disabled={shareLoading}
-                    className="flex-1 rounded-xl bg-rose-50 text-rose-600 py-3.5 font-bold hover:bg-rose-100 transition-colors disabled:opacity-50"
-                  >
-                    {shareLoading ? "Đang xử lý..." : "Tắt chia sẻ"}
-                  </button>
-                </div>
+              </div>
+
+              {/* Success actions */}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsShareModalOpen(false)}
+                  className="flex-1 rounded-xl border border-slate-200 bg-white py-3 font-bold text-slate-700 hover:bg-slate-50 transition-colors min-h-[44px] text-[13.5px] focus:outline-none"
+                >
+                  Đóng
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRevokeLink}
+                  disabled={shareLoading}
+                  className="flex-1 rounded-xl bg-transparent hover:bg-rose-50 text-rose-600 py-3 font-bold active:scale-95 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none"
+                >
+                  {shareLoading ? "Đang tắt..." : "Tắt chia sẻ"}
+                </button>
               </div>
             </div>
           )}
@@ -2019,6 +2182,15 @@ export function MoreScreen({
           </div>
         </div>
       </BottomSheet>
+
+      {activeToken && (
+        <ShareChangeRequestsSheet
+          isOpen={isRequestsSheetOpen}
+          onClose={() => setIsRequestsSheetOpen(false)}
+          token={activeToken}
+          requests={pendingRequests}
+        />
+      )}
 
     </div>
   );

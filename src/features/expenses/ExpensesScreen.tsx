@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Trash2, WalletCards, Scale, UsersRound, UserRound, Calculator, ChartPie, ReceiptText, Route, Utensils, Hotel, Ticket, Tags, PencilLine, Info, UserCheck } from "lucide-react";
+import { Plus, Trash2, WalletCards, Scale, UsersRound, UserRound, Calculator, ChartPie, ReceiptText, Route, Utensils, Hotel, Ticket, Tags, PencilLine, Info, UserCheck, ChevronRight, ShoppingBag, Gamepad2, Plane, Sparkles } from "lucide-react";
 import { db, Expense, Member } from "../../db";
 import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories } from "../../utils/helpers";
-import { BottomSheet, FormActions, Input, ScreenTitle, Select, TypedDeleteConfirmModal, classNames } from "../../components/ui";
+import { BottomSheet, FormActions, Input, ScreenTitle, Select, DeleteConfirmModal, classNames } from "../../components/ui";
 
 function CategoryBar({ percent, colorClass }: { percent: number; colorClass: string }) {
   return (
@@ -78,6 +78,18 @@ function SettlementCard({
     emptyText = "Chưa có khoản chi chung để cân đối chia tiền.";
   }
 
+  // Group settlements by recipient ('to')
+  const groupedByRecipient = React.useMemo(() => {
+    const groups: Record<string, Array<{ from: string; amount: number }>> = {};
+    settlements.forEach(s => {
+      if (!groups[s.to]) {
+        groups[s.to] = [];
+      }
+      groups[s.to].push({ from: s.from, amount: s.amount });
+    });
+    return groups;
+  }, [settlements]);
+
   return (
     <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm mt-6 animate-fadeIn">
       <div className="flex items-center gap-2 mb-4">
@@ -87,15 +99,33 @@ function SettlementCard({
         <h3 className="text-[16px] font-extrabold text-[#030D2E]">Cân đối chia tiền</h3>
       </div>
       {settlements.length ? (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {settlements.map((item, idx) => (
-            <div key={idx} className="flex items-center justify-between rounded-2xl bg-kat-primary/5 border border-kat-primary/10 p-4 transition-all hover:bg-kat-primary/10">
-              <div className="flex items-center gap-2 text-[14px] font-bold text-[#030D2E]">
-                <span>{item.from}</span>
-                <span className="text-slate-400 font-normal">&rarr;</span>
-                <span>{item.to}</span>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {Object.entries(groupedByRecipient).map(([recipient, debtors], idx) => (
+            <div key={idx} className="rounded-2xl border border-[#E8E1D8] bg-[#FFFDF8] p-4.5 shadow-sm space-y-3">
+              {/* Header card: Người nhận tiền */}
+              <div className="flex items-center gap-2 pb-2.5 border-b border-slate-100">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+                  <UserCheck className="h-4 w-4" />
+                </span>
+                <p className="text-[14px] font-extrabold text-[#030D2E]">
+                  Nhận tiền: <span className="underline decoration-kat-primary decoration-2 underline-offset-4">{recipient}</span>
+                </p>
               </div>
-              <span className="font-black text-sunset-600 text-[15px]">{formatMoney(item.amount)}</span>
+              
+              {/* Danh sách người gửi tiền */}
+              <div className="space-y-2">
+                {debtors.map((debtor, dIdx) => (
+                  <div key={dIdx} className="flex items-center justify-between text-[13px] font-bold text-slate-700 bg-white/70 border border-slate-100 rounded-xl px-3 py-2">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="text-slate-400 font-semibold">Từ:</span>
+                      <span className="truncate text-[#030D2E]">{debtor.from}</span>
+                    </div>
+                    <span className="font-black text-rose-600 text-[14px] shrink-0 pl-2">
+                      {formatMoney(debtor.amount)}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
@@ -112,12 +142,16 @@ function ExpenseCard({
   item, 
   onEdit, 
   onDelete,
-  idx = 0
+  idx = 0,
+  isSwiped,
+  onSwipe
 }: { 
   item: Expense; 
   onEdit: () => void; 
   onDelete: () => void;
   idx?: number;
+  isSwiped: boolean;
+  onSwipe: (swiped: boolean) => void;
 }) {
   const isPersonal = item.splitType === "personal";
   
@@ -125,80 +159,123 @@ function ExpenseCard({
     switch (category) {
       case "Di chuyển":
         return <Route className="h-3.5 w-3.5" />;
+      case "Vé máy bay":
+        return <Plane className="h-3.5 w-3.5" />;
       case "Ăn uống":
         return <Utensils className="h-3.5 w-3.5" />;
       case "Lưu trú":
         return <Hotel className="h-3.5 w-3.5" />;
       case "Vé tham quan":
         return <Ticket className="h-3.5 w-3.5" />;
+      case "Mua sắm":
+        return <ShoppingBag className="h-3.5 w-3.5" />;
+      case "Vui chơi & Giải trí":
+        return <Gamepad2 className="h-3.5 w-3.5" />;
+      case "Chuẩn bị hành lý":
+        return <Sparkles className="h-3.5 w-3.5" />;
       default:
         return <Tags className="h-3.5 w-3.5" />;
     }
   };
+
+  const touchStartX = React.useRef(0);
+  const touchEndX = React.useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 40) {
+      onSwipe(true);
+    } else if (diff < -40) {
+      onSwipe(false);
+    }
+  };
   
   return (
-    <article className={`flex items-center justify-between gap-4 rounded-3xl bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] transition-all duration-200 hover:shadow-md hover:border-slate-300 motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}>
-      <div className="min-w-0 flex-1">
-        {/* Category & Badge */}
-        <div className="flex items-center flex-wrap gap-2 text-[12px] font-bold text-slate-400">
-          <span className="inline-flex items-center gap-1 uppercase tracking-wider text-slate-500">
-            {getCategoryIcon(item.category)}
-            {item.category}
-          </span>
-          
-          <span className={classNames(
-            "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold border",
-            isPersonal 
-              ? "bg-slate-100 text-slate-600 border-slate-200" 
-              : "bg-kat-primary/10 text-kat-primary border-kat-primary/20"
-          )}>
-            {isPersonal ? "Chi cá nhân" : "Chi chung chuyến đi"}
-          </span>
-        </div>
+    <div className={`relative overflow-hidden rounded-3xl motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}>
+      {/* Background Action Buttons */}
+      <div className="absolute inset-y-0 right-0 z-0 flex items-center justify-end gap-2 pr-4 pl-12 bg-slate-50/60 rounded-3xl border border-slate-100">
+        <button 
+          className="flex h-11 w-11 items-center justify-center rounded-2xl text-slate-600 bg-white hover:bg-slate-50 active:scale-95 transition-all shadow-sm border border-slate-200/50 focus:outline-none" 
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit();
+          }}
+          title="Chỉnh sửa"
+        >
+          <PencilLine className="h-5 w-5" />
+        </button>
+        <button 
+          className="flex h-11 w-11 items-center justify-center rounded-2xl text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all shadow-sm border border-rose-100 focus:outline-none" 
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          title="Xóa"
+        >
+          <Trash2 className="h-5 w-5" />
+        </button>
+      </div>
 
-        {/* Description */}
-        <h4 className="mt-1.5 truncate text-[16px] font-extrabold text-[#030D2E]">
-          {item.description || "Khoản chi không tên"}
-        </h4>
-
-        {/* Paid by / Owned by info */}
-        {isPersonal ? (
-          item.payer && (
-            <p className="mt-1 text-[13.5px] font-semibold text-slate-500">
-              Chi cá nhân: <span className="text-[#030D2E]">{item.payer}</span>
-            </p>
-          )
-        ) : (
-          <p className="mt-1 text-[13.5px] font-semibold text-slate-500">
-            Người trả: <span className="text-[#030D2E]">{item.payer || "Chưa chọn"}</span>
-          </p>
+      {/* Main Card Content Overlay */}
+      <article 
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onClick={(e) => {
+          e.stopPropagation();
+          onSwipe(!isSwiped);
+        }}
+        className={classNames(
+          "relative z-10 flex items-center justify-between gap-4 rounded-3xl bg-[#FFFDF8] p-5 border border-[#E8E1D8] transition-all duration-200 hover:shadow-md cursor-pointer select-none",
+          isSwiped ? "-translate-x-28 border-slate-300" : "translate-x-0"
         )}
-      </div>
+      >
+        <div className="min-w-0 flex-1">
+          {/* Description */}
+          <h4 className="text-base font-semibold text-[#030D2E] truncate">
+            {item.description || "Khoản chi không tên"}
+          </h4>
 
-      {/* Amount and Actions */}
-      <div className="flex flex-col items-end gap-2.5 shrink-0 pl-2">
-        <p className="font-black text-[#030D2E] text-[16px] md:text-[18px]">
-          {formatMoney(item.amount)}
-        </p>
-        
-        <div className="flex gap-1">
-          <button 
-            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-50 hover:text-slate-600 motion-press" 
-            onClick={onEdit}
-            title="Chỉnh sửa"
-          >
-            <PencilLine className="h-4.5 w-4.5" />
-          </button>
-          <button 
-            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-rose-50 hover:text-rose-600 motion-press" 
-            onClick={onDelete}
-            title="Xóa"
-          >
-            <Trash2 className="h-4.5 w-4.5" />
-          </button>
+          {/* Category & Badge */}
+          <div className="flex items-center flex-wrap gap-2 text-xs text-slate-500 mt-1.5">
+            <span className="inline-flex items-center gap-1 font-medium bg-slate-100/80 px-2 py-0.5 rounded-md border border-slate-200/20">
+              {getCategoryIcon(item.category)}
+              {item.category}
+            </span>
+            
+            <span className={classNames(
+              "inline-flex items-center rounded-md px-2 py-0.5 font-bold border",
+              isPersonal 
+                ? "bg-slate-50 text-slate-500 border-slate-200/80" 
+                : "bg-emerald-50 text-emerald-700 border-emerald-100"
+            )}>
+              {isPersonal ? "Chi cá nhân" : "Chi chung"}
+            </span>
+
+            {/* Paid by / Owned by info */}
+            <span className="font-medium">
+              • {isPersonal ? (item.payer ? `Của: ${item.payer}` : "Cá nhân") : `Trả: ${item.payer || "Chưa chọn"}`}
+            </span>
+          </div>
         </div>
-      </div>
-    </article>
+
+        {/* Amount */}
+        <div className="shrink-0 pl-2 text-right">
+          <p className="font-bold text-[#030D2E] text-lg">
+            {formatMoney(item.amount)}
+          </p>
+        </div>
+      </article>
+    </div>
   );
 }
 
@@ -248,9 +325,12 @@ function ExpenseForm({
     customCategory?: string; 
   }>({});
 
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
   useEffect(() => {
     if (isOpen) {
       setErrors({});
+      setShowAdvanced(false);
       if (editing) {
         const isCustom = !categoryOptions.includes(editing.category) || editing.category === "Khác...";
         setForm({
@@ -261,6 +341,9 @@ function ExpenseForm({
           customCategory: isCustom && editing.category !== "Khác..." ? editing.category : "",
           splitType: editing.splitType ?? "shared",
         });
+        if (editing.splitType === "personal" || isCustom || editing.category !== categoryOptions[0]) {
+          setShowAdvanced(true);
+        }
       } else {
         setForm({ 
           description: "", 
@@ -321,40 +404,46 @@ function ExpenseForm({
     }
   }
 
+  const isSaveDisabled = !form.amount.trim() || (form.splitType === "shared" && members.length > 0 && !form.payer);
+
+  const headerAction = (
+    <button
+      type="button"
+      onClick={save}
+      disabled={isSaveDisabled}
+      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-primary hover:bg-kat-primary-usable text-[#030D2E] px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
+    >
+      {editing ? "Lưu" : "Thêm"}
+    </button>
+  );
+
   return (
     <BottomSheet 
       isOpen={isOpen} 
       onClose={onClose} 
       title={editing ? "Sửa khoản chi" : "Thêm khoản chi"}
-      footer={
-        <FormActions 
-          onSave={save} 
-          saveLabel={editing ? "Lưu thông tin" : "Thêm khoản chi"} 
-          onCancel={onClose}
-          disabled={!form.amount.trim() || (form.splitType === "shared" && members.length > 0 && !form.payer)}
-        />
-      }
+      headerAction={headerAction}
     >
-      <div className="space-y-5">
-        {/* Amount */}
-        <div>
-          <Input 
-            label={
-              <span className="flex items-center gap-1.5">
-                <WalletCards className="h-4 w-4 text-slate-500" />
-                Số tiền *
-              </span>
-            } 
-            type="number" 
-            value={form.amount} 
-            onChange={(amount) => {
-              setForm({ ...form, amount });
-              setErrors({ ...errors, amount: "" });
-            }} 
-            placeholder="VD: 500000" 
-          />
+      <div className="space-y-4">
+        {/* Prominent Amount Input */}
+        <div className="relative flex flex-col items-center justify-center py-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+          <span className="text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-1">Số tiền (đ)</span>
+          <div className="relative w-full max-w-[280px] flex items-center justify-center">
+            <input
+              type="number"
+              pattern="[0-9]*"
+              inputMode="numeric"
+              value={form.amount}
+              onChange={(e) => {
+                setForm({ ...form, amount: e.target.value });
+                setErrors({ ...errors, amount: "" });
+              }}
+              placeholder="0"
+              className="w-full text-center text-3xl font-black text-[#030D2E] bg-transparent border-none outline-none placeholder-slate-300 focus:ring-0"
+            />
+          </div>
           {errors.amount && (
-            <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1">{errors.amount}</p>
+            <p className="text-rose-500 text-[12.5px] font-bold mt-1.5">{errors.amount}</p>
           )}
         </div>
 
@@ -371,95 +460,7 @@ function ExpenseForm({
           placeholder="VD: Taxi, ăn trưa, vé tham quan..." 
         />
 
-        {/* Category */}
-        <div className="grid grid-cols-1 gap-4">
-          <Select 
-            label={
-              <span className="flex items-center gap-1.5">
-                <Tags className="h-4 w-4 text-slate-500" />
-                Hạng mục
-              </span>
-            } 
-            value={form.category} 
-            onChange={(category) => {
-              setForm({ ...form, category, customCategory: "" });
-              setErrors({ ...errors, customCategory: "" });
-            }} 
-            options={categoryOptions} 
-          />
-          
-          {form.category === "Khác..." && (
-            <div className="animate-fadeIn">
-              <Input 
-                label={
-                  <span className="flex items-center gap-1.5">
-                    <Tags className="h-4 w-4 text-slate-500" />
-                    Tên hạng mục tự nhập *
-                  </span>
-                } 
-                value={form.customCategory} 
-                onChange={(customCategory) => {
-                  setForm({ ...form, customCategory: customCategory.slice(0, 30) });
-                  setErrors({ ...errors, customCategory: "" });
-                }} 
-                placeholder="VD: Quà lưu niệm, Thuê xe máy" 
-              />
-              {errors.customCategory && (
-                <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1">{errors.customCategory}</p>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Segmented Control for Cost Calculation */}
-        <div className="space-y-2">
-          <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-            <Scale className="h-4 w-4 text-slate-500" />
-            Cách chia khoản chi
-          </span>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => {
-                setForm({ ...form, splitType: "shared", payer: members[0]?.name ?? "" });
-                setErrors({ ...errors, payer: "" });
-              }}
-              className={classNames(
-                "flex flex-col items-start gap-1 p-3.5 rounded-2xl border text-left transition-all active:scale-95",
-                form.splitType === "shared"
-                  ? "border-kat-primary bg-kat-primary/5 text-kat-text"
-                  : "border-slate-200 hover:bg-slate-50 text-slate-500"
-              )}
-            >
-              <span className="text-[14px] font-extrabold flex items-center gap-1">
-                <UsersRound className="h-4 w-4 text-kat-primary" />
-                Chi chung chuyến đi
-              </span>
-              <span className="text-[11px] opacity-80 leading-snug">Một người trả trước, cả nhóm cùng chia.</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setForm({ ...form, splitType: "personal", payer: "" });
-                setErrors({ ...errors, payer: "" });
-              }}
-              className={classNames(
-                "flex flex-col items-start gap-1 p-3.5 rounded-2xl border text-left transition-all active:scale-95",
-                form.splitType === "personal"
-                  ? "border-kat-primary bg-kat-primary/5 text-kat-text"
-                  : "border-slate-200 hover:bg-slate-50 text-slate-500"
-              )}
-            >
-              <span className="text-[14px] font-extrabold flex items-center gap-1">
-                <UserRound className="h-4 w-4 text-slate-500" />
-                Chi cá nhân
-              </span>
-              <span className="text-[11px] opacity-80 leading-snug">Khoản cá nhân, không chia với nhóm.</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Split Details Conditional Rendering */}
+        {/* Payer Select (Always Visible in Default Section) */}
         {form.splitType === "shared" ? (
           members.length > 0 ? (
             <div>
@@ -481,10 +482,9 @@ function ExpenseForm({
               {errors.payer && (
                 <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1">{errors.payer}</p>
               )}
-              <p className="text-[12.5px] text-slate-400 mt-1.5 pl-1">Người thanh toán khoản này trước cho chuyến đi.</p>
             </div>
           ) : (
-            <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-[13.5px] text-amber-800 font-semibold flex gap-2">
+            <div className="rounded-2xl bg-amber-50/70 border border-amber-100 p-4 text-[13px] text-amber-800 font-semibold flex gap-2">
               <Info className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
               <span>Chuyến đi chưa có người đồng hành. Thêm người đồng hành để tính phần cần góp hoặc hoàn lại.</span>
             </div>
@@ -504,10 +504,108 @@ function ExpenseForm({
                 options={["", ...members.map((member) => member.name)]}
                 placeholder="Chọn người đồng hành (không bắt buộc)"
               />
-              <p className="text-[12.5px] text-slate-400 mt-1.5 pl-1">Dùng để thống kê chi cá nhân, không tính vào phần cần chia của chuyến đi.</p>
             </div>
           )
         )}
+
+        {/* Accordion / Collapsible Panel */}
+        <div className="pt-2 border-t border-slate-100/80">
+          <button
+            type="button"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-[#030D2E] transition-colors focus:outline-none"
+          >
+            <span className="flex items-center gap-1.5">
+              <Tags className="h-4 w-4 text-slate-400" />
+              Chi tiết nâng cao
+            </span>
+            <ChevronRight className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
+          </button>
+
+          {showAdvanced && (
+            <div className="mt-3 space-y-4 animate-fadeIn">
+              {/* Category */}
+              <div className="grid grid-cols-1 gap-4">
+                <Select 
+                  label={
+                    <span className="flex items-center gap-1.5">
+                      <Tags className="h-4 w-4 text-slate-500" />
+                      Hạng mục
+                    </span>
+                  } 
+                  value={form.category} 
+                  onChange={(category) => {
+                    setForm({ ...form, category, customCategory: "" });
+                    setErrors({ ...errors, customCategory: "" });
+                  }} 
+                  options={categoryOptions} 
+                />
+                
+                {form.category === "Khác..." && (
+                  <div className="animate-fadeIn">
+                    <Input 
+                      label={
+                        <span className="flex items-center gap-1.5">
+                          <Tags className="h-4 w-4 text-slate-500" />
+                          Tên hạng mục tự nhập *
+                        </span>
+                      } 
+                      value={form.customCategory} 
+                      onChange={(customCategory) => {
+                        setForm({ ...form, customCategory: customCategory.slice(0, 30) });
+                        setErrors({ ...errors, customCategory: "" });
+                      }} 
+                      placeholder="VD: Quà lưu niệm, Thuê xe máy" 
+                    />
+                    {errors.customCategory && (
+                      <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1">{errors.customCategory}</p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Segmented Control for Cost Calculation */}
+              <div className="space-y-2">
+                <span className="text-[13.5px] font-semibold text-slate-600 flex items-center gap-1.5">
+                  <Scale className="h-4 w-4 text-slate-500" />
+                  Cách chia khoản chi
+                </span>
+                <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200/40">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForm({ ...form, splitType: "shared", payer: members[0]?.name ?? "" });
+                      setErrors({ ...errors, payer: "" });
+                    }}
+                    className={classNames(
+                      "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
+                      form.splitType === "shared"
+                        ? "bg-white text-[#030D2E] shadow-sm border border-slate-200/10"
+                        : "text-slate-500 hover:text-slate-700"
+                    )}
+                  >
+                    Chi chung nhóm
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForm({ ...form, splitType: "personal", payer: "" });
+                      setErrors({ ...errors, payer: "" });
+                    }}
+                    className={classNames(
+                      "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
+                      form.splitType === "personal"
+                        ? "bg-white text-[#030D2E] shadow-sm border border-slate-200/10"
+                        : "text-slate-500 hover:text-slate-700"
+                    )}
+                  >
+                    Cá nhân tự trả
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </BottomSheet>
   );
@@ -529,6 +627,7 @@ export function ExpensesScreen({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
+  const [swipedExpenseId, setSwipedExpenseId] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (message: string) => {
@@ -567,7 +666,10 @@ export function ExpensesScreen({
   const isEmpty = expenses.length === 0;
 
   return (
-    <div className="mx-auto max-w-[1120px] px-1 md:px-0">
+    <div 
+      className="mx-auto max-w-[1120px] px-1 md:px-0"
+      onClick={() => setSwipedExpenseId(null)}
+    >
       <div className="space-y-6 md:space-y-8 pb-0 md:pb-8">
         
         {/* Title row */}
@@ -629,7 +731,7 @@ export function ExpensesScreen({
               </div>
             </div>
             
-            {/* Hộp nút thêm khoản chi trên Mobile - ẩn đi khi ở Desktop (md:hidden) vì đã có nút góc trên bên phải */}
+            {/* Hộp nút thêm khoản chi trên Mobile */}
             <div className="shrink-0 flex md:hidden items-center justify-end w-full">
               <button 
                 onClick={openNewForm}
@@ -708,9 +810,17 @@ export function ExpensesScreen({
                 <ExpenseCard
                   key={item.id}
                   item={item}
-                  onEdit={() => openEditForm(item)}
-                  onDelete={() => setExpenseToDelete(item)}
+                  onEdit={() => {
+                    setSwipedExpenseId(null);
+                    openEditForm(item);
+                  }}
+                  onDelete={() => {
+                    setSwipedExpenseId(null);
+                    setExpenseToDelete(item);
+                  }}
                   idx={idx}
+                  isSwiped={swipedExpenseId === item.id}
+                  onSwipe={(swiped) => setSwipedExpenseId(swiped ? item.id! : null)}
                 />
               ))
             )}
@@ -718,7 +828,7 @@ export function ExpensesScreen({
         </section>
       </div>
 
-      <TypedDeleteConfirmModal
+      <DeleteConfirmModal
         isOpen={Boolean(expenseToDelete)}
         onClose={() => setExpenseToDelete(null)}
         onConfirm={executeDelete}
@@ -727,8 +837,6 @@ export function ExpensesScreen({
         description="Khoản chi này sẽ bị xóa khỏi danh sách chi phí của chuyến đi. Sau khi xóa, không thể hoàn tác."
         confirmLabel="Xóa khoản chi"
       />
-
-
 
       {/* Success Toast */}
       {toastMessage && (

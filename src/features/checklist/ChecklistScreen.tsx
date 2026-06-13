@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Check, Plus, Trash2, Luggage, Edit2, AlertCircle, User, X, Minus, Sparkles, FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, WalletCards, Sandwich, Package, BadgeCheck, CheckCircle2, ClipboardList, UserRoundCheck, StickyNote, Type } from "lucide-react";
+import { Check, Plus, Trash2, Luggage, Edit2, AlertCircle, User, X, Minus, Sparkles, FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, WalletCards, Sandwich, Package, BadgeCheck, CheckCircle2, ClipboardList, UserRoundCheck, StickyNote, Type, MoreHorizontal } from "lucide-react";
 import { ChecklistItem, db } from "../../db";
 import { getChecklistStats } from "../../utils/helpers";
 import { useLiveQuery } from "dexie-react-hooks";
-import { TypedDeleteConfirmModal } from "../../components/ui";
+import { DeleteConfirmModal } from "../../components/ui";
 
 const CATEGORIES = [
   "Giấy tờ",
@@ -48,6 +48,142 @@ const QUICK_SUGGESTIONS = [
   { label: "Khăn / vệ sinh", title: "Khăn mặt & Bộ vệ sinh", category: "Đồ cá nhân" },
   { label: "Đồ ăn nhẹ", title: "Nước uống & bánh kẹo", category: "Đồ ăn nhẹ" }
 ];
+
+function ChecklistItemRow({
+  item,
+  onToggleComplete,
+  onEdit,
+  onDelete
+}: {
+  item: ChecklistItem;
+  onToggleComplete: (item: ChecklistItem) => void;
+  onEdit: (item: ChecklistItem) => void;
+  onDelete: (item: ChecklistItem) => void;
+}) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  return (
+    <div
+      className={`group flex items-start gap-3.5 p-3 rounded-2xl border transition-all duration-200 ${
+        item.completed
+          ? "bg-slate-50/50 border-slate-200/50 opacity-65"
+          : "bg-white border-slate-200/80 hover:border-slate-300"
+      }`}
+    >
+      {/* Checkbox button */}
+      <button
+        onClick={() => onToggleComplete(item)}
+        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-all duration-200 motion-press ${
+          item.completed
+            ? "bg-[#00BFB7]/20 text-[#00BFB7] border-transparent shadow-sm"
+            : "bg-slate-50 border border-slate-200/80 text-transparent hover:text-[#00BFB7] hover:border-[#00BFB7]/50 hover:bg-slate-100"
+        }`}
+        aria-label="Đánh dấu checklist"
+      >
+        <Check className="h-5.5 w-5.5 text-current" strokeWidth={3.5} />
+      </button>
+
+      {/* Title and details */}
+      <div className="min-w-0 flex-1 py-0.5">
+        <div className="flex items-center flex-wrap gap-x-2 gap-y-1">
+          <span
+            className={`text-[15px] font-bold tracking-wide break-words transition-all ${
+              item.completed ? "text-slate-400 line-through font-medium" : "text-slate-800"
+            }`}
+          >
+            {item.title}
+          </span>
+
+          {/* Quantity Badge if > 1 */}
+          {item.quantity && item.quantity > 1 && (
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-extrabold border border-slate-200/60">
+              x{item.quantity}
+            </span>
+          )}
+
+          {/* Priority Badge */}
+          {item.priority && item.priority !== "normal" && (
+            <span
+              className={`inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-black border ${
+                item.priority === "required"
+                  ? "bg-rose-50 text-rose-700 border-rose-100"
+                  : "bg-amber-50 text-amber-700 border-amber-100"
+              }`}
+            >
+              {item.priority === "required" ? "Bắt buộc" : "Quan trọng"}
+            </span>
+          )}
+        </div>
+
+        {/* Notes and Assigned To */}
+        {(item.note || item.assignedTo) && (
+          <div className="mt-1 space-y-0.5 text-[12.5px] text-slate-500 font-semibold">
+            {item.note && <p className="italic text-slate-400 line-clamp-2">"{item.note}"</p>}
+            {item.assignedTo && (
+              <p className="flex items-center gap-1 text-[11px] text-slate-400">
+                <User className="h-3 w-3" />
+                Chuẩn bị: <span className="text-[#030D2E]">{item.assignedTo}</span>
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Action menu trigger (min 44x44px target zone) */}
+      <div className="relative shrink-0 self-center">
+        <button
+          type="button"
+          className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsMenuOpen(!isMenuOpen);
+          }}
+          title="Tùy chọn"
+        >
+          <MoreHorizontal className="h-5 w-5" />
+        </button>
+
+        {isMenuOpen && (
+          <>
+            <div
+              className="fixed inset-0 z-30 cursor-default"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMenuOpen(false);
+              }}
+            />
+            <div className="absolute right-0 top-12 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMenuOpen(false);
+                  onEdit(item);
+                }}
+                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+              >
+                <Edit2 className="h-4 w-4 text-slate-500" />
+                Sửa
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMenuOpen(false);
+                  onDelete(item);
+                }}
+                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+              >
+                <Trash2 className="h-4 w-4" />
+                Xóa
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistItem[]; tripId: number }) {
   // Modal & Form State
@@ -213,6 +349,53 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
     }
   }
 
+  const renderCategoryCard = (catName: string, catIdx: number) => {
+    const items = groupedItems[catName];
+    const catDone = items.filter((i) => i.completed).length;
+    const catTotal = items.length;
+
+    return (
+      <div
+        key={catName}
+        className={`bg-kat-surface rounded-[24px] border border-kat-border p-5 shadow-sm space-y-4 hover:shadow-md transition-all duration-200 motion-card-enter motion-delay-${Math.min(
+          catIdx + 1,
+          5
+        )}`}
+      >
+        {/* Category Header */}
+        <div className="flex items-center justify-between pb-3 border-b border-[#E8E1D8]/50">
+          <div className="flex items-center gap-2.5">
+            {(() => {
+              const IconComponent = CATEGORY_ICONS[catName] || Package;
+              return (
+                <div className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-kat-primary/10 text-kat-primary">
+                  <IconComponent className="w-4.5 h-4.5" strokeWidth={2.2} />
+                </div>
+              );
+            })()}
+            <h3 className="text-[16.5px] font-black text-kat-text">{catName}</h3>
+          </div>
+          <span className="text-[11.5px] font-black text-slate-500 px-2.5 py-0.5 rounded-full bg-[#030D2E]/05">
+            {catDone} / {catTotal} món
+          </span>
+        </div>
+
+        {/* Items List */}
+        <div className="space-y-3">
+          {items.map((item) => (
+            <ChecklistItemRow
+              key={item.id}
+              item={item}
+              onToggleComplete={toggleComplete}
+              onEdit={openEditForm}
+              onDelete={setItemToDelete}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="mx-auto max-w-[1120px] px-2 sm:px-4 md:px-6 py-6 md:py-8 space-y-6 md:space-y-8 pb-0 md:pb-8">
       {/* Title Row */}
@@ -221,90 +404,102 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
           <h2 className="text-[32px] font-black tracking-tight text-kat-text">Chuẩn bị hành lý</h2>
           <p className="mt-1 text-[15px] font-bold text-kat-muted">Chuẩn bị đủ những món cần mang theo cho chuyến đi.</p>
         </div>
-        <button
-          onClick={openAddForm}
-          className="flex h-[48px] items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 text-kat-text px-5 text-[14px] font-bold shadow-sm hover:bg-kat-primary/20 active:scale-98 transition-all duration-200 sm:self-center shrink-0"
-        >
-          <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
-          Thêm món chuẩn bị
-        </button>
       </div>
 
-      {/* Smart Overview Card */}
-      <section className="bg-kat-surface rounded-[28px] p-6 shadow-soft border border-kat-border relative overflow-hidden">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
-          
-          {/* Left: Progress Circle */}
-          <div className="flex items-center gap-5 shrink-0 self-start md:self-center">
-            <div className="relative inline-flex items-center justify-center" style={{ width: 96, height: 96 }}>
-              <svg className="absolute -rotate-90 transform" width={96} height={96}>
+      {/* Optimized Progress Header Card */}
+      <section className="bg-kat-surface rounded-[24px] p-5 shadow-soft border border-kat-border/60 relative overflow-hidden">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Progress Indicator (Left: chart, Right: text) */}
+          <div className="flex items-center gap-4.5 w-full sm:w-auto">
+            {/* Circle Progress Chart */}
+            <div className="relative inline-flex items-center justify-center shrink-0" style={{ width: 72, height: 72 }}>
+              <svg className="absolute -rotate-90 transform" width={72} height={72}>
                 <circle
                   className="text-slate-100"
-                  strokeWidth={9}
+                  strokeWidth={7}
                   stroke="currentColor"
                   fill="transparent"
-                  r={38}
-                  cx={48}
-                  cy={48}
+                  r={29}
+                  cx={36}
+                  cy={36}
                 />
                 <circle
-                  className="text-kat-primary transition-all duration-1000 ease-out"
-                  strokeWidth={9}
-                  strokeDasharray={238.76}
-                  strokeDashoffset={238.76 - (stats.percent / 100) * 238.76}
+                  className="text-[#00BFB7] transition-all duration-1000 ease-out"
+                  strokeWidth={7}
+                  strokeDasharray={182.21}
+                  strokeDashoffset={182.21 - (stats.percent / 100) * 182.21}
                   strokeLinecap="round"
                   stroke="currentColor"
                   fill="transparent"
-                  r={38}
-                  cx={48}
-                  cy={48}
+                  r={29}
+                  cx={36}
+                  cy={36}
                 />
               </svg>
-              <span className="text-[20px] font-black text-kat-text">{stats.percent}%</span>
+              <span className="text-[15px] font-black text-slate-800">{stats.percent}%</span>
             </div>
-            <div className="flex items-center gap-2">
-              <BadgeCheck className="h-5 w-5 text-kat-primary shrink-0" />
-              <div>
-                <p className="text-[15px] font-black text-kat-text">Tiến độ chuẩn bị</p>
-                <p className="text-[12px] font-bold text-kat-muted uppercase tracking-wider mt-0.5">Đã xong</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Middle: Stats grid */}
-          <div className="grid grid-cols-2 gap-x-8 gap-y-2 flex-1 max-w-sm w-full md:border-l md:border-r border-kat-border/60 md:px-8">
-            <div className="flex items-start gap-2.5">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
-              <div>
-                <p className="text-[12px] font-bold text-kat-muted uppercase tracking-wider">Đã xếp</p>
-                <p className="text-[22px] font-black text-kat-text mt-0.5">{stats.completed} / {stats.total} món</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-2.5">
-              <ClipboardList className="h-5 w-5 text-[#FF6B6B] shrink-0 mt-0.5" />
-              <div>
-                <p className="text-[12px] font-bold text-kat-muted uppercase tracking-wider">Còn cần chuẩn bị</p>
-                <p className="text-[22px] font-black text-kat-text mt-0.5">Còn {stats.total - stats.completed} món</p>
-              </div>
+            
+            {/* Text Hierarchy */}
+            <div>
+              <h3 className="text-[16px] font-semibold text-slate-800 leading-snug">Tiến độ chuẩn bị</h3>
+              <p className="text-[13.5px] font-medium text-slate-500 mt-0.5">
+                Đã xếp {stats.completed} / {stats.total} món
+              </p>
             </div>
           </div>
 
-          {/* Right: State Text & CTA */}
-          <div className="flex flex-col items-center md:items-end justify-center shrink-0 w-full md:w-auto">
-            <div className="text-center md:text-right">
-              <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-extrabold border ${
-                stats.total === 0 
-                  ? "bg-slate-100 text-slate-500 border-slate-200" 
-                  : stats.percent === 100 
-                  ? "bg-emerald-50 text-emerald-700 border-emerald-200" 
-                  : "bg-kat-primary/10 text-kat-primary border-kat-primary/20"
-              }`}>
-                {statusText}
-              </span>
-            </div>
-          </div>
+          {/* Action Trigger Button */}
+          <button
+            onClick={openAddForm}
+            className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-4 text-[13.5px] font-black shadow-sm hover:brightness-105 active:scale-95 transition-all motion-press w-full sm:w-auto shrink-0"
+          >
+            <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
+            <span>Thêm món</span>
+          </button>
         </div>
       </section>
+
+      {/* Quick Suggestions Horizontal Scroll Chips (Only if not empty) */}
+      {!isEmpty && (
+        <section className="bg-kat-surface rounded-[24px] p-4 border border-kat-border/60 shadow-soft space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="h-4.5 w-4.5 text-amber-500" />
+              <h3 className="text-[14.5px] font-black text-kat-text">Gợi ý nhanh cho hành lý</h3>
+            </div>
+            <span className="text-[11px] font-bold text-slate-400 md:hidden">Cuộn ngang ›</span>
+          </div>
+          <div className="flex flex-nowrap gap-2 overflow-x-auto pb-1 -mx-2 px-2 touch-pan-x scrollbar-none md:flex-wrap md:overflow-visible md:pb-0 md:mx-0 md:px-0">
+            {QUICK_SUGGESTIONS.map((sug) => {
+              const added = isAdded(sug.title);
+              return (
+                <button
+                  key={sug.title}
+                  disabled={added}
+                  onClick={() => handleQuickAdd(sug.title, sug.category)}
+                  className={`h-9 px-3.5 shrink-0 rounded-xl border text-[12px] font-semibold flex items-center gap-1.5 transition-all duration-200 active:scale-95 ${
+                    added
+                      ? "bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed"
+                      : "bg-white border-kat-border text-slate-700 hover:border-kat-primary hover:bg-kat-primary/5 hover:text-kat-primary shadow-sm"
+                  }`}
+                >
+                  {added ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" strokeWidth={3} />
+                      <span className="truncate">{sug.label} · Đã thêm</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-3.5 w-3.5 text-[#00BFB7] shrink-0" strokeWidth={2.5} />
+                      <span className="truncate">{sug.label}</span>
+                    </>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Main Checklist Body */}
       {isEmpty ? (
@@ -372,169 +567,28 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
       ) : (
         /* Checklist grouped by Categories (Grid on desktop, List on mobile) */
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-          {activeCategories.map((catName, catIdx) => {
-            const items = groupedItems[catName];
-            const catDone = items.filter(i => i.completed).length;
-            const catTotal = items.length;
-
-            return (
-              <div 
-                key={catName} 
-                className={`bg-kat-surface rounded-[24px] border border-kat-border p-5 shadow-sm space-y-4 hover:shadow-md transition-all duration-200 motion-card-enter motion-delay-${Math.min(catIdx + 1, 5)}`}
-              >
-                {/* Category Header */}
-                <div className="flex items-center justify-between pb-3 border-b border-[#E8E1D8]/50">
-                  <div className="flex items-center gap-2.5">
-                    {(() => {
-                      const IconComponent = CATEGORY_ICONS[catName] || Package;
-                      return (
-                        <div className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-kat-primary/10 text-kat-primary">
-                          <IconComponent className="w-4.5 h-4.5" strokeWidth={2.2} />
-                        </div>
-                      );
-                    })()}
-                    <h3 className="text-[16.5px] font-black text-kat-text">{catName}</h3>
-                  </div>
-                  <span className="text-[11.5px] font-black text-slate-500 px-2.5 py-0.5 rounded-full bg-[#030D2E]/05">
-                    {catDone} / {catTotal} món
-                  </span>
-                </div>
-
-                {/* Items List */}
-                <div className="space-y-3">
-                  {items.map((item) => {
-                    return (
-                      <div 
-                        key={item.id} 
-                        className={`group flex items-start gap-3.5 p-3 rounded-2xl border transition-all duration-200 ${
-                          item.completed 
-                            ? "bg-slate-50/50 border-slate-200/50 opacity-65" 
-                            : "bg-white border-slate-200/80 hover:border-slate-300"
-                        }`}
-                      >
-                        {/* Checkbox button */}
-                        <button
-                          onClick={() => toggleComplete(item)}
-                          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-all duration-200 motion-press ${
-                            item.completed
-                              ? "bg-kat-primary/20 text-kat-primary border-transparent shadow-sm"
-                              : "bg-slate-50 border border-slate-200/80 text-transparent hover:text-slate-300 hover:border-kat-primary/50 hover:bg-slate-100"
-                          }`}
-                          aria-label="Đánh dấu checklist"
-                        >
-                          <Check className="h-5.5 w-5.5 text-current" strokeWidth={3.5} />
-                        </button>
-
-                        {/* Title and details */}
-                        <div className="min-w-0 flex-1 py-0.5">
-                          <div className="flex items-center flex-wrap gap-x-2 gap-y-1">
-                            <span className={`text-[15px] font-bold tracking-wide break-words transition-all ${
-                              item.completed ? "text-slate-400 line-through font-medium" : "text-kat-text"
-                            }`}>
-                              {item.title}
-                            </span>
-                            
-                            {/* Quantity Badge if > 1 */}
-                            {item.quantity && item.quantity > 1 && (
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-extrabold border border-slate-200/60">
-                                x{item.quantity}
-                              </span>
-                            )}
-
-                            {/* Priority Badge */}
-                            {item.priority && item.priority !== "normal" && (
-                              <span className={`inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-black border ${
-                                item.priority === "required" 
-                                  ? "bg-rose-50 text-rose-700 border-rose-100" 
-                                  : "bg-amber-50 text-amber-700 border-amber-100"
-                              }`}>
-                                {item.priority === "required" ? "Bắt buộc" : "Quan trọng"}
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Notes and Assigned To */}
-                          {(item.note || item.assignedTo) && (
-                            <div className="mt-1 space-y-0.5 text-[12.5px] text-slate-500 font-semibold">
-                              {item.note && <p className="italic text-slate-400 line-clamp-2">"{item.note}"</p>}
-                              {item.assignedTo && (
-                                <p className="flex items-center gap-1 text-[11px] text-kat-muted">
-                                  <User className="h-3 w-3" />
-                                  Chuẩn bị: <span className="text-[#030D2E]">{item.assignedTo}</span>
-                                </p>
-                              )}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Action buttons */}
-                        <div className="flex items-center gap-1 shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                          <button
-                            onClick={() => openEditForm(item)}
-                            className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-200/60 text-slate-500 hover:bg-[#00A59E]/10 hover:text-kat-primary hover:border-[#00A59E]/30 transition-all motion-press"
-                            title="Sửa"
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </button>
-                          <button
-                            onClick={() => setItemToDelete(item)}
-                            className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-200/60 text-slate-400 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all motion-press"
-                            title="Xóa"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+          {/* Column 1 */}
+          <div className="space-y-6">
+            {activeCategories
+              .filter((_, idx) => idx % 2 === 0)
+              .map((catName, idx) => {
+                const catIdx = idx * 2;
+                return renderCategoryCard(catName, catIdx);
+              })}
+          </div>
+          {/* Column 2 */}
+          <div className="space-y-6">
+            {activeCategories
+              .filter((_, idx) => idx % 2 !== 0)
+              .map((catName, idx) => {
+                const catIdx = idx * 2 + 1;
+                return renderCategoryCard(catName, catIdx);
+              })}
+          </div>
         </div>
       )}
 
-      {/* Quick Suggestions Section */}
-      {!isEmpty && (
-        <section className="bg-kat-surface rounded-[24px] p-6 border border-kat-border/60 shadow-soft">
-          <div className="mb-4">
-            <h3 className="text-[16px] font-bold text-kat-text flex items-center gap-1.5">
-              <Sparkles className="h-4.5 w-4.5 text-kat-accent-yellow" />
-              Gợi ý nhanh cho hành lý
-            </h3>
-            <p className="text-[12.5px] text-kat-muted font-semibold mt-0.5">Chọn nhanh những món thường cần trong chuyến đi.</p>
-          </div>
-          <div className="flex flex-wrap gap-2.5">
-            {QUICK_SUGGESTIONS.map((sug) => {
-              const added = isAdded(sug.title);
-              return (
-                <button
-                  key={sug.title}
-                  disabled={added}
-                  onClick={() => handleQuickAdd(sug.title, sug.category)}
-                  className={`h-[38px] px-3.5 rounded-xl border text-[12px] font-semibold flex items-center gap-1.5 transition-all motion-press duration-200 ${
-                    added
-                      ? "bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed"
-                      : "bg-white border-kat-border text-kat-text hover:border-kat-primary hover:bg-kat-primary/5 hover:text-kat-primary shadow-sm"
-                  }`}
-                >
-                  {added ? (
-                    <>
-                      <Check className="h-3.5 w-3.5 text-emerald-600 motion-fadeIn" strokeWidth={3} />
-                      <span>{sug.label} · Đã thêm</span>
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="h-3.5 w-3.5 text-kat-primary" strokeWidth={2.5} />
-                      <span>{sug.label}</span>
-                    </>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </section>
-      )}
+
 
       {/* Responsive Modal Form (Centered on Desktop, Bottom Sheet on Mobile) */}
       {isFormOpen && (
@@ -766,7 +820,7 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
         </button>
       )}
 
-      <TypedDeleteConfirmModal
+      <DeleteConfirmModal
         isOpen={Boolean(itemToDelete)}
         onClose={() => setItemToDelete(null)}
         onConfirm={executeDeleteItem}

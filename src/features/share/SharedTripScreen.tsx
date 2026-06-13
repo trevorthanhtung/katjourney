@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { 
   Globe, MapPin, CalendarDays, Clock, Route,
-  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX
+  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert
 } from "lucide-react";
 import { getViewShareData } from "../../services/cloudShareService";
 import { formatDate, classNames, getTripTiming, formatMoney } from "../../utils/helpers";
 import { EventItem, Expense, ChecklistItem, Member, JournalEntry, TravelDocument, BackupPlan } from "../../db";
+import { SharedActivitiesSection } from "./components/SharedActivitiesSection";
+import { SharedExpensesSection, SharedChecklistSection, SharedJournalsSection, SharedBackupPlansSection, SharedDocumentsSection } from "./components/SharedSections";
 
 interface SharedData {
   trip: any;
@@ -24,29 +26,10 @@ interface SharedData {
   ownerUid: string;
 }
 
-export default function SharedTripScreen({ token }: { token: string }) {
-  const [data, setData] = useState<SharedData | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+import { useSharedTrip } from "../../hooks/useSharedTrip";
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const result = await getViewShareData(token);
-        // sort activities
-        result.activities.sort((a: any, b: any) => {
-          if (a.date !== b.date) return a.date.localeCompare(b.date);
-          return (a.time || "").localeCompare(b.time || "");
-        });
-        setData(result as SharedData);
-      } catch (err: any) {
-        setError(err.message || "Lỗi khi tải dữ liệu chia sẻ.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
-  }, [token]);
+export default function SharedTripScreen({ token }: { token: string }) {
+  const { data, error, loading } = useSharedTrip(token);
 
   if (loading) {
     return (
@@ -59,27 +42,49 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   if (error || !data) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#FFFDF8] p-4">
-        <div className="max-w-md w-full text-center space-y-4">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-rose-50 text-rose-500">
-            <SearchX className="h-10 w-10" />
+      <div className="flex min-h-screen items-center justify-center bg-[#FFFDF8] p-6">
+        <div className="max-w-md w-full flex flex-col items-center text-center space-y-6 animate-fadeIn">
+          {/* Icon Container */}
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+            <ShieldAlert className="h-10 w-10" />
           </div>
-          <h2 className="text-2xl font-black text-[#030D2E]">Rất tiếc!</h2>
-          <p className="text-[15px] text-slate-500 font-medium leading-relaxed">
-            {error || "Không tìm thấy dữ liệu hành trình."}
-          </p>
+          
+          {/* Heading */}
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold text-slate-900">Không thể truy cập chuyến đi</h2>
+            
+            {/* Copywriting (Body & Sub-body) */}
+            <p className="text-base text-slate-500 font-medium leading-relaxed">
+              Liên kết này không tồn tại hoặc bạn không có quyền truy cập.
+            </p>
+            <p className="text-sm text-slate-400 font-medium mt-2 leading-relaxed">
+              Vui lòng kiểm tra lại đường dẫn hoặc yêu cầu chủ chuyến đi chia sẻ lại liên kết.
+            </p>
+          </div>
+          
+          {/* CTA Button */}
           <button
             onClick={() => window.location.href = "/"}
-            className="mt-6 inline-flex rounded-xl bg-slate-100 px-6 py-3 font-bold text-slate-700 hover:bg-slate-200 transition-colors"
+            className="inline-flex min-h-[44px] w-fit items-center justify-center rounded-xl bg-[#030D2E] text-white px-6 py-2.5 font-bold shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all focus:outline-none"
           >
-            Về trang chủ KAT Journey
+            Quay lại trang chủ
           </button>
         </div>
       </div>
     );
   }
 
-  const { trip, activities, members, expenses, checklist, journals, backupPlans, travelDocuments } = data;
+  const { 
+    trip, 
+    activities = [], 
+    members = [], 
+    expenses = [], 
+    checklist = [], 
+    journals = [], 
+    backupPlans = [], 
+    travelDocuments = [],
+    changeRequests = []
+  } = data;
 
   const isDayTrip = trip.startDate === trip.endDate;
   let durationText = "Trong ngày";
@@ -99,14 +104,16 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const timing = getTripTiming(trip);
   
   // Stats
-  const totalExpense = expenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const totalExpense = expenses.reduce((sum: number, item: any) => sum + Number(item.amount || 0), 0);
   const checklistTotal = checklist.length;
-  const checklistDone = checklist.filter(c => c.completed).length;
+  const checklistDone = checklist.filter((c: any) => c.completed).length;
   const checklistPercent = checklistTotal ? Math.round((checklistDone / checklistTotal) * 100) : 0;
+
+  const canRequestEdit = (data.mode === 'edit' || data.mode === 'request_edit') && !data.revoked;
 
   return (
     <div className="font-sans text-kat-text bg-[#FAF7F1] min-h-screen">
-      <header className="sticky top-0 z-40 bg-white/80 px-4 pb-3 pt-3 backdrop-blur-xl border-b border-slate-200/60 shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
+      <header className="sticky top-0 z-40 bg-white/85 px-4 pb-3 pt-3 backdrop-blur-xl border-b border-slate-200/60 shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
         <div className="mx-auto flex max-w-3xl items-center justify-between">
           <div className="flex items-center gap-3">
             <h1 className="text-[20px] font-extrabold tracking-tight text-[#030D2E]">KAT Journey</h1>
@@ -123,6 +130,14 @@ export default function SharedTripScreen({ token }: { token: string }) {
           </button>
         </div>
       </header>
+
+      {canRequestEdit && (
+        <div className="sticky top-[53px] md:top-[61px] z-30 bg-[#030D2E] text-white px-4 py-2.5 text-center shadow-md animate-fadeIn">
+          <p className="text-[13.5px] font-bold">
+            Chế độ Đề xuất: Các thay đổi của bạn sẽ được gửi cho chủ chuyến đi xét duyệt.
+          </p>
+        </div>
+      )}
 
       <main className="mx-auto max-w-3xl px-4 py-6 md:py-8 space-y-6">
         {/* Hero Section */}
@@ -192,118 +207,60 @@ export default function SharedTripScreen({ token }: { token: string }) {
         </section>
 
         {/* Timeline */}
-        {activities.length > 0 && (
-          <section className="bg-white rounded-3xl border border-slate-200/60 p-5 md:p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-6 border-b border-slate-100 pb-4">
-              <Route className="h-6 w-6 text-kat-primary" />
-              <h3 className="text-[18px] font-black text-[#030D2E]">Lịch trình chi tiết</h3>
-            </div>
-            <div className="space-y-6">
-              {activities.map((item, idx) => (
-                <div key={item.id} className="relative flex gap-4 pl-1">
-                  <div className="absolute bottom-0 left-[21px] top-8 w-0.5 bg-slate-200 group-last:bg-transparent" />
-                  <div className="relative z-10 flex shrink-0 mt-1">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 ring-4 ring-white shadow-sm border border-slate-200/60">
-                      <MapPinned className="h-4.5 w-4.5" />
-                    </div>
-                  </div>
-                  <div className="flex flex-col w-full min-w-0 pt-0.5 pb-2">
-                    <div className="flex items-baseline justify-between gap-2">
-                      <h4 className="text-[15px] font-bold text-[#030D2E] break-words">{item.title}</h4>
-                    </div>
-                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] font-medium text-slate-500">
-                      {item.time && (
-                        <span className="flex items-center gap-1 font-bold text-kat-primary">
-                          <Clock className="h-3.5 w-3.5" />
-                          {item.time}
-                        </span>
-                      )}
-                      <span>{formatDate(item.date)}</span>
-                    </div>
-                    {item.location && (
-                      <p className="mt-1.5 text-[13.5px] text-slate-600 flex items-start gap-1.5">
-                        <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-slate-400" />
-                        <span className="break-words">{item.location}</span>
-                      </p>
-                    )}
-                    {item.notes && (
-                      <div className="mt-2 rounded-xl bg-slate-50 p-3 border border-slate-100">
-                        <p className="text-[13px] text-slate-600 whitespace-pre-wrap">{item.notes}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+        {(activities.length > 0 || canRequestEdit) && (
+          <SharedActivitiesSection 
+            token={token} 
+            mode={canRequestEdit ? 'request_edit' : 'view'} 
+            activities={activities} 
+            changeRequests={changeRequests}
+          />
         )}
 
         {/* Other Sections included in Share */}
         <div className="grid grid-cols-1 gap-4">
-          {data.includeExpenses && expenses.length > 0 && (
-             <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm">
-                <div className="flex items-center gap-2 mb-3">
-                  <WalletCards className="h-5 w-5 text-amber-500" />
-                  <h3 className="text-[16px] font-black text-[#030D2E]">Chi phí chuyến đi</h3>
-                </div>
-                <div className="space-y-3">
-                  {expenses.slice(0, 5).map(e => (
-                    <div key={e.id} className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0">
-                      <span className="text-[14px] font-semibold text-slate-700">{e.description}</span>
-                      <span className="text-[14px] font-bold text-[#030D2E]">{formatMoney(e.amount)}</span>
-                    </div>
-                  ))}
-                  {expenses.length > 5 && (
-                    <p className="text-[13px] font-medium text-slate-400 text-center pt-2">
-                      Và {expenses.length - 5} khoản chi khác...
-                    </p>
-                  )}
-                </div>
-             </section>
+          {data.includeExpenses && (expenses.length > 0 || canRequestEdit) && (
+             <SharedExpensesSection 
+               token={token} 
+               mode={canRequestEdit ? 'request_edit' : 'view'} 
+               expenses={expenses} 
+               changeRequests={changeRequests}
+             />
           )}
 
-          {data.includeChecklist && checklist.length > 0 && (
-             <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm">
-                <div className="flex items-center gap-2 mb-3">
-                  <CheckCircle className="h-5 w-5 text-purple-500" />
-                  <h3 className="text-[16px] font-black text-[#030D2E]">Danh sách chuẩn bị</h3>
-                </div>
-                <div className="space-y-2">
-                  {checklist.slice(0, 5).map(c => (
-                    <div key={c.id} className="flex items-center gap-2">
-                      <div className={classNames("h-4 w-4 rounded border flex items-center justify-center", c.completed ? "bg-purple-500 border-purple-500" : "border-slate-300")}>
-                        {c.completed && <CheckCircle className="h-3 w-3 text-white" />}
-                      </div>
-                      <span className={classNames("text-[14px] font-medium", c.completed ? "text-slate-400 line-through" : "text-slate-700")}>{c.title}</span>
-                    </div>
-                  ))}
-                   {checklist.length > 5 && (
-                    <p className="text-[13px] font-medium text-slate-400 text-center pt-2">
-                      Và {checklist.length - 5} mục khác...
-                    </p>
-                  )}
-                </div>
-             </section>
+          {data.includeChecklist && (checklist.length > 0 || canRequestEdit) && (
+             <SharedChecklistSection 
+               token={token} 
+               mode={canRequestEdit ? 'request_edit' : 'view'} 
+               checklist={checklist} 
+               changeRequests={changeRequests}
+             />
           )}
 
-          {data.includeJournals && journals.length > 0 && (
-             <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm">
-                <div className="flex items-center gap-2 mb-3">
-                  <BookOpenText className="h-5 w-5 text-blue-500" />
-                  <h3 className="text-[16px] font-black text-[#030D2E]">Nhật ký</h3>
-                </div>
-                <p className="text-[14px] text-slate-600 font-medium">Đã ghi {journals.length} trang nhật ký.</p>
-             </section>
+          {data.includeJournals && (journals.length > 0 || canRequestEdit) && (
+             <SharedJournalsSection 
+               token={token} 
+               mode={canRequestEdit ? 'request_edit' : 'view'} 
+               journals={journals} 
+               changeRequests={changeRequests}
+             />
           )}
-          
-          {data.includeDocuments && travelDocuments.length > 0 && (
-             <section className="bg-rose-50/50 rounded-2xl border border-rose-100 p-5 shadow-sm">
-                <div className="flex items-center gap-2 mb-3">
-                  <FileText className="h-5 w-5 text-rose-500" />
-                  <h3 className="text-[16px] font-black text-[#030D2E]">Giấy tờ & đặt chỗ</h3>
-                </div>
-                <p className="text-[14px] text-rose-700/80 font-medium">Bao gồm {travelDocuments.length} mục giấy tờ được chia sẻ.</p>
-             </section>
+
+          {data.includeBackupPlans && (backupPlans.length > 0 || canRequestEdit) && (
+             <SharedBackupPlansSection 
+               token={token} 
+               mode={canRequestEdit ? 'request_edit' : 'view'} 
+               backupPlans={backupPlans} 
+               changeRequests={changeRequests}
+             />
+          )}
+
+          {data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit) && (
+             <SharedDocumentsSection 
+               token={token} 
+               mode={canRequestEdit ? 'request_edit' : 'view'} 
+               documents={travelDocuments} 
+               changeRequests={changeRequests}
+             />
           )}
         </div>
 

@@ -3,6 +3,7 @@ import { db as localDb } from '../db';
 import { doc, writeBatch, serverTimestamp, updateDoc } from 'firebase/firestore';
 
 export interface ShareOptions {
+  mode: "view" | "edit" | "request_edit";
   includeExpenses: boolean;
   includeJournals: boolean;
   includeChecklist: boolean;
@@ -24,6 +25,7 @@ export async function ensureCloudShareReady() {
  * Helper to split Firestore writes into batches of max 450 operations.
  */
 async function commitBatchedWritesInChunks(dbInstance: any, writes: { ref: any; data: any }[]) {
+  const { writeBatch } = await import('firebase/firestore');
   const CHUNK_SIZE = 450;
   for (let i = 0; i < writes.length; i += CHUNK_SIZE) {
     const chunk = writes.slice(i, i + CHUNK_SIZE);
@@ -36,16 +38,17 @@ async function commitBatchedWritesInChunks(dbInstance: any, writes: { ref: any; 
 }
 
 /**
- * Creates a view-only share link for a given trip.
+ * Creates a share link for a given trip.
  * Generates a public snapshot in Firestore under `publicShares/{token}`.
  */
-export async function createViewShareLink(
+export async function createShareLink(
   tripId: number,
   options: ShareOptions
 ): Promise<{ token: string; url: string }> {
   await ensureCloudShareReady();
   const user = await ensureAnonymousUser();
   const { db } = await initFirebase();
+  const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
 
   // 1. Fetch trip data from local Dexie
   const trip = await localDb.trips.get(tripId);
@@ -61,49 +64,75 @@ export async function createViewShareLink(
   const backupPlans = options.includeBackupPlans ? await localDb.backupPlans.where('tripId').equals(tripId).toArray() : [];
   const travelDocuments = options.includeDocuments ? await localDb.travelDocuments.where('tripId').equals(tripId).toArray() : [];
 
-  // 2. Generate a secure token
-  const token = crypto.randomUUID().replace(/-/g, '') + Math.random().toString(36).substring(2, 10);
+  const randomUUID = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
 
-  const writes: { ref: any; data: any }[] = [];
+  // 2. Generate a secure token
+  const token = randomUUID().replace(/-/g, '') + Math.random().toString(36).substring(2, 10);
   const shareRef = doc(db, 'publicShares', token);
 
-  // 3. Parent public share document
-  writes.push({
-    ref: shareRef,
-    data: {
-      token,
-      ownerUid: user.uid,
-      sourceTripId: String(tripId),
-      mode: 'view',
-      revoked: false,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      includeExpenses: options.includeExpenses,
-      includeJournals: options.includeJournals,
-      includeChecklist: options.includeChecklist,
-      includeBackupPlans: options.includeBackupPlans,
-      includeDocuments: options.includeDocuments,
-      trip: {
-        id: String(trip.id),
-        name: trip.title,
-        destination: trip.location,
-        startDate: trip.startDate,
-        endDate: trip.endDate,
-      }
+  // 3. Parent public share document (Write this first so rules using get() pass)
+  console.log("[CloudShare] Attempting to set parent document...");
+  await setDoc(shareRef, {
+    token,
+    ownerUid: user.uid,
+    sourceTripId: String(tripId),
+    mode: options.mode,
+    revoked: false,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    includeExpenses: options.includeExpenses,
+    includeJournals: options.includeJournals,
+    includeChecklist: options.includeChecklist,
+    includeBackupPlans: options.includeBackupPlans,
+    includeDocuments: options.includeDocuments,
+    trip: {
+      id: String(trip.id),
+      name: trip.title,
+      destination: trip.location,
+      startDate: trip.startDate,
+      endDate: trip.endDate,
     }
   });
+  console.log("[CloudShare] Parent document created successfully.");
+
+  const writes: { ref: any; data: any }[] = [];
 
   // 4. Subcollections
-  members.forEach(m => writes.push({ ref: doc(shareRef, 'members', String(m.id)), data: m }));
-  activities.forEach(a => writes.push({ ref: doc(shareRef, 'activities', String(a.id)), data: a }));
-  expenses.forEach(e => writes.push({ ref: doc(shareRef, 'expenses', String(e.id)), data: e }));
-  checklist.forEach(c => writes.push({ ref: doc(shareRef, 'checklist', String(c.id)), data: c }));
-  journals.forEach(j => writes.push({ ref: doc(shareRef, 'journals', String(j.id)), data: j }));
-  backupPlans.forEach(b => writes.push({ ref: doc(shareRef, 'backupPlans', String(b.id)), data: b }));
-  travelDocuments.forEach(d => writes.push({ ref: doc(shareRef, 'travelDocuments', String(d.id)), data: d }));
+  // We append createdAt, updatedAt, createdByUid, updatedByUid for audit trails in Phase 3A
+  const timestamp = serverTimestamp();
+  const auditFields = { createdAt: timestamp, updatedAt: timestamp, createdByUid: user.uid, updatedByUid: user.uid };
+  
+  // Helper to remove undefined values which Firestore rejects
+  const sanitize = (obj: any) => {
+    const newObj = { ...obj };
+    Object.keys(newObj).forEach(key => {
+      if (newObj[key] === undefined) {
+        delete newObj[key];
+      }
+    });
+    return newObj;
+  };
+
+  members.forEach(m => writes.push({ ref: doc(shareRef, 'members', String(m.id)), data: { ...sanitize(m), ...auditFields } }));
+  activities.forEach(a => writes.push({ ref: doc(shareRef, 'activities', String(a.id)), data: { ...sanitize(a), ...auditFields } }));
+  expenses.forEach(e => writes.push({ ref: doc(shareRef, 'expenses', String(e.id)), data: { ...sanitize(e), ...auditFields } }));
+  checklist.forEach(c => writes.push({ ref: doc(shareRef, 'checklist', String(c.id)), data: { ...sanitize(c), ...auditFields } }));
+  journals.forEach(j => writes.push({ ref: doc(shareRef, 'journals', String(j.id)), data: { ...sanitize(j), ...auditFields } }));
+  backupPlans.forEach(b => writes.push({ ref: doc(shareRef, 'backupPlans', String(b.id)), data: { ...sanitize(b), ...auditFields } }));
+  travelDocuments.forEach(d => writes.push({ ref: doc(shareRef, 'travelDocuments', String(d.id)), data: { ...sanitize(d), ...auditFields } }));
 
   // 5. Commit chunks
+  console.log("[CloudShare] Attempting to commit subcollections...");
   await commitBatchedWritesInChunks(db, writes);
+  console.log("[CloudShare] Subcollections committed successfully.");
 
   const url = `${window.location.origin}/share/${token}`;
   return { token, url };
@@ -114,6 +143,7 @@ export async function createViewShareLink(
  */
 export async function revokeShareLink(token: string): Promise<void> {
   await ensureCloudShareReady();
+  await ensureAnonymousUser();
   const { db } = await initFirebase();
   const shareRef = doc(db, 'publicShares', token);
   

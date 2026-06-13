@@ -6,7 +6,17 @@ export const sectionLabels: Record<import("../db").ChecklistSection, string> = {
   "During Trip": "Trong chuyến đi",
   "After Trip": "Sau chuyến đi"
 };
-export const expenseCategories = ["Di chuyển", "Ăn uống", "Lưu trú", "Vé tham quan", "Khác"];
+export const expenseCategories = [
+  "Di chuyển",
+  "Vé máy bay",
+  "Ăn uống",
+  "Lưu trú",
+  "Vé tham quan",
+  "Mua sắm",
+  "Vui chơi & Giải trí",
+  "Chuẩn bị hành lý",
+  "Khác"
+];
 export const moods: JournalMood[] = ["very_bad", "bad", "okay", "good", "great"];
 export const moodLabels: Record<JournalMood, string> = {
   very_bad: "Mệt",

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { 
   Check, 
   Edit3, 
@@ -23,12 +23,13 @@ import {
   CircleEllipsis,
   StickyNote,
   Type,
-  GitBranch
+  GitBranch,
+  MoreVertical
 } from "lucide-react";
 import { db, EventItem, Trip } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { classNames, daysBetween, formatDate, today, getTripTiming } from "../../utils/helpers";
-import { BottomSheet, FormActions, Input, Textarea, Select, TypedDeleteConfirmModal } from "../../components/ui";
+import { BottomSheet, FormActions, Input, Textarea, Select, DeleteConfirmModal } from "../../components/ui";
 import { BackupPlansSheet } from "./BackupPlansSheet";
 
 // Define categories for PWA Travel 2027
@@ -62,7 +63,8 @@ function ActivityCard({
   isUpcoming,
   idx = 0,
   backupCount,
-  onOpenBackup
+  onOpenBackup,
+  onDelete
 }: { 
   item: EventItem; 
   onEdit: () => void; 
@@ -71,7 +73,9 @@ function ActivityCard({
   idx?: number;
   backupCount?: number;
   onOpenBackup?: () => void;
+  onDelete: () => void;
 }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const category = getCategory(item.type);
   const CatIcon = category.icon;
   
@@ -184,17 +188,58 @@ function ActivityCard({
             </div>
           </div>
 
-          {/* Quick Edit icon */}
-          <button 
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-400 hover:bg-slate-50 hover:text-slate-600 md:opacity-0 md:group-hover:opacity-100 transition-opacity" 
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit();
-            }} 
-            title="Chỉnh sửa"
-          >
-            <Edit3 className="h-4 w-4" />
-          </button>
+          {/* Quick options menu trigger (min 44x44px target zone) */}
+          <div className="relative shrink-0">
+            <button 
+              type="button"
+              className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40" 
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMenuOpen(!isMenuOpen);
+              }} 
+              title="Tùy chọn"
+            >
+              <MoreVertical className="h-5 w-5" />
+            </button>
+            
+            {isMenuOpen && (
+              <>
+                <div 
+                  className="fixed inset-0 z-30 cursor-default" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMenuOpen(false);
+                  }} 
+                />
+                <div className="absolute right-0 top-12 z-40 w-36 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsMenuOpen(false);
+                      onEdit();
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+                  >
+                    <Edit3 className="h-4 w-4 text-slate-500" />
+                    Chỉnh sửa
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsMenuOpen(false);
+                      onDelete();
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+                  >
+                    <Trash2 className="h-4 w-4 text-rose-500" />
+                    Xóa
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </article>
@@ -203,7 +248,10 @@ function ActivityCard({
 
 function DayHeader({ day, index, isToday }: { day: string; index: number; isToday: boolean }) {
   return (
-    <div className="sticky top-[64px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/90 px-4 py-3.5 backdrop-blur-md border-b border-slate-200/40">
+    <div 
+      id={`day-section-${day}`} 
+      className="scroll-mt-[180px] sticky top-[115px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+    >
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#030D2E] text-white font-black text-[14px] shadow-sm">
           {index + 1}
@@ -229,7 +277,8 @@ function EventForm({
   isOpen, 
   onClose,
   defaultDate,
-  onSaved
+  onSaved,
+  onDelete
 }: { 
   tripId: number; 
   tripDays: string[]; 
@@ -238,8 +287,8 @@ function EventForm({
   onClose: () => void;
   defaultDate?: string;
   onSaved?: (date: string) => void;
+  onDelete: () => void;
 }) {
-  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [form, setForm] = useState({
     time: "",
     title: "",
@@ -296,13 +345,6 @@ function EventForm({
     }
   }
 
-  async function executeDelete() {
-    if (!editing?.id) return;
-    await db.events.delete(editing.id);
-    setIsDeleteConfirmOpen(false);
-    onClose();
-  }
-
   const dateLabels = tripDays.reduce((acc, date, idx) => {
     acc[date] = `Ngày ${idx + 1} (${formatDate(date)})`;
     return acc;
@@ -314,169 +356,157 @@ function EventForm({
     : "";
 
   return (
-    <>
-      <BottomSheet 
-        isOpen={isOpen} 
-        onClose={onClose} 
-        title={editing ? "Sửa mục lịch trình" : "Thêm mục lịch trình"}
-        footer={
-          <div className="flex flex-col gap-2.5 w-full">
-            <FormActions 
-              onSave={save} 
-              saveLabel={editing ? "Lưu thông tin" : "Thêm mục lịch trình"} 
-              onCancel={onClose}
-              disabled={!form.title.trim()}
-            />
-            {editing && (
+    <BottomSheet 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      title={editing ? "Sửa mục lịch trình" : "Thêm mục lịch trình"}
+      footer={
+        <div className="flex flex-col gap-2.5 w-full">
+          <FormActions 
+            onSave={save} 
+            saveLabel={editing ? "Lưu thông tin" : "Thêm mục lịch trình"} 
+            onCancel={onClose}
+            disabled={!form.title.trim()}
+          />
+          {editing && (
+            <button
+              onClick={onDelete}
+              className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-[16px] bg-rose-50 border border-rose-200 px-6 font-bold text-rose-600 transition-colors hover:bg-rose-100 active:scale-[0.98] transition-all duration-200"
+            >
+              <Trash2 className="h-4.5 w-4.5" />
+              Xóa mục lịch trình
+            </button>
+          )}
+        </div>
+      }
+    >
+      <div className="space-y-5">
+      {/* Title Input */}
+      <Input 
+        label={
+          <span className="flex items-center gap-1.5">
+            <Type className="h-4 w-4 text-slate-500" />
+            Tên mục lịch trình *
+          </span>
+        } 
+        value={form.title} 
+        onChange={(title) => setForm({ ...form, title })} 
+        placeholder="VD: Ăn trưa tại quán địa phương" 
+      />
+
+      {/* Category Selector Grid */}
+      <div className="space-y-2">
+        <span className="text-sm font-semibold text-slate-600">Loại lịch trình</span>
+        <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+          {ACTIVITY_CATEGORIES.map(cat => {
+            const Icon = cat.icon;
+            const isSelected = form.type === cat.id;
+            return (
               <button
-                onClick={() => setIsDeleteConfirmOpen(true)}
-                className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-[16px] bg-rose-50 border border-rose-200 px-6 font-bold text-rose-600 transition-colors hover:bg-rose-100 active:scale-[0.98] transition-all duration-200"
+                key={cat.id}
+                type="button"
+                onClick={() => setForm({ ...form, type: cat.id })}
+                className={classNames(
+                  "flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border transition-all text-center h-[64px] motion-press",
+                  isSelected 
+                    ? cat.activeBg 
+                    : "border-slate-200 hover:bg-slate-50 text-slate-500"
+                )}
               >
-                <Trash2 className="h-4.5 w-4.5" />
-                Xóa mục lịch trình
+                <Icon className="h-5 w-5" strokeWidth={2.2} />
+                <span className="text-[10px] font-bold leading-none">{cat.label}</span>
               </button>
-            )}
-          </div>
-        }
-      >
-        <div className="space-y-5">
-        {/* Title Input */}
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Date and Time selectors */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-1">
+          {tripDays.length > 0 ? (
+            <Select
+              label={
+                <span className="flex items-center gap-1.5">
+                  <CalendarDays className="h-4 w-4 text-slate-500" />
+                  Chọn ngày
+                </span>
+              }
+              value={form.date}
+              onChange={(date) => setForm({ ...form, date })}
+              options={tripDays}
+              labels={dateLabels}
+            />
+          ) : (
+            <Input 
+              label={
+                <span className="flex items-center gap-1.5">
+                  <CalendarDays className="h-4 w-4 text-slate-500" />
+                  Ngày (YYYY-MM-DD)
+                </span>
+              } 
+              value={form.date} 
+              onChange={(date) => setForm({ ...form, date })} 
+            />
+          )}
+          {helperText && (
+            <p className="px-1 text-[12px] font-semibold text-slate-500">{helperText}</p>
+          )}
+        </div>
+        
         <Input 
           label={
             <span className="flex items-center gap-1.5">
-              <Type className="h-4 w-4 text-slate-500" />
-              Tên mục lịch trình *
+              <Clock className="h-4 w-4 text-slate-500" />
+              Giờ khởi hành / thời gian
             </span>
           } 
-          value={form.title} 
-          onChange={(title) => setForm({ ...form, title })} 
-          placeholder="VD: Ăn trưa tại quán địa phương" 
+          type="time" 
+          value={form.time} 
+          onChange={(time) => setForm({ ...form, time })} 
         />
+      </div>
 
-        {/* Category Selector Grid */}
-        <div className="space-y-2">
-          <span className="text-sm font-semibold text-slate-600">Loại lịch trình</span>
-          <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
-            {ACTIVITY_CATEGORIES.map(cat => {
-              const Icon = cat.icon;
-              const isSelected = form.type === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => setForm({ ...form, type: cat.id })}
-                  className={classNames(
-                    "flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border transition-all text-center h-[64px] motion-press",
-                    isSelected 
-                      ? cat.activeBg 
-                      : "border-slate-200 hover:bg-slate-50 text-slate-500"
-                  )}
-                >
-                  <Icon className="h-5 w-5" strokeWidth={2.2} />
-                  <span className="text-[10px] font-bold leading-none">{cat.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Date and Time selectors */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-1">
-            {tripDays.length > 0 ? (
-              <Select
-                label={
-                  <span className="flex items-center gap-1.5">
-                    <CalendarDays className="h-4 w-4 text-slate-500" />
-                    Chọn ngày
-                  </span>
-                }
-                value={form.date}
-                onChange={(date) => setForm({ ...form, date })}
-                options={tripDays}
-                labels={dateLabels}
-              />
-            ) : (
-              <Input 
-                label={
-                  <span className="flex items-center gap-1.5">
-                    <CalendarDays className="h-4 w-4 text-slate-500" />
-                    Ngày (YYYY-MM-DD)
-                  </span>
-                } 
-                value={form.date} 
-                onChange={(date) => setForm({ ...form, date })} 
-              />
-            )}
-            {helperText && (
-              <p className="px-1 text-[12px] font-semibold text-slate-500">{helperText}</p>
-            )}
-          </div>
-          
-          <Input 
-            label={
-              <span className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-slate-500" />
-                Giờ khởi hành / thời gian
-              </span>
-            } 
-            type="time" 
-            value={form.time} 
-            onChange={(time) => setForm({ ...form, time })} 
-          />
-        </div>
-
-        {/* Location and Map link */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input 
-            label={
-              <span className="flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-slate-500" />
-                Địa điểm
-              </span>
-            } 
-            value={form.location} 
-            onChange={(location) => setForm({ ...form, location })} 
-            placeholder="VD: Bãi Trước, Vũng Tàu" 
-          />
-          <Input 
-            label={
-              <span className="flex items-center gap-1.5">
-                <Map className="h-4 w-4 text-slate-500" />
-                Link bản đồ
-              </span>
-            } 
-            value={form.mapLink} 
-            onChange={(mapLink) => setForm({ ...form, mapLink })} 
-            placeholder="https://maps.google.com/..." 
-          />
-        </div>
-
-        {/* Notes */}
-        <Textarea 
+      {/* Location and Map link */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Input 
           label={
             <span className="flex items-center gap-1.5">
-              <StickyNote className="h-4 w-4 text-slate-500" />
-              Ghi chú, mã đặt chỗ
+              <MapPin className="h-4 w-4 text-slate-500" />
+              Địa điểm
             </span>
           } 
-          value={form.notes} 
-          onChange={(notes) => setForm({ ...form, notes })} 
-          placeholder="Lưu ý quan trọng, mã phòng, số điện thoại liên hệ..." 
+          value={form.location} 
+          onChange={(location) => setForm({ ...form, location })} 
+          placeholder="VD: Bãi Trước, Vũng Tàu" 
         />
-        </div>
-      </BottomSheet>
+        <Input 
+          label={
+            <span className="flex items-center gap-1.5">
+              <Map className="h-4 w-4 text-slate-500" />
+              Link bản đồ
+            </span>
+          } 
+          value={form.mapLink} 
+          onChange={(mapLink) => setForm({ ...form, mapLink })} 
+          placeholder="https://maps.google.com/..." 
+        />
+      </div>
 
-      <TypedDeleteConfirmModal
-        isOpen={isDeleteConfirmOpen}
-        onClose={() => setIsDeleteConfirmOpen(false)}
-        onConfirm={executeDelete}
-        title="Xóa mục lịch trình này?"
-        itemName={editing?.title}
-        description="Mục lịch trình này sẽ không còn xuất hiện trong lịch trình. Sau khi xóa, không thể hoàn tác."
-        confirmLabel="Xóa mục lịch trình"
+      {/* Notes */}
+      <Textarea 
+        label={
+          <span className="flex items-center gap-1.5">
+            <StickyNote className="h-4 w-4 text-slate-500" />
+            Ghi chú, mã đặt chỗ
+          </span>
+        } 
+        value={form.notes} 
+        onChange={(notes) => setForm({ ...form, notes })} 
+        placeholder="Lưu ý quan trọng, mã phòng, số điện thoại liên hệ..." 
       />
-    </>
+      </div>
+    </BottomSheet>
   );
 }
 
@@ -486,38 +516,88 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
   const days = Array.from(new Set([...tripDays, ...eventDays])).filter(Boolean).sort();
   const tripIsActive = today >= trip.startDate && today <= trip.endDate;
 
-  const [selectedDay, setSelectedDay] = useState<string | "all">("all");
-  const [isDaySelectorOpen, setIsDaySelectorOpen] = useState(false);
+  const [filterDay, setFilterDay] = useState<string | "all">("all");
+  const [activeTab, setActiveTab] = useState<string | "all">("all");
+  const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<EventItem | null>(null);
   const [formDefaultDate, setFormDefaultDate] = useState<string>("");
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState<EventItem | null>(null);
 
   const [isBackupPlansOpen, setIsBackupPlansOpen] = useState(false);
   const [backupPlanCtx, setBackupPlanCtx] = useState<{ activityId?: number; date?: string }>({});
 
   const backupPlans = useLiveQuery(() => db.backupPlans.where("tripId").equals(trip.id!).toArray(), [trip.id]) ?? [];
+  const isScrollingRef = useRef(false);
 
   // Default selected day calculations on mount or trip bounds change
   useEffect(() => {
     const isTodayInTrip = days.includes(today);
     const timing = getTripTiming(trip);
 
+    setFilterDay("all");
+    setActiveTab("all");
+
     if (isTodayInTrip) {
-      setSelectedDay(today);
-    } else if (timing.status === "upcoming") {
-      const isMobile = window.innerWidth < 768;
-      setSelectedDay(isMobile ? (trip.startDate || "all") : "all");
-    } else {
-      setSelectedDay("all");
+      setTimeout(() => {
+        const element = document.getElementById(`day-section-${today}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 500);
     }
   }, [trip.startDate, trip.endDate]);
+
+  // Scrollspy viewport tracking
+  useEffect(() => {
+    const handleScroll = () => {
+      if (filterDay !== "all") return;
+      if (isScrollingRef.current) return;
+      
+      const daySections = days.map(day => document.getElementById(`day-section-${day}`)).filter(Boolean) as HTMLElement[];
+      let currentActiveDay = "all";
+      const scrollPosition = window.scrollY + 185; 
+      
+      for (const section of daySections) {
+        if (section.offsetTop <= scrollPosition) {
+          currentActiveDay = section.id.replace("day-section-", "");
+        }
+      }
+      
+      if (window.scrollY < 80) {
+        currentActiveDay = "all";
+      }
+      
+      setActiveTab(currentActiveDay);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [days, filterDay]);
+
+  const selectDayFilter = (day: string | "all") => {
+    setFilterDay(day);
+    setActiveTab(day);
+    
+    if (day === "all") {
+      isScrollingRef.current = true;
+      const element = document.getElementById("timeline-top");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 800);
+    }
+  };
 
   function openNewForm(defaultDateVal?: string) {
     setEditing(null);
     if (defaultDateVal) {
       setFormDefaultDate(defaultDateVal);
-    } else if (selectedDay !== "all") {
-      setFormDefaultDate(selectedDay);
+    } else if (filterDay !== "all") {
+      setFormDefaultDate(filterDay);
     } else {
       setFormDefaultDate(tripDays.includes(today) ? today : (tripDays[0] || today));
     }
@@ -529,85 +609,104 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
     setIsFormOpen(true);
   }
 
+  function initiateDelete(item: EventItem) {
+    setEventToDelete(item);
+    setIsDeleteConfirmOpen(true);
+  }
+
+  async function executeDelete() {
+    if (!eventToDelete?.id) return;
+    await db.events.delete(eventToDelete.id);
+    setIsDeleteConfirmOpen(false);
+    setEventToDelete(null);
+    setIsFormOpen(false);
+  }
+
   const handleEventSaved = (date: string) => {
-    setSelectedDay(date);
+    selectDayFilter(date);
   };
 
   const renderDayNav = () => {
     // If the trip has only 1 day, don't show select rail
     if (days.length <= 1) {
-      return (
-        <div className="mb-6 px-1 text-[15px] font-bold text-slate-600">
-          Ngày 1 · {days[0] ? formatDate(days[0]) : ""}
-        </div>
-      );
+      return null;
     }
 
-    let chipsToRender: Array<{ date: string | "all"; label: string; sub: string }> = [];
-    const is15Plus = days.length >= 15;
-
-    if (is15Plus) {
-      // Simplify rail for 15+ days: Tất cả, Hôm nay (if inside range), Ngày đang chọn, Chọn ngày
-      chipsToRender.push({ date: "all", label: "Tất cả", sub: `${events.length} mục` });
-      
-      const isTodayInTrip = days.includes(today);
-      if (isTodayInTrip) {
-        const todayIdx = days.indexOf(today);
-        chipsToRender.push({ date: today, label: "Hôm nay", sub: `Ngày ${todayIdx + 1}` });
-      }
-
-      if (selectedDay !== "all" && selectedDay !== today && days.includes(selectedDay)) {
-        const selIdx = days.indexOf(selectedDay);
-        chipsToRender.push({ date: selectedDay, label: `Ngày ${selIdx + 1}`, sub: formatDateShort(selectedDay) });
-      }
-    } else {
-      // 2-14 Days: Tất cả + all days
-      chipsToRender.push({ date: "all", label: "Tất cả", sub: `${events.length} mục` });
-      days.forEach((day, idx) => {
-        const count = events.filter(e => e.date === day).length;
-        chipsToRender.push({
-          date: day,
-          label: `Ngày ${idx + 1}`,
-          sub: `${formatDateShort(day)} · ${count}`
-        });
-      });
+    const hasMoreDays = days.length > 4;
+    const visibleDays = days.slice(0, 4);
+    
+    // If selected day is beyond the first 4, append it dynamically so it is visible and highlighted
+    const selectedIdx = days.indexOf(filterDay);
+    if (filterDay !== "all" && selectedIdx >= 4) {
+      visibleDays.push(filterDay);
     }
 
     return (
-      <div className="mb-6 flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none w-full select-none shrink-0">
-        {chipsToRender.map((chip) => {
-          const isActive = selectedDay === chip.date;
+      <div 
+        className="flex items-center gap-2 overflow-x-auto py-1 w-full select-none shrink-0 scrollbar-none"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {/* "Tất cả" tab */}
+        <button
+          type="button"
+          onClick={() => selectDayFilter("all")}
+          className={classNames(
+            "flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer",
+            activeTab === "all"
+              ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
+              : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+          )}
+        >
+          <span>Tất cả</span>
+          <span className={classNames(
+            "text-[10px] font-bold px-1.5 py-0.5 rounded-full",
+            activeTab === "all" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
+          )}>
+            {events.length}
+          </span>
+        </button>
+
+        {/* Day tabs */}
+        {visibleDays.map((day) => {
+          const idx = days.indexOf(day);
+          const hasEvents = events.some(e => e.date === day);
+          const isActive = activeTab === day;
           return (
             <button
-              key={chip.date}
+              key={day}
               type="button"
-              onClick={() => setSelectedDay(chip.date)}
+              onClick={() => selectDayFilter(day)}
               className={classNames(
-                "flex flex-col items-center justify-center py-2 px-4 rounded-2xl border shrink-0 min-w-[96px] min-h-[52px] transition-all motion-press select-none",
-                isActive 
-                  ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm" 
-                  : "bg-[#FFFDF8] border-[#E8E1D8] text-slate-700 hover:bg-slate-50 hover:border-slate-350"
+                "flex items-center gap-2 py-1.5 px-3.5 rounded-full border shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer",
+                isActive
+                  ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
+                  : hasEvents 
+                    ? "bg-white border-slate-200 text-slate-700 hover:bg-slate-50" 
+                    : "bg-white/40 border-slate-200/60 text-slate-400 hover:bg-slate-50"
               )}
             >
-              <span className="text-[13.5px] font-extrabold leading-none">{chip.label}</span>
-              <span className={classNames(
-                "text-[10.5px] font-bold mt-1.5 leading-none",
-                isActive ? "text-white/80" : "text-slate-400"
-              )}>
-                {chip.sub}
-              </span>
+              <span>Ngày {idx + 1}</span>
+              {hasEvents ? (
+                <span className={classNames(
+                  "w-1.5 h-1.5 rounded-full shrink-0",
+                  isActive ? "bg-white" : "bg-[#00BFB7]"
+                )} />
+              ) : (
+                <span className="text-[10.5px] text-slate-400 font-semibold">({formatDateShort(day)})</span>
+              )}
             </button>
           );
         })}
 
-        {days.length >= 8 && (
+        {/* "Xem thêm" pill at the end of the rail if there are more than 4 days */}
+        {hasMoreDays && (
           <button
             type="button"
-            onClick={() => setIsDaySelectorOpen(true)}
-            className="flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-2xl border border-dashed border-[#00BFB7]/40 bg-[#00BFB7]/5 text-[#030D2E] font-extrabold text-[13.5px] shrink-0 min-h-[52px] hover:bg-[#00BFB7]/10 transition-all motion-press select-none"
+            onClick={() => setIsDayPickerOpen(true)}
+            className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border border-slate-200 bg-white text-[#00BFB7] hover:bg-slate-50 shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer"
           >
-            <span>Chọn ngày</span>
-            <ChevronRight className="w-4 h-4" />
+            <CalendarDays className="w-3.5 h-3.5 text-[#00BFB7]" />
+            <span>Xem thêm ({days.length - 4})</span>
           </button>
         )}
       </div>
@@ -617,102 +716,140 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
   const undatedEvents = events.filter(e => !e.date);
 
   const renderTimeline = () => {
-    if (selectedDay === "all") {
-      return (
-        <div key="all" className="space-y-8 motion-page-enter">
-          {days.map((day, index) => {
-            const dayEvents = events.filter((item) => item.date === day).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
-            const isToday = tripIsActive && day === today;
-            
+    const activeDays = filterDay === "all" ? days : days.filter(d => d === filterDay);
+
+    return (
+      <div id="timeline-top" className="space-y-8 motion-page-enter">
+        {activeDays.map((day) => {
+          const index = days.indexOf(day);
+          const dayEvents = events.filter((item) => item.date === day).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+          const isToday = tripIsActive && day === today;
+          
+          if (dayEvents.length === 0) {
+            // Smart Collapse: Slim Row (max height 48px, keeps vertical line connection)
             return (
-              <div key={day} className="space-y-4">
-                <DayHeader day={day} index={index} isToday={isToday} />
-                <div className="px-1">
-                  {dayEvents.length === 0 ? (
-                    <div className="px-1 relative flex gap-4 pl-1 mb-6">
-                      <div className="relative z-10 flex shrink-0">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-50 text-slate-400 font-extrabold border border-slate-200/40">
-                          {index + 1}
-                        </div>
-                      </div>
-                      <div className="min-w-0 flex-1 rounded-2xl bg-slate-50/45 p-3.5 border border-dashed border-slate-200 text-center py-4">
-                        <p className="text-[13px] font-semibold text-slate-400">Chưa có mục lịch trình trong ngày này.</p>
-                      </div>
-                    </div>
-                  ) : (
-                    dayEvents.map((item, idx) => (
-                      <ActivityCard 
-                        key={item.id} 
-                        item={item} 
-                        onEdit={() => openEditForm(item)} 
-                        isToday={isToday} 
-                        isUpcoming={day > today} 
-                        idx={idx}
-                        backupCount={backupPlans.filter(p => p.activityId === item.id).length}
-                        onOpenBackup={() => {
-                          setBackupPlanCtx({ activityId: item.id, date: day });
-                          setIsBackupPlansOpen(true);
-                        }}
-                      />
-                    ))
-                  )}
+              <div 
+                key={day} 
+                id={`day-section-${day}`} 
+                className="scroll-mt-[180px] relative flex items-center justify-between h-[48px] pl-1 py-1 group"
+              >
+                {/* Vertical line through marker */}
+                <div className="absolute bottom-0 left-[21px] top-0 w-0.5 bg-slate-200/80 group-last:bg-transparent" />
+                
+                <div className="flex items-center gap-3.5 relative z-10">
+                  {/* Circle marker */}
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 font-extrabold border border-slate-200 text-[12px]">
+                    {index + 1}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-extrabold text-[#030D2E]">Ngày {index + 1}</span>
+                    <span className="text-xs font-semibold text-slate-400">({formatDateShort(day)})</span>
+                    {isToday && (
+                      <span className="rounded-full bg-sunset-50 px-2 py-0.5 text-[9.5px] font-black uppercase tracking-widest text-sunset-600 border border-sunset-100">
+                        Hôm nay
+                      </span>
+                    )}
+                  </div>
                 </div>
+                
+                <button 
+                  type="button"
+                  onClick={() => openNewForm(day)}
+                  className="relative z-10 text-[13px] font-bold text-[#00BFB7] hover:brightness-95 transition-colors pr-2 flex items-center gap-1 motion-press"
+                >
+                  <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
+                  Thêm
+                </button>
               </div>
             );
-          })}
+          }
 
-          {/* Undated fallback events */}
-          {undatedEvents.length > 0 && (
-            <div key="undated" className="space-y-4">
-              <div className="sticky top-[64px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/90 px-4 py-3.5 backdrop-blur-md border-b border-slate-200/40">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-400 text-white font-black text-[14px] shadow-sm">
-                    ?
-                  </div>
-                  <div>
-                    <h4 className="text-[16px] font-extrabold text-[#030D2E]">Chưa phân ngày</h4>
-                    <p className="text-[13px] font-semibold text-slate-500">Các mục lịch trình chưa xếp ngày cụ thể</p>
-                  </div>
-                </div>
-              </div>
+          // Non-empty days: DayHeader + ActivityCards
+          return (
+            <div key={day} className="space-y-4">
+              <DayHeader day={day} index={index} isToday={isToday} />
               <div className="px-1">
-                {undatedEvents.map((item, idx) => (
+                {dayEvents.map((item, idx) => (
                   <ActivityCard 
                     key={item.id} 
                     item={item} 
                     onEdit={() => openEditForm(item)} 
-                    isToday={false} 
-                    isUpcoming={false} 
+                    onDelete={() => initiateDelete(item)}
+                    isToday={isToday} 
+                    isUpcoming={day > today} 
                     idx={idx}
+                    backupCount={backupPlans.filter(p => p.activityId === item.id).length}
+                    onOpenBackup={() => {
+                      setBackupPlanCtx({ activityId: item.id, date: day });
+                      setIsBackupPlansOpen(true);
+                    }}
                   />
                 ))}
               </div>
             </div>
-          )}
+          );
+        })}
 
-          {/* Backup plans for all days */}
-          {backupPlans.filter(p => !p.activityId && !p.date).length > 0 && (
-            <div className="space-y-4">
-              <div className="sticky top-[64px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/90 px-4 py-3.5 backdrop-blur-md border-b border-slate-200/40">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-primary-light text-kat-primary font-black text-[14px] shadow-sm">
-                    <GitBranch className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-[16px] font-extrabold text-[#030D2E]">Dự phòng chung</h4>
-                    <p className="text-[13px] font-semibold text-slate-500">Các phương án áp dụng cho toàn bộ chuyến đi</p>
-                  </div>
+        {/* Undated fallback events */}
+        {filterDay === "all" && undatedEvents.length > 0 && (
+          <div key="undated" className="space-y-4">
+            <div 
+              id="day-section-undated"
+              className="scroll-mt-[180px] sticky top-[115px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-400 text-white font-black text-[14px] shadow-sm">
+                  ?
                 </div>
-                <button
-                  onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
-                  className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold text-[13px] hover:bg-slate-50 motion-press"
-                >
-                  Xem chi tiết
-                </button>
+                <div>
+                  <h4 className="text-[16px] font-extrabold text-[#030D2E]">Chưa phân ngày</h4>
+                  <p className="text-[13px] font-semibold text-slate-500">Các mục lịch trình chưa xếp ngày cụ thể</p>
+                </div>
               </div>
             </div>
-          )}
+            <div className="px-1">
+              {undatedEvents.map((item, idx) => (
+                <ActivityCard 
+                  key={item.id} 
+                  item={item} 
+                  onEdit={() => openEditForm(item)} 
+                  onDelete={() => initiateDelete(item)}
+                  isToday={false} 
+                  isUpcoming={false} 
+                  idx={idx}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
+        {/* Backup plans for all days */}
+        {filterDay === "all" && backupPlans.filter(p => !p.activityId && !p.date).length > 0 && (
+          <div key="backup" className="space-y-4">
+            <div 
+              id="day-section-backup"
+              className="scroll-mt-[180px] sticky top-[115px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-primary-light text-kat-primary font-black text-[14px] shadow-sm">
+                  <GitBranch className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-[16px] font-extrabold text-[#030D2E]">Dự phòng chung</h4>
+                  <p className="text-[13px] font-semibold text-slate-500">Các phương án áp dụng cho toàn bộ chuyến đi</p>
+                </div>
+              </div>
+              <button
+                onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
+                className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold text-[13px] hover:bg-slate-50 motion-press"
+              >
+                Xem chi tiết
+              </button>
+            </div>
+          </div>
+        )}
+
+        {filterDay === "all" && (
           <div className="flex justify-center mt-6">
              <button
                 onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
@@ -722,130 +859,45 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
                Thêm phương án dự phòng chuyến đi
              </button>
           </div>
-        </div>
-      );
-    } else {
-      const dayIndex = days.indexOf(selectedDay);
-      const isToday = tripIsActive && selectedDay === today;
-      const dayEvents = events.filter((item) => item.date === selectedDay).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
-      const dayLabel = dayIndex !== -1 ? `Ngày ${dayIndex + 1}` : "ngày này";
-
-      return (
-        <div key={selectedDay} className="space-y-4 motion-page-enter">
-          {dayIndex !== -1 && (
-            <DayHeader day={selectedDay} index={dayIndex} isToday={isToday} />
-          )}
-          
-          <div className="px-1">
-            {dayEvents.length === 0 ? (
-              <div className="min-w-0 flex-1 rounded-[24px] bg-kat-surface p-8 border border-kat-border/60 shadow-soft flex flex-col items-center text-center motion-card-enter mt-2">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5">
-                  <MapPinned className="h-6 w-6" />
-                </div>
-                <h4 className="text-[15.5px] font-bold text-kat-text">Chưa có mục lịch trình trong {dayLabel}</h4>
-                <p className="mt-1.5 text-[13.5px] text-kat-muted font-medium max-w-sm leading-relaxed">
-                  Thêm điểm đến, giờ di chuyển hoặc việc cần làm cho ngày này.
-                </p>
-                <button 
-                  onClick={() => openNewForm(selectedDay)}
-                  className="mt-5 inline-flex items-center gap-1.5 rounded-2xl bg-kat-primary text-[#030D2E] hover:brightness-105 px-5 py-2.5 text-[13.5px] font-black shadow-sm transition-all motion-press"
-                >
-                  <Plus className="h-4 w-4" strokeWidth={2.5} />
-                  Thêm mục lịch trình cho {dayLabel}
-                </button>
-              </div>
-            ) : (
-              dayEvents.map((item, idx) => (
-                <ActivityCard 
-                  key={item.id} 
-                  item={item} 
-                  onEdit={() => openEditForm(item)} 
-                  isToday={isToday} 
-                  isUpcoming={selectedDay > today} 
-                  idx={idx}
-                  backupCount={backupPlans.filter(p => p.activityId === item.id).length}
-                  onOpenBackup={() => {
-                    setBackupPlanCtx({ activityId: item.id, date: selectedDay });
-                    setIsBackupPlansOpen(true);
-                  }}
-                />
-              ))
-            )}
-          </div>
-
-          {/* Backup plans for the specific day */}
-          <div className="mt-8">
-            <div className="flex items-center justify-between px-1 mb-4">
-               <h4 className="text-[15px] font-extrabold text-[#030D2E] flex items-center gap-2">
-                 <GitBranch className="w-4 h-4 text-kat-primary" />
-                 Dự phòng trong ngày
-               </h4>
-               <button
-                 onClick={() => { setBackupPlanCtx({ date: selectedDay }); setIsBackupPlansOpen(true); }}
-                 className="text-[13px] font-bold text-kat-primary hover:text-kat-primary-usable motion-press"
-               >
-                 {backupPlans.filter(p => !p.activityId && p.date === selectedDay).length > 0 ? "Quản lý" : "Thêm mới"}
-               </button>
-            </div>
-            {backupPlans.filter(p => !p.activityId && p.date === selectedDay).length > 0 && (
-              <div className="px-1 space-y-3">
-                 {backupPlans.filter(p => !p.activityId && p.date === selectedDay).map(plan => (
-                   <div key={plan.id} className="p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-kat-primary/30 transition-colors cursor-pointer motion-press" onClick={() => { setBackupPlanCtx({ date: selectedDay }); setIsBackupPlansOpen(true); }}>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[11px] font-bold text-kat-primary bg-kat-primary-light px-2 py-0.5 rounded-md border border-kat-primary/20">
-                          {plan.title}
-                        </span>
-                        {plan.reason && <span className="text-[12px] font-bold text-slate-500 truncate">Khi: {plan.reason}</span>}
-                      </div>
-                      {plan.location && <p className="text-[13px] font-semibold text-slate-600 mt-1.5 flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-slate-400" /> {plan.location}</p>}
-                   </div>
-                 ))}
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
+        )}
+      </div>
+    );
   };
 
   return (
     <div className="mx-auto max-w-[1120px] px-1 md:px-0">
-      {/* Title block */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
-        <div className="w-full sm:w-auto">
-          <h2 className="text-[32px] font-extrabold tracking-tight text-[#030D2E]">Lịch trình</h2>
-          <p className="mt-1 text-[15px] font-medium text-slate-500">Sắp xếp từng điểm dừng để hành trình rõ ràng và trọn vẹn hơn.</p>
-          {/* Mobile CTA */}
+      
+      {/* Sticky Header Block */}
+      <div className="sticky top-0 z-30 -mx-4 px-4 py-3 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-slate-200/50 mb-6 shadow-sm md:mx-0 md:px-0 md:rounded-b-2xl">
+        <div className="flex items-center justify-between gap-4 mb-3">
+          <div>
+            <h2 className="text-xl md:text-2xl font-black text-[#030D2E] leading-none">Lịch trình</h2>
+            <p className="hidden md:block mt-1 text-[13.5px] font-medium text-slate-500">
+              Sắp xếp từng điểm dừng để hành trình rõ ràng và trọn vẹn hơn.
+            </p>
+          </div>
+          
+          {/* Desktop CTA docked in header */}
           <button
             onClick={() => openNewForm()}
-            className="flex md:hidden items-center justify-center gap-2 w-full mt-3.5 h-[46px] rounded-2xl bg-[#00BFB7] text-[#030D2E] text-[14px] font-bold shadow-sm motion-press"
+            className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-[#00BFB7] text-[#030D2E] px-4 py-2 text-[13.5px] font-extrabold shadow-sm hover:brightness-105 active:scale-95 transition-all h-10 motion-press"
           >
             <Plus className="h-4 w-4" strokeWidth={2.5} />
-            Thêm mục lịch trình
+            Thêm lịch trình
           </button>
         </div>
-        <div>
-          {/* Desktop CTA */}
-          <button
-            onClick={() => openNewForm()}
-            className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-5 text-[14px] font-bold text-kat-text shadow-sm hover:bg-kat-primary/20 motion-press h-[48px]"
-          >
-            <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
-            Thêm mục lịch trình
-          </button>
-        </div>
-      </div>
 
-      {/* Day Navigation Selection Rail */}
-      {renderDayNav()}
+        {/* Day Navigation Tabs selection bar */}
+        {renderDayNav()}
+      </div>
 
       {/* Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:gap-8 items-start pb-0 md:pb-8">
         {/* Left Column: Timeline list */}
         <div className="space-y-8">
-          {events.length === 0 && selectedDay === "all" ? (
+          {events.length === 0 ? (
             /* Compact Empty Timeline Card */
-            <div>
+            <div id="timeline-top">
               <DayHeader day={trip.startDate} index={0} isToday={tripIsActive && trip.startDate === today} />
               <div className="px-1 relative flex gap-4 pl-1">
                 {/* Circle marker */}
@@ -864,7 +916,7 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
                   <p className="mt-1 text-[13.5px] text-kat-muted font-medium max-w-sm">Thêm điểm đến, thời gian di chuyển hoặc việc cần làm để hành trình rõ ràng hơn.</p>
                   <button 
                     onClick={() => openNewForm()}
-                    className="mt-4 inline-flex items-center gap-1.5 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-4 py-2 text-[13px] font-bold text-kat-text hover:bg-kat-primary/20 motion-press"
+                    className="mt-4 inline-flex items-center gap-1.5 rounded-2xl bg-[#00BFB7] px-4 py-2 text-[13px] font-bold text-[#030D2E] hover:brightness-105 transition-all motion-press"
                   >
                     <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
                     Thêm mục lịch trình đầu tiên
@@ -878,7 +930,7 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
         </div>
 
         {/* Right Column: Dynamic smart widgets */}
-        <div className="space-y-6 lg:sticky lg:top-[90px]">
+        <div className="space-y-6 lg:sticky lg:top-[160px]">
           {/* Mini Trip Context Card */}
           <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4">
             <div className="flex items-center gap-2">
@@ -959,48 +1011,14 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
         </div>
       </div>
 
-      {/* Select Day Bottom Sheet selector for 8+ days */}
-      <BottomSheet
-        isOpen={isDaySelectorOpen}
-        onClose={() => setIsDaySelectorOpen(false)}
-        title="Chọn ngày lịch trình"
+      {/* Mobile Floating Action Button (FAB) (min 44x44px touch area) */}
+      <button
+        onClick={() => openNewForm()}
+        className="fixed bottom-20 right-6 z-40 md:hidden flex h-14 w-14 items-center justify-center rounded-full bg-[#00BFB7] text-[#030D2E] shadow-lg hover:scale-105 active:scale-95 focus:outline-none transition-all motion-press"
+        aria-label="Thêm mục lịch trình"
       >
-        <div className="grid grid-cols-2 gap-3 max-h-[360px] overflow-y-auto p-1">
-          <button
-            type="button"
-            onClick={() => { setSelectedDay("all"); setIsDaySelectorOpen(false); }}
-            className={classNames(
-              "p-3 rounded-2xl border text-center font-bold text-[14px] transition-all motion-press h-[60px] flex flex-col items-center justify-center",
-              selectedDay === "all" ? "bg-[#030D2E] text-white border-[#030D2E]" : "bg-[#FFFDF8] border-slate-200 text-slate-700 hover:bg-slate-50"
-            )}
-          >
-            <span className="font-extrabold text-[13.5px]">Tất cả</span>
-            <span className={classNames("text-[11px] font-semibold mt-0.5", selectedDay === "all" ? "text-white/80" : "text-slate-450")}>
-              {events.length} mục
-            </span>
-          </button>
-          {days.map((day, idx) => {
-            const count = events.filter(e => e.date === day).length;
-            const isSelected = selectedDay === day;
-            return (
-              <button
-                key={day}
-                type="button"
-                onClick={() => { setSelectedDay(day); setIsDaySelectorOpen(false); }}
-                className={classNames(
-                  "p-3 rounded-2xl border text-center transition-all motion-press h-[60px] flex flex-col items-center justify-center",
-                  isSelected ? "bg-[#030D2E] text-white border-[#030D2E]" : "bg-[#FFFDF8] border-slate-200 text-slate-700 hover:bg-slate-50"
-                )}
-              >
-                <div className="font-extrabold text-[13.5px]">Ngày {idx + 1}</div>
-                <div className={classNames("text-[11px] mt-0.5 font-semibold", isSelected ? "text-white/80" : "text-slate-400")}>
-                  {formatDateShort(day)} {count > 0 ? `· ${count} mục` : ""}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </BottomSheet>
+        <Plus className="h-7 w-7" strokeWidth={2.5} />
+      </button>
 
       <EventForm
         tripId={trip.id!}
@@ -1010,6 +1028,20 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
         onClose={() => setIsFormOpen(false)}
         defaultDate={formDefaultDate}
         onSaved={handleEventSaved}
+        onDelete={() => initiateDelete(editing!)}
+      />
+
+      <DeleteConfirmModal
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => {
+          setIsDeleteConfirmOpen(false);
+          setEventToDelete(null);
+        }}
+        onConfirm={executeDelete}
+        title="Xóa mục lịch trình này?"
+        itemName={eventToDelete?.title}
+        description="Mục lịch trình này sẽ không còn xuất hiện trong lịch trình. Sau khi xóa, không thể hoàn tác."
+        confirmLabel="Xóa mục lịch trình"
       />
 
       <BackupPlansSheet
@@ -1019,6 +1051,83 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
         isOpen={isBackupPlansOpen}
         onClose={() => setIsBackupPlansOpen(false)}
       />
+
+      {/* Grid Day Picker Bottom Sheet */}
+      <BottomSheet
+        isOpen={isDayPickerOpen}
+        onClose={() => setIsDayPickerOpen(false)}
+        title="Chọn nhanh ngày lịch trình"
+      >
+        <div className="space-y-4">
+          <p className="text-[13.5px] font-semibold text-slate-500 pb-1">
+            Chọn một ngày cụ thể dưới đây để lọc xem chi tiết hoạt động hoặc chọn "Tất cả các ngày".
+          </p>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[60vh] overflow-y-auto pr-1 scrollbar-none pb-4">
+            {/* "Tất cả" button */}
+            <button
+              type="button"
+              onClick={() => {
+                selectDayFilter("all");
+                setIsDayPickerOpen(false);
+              }}
+              className={classNames(
+                "flex flex-col items-center justify-center p-3 rounded-[16px] border text-center transition-all duration-200 active:scale-95 min-h-[72px] cursor-pointer",
+                filterDay === "all"
+                  ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
+                  : "bg-[#FFFDF8] border-slate-200 text-slate-700 hover:bg-slate-50"
+              )}
+            >
+              <span className="text-[13.5px] font-extrabold">Tất cả các ngày</span>
+              <span className={classNames(
+                "text-[10px] font-bold mt-1 px-1.5 py-0.5 rounded-full",
+                filterDay === "all" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
+              )}>
+                {events.length} mục
+              </span>
+            </button>
+
+            {/* Day buttons */}
+            {days.map((day, idx) => {
+              const hasEvents = events.some(e => e.date === day);
+              const isActive = filterDay === day;
+              const count = events.filter(e => e.date === day).length;
+              return (
+                <button
+                  key={day}
+                  type="button"
+                  onClick={() => {
+                    selectDayFilter(day);
+                    setIsDayPickerOpen(false);
+                  }}
+                  className={classNames(
+                    "flex flex-col items-center justify-center p-3 rounded-[16px] border text-center transition-all duration-200 active:scale-95 min-h-[72px] cursor-pointer",
+                    isActive
+                      ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
+                      : "bg-[#FFFDF8] border-slate-200 text-slate-700 hover:bg-slate-50"
+                  )}
+                >
+                  <span className="text-[13.5px] font-extrabold">Ngày {idx + 1}</span>
+                  <span className={classNames(
+                    "text-[10.5px] font-medium mt-0.5",
+                    isActive ? "text-slate-200" : "text-slate-400"
+                  )}>
+                    {formatDateShort(day)}
+                  </span>
+                  {hasEvents && (
+                    <span className={classNames(
+                      "text-[9px] font-black mt-1 px-1.5 py-0.2 rounded-full",
+                      isActive ? "bg-white/20 text-white" : "bg-kat-primary/15 text-kat-primary"
+                    )}>
+                      {count} mục
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </BottomSheet>
     </div>
   );
 }

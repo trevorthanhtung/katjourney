@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { db, JournalEntry, JournalMood } from "../../db";
 import { formatDate, moodLabels, today } from "../../utils/helpers";
-import { BottomSheet, FAB, Input, Textarea, TypedDeleteConfirmModal } from "../../components/ui";
+import { BottomSheet, FAB, Input, Textarea, DeleteConfirmModal } from "../../components/ui";
 
 const moodOptionList: Array<{ value: JournalMood; label: string }> = [
   { value: "good", label: "Vui" },
@@ -273,7 +273,7 @@ function DeleteJournalConfirmModal({
   onConfirm: () => void;
 }) {
   return (
-    <TypedDeleteConfirmModal
+    <DeleteConfirmModal
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={onConfirm}
@@ -303,19 +303,15 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
         <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
           Bắt đầu bằng một cảm xúc, một nơi đã ghé qua hoặc một khoảnh khắc bạn muốn nhớ.
         </p>
-        <button
-          onClick={onWrite}
-          className="mt-5 inline-flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-6 text-[14px] font-black transition-all hover:brightness-105 active:scale-95 shadow-sm"
-        >
-          <PenLine className="w-4.5 h-4.5" strokeWidth={2.5} />
-          Viết trang đầu tiên
-        </button>
       </div>
 
       {/* Prompts Section */}
-      <div className="w-full max-w-xl mx-auto">
-        <p className="text-[12.5px] font-extrabold uppercase tracking-wider text-slate-400 mb-3.5 pl-1">Gợi ý viết nhanh</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="w-full max-w-xl md:max-w-none mx-auto space-y-3">
+        <div className="flex items-center justify-between pl-1">
+          <p className="text-[12.5px] font-extrabold uppercase tracking-wider text-slate-400">Gợi ý viết nhanh</p>
+          <span className="text-[11px] font-bold text-slate-400 md:hidden">Vuốt ngang ›</span>
+        </div>
+        <div className="flex flex-nowrap gap-3 overflow-x-auto pb-1.5 -mx-2 px-2 touch-pan-x snap-x snap-mandatory scrollbar-none md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0">
           {prompts.map((prompt, idx) => {
             const icons = [Star, Camera, MapPin, Compass];
             const colors = ["text-amber-500", "text-rose-500", "text-emerald-500", "text-sky-500"];
@@ -326,17 +322,17 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
               <button 
                 key={prompt}
                 onClick={() => onPromptClick(prompt)} 
-                className="text-left bg-[#FFFDF8] p-4 rounded-[20px] border border-[#E8E1D8] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all group active:scale-[0.99] flex flex-col justify-between min-h-[112px]"
+                className="text-left bg-[#FFFDF8] p-4 rounded-[20px] border border-[#E8E1D8] shadow-sm hover:shadow-md transition-all group active:scale-[0.99] flex flex-col justify-between min-h-[112px] w-[260px] md:w-full shrink-0 md:shrink-0 snap-center"
               >
                 <div className="flex items-start gap-2.5">
                   <div className={`p-1.5 rounded-lg bg-slate-50 border border-slate-100/60 ${iconColor} shrink-0 mt-0.5`}>
                     <PromptIcon className="h-4.5 w-4.5" />
                   </div>
-                  <p className="text-[14px] font-extrabold text-slate-700 leading-snug group-hover:text-[#00BFB7] transition-colors">
+                  <p className="text-[13.5px] font-extrabold text-slate-700 leading-snug group-hover:text-[#00BFB7] transition-colors line-clamp-2">
                     {prompt}
                   </p>
                 </div>
-                <span className="text-[11.5px] font-bold text-[#00BFB7] uppercase tracking-wider mt-2 block opacity-80 group-hover:opacity-100 transition-opacity pl-9">
+                <span className="text-[11px] font-bold text-[#00BFB7] uppercase tracking-wider mt-2 block opacity-80 group-hover:opacity-100 transition-opacity pl-9">
                   Ghi lại ngay →
                 </span>
               </button>
@@ -423,7 +419,7 @@ export function JournalSection({
           {onBack && (
             <button
               onClick={onBack}
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all shadow-sm shrink-0 motion-press"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 text-slate-700 active:scale-95 transition-all shrink-0"
               title="Quay lại"
             >
               <ArrowLeft className="h-5 w-5" />

@@ -82,26 +82,13 @@ export function TripManagerScreen({
     const tripChecklist = allChecklist.filter(c => c.tripId === trip.id);
     const checklistRemaining = tripChecklist.filter(c => !c.completed).length;
 
-    // Render edit and delete action buttons
-    const renderActions = () => (
-      <div className="absolute top-4 right-4 flex gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 z-20">
-        <button
-          className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 bg-white/95 border border-slate-200/60 shadow-sm hover:bg-slate-50 hover:text-slate-700 transition-colors motion-press"
-          onClick={(e) => { e.stopPropagation(); setEditingTrip(trip); }}
-          title="Sửa thông tin"
-        >
-          <Edit3 className="h-4 w-4" />
-        </button>
-      </div>
-    );
-
     // Single Featured Card Layout
     if (isSingle) {
       return (
         <div 
-          className={`group relative overflow-hidden rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-6 md:p-8 shadow-sm hover:shadow-md hover:border-kat-primary/40 transition-all w-full flex flex-col md:flex-row gap-6 justify-between items-stretch md:min-w-[560px] md:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+          onClick={() => onOpenTrip(trip.id!)}
+          className={`group relative cursor-pointer overflow-hidden rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-6 md:p-8 shadow-sm hover:shadow-md hover:border-kat-primary/40 hover:bg-slate-50/40 transition-all w-full flex flex-col md:flex-row gap-6 justify-between items-stretch md:min-w-[560px] md:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
         >
-          
           {/* Left info column */}
           <div className="flex-1 flex flex-col justify-between pr-4">
             <div>
@@ -120,15 +107,12 @@ export function TripManagerScreen({
                 </span>
               </div>
 
-              <h4 
-                className="text-[22px] md:text-[25px] font-extrabold text-kat-text leading-tight mb-4 cursor-pointer hover:text-kat-primary transition-colors"
-                onClick={() => onOpenTrip(trip.id!)}
-              >
+              <h4 className="text-[22px] md:text-[25px] font-extrabold text-kat-text leading-tight mb-4">
                 {trip.title}
               </h4>
             </div>
 
-            <div className="space-y-2.5 pb-2 border-slate-100">
+            <div className="space-y-2.5 pb-2">
               <div className="flex items-center gap-2 text-[14px] font-semibold text-slate-500">
                 <MapPin className="h-4.5 w-4.5 text-kat-primary shrink-0" />
                 <span className="truncate">{trip.location || "Chưa có địa điểm"}</span>
@@ -140,7 +124,7 @@ export function TripManagerScreen({
             </div>
           </div>
 
-          {/* Right stats and action column */}
+          {/* Right stats column */}
           <div className="w-full md:w-[260px] shrink-0 md:border-l md:border-[#E8E1D8]/60 md:pl-6 flex flex-col justify-between gap-5">
             <div className="space-y-2.5">
               <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 bg-slate-50 border border-slate-200/50 px-3 py-2 rounded-xl">
@@ -156,7 +140,7 @@ export function TripManagerScreen({
                 <div className="flex items-center gap-2 text-[12px] font-extrabold text-rose-700 bg-rose-50 border border-rose-100 px-3 py-2 rounded-xl">
                   <span className="truncate">
                     {timing.status === "past" 
-                      ? `${checklistRemaining} món chưa được đánh dấu chuẩn bị` 
+                      ? `${checklistRemaining} món chưa được chuẩn bị` 
                       : `Còn ${checklistRemaining} món cần chuẩn bị`}
                   </span>
                 </div>
@@ -167,30 +151,6 @@ export function TripManagerScreen({
                 </div>
               )}
             </div>
-
-            <div className="flex flex-wrap gap-2.5 pt-2 border-t border-slate-100/60">
-              <button 
-                onClick={() => onOpenTrip(trip.id!)}
-                className="flex-1 h-11 flex items-center justify-center rounded-xl bg-[#030D2E] hover:bg-[#030D2E]/90 text-white font-black text-[14px] shadow-sm transition-all motion-press"
-              >
-                Xem chi tiết
-              </button>
-              <button
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors motion-press"
-                onClick={(e) => { e.stopPropagation(); setEditingTrip(trip); }}
-                title="Sửa thông tin"
-              >
-                <Edit3 className="h-4.5 w-4.5" />
-              </button>
-              {timing.status === "past" && (
-                <button 
-                  onClick={() => onOpenTrip(trip.id!)}
-                  className="h-11 px-4 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[13.5px] transition-all motion-press"
-                >
-                  Tổng kết
-                </button>
-              )}
-            </div>
           </div>
         </div>
       );
@@ -199,10 +159,9 @@ export function TripManagerScreen({
     // Grid Card Layout
     return (
       <div 
-        className={`group relative flex flex-col justify-between overflow-hidden rounded-[24px] bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] transition-all hover:shadow-md hover:border-kat-primary/40 w-full max-w-[420px] mx-auto md:mx-0 motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+        onClick={() => onOpenTrip(trip.id!)}
+        className={`group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[24px] bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] hover:border-kat-primary/40 hover:bg-slate-50/40 transition-all hover:shadow-md w-full max-w-[420px] mx-auto md:mx-0 h-full motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
       >
-        {renderActions()}
-
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-3">
             {timing.status === "active" && (
@@ -219,70 +178,45 @@ export function TripManagerScreen({
             </span>
           </div>
 
-          <h4 
-            className="text-[18px] md:text-[19px] font-extrabold text-kat-text leading-tight mb-4 cursor-pointer hover:text-kat-primary transition-colors line-clamp-2 pr-12"
-            onClick={() => onOpenTrip(trip.id!)}
-          >
+          <h4 className="text-[18px] md:text-[19px] font-extrabold text-kat-text leading-tight mb-4 line-clamp-2">
             {trip.title}
           </h4>
 
-          <div className="space-y-2 mb-4 pt-1">
-            <div className="flex items-center gap-2 text-[13px] font-semibold text-slate-500">
-              <MapPin className="h-4 w-4 text-kat-primary shrink-0" />
-              <span className="truncate">{trip.location || "Chưa có địa điểm"}</span>
+          {/* Glanceable Grid Info */}
+          <div className="grid grid-cols-2 gap-y-2.5 gap-x-2 text-[13px] font-semibold text-slate-500 mb-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <MapPin className="h-4 w-4 text-slate-450 shrink-0" />
+              <span className="truncate">{trip.location || "Chưa xác định"}</span>
             </div>
-            <div className="flex items-center gap-2 text-[13px] font-semibold text-slate-500">
-              <Calendar className="h-4 w-4 text-[#0081BE] shrink-0" />
-              <span className="truncate">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <Calendar className="h-4 w-4 text-slate-450 shrink-0" />
+              <span className="truncate">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)}`}</span>
+            </div>
+            <div className="flex items-center gap-2 min-w-0">
+              <Users className="h-4 w-4 text-slate-455 shrink-0" />
+              <span className="truncate">{memberCounts[trip.id!] || 1} người</span>
+            </div>
+            <div className="flex items-center gap-2 min-w-0">
+              <WalletCards className="h-4 w-4 text-slate-455 shrink-0" />
+              <span className="truncate">{totalExpense > 0 ? `${totalExpense.toLocaleString()}đ` : "Chưa chi"}</span>
             </div>
           </div>
         </div>
 
-        <div className="mt-auto">
-          <div className="flex flex-wrap gap-2 pt-3.5 border-t border-[#E8E1D8]/50">
-            <div className="flex items-center gap-1.5 text-[11px] font-extrabold text-slate-600 bg-slate-50 border border-slate-200/50 px-2 py-1 rounded-lg">
-              <Users className="w-3.5 h-3.5 text-slate-400" />
-              <span>{memberCounts[trip.id!] || 1} người</span> 
-            </div>
-            {totalExpense > 0 && (
-              <div className="flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-600 bg-emerald-500/8 border border-emerald-500/15 px-2.5 py-1 rounded-lg">
-                <WalletCards className="w-3.5 h-3.5 text-emerald-600/60" />
-                <span>{totalExpense.toLocaleString()}đ</span>
+        {/* Checklist Status Border Block */}
+        {tripChecklist.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-[#E8E1D8]/50 flex">
+            {checklistRemaining > 0 ? (
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-rose-700 bg-rose-50 border border-rose-100 px-2.5 py-1 rounded-lg">
+                <span>Còn {checklistRemaining} món cần chuẩn bị</span>
               </div>
-            )}
-            {tripChecklist.length > 0 && checklistRemaining > 0 && (
-              <div className="flex items-center gap-1.5 text-[11px] font-extrabold text-rose-700 bg-rose-50 border border-rose-100 px-2.5 py-1 rounded-lg">
-                <span>
-                  {timing.status === "past" 
-                    ? `${checklistRemaining} món chưa được đánh dấu chuẩn bị` 
-                    : `Còn ${checklistRemaining} món cần chuẩn bị`}
-                </span>
-              </div>
-            )}
-            {tripChecklist.length > 0 && checklistRemaining === 0 && (
-              <div className="flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg">
-                <span>Xong hành lý</span>
+            ) : (
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg">
+                <span>Hành lý đã chuẩn bị xong</span>
               </div>
             )}
           </div>
-
-          <div className="flex items-center gap-2 mt-4 pt-3.5 border-t border-slate-100/60">
-            <button 
-              onClick={() => onOpenTrip(trip.id!)}
-              className="flex-1 h-10 flex items-center justify-center rounded-xl bg-[#030D2E] hover:bg-[#030D2E]/90 text-white font-extrabold text-[13.5px] shadow-sm transition-all motion-press"
-            >
-              Xem chi tiết
-            </button>
-            {timing.status === "past" && (
-              <button 
-                onClick={() => onOpenTrip(trip.id!)}
-                className="h-10 px-3.5 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[13px] transition-all motion-press"
-              >
-                Tổng kết
-              </button>
-            )}
-          </div>
-        </div>
+        )}
       </div>
     );
   }
@@ -347,11 +281,11 @@ export function TripManagerScreen({
       ) : (
         <>
           {/* Hero Header */}
-          <div className="mb-10 md:mb-12 rounded-[28px] bg-gradient-to-br from-[#030D2E] via-[#004E5A] to-[#007C78] p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-soft relative overflow-hidden motion-page-enter">
+          <div className="mb-10 md:mb-12 rounded-[28px] bg-gradient-to-br from-[#030D2E] via-[#004E5A] to-[#007C78] py-5 px-6 md:py-6 md:px-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-soft relative overflow-hidden motion-page-enter">
             <Compass className="absolute -right-8 -bottom-8 w-44 h-44 text-white/[0.04] rotate-12 pointer-events-none" />
             <div className="relative z-10">
               <h1 className="text-[32px] md:text-[36px] font-black text-white tracking-tight leading-tight">Chuyến đi của bạn</h1>
-              <p className="mt-2 text-[15.5px] font-semibold text-white/80 max-w-md">Lưu lịch trình, người đồng hành, chi phí và những việc cần chuẩn bị cho từng chuyến đi.</p>
+              <p className="mt-1.5 text-[15.5px] font-semibold text-white/80 max-w-md">Lưu lịch trình, người đồng hành, chi phí và những việc cần chuẩn bị cho từng chuyến đi.</p>
             </div>
             <button
               onClick={onCreateNew}
@@ -366,14 +300,14 @@ export function TripManagerScreen({
             <section className="mb-12 md:mb-14">
               <h3 className="mb-4 px-1 text-[20px] font-extrabold text-kat-text motion-title-enter">Chuyến tiếp theo</h3>
               <div 
-                className="group relative overflow-hidden rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-6 md:p-8 lg:p-10 shadow-sm cursor-pointer hover:border-kat-primary/40 transition-all min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2"
+                className="group relative overflow-hidden rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-6 md:p-8 lg:p-10 shadow-sm cursor-pointer hover:border-kat-primary/40 hover:bg-slate-50/40 transition-all min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2"
                 onClick={() => onOpenTrip(featuredTrip.id!)}
               >
                 {/* Decorative background */}
                 <div className="absolute right-0 top-0 bottom-0 w-1/2 md:w-1/3 bg-gradient-to-l from-kat-primary/5 to-transparent pointer-events-none" />
                 <Compass className="absolute -right-10 -bottom-10 w-64 h-64 text-kat-primary/[0.04] rotate-12 pointer-events-none transition-transform group-hover:scale-105 duration-700" />
                 
-                <div className="relative z-10 md:w-2/3">
+                <div className="relative z-10 md:w-2/3 pr-4">
                   <div className="flex flex-wrap gap-2 mb-4">
                     {getTripTiming(featuredTrip).status === "active" ? (
                       <span className="rounded-full bg-kat-primary/15 px-3 py-1 text-[12px] font-bold text-kat-primary uppercase tracking-wider">Đang diễn ra</span>
@@ -385,11 +319,11 @@ export function TripManagerScreen({
                     </span>
                   </div>
                   
-                  <h4 className="text-[28px] md:text-[36px] font-extrabold text-kat-text leading-tight mb-4 group-hover:text-kat-primary transition-colors">
+                  <h4 className="text-[28px] md:text-[36px] font-extrabold text-kat-text leading-tight mb-4">
                     {featuredTrip.title}
                   </h4>
                   
-                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 text-slate-600 mb-6">
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 text-slate-600">
                     <div className="flex items-center gap-2">
                       <MapPin className="h-5 w-5 text-kat-primary" />
                       <span className="font-semibold text-[15px] text-slate-700">{featuredTrip.location || "Chưa có địa điểm"}</span>
@@ -402,18 +336,6 @@ export function TripManagerScreen({
                       <Users className="h-5 w-5 text-emerald-600" />
                       <span className="font-semibold text-[15px] text-slate-700">{memberCounts[featuredTrip.id!] || 1} người</span>
                     </div>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-3">
-                    <button className="h-10 px-5 rounded-full bg-[#030D2E] hover:bg-[#030D2E]/90 text-white font-bold text-[14px] active:scale-95 transition-all shadow-sm motion-press">
-                      Xem chi tiết
-                    </button>
-                    <button 
-                      className="h-10 w-10 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all motion-press"
-                      onClick={(e) => { e.stopPropagation(); setEditingTrip(featuredTrip); }}
-                    >
-                      <Edit3 className="w-4 h-4" />
-                    </button>
                   </div>
                 </div>
               </div>

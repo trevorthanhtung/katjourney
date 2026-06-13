@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Check, Edit3, Plus, Sparkles, Trash2, Luggage } from "lucide-react";
 import { db, PackingItem, PackingTripType } from "../../db";
 import { getChecklistStats, packingSuggestions, packingTripTypes } from "../../utils/helpers";
-import { BottomSheet, EmptyCard, FAB, FormActions, FormCard, IconButton, Input, ProgressRing, ScreenTitle, Select, TypedDeleteConfirmModal, classNames } from "../../components/ui";
+import { BottomSheet, EmptyCard, FAB, FormActions, FormCard, IconButton, Input, ProgressRing, ScreenTitle, Select, DeleteConfirmModal, classNames } from "../../components/ui";
 
 export function PackingSection({ tripId, packingItems }: { tripId: number; packingItems: PackingItem[] }) {
   const [tripType, setTripType] = useState<PackingTripType>("Biển");
@@ -141,7 +141,7 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
         </div>
       </BottomSheet>
 
-      <TypedDeleteConfirmModal
+      <DeleteConfirmModal
         isOpen={Boolean(itemToDelete)}
         onClose={() => setItemToDelete(null)}
         onConfirm={executeDeleteItem}

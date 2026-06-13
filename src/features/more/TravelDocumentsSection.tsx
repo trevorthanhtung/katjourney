@@ -12,11 +12,16 @@ import {
   FileText, 
   FileCheck, 
   ExternalLink,
-  Link2
+  Link2,
+  Sparkles,
+  ChevronRight,
+  Copy,
+  Check,
+  PencilLine
 } from "lucide-react";
 import { db, TravelDocument } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
-import { BottomSheet, Input, Textarea, Select, TypedDeleteConfirmModal } from "../../components/ui";
+import { BottomSheet, Input, Textarea, Select, DeleteConfirmModal, classNames } from "../../components/ui";
 
 const typeOptions: Array<{ value: NonNullable<TravelDocument["type"]>; label: string }> = [
   { value: "ticket", label: "Vé di chuyển" },
@@ -76,9 +81,11 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
   });
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [dirty, setDirty] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
+      setShowAdvanced(false);
       if (editing) {
         setForm({
           title: editing.title || "",
@@ -88,6 +95,9 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           link: editing.link || "",
           note: editing.note || ""
         });
+        if (editing.date || editing.link || editing.note) {
+          setShowAdvanced(true);
+        }
       } else {
         setForm({
           title: "",
@@ -134,9 +144,28 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
     onClose();
   }
 
+  const isSaveDisabled = !form.title.trim();
+
+  const headerAction = (
+    <button
+      type="button"
+      onClick={save}
+      disabled={isSaveDisabled}
+      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-primary hover:bg-kat-primary-usable text-[#030D2E] px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
+    >
+      Lưu
+    </button>
+  );
+
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title={editing ? "Chỉnh sửa giấy tờ & đặt chỗ" : "Thêm giấy tờ & đặt chỗ"}>
+    <BottomSheet 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      title={editing ? "Sửa giấy tờ & đặt chỗ" : "Thêm giấy tờ & đặt chỗ"}
+      headerAction={headerAction}
+    >
       <div className="space-y-4">
+        {/* Title */}
         <div>
           <Input 
             label="Tên mục *" 
@@ -149,6 +178,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           )}
         </div>
 
+        {/* Type & Code */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Select 
             label="Phân loại" 
@@ -165,46 +195,209 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input 
-            label="Ngày liên quan" 
-            type="date"
-            value={form.date} 
-            onChange={(date) => { setForm({ ...form, date }); setDirty(true); }} 
-          />
-          <Input 
-            label="Đường dẫn liên quan" 
-            value={form.link} 
-            onChange={(link) => { setForm({ ...form, link }); setDirty(true); }} 
-            placeholder="VD: Link vé điện tử, bản đồ, tệp đặt phòng..." 
-          />
-        </div>
-
-        <div>
-          <Textarea 
-            label="Ghi chú" 
-            value={form.note} 
-            onChange={(note) => { setForm({ ...form, note }); setDirty(true); }} 
-            placeholder="VD: Giờ nhận phòng, hành lý, số điện thoại liên hệ..." 
-          />
-        </div>
-
-        <div className="flex gap-3 pt-3">
+        {/* Collapsible Info Section */}
+        <div className="pt-2 border-t border-slate-100/80">
           <button
-            onClick={onClose}
-            className="flex-1 py-3.5 rounded-2xl bg-slate-100 text-slate-700 font-bold text-[15px] hover:bg-slate-200 active:scale-98 transition-all"
+            type="button"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-[#030D2E] transition-colors focus:outline-none"
           >
-            Hủy bỏ
+            <span className="flex items-center gap-1.5">
+              <Plus className="h-4 w-4 text-slate-400" />
+              Thông tin bổ sung
+            </span>
+            <ChevronRight className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
           </button>
-          <button
-            onClick={save}
-            className="flex-1 py-3.5 rounded-2xl bg-kat-primary text-white font-bold text-[15px] hover:bg-kat-primary-dark shadow-sm active:scale-98 transition-all"
-          >
-            Lưu giấy tờ
-          </button>
+
+          {showAdvanced && (
+            <div className="mt-3 space-y-4 animate-fadeIn">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Input 
+                  label="Ngày liên quan" 
+                  type="date"
+                  value={form.date} 
+                  onChange={(date) => { setForm({ ...form, date }); setDirty(true); }} 
+                />
+                <Input 
+                  label="Đường dẫn liên quan" 
+                  value={form.link} 
+                  onChange={(link) => { setForm({ ...form, link }); setDirty(true); }} 
+                  placeholder="VD: Link vé điện tử, bản đồ, tệp đặt phòng..." 
+                />
+              </div>
+              <div>
+                <Textarea 
+                  label="Ghi chú" 
+                  value={form.note} 
+                  onChange={(note) => { setForm({ ...form, note }); setDirty(true); }} 
+                  placeholder="VD: Giờ nhận phòng, hành lý, số điện thoại liên hệ..." 
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </BottomSheet>
+  );
+}
+
+function DocumentCard({
+  doc,
+  onEdit,
+  onDelete,
+  idx = 0,
+  isSwiped,
+  onSwipe
+}: {
+  doc: TravelDocument;
+  onEdit: () => void;
+  onDelete: () => void;
+  idx?: number;
+  isSwiped: boolean;
+  onSwipe: (swiped: boolean) => void;
+}) {
+  const colors = typeColors[doc.type || "other"];
+  const Icon = typeIcons[doc.type || "other"];
+  const formattedDate = doc.date ? new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(doc.date)) : null;
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!doc.code) return;
+    navigator.clipboard.writeText(doc.code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const touchStartX = React.useRef(0);
+  const touchEndX = React.useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 40) {
+      onSwipe(true);
+    } else if (diff < -40) {
+      onSwipe(false);
+    }
+  };
+
+  return (
+    <div className={`relative overflow-hidden rounded-3xl motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}>
+      {/* Background Action Buttons */}
+      <div className="absolute inset-y-0 right-0 z-0 flex items-center justify-end gap-2 pr-4 pl-12 bg-slate-50/60 rounded-3xl border border-slate-100">
+        <button 
+          className="flex h-11 w-11 items-center justify-center rounded-2xl text-slate-600 bg-white hover:bg-slate-50 active:scale-95 transition-all shadow-sm border border-slate-200/50 focus:outline-none" 
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit();
+          }}
+          title="Chỉnh sửa"
+        >
+          <PencilLine className="h-5 w-5" />
+        </button>
+        <button 
+          className="flex h-11 w-11 items-center justify-center rounded-2xl text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all shadow-sm border border-rose-100 focus:outline-none" 
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          title="Xóa"
+        >
+          <Trash2 className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Main Card Content Overlay */}
+      <article 
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onClick={(e) => {
+          e.stopPropagation();
+          onSwipe(!isSwiped);
+        }}
+        className={classNames(
+          "relative z-10 flex flex-col justify-between rounded-3xl bg-[#FFFDF8] p-5 border border-[#E8E1D8] transition-all duration-200 hover:shadow-md cursor-pointer select-none",
+          isSwiped ? "-translate-x-28 border-slate-300" : "translate-x-0"
+        )}
+      >
+        <div>
+          {/* Top info row */}
+          <div className="flex items-start justify-between gap-4 mb-3">
+            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold border ${colors.bg} ${colors.text} ${colors.border}`}>
+              <Icon className="w-3.5 h-3.5" />
+              {typeLabels[doc.type || "other"].split(" / ")[0]}
+            </span>
+          </div>
+
+          {/* Title */}
+          <h4 className="text-lg font-semibold text-[#030D2E] leading-tight mb-2.5">{doc.title}</h4>
+          
+          {/* Code Container */}
+          {doc.code && (
+            <div 
+              onClick={handleCopy}
+              className="group/code flex items-center justify-between bg-slate-50 hover:bg-slate-100/80 border border-slate-200/50 rounded-xl p-3 mt-2.5 transition-all active:scale-[0.99] cursor-pointer"
+            >
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã xác nhận / Code</p>
+                <p className="text-[14px] font-extrabold text-[#030D2E] truncate mt-0.5">{doc.code}</p>
+              </div>
+              <button
+                type="button"
+                className="ml-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-slate-200/60 text-slate-500 hover:text-[#030D2E] transition-all shadow-sm shrink-0"
+                title="Sao chép mã"
+              >
+                {copied ? (
+                  <Check className="h-4 w-4 text-emerald-500" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Date & Note */}
+          {formattedDate && (
+            <p className="text-[13px] font-semibold text-slate-500 mt-3.5">
+              Ngày liên quan: <span className="font-extrabold text-slate-700">{formattedDate}</span>
+            </p>
+          )}
+
+          {doc.note && (
+            <p className="text-[13px] text-slate-500 font-medium whitespace-pre-line bg-slate-50/50 p-3 rounded-xl border border-slate-100 mt-2.5">
+              {doc.note}
+            </p>
+          )}
+        </div>
+
+        {/* Bottom link row */}
+        {doc.link && (
+          <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center">
+            <a
+              href={doc.link.startsWith("http") ? doc.link : `https://${doc.link}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="inline-flex items-center gap-1.5 text-[13.5px] font-bold text-kat-primary hover:text-kat-primary-dark transition-colors"
+            >
+              <Link2 className="w-3.5 h-3.5" />
+              <span>Mở liên kết trực tuyến</span>
+            </a>
+          </div>
+        )}
+      </article>
+    </div>
   );
 }
 
@@ -222,6 +415,7 @@ export function TravelDocumentsSection({
   const [formOpen, setFormOpen] = useState(false);
   const [editingDoc, setEditingDoc] = useState<TravelDocument | null>(null);
   const [docToDelete, setDocToDelete] = useState<TravelDocument | null>(null);
+  const [swipedDocId, setSwipedDocId] = useState<number | null>(null);
 
   const filteredDocs = selectedTypeFilter === "all" 
     ? documents 
@@ -245,27 +439,29 @@ export function TravelDocumentsSection({
   }
 
   return (
-    <div className="space-y-6 animate-fadeIn pb-24">
+    <div 
+      className="space-y-6 animate-fadeIn pb-24"
+      onClick={() => setSwipedDocId(null)}
+    >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#FFFDF8] p-5 rounded-[24px] border border-[#E8E1D8] shadow-sm">
-        <div className="flex items-center gap-3.5 min-w-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+        <div className="flex items-center gap-3 min-w-0">
           <button 
             onClick={onBack} 
-            className="flex h-10 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors px-3 shrink-0 motion-press"
-            title="Quản lý chuyến đi"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 text-slate-700 active:scale-95 transition-all shrink-0 motion-press"
+            title="Quay lại"
           >
-            <ArrowLeft className="h-4.5 w-4.5" />
-            <span className="text-[13px] font-extrabold ml-1.5 hidden sm:inline">Quản lý chuyến đi</span>
+            <ArrowLeft className="h-5 w-5" />
           </button>
           <div className="min-w-0">
-            <h2 className="text-[20px] font-extrabold text-[#030D2E] leading-tight">Giấy tờ & đặt chỗ</h2>
-            <p className="text-[13px] font-semibold text-slate-500 mt-1 max-w-xl">Lưu vé, mã đặt chỗ và thông tin quan trọng để tra cứu nhanh khi cần.</p>
+            <h2 className="text-[28px] font-extrabold text-[#030D2E] leading-tight">Giấy tờ & đặt chỗ</h2>
+            <p className="text-[14px] font-medium text-slate-500 mt-0.5">Lưu vé, mã đặt chỗ và thông tin quan trọng để tra cứu nhanh khi cần.</p>
           </div>
         </div>
         {documents.length > 0 && (
           <button
             onClick={openNewForm}
-            className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 text-kat-text px-5 text-[13.5px] font-bold hover:bg-kat-primary/20 motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center"
+            className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-5 text-[13.5px] font-bold hover:brightness-105 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center"
           >
             <Plus className="h-4 w-4" strokeWidth={2.5} />
             <span>Thêm giấy tờ</span>
@@ -275,7 +471,7 @@ export function TravelDocumentsSection({
 
       {/* Filter bar */}
       {documents.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 overflow-x-auto pb-1 px-1">
+        <div className="flex flex-wrap gap-1.5 overflow-x-auto pb-1 px-1 scrollbar-none">
           <button
             onClick={() => setSelectedTypeFilter("all")}
             className={`px-4 py-2 rounded-full text-[13px] font-extrabold border transition-all motion-press ${
@@ -330,91 +526,27 @@ export function TravelDocumentsSection({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredDocs.map((doc, idx) => {
-            const colors = typeColors[doc.type || "other"];
-            const Icon = typeIcons[doc.type || "other"];
-            const formattedDate = doc.date ? new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(doc.date)) : null;
-
-            return (
-              <div 
-                key={doc.id} 
-                className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-150 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:border-slate-300 motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}
-              >
-                <div>
-                  {/* Top info row */}
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold border ${colors.bg} ${colors.text} ${colors.border}`}>
-                      <Icon className="w-3.5 h-3.5" />
-                      {typeLabels[doc.type || "other"].split(" / ")[0]}
-                    </span>
-
-                    {/* Actions buttons */}
-                    <div className="flex items-center gap-1 shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                      <button
-                        onClick={() => openEditForm(doc)}
-                        className="p-1.5 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors motion-press"
-                        title="Chỉnh sửa"
-                      >
-                        <Edit3 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => setDocToDelete(doc)}
-                        className="p-1.5 rounded-full text-rose-300 hover:bg-rose-50 hover:text-rose-600 transition-colors motion-press"
-                        title="Xóa bỏ"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Title & Code */}
-                  <h4 className="text-[16px] font-extrabold text-[#030D2E] leading-tight mb-2">{doc.title}</h4>
-                  
-                  {doc.code && (
-                    <div className="mb-2">
-                      <span className="text-[12px] font-semibold text-slate-400">Mã xác nhận / Code:</span>
-                      <span className="ml-1.5 inline-block text-[13px] font-bold text-slate-700 bg-slate-100 border border-slate-200/50 px-2 py-0.5 rounded-md">
-                        {doc.code}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Date & Note */}
-                  {formattedDate && (
-                    <p className="text-[13px] font-semibold text-slate-500 mb-1.5">
-                      Ngày liên quan: <span className="font-extrabold text-slate-700">{formattedDate}</span>
-                    </p>
-                  )}
-
-                  {doc.note && (
-                    <p className="text-[13px] text-slate-500 font-medium whitespace-pre-line bg-slate-50/50 p-2.5 rounded-xl border border-slate-100 mt-2">
-                      {doc.note}
-                    </p>
-                  )}
-                </div>
-
-                {/* Bottom link row */}
-                {doc.link && (
-                  <div className="mt-4 pt-3 border-t border-slate-100">
-                    <a
-                      href={doc.link.startsWith("http") ? doc.link : `https://${doc.link}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-[13px] font-bold text-kat-primary hover:text-kat-primary-dark transition-colors"
-                    >
-                      <Link2 className="w-3.5 h-3.5" />
-                      <span>Mở liên kết trực tuyến</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {filteredDocs.map((doc, idx) => (
+            <DocumentCard
+              key={doc.id}
+              doc={doc}
+              onEdit={() => {
+                setSwipedDocId(null);
+                openEditForm(doc);
+              }}
+              onDelete={() => {
+                setSwipedDocId(null);
+                setDocToDelete(doc);
+              }}
+              idx={idx}
+              isSwiped={swipedDocId === doc.id}
+              onSwipe={(swiped) => setSwipedDocId(swiped ? doc.id! : null)}
+            />
+          ))}
         </div>
       )}
 
-      <TypedDeleteConfirmModal
+      <DeleteConfirmModal
         isOpen={Boolean(docToDelete)}
         onClose={() => setDocToDelete(null)}
         onConfirm={executeDelete}

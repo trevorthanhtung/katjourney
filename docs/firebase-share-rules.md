@@ -1,30 +1,23 @@
-# Firebase Security Rules - Phase 1 & 2 Planning
+# Firebase Security Rules - Request Edit Model
 
-These rules are drafted for the cloud sharing functionality. They define the security model to ensure safe read-only access for shared links while protecting private data.
+These rules are drafted for the cloud sharing functionality. They define the security model to ensure safe read-only access for shared links, while allowing viewers to submit change requests instead of editing directly.
 
 ```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Cloud Trips collection (Phase 1 draft - kept for reference)
-    match /cloudTrips/{tripId} {
-      allow read, write: if request.auth != null && resource.data.ownerId == request.auth.uid;
-      allow create: if request.auth != null && request.resource.data.ownerId == request.auth.uid;
-    }
-
-    // Phase 2: Public Share Links
+    // Public Share Links
     match /publicShares/{token} {
       // 1. Read access: Prevent listing. Only allow GET for specific known tokens.
       allow get: if resource.data.revoked == false
                   && (!("expiresAt" in resource.data) || resource.data.expiresAt > request.time);
       
-      // 2. Create access: Owner can create view-only links
+      // 2. Create access: Owner can create view or request_edit links
       allow create: if request.auth != null 
-                    && request.resource.data.ownerUid == request.auth.uid
-                    && request.resource.data.mode == "view";
+                    && request.resource.data.ownerUid == request.auth.uid;
 
-      // 3. Update access: Owner can update (e.g. to revoke)
+      // 3. Update access: Owner can update (e.g. to revoke or change mode)
       allow update: if request.auth != null
                     && resource.data.ownerUid == request.auth.uid;
 
@@ -32,23 +25,67 @@ service cloud.firestore {
       allow delete: if false;
 
       // Subcollections under publicShares
+      // ----------------------------------------------------------------------
+      // Generic Read rule for all subcollections
       match /{subcollection}/{docId} {
-        // Read: Inherit read permission from the parent publicShare token
         allow read: if get(/databases/$(database)/documents/publicShares/$(token)).data.revoked == false
                     && (!("expiresAt" in get(/databases/$(database)/documents/publicShares/$(token)).data) 
                         || get(/databases/$(database)/documents/publicShares/$(token)).data.expiresAt > request.time);
+      }
 
-        // Write: Only the owner of the parent publicShare token can write
-        allow write: if request.auth != null 
-                     && get(/databases/$(database)/documents/publicShares/$(token)).data.ownerUid == request.auth.uid;
+      function isOwner() {
+        return get(/databases/$(database)/documents/publicShares/$(token)).data.ownerUid == request.auth.uid;
+      }
+      
+      function isRequestEditAllowed(flag) {
+        let parent = get(/databases/$(database)/documents/publicShares/$(token)).data;
+        return (parent.mode == "request_edit" || parent.mode == "edit") 
+               && parent.revoked == false 
+               && (flag == null || parent[flag] == true);
+      }
+
+      // Write rules for data collections: ONLY OWNER can write.
+      match /members/{docId} {
+        allow write: if request.auth != null && isOwner();
+      }
+
+      match /activities/{docId} {
+        allow write: if request.auth != null && isOwner();
+      }
+
+      match /expenses/{docId} {
+        allow write: if request.auth != null && isOwner();
+      }
+
+      match /checklist/{docId} {
+        allow write: if request.auth != null && isOwner();
+      }
+
+      match /journals/{docId} {
+        allow write: if request.auth != null && isOwner();
+      }
+
+      match /backupPlans/{docId} {
+        allow write: if request.auth != null && isOwner();
+      }
+
+      match /travelDocuments/{docId} {
+        allow write: if request.auth != null && isOwner();
+      }
+
+      // Change Requests Subcollection
+      match /changeRequests/{docId} {
+        // Owner can read and write (to approve/reject)
+        // Viewer can read (to see their own requests maybe, covered by generic read above)
+        // Viewer can CREATE a request if it's pending and mode is request_edit
+        allow create: if request.auth != null 
+                      && isRequestEditAllowed(null)
+                      && request.resource.data.status == "pending"
+                      && request.resource.data.requesterUid == request.auth.uid;
+                      
+        allow update, delete: if request.auth != null && isOwner();
       }
     }
   }
 }
 ```
-
-## Key Principles:
-1. **Owner Exclusivity for Writes**: Only the original creator (`ownerId` matching Firebase Auth UID) can write or modify the cloud trip data.
-2. **Anonymous Auth Is Just A Layer, Not The Shield**: Anonymous Auth forces requests to be authenticated, helping rules control them, but any bot can get an Anonymous UID. The *real* security relies on unguessable tokens, correct rules, and limited data scope.
-3. **No Listing (allow get)**: Viewers can only use `get` for a specific token. They cannot `list` or `query` the `publicShares` collection, preventing enumeration attacks.
-4. **Selective Privacy**: The `travelDocuments` subcollection defaults to restricted unless the owner explicitly opts-in (`includeDocuments=true`), protecting sensitive tickets/passports.

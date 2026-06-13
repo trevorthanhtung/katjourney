@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, Plus, Pencil, Trash2, MapPin, DollarSign, AlignLeft, Route, HelpCircle } from "lucide-react";
+import { X, Plus, Pencil, Trash2, MapPin, DollarSign, AlignLeft, Route, HelpCircle, ChevronRight } from "lucide-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, BackupPlan, BackupPlanType } from "../../db";
-import { TypedDeleteConfirmModal } from "../../components/ui";
+import { DeleteConfirmModal } from "../../components/ui";
 
 interface BackupPlansSheetProps {
   tripId: number;
@@ -25,13 +25,13 @@ const typeLabels: Record<BackupPlanType, string> = {
 };
 
 const typeColors: Record<BackupPlanType, string> = {
-  food: "text-amber-600 bg-amber-50 border-amber-200",
-  place: "text-kat-primary bg-kat-primary-light border-kat-primary/30",
-  transport: "text-blue-600 bg-blue-50 border-blue-200",
-  hotel: "text-indigo-600 bg-indigo-50 border-indigo-200",
-  indoor: "text-purple-600 bg-purple-50 border-purple-200",
-  weather: "text-rose-600 bg-rose-50 border-rose-200",
-  other: "text-slate-600 bg-slate-50 border-slate-200"
+  food: "text-amber-750 bg-amber-50/50 border-amber-100/70",
+  place: "text-kat-primary-usable bg-kat-primary/5 border-kat-primary/10",
+  transport: "text-blue-700 bg-blue-50/50 border-blue-100/70",
+  hotel: "text-indigo-700 bg-indigo-50/50 border-indigo-100/70",
+  indoor: "text-purple-700 bg-purple-50/50 border-purple-100/70",
+  weather: "text-rose-700 bg-rose-50/50 border-rose-100/70",
+  other: "text-slate-600 bg-slate-50/50 border-slate-200/70"
 };
 
 export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, onShowToast }: BackupPlansSheetProps) {
@@ -39,6 +39,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
   const [editingPlan, setEditingPlan] = useState<BackupPlan | null>(null);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [planToDelete, setPlanToDelete] = useState<BackupPlan | null>(null);
+  const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
 
   // Form states
   const [title, setTitle] = useState("");
@@ -70,11 +71,13 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
     setMapLink("");
     setEstimatedCost("");
     setNote("");
+    setShowAdditionalInfo(false);
   }
 
   function handleOpenAdd() {
     resetForm();
     setEditingPlan(null);
+    setShowAdditionalInfo(false);
     setIsFormOpen(true);
   }
 
@@ -87,6 +90,11 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
     setMapLink(plan.mapLink || "");
     setEstimatedCost(plan.estimatedCost ? String(plan.estimatedCost) : "");
     setNote(plan.note || "");
+    
+    // Auto-expand additional info if any fields are present
+    const hasAdditional = !!(plan.location || plan.mapLink || plan.estimatedCost || plan.note);
+    setShowAdditionalInfo(hasAdditional);
+    
     setIsFormOpen(true);
   }
 
@@ -140,14 +148,25 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
 
       <div className="relative z-10 w-full sm:max-w-lg bg-[#FFFDF8] rounded-t-3xl sm:rounded-3xl shadow-floating overflow-hidden flex flex-col max-h-[90vh] motion-modal-dialog">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E1D8] bg-white sticky top-0 z-10">
-          <div>
-            <h3 className="text-[18px] font-extrabold text-[#030D2E]">Phương án dự phòng</h3>
-            <p className="text-[13px] font-semibold text-slate-500">Kế hoạch B cho những tình huống phát sinh</p>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E1D8] bg-white sticky top-0 z-10 gap-3">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-[18px] font-extrabold text-[#030D2E] truncate">Phương án dự phòng</h3>
+            <p className="text-[13px] font-semibold text-slate-500 truncate">Kế hoạch B cho những tình huống phát sinh</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors motion-press">
-            <X className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            {!isFormOpen && plans.length > 0 && (
+              <button
+                onClick={handleOpenAdd}
+                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-kat-primary text-white px-3.5 text-[13px] font-extrabold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
+              >
+                <Plus className="w-4 h-4" strokeWidth={2.5} />
+                <span>Thêm</span>
+              </button>
+            )}
+            <button onClick={onClose} className="p-2 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors motion-press focus:outline-none">
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         {/* Content */}
@@ -197,66 +216,81 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                 />
               </div>
 
-              <div>
-                <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-slate-400" /> Địa điểm
-                </label>
-                <input
-                  type="text"
-                  value={location}
-                  onChange={e => setLocation(e.target.value)}
-                  placeholder="VD: Quán B gần khách sạn"
-                  className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400"
-                />
-              </div>
+              <div className="border-t border-[#E8E1D8] pt-4 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
+                  className="w-full flex items-center justify-between text-[13.5px] font-extrabold text-slate-750 hover:text-[#030D2E] focus:outline-none transition-colors"
+                >
+                  <span>Thông tin bổ sung</span>
+                  <ChevronRight className={`h-4.5 w-4.5 text-slate-400 transition-transform duration-200 ${showAdditionalInfo ? "rotate-90" : ""}`} />
+                </button>
 
-              <div>
-                <label className="block text-[13px] font-bold text-slate-700 mb-1.5">Link Google Maps</label>
-                <input
-                  type="url"
-                  value={mapLink}
-                  onChange={e => setMapLink(e.target.value)}
-                  placeholder="https://maps.google.com/..."
-                  className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400"
-                />
-              </div>
+                {showAdditionalInfo && (
+                  <div className="space-y-4 mt-4 animate-fadeIn">
+                    <div>
+                      <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                        <MapPin className="w-4 h-4 text-slate-400" /> Địa điểm
+                      </label>
+                      <input
+                        type="text"
+                        value={location}
+                        onChange={e => setLocation(e.target.value)}
+                        placeholder="VD: Quán B gần khách sạn"
+                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400"
+                      />
+                    </div>
 
-              <div>
-                <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <DollarSign className="w-4 h-4 text-slate-400" /> Chi phí dự kiến
-                </label>
-                <input
-                  type="number"
-                  value={estimatedCost}
-                  onChange={e => setEstimatedCost(e.target.value)}
-                  placeholder="VD: 200000"
-                  className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400"
-                />
-              </div>
+                    <div>
+                      <label className="block text-[13px] font-bold text-slate-700 mb-1.5">Link Google Maps</label>
+                      <input
+                        type="url"
+                        value={mapLink}
+                        onChange={e => setMapLink(e.target.value)}
+                        placeholder="https://maps.google.com/..."
+                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400"
+                      />
+                    </div>
 
-              <div>
-                <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <AlignLeft className="w-4 h-4 text-slate-400" /> Ghi chú
-                </label>
-                <textarea
-                  value={note}
-                  onChange={e => setNote(e.target.value)}
-                  placeholder="VD: Gọi trước khi đến, nên đi taxi..."
-                  rows={3}
-                  className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400 resize-none"
-                />
+                    <div>
+                      <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                        <DollarSign className="w-4 h-4 text-slate-400" /> Chi phí dự kiến
+                      </label>
+                      <input
+                        type="number"
+                        value={estimatedCost}
+                        onChange={e => setEstimatedCost(e.target.value)}
+                        placeholder="VD: 200000"
+                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                        <AlignLeft className="w-4 h-4 text-slate-400" /> Ghi chú
+                      </label>
+                      <textarea
+                        value={note}
+                        onChange={e => setNote(e.target.value)}
+                        placeholder="VD: Gọi trước khi đến, nên đi taxi..."
+                        rows={3}
+                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400 resize-none"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-3 pt-2">
                 <button
                   onClick={() => setIsFormOpen(false)}
-                  className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors motion-press"
+                  className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-slate-650 bg-slate-100 hover:bg-slate-200 transition-colors motion-press focus:outline-none"
                 >
                   Hủy
                 </button>
                 <button
                   onClick={handleSave}
-                  className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-white bg-kat-primary hover:bg-kat-primary-usable transition-colors motion-press"
+                  className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-white bg-kat-primary hover:bg-kat-primary-usable transition-colors motion-press focus:outline-none"
                 >
                   Lưu phương án
                 </button>
@@ -281,79 +315,89 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
             </div>
           ) : (
             <div className="space-y-4">
-              <button
-                onClick={handleOpenAdd}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-kat-primary-light/50 border border-kat-primary/20 text-kat-primary rounded-xl text-[14.5px] font-bold hover:bg-kat-primary-light transition-colors motion-press"
-              >
-                <Plus className="w-5 h-5" />
-                Thêm phương án dự phòng
-              </button>
-
               <div className="space-y-3">
                 {plans.map(plan => (
-                  <div key={plan.id} className="p-4 rounded-2xl bg-white border border-[#E8E1D8] hover:border-kat-primary/30 transition-colors">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span className={`px-2 py-0.5 rounded-md text-[11px] font-bold border ${typeColors[plan.type || "other"]}`}>
+                  <div key={plan.id} className="p-4 rounded-2xl bg-white border border-[#E8E1D8] hover:border-kat-primary/20 transition-all">
+                    <div className="flex flex-col justify-between h-full">
+                      {/* Top content */}
+                      <div>
+                        {/* Type Badge */}
+                        <div className="mb-2">
+                          <span className={`px-2 py-0.5 rounded-md text-[11px] font-extrabold border ${typeColors[plan.type || "other"]}`}>
                             {typeLabels[plan.type || "other"]}
                           </span>
-                          {plan.reason && (
-                            <span className="text-[12px] font-bold text-slate-500 truncate">
-                              Khi: {plan.reason}
-                            </span>
-                          )}
                         </div>
-                        <h4 className="text-[15px] font-extrabold text-[#030D2E]">{plan.title}</h4>
-                        
+
+                        {/* Title */}
+                        <h4 className="text-[15.5px] font-extrabold text-[#030D2E] leading-snug">{plan.title}</h4>
+
+                        {/* Location */}
                         {plan.location && (
-                          <div className="flex items-center gap-1.5 mt-2 text-[13px] font-semibold text-slate-600">
+                          <div className="flex items-center gap-1.5 mt-1.5 text-[13.5px] font-semibold text-slate-500">
                             <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                             <span className="truncate">{plan.location}</span>
                           </div>
                         )}
-                        
+
+                        {/* Cost */}
                         {plan.estimatedCost ? (
-                          <div className="flex items-center gap-1.5 mt-1 text-[13px] font-semibold text-slate-600">
+                          <div className="flex items-center gap-1.5 mt-1 text-[13.5px] font-semibold text-slate-500">
                             <DollarSign className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                             <span>{plan.estimatedCost.toLocaleString("vi-VN")} ₫</span>
                           </div>
                         ) : null}
 
+                        {/* Activation condition callout */}
+                        {plan.reason && (
+                          <div className="mt-2.5 text-[13px] font-bold text-amber-700 bg-amber-50/50 border border-amber-100/60 px-3 py-1.5 rounded-xl leading-relaxed">
+                            <span className="text-amber-850">Khi:</span> {plan.reason}
+                          </div>
+                        )}
+
+                        {/* Note */}
                         {plan.note && (
-                          <p className="mt-2 text-[13px] font-medium text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                          <p className="mt-2.5 text-[13px] font-medium text-slate-500 bg-slate-50/50 p-2.5 rounded-xl border border-slate-100/50 leading-relaxed">
                             {plan.note}
                           </p>
                         )}
+                      </div>
 
-                        {plan.mapLink && (
+                      {/* Actions toolbar */}
+                      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                        {plan.mapLink ? (
                           <a
                             href={plan.mapLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex mt-2 text-[13px] font-bold text-kat-primary hover:underline"
+                            className="inline-flex items-center gap-1.5 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors hover:underline"
                           >
                             Xem bản đồ
                           </a>
+                        ) : (
+                          <div />
                         )}
-                      </div>
 
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          onClick={() => handleOpenEdit(plan)}
-                          className="p-2 rounded-lg text-slate-400 hover:text-kat-primary hover:bg-kat-primary-light transition-colors motion-press"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setPlanToDelete(plan);
-                            setIsDeleteConfirmOpen(true);
-                          }}
-                          className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors motion-press"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleOpenEdit(plan)}
+                            className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-slate-650 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 active:scale-95 transition-all border border-slate-200/40 motion-press focus:outline-none"
+                            title="Sửa phương án"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                            <span>Sửa</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setPlanToDelete(plan);
+                              setIsDeleteConfirmOpen(true);
+                            }}
+                            className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all border border-rose-200/40 motion-press focus:outline-none"
+                            title="Xóa phương án"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Xóa</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -364,7 +408,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
         </div>
       </div>
 
-      <TypedDeleteConfirmModal
+      <DeleteConfirmModal
         isOpen={isDeleteConfirmOpen}
         onClose={() => setIsDeleteConfirmOpen(false)}
         onConfirm={handleDeleteConfirm}
