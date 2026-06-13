@@ -113,18 +113,21 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   return (
     <div className="font-sans text-kat-text bg-[#FAF7F1] min-h-screen">
-      <header className="sticky top-0 z-40 bg-white/85 px-4 pb-3 pt-3 backdrop-blur-xl border-b border-slate-200/60 shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
+      <header className="sticky top-0 z-40 bg-kat-bg/90 px-4 pb-3 pt-3 backdrop-blur-xl border-b border-kat-border shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
         <div className="mx-auto flex max-w-3xl items-center justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-[20px] font-extrabold tracking-tight text-[#030D2E]">KAT Journey</h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2.5 py-0.5 text-[11px] font-bold text-violet-700">
+            <div className="flex items-center gap-2 select-none">
+              <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[28px] w-[28px] object-contain drop-shadow-sm" />
+              <h1 className="text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap">KAT Journey</h1>
+            </div>
+            <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2.5 py-0.5 text-[11px] font-bold text-violet-700 select-none">
               <Share2 className="h-3 w-3" />
               Bản chia sẻ
             </span>
           </div>
           <button
             onClick={() => window.location.href = "/"}
-            className="text-[13px] font-bold text-kat-primary hover:underline"
+            className="text-[13.5px] font-bold text-kat-primary hover:underline whitespace-nowrap"
           >
             Tạo chuyến đi của bạn
           </button>
