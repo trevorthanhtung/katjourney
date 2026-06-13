@@ -1,6 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
-import { Plus, X, Check } from "lucide-react";
+import { Plus, X, Check, Trash2 } from "lucide-react";
 import { classNames } from "../../utils/helpers";
 
 export { classNames };
@@ -285,6 +285,108 @@ export function BottomSheet({
       </div>
     </div>,
     document.body
+  );
+}
+
+export function TypedDeleteConfirmModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  description,
+  warning,
+  confirmLabel = "Xóa",
+  confirmationText = "XÓA",
+  inputPlaceholder,
+  itemName
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void | Promise<void>;
+  title: string;
+  description: React.ReactNode;
+  warning?: React.ReactNode;
+  confirmLabel?: string;
+  confirmationText?: string;
+  inputPlaceholder?: string;
+  itemName?: string;
+}) {
+  const [typedText, setTypedText] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const normalizedTypedText = typedText.trim().normalize("NFC").toUpperCase();
+  const normalizedConfirmationText = confirmationText.trim().normalize("NFC").toUpperCase();
+  const isConfirmed = normalizedTypedText === normalizedConfirmationText;
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setTypedText("");
+      setIsSubmitting(false);
+    }
+  }, [isOpen]);
+
+  async function handleConfirm() {
+    if (!isConfirmed || isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await onConfirm();
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <BottomSheet isOpen={isOpen} onClose={onClose} title={title}>
+      <div className="space-y-5">
+        <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed">
+          {warning ?? description}
+        </div>
+
+        {warning && (
+          <p className="text-[14px] font-semibold leading-relaxed text-slate-600">
+            {description}
+          </p>
+        )}
+
+        {itemName && (
+          <div className="rounded-2xl border border-slate-200/70 bg-slate-50 px-4 py-3">
+            <p className="text-[12px] font-black uppercase tracking-wide text-slate-400">Mục sẽ xóa</p>
+            <p className="mt-1 break-words text-[15px] font-extrabold text-[#030D2E]">{itemName}</p>
+          </div>
+        )}
+
+        <label className="block space-y-2">
+          <span className="text-[13.5px] font-bold text-slate-600 block">
+            Nhập <span className="text-rose-500 font-black">{confirmationText}</span> để xác nhận thao tác này.
+          </span>
+          <input
+            type="text"
+            value={typedText}
+            onChange={(event) => setTypedText(event.target.value)}
+            placeholder={inputPlaceholder ?? `Gõ ${confirmationText} để xác nhận`}
+            className="w-full rounded-[14px] border border-slate-200/60 bg-slate-50 px-4 h-[50px] text-[15px] font-bold text-[#030D2E] outline-none transition-all focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder:text-slate-400"
+          />
+        </label>
+
+        <div className="pt-2 flex flex-col sm:flex-row gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200 motion-press"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            disabled={!isConfirmed || isSubmitting}
+            onClick={handleConfirm}
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:bg-rose-200 disabled:border-rose-200 disabled:cursor-not-allowed transition-all active:scale-[0.98] disabled:active:scale-100 motion-press"
+          >
+            <Trash2 className="h-5 w-5" />
+            {isSubmitting ? "Đang xóa..." : confirmLabel}
+          </button>
+        </div>
+      </div>
+    </BottomSheet>
   );
 }
 

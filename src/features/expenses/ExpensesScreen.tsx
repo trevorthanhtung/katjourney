@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Plus, Trash2, WalletCards, Scale, UsersRound, UserRound, Calculator, ChartPie, ReceiptText, Route, Utensils, Hotel, Ticket, Tags, PencilLine, Info, UserCheck } from "lucide-react";
 import { db, Expense, Member } from "../../db";
 import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories } from "../../utils/helpers";
-import { BottomSheet, FormActions, Input, ScreenTitle, Select, classNames } from "../../components/ui";
+import { BottomSheet, FormActions, Input, ScreenTitle, Select, TypedDeleteConfirmModal, classNames } from "../../components/ui";
 
 function CategoryBar({ percent, colorClass }: { percent: number; colorClass: string }) {
   return (
@@ -528,6 +528,7 @@ export function ExpensesScreen({
 }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
+  const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (message: string) => {
@@ -556,11 +557,11 @@ export function ExpensesScreen({
     setIsFormOpen(true);
   }
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa khoản chi này không?")) {
-      await db.expenses.delete(id);
-      showToast("Đã xóa khoản chi");
-    }
+  const executeDelete = async () => {
+    if (!expenseToDelete?.id) return;
+    await db.expenses.delete(expenseToDelete.id);
+    setExpenseToDelete(null);
+    showToast("Đã xóa khoản chi");
   };
 
   const isEmpty = expenses.length === 0;
@@ -708,7 +709,7 @@ export function ExpensesScreen({
                   key={item.id}
                   item={item}
                   onEdit={() => openEditForm(item)}
-                  onDelete={() => handleDelete(item.id!)}
+                  onDelete={() => setExpenseToDelete(item)}
                   idx={idx}
                 />
               ))
@@ -716,6 +717,16 @@ export function ExpensesScreen({
           </div>
         </section>
       </div>
+
+      <TypedDeleteConfirmModal
+        isOpen={Boolean(expenseToDelete)}
+        onClose={() => setExpenseToDelete(null)}
+        onConfirm={executeDelete}
+        title="Xóa khoản chi này?"
+        itemName={expenseToDelete?.description || expenseToDelete?.category}
+        description="Khoản chi này sẽ bị xóa khỏi danh sách chi phí của chuyến đi. Sau khi xóa, không thể hoàn tác."
+        confirmLabel="Xóa khoản chi"
+      />
 
 
 

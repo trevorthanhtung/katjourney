@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Check, Edit3, Plus, Sparkles, Trash2, Luggage } from "lucide-react";
 import { db, PackingItem, PackingTripType } from "../../db";
 import { getChecklistStats, packingSuggestions, packingTripTypes } from "../../utils/helpers";
-import { BottomSheet, EmptyCard, FAB, FormActions, FormCard, IconButton, Input, ProgressRing, ScreenTitle, Select, classNames } from "../../components/ui";
+import { BottomSheet, EmptyCard, FAB, FormActions, FormCard, IconButton, Input, ProgressRing, ScreenTitle, Select, TypedDeleteConfirmModal, classNames } from "../../components/ui";
 
 export function PackingSection({ tripId, packingItems }: { tripId: number; packingItems: PackingItem[] }) {
   const [tripType, setTripType] = useState<PackingTripType>("Biển");
   const [title, setTitle] = useState("");
   const [editing, setEditing] = useState<PackingItem | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<PackingItem | null>(null);
   
   // Cast section to "Before Trip" just to satisfy the getChecklistStats type which expects ChecklistItem
   const stats = getChecklistStats(packingItems.map((item) => ({ ...item, section: "Before Trip" as const })));
@@ -55,9 +56,15 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
     setIsFormOpen(true);
   }
 
-  async function deleteItem(item: PackingItem) {
-    if (!item.id || !window.confirm("Xóa món đồ này khỏi danh sách hành lý?")) return;
-    await db.packingItems.delete(item.id);
+  function deleteItem(item: PackingItem) {
+    if (!item.id) return;
+    setItemToDelete(item);
+  }
+
+  async function executeDeleteItem() {
+    if (!itemToDelete?.id) return;
+    await db.packingItems.delete(itemToDelete.id);
+    setItemToDelete(null);
   }
 
   return (
@@ -133,6 +140,16 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
           </div>
         </div>
       </BottomSheet>
+
+      <TypedDeleteConfirmModal
+        isOpen={Boolean(itemToDelete)}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={executeDeleteItem}
+        title="Xóa món hành lý này?"
+        itemName={itemToDelete?.title}
+        description="Món hành lý này sẽ bị xóa khỏi danh sách chuẩn bị. Sau khi xóa, không thể hoàn tác."
+        confirmLabel="Xóa món"
+      />
     </div>
   );
 }

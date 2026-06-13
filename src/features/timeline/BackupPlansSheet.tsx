@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { X, Plus, Pencil, Trash2, MapPin, DollarSign, AlignLeft, Route, HelpCircle } from "lucide-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, BackupPlan, BackupPlanType } from "../../db";
+import { TypedDeleteConfirmModal } from "../../components/ui";
 
 interface BackupPlansSheetProps {
   tripId: number;
@@ -363,35 +364,15 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
-      {isDeleteConfirmOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm motion-modal-overlay" onClick={() => setIsDeleteConfirmOpen(false)} />
-          <div className="relative z-10 w-full max-w-sm bg-[#FFFDF8] rounded-3xl p-6 shadow-floating text-center motion-modal-dialog">
-            <div className="w-14 h-14 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4">
-              <Trash2 className="w-7 h-7" />
-            </div>
-            <h3 className="text-[18px] font-extrabold text-[#030D2E] mb-2">Xóa phương án dự phòng này?</h3>
-            <p className="text-[14px] font-semibold text-slate-500 mb-6">
-              Phương án này sẽ không còn xuất hiện trong chuyến đi.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setIsDeleteConfirmOpen(false)}
-                className="flex-1 py-3 rounded-xl text-[14.5px] font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors motion-press"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={handleDeleteConfirm}
-                className="flex-1 py-3 rounded-xl text-[14.5px] font-bold text-white bg-rose-500 hover:bg-rose-600 transition-colors motion-press"
-              >
-                Xóa phương án
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <TypedDeleteConfirmModal
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => setIsDeleteConfirmOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        title="Xóa phương án dự phòng này?"
+        itemName={planToDelete?.title}
+        description="Phương án này sẽ không còn xuất hiện trong chuyến đi. Sau khi xóa, không thể hoàn tác."
+        confirmLabel="Xóa phương án"
+      />
     </div>,
     document.body
   );

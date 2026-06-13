@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { db, JournalEntry, JournalMood } from "../../db";
 import { formatDate, moodLabels, today } from "../../utils/helpers";
-import { BottomSheet, FAB, Input, Textarea } from "../../components/ui";
+import { BottomSheet, FAB, Input, Textarea, TypedDeleteConfirmModal } from "../../components/ui";
 
 const moodOptionList: Array<{ value: JournalMood; label: string }> = [
   { value: "good", label: "Vui" },
@@ -273,30 +273,14 @@ function DeleteJournalConfirmModal({
   onConfirm: () => void;
 }) {
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Xóa nhật ký này?">
-      <div className="space-y-5">
-        <p className="text-[14.5px] font-medium leading-relaxed text-slate-600">
-          Nhật ký sẽ không còn xuất hiện trong chuyến đi.
-        </p>
-
-        <div className="pt-2 flex flex-col sm:flex-row gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
-          >
-            Hủy
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 active:scale-[0.98] transition-all duration-200 shadow-sm"
-          >
-            Xóa nhật ký
-          </button>
-        </div>
-      </div>
-    </BottomSheet>
+    <TypedDeleteConfirmModal
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      title="Xóa nhật ký này?"
+      description="Nhật ký sẽ không còn xuất hiện trong chuyến đi. Sau khi xóa, không thể hoàn tác."
+      confirmLabel="Xóa nhật ký"
+    />
   );
 }
 

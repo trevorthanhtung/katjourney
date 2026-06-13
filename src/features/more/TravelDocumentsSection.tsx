@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { db, TravelDocument } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
-import { BottomSheet, Input, Textarea, Select } from "../../components/ui";
+import { BottomSheet, Input, Textarea, Select, TypedDeleteConfirmModal } from "../../components/ui";
 
 const typeOptions: Array<{ value: NonNullable<TravelDocument["type"]>; label: string }> = [
   { value: "ticket", label: "Vé di chuyển" },
@@ -221,17 +221,17 @@ export function TravelDocumentsSection({
   const [selectedTypeFilter, setSelectedTypeFilter] = useState<string>("all");
   const [formOpen, setFormOpen] = useState(false);
   const [editingDoc, setEditingDoc] = useState<TravelDocument | null>(null);
+  const [docToDelete, setDocToDelete] = useState<TravelDocument | null>(null);
 
   const filteredDocs = selectedTypeFilter === "all" 
     ? documents 
     : documents.filter(doc => doc.type === selectedTypeFilter);
 
-  async function handleDelete(doc: TravelDocument) {
-    if (!doc.id) return;
-    if (window.confirm(`Bạn có chắc chắn muốn xóa mục này?`)) {
-      await db.travelDocuments.delete(doc.id);
-      onShowToast?.("Đã xóa thành công");
-    }
+  async function executeDelete() {
+    if (!docToDelete?.id) return;
+    await db.travelDocuments.delete(docToDelete.id);
+    onShowToast?.("Đã xóa thành công");
+    setDocToDelete(null);
   }
 
   function openNewForm() {
@@ -358,7 +358,7 @@ export function TravelDocumentsSection({
                         <Edit3 className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(doc)}
+                        onClick={() => setDocToDelete(doc)}
                         className="p-1.5 rounded-full text-rose-300 hover:bg-rose-50 hover:text-rose-600 transition-colors motion-press"
                         title="Xóa bỏ"
                       >
@@ -413,6 +413,16 @@ export function TravelDocumentsSection({
           })}
         </div>
       )}
+
+      <TypedDeleteConfirmModal
+        isOpen={Boolean(docToDelete)}
+        onClose={() => setDocToDelete(null)}
+        onConfirm={executeDelete}
+        title="Xóa giấy tờ này?"
+        itemName={docToDelete?.title}
+        description="Mục giấy tờ hoặc đặt chỗ này sẽ bị xóa khỏi chuyến đi. Sau khi xóa, không thể hoàn tác."
+        confirmLabel="Xóa giấy tờ"
+      />
 
       {/* Document Form Bottom Sheet */}
       <DocumentForm 

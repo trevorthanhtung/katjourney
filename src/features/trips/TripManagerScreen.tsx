@@ -1,20 +1,25 @@
 import React, { useState } from "react";
 import { Calendar, MapPin, Plane, Trash2, Edit3, Compass, Users, Map, WalletCards, Trophy } from "lucide-react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { Trip, db } from "../../db";
+import { Trip, db, deleteTripCascade } from "../../db";
 import { formatDate, getTripTiming } from "../../utils/helpers";
 import { TripForm } from "../more/MoreScreen";
+import { TypedDeleteConfirmModal } from "../../components/ui";
+import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
 
 export function TripManagerScreen({
   trips,
   onOpenTrip,
   onCreateNew,
+  onShowToast,
 }: {
   trips: Trip[];
   onOpenTrip: (id: number) => void;
   onCreateNew: () => void;
+  onShowToast?: (msg: string) => void;
 }) {
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
+  const [tripToDelete, setTripToDelete] = useState<Trip | null>(null);
 
   const allMembers = useLiveQuery(() => db.members.toArray()) ?? [];
   const allExpenses = useLiveQuery(() => db.expenses.toArray()) ?? [];
@@ -25,11 +30,11 @@ export function TripManagerScreen({
     return acc;
   }, {} as Record<number, number>);
   
-  async function handleDelete(trip: Trip) {
-    if (window.confirm(`Bạn có chắc chắn muốn xóa chuyến đi "${trip.title}" không? Dữ liệu không thể khôi phục.`)) {
-      if (trip.id) {
-        await db.trips.delete(trip.id);
-      }
+  async function executeDeleteTrip() {
+    if (tripToDelete?.id) {
+      await deleteTripCascade(tripToDelete.id);
+      setTripToDelete(null);
+      onShowToast?.("Đã xóa chuyến đi khỏi thiết bị này.");
     }
   }
 
@@ -87,13 +92,6 @@ export function TripManagerScreen({
         >
           <Edit3 className="h-4 w-4" />
         </button>
-        <button
-          className="flex h-8 w-8 items-center justify-center rounded-full text-rose-400 bg-white/95 border border-slate-200/60 shadow-sm hover:bg-rose-50 hover:text-rose-600 transition-colors motion-press"
-          onClick={(e) => { e.stopPropagation(); void handleDelete(trip); }}
-          title="Xóa chuyến đi"
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
       </div>
     );
 
@@ -103,7 +101,6 @@ export function TripManagerScreen({
         <div 
           className={`group relative overflow-hidden rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-6 md:p-8 shadow-sm hover:shadow-md hover:border-kat-primary/40 transition-all w-full flex flex-col md:flex-row gap-6 justify-between items-stretch md:min-w-[560px] md:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
         >
-          {renderActions()}
           
           {/* Left info column */}
           <div className="flex-1 flex flex-col justify-between pr-4">
@@ -177,6 +174,13 @@ export function TripManagerScreen({
                 className="flex-1 h-11 flex items-center justify-center rounded-xl bg-[#030D2E] hover:bg-[#030D2E]/90 text-white font-black text-[14px] shadow-sm transition-all motion-press"
               >
                 Xem chi tiết
+              </button>
+              <button
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors motion-press"
+                onClick={(e) => { e.stopPropagation(); setEditingTrip(trip); }}
+                title="Sửa thông tin"
+              >
+                <Edit3 className="h-4.5 w-4.5" />
               </button>
               {timing.status === "past" && (
                 <button 
@@ -454,6 +458,13 @@ export function TripManagerScreen({
         onClose={() => setEditingTrip(null)}
         trip={editingTrip || undefined}
         onSaved={() => setEditingTrip(null)}
+      />
+
+      <ConfirmDeleteTripDialog
+        open={Boolean(tripToDelete)}
+        tripName={tripToDelete?.title}
+        onClose={() => setTripToDelete(null)}
+        onConfirm={executeDeleteTrip}
       />
     </div>
   );
