@@ -15,9 +15,10 @@ interface UseTripRemindersProps {
   travelDocuments: TravelDocument[];
   events: EventItem[];
   backupPlans: BackupPlan[];
+  pendingRequestsCount?: number;
 }
 
-export function useTripReminders({ trip, checklist, travelDocuments, events, backupPlans }: UseTripRemindersProps) {
+export function useTripReminders({ trip, checklist, travelDocuments, events, backupPlans, pendingRequestsCount }: UseTripRemindersProps) {
   return useMemo(() => {
     const reminders: TripReminder[] = [];
     
@@ -34,6 +35,17 @@ export function useTripReminders({ trip, checklist, travelDocuments, events, bac
     
     const diffTime = start.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // 0. Pending share requests (Highest priority)
+    if (pendingRequestsCount && pendingRequestsCount > 0) {
+      reminders.push({
+        id: 'share_requests',
+        text: `Có ${pendingRequestsCount} yêu cầu chỉnh sửa đang chờ duyệt.`,
+        cta: 'Xem yêu cầu',
+        tab: 'share_requests' as any,
+        isImportant: true
+      });
+    }
 
     // 1. Sắp đi (1-3 ngày)
     if (diffDays >= 1 && diffDays <= 3) {
@@ -95,6 +107,6 @@ export function useTripReminders({ trip, checklist, travelDocuments, events, bac
       return 0;
     });
 
-    return reminders.slice(0, 3);
-  }, [trip?.startDate, trip?.endDate, checklist, travelDocuments, events, backupPlans]);
+    return reminders.slice(0, 4);
+  }, [trip?.startDate, trip?.endDate, checklist, travelDocuments, events, backupPlans, pendingRequestsCount]);
 }

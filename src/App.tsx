@@ -19,8 +19,9 @@ import { ChecklistScreen } from "./features/checklist/ChecklistScreen";
 import { MoreScreen, TripForm } from "./features/more/MoreScreen";
 import { TripManagerScreen } from "./features/trips/TripManagerScreen";
 
-// Lazy load SharedTripScreen to avoid bundling it when not needed
 const SharedTripScreen = React.lazy(() => import("./features/share/SharedTripScreen"));
+import { useShareChangeRequests } from "./hooks/useShareChangeRequests";
+import { ShareChangeRequestsSheet } from "./features/share/components/ShareChangeRequestsSheet";
 
 function NavButton({ 
   isActive, 
@@ -56,6 +57,7 @@ function App() {
   const [isRemindersOpen, setIsRemindersOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [moreSection, setMoreSection] = useState<"overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents">("overview");
+  const [isAppInboxOpen, setIsAppInboxOpen] = useState(false);
 
   const trips = useLiveQuery(() => db.trips.toArray()) ?? [];
   const [selectedTripId, setSelectedTripId] = useState<number | null>(null);
@@ -84,7 +86,8 @@ function App() {
   const packingItems = useLiveQuery(() => (tripId ? db.packingItems.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
   const travelDocuments = useLiveQuery(() => (tripId ? db.travelDocuments.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
   const backupPlans = useLiveQuery(() => (tripId ? db.backupPlans.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
-  const reminders = useTripReminders({ trip, checklist, travelDocuments, events, backupPlans });
+  const { pendingRequests, activeToken } = useShareChangeRequests(trip);
+  const reminders = useTripReminders({ trip, checklist, travelDocuments, events, backupPlans, pendingRequestsCount: pendingRequests.length });
 
   const sharedExpenses = expenses.filter(e => e.splitType !== "personal");
   const totalSharedExpense = sharedExpenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
@@ -138,6 +141,10 @@ function App() {
           Icon = Sparkles;
           colorClasses = "bg-sky-50 text-sky-600 border border-sky-100/50";
           break;
+        case "share_requests" as any:
+          Icon = BellRing;
+          colorClasses = "bg-rose-50 text-rose-600 border border-rose-100/50";
+          break;
       }
 
       return (
@@ -146,7 +153,9 @@ function App() {
           className="flex w-full items-center gap-3.5 bg-white p-4 text-left hover:bg-slate-50 transition-colors focus:outline-none"
           onClick={() => {
             setIsRemindersOpen(false);
-            if (rem.tab === "documents" || rem.tab === "journal" || rem.tab === "wrapped") {
+            if (rem.tab === "share_requests" as any) {
+              setIsAppInboxOpen(true);
+            } else if (rem.tab === "documents" || rem.tab === "journal" || rem.tab === "wrapped") {
               navigateToMore(rem.tab);
             } else {
               setActiveTab(rem.tab);
@@ -340,11 +349,11 @@ function App() {
             </div>
           ) : trip && tripId ? (
             <div key={activeTab} className="motion-page-enter">
-              {activeTab === "home" && <HomeScreen trip={trip} members={members} events={events} expenses={expenses} checklist={checklist} travelDocuments={travelDocuments} totalExpense={totalExpense} perPerson={perPerson} onNavigateTab={setActiveTab} onNavigateMore={navigateToMore} />}
+              {activeTab === "home" && <HomeScreen trip={trip} members={members} events={events} expenses={expenses} checklist={checklist} travelDocuments={travelDocuments} totalExpense={totalExpense} perPerson={perPerson} onNavigateTab={setActiveTab} onNavigateMore={navigateToMore} onOpenInbox={() => setIsAppInboxOpen(true)} />}
               {activeTab === "timeline" && <TimelineScreen trip={trip} events={events} />}
               {activeTab === "expenses" && <ExpensesScreen expenses={expenses} members={members} totalExpense={totalExpense} perPerson={perPerson} tripId={tripId} />}
               {activeTab === "checklist" && <ChecklistScreen checklist={checklist} tripId={tripId} />}
-              {activeTab === "more" && <MoreScreen trip={trip} members={members} events={events} expenses={expenses} checklist={checklist} journals={journals} packingItems={packingItems} travelDocuments={travelDocuments} onTripDeleted={() => { setSelectedTripId(null); setIsManagingTrips(true); showToast("Đã xóa chuyến đi khỏi danh sách."); }} onTripSelected={setSelectedTripId} onShowToast={showToast} section={moreSection} setSection={setMoreSection} />}
+              {activeTab === "more" && <MoreScreen trip={trip} members={members} events={events} expenses={expenses} checklist={checklist} journals={journals} packingItems={packingItems} travelDocuments={travelDocuments} onTripDeleted={() => { setSelectedTripId(null); setIsManagingTrips(true); showToast("Đã xóa chuyến đi khỏi danh sách."); }} onTripSelected={setSelectedTripId} onShowToast={showToast} section={moreSection} setSection={setMoreSection} onOpenInbox={() => setIsAppInboxOpen(true)} />}
             </div>
           ) : (
             <div className="flex items-center justify-center py-20">
@@ -447,6 +456,15 @@ function App() {
             {renderReminderItems()}
           </div>
         </BottomSheet>
+      )}
+
+      {activeToken && tripId && (
+        <ShareChangeRequestsSheet
+          isOpen={isAppInboxOpen}
+          onClose={() => setIsAppInboxOpen(false)}
+          token={activeToken}
+          requests={pendingRequests}
+        />
       )}
     </div>
   );
