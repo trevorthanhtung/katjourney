@@ -1,5 +1,5 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { Backpack, CalendarDays, Calendar, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft, Search, Bell, BellRing, ChevronRight, Check, ListTodo, FileText, BookOpenText, Sparkles } from "lucide-react";
+import { Backpack, CalendarDays, Calendar, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft, Search, Bell, BellRing, ChevronRight, Check, ListTodo, FileText, BookOpenText, Sparkles, Home } from "lucide-react";
 import React, { useState } from "react";
 import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "./db";
 
@@ -250,6 +250,14 @@ function App() {
           <div className="flex items-center gap-2 md:gap-3">
             {!isManagingTrips && tripId && (
               <>
+                <button
+                  onClick={() => setIsManagingTrips(true)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
+                  title="Trang chủ (Danh sách chuyến đi)"
+                >
+                  <Home className="h-4.5 w-4.5" />
+                </button>
+
                 <button
                   onClick={() => setIsSearchOpen(true)}
                   className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
