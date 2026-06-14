@@ -359,22 +359,35 @@ function EventForm({
       onClose={onClose} 
       title={editing ? "Sửa mục lịch trình" : "Thêm mục lịch trình"}
       footer={
-        <div className="flex flex-col gap-2.5 w-full">
-          <FormActions 
-            onSave={save} 
-            saveLabel={editing ? "Lưu thông tin" : "Thêm mục lịch trình"} 
-            onCancel={onClose}
-            disabled={!form.title.trim()}
-          />
+        <div className="flex items-center gap-2.5 w-full">
           {editing && (
             <button
+              type="button"
               onClick={onDelete}
-              className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-[16px] bg-rose-50 border border-rose-200 px-6 font-bold text-rose-600 transition-colors hover:bg-rose-100 active:scale-[0.98] transition-all duration-200"
+              title="Xóa mục lịch trình"
+              className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 transition-colors hover:bg-rose-100 active:scale-[0.96] motion-press"
             >
-              <Trash2 className="h-4.5 w-4.5" />
-              Xóa mục lịch trình
+              <Trash2 className="h-5 w-5" />
             </button>
           )}
+          
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-[52px] shrink-0 items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.96] transition-all motion-press"
+          >
+            Hủy
+          </button>
+
+          <button
+            type="button"
+            onClick={save}
+            disabled={!form.title.trim()}
+            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-[#030D2E] text-white px-6 font-black shadow-sm hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed motion-press"
+          >
+            <Check className="h-5 w-5" strokeWidth={2.5} />
+            {editing ? "Lưu thông tin" : "Thêm mục lịch trình"}
+          </button>
         </div>
       }
     >
