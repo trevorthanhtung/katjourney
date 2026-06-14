@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Calendar, MapPin, Plane, Trash2, Edit3, Compass, Users, Map, WalletCards, Trophy } from "lucide-react";
+import { Calendar, MapPin, Plane, Trash2, Edit3, Compass, Users, Map, WalletCards, Trophy, Sparkles } from "lucide-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Trip, db, deleteTripCascade } from "../../db";
 import { formatDate, getTripTiming } from "../../utils/helpers";
@@ -296,24 +296,37 @@ export function TripManagerScreen({
       ) : (
         <>
           {/* Hero Header */}
-          <div className="mb-10 md:mb-12 rounded-[28px] bg-gradient-to-br from-[#030D2E] via-[#004E5A] to-[#007C78] py-5 px-6 md:py-6 md:px-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-soft relative overflow-hidden motion-page-enter">
-            <Compass className="absolute -right-8 -bottom-8 w-44 h-44 text-white/[0.04] rotate-12 pointer-events-none" />
+          <div className="mb-10 md:mb-12 rounded-[32px] bg-[#030D2E] py-6 px-6 md:py-8 md:px-10 flex flex-col md:flex-row md:items-center justify-between gap-8 shadow-[0_12px_40px_-12px_rgba(3,13,46,0.3)] relative overflow-hidden motion-page-enter">
+            {/* Ambient Background Glows */}
+            <div className="absolute top-0 right-0 w-72 h-72 bg-[#00BFB7] opacity-20 blur-[80px] rounded-full pointer-events-none" />
+            <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-violet-600 opacity-20 blur-[100px] rounded-full pointer-events-none" />
+            <Compass className="absolute -right-8 -bottom-8 w-44 h-44 text-white/[0.03] rotate-12 pointer-events-none" />
+            
             <div className="relative z-10">
-              <h1 className="text-[32px] md:text-[36px] font-black text-white tracking-tight leading-tight">Chuyến đi của bạn</h1>
-              <p className="mt-1.5 text-[15.5px] font-semibold text-white/80 max-w-md">Lưu lịch trình, người đồng hành, chi phí và những việc cần chuẩn bị cho từng chuyến đi.</p>
+              <h1 className="text-[32px] md:text-[36px] font-black text-white tracking-tight leading-tight">
+                Chuyến đi của bạn
+              </h1>
+              <p className="mt-2 text-[15px] font-medium text-white/70 max-w-md leading-relaxed">
+                Lưu lịch trình, người đồng hành, chi phí và những việc cần chuẩn bị cho từng chuyến đi.
+              </p>
             </div>
+            
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0 relative z-10">
               <button
                 onClick={onOpenArchive}
-                className="flex h-[52px] items-center justify-center rounded-[16px] bg-white/10 hover:bg-white/20 text-white px-6 font-bold text-[14.5px] shadow-sm border border-white/20 active:scale-[0.98] transition-all duration-200 motion-press"
+                className="group relative flex h-[52px] items-center justify-center gap-2.5 rounded-[16px] bg-white/[0.08] hover:bg-white/[0.12] text-white px-7 font-bold text-[14.5px] border border-white/10 backdrop-blur-xl overflow-hidden active:scale-[0.98] transition-all duration-300 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.3)]"
               >
-                Kỷ niệm
+                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+                <Sparkles className="w-4.5 h-4.5 text-[#00BFB7] group-hover:scale-110 transition-transform duration-300" />
+                <span className="tracking-wide">Kỷ niệm</span>
               </button>
+              
               <button
                 onClick={onCreateNew}
-                className="flex h-[52px] items-center justify-center rounded-[16px] bg-white text-[#030D2E] hover:bg-white/95 px-8 font-black text-[14.5px] shadow-sm active:scale-[0.98] transition-all duration-200 motion-press"
+                className="group flex h-[52px] items-center justify-center gap-1.5 rounded-[16px] bg-white text-[#030D2E] px-8 font-black text-[14.5px] shadow-[0_8px_24px_-8px_rgba(255,255,255,0.2)] active:scale-[0.98] transition-all duration-300 hover:bg-[#F8F9FA] hover:shadow-[0_12px_32px_-8px_rgba(255,255,255,0.4)]"
               >
-                + Tạo chuyến đi
+                <span className="text-lg leading-none group-hover:rotate-90 transition-transform duration-300">+</span>
+                Tạo chuyến đi
               </button>
             </div>
           </div>
