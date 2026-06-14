@@ -61,14 +61,11 @@ export async function geocodeDestination(destination: string): Promise<Geocoding
     const normalizedQuery = trimmedDest.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
     const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(normalizedQuery)}&count=1&language=vi&format=json`);
     
-    let data;
     if (!res.ok) {
-      console.warn("Geocoding API failed, returning mock coordinates.");
-      // Mock coordinates (Da Lat) if rate limited
-      data = { results: [{ name: destination, latitude: 11.94646, longitude: 108.44193 }] };
-    } else {
-      data = await res.json();
+      console.warn("Geocoding API failed");
+      return null;
     }
+    const data = await res.json();
     
     if (data.results && data.results.length > 0) {
       const result = {
@@ -186,22 +183,8 @@ export async function getWeatherForecast(lat: number, lon: number, days: number 
     }
   }
 
-  // Final fallback: Return MOCK data if everything fails (rate limit & no cache) so the UI doesn't crash during development
   if (!dataToReturn) {
-    console.warn("Using MOCK weather data because API failed and no cache exists.");
-    dataToReturn = {
-      time: Array.from({ length: fetchDays }).map((_, i) => {
-        const d = new Date(); d.setDate(d.getDate() + i); return d.toISOString().split("T")[0];
-      }),
-      weathercode: Array.from({ length: fetchDays }).map(() => [0, 2, 3, 51, 61, 80, 95][Math.floor(Math.random() * 7)]),
-      temperature_2m_max: Array.from({ length: fetchDays }).map(() => 25 + Math.floor(Math.random() * 8)),
-      temperature_2m_min: Array.from({ length: fetchDays }).map(() => 15 + Math.floor(Math.random() * 5)),
-      current: {
-        temperature: 22,
-        is_day: 1,
-        weathercode: 2
-      }
-    };
+    return null;
   }
 
   return applyDaysLimit(dataToReturn, days, fetchDays);

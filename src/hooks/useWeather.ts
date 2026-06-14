@@ -24,16 +24,6 @@ export function useWeather(destination?: string, latitude?: number, longitude?: 
         let lon = longitude;
 
         if (!lat || !lon) {
-          if (destination) {
-            const coords = await geocodeDestination(destination);
-            if (coords) {
-              lat = coords.latitude;
-              lon = coords.longitude;
-            }
-          }
-        }
-
-        if (!lat || !lon) {
           if (isMounted) {
             setError(true);
             setLoading(false);
