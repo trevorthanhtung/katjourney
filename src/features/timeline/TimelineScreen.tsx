@@ -82,7 +82,6 @@ function ActivityCard({
   onDelete: () => void;
   onAddExpense?: () => void;
 }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const category = getCategory(item.type);
   const CatIcon = category.icon;
   
@@ -232,58 +231,6 @@ function ActivityCard({
               </div>
             )}
           </div>
-
-          {/* Quick options menu trigger (min 44x44px target zone) */}
-          <div className="relative shrink-0">
-            <button 
-              type="button"
-              className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40" 
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsMenuOpen(!isMenuOpen);
-              }} 
-              title="Tùy chọn"
-            >
-              <MoreVertical className="h-5 w-5" />
-            </button>
-            
-            {isMenuOpen && (
-              <>
-                <div 
-                  className="fixed inset-0 z-30 cursor-default" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsMenuOpen(false);
-                  }} 
-                />
-                <div className="absolute right-0 bottom-full mb-1 z-40 w-36 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsMenuOpen(false);
-                      onEdit();
-                    }}
-                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
-                  >
-                    <Edit3 className="h-4 w-4 text-slate-500" />
-                    Chỉnh sửa
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsMenuOpen(false);
-                      onDelete();
-                    }}
-                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
-                  >
-                    <Trash2 className="h-4 w-4 text-rose-500" />
-                    Xóa
-                  </button>
-                </div>
-              </>
-            )}
           </div>
         </div>
       </div>
