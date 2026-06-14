@@ -828,8 +828,15 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps }: Setti
                       )}
                       <div className="mt-2.5">
                         {provider === "google" ? (
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-slate-100 border border-slate-200 text-slate-600">
-                            Google
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-[0.15em] bg-slate-50 border border-slate-200 shadow-sm">
+                            <span>
+                              <span className="text-[#4285F4]">G</span>
+                              <span className="text-[#EA4335]">o</span>
+                              <span className="text-[#FBBC05]">o</span>
+                              <span className="text-[#4285F4]">g</span>
+                              <span className="text-[#34A853]">l</span>
+                              <span className="text-[#EA4335]">e</span>
+                            </span>
                           </div>
                         ) : (
                           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide bg-amber-100/60 border border-amber-200 text-amber-700">
