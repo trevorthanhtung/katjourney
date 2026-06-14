@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import { showToast } from "../../components/ui/ToastManager";
 import { 
   MoreVertical,
   Backpack, 
@@ -684,7 +685,7 @@ function MemberForm({
             type="button"
             disabled={hasError}
             onClick={save}
-            className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white px-6 font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
+            className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white px-6 font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#030D2E] disabled:active:scale-100 shadow-sm"
           >
             {editing ? (
               <Check className="h-4.5 w-4.5" strokeWidth={2.5} />
@@ -730,7 +731,7 @@ function MemberForm({
           {(dirty || submitAttempted) && phoneError ? (
             <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{phoneError}</p>
           ) : (
-            <p className="mt-1.5 px-1 text-[12.5px] font-medium text-slate-400">Dùng để liên hệ nhanh trong chuyến đi khi cần.</p>
+            <p className="mt-1.5 px-1 text-[11.5px] font-bold text-kat-muted">Dùng để liên hệ nhanh trong chuyến đi khi cần.</p>
           )}
         </div>
 
@@ -774,7 +775,7 @@ function MemberForm({
               )}
             </div>
           )}
-          <p className="mt-1.5 px-1 text-[12.5px] font-medium text-slate-400">
+          <p className="mt-1.5 px-1 text-[11.5px] font-bold text-kat-muted">
             Vai trò giúp chia chi phí, chuẩn bị hành lý và ghi chú rõ ràng hơn.
           </p>
         </div>
@@ -1120,7 +1121,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             <p className="text-[14px] font-semibold text-slate-500 mb-5 max-w-sm">Viết thêm nhật ký để lưu lại cảm xúc và khoảnh khắc đáng nhớ.</p>
             <button 
               onClick={() => setSection("journal")}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-5 py-2.5 text-[14px] font-extrabold text-kat-text hover:bg-kat-primary/20 active:scale-[0.98] transition-all"
+              className="flex items-center justify-center gap-2 rounded-2xl bg-[#030D2E] px-5 py-2.5 text-[14px] font-extrabold text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm"
             >
               <BookOpenText className="h-4.5 w-4.5 text-blue-500" />
               Ghi nhật ký đầu tiên
@@ -1203,7 +1204,8 @@ function ActionCard({
   iconTextColor = "text-[#00BFB7]",
   className = "",
   titleClassName = "text-[#030D2E]",
-  rightElement
+  rightElement,
+  disabled
 }: {
   icon: React.ElementType;
   title: string;
@@ -1213,6 +1215,7 @@ function ActionCard({
   className?: string;
   titleClassName?: string;
   rightElement?: React.ReactNode;
+  disabled?: boolean;
 }) {
   const content = (
     <>
@@ -1232,19 +1235,23 @@ function ActionCard({
         {rightElement !== undefined ? (
           rightElement
         ) : (
-          onClick && <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+          (onClick || disabled) && <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
         )}
       </div>
     </>
   );
 
-  if (onClick) {
+  if (onClick || disabled) {
     return (
       <button
         type="button"
         onClick={onClick}
+        disabled={disabled}
         className={classNames(
-          "group flex w-full items-center justify-between bg-[#FFFDF8] border border-[#E8E1D8] px-4 py-3 rounded-2xl min-h-[56px] text-left hover:bg-slate-50/60 transition-all focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/50 motion-press md:motion-hover-lift",
+          "group flex w-full items-center justify-between px-4 py-3 rounded-2xl min-h-[56px] text-left transition-all focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/50",
+          disabled 
+            ? "bg-[#FAF7F1] border border-[#E8E1D8]/50 opacity-60 cursor-not-allowed" 
+            : "bg-[#FFFDF8] border border-[#E8E1D8] hover:bg-slate-50/60 motion-press md:motion-hover-lift",
           className
         )}
       >
@@ -1273,13 +1280,15 @@ function MemberCardRow({
   checklist,
   expenses,
   openEditMember,
-  onDeleteMember
+  onDeleteMember,
+  isReadOnly
 }: {
   member: Member;
   checklist: ChecklistItem[];
   expenses: Expense[];
   openEditMember: (member: Member) => void;
   onDeleteMember: (member: Member) => void;
+  isReadOnly?: boolean;
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const initial = member.name.trim().charAt(0).toUpperCase() || "?";
@@ -1330,8 +1339,9 @@ function MemberCardRow({
         </div>
 
         {/* Dropdown Menu Trigger (min 44x44px target) */}
-        <div className="relative shrink-0">
-          <button
+        {!isReadOnly && (
+          <div className="relative shrink-0">
+            <button
             type="button"
             className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
             onClick={(e) => {
@@ -1380,7 +1390,8 @@ function MemberCardRow({
               </div>
             </>
           )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Mini Stats Row */}
@@ -1407,6 +1418,7 @@ function MemberCardRow({
 }
 
 import { ensureAnonymousUser, firebaseEnabled } from "../../lib/firebase";
+import { createShareLink, revokeShareLink, updateShareLink } from "../../services/cloudShareService";
 
 export function MoreScreen({
   trip,
@@ -1486,7 +1498,7 @@ export function MoreScreen({
 
   async function handleShareTrip() {
     if (!firebaseEnabled) {
-      alert("Chưa cấu hình Firebase. Vui lòng kiểm tra môi trường (env).");
+      showToast("Chưa cấu hình Firebase. Vui lòng kiểm tra môi trường (env).", "error");
       return;
     }
     setShareLoading(true);
@@ -1494,7 +1506,7 @@ export function MoreScreen({
       await ensureAnonymousUser();
       setIsShareModalOpen(true);
     } catch (e: any) {
-      alert("Không thể kết nối Firebase: " + e.message);
+      showToast("Không thể kết nối Firebase: " + e.message, "error");
     } finally {
       setShareLoading(false);
     }
@@ -1503,14 +1515,13 @@ export function MoreScreen({
   async function handleCreateLink() {
     try {
       setShareLoading(true);
-      const { createShareLink } = await import("../../services/cloudShareService");
       await createShareLink(trip.id!, { 
         ...shareOptions, 
         mode: "request_edit",
         sharePin: shareOptions.usePinProtection && shareOptions.sharePin.length === 4 ? shareOptions.sharePin : undefined
       });
     } catch (e: any) {
-      alert("Lỗi khi tạo link chia sẻ. Vui lòng thử lại sau.");
+      showToast("Lỗi khi tạo link chia sẻ. Vui lòng thử lại sau.", "error");
       console.error(e);
     } finally {
       setShareLoading(false);
@@ -1521,15 +1532,14 @@ export function MoreScreen({
     if (!activeShareLink) return;
     try {
       setSyncLoading(true);
-      const { updateShareLink } = await import("../../services/cloudShareService");
       await updateShareLink(trip.id!, activeShareLink.token, {
         ...shareOptions,
         mode: "request_edit",
         sharePin: shareOptions.usePinProtection && shareOptions.sharePin.length === 4 ? shareOptions.sharePin : undefined
       });
-      alert("Đã đồng bộ dữ liệu chia sẻ.");
+      showToast("Đã đồng bộ dữ liệu chia sẻ.");
     } catch (e: any) {
-      alert("Lỗi khi đồng bộ dữ liệu. Vui lòng thử lại sau.");
+      showToast("Lỗi khi đồng bộ dữ liệu. Vui lòng thử lại sau.", "error");
       console.error(e);
     } finally {
       setSyncLoading(false);
@@ -1540,11 +1550,10 @@ export function MoreScreen({
     if (!activeShareLink) return;
     try {
       setShareLoading(true);
-      const { revokeShareLink } = await import("../../services/cloudShareService");
       await revokeShareLink(trip.id!, activeShareLink.token);
-      alert("Đã tắt link chia sẻ.");
+      showToast("Đã tắt link chia sẻ.");
     } catch (e: any) {
-      alert("Lỗi khi tắt link chia sẻ. Vui lòng thử lại sau.");
+      showToast("Lỗi khi tắt link chia sẻ. Vui lòng thử lại sau.", "error");
       console.error(e);
     } finally {
       setShareLoading(false);
@@ -1673,7 +1682,7 @@ export function MoreScreen({
       onTripSelected(newTripId);
       onShowToast?.("Đã nhập bản sao lưu thành công.");
     } catch (error) {
-      alert(error instanceof Error ? error.message : "Không thể import tệp này.");
+      showToast(error instanceof Error ? error.message : "Không thể import tệp này.", "error");
     } finally {
       setImporting(false);
     }
@@ -1682,10 +1691,12 @@ export function MoreScreen({
   async function factoryReset() {
     try {
       await db.delete();
-      alert("Đã xóa dữ liệu thành công. Đang tải lại trang...");
-      window.location.reload();
+      showToast("Đã xóa dữ liệu thành công. Đang tải lại trang...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (e) {
-      alert("Đã xảy ra lỗi khi xóa dữ liệu.");
+      showToast("Đã xảy ra lỗi khi xóa dữ liệu.", "error");
     }
   }
 
@@ -1715,9 +1726,9 @@ export function MoreScreen({
     }
   };
 
-  if (section === "journal") return <JournalSection tripId={trip.id!} journals={journals} onShowToast={onShowToast} onBack={() => setSection("overview")} />;
+  if (section === "journal") return <JournalSection tripId={trip.id!} journals={journals} onShowToast={onShowToast} onBack={() => setSection("overview")} isReadOnly={isReadOnly} />;
   if (section === "wrapped") return <WrappedSection data={tripData} setSection={setSection} />;
-  if (section === "documents") return <TravelDocumentsSection tripId={trip.id!} onBack={() => setSection("overview")} onShowToast={onShowToast} />;
+  if (section === "documents") return <TravelDocumentsSection tripId={trip.id!} onBack={() => setSection("overview")} onShowToast={onShowToast} isReadOnly={isReadOnly} />;
   
   if (section === "members") {
     const membersWithTasks = members.filter(m => checklist.some(c => c.assignedTo === m.name)).length;
@@ -1740,13 +1751,15 @@ export function MoreScreen({
               <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Quản lý những người cùng tham gia và chia sẻ hành trình.</p>
             </div>
           </div>
-          <button 
-            className="flex h-11 sm:h-12 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] px-5 text-[14px] font-black text-white transition-all hover:bg-[#030D2E]/90 active:scale-[0.98] shadow-sm w-full sm:w-auto shrink-0"
-            onClick={openNewMember}
-          >
-            <UserPlus className="w-4.5 h-4.5" strokeWidth={2.5} />
-            Thêm người đồng hành
-          </button>
+          {!isReadOnly && (
+            <button 
+              className="flex h-11 sm:h-12 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] px-5 text-[14px] font-black text-white transition-all hover:bg-[#030D2E]/90 active:scale-[0.98] shadow-sm w-full sm:w-auto shrink-0"
+              onClick={openNewMember}
+            >
+              <UserPlus className="w-4.5 h-4.5" strokeWidth={2.5} />
+              Thêm người đồng hành
+            </button>
+          )}
         </div>
 
         {/* Overview Card */}
@@ -1797,15 +1810,6 @@ export function MoreScreen({
         <section className="space-y-4">
           <div className="flex items-center justify-between px-1">
             <h3 className="text-[17px] font-extrabold text-[#030D2E]">Danh sách người đồng hành {members.length > 0 && `(${members.length})`}</h3>
-            {members.length > 0 && !isReadOnly && (
-              <button
-                onClick={openNewMember}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary hover:bg-kat-primary/20 transition-all active:scale-95"
-                aria-label="Thêm người đồng hành"
-              >
-                <Plus className="w-5 h-5" />
-              </button>
-            )}
           </div>
           
           {members.length ? (
@@ -1817,6 +1821,7 @@ export function MoreScreen({
                   checklist={checklist}
                   expenses={expenses}
                   openEditMember={openEditMember}
+                  isReadOnly={isReadOnly}
                   onDeleteMember={(m) => {
                     setMemberToDelete(m);
                     setIsDeleteMemberConfirmOpen(true);
@@ -1834,13 +1839,6 @@ export function MoreScreen({
               <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
                 Thêm người đồng hành để cùng chia chi phí, chuẩn bị hành lý và lưu lại vai trò trong chuyến đi.
               </p>
-              <button
-                onClick={openNewMember}
-                className="mt-5 inline-flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white px-6 text-[14px] font-black transition-all hover:bg-[#030D2E]/90 active:scale-95 shadow-sm"
-              >
-                <UserPlus className="w-4.5 h-4.5" strokeWidth={2.5} />
-                Thêm người đồng hành đầu tiên
-              </button>
             </div>
           )}
         </section>
@@ -2059,6 +2057,7 @@ export function MoreScreen({
               icon={MapPinned}
               title="Thông tin chuyến đi"
               onClick={() => setEditingTrip(true)}
+              disabled={isReadOnly}
               iconBgColor="bg-sky-50"
               iconTextColor="text-sky-600 border-sky-100"
             />
@@ -2094,6 +2093,7 @@ export function MoreScreen({
               icon={Share2}
               title="Chia sẻ chuyến đi"
               onClick={handleShareTrip}
+              disabled={isReadOnly}
               iconBgColor="bg-violet-50"
               iconTextColor="text-violet-600 border-violet-100"
             />
@@ -2578,7 +2578,7 @@ export function MoreScreen({
                 }
                 setSelectedFileForRestore(null);
               }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-6 font-bold text-kat-text hover:bg-kat-primary/20 active:scale-98 transition-all duration-200 shadow-sm"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-[#030D2E] border border-[#030D2E] px-6 font-bold text-white hover:bg-[#030D2E]/90 active:scale-98 transition-all duration-200 shadow-sm"
             >
               <Upload className="h-5 w-5" />
               Khôi phục

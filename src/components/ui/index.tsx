@@ -1,6 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
-import { Plus, X, Check, Trash2 } from "lucide-react";
+import { Plus, X, Check, Trash2, ChevronDown, Calendar, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { classNames } from "../../utils/helpers";
 
 export { classNames };
@@ -29,17 +29,28 @@ export function Input({
   placeholder?: string;
   onFocus?: () => void;
 }) {
+  const isDateOrTime = type === "date" || type === "time";
+  
   return (
     <label className="block">
       <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
-      <input
-        className="mt-1.5 w-full rounded-[14px] border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] placeholder-slate-400"
-        type={type}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        onFocus={onFocus}
-      />
+      <div className="relative mt-1.5">
+        <input
+          className={`w-full rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] placeholder-slate-400 ${
+            isDateOrTime ? "[&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer bg-white" : ""
+          }`}
+          type={type}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          onFocus={onFocus}
+        />
+        {isDateOrTime && (
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 bg-white pl-2">
+            {type === "date" ? <Calendar className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
+          </div>
+        )}
+      </div>
     </label>
   );
 }
@@ -68,6 +79,310 @@ export function Textarea({
   );
 }
 
+export function TimePicker({
+  label,
+  value,
+  onChange,
+  placeholder = "--:--",
+}: {
+  label: React.ReactNode;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [tempHour, setTempHour] = React.useState("09");
+  const [tempMinute, setTempMinute] = React.useState("00");
+
+  const hourRef = React.useRef<HTMLDivElement>(null);
+  const minRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      if (value) {
+        const [h, m] = value.split(":");
+        if (h && m) {
+          setTempHour(h);
+          setTempMinute(m);
+        }
+      }
+      
+      // Auto scroll to center after a tiny delay
+      setTimeout(() => {
+        if (hourRef.current) {
+          const selectedHourEl = hourRef.current.querySelector('[data-selected="true"]');
+          if (selectedHourEl) selectedHourEl.scrollIntoView({ block: "center" });
+        }
+        if (minRef.current) {
+          const selectedMinEl = minRef.current.querySelector('[data-selected="true"]');
+          if (selectedMinEl) selectedMinEl.scrollIntoView({ block: "center" });
+        }
+      }, 50);
+    }
+  }, [isOpen, value]);
+
+  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
+  const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
+
+  const handleSave = () => {
+    onChange(`${tempHour}:${tempMinute}`);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="block">
+      <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7]"
+      >
+        <span className={value ? "text-[#030D2E] font-bold" : "text-slate-400"}>
+          {value || placeholder}
+        </span>
+        <Clock className="h-4 w-4 text-slate-400" />
+      </button>
+
+      <BottomSheet
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="Chọn thời gian"
+      >
+        <div className="flex flex-col items-center">
+          <div className="flex justify-center w-full max-w-[240px] h-[200px] relative overflow-hidden bg-slate-50/80 rounded-3xl border border-slate-100 shadow-inner">
+            {/* Highlight bar in the middle */}
+            <div className="absolute top-1/2 -translate-y-1/2 w-[90%] h-[44px] bg-white rounded-2xl border border-slate-200/60 shadow-sm pointer-events-none" />
+            
+            {/* Hours column */}
+            <div 
+              ref={hourRef}
+              className="flex-1 h-full overflow-y-auto snap-y snap-mandatory scrollbar-hide py-[78px] px-2 relative z-10"
+            >
+              {hours.map(h => (
+                <div 
+                  key={`h-${h}`} 
+                  data-selected={tempHour === h}
+                  onClick={() => {
+                    setTempHour(h);
+                    const el = hourRef.current?.querySelector(`[data-hour="${h}"]`);
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }}
+                  data-hour={h}
+                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempHour === h ? 'font-black text-[#00BFB7] scale-110' : 'font-medium text-slate-400 hover:text-slate-600'}`}
+                >
+                  {h}
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-center text-xl font-black text-[#030D2E] relative z-10 pb-1">:</div>
+
+            {/* Minutes column */}
+            <div 
+              ref={minRef}
+              className="flex-1 h-full overflow-y-auto snap-y snap-mandatory scrollbar-hide py-[78px] px-2 relative z-10"
+            >
+              {minutes.map(m => (
+                <div 
+                  key={`m-${m}`} 
+                  data-selected={tempMinute === m}
+                  onClick={() => {
+                    setTempMinute(m);
+                    const el = minRef.current?.querySelector(`[data-min="${m}"]`);
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }}
+                  data-min={m}
+                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempMinute === m ? 'font-black text-[#00BFB7] scale-110' : 'font-medium text-slate-400 hover:text-slate-600'}`}
+                >
+                  {m}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="w-full mt-6">
+            <button
+              onClick={handleSave}
+              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-[#030D2E] text-white px-6 font-black shadow-sm hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all motion-press"
+            >
+              Lưu thời gian
+            </button>
+          </div>
+        </div>
+      </BottomSheet>
+    </div>
+  );
+}
+
+export function DatePicker({
+  label,
+  value,
+  onChange,
+  placeholder = "Chọn ngày",
+  min,
+  max
+}: {
+  label: React.ReactNode;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  min?: string;
+  max?: string;
+}) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  
+  const [viewDate, setViewDate] = React.useState(() => {
+    return value ? new Date(value) : new Date();
+  });
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setViewDate(value ? new Date(value) : new Date());
+    }
+  }, [isOpen, value]);
+
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0 is Sun, 1 is Mon
+  
+  const startDayIndex = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const blanks = Array.from({ length: startDayIndex }, (_, i) => i);
+
+  const handlePrevMonth = () => {
+    setViewDate(new Date(year, month - 1, 1));
+  };
+  const handleNextMonth = () => {
+    setViewDate(new Date(year, month + 1, 1));
+  };
+
+  const handleSelectDay = (day: number) => {
+    const newDate = new Date(year, month, day);
+    // adjust timezone offset to avoid getting wrong UTC date
+    const offset = newDate.getTimezoneOffset();
+    const adjustedDate = new Date(newDate.getTime() - (offset*60*1000));
+    const isoString = adjustedDate.toISOString().split('T')[0];
+    onChange(isoString);
+    setIsOpen(false);
+  };
+
+  const dayNames = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+  
+  // formatting selected value for display
+  const displayValue = value ? (() => {
+    const d = new Date(value);
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+  })() : "";
+
+  return (
+    <div className="block">
+      <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7]"
+      >
+        <span className={value ? "text-[#030D2E] font-bold" : "text-slate-400"}>
+          {displayValue || placeholder}
+        </span>
+        <Calendar className="h-4 w-4 text-slate-400" />
+      </button>
+
+      <BottomSheet
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="Chọn ngày"
+      >
+        <div className="flex flex-col items-center p-2">
+          {/* Header */}
+          <div className="flex items-center justify-between w-full mb-6">
+            <button 
+              onClick={handlePrevMonth}
+              className="p-2 rounded-full hover:bg-slate-100 active:bg-slate-200 text-slate-600"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <h3 className="text-[17px] font-bold text-[#030D2E]">
+              Tháng {month + 1} năm {year}
+            </h3>
+            <button 
+              onClick={handleNextMonth}
+              className="p-2 rounded-full hover:bg-slate-100 active:bg-slate-200 text-slate-600"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Days of week */}
+          <div className="grid grid-cols-7 w-full mb-2">
+            {dayNames.map(d => (
+              <div key={d} className="text-center text-[13px] font-bold text-slate-400">
+                {d}
+              </div>
+            ))}
+          </div>
+
+          {/* Calendar Grid */}
+          <div className="grid grid-cols-7 w-full gap-y-2">
+            {blanks.map(b => (
+              <div key={`blank-${b}`} className="h-10"></div>
+            ))}
+            {days.map(d => {
+              const currentDateStr = (() => {
+                const newDate = new Date(year, month, d);
+                const offset = newDate.getTimezoneOffset();
+                const adjustedDate = new Date(newDate.getTime() - (offset*60*1000));
+                return adjustedDate.toISOString().split('T')[0];
+              })();
+              const isSelected = value === currentDateStr;
+              const isToday = (() => {
+                const today = new Date();
+                return today.getDate() === d && today.getMonth() === month && today.getFullYear() === year;
+              })();
+
+              return (
+                <div key={d} className="flex items-center justify-center h-10">
+                  <button
+                    onClick={() => handleSelectDay(d)}
+                    className={`w-9 h-9 rounded-full flex items-center justify-center text-[15px] font-medium transition-all duration-200
+                      ${isSelected ? 'bg-[#00BFB7] text-white font-bold shadow-md scale-110' : 
+                        isToday ? 'bg-slate-100 text-[#00BFB7] font-bold border border-[#00BFB7]/20' : 
+                        'text-[#030D2E] hover:bg-slate-100'}
+                    `}
+                  >
+                    {d}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="w-full mt-8">
+            <button
+              onClick={() => {
+                const today = new Date();
+                const offset = today.getTimezoneOffset();
+                const adjustedDate = new Date(today.getTime() - (offset*60*1000));
+                onChange(adjustedDate.toISOString().split('T')[0]);
+                setIsOpen(false);
+              }}
+              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-slate-100 text-[#030D2E] px-6 font-bold hover:bg-slate-200 active:scale-[0.98] transition-all motion-press"
+            >
+              Chọn hôm nay
+            </button>
+          </div>
+        </div>
+      </BottomSheet>
+    </div>
+  );
+}
+
 export function Select({
   label,
   value,
@@ -83,21 +398,54 @@ export function Select({
   placeholder?: string;
   labels?: Record<string, string>;
 }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+
   return (
-    <label className="block">
+    <div className="block">
       <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
-      <select
-        className="mt-1.5 w-full appearance-none rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7]"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7]"
       >
-        {options.map((option) => (
-          <option key={option || "empty"} value={option}>
-            {option ? labels?.[option] ?? option : placeholder ?? "Chưa chọn"}
-          </option>
-        ))}
-      </select>
-    </label>
+        <span className={value ? "text-[#030D2E]" : "text-slate-400"}>
+          {value ? (labels?.[value] ?? value) : (placeholder ?? "Chưa chọn")}
+        </span>
+        <ChevronDown className="h-4 w-4 text-slate-400" />
+      </button>
+
+      <BottomSheet
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title={typeof label === 'string' ? `Chọn ${label.toLowerCase()}` : "Chọn tuỳ chọn"}
+      >
+        <div className="space-y-1">
+          {options.map((option) => {
+            const isSelected = value === option;
+            const displayLabel = option ? labels?.[option] ?? option : placeholder ?? "Chưa chọn";
+            return (
+              <button
+                key={option || "empty"}
+                onClick={() => {
+                  onChange(option);
+                  setIsOpen(false);
+                }}
+                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
+                  isSelected 
+                    ? "bg-[#00BFB7]/10 text-kat-primary" 
+                    : "hover:bg-slate-50 text-[#030D2E]"
+                }`}
+              >
+                <span className={`text-[15px] ${isSelected ? 'font-extrabold' : 'font-semibold'}`}>
+                  {displayLabel}
+                </span>
+                {isSelected && <Check className="w-5 h-5 text-kat-primary" />}
+              </button>
+            );
+          })}
+        </div>
+      </BottomSheet>
+    </div>
   );
 }
 

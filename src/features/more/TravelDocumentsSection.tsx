@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { db, TravelDocument } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
-import { BottomSheet, Input, Textarea, Select, DeleteConfirmModal, classNames } from "../../components/ui";
+import { BottomSheet, Input, Textarea, Select, DatePicker, DeleteConfirmModal, classNames } from "../../components/ui";
 import { uploadDocumentImage } from "../../services/storageService";
 
 const typeOptions: Array<{ value: NonNullable<TravelDocument["type"]>; label: string }> = [
@@ -83,7 +83,8 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
     date: "",
     link: "",
     note: "",
-    attachmentUrl: ""
+    attachmentUrl: "",
+    isPrivate: false
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -103,9 +104,10 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           date: editing.date || "",
           link: editing.link || "",
           note: editing.note || "",
-          attachmentUrl: editing.attachmentUrl || ""
+          attachmentUrl: editing.attachmentUrl || "",
+          isPrivate: editing.isPrivate || false
         });
-        if (editing.date || editing.link || editing.note || editing.attachmentUrl) {
+        if (editing.date || editing.link || editing.note || editing.attachmentUrl || editing.isPrivate) {
           setShowAdvanced(true);
         }
       } else {
@@ -116,7 +118,8 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           date: "",
           link: "",
           note: "",
-          attachmentUrl: ""
+          attachmentUrl: "",
+          isPrivate: false
         });
       }
       setSelectedFile(null);
@@ -154,25 +157,20 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
         finalAttachmentUrl = await uploadDocumentImage(selectedFile, String(tripId));
       }
 
-      const payload: Omit<TravelDocument, "id"> = {
-        tripId,
-        title: form.title.trim(),
-        type: form.type,
-        code: form.code.trim(),
-        date: form.date,
-        link: form.link.trim(),
-        note: form.note.trim(),
-        attachmentUrl: finalAttachmentUrl,
-        updatedAt: new Date().toISOString()
-      };
-
       if (editing?.id) {
-        await db.travelDocuments.update(editing.id, payload);
+        await db.travelDocuments.update(editing.id, {
+          ...form,
+          attachmentUrl: finalAttachmentUrl,
+          updatedAt: new Date().toISOString()
+        });
         onShowToast?.("Đã cập nhật giấy tờ");
       } else {
         await db.travelDocuments.add({
-          ...payload,
-          createdAt: new Date().toISOString()
+          ...form,
+          tripId,
+          attachmentUrl: finalAttachmentUrl,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         });
         onShowToast?.("Đã lưu giấy tờ mới");
       }
@@ -219,7 +217,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           )}
         </div>
 
-        {/* Type & Code */}
+        {/* Type & Code & Privacy */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Select 
             label="Phân loại" 
@@ -228,13 +226,19 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
             options={typeOptions.map(t => t.value)}
             labels={typeLabels}
           />
-          <Input 
-            label="Mã / thông tin đặt chỗ" 
-            value={form.code} 
-            onChange={(code) => { setForm({ ...form, code }); setDirty(true); }} 
-            placeholder="VD: PNR ABC123, mã phòng, số vé..." 
+          <Select 
+            label="Quyền chia sẻ" 
+            value={form.isPrivate ? "Riêng tư (Chỉ mình tôi)" : "Chia sẻ với nhóm"} 
+            onChange={(val) => { setForm({ ...form, isPrivate: val === "Riêng tư (Chỉ mình tôi)" }); setDirty(true); }}
+            options={["Chia sẻ với nhóm", "Riêng tư (Chỉ mình tôi)"]}
           />
         </div>
+        <Input 
+          label="Mã / thông tin đặt chỗ" 
+          value={form.code} 
+          onChange={(code) => { setForm({ ...form, code }); setDirty(true); }} 
+          placeholder="VD: PNR ABC123, mã phòng, số vé..." 
+        />
 
         {/* Collapsible Info Section */}
         <div className="pt-2 border-t border-slate-100/80">
@@ -253,9 +257,8 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           {showAdvanced && (
             <div className="mt-3 space-y-4 animate-fadeIn">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Input 
+                <DatePicker 
                   label="Ngày liên quan" 
-                  type="date"
                   value={form.date} 
                   onChange={(date) => { setForm({ ...form, date }); setDirty(true); }} 
                 />
@@ -594,12 +597,12 @@ export function TravelDocumentsSection({
             <p className="text-[14px] font-medium text-slate-500 mt-0.5">Lưu vé, mã đặt chỗ và thông tin quan trọng để tra cứu nhanh khi cần.</p>
           </div>
         </div>
-        {!isReadOnly && documents.length > 0 && (
+        {!isReadOnly && (
           <button
             onClick={openNewForm}
             className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white px-5 text-[13.5px] font-bold hover:bg-[#030D2E]/90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center"
           >
-            <Plus className="h-4 w-4" strokeWidth={2.5} />
+            <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
             <span>Thêm giấy tờ</span>
           </button>
         )}
@@ -647,18 +650,11 @@ export function TravelDocumentsSection({
           <h4 className="text-[16px] font-extrabold text-[#030D2E] mb-1">
             {selectedTypeFilter === "all" ? "Chưa có giấy tờ nào" : "Không tìm thấy mục lưu trữ"}
           </h4>
-          <p className="text-[13.5px] font-semibold text-slate-400 mb-6 max-w-[280px]">
+          <p className="text-[13.5px] font-semibold text-slate-400 mb-0 max-w-[280px]">
             {selectedTypeFilter === "all" 
               ? "Lưu vé, mã đặt chỗ, liên hệ quan trọng hoặc link bản đồ để tra cứu nhanh khi cần."
               : "Chọn bộ lọc khác hoặc thêm mới giấy tờ & đặt chỗ thuộc nhóm này."}
           </p>
-          <button 
-            onClick={openNewForm}
-            className="flex items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] border border-[#030D2E]/25 px-5 py-2.5 text-[13.5px] font-bold text-white hover:bg-[#030D2E]/90 motion-press shadow-sm"
-          >
-            <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
-            Thêm giấy tờ đầu tiên
-          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

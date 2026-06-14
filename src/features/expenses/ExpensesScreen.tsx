@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Plus, Trash2, WalletCards, Scale, UsersRound, UserRound, Calculator, ChartPie, ReceiptText, Route, Utensils, Hotel, Ticket, Tags, PencilLine, Info, UserCheck, ChevronRight, ShoppingBag, Gamepad2, Plane, Sparkles, CalendarDays } from "lucide-react";
 import { db, Expense, Member, EventItem } from "../../db";
 import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories } from "../../utils/helpers";
-import { BottomSheet, FormActions, Input, ScreenTitle, Select, DeleteConfirmModal, classNames } from "../../components/ui";
+import { BottomSheet, FormActions, Input, ScreenTitle, Select, DatePicker, DeleteConfirmModal, classNames } from "../../components/ui";
 
 function CategoryBar({ percent, colorClass }: { percent: number; colorClass: string }) {
   return (
@@ -78,18 +78,6 @@ function SettlementCard({
     emptyText = "Chưa có khoản chi chung để cân đối chia tiền.";
   }
 
-  // Group settlements by recipient ('to')
-  const groupedByRecipient = React.useMemo(() => {
-    const groups: Record<string, Array<{ from: string; amount: number }>> = {};
-    settlements.forEach(s => {
-      if (!groups[s.to]) {
-        groups[s.to] = [];
-      }
-      groups[s.to].push({ from: s.from, amount: s.amount });
-    });
-    return groups;
-  }, [settlements]);
-
   return (
     <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm mt-6 animate-fadeIn">
       <div className="flex items-center gap-2 mb-4">
@@ -99,32 +87,30 @@ function SettlementCard({
         <h3 className="text-[16px] font-extrabold text-[#030D2E]">Cân đối chia tiền</h3>
       </div>
       {settlements.length ? (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {Object.entries(groupedByRecipient).map(([recipient, debtors], idx) => (
-            <div key={idx} className="rounded-2xl border border-[#E8E1D8] bg-[#FFFDF8] p-4.5 shadow-sm space-y-3">
-              {/* Header card: Người nhận tiền */}
-              <div className="flex items-center gap-2 pb-2.5 border-b border-slate-100">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
-                  <UserCheck className="h-4 w-4" />
-                </span>
-                <p className="text-[14px] font-extrabold text-[#030D2E]">
-                  Nhận tiền: <span className="underline decoration-kat-primary decoration-2 underline-offset-4">{recipient}</span>
-                </p>
-              </div>
-              
-              {/* Danh sách người gửi tiền */}
-              <div className="space-y-2">
-                {debtors.map((debtor, dIdx) => (
-                  <div key={dIdx} className="flex items-center justify-between text-[13px] font-bold text-slate-700 bg-white/70 border border-slate-100 rounded-xl px-3 py-2">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <span className="text-slate-400 font-semibold">Từ:</span>
-                      <span className="truncate text-[#030D2E]">{debtor.from}</span>
-                    </div>
-                    <span className="font-black text-rose-600 text-[14px] shrink-0 pl-2">
-                      {formatMoney(debtor.amount)}
-                    </span>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {settlements.map((s, idx) => (
+            <div key={idx} className="flex flex-col justify-center bg-white border border-[#E8E1D8] shadow-sm rounded-2xl p-4 gap-2">
+              <div className="flex items-center justify-between w-full">
+                <div className="flex flex-col items-center flex-1">
+                  <span className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-1">
+                    <UserRound className="w-4 h-4" />
+                  </span>
+                  <span className="font-bold text-[#030D2E] text-[13px] truncate max-w-[80px]">{s.from}</span>
+                </div>
+                
+                <div className="flex flex-col items-center justify-center flex-[1.5] px-2">
+                  <span className="font-black text-rose-600 text-[14.5px] mb-1">{formatMoney(s.amount)}</span>
+                  <div className="w-full h-[2px] bg-slate-200 relative flex items-center justify-center">
+                    <div className="absolute right-[-4px] top-1/2 -translate-y-1/2 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-slate-200" />
                   </div>
-                ))}
+                </div>
+
+                <div className="flex flex-col items-center flex-1">
+                  <span className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1 border border-emerald-100">
+                    <UserCheck className="w-4 h-4" />
+                  </span>
+                  <span className="font-bold text-kat-primary text-[13px] truncate max-w-[80px]">{s.to}</span>
+                </div>
               </div>
             </div>
           ))}
@@ -480,8 +466,7 @@ function ExpenseForm({
         </div>
 
         {/* Date */}
-        <Input 
-          type="date"
+        <DatePicker 
           label={
             <span className="flex items-center gap-1.5">
               <CalendarDays className="h-4 w-4 text-slate-500" />
@@ -890,18 +875,9 @@ export function ExpensesScreen({
                   <WalletCards className="h-5.5 w-5.5" />
                 </div>
                 <h3 className="text-[17px] font-bold text-kat-text mb-1.5">Chưa có khoản chi nào</h3>
-                <p className="text-[13.5px] font-medium text-kat-muted mb-6 max-w-xs">
+                <p className="text-[13.5px] font-medium text-kat-muted mb-0 max-w-xs">
                   Ghi lại chi phí ăn uống, di chuyển, vé tham quan để hệ thống tự động cân đối chia tiền sau chuyến đi.
                 </p>
-                {!isReadOnly && (
-                  <button 
-                    onClick={openNewForm}
-                    className="flex h-10 items-center justify-center gap-2 rounded-2xl bg-[#030D2E] px-5 text-[13.5px] font-bold text-white hover:bg-[#030D2E]/90 motion-press shadow-sm"
-                  >
-                    <Plus className="h-4 w-4" strokeWidth={2.5} />
-                    Thêm khoản chi
-                  </button>
-                )}
               </div>
             ) : (
               [...expenses]

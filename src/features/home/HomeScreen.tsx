@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { 
   Backpack, 
   BookOpen, 
@@ -13,6 +13,7 @@ import {
   Globe, 
   CheckSquare, 
   Square, 
+  Compass, 
   AlertTriangle, 
   CheckCircle,
   Trophy,
@@ -34,6 +35,7 @@ import { exportTripPdf, exportTripExcel } from "../../utils/exports";
 import { CloudRainWind } from "lucide-react";
 import { useWeather } from "../../hooks/useWeather";
 import { getWeatherIcon, getWeatherGradient, getWeatherText } from "../../services/weatherService";
+import { WeatherDetailsModal } from "../timeline/WeatherDetailsModal";
 
 function QuickAction({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
   return (
@@ -82,6 +84,7 @@ export function HomeScreen({
 
   // Weather data
   const { forecast, loading: weatherLoading, error: weatherError } = useWeather(trip.location, trip.latitude, trip.longitude, 1);
+  const [weatherModalOpen, setWeatherModalOpen] = useState(false);
 
   if (!trip) return null;
   const timing = getTripTiming(trip);
@@ -177,19 +180,54 @@ export function HomeScreen({
     }
 
     const currentCode = forecast?.current?.weathercode;
-    const bgGradient = (!forecast)
-      ? "linear-gradient(135deg, #030D2E 0%, #003D4A 60%, #007C78 100%)" // Premium Dark Gradient
-      : getWeatherGradient(currentCode!);
+    
+    const fallbackGradient = status === "past"
+      ? "linear-gradient(135deg, #2D1B4E 0%, #4A2C6E 50%, #6B3A8A 100%)" // Ended: deep purple
+      : status === "active"
+      ? "linear-gradient(135deg, #0F4C81 0%, #1565C0 55%, #1976D2 100%)" // Active: strong blue
+      : "linear-gradient(135deg, #1A3A5C 0%, #1E4976 55%, #2460A7 100%)"; // Upcoming: deep navy
+    
+    const bgGradient = (forecast && currentCode != null)
+      ? getWeatherGradient(currentCode)
+      : fallbackGradient;
     
     return (
-      <div className="mb-6 relative overflow-hidden rounded-3xl shadow-sm border border-slate-100 group transition-all duration-300">
+      <div className="mb-6 relative overflow-hidden rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/10 group hover:shadow-[0_15px_45px_rgba(0,0,0,0.18)] hover:scale-[1.002] transition-all duration-500 ease-out">
         <div className="absolute inset-0 z-0" style={{ background: bgGradient }} />
         
+        {/* Glass reflection gloss */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/10 opacity-70 pointer-events-none" />
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
+        
+        {/* Transparent Compass Background Icon */}
+        <Compass className="absolute -right-12 -bottom-12 w-64 h-64 text-white/[0.04] rotate-12 pointer-events-none transition-all group-hover:scale-110 group-hover:rotate-[24deg] duration-1000 ease-out" />
+
         <div className="relative z-10 flex flex-col md:flex-row p-5 md:p-8 justify-between gap-5 md:gap-6">
           <div className="flex flex-col items-start text-left max-w-2xl w-full md:w-auto flex-1">
-            <p className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-[11px] font-bold tracking-wider text-white shadow-sm backdrop-blur-md border border-white/20 mb-2">
-              {badge}
-            </p>
+            {status === "active" && (
+              <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-[11px] font-extrabold tracking-wider text-white shadow-[0_2px_8px_rgba(255,255,255,0.1)] backdrop-blur-md border border-white/20 mb-2.5">
+                <span className="relative flex h-1.5 w-1.5 mr-1.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
+                </span>
+                Đang diễn ra
+              </span>
+            )}
+            {status === "upcoming" && (
+              <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[11px] font-extrabold tracking-wider text-white/90 shadow-[0_2px_8px_rgba(255,255,255,0.05)] backdrop-blur-md border border-white/10 mb-2.5">
+                <span className="relative flex h-1.5 w-1.5 mr-1.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
+                </span>
+                Sắp diễn ra
+              </span>
+            )}
+            {status === "past" && (
+              <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-[11px] font-extrabold tracking-wider text-white/70 shadow-[0_2px_8px_rgba(255,255,255,0.02)] backdrop-blur-md border border-white/10 mb-2.5">
+                Đã kết thúc
+              </span>
+            )}
+
             <h2 className="text-2xl md:text-4xl font-extrabold leading-tight tracking-tight drop-shadow-sm text-white mb-2 line-clamp-2">{trip.title}</h2>
             
             <div className="flex flex-wrap gap-1.5 mt-auto">
@@ -214,7 +252,7 @@ export function HomeScreen({
             </div>
           </div>
 
-          <div className="shrink-0 flex items-center justify-start md:justify-end w-auto gap-4 mt-1 md:mt-0">
+          <div className="shrink-0 flex items-center justify-center md:justify-end w-full md:w-auto gap-4 mt-3 md:mt-0">
             {weatherLoading ? (
                <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 animate-pulse w-auto">
                  <div className="w-10 h-10 bg-white/20 rounded-xl"></div>
@@ -240,7 +278,10 @@ export function HomeScreen({
                  </div>
                </div>
             ) : (
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-sm transition-transform hover:scale-[1.02] w-auto">
+              <button
+                onClick={() => setWeatherModalOpen(true)}
+                className="flex items-center gap-4 bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl p-4 shadow-[0_4px_24px_rgba(255,255,255,0.05)] transition-all duration-300 hover:bg-white/25 hover:scale-[1.03] active:scale-[0.97] w-auto text-left cursor-pointer"
+              >
                 <div className="flex items-center gap-2">
                   <span className="text-4xl md:text-5xl font-black text-white drop-shadow-sm tracking-tighter">
                     {Math.round(forecast.current?.temperature || 20)}°
@@ -249,7 +290,7 @@ export function HomeScreen({
                     <span className="mb-[-4px] flex items-center justify-center h-8">
                       {getWeatherIcon(forecast.current?.weathercode || 0, "w-7 h-7 drop-shadow-md")}
                     </span>
-                    <span className="text-[12px] font-bold text-white/90 uppercase tracking-wide whitespace-nowrap mt-1">
+                    <span className="text-[12px] font-bold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
                       {getWeatherText(forecast.current?.weathercode || 0)}
                     </span>
                   </div>
@@ -263,7 +304,7 @@ export function HomeScreen({
                     Thấp: {Math.round(forecast.temperature_2m_min[0])}°
                   </span>
                 </div>
-              </div>
+              </button>
             )}
           </div>
         </div>
@@ -282,7 +323,7 @@ export function HomeScreen({
           <div className="space-y-4">
             {/* Tổng kết card */}
             <div className="rounded-3xl bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] motion-card-enter motion-delay-1 flex items-start gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 border border-amber-200/35">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 border border-amber-200/40">
                 <Trophy className="h-6 w-6" />
               </div>
               <div className="min-w-0 flex-1">
@@ -292,9 +333,8 @@ export function HomeScreen({
                 </p>
                 <button
                   onClick={() => onNavigateMore("wrapped")}
-                  className="mt-3.5 flex items-center justify-center gap-1.5 rounded-xl bg-[#00BFB7]/10 hover:bg-[#00BFB7]/20 border border-[#00BFB7]/20 px-4 py-2 text-[12.5px] font-extrabold text-[#030D2E] transition-all duration-200 motion-press shadow-sm"
+                  className="mt-3.5 flex items-center justify-center rounded-xl bg-amber-500 hover:bg-amber-500/90 px-4 py-2 text-[12.5px] font-extrabold text-white transition-all duration-200 motion-press shadow-sm"
                 >
-                  <Sparkles className="w-4 h-4 text-kat-primary" />
                   <span>Xem tổng kết</span>
                 </button>
               </div>
@@ -302,7 +342,7 @@ export function HomeScreen({
 
             {/* Nhật ký card */}
             <div className="rounded-3xl bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] motion-card-enter motion-delay-2 flex items-start gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-600 border border-violet-200/40">
                 <BookOpen className="h-6 w-6" />
               </div>
               <div className="min-w-0 flex-1">
@@ -313,9 +353,8 @@ export function HomeScreen({
                 {!isReadOnly && (
                     <button
                       onClick={() => onNavigateMore("journal")}
-                      className="mt-3.5 flex items-center justify-center gap-1.5 rounded-xl bg-kat-primary text-[#030D2E] hover:brightness-105 px-4 py-2 text-[12.5px] font-black transition-all duration-200 motion-press shadow-sm"
+                      className="mt-3.5 flex items-center justify-center rounded-xl bg-violet-600 hover:bg-violet-600/90 text-white px-4 py-2 text-[12.5px] font-black transition-all duration-200 motion-press shadow-sm"
                     >
-                      <Plus className="w-4 h-4" />
                       <span>Viết nhật ký</span>
                     </button>
                 )}
@@ -463,7 +502,7 @@ export function HomeScreen({
                 {!isReadOnly && (
                     <button 
                       onClick={() => onNavigateTab("timeline")}
-                      className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-kat-primary text-[#030D2E] hover:brightness-105 px-4 py-2.5 text-[13px] font-black transition-all duration-200 shadow-sm motion-press"
+                      className="mt-4 flex items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white hover:bg-[#030D2E]/90 px-5 py-3 text-[13.5px] font-black transition-all duration-200 shadow-[0_4px_14px_rgba(3,13,46,0.18)] active:scale-95 motion-press"
                     >
                       <Plus className="h-4 w-4" strokeWidth={2.5} />
                       Thêm lịch trình
@@ -900,12 +939,21 @@ export function HomeScreen({
   };
 
   return (
-    <div className="space-y-4 md:space-y-6 animate-fadeIn mx-auto w-full max-w-[1120px]">
-      {renderHero()}
-      
-      {status === "past" && renderPastLayout()}
-      {status === "active" && renderActiveLayout()}
-      {(status !== "past" && status !== "active") && renderUpcomingLayout()}
-    </div>
+    <>
+      <div className="space-y-4 md:space-y-6 animate-fadeIn mx-auto w-full max-w-[1120px]">
+        {renderHero()}
+        
+        {status === "past" && renderPastLayout()}
+        {status === "active" && renderActiveLayout()}
+        {(status !== "past" && status !== "active") && renderUpcomingLayout()}
+      </div>
+
+      <WeatherDetailsModal
+        isOpen={weatherModalOpen}
+        onClose={() => setWeatherModalOpen(false)}
+        destination={trip.location || "Điểm đến"}
+        forecast={forecast}
+      />
+    </>
   );
 }

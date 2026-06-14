@@ -116,6 +116,7 @@ export interface TravelDocument {
   link?: string;
   attachmentUrl?: string;
   note?: string;
+  isPrivate?: boolean;
   createdAt?: string;
   updatedAt?: string;
   isDeleted?: boolean;

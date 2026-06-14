@@ -89,25 +89,49 @@ export function TripManagerScreen({
     const tripChecklist = allChecklist.filter(c => c.tripId === trip.id);
     const checklistRemaining = tripChecklist.filter(c => !c.completed).length;
 
+    const statusColor = 
+      timing.status === "active" 
+        ? "border-l-[#00BFB7]" 
+        : timing.status === "upcoming" 
+          ? "border-l-[#F89B02]" 
+          : "border-l-[#0081BE]";
+
     // Single Featured Card Layout
     if (isSingle) {
       return (
         <div 
           onClick={() => onOpenTrip(trip.id!)}
-          className={`group relative cursor-pointer overflow-hidden rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-6 md:p-8 shadow-sm hover:shadow-md hover:border-kat-primary/40 hover:bg-slate-50/40 transition-all w-full flex flex-col md:flex-row gap-6 justify-between items-stretch md:min-w-[560px] md:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+          className={`group relative cursor-pointer overflow-hidden rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] border-l-4 ${statusColor} p-6 md:p-8 shadow-sm hover:shadow-md hover:border-r-kat-primary/25 hover:border-y-kat-primary/25 hover:bg-slate-50/20 hover:scale-[1.005] active:scale-[0.99] transition-all duration-300 w-full flex flex-col md:flex-row gap-6 justify-between items-stretch md:min-w-[560px] md:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
         >
           {/* Left info column */}
           <div className="flex-1 flex flex-col justify-between pr-4">
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 {timing.status === "active" && (
-                  <span className="inline-flex items-center rounded-full bg-kat-primary-soft border border-kat-primary/20 px-3 py-1 text-[11px] font-bold text-kat-primary-usable uppercase tracking-wider">Đang diễn ra</span>
+                  <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-3 py-1 text-[11px] font-bold text-emerald-700 uppercase tracking-wider shadow-sm">
+                    <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    Đang diễn ra
+                  </span>
                 )}
                 {timing.status === "upcoming" && (
-                  <span className="inline-flex items-center rounded-full bg-[#F89B02]/10 border border-[#F89B02]/20 px-3 py-1 text-[11px] font-bold text-[#F89B02] uppercase tracking-wider">Sắp diễn ra</span>
+                  <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-3 py-1 text-[11px] font-bold text-amber-700 uppercase tracking-wider shadow-sm">
+                    <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                    </span>
+                    Sắp diễn ra
+                  </span>
                 )}
                 {timing.status === "past" && (
-                  <span className="inline-flex items-center rounded-full bg-[#0081BE]/10 border border-[#0081BE]/20 px-3 py-1 text-[11px] font-bold text-[#0081BE] uppercase tracking-wider">Đã kết thúc</span>
+                  <span className="inline-flex items-center rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-600 uppercase tracking-wider shadow-sm">
+                    <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-slate-400"></span>
+                    </span>
+                    Đã kết thúc
+                  </span>
                 )}
                 <span className="inline-flex items-center rounded-full bg-slate-100 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-605 tracking-wide">
                   {getTripDurationText(trip)}
@@ -119,45 +143,46 @@ export function TripManagerScreen({
               </h4>
             </div>
 
-            <div className="space-y-2.5 pb-2">
-              <div className="flex items-center gap-2 text-[14px] font-semibold text-slate-500">
-                <MapPin className="h-4.5 w-4.5 text-kat-primary shrink-0" />
-                <span className="truncate">{trip.location || "Chưa có địa điểm"}</span>
+            <div className="flex flex-col gap-2 pb-2">
+              <div className="flex items-center gap-2 text-[13.5px] font-semibold text-slate-650 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-1.5 rounded-xl w-fit">
+                <MapPin className="h-4 w-4 text-slate-400 shrink-0" />
+                <span className="truncate max-w-[280px]">{trip.location || "Chưa có địa điểm"}</span>
               </div>
-              <div className="flex items-center gap-2 text-[14px] font-semibold text-slate-500">
-                <Calendar className="h-4.5 w-4.5 text-[#0081BE] shrink-0" />
+              <div className="flex items-center gap-2 text-[13.5px] font-semibold text-slate-650 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-1.5 rounded-xl w-fit">
+                <Calendar className="h-4 w-4 text-slate-400 shrink-0" />
                 <span>{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}</span>
               </div>
             </div>
           </div>
 
           {/* Right stats column */}
-          <div className="w-full md:w-[260px] shrink-0 md:border-l md:border-[#E8E1D8]/60 md:pl-6 flex flex-col justify-between gap-5">
-            <div className="space-y-2.5">
-              <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 bg-slate-50 border border-slate-200/50 px-3 py-2 rounded-xl">
-                <Users className="w-4 h-4 text-slate-400 shrink-0" />
-                <span>{memberCounts[trip.id!] || 1} người đồng hành</span> 
-              </div>
-              <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 bg-slate-50 border border-slate-200/50 px-3 py-2 rounded-xl">
-                <WalletCards className="w-4 h-4 text-slate-400 shrink-0" />
-                <span>{totalExpense > 0 ? `${totalExpense.toLocaleString()}đ chi phí` : "Chưa có chi phí"}</span>
-              </div>
-              
-              {tripChecklist.length > 0 && checklistRemaining > 0 && (
-                <div className="flex items-center gap-2 text-[12px] font-extrabold text-rose-700 bg-rose-50 border border-rose-100 px-3 py-2 rounded-xl">
+          <div className="w-full md:w-[250px] shrink-0 md:border-l md:border-[#E8E1D8]/60 md:pl-6 flex flex-col justify-center gap-2.5">
+            <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-2 rounded-xl">
+              <Users className="w-4 h-4 text-slate-400 shrink-0" />
+              <span>{memberCounts[trip.id!] || 1} người đồng hành</span> 
+            </div>
+            <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-2 rounded-xl">
+              <WalletCards className="w-4 h-4 text-slate-400 shrink-0" />
+              <span>{totalExpense > 0 ? `${totalExpense.toLocaleString()}đ chi phí` : "Chưa có chi phí"}</span>
+            </div>
+            
+            {tripChecklist.length > 0 && (
+              checklistRemaining > 0 ? (
+                <div className="flex items-center gap-2 text-[12px] font-extrabold text-rose-700 bg-rose-50/40 border border-rose-100/60 px-3.5 py-2 rounded-xl">
+                  <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse shrink-0"></span>
                   <span className="truncate">
                     {timing.status === "past" 
-                      ? `${checklistRemaining} món chưa được chuẩn bị` 
-                      : `Còn ${checklistRemaining} món cần chuẩn bị`}
+                      ? `${checklistRemaining} món chưa chuẩn bị` 
+                      : `Còn ${checklistRemaining} món cần soạn`}
                   </span>
                 </div>
-              )}
-              {tripChecklist.length > 0 && checklistRemaining === 0 && (
-                <div className="flex items-center gap-2 text-[12px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-2 rounded-xl">
-                  <span>Hành lý đã chuẩn bị xong</span>
+              ) : (
+                <div className="flex items-center gap-2 text-[12px] font-extrabold text-emerald-700 bg-emerald-50/40 border border-emerald-100/60 px-3.5 py-2 rounded-xl">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                  <span className="truncate">Hành lý chuẩn bị xong</span>
                 </div>
-              )}
-            </div>
+              )
+            )}
           </div>
         </div>
       );
@@ -167,18 +192,35 @@ export function TripManagerScreen({
     return (
       <div 
         onClick={() => onOpenTrip(trip.id!)}
-        className={`group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[24px] bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] hover:border-kat-primary/40 hover:bg-slate-50/40 transition-all hover:shadow-md w-full max-w-[420px] mx-auto md:mx-0 h-full motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+        className={`group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[24px] bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] border-l-4 ${statusColor} hover:border-r-kat-primary/25 hover:border-y-kat-primary/25 hover:bg-slate-50/20 hover:scale-[1.01] hover:shadow-md transition-all duration-300 w-full max-w-[420px] mx-auto md:mx-0 h-full motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
       >
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-3">
             {timing.status === "active" && (
-              <span className="inline-flex items-center rounded-full bg-kat-primary-soft border border-kat-primary/20 px-2.5 py-0.5 text-[10.5px] font-bold text-kat-primary-usable uppercase tracking-wider">Đang diễn ra</span>
+              <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-emerald-700 uppercase tracking-wider shadow-sm">
+                <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                </span>
+                Đang diễn ra
+              </span>
             )}
             {timing.status === "upcoming" && (
-              <span className="inline-flex items-center rounded-full bg-[#F89B02]/10 border border-[#F89B02]/20 px-2.5 py-0.5 text-[10.5px] font-bold text-[#F89B02] uppercase tracking-wider">Sắp diễn ra</span>
+              <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-amber-700 uppercase tracking-wider shadow-sm">
+                <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
+                </span>
+                Sắp diễn ra
+              </span>
             )}
             {timing.status === "past" && (
-              <span className="inline-flex items-center rounded-full bg-[#0081BE]/10 border border-[#0081BE]/20 px-2.5 py-0.5 text-[10.5px] font-bold text-[#0081BE] uppercase tracking-wider">Đã kết thúc</span>
+              <span className="inline-flex items-center rounded-full bg-slate-50 border border-slate-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-slate-600 uppercase tracking-wider shadow-sm">
+                <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-slate-400"></span>
+                </span>
+                Đã kết thúc
+              </span>
             )}
             <span className="inline-flex items-center rounded-full bg-slate-100 border border-slate-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-slate-600 tracking-wide">
               {getTripDurationText(trip)}
@@ -190,21 +232,21 @@ export function TripManagerScreen({
           </h4>
 
           {/* Glanceable Grid Info */}
-          <div className="grid grid-cols-2 gap-y-2.5 gap-x-2 text-[13px] font-semibold text-slate-500 mb-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <MapPin className="h-4 w-4 text-slate-450 shrink-0" />
+          <div className="grid grid-cols-2 gap-2 text-[12px] font-bold text-slate-650 mb-1">
+            <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-2 py-1.5 rounded-lg min-w-0">
+              <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
               <span className="truncate">{trip.location || "Chưa xác định"}</span>
             </div>
-            <div className="flex items-center gap-2 min-w-0">
-              <Calendar className="h-4 w-4 text-slate-450 shrink-0" />
-              <span className="truncate">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)}`}</span>
+            <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-2 py-1.5 rounded-lg min-w-0">
+              <Calendar className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+              <span className="truncate text-slate-600">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)}`}</span>
             </div>
-            <div className="flex items-center gap-2 min-w-0">
-              <Users className="h-4 w-4 text-slate-455 shrink-0" />
+            <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-2 py-1.5 rounded-lg min-w-0">
+              <Users className="h-3.5 w-3.5 text-slate-400 shrink-0" />
               <span className="truncate">{memberCounts[trip.id!] || 1} người</span>
             </div>
-            <div className="flex items-center gap-2 min-w-0">
-              <WalletCards className="h-4 w-4 text-slate-455 shrink-0" />
+            <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-2 py-1.5 rounded-lg min-w-0">
+              <WalletCards className="h-3.5 w-3.5 text-slate-400 shrink-0" />
               <span className="truncate">{totalExpense > 0 ? `${totalExpense.toLocaleString()}đ` : "Chưa chi"}</span>
             </div>
           </div>
@@ -214,12 +256,14 @@ export function TripManagerScreen({
         {tripChecklist.length > 0 && (
           <div className="mt-3 pt-3 border-t border-[#E8E1D8]/50 flex">
             {checklistRemaining > 0 ? (
-              <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-rose-700 bg-rose-50 border border-rose-100 px-2.5 py-1 rounded-lg">
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-rose-700 bg-rose-50/40 border border-rose-100/60 px-2.5 py-1 rounded-lg">
+                <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse"></span>
                 <span>Còn {checklistRemaining} món cần chuẩn bị</span>
               </div>
             ) : (
-              <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg">
-                <span>Hành lý đã chuẩn bị xong</span>
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-700 bg-emerald-50/40 border border-emerald-100/60 px-2.5 py-1 rounded-lg">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                <span>Hành lý chuẩn bị xong</span>
               </div>
             )}
           </div>
@@ -277,30 +321,38 @@ export function TripManagerScreen({
   return (
     <div className="mx-auto w-full max-w-[1120px] px-4 py-6 md:px-6 md:pt-4 md:pb-16">
       {trips.length === 0 ? (
-        <div className="mt-8 md:mt-16 flex flex-col items-center justify-center rounded-[32px] bg-[#FFFDF8] p-8 md:p-12 text-center border border-[#E8E1D8] shadow-sm mx-auto max-w-[580px] relative overflow-hidden motion-page-enter">
+        <div className="mt-8 md:mt-16 flex flex-col items-center justify-center rounded-[32px] bg-[#FFFDF8] p-8 md:p-12 text-center border border-[#E8E1D8] shadow-floating hover:shadow-xl hover:border-[#00BFB7]/35 transition-all duration-500 mx-auto max-w-[540px] relative overflow-hidden motion-page-enter motion-hover-lift">
+          {/* Ambient Background Glows */}
+          <div className="absolute -right-10 -top-10 w-44 h-44 bg-[#00BFB7]/5 blur-[40px] rounded-full pointer-events-none" />
+          <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-indigo-500/5 blur-[50px] rounded-full pointer-events-none" />
+          
           <Map className="absolute -right-12 -top-12 w-48 h-48 text-kat-primary/[0.03] rotate-12 pointer-events-none" />
-          <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-kat-primary/10 relative z-10">
-            <Plane className="h-12 w-12 text-kat-primary" />
+          
+          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-[24px] bg-gradient-to-br from-[#00BFB7] via-[#00AFA8] to-[#0081BE] text-white shadow-[0_8px_24px_rgba(0,191,183,0.3)] relative z-10 border-2 border-white transform hover:rotate-12 transition-all duration-300">
+            <Plane className="h-9 w-9 text-white -rotate-45" />
           </div>
-          <h3 className="mb-3 text-[24px] font-bold text-kat-text relative z-10">Chưa có chuyến đi nào</h3>
-          <p className="mb-8 text-[15px] text-kat-muted leading-relaxed relative z-10">
+          
+          <h3 className="mb-3 text-[24px] font-black text-kat-text tracking-tight relative z-10">Chưa có chuyến đi nào</h3>
+          <p className="mb-8 text-[14.5px] font-semibold text-slate-500 leading-relaxed max-w-[340px] relative z-10">
             Tạo chuyến đi đầu tiên để bắt đầu lên lịch trình, quản lý chi phí và chuẩn bị hành lý.
           </p>
+          
           <button
             onClick={onCreateNew}
-            className="flex h-[52px] w-full items-center justify-center rounded-[16px] bg-[#00BFB7] text-[#030D2E] px-6 font-bold hover:brightness-105 active:scale-[0.98] transition-all duration-200 relative z-10 motion-press"
+            className="group flex h-13 w-full items-center justify-center gap-2 rounded-[18px] bg-gradient-to-r from-[#00BFB7] to-[#00AFA8] text-[#030D2E] px-6 font-black text-[15px] hover:brightness-[1.03] active:scale-[0.97] transition-all duration-300 relative z-10 shadow-[0_6px_20px_rgba(0,191,183,0.25)] hover:shadow-[0_8px_28px_rgba(0,191,183,0.4)] motion-press"
           >
-            + Tạo chuyến đi
+            <span className="text-[18px] leading-none group-hover:rotate-90 transition-transform duration-300 font-bold">+</span>
+            Tạo chuyến đi đầu tiên
           </button>
         </div>
       ) : (
         <>
           {/* Hero Header */}
-          <div className="mb-10 md:mb-12 rounded-[32px] bg-[#030D2E] py-6 px-6 md:py-8 md:px-10 flex flex-col md:flex-row md:items-center justify-between gap-8 shadow-[0_12px_40px_-12px_rgba(3,13,46,0.3)] relative overflow-hidden motion-page-enter">
+          <div className="group/hero mb-10 md:mb-12 rounded-[32px] bg-[#030D2E] py-6 px-6 md:py-8 md:px-10 flex flex-col md:flex-row md:items-center justify-between gap-8 shadow-[0_12px_40px_-12px_rgba(3,13,46,0.3)] relative overflow-hidden motion-page-enter">
             {/* Ambient Background Glows */}
             <div className="absolute top-0 right-0 w-72 h-72 bg-[#00BFB7] opacity-20 blur-[80px] rounded-full pointer-events-none" />
             <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-violet-600 opacity-20 blur-[100px] rounded-full pointer-events-none" />
-            <Compass className="absolute -right-8 -bottom-8 w-44 h-44 text-white/[0.03] rotate-12 pointer-events-none" />
+            <Compass className="absolute -right-8 -bottom-8 w-44 h-44 text-white/[0.03] rotate-12 pointer-events-none transition-all group-hover/hero:scale-110 group-hover/hero:rotate-[24deg] duration-700" />
             
             <div className="relative z-10">
               <h1 className="text-[32px] md:text-[36px] font-black text-white tracking-tight leading-tight">
@@ -314,7 +366,7 @@ export function TripManagerScreen({
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0 relative z-10">
               <button
                 onClick={onOpenArchive}
-                className="group relative flex h-[52px] items-center justify-center gap-2.5 rounded-[16px] bg-white/[0.08] hover:bg-white/[0.12] text-white px-7 font-bold text-[14.5px] border border-white/10 backdrop-blur-xl overflow-hidden active:scale-[0.98] transition-all duration-300 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.3)]"
+                className="group relative flex h-[52px] items-center justify-center gap-2.5 rounded-[16px] bg-white/[0.06] hover:bg-white/[0.12] text-white px-7 font-bold text-[14.5px] border border-white/15 backdrop-blur-xl overflow-hidden active:scale-[0.98] hover:border-white/25 transition-all duration-300 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.3)]"
               >
                 <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
                 <Sparkles className="w-4.5 h-4.5 text-[#00BFB7] group-hover:scale-110 transition-transform duration-300" />
@@ -325,58 +377,74 @@ export function TripManagerScreen({
                 onClick={onCreateNew}
                 className="group flex h-[52px] items-center justify-center gap-1.5 rounded-[16px] bg-white text-[#030D2E] px-8 font-black text-[14.5px] shadow-[0_8px_24px_-8px_rgba(255,255,255,0.2)] active:scale-[0.98] transition-all duration-300 hover:bg-[#F8F9FA] hover:shadow-[0_12px_32px_-8px_rgba(255,255,255,0.4)]"
               >
-                <span className="text-lg leading-none group-hover:rotate-90 transition-transform duration-300">+</span>
+                <span className="text-lg leading-none group-hover:rotate-90 transition-transform duration-300 font-extrabold">+</span>
                 Tạo chuyến đi
               </button>
             </div>
           </div>
 
           {/* Featured Trip (Sắp diễn ra tiếp theo) */}
-          {featuredTrip && (
-            <section className="mb-12 md:mb-14">
-              <h3 className="mb-4 px-1 text-[20px] font-extrabold text-kat-text motion-title-enter">Chuyến tiếp theo</h3>
-              <div 
-                className="group relative overflow-hidden rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-6 md:p-8 lg:p-10 shadow-sm cursor-pointer hover:border-kat-primary/40 hover:bg-slate-50/40 transition-all min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2"
-                onClick={() => onOpenTrip(featuredTrip.id!)}
-              >
-                {/* Decorative background */}
-                <div className="absolute right-0 top-0 bottom-0 w-1/2 md:w-1/3 bg-gradient-to-l from-kat-primary/5 to-transparent pointer-events-none" />
-                <Compass className="absolute -right-10 -bottom-10 w-64 h-64 text-kat-primary/[0.04] rotate-12 pointer-events-none transition-transform group-hover:scale-105 duration-700" />
-                
-                <div className="relative z-10 md:w-2/3 pr-4">
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {getTripTiming(featuredTrip).status === "active" ? (
-                      <span className="rounded-full bg-kat-primary/15 px-3 py-1 text-[12px] font-bold text-kat-primary uppercase tracking-wider">Đang diễn ra</span>
-                    ) : (
-                      <span className="rounded-full bg-[#F89B02]/15 px-3 py-1 text-[12px] font-bold text-[#F89B02] uppercase tracking-wider">Sắp khởi hành</span>
-                    )}
-                    <span className="rounded-full bg-slate-100 px-3 py-1 text-[12px] font-bold text-slate-600">
-                      {getTripDurationText(featuredTrip)}
-                    </span>
-                  </div>
+          {featuredTrip && (() => {
+            const featuredStatus = getTripTiming(featuredTrip);
+            const featuredBorderColor = featuredStatus.status === "active" ? "border-l-[#00BFB7]" : "border-l-[#F89B02]";
+            return (
+              <section className="mb-12 md:mb-14">
+                <h3 className="mb-4 px-1 text-[20px] font-extrabold text-kat-text motion-title-enter">Chuyến tiếp theo</h3>
+                <div 
+                  className={`group relative overflow-hidden rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] border-l-4 ${featuredBorderColor} p-6 md:p-8 lg:p-10 shadow-sm cursor-pointer hover:border-r-kat-primary/25 hover:border-y-kat-primary/25 hover:bg-slate-50/20 hover:scale-[1.002] transition-all duration-300 min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2`}
+                  onClick={() => onOpenTrip(featuredTrip.id!)}
+                >
+                  {/* Decorative background */}
+                  <div className="absolute right-0 top-0 bottom-0 w-1/2 md:w-1/3 bg-gradient-to-l from-kat-primary/5 to-transparent pointer-events-none" />
+                  <Compass className="absolute -right-10 -bottom-10 w-64 h-64 text-kat-primary/[0.04] rotate-12 pointer-events-none transition-all group-hover:scale-110 group-hover:rotate-[24deg] duration-700" />
                   
-                  <h4 className="text-[28px] md:text-[36px] font-extrabold text-kat-text leading-tight mb-4">
-                    {featuredTrip.title}
-                  </h4>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 text-slate-600">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-5 w-5 text-kat-primary" />
-                      <span className="font-semibold text-[15px] text-slate-700">{featuredTrip.location || "Chưa có địa điểm"}</span>
+                  <div className="relative z-10 md:w-2/3 pr-4">
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {featuredStatus.status === "active" ? (
+                        <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-3 py-1 text-[12px] font-bold text-emerald-700 uppercase tracking-wider shadow-sm">
+                          <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                          </span>
+                          Đang diễn ra
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-3 py-1 text-[12px] font-bold text-amber-700 uppercase tracking-wider shadow-sm">
+                          <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                          </span>
+                          Sắp khởi hành
+                        </span>
+                      )}
+                      <span className="rounded-full bg-slate-100 border border-slate-200/60 px-3 py-1 text-[12px] font-bold text-slate-600">
+                        {getTripDurationText(featuredTrip)}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-5 w-5 text-[#0081BE]" />
-                      <span className="font-semibold text-[15px] text-slate-700">{featuredTrip.startDate === featuredTrip.endDate ? formatDate(featuredTrip.startDate) : `${formatDate(featuredTrip.startDate)} - ${formatDate(featuredTrip.endDate)}`}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-5 w-5 text-emerald-600" />
-                      <span className="font-semibold text-[15px] text-slate-700">{memberCounts[featuredTrip.id!] || 1} người</span>
+                    
+                    <h4 className="text-[28px] md:text-[36px] font-extrabold text-kat-text leading-tight mb-4">
+                      {featuredTrip.title}
+                    </h4>
+                    
+                    <div className="flex flex-wrap gap-2.5 text-slate-700">
+                      <div className="flex items-center gap-2 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-2 rounded-xl">
+                        <MapPin className="h-4.5 w-4.5 text-slate-400 shrink-0" />
+                        <span className="font-extrabold text-[13.5px] text-slate-650">{featuredTrip.location || "Chưa có địa điểm"}</span>
+                      </div>
+                      <div className="flex items-center gap-2 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-2 rounded-xl">
+                        <Calendar className="h-4.5 w-4.5 text-slate-400 shrink-0" />
+                        <span className="font-extrabold text-[13.5px] text-slate-650">{featuredTrip.startDate === featuredTrip.endDate ? formatDate(featuredTrip.startDate) : `${formatDate(featuredTrip.startDate)} - ${formatDate(featuredTrip.endDate)}`}</span>
+                      </div>
+                      <div className="flex items-center gap-2 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-2 rounded-xl">
+                        <Users className="h-4.5 w-4.5 text-slate-400 shrink-0" />
+                        <span className="font-extrabold text-[13.5px] text-slate-650">{memberCounts[featuredTrip.id!] || 1} người</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </section>
-          )}
+              </section>
+            );
+          })()}
 
           {/* Remaining Trips List */}
           {remainingTrips.length > 0 && (

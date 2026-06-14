@@ -610,21 +610,18 @@ function App() {
                   setSelectedTripId(id);
                   setIsViewingArchive(false);
                   setIsManagingTrips(false);
-                  setIsCreatingTrip(false);
                 }}
               />
             </div>
-          ) : isManagingTrips || (!tripId && !isCreatingTrip) ? (
+          ) : isManagingTrips || !tripId ? (
             <div key="manager" className="motion-page-enter">
               <TripManagerScreen
                 trips={trips}
                 onOpenTrip={(id) => {
                   setSelectedTripId(id);
                   setIsManagingTrips(false);
-                  setIsCreatingTrip(false);
                 }}
                 onCreateNew={() => {
-                  setIsManagingTrips(false);
                   setIsCreatingTrip(true);
                 }}
                 onOpenArchive={() => {
@@ -633,18 +630,6 @@ function App() {
                 }}
                 onShowToast={showToast}
               />
-            </div>
-          ) : isCreatingTrip ? (
-            <div key="creating" className="space-y-6 motion-page-enter">
-              <ScreenTitle title="Chuyến đi mới" subtitle="Bắt đầu hành trình tiếp theo của bạn." />
-              <div className="rounded-2xl border border-emerald-950/5 bg-white p-5 shadow-soft">
-                <TripForm isOpen={true} onClose={() => { setIsCreatingTrip(false); setIsManagingTrips(true); }} onSaved={(id) => {
-                  setIsCreatingTrip(false);
-                  setIsManagingTrips(true);
-                  setSuccessToast(id);
-                  setTimeout(() => setSuccessToast(null), 4000);
-                }} />
-              </div>
             </div>
           ) : tripDataLoading ? (
             <div className="flex items-center justify-center py-20">
@@ -709,7 +694,7 @@ function App() {
       )}
 
       {successToast && (
-        <div className="fixed bottom-24 left-1/2 z-50 motion-toast-enter">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 motion-toast-enter">
           <div className="bg-kat-text text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-4">
             <span className="text-[14px] font-medium">Đã tạo chuyến đi thành công</span>
             <button 
@@ -730,9 +715,9 @@ function App() {
       )}
 
       {toastMessage && (
-        <div className="fixed bottom-24 left-1/2 z-50 motion-toast-enter">
-          <div className="bg-[#030D2E] text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2 border border-slate-200/10">
-            <span className="text-[14px] font-bold">{toastMessage}</span>
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-[400px] pointer-events-none motion-toast-enter">
+          <div className="bg-[#030D2E] text-white px-5 py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 border border-slate-200/10">
+            <span className="text-[14px] font-bold text-center leading-snug">{toastMessage}</span>
           </div>
         </div>
       )}
@@ -776,6 +761,18 @@ function App() {
           onClose={() => setIsAppInboxOpen(false)}
           token={activeToken}
           requests={pendingRequests}
+        />
+      )}
+
+      {isCreatingTrip && (
+        <TripForm
+          isOpen={isCreatingTrip}
+          onClose={() => setIsCreatingTrip(false)}
+          onSaved={(id) => {
+            setIsCreatingTrip(false);
+            setSuccessToast(id);
+            setTimeout(() => setSuccessToast(null), 4000);
+          }}
         />
       )}
 

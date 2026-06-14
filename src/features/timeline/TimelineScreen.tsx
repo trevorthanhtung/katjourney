@@ -29,7 +29,7 @@ import {
 import { db, EventItem, Trip, Expense } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { classNames, daysBetween, formatDate, today, getTripTiming } from "../../utils/helpers";
-import { BottomSheet, FormActions, Input, Textarea, Select, DeleteConfirmModal } from "../../components/ui";
+import { BottomSheet, FormActions, Input, Textarea, Select, TimePicker, DeleteConfirmModal } from "../../components/ui";
 import { BackupPlansSheet } from "./BackupPlansSheet";
 import { TimelineCalendarView } from "./TimelineCalendarView";
 import { getEmbedMapUrl } from "../../utils/mapUtils";
@@ -465,26 +465,30 @@ function EventForm({
           )}
         </div>
         
-        <Input 
-          label={
-            <span className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4 text-slate-500" />
-              Giờ khởi hành / thời gian
-            </span>
-          } 
-          type="time" 
-          value={form.time} 
-          onChange={(time) => setForm({ ...form, time })} 
-        />
+        <TimePicker 
+            label={
+              <span className="flex items-center gap-1.5">
+                <Clock className="h-4 w-4 text-slate-500" />
+                Giờ khởi hành / thời gian
+              </span>
+            } 
+            value={form.time} 
+            onChange={(time) => setForm({ ...form, time })} 
+          />
       </div>
 
       {/* Location and Map link */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="flex flex-col gap-4">
         <Input 
           label={
-            <span className="flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 text-slate-500" />
-              Địa điểm
+            <span className="flex flex-col gap-1">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4 text-slate-500" />
+                Địa điểm
+              </span>
+              <span className="text-xs font-normal text-slate-400">
+                Nhập tên địa điểm, hệ thống sẽ tự động tìm kiếm trên Google Maps.
+              </span>
             </span>
           } 
           value={form.location} 
@@ -493,9 +497,14 @@ function EventForm({
         />
         <Input 
           label={
-            <span className="flex items-center gap-1.5">
-              <Map className="h-4 w-4 text-slate-500" />
-              Link bản đồ
+            <span className="flex flex-col gap-1">
+              <span className="flex items-center gap-1.5">
+                <Map className="h-4 w-4 text-slate-500" />
+                Link bản đồ (Tuỳ chọn)
+              </span>
+              <span className="text-xs font-normal text-slate-400">
+                Chỉ cần điền nếu địa điểm quá khó tìm và hệ thống nhận diện sai.
+              </span>
             </span>
           } 
           value={form.mapLink} 
@@ -716,9 +725,9 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
           <button
             type="button"
             onClick={() => setIsDayPickerOpen(true)}
-            className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border border-slate-200 bg-white text-[#00BFB7] hover:bg-slate-50 shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer"
+            className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer"
           >
-            <CalendarDays className="w-3.5 h-3.5 text-[#00BFB7]" />
+            <CalendarDays className="w-3.5 h-3.5 text-slate-600" />
             <span>Xem thêm ({days.length - 4})</span>
           </button>
         )}
@@ -851,7 +860,7 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
               className="scroll-mt-[180px] sticky top-[115px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-primary-light text-kat-primary font-black text-[14px] shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 font-black text-[14px] shadow-sm">
                   <GitBranch className="w-5 h-5" />
                 </div>
                 <div>
@@ -922,7 +931,7 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
           {!isReadOnly && (
             <button 
               onClick={() => openNewForm()}
-              className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-[#030D2E] text-white px-4 py-2 text-[13.5px] font-extrabold shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all h-10 motion-press"
+              className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-[#030D2E] text-white px-4 py-2 text-[13.5px] font-extrabold shadow-[0_4px_14px_rgba(3,13,46,0.18)] hover:bg-[#030D2E]/90 active:scale-95 transition-all h-10 motion-press"
             >
               <Plus className="h-4 w-4" strokeWidth={2.5} />
               Thêm lịch trình
@@ -942,7 +951,7 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
       {!isReadOnly && (
         <button
           onClick={() => openNewForm()}
-          className="md:hidden fixed bottom-[96px] right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-kat-primary/10 border border-kat-primary/30 text-kat-primary shadow-floating motion-press hover:scale-105 duration-200"
+          className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
           style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
           aria-label="Thêm lịch trình"
         >
@@ -973,15 +982,6 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
                   </div>
                   <h4 className="text-[15px] font-bold text-kat-text">Chưa có mục lịch trình nào</h4>
                   <p className="mt-1 text-[13.5px] text-kat-muted font-medium max-w-sm">Thêm điểm đến, thời gian di chuyển hoặc việc cần làm để hành trình rõ ràng hơn.</p>
-                  {!isReadOnly && (
-                    <button 
-                      onClick={() => openNewForm()}
-                      className="mt-4 inline-flex items-center gap-1.5 rounded-2xl bg-[#030D2E] px-4 py-2 text-[13px] font-bold text-white hover:bg-[#030D2E]/90 transition-all motion-press"
-                    >
-                      <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
-                      Thêm mục lịch trình đầu tiên
-                    </button>
-                  )}
                 </div>
               </div>
             </div>

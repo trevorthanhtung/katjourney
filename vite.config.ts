@@ -45,5 +45,19 @@ export default defineConfig({
   ],
   esbuild: {
     drop: ['console', 'debugger'],
+  },
+  build: {
+    chunkSizeWarningLimit: 1400,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          firebase: ["firebase/app", "firebase/auth", "firebase/firestore"],
+          i18n: ["i18next", "i18next-browser-languagedetector", "react-i18next"],
+          documents: ["jspdf", "xlsx", "exceljs"],
+          ui: ["lucide-react"],
+        },
+      },
+    },
   }
 });

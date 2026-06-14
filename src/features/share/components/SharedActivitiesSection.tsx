@@ -21,7 +21,8 @@ import { EventItem, Member } from '../../../db';
 import { classNames, formatDate } from '../../../utils/helpers';
 import { getEmbedMapUrl } from '../../../utils/mapUtils';
 import { submitChangeRequest } from '../../../services/sharedTripRequestService';
-import { BottomSheet, Input, Textarea, Select } from '../../../components/ui';
+import { showToast } from '../../../components/ui/ToastManager';
+import { BottomSheet, Input, Textarea, Select, DatePicker, TimePicker, DeleteConfirmModal } from '../../../components/ui';
 import { User, UserRoundCheck } from 'lucide-react';
 
 const ACTIVITY_CATEGORIES = [
@@ -51,6 +52,7 @@ export function SharedActivitiesSection({
 }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [form, setForm] = useState({ 
     title: '', 
@@ -59,8 +61,7 @@ export function SharedActivitiesSection({
     location: '', 
     notes: '', 
     mapLink: '', 
-    type: 'other',
-    assignee: ''
+    type: 'other'
   });
 
   const isRequestEdit = mode === 'request_edit';
@@ -114,8 +115,7 @@ export function SharedActivitiesSection({
       location: '', 
       notes: '', 
       mapLink: '', 
-      type: 'other',
-      assignee: ''
+      type: 'other'
     });
     setIsFormOpen(true);
     setEditingId(null);
@@ -135,8 +135,7 @@ export function SharedActivitiesSection({
       location: item.location || '',
       notes: item.notes || '',
       mapLink: item.mapLink || '',
-      type: item.type || 'other',
-      assignee: item.assignee || ''
+      type: item.type || 'other'
     });
     setEditingId(String(item.id));
     setIsFormOpen(true);
@@ -144,7 +143,7 @@ export function SharedActivitiesSection({
 
   async function handleSave() {
     if (!form.title.trim() || !form.date) {
-      alert('Vui lòng nhập tên hoạt động và chọn ngày.');
+      showToast('Vui lòng nhập tên hoạt động và chọn ngày.', 'error');
       return;
     }
     
@@ -158,7 +157,7 @@ export function SharedActivitiesSection({
           requesterName: guestName
         });
         setIsFormOpen(false);
-        alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+        showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
       } else {
         const currentItem = activities.find(a => String(a.id) === editingId);
         await submitChangeRequest(token, {
@@ -171,29 +170,31 @@ export function SharedActivitiesSection({
         });
         setEditingId(null);
         setIsFormOpen(false);
-        alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+        showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
       }
     } catch (e: any) {
       console.error(e);
-      alert('Lỗi khi gửi đề xuất: ' + e.message);
+      showToast('Lỗi khi gửi đề xuất: ' + e.message, 'error');
     }
   }
 
   async function handleDelete(id: string) {
-    if (confirm('Bạn muốn đề xuất xóa hoạt động này?')) {
-      try {
-        const currentItem = activities.find(a => String(a.id) === id);
-        await submitChangeRequest(token, {
-          section: 'activities',
-          action: 'delete',
-          targetId: id,
-          before: currentItem as any,
-          requesterName: guestName
-        });
-        alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
-      } catch (e: any) {
-        alert('Lỗi khi gửi đề xuất: ' + e.message);
-      }
+    setDeleteTargetId(id);
+  }
+
+  async function executeDelete(id: string) {
+    try {
+      const currentItem = activities.find(a => String(a.id) === id);
+      await submitChangeRequest(token, {
+        section: 'activities',
+        action: 'delete',
+        targetId: id,
+        before: currentItem as any,
+        requesterName: guestName
+      });
+      showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+    } catch (e: any) {
+      showToast('Lỗi khi gửi đề xuất: ' + e.message, 'error');
     }
   }
 
@@ -386,10 +387,10 @@ export function SharedActivitiesSection({
       {isRequestEdit && (
         <button 
           onClick={startAdd} 
-          className="mt-6 flex h-11 w-full items-center justify-center gap-1.5 text-[14px] font-bold text-kat-primary border-2 border-dashed border-slate-200 hover:border-kat-primary/40 hover:bg-slate-50/50 rounded-xl transition-all"
+          className="mt-6 flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-[#FFFDF8] hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
           title="Đề xuất thêm"
         >
-          <Plus className="h-4 w-4" /> Đề xuất thêm
+          <Plus className="h-4.5 w-4.5" /> Đề xuất thêm
         </button>
       )}
 
@@ -407,12 +408,12 @@ export function SharedActivitiesSection({
             label={
               <span className="flex items-center gap-1.5">
                 <Type className="h-4 w-4 text-slate-500" />
-                Tên hoạt động *
+                Tên mục lịch trình *
               </span>
             }
             value={form.title}
             onChange={val => setForm({ ...form, title: val })}
-            placeholder="VD: Ăn trưa tại quán ngon, Di chuyển đến khách sạn..."
+            placeholder="VD: Ăn trưa tại quán địa phương"
           />
 
           {/* Category Selector Grid */}
@@ -443,49 +444,57 @@ export function SharedActivitiesSection({
           </div>
 
           {/* Date & Time Selectors */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label={
-                <span className="flex items-center gap-1.5">
-                  <CalendarDays className="h-4 w-4 text-slate-500" />
-                  Ngày thực hiện *
-                </span>
-              }
-              type="date"
-              value={form.date}
-              onChange={val => setForm({ ...form, date: val })}
-            />
-            <Input
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <DatePicker
+                label={
+                  <span className="flex items-center gap-1.5">
+                    <CalendarDays className="h-4 w-4 text-slate-500" />
+                    Ngày thực hiện *
+                  </span>
+                }
+                value={form.date}
+                onChange={val => setForm({ ...form, date: val })}
+              />
+            <TimePicker
               label={
                 <span className="flex items-center gap-1.5">
                   <Clock className="h-4 w-4 text-slate-500" />
                   Giờ khởi hành / thời gian
                 </span>
               }
-              type="time"
               value={form.time}
               onChange={val => setForm({ ...form, time: val })}
             />
           </div>
 
           {/* Location & Map Link */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-4">
             <Input
               label={
-                <span className="flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-slate-500" />
-                  Địa điểm
+                <span className="flex flex-col gap-1">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4 text-slate-500" />
+                    Địa điểm
+                  </span>
+                  <span className="text-xs font-normal text-slate-400">
+                    Nhập tên địa điểm, hệ thống sẽ tự động tìm kiếm trên Google Maps.
+                  </span>
                 </span>
               }
               value={form.location}
               onChange={val => setForm({ ...form, location: val })}
-              placeholder="Ví dụ: Nhà hàng Sen Tây Hồ, Hà Nội..."
+              placeholder="Ví dụ: Bãi Trước, Vũng Tàu"
             />
             <Input
               label={
-                <span className="flex items-center gap-1.5">
-                  <Map className="h-4 w-4 text-slate-500" />
-                  Link bản đồ
+                <span className="flex flex-col gap-1">
+                  <span className="flex items-center gap-1.5">
+                    <Map className="h-4 w-4 text-slate-500" />
+                    Link bản đồ (Tuỳ chọn)
+                  </span>
+                  <span className="text-xs font-normal text-slate-400">
+                    Chỉ cần điền nếu địa điểm quá khó tìm và hệ thống nhận diện sai.
+                  </span>
                 </span>
               }
               value={form.mapLink}
@@ -507,34 +516,6 @@ export function SharedActivitiesSection({
             placeholder="Mô tả chi tiết hoặc lưu ý cho hoạt động này..."
           />
 
-          <div className="space-y-1.5">
-            <label className="text-[13px] font-bold text-slate-700 flex items-center gap-1.5">
-              <UserRoundCheck className="h-4 w-4 text-slate-500" />
-              Thành viên phụ trách
-            </label>
-            {(!members || members.length === 0) ? (
-              <div className="rounded-[16px] bg-[#FAF7F1] border border-kat-border/60 p-3 flex items-start gap-2.5">
-                <User className="h-4 w-4 text-slate-500 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-[12.5px] font-bold text-slate-800">Chưa có người đồng hành</h4>
-                  <p className="text-[11.5px] text-slate-500 mt-0.5 font-bold">Thêm thành viên vào chuyến đi để có thể phân công.</p>
-                </div>
-              </div>
-            ) : (
-              <Select
-                label=""
-                value={form.assignee}
-                onChange={(assignee) => setForm({ ...form, assignee })}
-                options={[
-                  "", 
-                  ...(form.assignee && !members.some(m => m.name === form.assignee) ? [form.assignee] : []),
-                  ...members.map(m => m.name)
-                ]}
-                placeholder="Chọn người đồng hành"
-              />
-            )}
-          </div>
-
           <button
             onClick={handleSave}
             className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
@@ -543,6 +524,20 @@ export function SharedActivitiesSection({
           </button>
         </div>
       </BottomSheet>
+
+      <DeleteConfirmModal
+        isOpen={deleteTargetId !== null}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={async () => {
+          if (!deleteTargetId) return;
+          await executeDelete(deleteTargetId);
+          setDeleteTargetId(null);
+        }}
+        title="Đề xuất xóa hoạt động?"
+        description="Bạn đang gửi đề xuất xóa hoạt động này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
+        confirmLabel="Đề xuất xóa"
+        itemName={activities.find(a => String(a.id) === deleteTargetId)?.title}
+      />
     </section>
   );
 }
