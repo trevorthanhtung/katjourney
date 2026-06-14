@@ -251,8 +251,8 @@ export function HomeScreen({
                     </span>
                   </div>
                 </div>
-                <div className="w-px h-10 bg-white/20 mx-1 hidden sm:block" />
-                <div className="flex flex-col text-right hidden sm:flex whitespace-nowrap">
+                <div className="w-px h-10 bg-white/20 mx-1" />
+                <div className="flex flex-col text-right whitespace-nowrap">
                   <span className="text-[11px] font-bold text-white/90">
                     Cao: {Math.round(forecast.temperature_2m_max[0])}°
                   </span>
