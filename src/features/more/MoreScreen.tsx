@@ -2581,11 +2581,13 @@ export function MoreScreen({
       <BottomSheet 
         isOpen={isArchiveConfirmOpen} 
         onClose={() => setIsArchiveConfirmOpen(false)} 
-        title="Kết thúc chuyến đi?"
+        title="Đóng gói kỷ niệm?"
       >
         <div className="space-y-5">
-          <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-[13.5px] text-amber-800 font-semibold leading-relaxed">
-            Chuyến đi sẽ được lưu trữ vào <b>Archive</b> và chuyển sang chế độ <b>"Chỉ xem" (Read-only)</b>. Bạn không thể thay đổi dữ liệu trừ khi khôi phục lại.
+          <div className="rounded-[20px] bg-slate-50 border border-slate-200/60 p-5 text-[14px] text-slate-600 font-medium leading-relaxed relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-[#030D2E] rounded-l-[20px]" />
+            Hành trình này sẽ được đóng gói và đưa vào góc <b className="text-[#030D2E]">Kỷ niệm</b>. 
+            Mọi dữ liệu sẽ được chuyển sang chế độ <b className="text-[#030D2E]">chỉ xem</b> để lưu giữ nguyên vẹn những khoảnh khắc của bạn.
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
@@ -2602,13 +2604,13 @@ export function MoreScreen({
                 setIsArchiveConfirmOpen(false);
                 if (trip.id) {
                   await archiveTrip(trip.id);
-                  onShowToast?.("Đã kết thúc chuyến đi và đưa vào lưu trữ.");
+                  onShowToast?.("Đã kết thúc chuyến đi và đưa vào kỷ niệm.");
                 }
               }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-slate-800 border border-slate-700 px-6 font-bold text-white hover:bg-slate-900 active:scale-98 transition-all duration-200 shadow-sm"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-[#030D2E] border border-[#030D2E] px-6 font-bold text-white hover:bg-[#030D2E]/90 active:scale-98 transition-all duration-200 shadow-[0_8px_24px_-8px_rgba(3,13,46,0.4)]"
             >
-              <Lock className="h-5 w-5" />
-              Đồng ý kết thúc
+              <Lock className="h-5 w-5 opacity-80" />
+              Đồng ý đóng gói
             </button>
           </div>
         </div>
@@ -2618,11 +2620,12 @@ export function MoreScreen({
       <BottomSheet 
         isOpen={isUnarchiveConfirmOpen} 
         onClose={() => setIsUnarchiveConfirmOpen(false)} 
-        title="Khôi phục chuyến đi?"
+        title="Mở khóa chuyến đi?"
       >
         <div className="space-y-5">
-          <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 text-[13.5px] text-emerald-800 font-semibold leading-relaxed">
-            Chuyến đi sẽ được mở khóa. Bạn có thể tiếp tục thêm sự kiện, chi phí và viết nhật ký như bình thường.
+          <div className="rounded-[20px] bg-emerald-50/80 border border-emerald-100 p-5 text-[14px] text-emerald-800 font-medium leading-relaxed relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 rounded-l-[20px]" />
+            Chuyến đi sẽ được <b className="text-emerald-700">mở khóa trở lại</b>. Bạn có thể tiếp tục lên lịch trình, ghi chép nhật ký và quản lý chi phí như bình thường.
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
@@ -2639,13 +2642,13 @@ export function MoreScreen({
                 setIsUnarchiveConfirmOpen(false);
                 if (trip.id) {
                   await unarchiveTrip(trip.id);
-                  onShowToast?.("Đã khôi phục chuyến đi.");
+                  onShowToast?.("Đã mở khóa chuyến đi.");
                 }
               }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-emerald-600 border border-emerald-500 px-6 font-bold text-white hover:bg-emerald-700 active:scale-98 transition-all duration-200 shadow-sm"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-emerald-600 border border-emerald-500 px-6 font-bold text-white hover:bg-emerald-700 active:scale-98 transition-all duration-200 shadow-[0_8px_24px_-8px_rgba(5,150,105,0.4)]"
             >
-              <Unlock className="h-5 w-5" />
-              Đồng ý khôi phục
+              <Unlock className="h-5 w-5 opacity-80" />
+              Tiếp tục hành trình
             </button>
           </div>
         </div>
