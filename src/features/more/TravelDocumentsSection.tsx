@@ -597,7 +597,7 @@ export function TravelDocumentsSection({
         {!isReadOnly && documents.length > 0 && (
           <button
             onClick={openNewForm}
-            className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-5 text-[13.5px] font-bold hover:brightness-105 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center"
+            className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white px-5 text-[13.5px] font-bold hover:bg-[#030D2E]/90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center"
           >
             <Plus className="h-4 w-4" strokeWidth={2.5} />
             <span>Thêm giấy tờ</span>
@@ -654,7 +654,7 @@ export function TravelDocumentsSection({
           </p>
           <button 
             onClick={openNewForm}
-            className="flex items-center justify-center gap-1.5 rounded-2xl bg-kat-primary/10 border border-kat-primary/25 px-5 py-2.5 text-[13.5px] font-bold text-kat-text hover:bg-kat-primary/20 motion-press shadow-sm"
+            className="flex items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] border border-[#030D2E]/25 px-5 py-2.5 text-[13.5px] font-bold text-white hover:bg-[#030D2E]/90 motion-press shadow-sm"
           >
             <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
             Thêm giấy tờ đầu tiên
