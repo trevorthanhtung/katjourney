@@ -102,106 +102,6 @@ function SegmentedControl<T extends string>({
   );
 }
 
-// ─── Appearance + Language Block ────────────────────────────────────────────
-const LANG_CODES: Record<string, string> = { vi: "VI", en: "EN", ja: "JP", zh: "CN" };
-const LANG_OPTIONS = [
-  { value: "vi", code: "VI", full: "Tiếng Việt" },
-  { value: "en", code: "EN", full: "English" },
-  { value: "ja", code: "JP", full: "\u65e5\u672c\u8a9e" },
-  { value: "zh", code: "CN", full: "\u4e2d\u6587" },
-];
-const THEME_OPTIONS: { value: Theme; labelKey: string; Icon: React.ElementType }[] = [
-  { value: "light",  labelKey: "theme_light",  Icon: Sun     },
-  { value: "dark",   labelKey: "theme_dark",   Icon: Moon    },
-  { value: "system", labelKey: "theme_system", Icon: Monitor },
-];
-
-function AppearanceLanguageBlock() {
-  const { t } = useTranslation();
-  const { theme, setTheme } = useTheme();
-  const [themeOpen, setThemeOpen] = React.useState(false);
-
-  const currentLang = i18n.language.split("-")[0];
-  const currentLangLabel = LANG_OPTIONS.find((o) => o.value === currentLang)?.full ?? "Tiếng Việt";
-  const currentThemeOpt = THEME_OPTIONS.find((o) => o.value === theme) ?? THEME_OPTIONS[0];
-
-  const cycleLang = () => {
-    const order = ["vi", "en", "ja", "zh"];
-    const next = order[(order.indexOf(currentLang) + 1) % order.length];
-    i18n.changeLanguage(next);
-  };
-
-  const cardBase = "rounded-[20px] bg-slate-50 border border-slate-100 overflow-hidden";
-
-  return (
-    <>
-      {/* Language — badge cycle */}
-      <div className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100">
-        <div className="flex items-center gap-3.5">
-          <div>
-            <h4 className="text-[15px] font-bold text-slate-800">Ngôn ngữ</h4>
-            <p className="text-[12px] text-slate-400 font-medium">{currentLangLabel}</p>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={cycleLang}
-          className="text-[13px] font-black text-slate-700 bg-slate-200/80 hover:bg-slate-300/70 active:scale-95 px-3.5 py-1.5 rounded-full border border-slate-200 transition-all focus:outline-none min-w-[44px] text-center"
-        >
-          {LANG_CODES[currentLang] ?? "VI"}
-        </button>
-      </div>
-
-      {/* Theme — accordion */}
-      <div className={cardBase}>
-        <button
-          type="button"
-          onClick={() => setThemeOpen(!themeOpen)}
-          className="flex items-center justify-between w-full p-4 text-left hover:bg-slate-100/70 transition-all focus:outline-none"
-        >
-          <div className="flex items-center gap-3.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-50 text-violet-600 border border-violet-100">
-              <Palette className="h-5 w-5" />
-            </div>
-            <div>
-              <h4 className="text-[15px] font-bold text-slate-800">Giao diện</h4>
-              <p className="text-[12px] text-slate-400 font-medium">{t(currentThemeOpt.labelKey)}</p>
-            </div>
-          </div>
-          <ChevronDown className={["h-5 w-5 text-slate-400 transition-transform duration-200", themeOpen ? "rotate-180" : ""].join(" ")} />
-        </button>
-
-        {themeOpen && (
-          <div className="px-4 pb-4 border-t border-slate-100">
-            <div className="flex gap-2 pt-3">
-              {THEME_OPTIONS.map((opt) => {
-                const Icon = opt.Icon;
-                const active = theme === opt.value;
-                return (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => setTheme(opt.value)}
-                    className={[
-                      "flex flex-1 flex-col items-center gap-1.5 py-3 rounded-2xl text-[12.5px] font-bold transition-all active:scale-95 border",
-                      active
-                        ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
-                        : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50",
-                    ].join(" ")}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {t(opt.labelKey)}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
-
 
 export function SettingsSheet({ isOpen, onClose, initialView, syncProps }: SettingsSheetProps) {
   const { user, loading: authLoading, provider, isAuthenticated } = useAuth();
@@ -564,11 +464,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps }: Setti
         {view === "menu" && (
           <div className="flex flex-col gap-2">
 
-            {/* Appearance & Language */}
-            <AppearanceLanguageBlock />
 
-            {/* divider */}
-            <div className="my-1 border-t border-slate-100" />
 
             {/* Privacy */}
             <button
