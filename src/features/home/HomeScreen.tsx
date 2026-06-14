@@ -182,7 +182,7 @@ export function HomeScreen({
       <div className="mb-6 relative overflow-hidden rounded-3xl shadow-sm border border-slate-100 group transition-all duration-300">
         <div className="absolute inset-0 z-0" style={{ background: getWeatherGradient(currentCode) }} />
         
-        <div className="relative z-10 flex flex-col md:flex-row p-6 md:p-8 justify-between gap-6">
+        <div className="relative z-10 flex flex-col md:flex-row p-5 md:p-8 justify-between gap-5 md:gap-6">
           <div className="flex flex-col items-start text-left max-w-2xl w-full md:w-auto flex-1">
             <p className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-[11px] font-bold tracking-wider text-white shadow-sm backdrop-blur-md border border-white/20 mb-2">
               {badge}
@@ -211,9 +211,9 @@ export function HomeScreen({
             </div>
           </div>
 
-          <div className="shrink-0 flex items-center justify-start md:justify-end w-full md:w-auto gap-4 mt-2 md:mt-0">
+          <div className="shrink-0 flex items-center justify-start md:justify-end w-auto gap-4 mt-1 md:mt-0">
             {weatherLoading || !forecast ? (
-               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 animate-pulse w-full md:w-auto">
+               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 animate-pulse w-auto">
                  <div className="w-10 h-10 bg-white/20 rounded-xl"></div>
                  <div className="flex flex-col gap-2">
                    <div className="w-16 h-3 bg-white/20 rounded-full"></div>
@@ -221,7 +221,7 @@ export function HomeScreen({
                  </div>
                </div>
             ) : (!trip.location?.trim() && !trip.latitude) ? (
-               <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 w-full md:w-auto">
+               <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 w-auto">
                  <MapPin className="w-6 h-6 text-white/40" />
                  <div className="flex flex-col gap-0.5">
                    <span className="text-white/80 font-bold text-[12px]">Chưa có điểm đến</span>
@@ -229,7 +229,7 @@ export function HomeScreen({
                  </div>
                </div>
             ) : weatherError ? (
-               <div className="flex items-center gap-3 bg-red-500/20 backdrop-blur-md rounded-2xl p-4 border border-red-500/30 w-full md:w-auto">
+               <div className="flex items-center gap-3 bg-red-500/20 backdrop-blur-md rounded-2xl p-4 border border-red-500/30 w-auto">
                  <CloudRainWind className="w-6 h-6 text-white/60" />
                  <div className="flex flex-col gap-1">
                    <span className="text-white font-bold text-[12px]">Không thể tải thời tiết</span>
@@ -237,7 +237,7 @@ export function HomeScreen({
                  </div>
                </div>
             ) : (
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-sm transition-transform hover:scale-[1.02] w-full md:w-auto">
+              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-sm transition-transform hover:scale-[1.02] w-auto">
                 <div className="flex items-center gap-2">
                   <span className="text-4xl md:text-5xl font-black text-white drop-shadow-sm tracking-tighter">
                     {Math.round(forecast.current?.temperature || 20)}°
