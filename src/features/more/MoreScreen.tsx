@@ -1191,7 +1191,7 @@ function MiniStatCard({
   return (
     <div className="rounded-2xl border border-slate-100/60 bg-white p-3.5 shadow-inner flex flex-col justify-center min-h-[72px] transition-all hover:scale-[1.01]">
       <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider leading-none">{label}</span>
-      <span className={classNames("text-[15.5px] font-black mt-1.5 truncate leading-none", colorClass)}>
+      <span className={classNames("text-[15.5px] font-black mt-1.5 truncate leading-tight", colorClass)}>
         {value}
       </span>
     </div>
@@ -1227,7 +1227,7 @@ function ActionCard({
         )}>
           <Icon className="h-5.5 w-5.5" strokeWidth={2.2} />
         </div>
-        <span className={classNames("text-base font-medium truncate leading-none", titleClassName)}>
+        <span className={classNames("text-base font-medium truncate leading-tight", titleClassName)}>
           {title}
         </span>
       </div>
@@ -2141,7 +2141,7 @@ export function MoreScreen({
                       <div className="flex shrink-0 h-10 w-10 items-center justify-center rounded-xl border bg-indigo-50 text-indigo-600 border-indigo-100">
                         <ArchiveRestore className="h-5.5 w-5.5" strokeWidth={2.2} />
                       </div>
-                      <span className="text-base font-medium text-[#030D2E] truncate leading-none">
+                      <span className="text-base font-medium text-[#030D2E] truncate leading-tight">
                         {importing ? "Đang nhập..." : "Khôi phục hành trình"}
                       </span>
                     </div>
