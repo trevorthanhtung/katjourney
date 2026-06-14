@@ -928,66 +928,67 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
   return (
     <div className="mx-auto max-w-[1120px] px-1 md:px-0">
       
-      {/* Sticky Header Block */}
-      <div className="sticky top-0 z-30 -mx-4 px-4 py-3 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-slate-200/50 mb-6 shadow-sm md:mx-0 md:px-0 md:rounded-b-2xl">
-        <div className="flex items-center justify-between gap-4 mb-3">
-          <div>
-            <h2 className="text-xl md:text-2xl font-black text-[#030D2E] leading-none">Lịch trình</h2>
-            <p className="hidden md:block mt-1 text-[13.5px] font-medium text-slate-500">
-              Sắp xếp từng điểm dừng để hành trình rõ ràng và trọn vẹn hơn.
-            </p>
+      {/* Title Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h2 className="text-[32px] font-black tracking-tight text-[#030D2E]">Lịch trình</h2>
+          <p className="mt-1 text-[15px] font-bold text-slate-500">
+            Sắp xếp từng điểm dừng để hành trình rõ ràng và trọn vẹn hơn.
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <div className="flex bg-[#E8E1D8]/40 p-1 rounded-xl">
+            <button 
+              onClick={() => setViewMode("list")}
+              className={classNames(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press",
+                viewMode === "list" ? "bg-white text-[#030D2E] shadow-sm" : "text-slate-500 hover:text-[#030D2E]"
+              )}
+            >
+              Danh sách
+            </button>
+            <button 
+              onClick={() => setViewMode("calendar")}
+              className={classNames(
+                "flex items-center justify-center w-9 h-8 rounded-lg transition-all motion-press",
+                viewMode === "calendar" ? "bg-white text-[#030D2E] shadow-sm" : "text-slate-500 hover:text-[#030D2E]"
+              )}
+              aria-label="Xem dạng lịch"
+            >
+              <CalendarDays className="h-4.5 w-4.5" />
+            </button>
           </div>
           
-          {/* Desktop CTA docked in header */}
-          <div className="flex items-center gap-3">
-            <div className="flex bg-[#E8E1D8]/40 p-1 rounded-xl">
-              <button 
-                onClick={() => setViewMode("list")}
-                className={classNames(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press",
-                  viewMode === "list" ? "bg-white text-[#030D2E] shadow-sm" : "text-slate-500 hover:text-slate-700"
-                )}
-              >
-                <span>Danh sách</span>
-              </button>
-              <button 
-                onClick={() => setViewMode("calendar")}
-                className={classNames(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press",
-                  viewMode === "calendar" ? "bg-white text-[#030D2E] shadow-sm" : "text-slate-500 hover:text-slate-700"
-                )}
-              >
-                <CalendarDays className="w-4 h-4" />
-                <span className="hidden sm:inline">Lịch</span>
-              </button>
-            </div>
-            
-            {!isReadOnly && (
-              <button
-                onClick={() => openNewForm()}
-                className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-[#00BFB7] text-[#030D2E] px-4 py-2 text-[13.5px] font-extrabold shadow-sm hover:brightness-105 active:scale-95 transition-all h-10 motion-press"
-              >
-                <Plus className="h-4 w-4" strokeWidth={2.5} />
-                Thêm lịch trình
-              </button>
-            )}
-          </div>
+          {!isReadOnly && (
+            <button 
+              onClick={() => openNewForm()}
+              className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-[#00BFB7] text-[#030D2E] px-4 py-2 text-[13.5px] font-extrabold shadow-sm hover:brightness-105 active:scale-95 transition-all h-10 motion-press"
+            >
+              <Plus className="h-4 w-4" strokeWidth={2.5} />
+              Thêm lịch trình
+            </button>
+          )}
         </div>
-
-        {/* Day Navigation Tabs selection bar */}
-        {viewMode === "list" && renderDayNav()}
       </div>
+
+      {/* Sticky Day Nav Block */}
+      {viewMode === "list" && days.length > 1 && (
+        <div className="sticky top-0 z-30 -mx-4 px-4 py-3 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-slate-200/50 mb-6 shadow-sm md:mx-0 md:px-0 md:rounded-b-2xl">
+          {renderDayNav()}
+        </div>
+      )}
 
       {/* Global Add FAB (Mobile only) */}
       {!isReadOnly && (
-        <div className="fixed bottom-[84px] right-4 z-40 md:hidden">
-          <button
-            onClick={() => openNewForm()}
-            className="flex h-14 w-14 items-center justify-center rounded-full bg-kat-primary/10 border border-kat-primary/30 text-kat-primary shadow-floating motion-press hover:scale-105 duration-200"
-          >
-            <Plus className="h-6 w-6" strokeWidth={2.5} />
-          </button>
-        </div>
+        <button
+          onClick={() => openNewForm()}
+          className="md:hidden fixed bottom-[96px] right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-kat-primary/10 border border-kat-primary/30 text-kat-primary shadow-floating motion-press hover:scale-105 duration-200"
+          style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
+          aria-label="Thêm lịch trình"
+        >
+          <Plus className="h-6 w-6" strokeWidth={2.5} />
+        </button>
       )}
 
       {/* Grid Layout */}
