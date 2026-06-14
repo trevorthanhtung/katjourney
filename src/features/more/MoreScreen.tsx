@@ -11,7 +11,8 @@ import {
   Sparkles, 
   Table2, 
   Trash2, 
-  Upload, 
+  Upload,
+  RefreshCw,
   Users, 
   MapPin, 
   Calendar, 
@@ -1464,6 +1465,7 @@ export function MoreScreen({
   // Cloud share states
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [shareLoading, setShareLoading] = useState(false);
+  const [syncLoading, setSyncLoading] = useState(false);
   const [shareOptions, setShareOptions] = useState({
     includeExpenses: true,
     includeJournals: true,
@@ -1512,6 +1514,25 @@ export function MoreScreen({
       console.error(e);
     } finally {
       setShareLoading(false);
+    }
+  }
+
+  async function handleSyncLink() {
+    if (!activeShareLink) return;
+    try {
+      setSyncLoading(true);
+      const { updateShareLink } = await import("../../services/cloudShareService");
+      await updateShareLink(trip.id!, activeShareLink.token, {
+        ...shareOptions,
+        mode: "request_edit",
+        sharePin: shareOptions.usePinProtection && shareOptions.sharePin.length === 4 ? shareOptions.sharePin : undefined
+      });
+      alert("Đã đồng bộ dữ liệu chia sẻ.");
+    } catch (e: any) {
+      alert("Lỗi khi đồng bộ dữ liệu. Vui lòng thử lại sau.");
+      console.error(e);
+    } finally {
+      setSyncLoading(false);
     }
   }
 
@@ -2492,13 +2513,22 @@ export function MoreScreen({
               </div>
 
               {/* Success actions */}
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-col sm:flex-row">
                 <button
                   type="button"
                   onClick={() => setIsShareModalOpen(false)}
                   className="flex-1 rounded-xl border border-slate-200 bg-white py-3 font-bold text-slate-700 hover:bg-slate-50 transition-colors min-h-[44px] text-[13.5px] focus:outline-none"
                 >
                   Đóng
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSyncLink}
+                  disabled={syncLoading}
+                  className="flex-[2] rounded-xl bg-[#030D2E]/10 border border-[#030D2E]/20 py-3 font-bold text-[#030D2E] hover:bg-[#030D2E]/20 active:scale-95 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none flex items-center justify-center gap-1.5"
+                >
+                  <RefreshCw className={classNames("h-4 w-4", syncLoading && "animate-spin")} />
+                  {syncLoading ? "Đang đồng bộ..." : "Đồng bộ dữ liệu"}
                 </button>
                 <button
                   type="button"

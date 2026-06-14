@@ -146,6 +146,87 @@ export async function createShareLink(
 }
 
 /**
+ * Updates an existing share link with current local data.
+ */
+export async function updateShareLink(
+  tripId: number,
+  token: string,
+  options: ShareOptions
+): Promise<void> {
+  await ensureCloudShareReady();
+  const user = await ensureAnonymousUser();
+  const { db } = await initFirebase();
+  const { doc, getDoc, updateDoc, serverTimestamp } = await import('firebase/firestore');
+
+  const shareRef = doc(db, 'publicShares', token);
+  const snap = await getDoc(shareRef);
+  
+  if (!snap.exists() || snap.data().ownerUid !== user.uid) {
+    throw new Error('Bạn không có quyền cập nhật link chia sẻ này.');
+  }
+
+  // 1. Fetch trip data from local Dexie
+  const trip = await localDb.trips.get(tripId);
+  if (!trip) throw new Error('Không tìm thấy chuyến đi cục bộ.');
+
+  const members = await localDb.members.where('tripId').equals(tripId).toArray();
+  const activities = await localDb.events.where('tripId').equals(tripId).toArray();
+  
+  // Conditionally fetch optional data
+  const expenses = options.includeExpenses ? await localDb.expenses.where('tripId').equals(tripId).toArray() : [];
+  const checklist = options.includeChecklist ? await localDb.checklist.where('tripId').equals(tripId).toArray() : [];
+  const journals = options.includeJournals ? await localDb.journals.where('tripId').equals(tripId).toArray() : [];
+  const backupPlans = options.includeBackupPlans ? await localDb.backupPlans.where('tripId').equals(tripId).toArray() : [];
+  const travelDocuments = options.includeDocuments ? await localDb.travelDocuments.where('tripId').equals(tripId).toArray() : [];
+
+  console.log("[CloudShare] Attempting to update parent document...");
+  await updateDoc(shareRef, {
+    mode: options.mode,
+    updatedAt: serverTimestamp(),
+    includeExpenses: options.includeExpenses,
+    includeJournals: options.includeJournals,
+    includeChecklist: options.includeChecklist,
+    includeBackupPlans: options.includeBackupPlans,
+    includeDocuments: options.includeDocuments,
+    sharePin: options.sharePin || null,
+    trip: {
+      id: String(trip.id),
+      name: trip.title,
+      destination: trip.location,
+      startDate: trip.startDate,
+      endDate: trip.endDate,
+      tripType: trip.tripType || "multiDay",
+    }
+  });
+
+  const writes: { ref: any; data: any }[] = [];
+  const timestamp = serverTimestamp();
+  const auditFields = { updatedAt: timestamp, updatedByUid: user.uid };
+  
+  const sanitize = (obj: any) => {
+    const newObj = { ...obj };
+    Object.keys(newObj).forEach(key => {
+      if (newObj[key] === undefined) {
+        delete newObj[key];
+      }
+    });
+    return newObj;
+  };
+
+  members.forEach(m => writes.push({ ref: doc(shareRef, 'members', String(m.id)), data: { ...sanitize(m), ...auditFields } }));
+  activities.forEach(a => writes.push({ ref: doc(shareRef, 'activities', String(a.id)), data: { ...sanitize(a), ...auditFields } }));
+  expenses.forEach(e => writes.push({ ref: doc(shareRef, 'expenses', String(e.id)), data: { ...sanitize(e), ...auditFields } }));
+  checklist.forEach(c => writes.push({ ref: doc(shareRef, 'checklist', String(c.id)), data: { ...sanitize(c), ...auditFields } }));
+  journals.forEach(j => writes.push({ ref: doc(shareRef, 'journals', String(j.id)), data: { ...sanitize(j), ...auditFields } }));
+  backupPlans.forEach(b => writes.push({ ref: doc(shareRef, 'backupPlans', String(b.id)), data: { ...sanitize(b), ...auditFields } }));
+  travelDocuments.forEach(d => writes.push({ ref: doc(shareRef, 'travelDocuments', String(d.id)), data: { ...sanitize(d), ...auditFields } }));
+
+  console.log("[CloudShare] Attempting to commit subcollections updates...");
+  await commitBatchedWritesInChunks(db, writes);
+  console.log("[CloudShare] Subcollections updates committed successfully.");
+}
+
+/**
  * Revokes an existing share link by setting revoked = true.
  */
 export async function revokeShareLink(tripId: number, token: string): Promise<void> {
