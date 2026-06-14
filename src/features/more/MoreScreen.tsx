@@ -534,9 +534,14 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
               setForm((f) => ({ ...f, location: display, latitude: result.latitude, longitude: result.longitude }));
             }}
           />
-          {form.latitude && form.longitude && (
-            <p className="mt-1.5 px-1 text-[11.5px] font-medium text-emerald-600 flex items-center gap-1">
-              <Check className="h-3 w-3" /> Đã xác định tọa độ — thời tiết sẽ hiển thị chính xác
+          {form.latitude && form.longitude ? (
+            <p className="mt-1.5 px-1 text-[11.5px] font-bold text-emerald-600 flex items-center gap-1 animate-fadeIn">
+              <Check className="h-3.5 w-3.5" /> Khớp tọa độ thành công — Thời tiết đã tự động kết nối!
+            </p>
+          ) : (
+            <p className="mt-1.5 px-1 text-[11.5px] font-semibold text-slate-500 leading-normal flex items-start gap-1">
+              <span className="text-amber-500 font-extrabold text-[12px] leading-none mt-0.5 shrink-0">💡</span>
+              <span>Chọn từ danh sách gợi ý khi gõ để tự động hiển thị dự báo thời tiết cho chuyến đi nhé.</span>
             </p>
           )}
         </div>
