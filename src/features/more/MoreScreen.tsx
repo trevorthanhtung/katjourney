@@ -1724,7 +1724,7 @@ export function MoreScreen({
             </div>
           </div>
           <button 
-            className="flex h-11 sm:h-12 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] px-5 text-[14px] font-black text-[#030D2E] transition-all hover:brightness-105 active:scale-[0.98] shadow-sm w-full sm:w-auto shrink-0"
+            className="flex h-11 sm:h-12 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] px-5 text-[14px] font-black text-white transition-all hover:bg-[#030D2E]/90 active:scale-[0.98] shadow-sm w-full sm:w-auto shrink-0"
             onClick={openNewMember}
           >
             <UserPlus className="w-4.5 h-4.5" strokeWidth={2.5} />
@@ -2454,7 +2454,7 @@ export function MoreScreen({
                   type="button"
                   onClick={handleCreateLink}
                   disabled={shareLoading || (shareOptions.usePinProtection && shareOptions.sharePin.length < 4)}
-                  className="flex-[2] rounded-xl bg-kat-primary py-3 font-bold text-white hover:brightness-105 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none"
+                  className="flex-[2] rounded-xl bg-[#030D2E] py-3 font-bold text-white hover:bg-[#030D2E]/90 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none"
                 >
                   {shareLoading ? "Đang tạo link..." : "Tạo link chia sẻ"}
                 </button>
