@@ -962,10 +962,6 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-[#030D2E]">Tổng kết hành trình</h2>
-              <span className="inline-flex items-center gap-1 rounded-full bg-kat-primary/10 border border-kat-primary/20 px-2 py-0.5 text-[10px] font-black text-kat-primary uppercase tracking-wider">
-                <Sparkles className="h-3 w-3" />
-                BẢN TỔNG KẾT
-              </span>
             </div>
             <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Nhìn lại những dấu ấn đáng nhớ trong chuyến đi của bạn.</p>
           </div>
@@ -973,9 +969,9 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <button
           onClick={handleExportPdf}
           disabled={isGeneratingPdf}
-          className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-blue-50 border border-blue-200/60 text-blue-600 px-5 text-[13.5px] font-bold hover:bg-blue-100/60 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white px-5 text-[13.5px] font-bold hover:bg-[#030D2E]/90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <FileDown className={classNames("h-4 w-4 text-blue-500", !isGeneratingPdf && "animate-bounce")} />
+          <FileDown className={classNames("h-4 w-4", !isGeneratingPdf && "animate-bounce")} />
           <span>{isGeneratingPdf ? "Đang xuất..." : "Xuất PDF"}</span>
         </button>
       </div>
