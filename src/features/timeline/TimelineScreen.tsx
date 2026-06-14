@@ -922,7 +922,7 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
           {!isReadOnly && (
             <button 
               onClick={() => openNewForm()}
-              className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-[#00BFB7] text-[#030D2E] px-4 py-2 text-[13.5px] font-extrabold shadow-sm hover:brightness-105 active:scale-95 transition-all h-10 motion-press"
+              className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-[#030D2E] text-white px-4 py-2 text-[13.5px] font-extrabold shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all h-10 motion-press"
             >
               <Plus className="h-4 w-4" strokeWidth={2.5} />
               Thêm lịch trình
@@ -976,7 +976,7 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
                   {!isReadOnly && (
                     <button 
                       onClick={() => openNewForm()}
-                      className="mt-4 inline-flex items-center gap-1.5 rounded-2xl bg-[#00BFB7] px-4 py-2 text-[13px] font-bold text-[#030D2E] hover:brightness-105 transition-all motion-press"
+                      className="mt-4 inline-flex items-center gap-1.5 rounded-2xl bg-[#030D2E] px-4 py-2 text-[13px] font-bold text-white hover:bg-[#030D2E]/90 transition-all motion-press"
                     >
                       <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
                       Thêm mục lịch trình đầu tiên
