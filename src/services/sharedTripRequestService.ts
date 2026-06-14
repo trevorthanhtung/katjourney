@@ -12,6 +12,7 @@ export interface ChangeRequestPayload {
   after?: Record<string, unknown>;
   note?: string;
   requesterName?: string;
+  status?: 'pending' | 'auto_approved';
 }
 
 export async function submitChangeRequest(token: string, payload: ChangeRequestPayload): Promise<void> {
@@ -72,7 +73,7 @@ function removeUndefined(obj: any): any {
     token,
     ...sanitizedPayload,
     requesterUid: user.uid,
-    status: 'pending',
+    status: sanitizedPayload.status || 'pending',
     createdAt: serverTimestamp()
   });
 }

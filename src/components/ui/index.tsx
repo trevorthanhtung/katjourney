@@ -19,13 +19,15 @@ export function Input({
   value,
   onChange,
   type = "text",
-  placeholder
+  placeholder,
+  onFocus
 }: {
   label: React.ReactNode;
   value: string;
   onChange: (value: string) => void;
   type?: string;
   placeholder?: string;
+  onFocus?: () => void;
 }) {
   return (
     <label className="block">
@@ -36,6 +38,7 @@ export function Input({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
+        onFocus={onFocus}
       />
     </label>
   );
@@ -483,3 +486,4 @@ export function FAB({ icon, label, onClick, className }: { icon: React.ReactNode
     </button>
   );
 }
+export * from "./DateRangePicker";

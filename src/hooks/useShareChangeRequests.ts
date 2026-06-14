@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { collection, query, where, onSnapshot, doc } from 'firebase/firestore';
+import { approveChangeRequest } from '../services/shareApprovalService';
 import { firebaseEnabled, initFirebase } from '../lib/firebase';
 import { Trip } from '../db';
 
 export interface AppChangeRequest {
   id: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'auto_approved';
   section: string;
   action: 'create' | 'update' | 'delete';
   targetId?: string;
@@ -52,17 +53,30 @@ export function useShareChangeRequests(trip: Trip | undefined) {
           if (unsubRequests) unsubRequests(); // cleanup previous
           const qRequests = query(
             collection(firestoreDb, 'publicShares', token, 'changeRequests'),
-            where('status', '==', 'pending')
+            where('status', 'in', ['pending', 'auto_approved'])
           );
           
           unsubRequests = onSnapshot(qRequests, (reqSnap) => {
-            const reqs = reqSnap.docs.map(d => ({ id: d.id, ...d.data() } as AppChangeRequest));
-            reqs.sort((a, b) => {
+            const allReqs = reqSnap.docs.map(d => ({ id: d.id, ...d.data() } as AppChangeRequest));
+            
+            // Auto-process auto_approved requests
+            const autoReqs = allReqs.filter(r => r.status === 'auto_approved');
+            autoReqs.forEach(async (req) => {
+              try {
+                await approveChangeRequest(token, req.id);
+              } catch (e) {
+                console.error("Auto-approve failed:", e);
+              }
+            });
+
+            // Only show pending in UI
+            const pendingReqs = allReqs.filter(r => r.status === 'pending');
+            pendingReqs.sort((a, b) => {
               const timeA = a.createdAt?.toMillis?.() || 0;
               const timeB = b.createdAt?.toMillis?.() || 0;
               return timeB - timeA;
             });
-            setPendingRequests(reqs);
+            setPendingRequests(pendingReqs);
           });
 
         } else {

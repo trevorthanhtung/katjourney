@@ -1,6 +1,9 @@
+import defaultTheme from "tailwindcss/defaultTheme";
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -69,7 +72,7 @@ export default {
         }
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"]
+        sans: ["Inter", ...defaultTheme.fontFamily.sans]
       },
       boxShadow: {
         soft: "0 8px 32px rgba(3, 13, 46, 0.04)",

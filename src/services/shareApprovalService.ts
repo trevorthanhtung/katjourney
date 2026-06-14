@@ -31,7 +31,7 @@ export async function approveChangeRequest(token: string, requestId: string): Pr
 
   const requestData = requestSnap.data();
 
-  if (requestData.status !== 'pending') {
+  if (requestData.status !== 'pending' && requestData.status !== 'auto_approved') {
     throw new Error('Yêu cầu đã được xử lý.');
   }
 

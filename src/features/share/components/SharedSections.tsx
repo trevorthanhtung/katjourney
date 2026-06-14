@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, Plus, Pencil, Trash2, MoreVertical,
-  ReceiptText, UserCheck, Tags, ChevronRight, Scale, Info, Check, X,
-  FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User
+  ReceiptText, UserCheck, Tags, ChevronRight, Scale, Info, Check, X, Clock,
+  FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles
 } from 'lucide-react';
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member } from '../../../db';
-import { formatMoney, expenseCategories } from '../../../utils/helpers';
+import { formatMoney, expenseCategories, formatDate, moodLabels } from '../../../utils/helpers';
 import { submitChangeRequest } from '../../../services/sharedTripRequestService';
-import { BottomSheet, Input, Select } from '../../../components/ui';
+import { uploadJournalImage } from '../../../services/storageService';
+import { getIdentity } from '../../../services/identityService';
+import { BottomSheet, Input, Select, Textarea } from '../../../components/ui';
 
 const classNames = (...classes: any[]) => classes.filter(Boolean).join(' ');
 
@@ -29,13 +31,15 @@ export function SharedExpensesSection({
   mode, 
   expenses, 
   changeRequests = [],
-  members = []
+  members = [],
+  guestName
 }: { 
   token: string; 
   mode: string; 
   expenses: Expense[]; 
   changeRequests?: any[];
   members?: Member[];
+  guestName?: string;
 }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -54,14 +58,16 @@ export function SharedExpensesSection({
     payer: string; 
     category: string; 
     customCategory: string; 
-    splitType: "shared" | "personal" 
+    splitType: "shared" | "personal";
+    date: string;
   }>({ 
     description: "", 
     amount: "", 
     payer: "", 
     category: categoryOptions[0] || "Di chuyển", 
     customCategory: "", 
-    splitType: "shared" 
+    splitType: "shared",
+    date: new Date().toISOString().split('T')[0]
   });
 
   const [errors, setErrors] = useState<{ 
@@ -89,6 +95,7 @@ export function SharedExpensesSection({
             category: isCustom ? "Khác..." : item.category,
             customCategory: isCustom && item.category !== "Khác..." ? item.category : "",
             splitType: item.splitType ?? "shared",
+            date: item.date ? new Date(item.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
           });
           if (item.splitType === "personal" || isCustom || item.category !== categoryOptions[0]) {
             setShowAdvanced(true);
@@ -101,7 +108,8 @@ export function SharedExpensesSection({
           payer: members[0]?.name ?? "", 
           category: categoryOptions[0] || "Di chuyển", 
           customCategory: "", 
-          splitType: "shared" 
+          splitType: "shared",
+          date: new Date().toISOString().split('T')[0]
         });
       }
     }
@@ -179,17 +187,18 @@ export function SharedExpensesSection({
       amount: amountVal, 
       payer: form.splitType === "personal" ? (form.payer || "") : form.payer, 
       category: finalCategory, 
-      splitType: form.splitType
+      splitType: form.splitType,
+      date: new Date(form.date).toISOString()
     };
 
     try {
       if (!editingId) {
-        await submitChangeRequest(token, { section: 'expenses', action: 'create', after: payload });
+        await submitChangeRequest(token, { section: 'expenses', action: 'create', after: payload, requesterName: guestName });
         setIsFormOpen(false);
         alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
       } else {
         const before = expenses.find(e => String(e.id) === editingId);
-        await submitChangeRequest(token, { section: 'expenses', action: 'update', targetId: editingId, before: before as any, after: payload });
+        await submitChangeRequest(token, { section: 'expenses', action: 'update', targetId: editingId, before: before as any, after: payload, requesterName: guestName });
         setEditingId(null);
         setIsFormOpen(false);
         alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
@@ -199,9 +208,9 @@ export function SharedExpensesSection({
 
   async function handleDelete(id: string) {
     if (confirm('Bạn muốn đề xuất xóa chi phí này?')) {
-      const before = expenses.find(e => String(e.id) === id);
       try {
-        await submitChangeRequest(token, { section: 'expenses', action: 'delete', targetId: id, before: before as any });
+        const before = expenses.find(e => String(e.id) === id);
+        await submitChangeRequest(token, { section: 'expenses', action: 'delete', targetId: id, before: before as any, requesterName: guestName });
         alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
       } catch (e: any) { alert('Lỗi khi gửi đề xuất: ' + e.message); }
     }
@@ -237,6 +246,12 @@ export function SharedExpensesSection({
                 )}>
                   {e.description}
                 </span>
+
+                {e.date && (
+                  <span className="inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium bg-slate-100/80 text-slate-500 shrink-0">
+                    {new Date(e.date).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                  </span>
+                )}
                 
                 {e.isPendingDelete && (
                   <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 shrink-0 select-none animate-fadeIn">
@@ -352,6 +367,19 @@ export function SharedExpensesSection({
             )}
           </div>
 
+          {/* Date */}
+          <Input 
+            type="date"
+            label={
+              <span className="flex items-center gap-1.5">
+                <CalendarDays className="h-4 w-4 text-slate-500" />
+                Ngày chi tiêu
+              </span>
+            } 
+            value={form.date} 
+            onChange={(date) => setForm({ ...form, date })} 
+          />
+
           {/* Description */}
           <Input 
             label={
@@ -379,15 +407,13 @@ export function SharedExpensesSection({
                   value={form.payer}
                   onChange={(payer) => {
                     setForm({ ...form, payer });
-                    setErrors({ ...errors, payer: "" });
+                    if (errors.payer) setErrors({ ...errors, payer: undefined });
                   }}
-                  options={["", ...members.map((member) => member.name)]}
+                  options={["", ...(members || []).map(m => m.name)]}
                   placeholder="Chọn người trả"
-                />
-                {errors.payer && (
-                  <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1">{errors.payer}</p>
-                )}
-              </div>
+                  />
+                  {errors.payer && <p className="mt-1 text-[12px] font-bold text-rose-500 pl-1">{errors.payer}</p>}
+                </div>
             ) : (
               <div className="rounded-2xl bg-[#FAF7F1] border border-kat-border/60 p-4 text-[13px] text-kat-muted font-semibold flex gap-2">
                 <Info className="h-5 w-5 shrink-0 text-slate-500 mt-0.5" />
@@ -531,13 +557,15 @@ export function SharedChecklistSection({
   mode, 
   checklist, 
   changeRequests = [],
-  members = []
+  members = [],
+  guestName
 }: { 
   token: string; 
   mode: string; 
   checklist: ChecklistItem[]; 
   changeRequests?: any[];
   members?: Member[];
+  guestName?: string;
 }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -625,7 +653,7 @@ export function SharedChecklistSection({
   async function handleToggle(item: ChecklistItem) {
     if (!isRequestEdit) return;
     try {
-      await submitChangeRequest(token, { section: 'checklist', action: 'update', targetId: String(item.id), before: item as any, after: { completed: !item.completed } });
+      await submitChangeRequest(token, { section: 'checklist', action: 'update', targetId: String(item.id), before: item as any, after: { completed: !item.completed }, requesterName: guestName });
       alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
     } catch (e: any) { alert('Lỗi: ' + e.message); }
   }
@@ -649,12 +677,12 @@ export function SharedChecklistSection({
 
     try {
       if (!editingId) {
-        await submitChangeRequest(token, { section: 'checklist', action: 'create', after: payload });
+        await submitChangeRequest(token, { section: 'checklist', action: 'create', after: payload, requesterName: guestName });
         setIsFormOpen(false);
         alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
       } else {
         const before = checklist.find(c => String(c.id) === editingId);
-        await submitChangeRequest(token, { section: 'checklist', action: 'update', targetId: editingId, before: before as any, after: payload });
+        await submitChangeRequest(token, { section: 'checklist', action: 'update', targetId: editingId, before: before as any, after: payload, requesterName: guestName });
         setEditingId(null);
         setIsFormOpen(false);
         alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
@@ -664,9 +692,9 @@ export function SharedChecklistSection({
 
   async function handleDelete(id: string) {
     if (confirm('Bạn muốn đề xuất xóa mục này?')) {
-      const before = checklist.find(c => String(c.id) === id);
       try {
-        await submitChangeRequest(token, { section: 'checklist', action: 'delete', targetId: id, before: before as any });
+        const before = checklist.find(c => String(c.id) === id);
+        await submitChangeRequest(token, { section: 'checklist', action: 'delete', targetId: id, before: before as any, requesterName: guestName });
         alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
       } catch (e: any) { alert('Lỗi: ' + e.message); }
     }
@@ -725,6 +753,20 @@ export function SharedChecklistSection({
                     </span>
                   )}
                 </div>
+                {c.assignedTo && (
+                  <div className="mt-1">
+                    <span 
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold"
+                      style={{
+                        backgroundColor: `hsl(${c.assignedTo.charCodeAt(0) * 137.5 % 360}, 70%, 90%)`,
+                        color: `hsl(${c.assignedTo.charCodeAt(0) * 137.5 % 360}, 70%, 30%)`
+                      }}
+                    >
+                      <User className="h-3 w-3" />
+                      {c.assignedTo}
+                    </span>
+                  </div>
+                )}
               </label>
               {isRequestEdit && !isPending && (
                 <div className="relative shrink-0 ml-2">
@@ -898,7 +940,11 @@ export function SharedChecklistSection({
                 label=""
                 value={form.assignedTo}
                 onChange={(assignedTo) => setForm({ ...form, assignedTo })}
-                options={["", ...members.map(m => m.name)]}
+                options={[
+                  "", 
+                  ...(form.assignedTo && !members.some(m => m.name === form.assignedTo) ? [form.assignedTo] : []),
+                  ...members.map(m => m.name)
+                ]}
                 placeholder="Chọn người đồng hành"
               />
             )}
@@ -960,85 +1006,425 @@ export function SharedChecklistSection({
 }
 
 
+const moodOptionList: Array<{ value: "good" | "okay" | "great" | "very_bad" | "bad"; label: string }> = [
+  { value: "good", label: "Vui" },
+  { value: "okay", label: "Bình yên" },
+  { value: "great", label: "Hào hứng" },
+  { value: "very_bad", label: "Mệt" },
+  { value: "bad", label: "Bất ngờ" }
+];
+
+const moodBadgeClasses: Record<string, string> = {
+  good: "bg-amber-50 text-amber-800 border-amber-200",
+  okay: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  great: "bg-rose-50 text-rose-800 border-rose-200",
+  very_bad: "bg-slate-100 text-slate-700 border-slate-300",
+  bad: "bg-blue-50 text-blue-800 border-blue-200"
+};
+
+const moodColorClasses: Record<string, string> = {
+  good: "bg-amber-500",
+  okay: "bg-emerald-500",
+  great: "bg-rose-500",
+  very_bad: "bg-slate-400",
+  bad: "bg-blue-500"
+};
+
+const promptSuggestions = [
+  "Điều muốn nhớ nhất",
+  "Món ăn đáng nhớ",
+  "Người bạn đã gặp",
+  "Khoảnh khắc vui",
+  "Điều muốn nhớ mãi"
+];
+
 export function SharedJournalsSection({ 
+  tripId,
   token, 
   mode, 
   journals, 
-  changeRequests = [] 
+  changeRequests = [],
+  guestName
 }: { 
+  tripId: string | number;
   token: string; 
   mode: string; 
   journals: JournalEntry[]; 
   changeRequests?: any[];
+  guestName?: string;
 }) {
   const isRequestEdit = mode === 'request_edit';
+  const [isFormOpen, setIsFormOpen] = React.useState(false);
+  const [form, setForm] = React.useState({ 
+    date: new Date().toISOString().split('T')[0], 
+    title: "", 
+    content: "", 
+    mood: "good" as "good" | "okay" | "great" | "very_bad" | "bad", 
+    imageUrl: "" 
+  });
+  const [uploading, setUploading] = React.useState(false);
+  const [submitAttempted, setSubmitAttempted] = React.useState(false);
+  const [dirty, setDirty] = React.useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadJournalImage(file, tripId); 
+      setForm(prev => ({ ...prev, imageUrl: url }));
+      setDirty(true);
+    } catch (err) {
+      alert("Lỗi tải ảnh lên. Vui lòng thử lại.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const mergedJournals = React.useMemo(() => {
-    return journals.map(item => {
+    const list = [...journals];
+    const creations = changeRequests.filter(r => r.section === 'journals' && r.action === 'create' && (r.status === 'pending' || r.status === 'auto_approved'));
+    creations.forEach(r => {
+      list.push({ id: r.id, ...(r.after as any) });
+    });
+
+    // sort descending by postedAt (ISO timestamp) → ngày mới nhất + giờ mới nhất lên đầu
+    list.sort((a, b) => {
+      const ta = a.postedAt || `${a.date}T00:00:00`;
+      const tb = b.postedAt || `${b.date}T00:00:00`;
+      return tb.localeCompare(ta);
+    });
+
+    return list.map(item => {
       const pendingDelete = changeRequests.some(r => r.section === 'journals' && r.action === 'delete' && String(r.targetId) === String(item.id));
-      return {
-        ...item,
-        isPendingDelete: pendingDelete
-      };
+      return { ...item, isPendingDelete: pendingDelete };
     });
   }, [journals, changeRequests]);
+
+  const titleError = !form.title.trim() ? "Vui lòng nhập tiêu đề." : "";
+  const contentError = !form.content.trim() ? "Vui lòng nhập nội dung nhật ký." : "";
+  const hasError = !!titleError || !!contentError;
+
+  async function handleCreate() {
+    setSubmitAttempted(true);
+    if (hasError) return;
+    try {
+      const identity = getIdentity('any');
+      const now = new Date().toISOString();
+      const payload = {
+        date: form.date,
+        title: form.title.trim(),
+        content: form.content.trim(),
+        mood: form.mood,
+        imageUrl: form.imageUrl || undefined,
+        authorId: identity?.id || "guest",
+        authorName: guestName || identity?.name || "Khách",
+        postedAt: now,
+      };
+      await submitChangeRequest(token, { section: 'journals', action: 'create', after: payload, status: 'auto_approved', requesterName: guestName });
+      setForm({ date: new Date().toISOString().split('T')[0], title: "", content: "", mood: "good", imageUrl: "" });
+      setSubmitAttempted(false);
+      setDirty(false);
+      setIsFormOpen(false);
+    } catch (e: any) { alert('Lỗi: ' + e.message); }
+  }
+
+  function handlePromptClick(prompt: string) {
+    setForm(prev => ({
+      ...prev,
+      content: prev.content + (prev.content.trim() ? "\n\n" : "") + `- ${prompt}: `
+    }));
+    setDirty(true);
+  }
 
   async function handleDelete(j: JournalEntry) {
     if (confirm('Bạn muốn đề xuất xóa nhật ký này?')) {
       try {
-        await submitChangeRequest(token, { section: 'journals', action: 'delete', targetId: String(j.id), before: j as any });
+        await submitChangeRequest(token, { section: 'journals', action: 'delete', targetId: String(j.id), before: j as any, requesterName: guestName });
         alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
       } catch (e: any) { alert('Lỗi: ' + e.message); }
     }
   }
 
   return (
-    <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm">
-      <div className="flex items-center gap-2 mb-3 border-b border-slate-100 pb-3">
-        <BookOpenText className="h-5 w-5 text-sky-500" />
-        <h3 className="text-[16px] font-black text-[#030D2E]">Nhật ký chuyến đi</h3>
-      </div>
-      <div className="space-y-4">
-        {mergedJournals.map(j => (
-          <div 
-            key={j.id} 
-            className={classNames(
-              "rounded-xl p-4 border transition-all", 
-              j.isPendingDelete ? "border-rose-100 bg-slate-50/50 opacity-70" : "bg-slate-50 border-slate-105"
-            )}
+    <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm space-y-4">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="flex items-center gap-2">
+          <BookOpenText className="h-5 w-5 text-sky-500" />
+          <h3 className="text-[16px] font-black text-[#030D2E]">Nhật ký chuyến đi</h3>
+        </div>
+        {isRequestEdit && (
+          <button 
+            onClick={() => setIsFormOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-600 font-bold rounded-full text-[13px] hover:bg-indigo-100 transition-colors"
           >
-            <div className="flex justify-between items-start">
-              <div className="flex flex-wrap items-baseline gap-2">
-                <h4 className={classNames(
-                  "text-[15px] font-bold text-slate-800",
-                  j.isPendingDelete ? "line-through text-slate-400" : ""
-                )}>
-                  {j.title}
-                </h4>
-                {j.isPendingDelete && (
-                  <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 select-none animate-fadeIn">
-                    Đề xuất xóa
-                  </span>
-                )}
-              </div>
-              {isRequestEdit && !j.isPendingDelete && (
-                <button 
-                  onClick={() => handleDelete(j)} 
-                  className="text-slate-400 hover:text-rose-600 text-sm font-semibold p-1 hover:bg-slate-100 rounded-md transition-colors"
-                >
-                  Đề xuất xóa
-                </button>
-              )}
-            </div>
-            <p className={classNames(
-              "mt-2 text-[14px] text-slate-600 leading-relaxed whitespace-pre-wrap",
-              j.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
-            )}>
-              {j.content}
-            </p>
-          </div>
-        ))}
+            <Pencil className="h-4 w-4" /> Viết nhật ký
+          </button>
+        )}
       </div>
+
+        {mergedJournals.length > 0 ? (
+          <div className="space-y-6 md:space-y-8">
+            {Object.entries(
+              mergedJournals.reduce<Record<string, any[]>>((result, entry) => {
+                result[entry.date] = [...(result[entry.date] ?? []), entry];
+                return result;
+              }, {})
+            )
+            .sort((a, b) => b[0].localeCompare(a[0]))
+            .map(([date, entries]) => (
+              <section key={date} className="space-y-4">
+                <div className="flex items-center gap-2 px-1">
+                  <CalendarDays className="h-4.5 w-4.5 text-slate-400" />
+                  <h3 className="text-[15px] font-extrabold text-[#030D2E]">{formatDate(date)}</h3>
+                </div>
+                
+                <div className="columns-1 md:columns-2 gap-4">
+                  {entries.map((j: any, idx) => {
+                    const moodBadge = moodBadgeClasses[j.mood] || "bg-slate-50 text-slate-700 border-slate-200";
+                    return (
+                      <article 
+                        key={j.id} 
+                        className={classNames(
+                          "break-inside-avoid mb-4 group rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] shadow-soft hover:shadow-md transition-all flex flex-col overflow-hidden",
+                          j.isPendingDelete ? "border-rose-100 bg-slate-50/50 opacity-70" : ""
+                        )}
+                      >
+                        <div className="flex items-center justify-between gap-4 p-4 pb-3">
+                          <div className="flex items-center gap-2.5">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-700 font-black text-[15px]">
+                              {(j.authorName || "T").charAt(0).toUpperCase()}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-[14px] font-extrabold text-slate-800">{j.authorName || "Trưởng nhóm"}</span>
+                              {j.isPendingDelete ? (
+                                <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wide">Đề xuất xóa</span>
+                              ) : (
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider border ${moodBadge}`}>
+                                    {moodLabels[j.mood as keyof typeof moodLabels] || "Đáng nhớ"}
+                                  </span>
+                                  {j.postedAt && (
+                                    <span className="text-[10px] font-semibold text-slate-400 flex items-center gap-0.5">
+                                      <Clock className="h-2.5 w-2.5" />
+                                      {new Date(j.postedAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {isRequestEdit && !j.isPendingDelete && (
+                            <button 
+                              onClick={() => handleDelete(j as JournalEntry)} 
+                              className="flex h-8 w-8 items-center justify-center rounded-full text-rose-400 hover:text-rose-600 hover:bg-rose-50 transition-all motion-press"
+                              title="Đề xuất xóa nhật ký"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+
+                        {j.imageUrl && (
+                          <div className="w-full bg-[#F3F4F6] border-y border-slate-100/50 flex justify-center">
+                            <img src={j.imageUrl} alt="Journal" className="w-full h-auto max-h-[500px] object-contain" />
+                          </div>
+                        )}
+
+                        <div className="p-4 pt-3">
+                          <h4 className="text-[17px] font-black text-[#030D2E] leading-snug break-words">
+                            {j.title || "Nhật ký chuyến đi"}
+                          </h4>
+                          <p className={classNames(
+                            "mt-1.5 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600",
+                            j.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
+                          )}>
+                            {j.content}
+                          </p>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <p className="text-center text-slate-400 text-sm font-medium py-4">Chưa có bài viết nào.</p>
+          </div>
+        )}
+
+      <BottomSheet 
+        isOpen={isFormOpen} 
+        onClose={() => {
+          setIsFormOpen(false);
+        }} 
+        title="Viết nhật ký hành trình"
+        footer={
+          <div className="flex gap-3 w-full">
+            <button
+              type="button"
+              onClick={() => {
+                setIsFormOpen(false);
+              }}
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              disabled={hasError}
+              onClick={handleCreate}
+              className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#00BFB7] text-[#030D2E] px-6 font-black hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
+            >
+              <Save className="h-4.5 w-4.5" strokeWidth={2.5} />
+              Lưu nhật ký
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-4 md:space-y-5">
+          {/* Date Field */}
+          <div>
+            <Input 
+              label={
+                <span className="flex items-center gap-1.5">
+                  <CalendarDays className="h-4 w-4 text-slate-500" />
+                  Ngày ghi lại
+                </span>
+              } 
+              type="date" 
+              value={form.date} 
+              onChange={(date) => { setForm({ ...form, date }); setDirty(true); }} 
+            />
+          </div>
+  
+          {/* Title Field */}
+          <div>
+            <Input 
+              label={
+                <span className="flex items-center gap-1.5">
+                  <Type className="h-4 w-4 text-slate-500" />
+                  Tiêu đề nhật ký *
+                </span>
+              } 
+              value={form.title} 
+              onChange={(title) => { setForm({ ...form, title }); setDirty(true); }} 
+              placeholder="VD: Một ngày đáng nhớ ở Vũng Tàu" 
+            />
+            {(dirty || submitAttempted) && titleError && (
+              <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{titleError}</p>
+            )}
+          </div>
+  
+          {/* Mood Chips */}
+          <div>
+            <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
+              <SmilePlus className="h-4 w-4 text-slate-500" />
+              Cảm xúc hôm nay
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {moodOptionList.map((opt) => {
+                const isActive = form.mood === opt.value;
+                const colorDot = moodColorClasses[opt.value];
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => { setForm({ ...form, mood: opt.value as any }); setDirty(true); }}
+                    className={`flex items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-bold border transition-all duration-200 active:scale-95 ${
+                      isActive
+                        ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#030D2E]"
+                        : "bg-[#FFFDF8] border-[#E8E1D8] text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    <span className={`h-2.5 w-2.5 rounded-full ${colorDot}`} />
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+  
+          {/* Content Field */}
+          <div>
+            <Textarea 
+              label={
+                <span className="flex items-center gap-1.5">
+                  <NotebookPen className="h-4 w-4 text-slate-500" />
+                  Câu chuyện của bạn *
+                </span>
+              } 
+              value={form.content} 
+              onChange={(content) => { setForm({ ...form, content }); setDirty(true); }} 
+              placeholder="Ghi lại cảm xúc, câu chuyện, món ăn ngon hoặc khoảnh khắc đáng nhớ..." 
+            />
+            {(dirty || submitAttempted) && contentError && (
+              <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{contentError}</p>
+            )}
+          </div>
+  
+          {/* Image Field */}
+          <div>
+            {form.imageUrl ? (
+              <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+                <img src={form.imageUrl} alt="Uploaded" className="w-full aspect-[4/3] object-contain" />
+                <button
+                  onClick={() => { setForm({ ...form, imageUrl: "" }); setDirty(true); }}
+                  className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 hover:bg-black/70"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <div>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleImageUpload} 
+                  accept="image/*" 
+                  className="hidden" 
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="w-full h-12 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 text-slate-500 font-bold text-[14px] hover:bg-slate-100 hover:text-[#00BFB7] transition-colors flex items-center justify-center gap-2"
+                >
+                  {uploading ? (
+                    <><Loader2 className="h-5 w-5 animate-spin" /> Đang tải ảnh...</>
+                  ) : (
+                    <><ImageIcon className="h-5 w-5" /> Đính kèm hình ảnh</>
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+  
+          {/* Quick Prompts Section inside Modal */}
+          <div className="pt-1">
+            <span className="mb-2 block text-[12.5px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+              <Sparkles className="h-4 w-4 text-slate-500" />
+              Gợi ý viết nhanh
+            </span>
+            <div className="flex flex-wrap gap-1.5">
+              {promptSuggestions.map((prompt) => (
+                <button
+                  key={prompt}
+                  type="button"
+                  onClick={() => handlePromptClick(prompt)}
+                  className="rounded-lg bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5 text-[12.5px] font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                >
+                  + {prompt}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </BottomSheet>
     </section>
   );
 }
@@ -1047,12 +1433,14 @@ export function SharedBackupPlansSection({
   token, 
   mode, 
   backupPlans, 
-  changeRequests = [] 
+  changeRequests = [],
+  guestName
 }: { 
   token: string; 
   mode: string; 
   backupPlans: BackupPlan[]; 
   changeRequests?: any[];
+  guestName?: string;
 }) {
   const isRequestEdit = mode === 'request_edit';
 
@@ -1069,7 +1457,7 @@ export function SharedBackupPlansSection({
   async function handleDelete(b: BackupPlan) {
     if (confirm('Bạn muốn đề xuất xóa phương án này?')) {
       try {
-        await submitChangeRequest(token, { section: 'backupPlans', action: 'delete', targetId: String(b.id), before: b as any });
+        await submitChangeRequest(token, { section: 'backupPlans', action: 'delete', targetId: String(b.id), before: b as any, requesterName: guestName });
         alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
       } catch (e: any) { alert('Lỗi: ' + e.message); }
     }
@@ -1132,14 +1520,17 @@ export function SharedDocumentsSection({
   token, 
   mode, 
   documents, 
-  changeRequests = [] 
+  changeRequests = [],
+  guestName
 }: { 
   token: string; 
   mode: string; 
   documents: TravelDocument[]; 
   changeRequests?: any[];
+  guestName?: string;
 }) {
   const isRequestEdit = mode === 'request_edit';
+  const [previewImage, setPreviewImage] = React.useState<string | null>(null);
 
   const mergedDocuments = React.useMemo(() => {
     return documents.map(item => {
@@ -1154,7 +1545,7 @@ export function SharedDocumentsSection({
   async function handleDelete(d: TravelDocument) {
     if (confirm('Bạn muốn đề xuất xóa tài liệu này?')) {
       try {
-        await submitChangeRequest(token, { section: 'travelDocuments', action: 'delete', targetId: String(d.id), before: d as any });
+        await submitChangeRequest(token, { section: 'travelDocuments', action: 'delete', targetId: String(d.id), before: d as any, requesterName: guestName });
         alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
       } catch (e: any) { alert('Lỗi: ' + e.message); }
     }
@@ -1204,9 +1595,64 @@ export function SharedDocumentsSection({
             )}>
               {d.note}
             </span>
+            
+            {/* Attachment Image Display */}
+            {d.attachmentUrl && (
+              <div className="mt-3">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Ảnh đính kèm</p>
+                <div 
+                  className={classNames(
+                    "relative w-full rounded-xl overflow-hidden border border-slate-200 cursor-pointer group bg-[#F8F9FA] flex justify-center items-center",
+                    d.isPendingDelete ? "opacity-60 grayscale" : ""
+                  )}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!d.isPendingDelete) setPreviewImage(d.attachmentUrl || null);
+                  }}
+                >
+                  <img 
+                    src={d.attachmentUrl} 
+                    alt={d.title}
+                    loading="lazy"
+                    className="w-full h-auto max-h-[400px] object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+                  />
+                  {!d.isPendingDelete && (
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                      <Maximize2 className="w-5 h-5 sm:w-6 sm:h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
+
+      {/* Lightbox */}
+      {previewImage && (
+        <div 
+          className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4 cursor-pointer backdrop-blur-sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            setPreviewImage(null);
+          }}
+        >
+          <img 
+            src={previewImage} 
+            alt="Fullscreen preview" 
+            className="max-w-full max-h-full object-contain"
+          />
+          <button 
+            className="absolute top-4 right-4 text-white bg-white/10 rounded-full p-2 hover:bg-white/20 transition-colors"
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              setPreviewImage(null); 
+            }}
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+      )}
     </section>
   );
 }

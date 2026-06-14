@@ -26,11 +26,14 @@ import {
   GitBranch,
   MoreVertical
 } from "lucide-react";
-import { db, EventItem, Trip } from "../../db";
+import { db, EventItem, Trip, Expense } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { classNames, daysBetween, formatDate, today, getTripTiming } from "../../utils/helpers";
 import { BottomSheet, FormActions, Input, Textarea, Select, DeleteConfirmModal } from "../../components/ui";
 import { BackupPlansSheet } from "./BackupPlansSheet";
+import { TimelineCalendarView } from "./TimelineCalendarView";
+import { getEmbedMapUrl } from "../../utils/mapUtils";
+import { WeatherWidget } from "./WeatherWidget";
 
 // Define categories for PWA Travel 2027
 const ACTIVITY_CATEGORIES = [
@@ -63,8 +66,10 @@ function ActivityCard({
   isUpcoming,
   idx = 0,
   backupCount,
+  linkedExpenses,
   onOpenBackup,
-  onDelete
+  onDelete,
+  onAddExpense
 }: { 
   item: EventItem; 
   onEdit: () => void; 
@@ -72,8 +77,10 @@ function ActivityCard({
   isUpcoming: boolean;
   idx?: number;
   backupCount?: number;
+  linkedExpenses?: Expense[];
   onOpenBackup?: () => void;
   onDelete: () => void;
+  onAddExpense?: () => void;
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const category = getCategory(item.type);
@@ -157,18 +164,35 @@ function ActivityCard({
               </p>
             )}
 
-            {/* Google Maps link */}
-            {item.mapLink && (
-              <a 
-                className="mt-3 inline-flex items-center gap-1 text-[13px] font-bold text-emerald-600 hover:text-emerald-700 transition-colors" 
-                href={item.mapLink} 
-                target="_blank" 
-                rel="noreferrer"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Map className="w-3.5 h-3.5" />
-                Xem trên Google Maps &rarr;
-              </a>
+            {/* Google Maps link & Embed */}
+            {(item.mapLink || item.location) && (
+              <div className="mt-3 space-y-2" onClick={(e) => e.stopPropagation()}>
+                {getEmbedMapUrl(item.mapLink || item.location || "", item.location) && (
+                  <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm dark:border-gray-800 bg-slate-100 relative min-h-[160px]">
+                    <div className="absolute inset-0 flex items-center justify-center text-slate-400">
+                      <span className="text-[12px] font-medium animate-pulse">Đang tải bản đồ...</span>
+                    </div>
+                    <iframe
+                      title="Google Maps Embed"
+                      width="100%"
+                      height="160"
+                      className="border-0 dark:opacity-80 relative z-10"
+                      loading="lazy"
+                      allowFullScreen
+                      src={getEmbedMapUrl(item.mapLink || item.location || "", item.location)}
+                    ></iframe>
+                  </div>
+                )}
+                <a 
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[13px] font-bold text-emerald-600 border border-emerald-100 hover:bg-emerald-100 transition-colors" 
+                  href={item.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
+                  target="_blank" 
+                  rel="noreferrer"
+                >
+                  <Map className="w-3.5 h-3.5" />
+                  Mở bằng ứng dụng Google Maps &rarr;
+                </a>
+              </div>
             )}
 
             {/* Backup Plans Badge */}
@@ -178,7 +202,7 @@ function ActivityCard({
                 className={classNames(
                   "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] font-bold border transition-colors motion-press",
                   backupCount && backupCount > 0 
-                    ? "bg-kat-primary-light text-kat-primary border-kat-primary/30 hover:bg-kat-primary/20"
+                    ? "bg-indigo-50 text-indigo-600 border-indigo-200 hover:bg-indigo-100"
                     : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-700"
                 )}
               >
@@ -186,6 +210,27 @@ function ActivityCard({
                 {backupCount && backupCount > 0 ? `${backupCount} phương án dự phòng` : "Thêm phương án dự phòng"}
               </button>
             </div>
+
+            {/* Expenses Linked */}
+            {(linkedExpenses && linkedExpenses.length > 0 || onAddExpense) && (
+              <div className="mt-4 border-t border-slate-100 pt-3 flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                {linkedExpenses?.map(exp => (
+                  <div key={exp.id} className="flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 text-rose-700 text-[12px] rounded-lg border border-rose-200 shadow-sm">
+                    <span className="font-extrabold">{new Intl.NumberFormat('vi-VN').format(exp.amount)}đ</span>
+                    <span className="text-rose-600 truncate max-w-[120px] font-medium">- {exp.description || exp.category}</span>
+                  </div>
+                ))}
+                {onAddExpense && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onAddExpense(); }}
+                    className="flex items-center gap-1 px-2 py-1.5 rounded-lg border border-dashed border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-50 text-[12px] font-bold transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Thêm chi phí
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Quick options menu trigger (min 44x44px target zone) */}
@@ -246,7 +291,7 @@ function ActivityCard({
   );
 }
 
-function DayHeader({ day, index, isToday }: { day: string; index: number; isToday: boolean }) {
+function DayHeader({ day, index, isToday, totalExpense = 0 }: { day: string; index: number; isToday: boolean; totalExpense?: number }) {
   return (
     <div 
       id={`day-section-${day}`} 
@@ -261,11 +306,18 @@ function DayHeader({ day, index, isToday }: { day: string; index: number; isToda
           <p className="text-[13px] font-semibold text-slate-500">{formatDate(day)}</p>
         </div>
       </div>
-      {isToday && (
-        <span className="rounded-full bg-sunset-100 px-3 py-1 text-[10.5px] font-black uppercase tracking-widest text-sunset-700 shadow-inner">
-          Hôm nay
-        </span>
-      )}
+      <div className="flex items-center gap-2">
+        {totalExpense > 0 && (
+          <span className="text-[12.5px] font-bold text-slate-600 bg-white border border-slate-200 px-2.5 py-1 rounded-lg shadow-sm">
+            Đã chi: {new Intl.NumberFormat('vi-VN').format(totalExpense)}đ
+          </span>
+        )}
+        {isToday && (
+          <span className="rounded-full bg-sunset-100 px-3 py-1 text-[10.5px] font-black uppercase tracking-widest text-sunset-700 shadow-inner">
+            Hôm nay
+          </span>
+        )}
+      </div>
     </div>
   );
 }
@@ -510,7 +562,7 @@ function EventForm({
   );
 }
 
-export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem[] }) {
+export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isReadOnly }: { trip: Trip; events: EventItem[]; expenses?: Expense[]; onAddExpense?: (date: string, eventId: number) => void; isReadOnly?: boolean }) {
   const tripDays = daysBetween(trip.startDate, trip.endDate);
   const eventDays = Array.from(new Set(events.map((e) => e.date)));
   const days = Array.from(new Set([...tripDays, ...eventDays])).filter(Boolean).sort();
@@ -521,14 +573,16 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
   const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<EventItem | null>(null);
-  const [formDefaultDate, setFormDefaultDate] = useState<string>("");
+const [formDefaultDate, setFormDefaultDate] = useState<string>("");
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<EventItem | null>(null);
 
   const [isBackupPlansOpen, setIsBackupPlansOpen] = useState(false);
   const [backupPlanCtx, setBackupPlanCtx] = useState<{ activityId?: number; date?: string }>({});
 
-  const backupPlans = useLiveQuery(() => db.backupPlans.where("tripId").equals(trip.id!).toArray(), [trip.id]) ?? [];
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+
+  const backupPlans = useLiveQuery(async () => (await db.backupPlans.where("tripId").equals(trip.id!).toArray()).filter(p => !p.isDeleted), [trip.id]) ?? [];
   const isScrollingRef = useRef(false);
 
   // Default selected day calculations on mount or trip bounds change
@@ -616,7 +670,7 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
 
   async function executeDelete() {
     if (!eventToDelete?.id) return;
-    await db.events.delete(eventToDelete.id);
+    await db.events.update(eventToDelete.id, { isDeleted: true });
     setIsDeleteConfirmOpen(false);
     setEventToDelete(null);
     setIsFormOpen(false);
@@ -752,22 +806,27 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
                   </div>
                 </div>
                 
-                <button 
-                  type="button"
-                  onClick={() => openNewForm(day)}
-                  className="relative z-10 text-[13px] font-bold text-[#00BFB7] hover:brightness-95 transition-colors pr-2 flex items-center gap-1 motion-press"
-                >
-                  <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
-                  Thêm
-                </button>
+                {!isReadOnly && (
+                  <button 
+                    type="button"
+                    onClick={() => openNewForm(day)}
+                    className="relative z-10 text-[13px] font-bold text-[#00BFB7] hover:brightness-95 transition-colors pr-2 flex items-center gap-1 motion-press"
+                  >
+                    <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
+                    Thêm
+                  </button>
+                )}
               </div>
             );
           }
 
           // Non-empty days: DayHeader + ActivityCards
+          const dayExpenses = expenses.filter(exp => exp.date === day);
+          const totalDayExpense = dayExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+
           return (
             <div key={day} className="space-y-4">
-              <DayHeader day={day} index={index} isToday={isToday} />
+              <DayHeader day={day} index={index} isToday={isToday} totalExpense={totalDayExpense} />
               <div className="px-1">
                 {dayEvents.map((item, idx) => (
                   <ActivityCard 
@@ -783,6 +842,8 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
                       setBackupPlanCtx({ activityId: item.id, date: day });
                       setIsBackupPlansOpen(true);
                     }}
+                    linkedExpenses={expenses.filter(exp => String(exp.eventId) === String(item.id))}
+                    onAddExpense={onAddExpense ? () => onAddExpense(day, item.id!) : undefined}
                   />
                 ))}
               </div>
@@ -849,11 +910,11 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
           </div>
         )}
 
-        {filterDay === "all" && (
+        {filterDay === "all" && !isReadOnly && (
           <div className="flex justify-center mt-6">
              <button
                 onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-kat-primary/30 text-kat-primary font-bold text-[14px] hover:bg-kat-primary/10 transition-colors motion-press"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-indigo-200 text-indigo-600 font-bold text-[14px] hover:bg-indigo-50 transition-colors motion-press"
              >
                <GitBranch className="w-4.5 h-4.5" />
                Thêm phương án dự phòng chuyến đi
@@ -878,24 +939,62 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
           </div>
           
           {/* Desktop CTA docked in header */}
-          <button
-            onClick={() => openNewForm()}
-            className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-[#00BFB7] text-[#030D2E] px-4 py-2 text-[13.5px] font-extrabold shadow-sm hover:brightness-105 active:scale-95 transition-all h-10 motion-press"
-          >
-            <Plus className="h-4 w-4" strokeWidth={2.5} />
-            Thêm lịch trình
-          </button>
+          <div className="flex items-center gap-3">
+            <div className="flex bg-[#E8E1D8]/40 p-1 rounded-xl">
+              <button 
+                onClick={() => setViewMode("list")}
+                className={classNames(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press",
+                  viewMode === "list" ? "bg-white text-[#030D2E] shadow-sm" : "text-slate-500 hover:text-slate-700"
+                )}
+              >
+                <span>Danh sách</span>
+              </button>
+              <button 
+                onClick={() => setViewMode("calendar")}
+                className={classNames(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press",
+                  viewMode === "calendar" ? "bg-white text-[#030D2E] shadow-sm" : "text-slate-500 hover:text-slate-700"
+                )}
+              >
+                <CalendarDays className="w-4 h-4" />
+                <span className="hidden sm:inline">Lịch</span>
+              </button>
+            </div>
+            
+            {!isReadOnly && (
+              <button
+                onClick={() => openNewForm()}
+                className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-[#00BFB7] text-[#030D2E] px-4 py-2 text-[13.5px] font-extrabold shadow-sm hover:brightness-105 active:scale-95 transition-all h-10 motion-press"
+              >
+                <Plus className="h-4 w-4" strokeWidth={2.5} />
+                Thêm lịch trình
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Day Navigation Tabs selection bar */}
-        {renderDayNav()}
+        {viewMode === "list" && renderDayNav()}
       </div>
+
+      {/* Global Add FAB (Mobile only) */}
+      {!isReadOnly && (
+        <div className="fixed bottom-[84px] right-4 z-40 md:hidden">
+          <button
+            onClick={() => openNewForm()}
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-[#00BFB7] text-[#030D2E] shadow-lg shadow-[#00BFB7]/30 transition-transform active:scale-90 motion-press"
+          >
+            <Plus className="h-6 w-6" strokeWidth={2.5} />
+          </button>
+        </div>
+      )}
 
       {/* Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:gap-8 items-start pb-0 md:pb-8">
         {/* Left Column: Timeline list */}
         <div className="space-y-8">
-          {events.length === 0 ? (
+          {events.length === 0 && viewMode === "list" ? (
             /* Compact Empty Timeline Card */
             <div id="timeline-top">
               <DayHeader day={trip.startDate} index={0} isToday={tripIsActive && trip.startDate === today} />
@@ -914,23 +1013,49 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
                   </div>
                   <h4 className="text-[15px] font-bold text-kat-text">Chưa có mục lịch trình nào</h4>
                   <p className="mt-1 text-[13.5px] text-kat-muted font-medium max-w-sm">Thêm điểm đến, thời gian di chuyển hoặc việc cần làm để hành trình rõ ràng hơn.</p>
-                  <button 
-                    onClick={() => openNewForm()}
-                    className="mt-4 inline-flex items-center gap-1.5 rounded-2xl bg-[#00BFB7] px-4 py-2 text-[13px] font-bold text-[#030D2E] hover:brightness-105 transition-all motion-press"
-                  >
-                    <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
-                    Thêm mục lịch trình đầu tiên
-                  </button>
+                  {!isReadOnly && (
+                    <button 
+                      onClick={() => openNewForm()}
+                      className="mt-4 inline-flex items-center gap-1.5 rounded-2xl bg-[#00BFB7] px-4 py-2 text-[13px] font-bold text-[#030D2E] hover:brightness-105 transition-all motion-press"
+                    >
+                      <Plus className="h-3.5 w-3.5" strokeWidth={2.5} />
+                      Thêm mục lịch trình đầu tiên
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
+          ) : viewMode === "calendar" ? (
+            <TimelineCalendarView 
+              events={events} 
+              trip={trip} 
+              onOpenNewForm={openNewForm}
+              renderActivityCard={(item, idx) => (
+                <ActivityCard 
+                  key={item.id} 
+                  item={item} 
+                  onEdit={() => openEditForm(item)} 
+                  onDelete={() => initiateDelete(item)}
+                  isToday={item.date === today} 
+                  isUpcoming={(item.date || "") > today} 
+                  idx={idx}
+                  backupCount={backupPlans.filter(p => p.activityId === item.id).length}
+                  onOpenBackup={() => {
+                    setBackupPlanCtx({ activityId: item.id, date: item.date });
+                    setIsBackupPlansOpen(true);
+                  }}
+                  linkedExpenses={expenses.filter(exp => String(exp.eventId) === String(item.id))}
+                  onAddExpense={onAddExpense && item.date ? () => onAddExpense(item.date!, item.id!) : undefined}
+                />
+              )}
+            />
           ) : (
             renderTimeline()
           )}
         </div>
 
         {/* Right Column: Dynamic smart widgets */}
-        <div className="space-y-6 lg:sticky lg:top-[160px]">
+        <div className="space-y-6">
           {/* Mini Trip Context Card */}
           <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4">
             <div className="flex items-center gap-2">
@@ -967,47 +1092,9 @@ export function TimelineScreen({ trip, events }: { trip: Trip; events: EventItem
             </div>
           </div>
 
-          {/* Smart Assistant Card */}
-          <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-500/10 text-amber-500">
-                <Sparkles className="h-4 w-4" />
-              </span>
-              <h4 className="text-[15px] font-extrabold text-[#030D2E]">Gợi ý hành trình</h4>
-            </div>
-
-            {/* Smart Dynamic Tip */}
-            <div className="p-3.5 bg-amber-50/60 rounded-2xl border border-amber-100/60 text-[13.5px] leading-relaxed text-amber-800 font-medium">
-              {events.length === 0 ? (
-                "Chuyến đi của bạn chưa có mục lịch trình nào. Hãy bắt đầu bằng nơi lưu trú, giờ xuất phát hoặc điểm dừng đầu tiên."
-              ) : !events.some(e => e.type === "dining") ? (
-                "Mẹo: Hành trình của bạn chưa có mục Ăn uống nào. Hãy lưu thêm các quán ngon địa phương muốn thử để thưởng thức ẩm thực!"
-              ) : !events.some(e => e.mapLink) ? (
-                "Mẹo: Thêm link Google Maps cho các điểm dừng để tra cứu đường đi siêu tốc kể cả khi đang di chuyển."
-              ) : (
-                "Lịch trình của bạn trông rất ổn! Đừng quên dành 1-2 tiếng nghỉ ngơi tự do giữa các điểm tham quan."
-              )}
-            </div>
-
-            {/* Travel Tips List */}
-            <div className="space-y-3 pt-2">
-              <h5 className="text-[12.5px] font-black uppercase tracking-wider text-slate-400">Mẹo hữu ích</h5>
-              <ul className="space-y-3 text-[13.5px] font-medium text-slate-600">
-                <li className="flex gap-2.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-kat-primary shrink-0 mt-2" />
-                  <span>Nên chừa 30–45 phút giữa các điểm dừng để tránh cập rập.</span>
-                </li>
-                <li className="flex gap-2.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-kat-primary shrink-0 mt-2" />
-                  <span>Thêm link Google Maps để tra cứu nhanh khi đang di chuyển.</span>
-                </li>
-                <li className="flex gap-2.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-kat-primary shrink-0 mt-2" />
-                  <span>Lưu mã đặt phòng, vé hoặc số điện thoại liên hệ vào ghi chú.</span>
-                </li>
-              </ul>
-            </div>
-          </div>
+          <WeatherWidget destination={trip.location} latitude={trip.latitude} longitude={trip.longitude} days={tripDays.length} />
+          
+          {/* Gợi ý hành trình has been replaced by the redesigned WeatherWidget above */}
         </div>
       </div>
 

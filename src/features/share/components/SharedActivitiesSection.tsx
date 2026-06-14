@@ -17,10 +17,12 @@ import {
   ShoppingBag,
   CircleEllipsis
 } from 'lucide-react';
-import { EventItem } from '../../../db';
-import { formatDate, classNames } from '../../../utils/helpers';
+import { EventItem, Member } from '../../../db';
+import { classNames, formatDate } from '../../../utils/helpers';
+import { getEmbedMapUrl } from '../../../utils/mapUtils';
 import { submitChangeRequest } from '../../../services/sharedTripRequestService';
-import { BottomSheet, Input, Textarea } from '../../../components/ui';
+import { BottomSheet, Input, Textarea, Select } from '../../../components/ui';
+import { User, UserRoundCheck } from 'lucide-react';
 
 const ACTIVITY_CATEGORIES = [
   { id: "transport", label: "Di chuyển", icon: Route, bgColor: "bg-blue-50 text-blue-600 border-blue-100", activeBg: "bg-blue-100 border-blue-400 text-blue-700" },
@@ -36,12 +38,16 @@ export function SharedActivitiesSection({
   token, 
   mode, 
   activities, 
-  changeRequests = [] 
+  changeRequests = [],
+  members = [],
+  guestName
 }: { 
   token: string; 
   mode: string; 
-  activities: EventItem[]; 
+  activities: EventItem[];
   changeRequests?: any[];
+  members?: Member[];
+  guestName?: string;
 }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -53,7 +59,8 @@ export function SharedActivitiesSection({
     location: '', 
     notes: '', 
     mapLink: '', 
-    type: 'other' 
+    type: 'other',
+    assignee: ''
   });
 
   const isRequestEdit = mode === 'request_edit';
@@ -107,7 +114,8 @@ export function SharedActivitiesSection({
       location: '', 
       notes: '', 
       mapLink: '', 
-      type: 'other' 
+      type: 'other',
+      assignee: ''
     });
     setIsFormOpen(true);
     setEditingId(null);
@@ -127,7 +135,8 @@ export function SharedActivitiesSection({
       location: item.location || '',
       notes: item.notes || '',
       mapLink: item.mapLink || '',
-      type: item.type || 'other'
+      type: item.type || 'other',
+      assignee: item.assignee || ''
     });
     setEditingId(String(item.id));
     setIsFormOpen(true);
@@ -145,7 +154,8 @@ export function SharedActivitiesSection({
           section: 'activities',
           action: 'create',
           after: form,
-          note: ''
+          note: '',
+          requesterName: guestName
         });
         setIsFormOpen(false);
         alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
@@ -156,7 +166,8 @@ export function SharedActivitiesSection({
           action: 'update',
           targetId: editingId,
           before: currentItem as any,
-          after: form
+          after: form,
+          requesterName: guestName
         });
         setEditingId(null);
         setIsFormOpen(false);
@@ -176,7 +187,8 @@ export function SharedActivitiesSection({
           section: 'activities',
           action: 'delete',
           targetId: id,
-          before: currentItem as any
+          before: currentItem as any,
+          requesterName: guestName
         });
         alert('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
       } catch (e: any) {
@@ -301,6 +313,16 @@ export function SharedActivitiesSection({
                     </span>
                   )}
                   <span className={item.isPendingDelete ? "line-through" : ""}>{formatDate(item.date)}</span>
+                  {item.assignee && (
+                    <span className={classNames(
+                      "flex items-center gap-1 font-bold text-slate-500",
+                      item.isPendingDelete ? "line-through" : ""
+                    )}>
+                      <span className="h-1 w-1 rounded-full bg-slate-300 mx-1"></span>
+                      <UserRoundCheck className="h-3.5 w-3.5" />
+                      {item.assignee}
+                    </span>
+                  )}
                 </div>
 
                 {item.location && (
@@ -319,6 +341,40 @@ export function SharedActivitiesSection({
                     item.isPendingDelete ? "opacity-60" : ""
                   )}>
                     <p className={classNames("text-[13px] text-slate-600 whitespace-pre-wrap", item.isPendingDelete ? "line-through" : "")}>{item.notes}</p>
+                  </div>
+                )}
+
+                {/* Google Maps Embed */}
+                {(item.mapLink || item.location) && (
+                  <div className={classNames(
+                    "mt-3 space-y-2",
+                    item.isPendingDelete ? "opacity-60 grayscale" : ""
+                  )} onClick={(e) => e.stopPropagation()}>
+                    {getEmbedMapUrl(item.mapLink || item.location || "", item.location) && (
+                      <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm dark:border-gray-800 bg-slate-100 relative min-h-[160px]">
+                        <div className="absolute inset-0 flex items-center justify-center text-slate-400">
+                          <span className="text-[12px] font-medium animate-pulse">Đang tải bản đồ...</span>
+                        </div>
+                        <iframe
+                          title="Google Maps Embed"
+                          width="100%"
+                          height="160"
+                          className="border-0 dark:opacity-80 relative z-10"
+                          loading="lazy"
+                          allowFullScreen
+                          src={getEmbedMapUrl(item.mapLink || item.location || "", item.location)}
+                        ></iframe>
+                      </div>
+                    )}
+                    <a 
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[13px] font-bold text-emerald-600 border border-emerald-100 hover:bg-emerald-100 transition-colors" 
+                      href={item.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
+                      target="_blank" 
+                      rel="noreferrer"
+                    >
+                      <Map className="w-3.5 h-3.5" />
+                      Mở bằng ứng dụng Google Maps &rarr;
+                    </a>
                   </div>
                 )}
               </div>
@@ -447,9 +503,37 @@ export function SharedActivitiesSection({
               </span>
             }
             value={form.notes}
-            onChange={val => setForm({ ...form, notes: val })}
+            onChange={(notes) => setForm({ ...form, notes })}
             placeholder="Mô tả chi tiết hoặc lưu ý cho hoạt động này..."
           />
+
+          <div className="space-y-1.5">
+            <label className="text-[13px] font-bold text-slate-700 flex items-center gap-1.5">
+              <UserRoundCheck className="h-4 w-4 text-slate-500" />
+              Thành viên phụ trách
+            </label>
+            {(!members || members.length === 0) ? (
+              <div className="rounded-[16px] bg-[#FAF7F1] border border-kat-border/60 p-3 flex items-start gap-2.5">
+                <User className="h-4 w-4 text-slate-500 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-[12.5px] font-bold text-slate-800">Chưa có người đồng hành</h4>
+                  <p className="text-[11.5px] text-slate-500 mt-0.5 font-bold">Thêm thành viên vào chuyến đi để có thể phân công.</p>
+                </div>
+              </div>
+            ) : (
+              <Select
+                label=""
+                value={form.assignee}
+                onChange={(assignee) => setForm({ ...form, assignee })}
+                options={[
+                  "", 
+                  ...(form.assignee && !members.some(m => m.name === form.assignee) ? [form.assignee] : []),
+                  ...members.map(m => m.name)
+                ]}
+                placeholder="Chọn người đồng hành"
+              />
+            )}
+          </div>
 
           <button
             onClick={handleSave}

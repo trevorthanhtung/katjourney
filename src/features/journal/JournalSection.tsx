@@ -19,11 +19,16 @@ import {
   Type,
   NotebookPen,
   Save,
-  Sparkles
+  Sparkles,
+  Image as ImageIcon,
+  Loader2
 } from "lucide-react";
 import { db, JournalEntry, JournalMood } from "../../db";
 import { formatDate, moodLabels, today } from "../../utils/helpers";
 import { BottomSheet, FAB, Input, Textarea, DeleteConfirmModal } from "../../components/ui";
+import { getIdentity } from "../../services/identityService";
+import { uploadJournalImage } from "../../services/storageService";
+import { getCurrentUser } from "../../services/authService";
 
 const moodOptionList: Array<{ value: JournalMood; label: string }> = [
   { value: "good", label: "Vui" },
@@ -66,16 +71,36 @@ function JournalForm({
   onClearPrefilled: () => void;
   onShowToast?: (msg: string) => void;
 }) {
-  const [form, setForm] = useState({ date: today, title: "", content: "", mood: "good" as JournalMood });
+  const [form, setForm] = useState({ date: today, title: "", content: "", mood: "good" as JournalMood, imageUrl: "" });
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [dirty, setDirty] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadJournalImage(file, tripId);
+      setForm(prev => ({ ...prev, imageUrl: url }));
+      setDirty(true);
+    } catch (err: any) {
+      console.error(err);
+      alert("Lỗi: " + (err.message || "Tải ảnh thất bại"));
+      onShowToast?.("Lỗi tải ảnh lên. Vui lòng thử lại.");
+    } finally {
+      setUploading(false);
+      if (e.target) e.target.value = '';
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
       if (editing) {
-        setForm({ date: editing.date, title: editing.title, content: editing.content, mood: editing.mood });
+        setForm({ date: editing.date, title: editing.title, content: editing.content, mood: editing.mood, imageUrl: editing.imageUrl || "" });
       } else {
-        setForm({ date: today, title: "", content: prefilledContent || "", mood: "good" });
+        setForm({ date: today, title: "", content: prefilledContent || "", mood: "good", imageUrl: "" });
       }
       setSubmitAttempted(false);
       setDirty(false);
@@ -90,16 +115,27 @@ function JournalForm({
     setSubmitAttempted(true);
     if (hasError) return;
 
+    const identity = getIdentity(tripId);
+    // Ưu tiên tên từ Firebase Auth (displayName đã set trong cài đặt)
+    const firebaseUser = await getCurrentUser();
+    const resolvedName = firebaseUser?.displayName || identity?.name || "Trưởng nhóm";
+    const resolvedId = firebaseUser?.uid || identity?.id || "lead";
+
+    const now = new Date().toISOString();
     const payload = {
       tripId,
       date: form.date,
       title: form.title.trim(),
       content: form.content.trim(),
-      mood: form.mood
+      mood: form.mood,
+      imageUrl: form.imageUrl || undefined,
+      authorId: resolvedId,
+      authorName: resolvedName,
+      postedAt: editing?.postedAt || now, // giữ nguyên postedAt khi edit
     };
 
     if (editing?.id) {
-      await db.journals.update(editing.id, payload);
+      await db.journals.update(editing.id, { ...payload, updatedAt: now });
       onShowToast?.("Đã cập nhật nhật ký");
     } else {
       await db.journals.add(payload);
@@ -239,6 +275,43 @@ function JournalForm({
           )}
         </div>
 
+        {/* Image Field */}
+        <div>
+          {form.imageUrl ? (
+            <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+              <img src={form.imageUrl} alt="Uploaded" className="w-full aspect-[4/3] object-contain" />
+              <button
+                onClick={() => { setForm({ ...form, imageUrl: "" }); setDirty(true); }}
+                className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 hover:bg-black/70"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <div>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleImageUpload} 
+                accept="image/*" 
+                className="hidden" 
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="w-full h-12 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 text-slate-500 font-bold text-[14px] hover:bg-slate-100 hover:text-[#00BFB7] transition-colors flex items-center justify-center gap-2"
+              >
+                {uploading ? (
+                  <><Loader2 className="h-5 w-5 animate-spin" /> Đang tải ảnh...</>
+                ) : (
+                  <><ImageIcon className="h-5 w-5" /> Đính kèm hình ảnh</>
+                )}
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Quick Prompts Section inside Modal */}
         <div className="pt-1">
           <span className="mb-2 block text-[12.5px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
@@ -348,12 +421,14 @@ export function JournalSection({
   tripId, 
   journals,
   onShowToast,
-  onBack
+  onBack,
+  isReadOnly
 }: { 
   tripId: number; 
   journals: JournalEntry[];
   onShowToast?: (msg: string) => void;
   onBack?: () => void;
+  isReadOnly?: boolean;
 }) {
   const [editing, setEditing] = useState<JournalEntry | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -363,7 +438,11 @@ export function JournalSection({
   const [entryToDelete, setEntryToDelete] = useState<JournalEntry | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const sorted = [...journals].sort((a, b) => `${b.date}${b.id ?? 0}`.localeCompare(`${a.date}${a.id ?? 0}`));
+  const sorted = [...journals].sort((a, b) => {
+    const ta = a.postedAt || `${a.date}T00:00:00`;
+    const tb = b.postedAt || `${b.date}T00:00:00`;
+    return tb.localeCompare(ta);
+  });
   const grouped = sorted.reduce<Record<string, JournalEntry[]>>((result, entry) => {
     result[entry.date] = [...(result[entry.date] ?? []), entry];
     return result;
@@ -404,7 +483,7 @@ export function JournalSection({
 
   async function executeDelete() {
     if (entryToDelete?.id) {
-      await db.journals.delete(entryToDelete.id);
+      await db.journals.update(entryToDelete.id, { isDeleted: true });
       onShowToast?.("Đã xóa nhật ký");
     }
     setIsDeleteOpen(false);
@@ -430,13 +509,15 @@ export function JournalSection({
             <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Lưu lại cảm xúc, câu chuyện và những khoảnh khắc đáng nhớ.</p>
           </div>
         </div>
-        <button
-          onClick={openNewForm}
-          className="hidden md:flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] px-5 text-[14px] font-black text-[#030D2E] transition-all hover:brightness-105 shadow-sm shrink-0 motion-press"
-        >
-          <PenLine className="w-4.5 h-4.5" strokeWidth={2.5} />
-          Viết nhật ký
-        </button>
+        {!isReadOnly && (
+          <button
+            onClick={openNewForm}
+            className="hidden md:flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] px-5 text-[14px] font-black text-[#030D2E] transition-all hover:brightness-105 shadow-sm shrink-0 motion-press"
+          >
+            <PenLine className="w-4.5 h-4.5" strokeWidth={2.5} />
+            Viết nhật ký
+          </button>
+        )}
       </div>
 
       {/* Journal Overview Card */}
@@ -492,47 +573,69 @@ export function JournalSection({
                 <h3 className="text-[15px] font-extrabold text-[#030D2E]">{formatDate(date)}</h3>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="columns-1 md:columns-2 gap-4">
                 {entries.map((entry, idx) => {
                   const moodBadge = moodBadgeClasses[entry.mood] || "bg-slate-50 text-slate-700 border-slate-200";
                   return (
                     <article 
                       key={entry.id} 
-                      className={`group rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft hover:shadow-md transition-all flex flex-col justify-between gap-4 motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}
+                      className={`break-inside-avoid mb-4 group rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] shadow-soft hover:shadow-md transition-all flex flex-col motion-card-enter overflow-hidden motion-delay-${Math.min(idx + 1, 5)}`}
                     >
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between gap-4">
-                          <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider ${moodBadge}`}>
-                            {moodLabels[entry.mood] || "Đáng nhớ"}
-                          </span>
-                          
-                          {/* Edit / Delete Buttons */}
-                          <div className="flex gap-2">
+                      <div className="flex items-center justify-between gap-4 p-4 pb-3">
+                        <div className="flex items-center gap-2.5">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-700 font-black text-[15px]">
+                            {(entry.authorName || "T").charAt(0).toUpperCase()}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[14px] font-extrabold text-slate-800">{entry.authorName || "Trưởng nhóm"}</span>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider ${moodBadge}`}>
+                                {moodLabels[entry.mood] || "Đáng nhớ"}
+                              </span>
+                              {entry.postedAt && (
+                                <span className="text-[10px] font-semibold text-slate-400 flex items-center gap-0.5">
+                                  <Clock3 className="h-2.5 w-2.5" />
+                                  {new Date(entry.postedAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Edit / Delete Buttons */}
+                        {!isReadOnly && (
+                          <div className="flex gap-1.5">
                             <button 
-                              className="flex h-9 w-9 items-center justify-center rounded-full text-slate-500 bg-slate-50 hover:bg-slate-100 transition-all border border-slate-200/40 motion-press" 
+                              className="flex h-8 w-8 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 transition-all motion-press" 
                               onClick={() => openEditForm(entry)}
                               title="Sửa nhật ký"
                             >
                               <Edit3 className="h-4 w-4" />
                             </button>
                             <button 
-                              className="flex h-9 w-9 items-center justify-center rounded-full text-rose-600 bg-rose-50 hover:bg-rose-100 transition-all border border-rose-200/40 motion-press" 
+                              className="flex h-8 w-8 items-center justify-center rounded-full text-rose-500 hover:bg-rose-50 transition-all motion-press" 
                               onClick={() => triggerDelete(entry)}
                               title="Xóa nhật ký"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
-                        </div>
+                        )}
+                      </div>
 
-                        <div>
-                          <h4 className="text-[17px] font-black text-[#030D2E] leading-snug break-words">
-                            {entry.title || "Nhật ký chuyến đi"}
-                          </h4>
-                          <p className="mt-2 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600">
-                            {entry.content}
-                          </p>
+                      {entry.imageUrl && (
+                        <div className="w-full bg-[#F3F4F6] border-y border-slate-100/50 flex justify-center">
+                          <img src={entry.imageUrl} alt="Journal" className="w-full h-auto max-h-[500px] object-contain" />
                         </div>
+                      )}
+
+                      <div className="p-4 pt-3">
+                        <h4 className="text-[17px] font-black text-[#030D2E] leading-snug break-words">
+                          {entry.title || "Nhật ký chuyến đi"}
+                        </h4>
+                        <p className="mt-1.5 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600">
+                          {entry.content}
+                        </p>
                       </div>
                     </article>
                   );
@@ -546,12 +649,14 @@ export function JournalSection({
       )}
 
       {/* FAB Mobile button */}
-      <FAB 
-        icon={<PenLine className="h-6 w-6" />} 
-        label="Viết nhật ký" 
-        onClick={openNewForm} 
-        className="md:hidden h-16 w-16 bg-[#00BFB7] text-[#030D2E] hover:scale-105 shadow-lg motion-press"
-      />
+      {!isReadOnly && (
+        <FAB 
+          icon={<PenLine className="h-6 w-6" />} 
+          label="Viết nhật ký" 
+          onClick={openNewForm} 
+          className="md:hidden h-16 w-16 bg-[#00BFB7] text-[#030D2E] hover:scale-105 shadow-lg motion-press"
+        />
+      )}
 
       {/* Modal Form */}
       <JournalForm

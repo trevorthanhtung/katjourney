@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { 
   MoreVertical,
   Backpack, 
@@ -58,7 +58,13 @@ import {
   Share2,
   CheckCircle2,
   AlertTriangle,
-  Copy
+  Copy,
+  Lock,
+  Unlock,
+  Info,
+  Palette,
+  Languages,
+  Package
 } from "lucide-react";
 
 function ShareSwitch({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) {
@@ -83,7 +89,7 @@ function ShareSwitch({ checked, onChange }: { checked: boolean; onChange: (check
     </button>
   );
 }
-import { ChecklistItem, db, deleteTripCascade, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "../../db";
+import { ChecklistItem, db, deleteTripCascade, EventItem, Expense, JournalEntry, Member, PackingItem, Trip, archiveTrip, unarchiveTrip } from "../../db";
 import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
 import { 
   checklistSections, 
@@ -104,17 +110,333 @@ import { exportTripExcel, exportTripPdf } from "../../utils/exports";
 import { BottomSheet, FormActions, Input, ScreenTitle, TypedDeleteConfirmModal, classNames } from "../../components/ui";
 import { JournalSection } from "../journal/JournalSection";
 import { TravelDocumentsSection } from "./TravelDocumentsSection";
+import { searchLocation, GeocodingResult } from "../../services/weatherService";
+
+// --- LocationInput Component ---
+function LocationInput({
+  value,
+  onChange,
+  onSelectResult,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  onSelectResult: (result: GeocodingResult) => void;
+}) {
+  const [suggestions, setSuggestions] = useState<GeocodingResult[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const fetchSuggestions = useCallback(async (query: string) => {
+    if (query.length < 2) { setSuggestions([]); setIsOpen(false); return; }
+    setLoading(true);
+    const results = await searchLocation(query);
+    setSuggestions(results);
+    setIsOpen(results.length > 0);
+    setLoading(false);
+  }, []);
+
+  function handleChange(val: string) {
+    onChange(val);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => fetchSuggestions(val), 350);
+  }
+
+  function handleSelect(result: GeocodingResult) {
+    const display = [result.name, result.admin1, result.country].filter(Boolean).join(", ");
+    onChange(display);
+    onSelectResult(result);
+    setSuggestions([]);
+    setIsOpen(false);
+  }
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative">
+      <div className="relative">
+        <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-kat-primary pointer-events-none" />
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => handleChange(e.target.value)}
+          placeholder="VD: Phú Quốc"
+          className="w-full rounded-[14px] border border-slate-200 bg-slate-50/80 pl-10 pr-10 py-3 text-[14px] font-medium text-slate-800 placeholder-slate-400 focus:border-kat-primary focus:ring-2 focus:ring-kat-primary/20 focus:outline-none transition-all"
+          autoComplete="off"
+        />
+        {loading && (
+          <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-kat-primary/30 border-t-kat-primary" />
+          </div>
+        )}
+        {!loading && value && (
+          <button
+            type="button"
+            onClick={() => { onChange(""); setSuggestions([]); setIsOpen(false); }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-slate-500 hover:bg-slate-300 transition-colors"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        )}
+      </div>
+
+      {isOpen && suggestions.length > 0 && (
+        <ul className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-floating animate-fadeIn">
+          {suggestions.map((result, idx) => {
+            const sub = [result.admin1, result.country].filter(Boolean).join(", ");
+            return (
+              <li key={idx}>
+                <button
+                  type="button"
+                  onMouseDown={(e) => { e.preventDefault(); handleSelect(result); }}
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors border-b border-slate-100/60 last:border-0"
+                >
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-kat-primary/10">
+                    <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[13.5px] font-bold text-slate-800 truncate">{result.name}</p>
+                    {sub && <p className="text-[11.5px] text-slate-400 font-medium truncate">{sub}</p>}
+                  </div>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+// --- End LocationInput ---
+
+// --- CalendarRangePicker Component ---
+const DAYS_OF_WEEK = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+const MONTHS_VI = ["Tháng 1","Tháng 2","Tháng 3","Tháng 4","Tháng 5","Tháng 6","Tháng 7","Tháng 8","Tháng 9","Tháng 10","Tháng 11","Tháng 12"];
+
+function CalendarRangePicker({
+  startDate,
+  endDate,
+  tripType,
+  onChangeTripType,
+  onChangeStart,
+  onChangeEnd,
+}: {
+  startDate: string;
+  endDate: string;
+  tripType: "dayTrip" | "multiDay";
+  onChangeTripType: (t: "dayTrip" | "multiDay") => void;
+  onChangeStart: (d: string) => void;
+  onChangeEnd: (d: string) => void;
+}) {
+  const todayDate = new Date();
+  todayDate.setHours(0,0,0,0);
+
+  const initialMonth = startDate ? new Date(startDate + "T00:00:00") : new Date();
+  const [viewYear, setViewYear] = React.useState(initialMonth.getFullYear());
+  const [viewMonth, setViewMonth] = React.useState(initialMonth.getMonth());
+  // hoverDate for range preview (multiDay)
+  const [hoverDate, setHoverDate] = React.useState<string | null>(null);
+  // picking state: first click = start, second click = end
+  const [pickingEnd, setPickingEnd] = React.useState(false);
+
+  function toISO(y: number, m: number, d: number) {
+    return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  }
+
+  function getDaysInMonth(y: number, m: number) {
+    return new Date(y, m+1, 0).getDate();
+  }
+
+  function getFirstDayOfWeek(y: number, m: number) {
+    return new Date(y, m, 1).getDay(); // 0=Sun
+  }
+
+  function prevMonth() {
+    if (viewMonth === 0) { setViewMonth(11); setViewYear(v => v-1); }
+    else setViewMonth(v => v-1);
+  }
+  function nextMonth() {
+    if (viewMonth === 11) { setViewMonth(0); setViewYear(v => v+1); }
+    else setViewMonth(v => v+1);
+  }
+
+  function handleDayClick(iso: string) {
+    if (tripType === "dayTrip") {
+      onChangeStart(iso);
+      onChangeEnd(iso);
+      return;
+    }
+    // multiDay: 2-tap selection
+    if (!pickingEnd) {
+      onChangeStart(iso);
+      onChangeEnd(iso);
+      setPickingEnd(true);
+    } else {
+      if (iso < startDate) {
+        onChangeStart(iso);
+        onChangeEnd(startDate);
+      } else {
+        onChangeEnd(iso);
+      }
+      setPickingEnd(false);
+    }
+  }
+
+  const daysInMonth = getDaysInMonth(viewYear, viewMonth);
+  const firstDow = getFirstDayOfWeek(viewYear, viewMonth);
+  const cells: (number|null)[] = Array(firstDow).fill(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const effectiveEnd = tripType === "dayTrip" ? startDate : (pickingEnd && hoverDate ? (hoverDate < startDate ? startDate : hoverDate) : endDate);
+
+  // Format display
+  function fmtDisplay(iso: string) {
+    if (!iso) return "--";
+    const d = new Date(iso + "T00:00:00");
+    return `${d.getDate()} thg ${d.getMonth()+1}, ${d.getFullYear()}`;
+  }
+
+  const monthLabel = `${MONTHS_VI[viewMonth]} ${viewYear}`;
+
+  return (
+    <div className="w-full">
+      {/* Trip type toggle */}
+      <div className="grid grid-cols-2 gap-2 mb-4">
+        <button type="button" onClick={() => { onChangeTripType("dayTrip"); setPickingEnd(false); }}
+          className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px]",
+            tripType === "dayTrip" ? "bg-kat-primary/10 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100")}
+        >
+          <span className={classNames("text-[14px] font-bold", tripType === "dayTrip" ? "text-kat-primary" : "text-slate-700")}>Đi trong ngày</span>
+          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "dayTrip" ? "text-kat-primary/80" : "text-slate-400")}>Đi và về cùng ngày</span>
+        </button>
+        <button type="button" onClick={() => { onChangeTripType("multiDay"); setPickingEnd(false); }}
+          className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px]",
+            tripType === "multiDay" ? "bg-kat-primary/10 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100")}
+        >
+          <span className={classNames("text-[14px] font-bold", tripType === "multiDay" ? "text-kat-primary" : "text-slate-700")}>Nhiều ngày</span>
+          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "multiDay" ? "text-kat-primary/80" : "text-slate-400")}>Có ngày đi và về</span>
+        </button>
+      </div>
+
+      {/* Selected range display */}
+      <div className="mb-4 px-1">
+        {tripType === "dayTrip" ? (
+          <p className="text-[18px] font-extrabold text-kat-text">{fmtDisplay(startDate)}</p>
+        ) : (
+          <p className="text-[18px] font-extrabold text-kat-text">
+            {fmtDisplay(startDate)} <span className="text-kat-muted font-bold mx-1">—</span> {fmtDisplay(effectiveEnd)}
+          </p>
+        )}
+        {tripType === "multiDay" && pickingEnd && (
+          <p className="text-[12px] text-kat-primary font-semibold mt-0.5 animate-pulse">Chọn ngày kết thúc…</p>
+        )}
+      </div>
+
+      {/* Calendar grid */}
+      <div className="rounded-2xl border border-slate-200/80 bg-white overflow-hidden">
+        {/* Month navigation */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+          <button type="button" onClick={prevMonth}
+            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors text-slate-500">
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <span className="text-[14px] font-bold text-slate-800">{monthLabel}</span>
+          <button type="button" onClick={nextMonth}
+            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors text-slate-500">
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+
+        {/* Day headers */}
+        <div className="grid grid-cols-7 border-b border-slate-100">
+          {DAYS_OF_WEEK.map(d => (
+            <div key={d} className="py-2 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wide">{d}</div>
+          ))}
+        </div>
+
+        {/* Day cells */}
+        <div className="grid grid-cols-7 p-1">
+          {cells.map((day, idx) => {
+            if (!day) return <div key={`e-${idx}`} className="h-10" />;
+            const iso = toISO(viewYear, viewMonth, day);
+            const isStart = iso === startDate;
+            const isEnd = tripType !== "dayTrip" && iso === effectiveEnd;
+            const inRange = tripType !== "dayTrip" && startDate && effectiveEnd && iso > startDate && iso < effectiveEnd;
+            const isToday = iso === todayDate.toISOString().split("T")[0];
+
+            // Rounded cap logic for range bar
+            const isStartCap = isStart && tripType !== "dayTrip" && startDate !== effectiveEnd;
+            const isEndCap = isEnd && startDate !== effectiveEnd;
+            const isSingleDay = isStart && isEnd;
+
+            return (
+              <div
+                key={iso}
+                className="relative h-10 flex items-center justify-center"
+                onMouseEnter={() => tripType === "multiDay" && pickingEnd && setHoverDate(iso)}
+                onMouseLeave={() => tripType === "multiDay" && pickingEnd && setHoverDate(null)}
+              >
+                {/* Range bar background */}
+                {(inRange || isStartCap || isEndCap) && !isSingleDay && (
+                  <div className={classNames(
+                    "absolute inset-y-1 bg-kat-primary/15",
+                    isStartCap ? "left-1/2 right-0" : isEndCap ? "left-0 right-1/2" : "left-0 right-0"
+                  )} />
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => handleDayClick(iso)}
+                  className={classNames(
+                    "relative z-10 h-9 w-9 flex items-center justify-center rounded-full text-[13.5px] font-semibold transition-all",
+                    (isStart || isEnd) && !isSingleDay
+                      ? "bg-kat-primary text-white font-bold shadow-sm"
+                      : isSingleDay
+                      ? "bg-kat-primary text-white font-bold shadow-sm"
+                      : inRange
+                      ? "text-kat-primary font-semibold hover:bg-kat-primary/10"
+                      : isToday
+                      ? "text-kat-primary font-bold ring-1.5 ring-kat-primary hover:bg-kat-primary/10"
+                      : "text-slate-700 hover:bg-slate-100"
+                  )}
+                >
+                  {day}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+// --- End CalendarRangePicker ---
 
 function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boolean; onClose: () => void; onSaved: (id: number) => void }) {
   const [form, setForm] = useState<{
     title: string;
     location: string;
+    latitude?: number;
+    longitude?: number;
     tripType: "dayTrip" | "multiDay";
     startDate: string;
     endDate: string;
   }>({
     title: trip?.title ?? "",
     location: trip?.location ?? "",
+    latitude: trip?.latitude,
+    longitude: trip?.longitude,
     tripType: trip?.tripType ?? (trip?.startDate === trip?.endDate ? "dayTrip" : "multiDay"),
     startDate: trip?.startDate ?? today,
     endDate: trip?.endDate ?? today
@@ -128,6 +450,8 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
       setForm({
         title: trip?.title ?? "",
         location: trip?.location ?? "",
+        latitude: trip?.latitude,
+        longitude: trip?.longitude,
         tripType: trip?.tripType ?? (trip?.startDate === trip?.endDate ? "dayTrip" : "multiDay"),
         startDate: trip?.startDate ?? today,
         endDate: trip?.endDate ?? today
@@ -195,107 +519,47 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
             <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{titleError}</p>
           )}
         </div>
-        <Input 
-          label={
-            <span className="flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 text-slate-500" />
-              Điểm đến
-            </span>
-          } 
-          value={form.location} 
-          onChange={(location) => setForm({ ...form, location })} 
-          placeholder="VD: Phú Quốc" 
-        />
-        
         <div>
           <span className="mb-1.5 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-            <Clock3 className="h-4 w-4 text-slate-500" />
-            Thời lượng chuyến đi
+            <MapPin className="h-4 w-4 text-slate-500" />
+            Điểm đến
           </span>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => setForm({ ...form, tripType: "dayTrip" })}
-              className={classNames(
-                "flex flex-col items-start justify-center rounded-[14px] px-4 py-3 text-left transition-all min-h-[64px]",
-                form.tripType === "dayTrip"
-                  ? "bg-kat-primary/10 ring-2 ring-inset ring-kat-primary"
-                  : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100"
-              )}
-            >
-              <span className={classNames("text-[15px] font-bold", form.tripType === "dayTrip" ? "text-kat-primary" : "text-slate-700")}>Đi trong ngày</span>
-              <span className={classNames("text-[12px] font-medium mt-0.5", form.tripType === "dayTrip" ? "text-kat-primary/80" : "text-slate-500")}>Đi và về trong cùng ngày</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setForm({ ...form, tripType: "multiDay" })}
-              className={classNames(
-                "flex flex-col items-start justify-center rounded-[14px] px-4 py-3 text-left transition-all min-h-[64px]",
-                form.tripType === "multiDay"
-                  ? "bg-kat-primary/10 ring-2 ring-inset ring-kat-primary"
-                  : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100"
-              )}
-            >
-              <span className={classNames("text-[15px] font-bold", form.tripType === "multiDay" ? "text-kat-primary" : "text-slate-700")}>Nhiều ngày</span>
-              <span className={classNames("text-[12px] font-medium mt-0.5", form.tripType === "multiDay" ? "text-kat-primary/80" : "text-slate-500")}>Có ngày khởi hành và ngày kết thúc</span>
-            </button>
-          </div>
+          <LocationInput
+            value={form.location}
+            onChange={(location) => setForm((f) => ({ ...f, location, latitude: undefined, longitude: undefined }))}
+            onSelectResult={(result) => {
+              const display = [result.name, result.admin1, result.country].filter(Boolean).join(", ");
+              setForm((f) => ({ ...f, location: display, latitude: result.latitude, longitude: result.longitude }));
+            }}
+          />
+          {form.latitude && form.longitude && (
+            <p className="mt-1.5 px-1 text-[11.5px] font-medium text-emerald-600 flex items-center gap-1">
+              <Check className="h-3 w-3" /> Đã xác định tọa độ — thời tiết sẽ hiển thị chính xác
+            </p>
+          )}
         </div>
-
-        {form.tripType === "dayTrip" ? (
-          <div>
-            <Input 
-              label={
-                <span className="flex items-center gap-1.5">
-                  <CalendarDays className="h-4 w-4 text-slate-500" />
-                  Ngày khởi hành
-                </span>
-              } 
-              type="date" 
-              value={form.startDate} 
-              onChange={(startDate) => setForm({ ...form, startDate })} 
-            />
-            {(dirty || submitAttempted) && startDateError && (
-              <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{startDateError}</p>
-            )}
-            <p className="mt-2 text-[13px] font-medium text-slate-500">Ngày kết thúc sẽ được tính cùng ngày bắt đầu.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Input 
-                label={
-                  <span className="flex items-center gap-1.5">
-                    <CalendarDays className="h-4 w-4 text-slate-500" />
-                    Ngày khởi hành
-                  </span>
-                } 
-                type="date" 
-                value={form.startDate} 
-                onChange={(startDate) => setForm({ ...form, startDate })} 
-              />
-              {(dirty || submitAttempted) && startDateError && (
-                <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{startDateError}</p>
-              )}
-            </div>
-            <div>
-              <Input 
-                label={
-                  <span className="flex items-center gap-1.5">
-                    <CalendarDays className="h-4 w-4 text-slate-500" />
-                    Ngày kết thúc
-                  </span>
-                } 
-                type="date" 
-                value={form.endDate} 
-                onChange={(endDate) => setForm({ ...form, endDate })} 
-              />
-              {(dirty || submitAttempted) && (endDateError || dateCompareError) && (
-                <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{endDateError || dateCompareError}</p>
-              )}
-            </div>
-          </div>
-        )}
+        
+        {/* === DATE SECTION replaced with CalendarRangePicker === */}
+        <div>
+          <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
+            <CalendarDays className="h-4 w-4 text-slate-500" />
+            Thời gian chuyến đi
+          </span>
+          <CalendarRangePicker
+            startDate={form.startDate}
+            endDate={form.endDate}
+            tripType={form.tripType}
+            onChangeTripType={(tripType) => setForm(f => ({ ...f, tripType }))}
+            onChangeStart={(startDate) => setForm(f => ({ ...f, startDate }))}
+            onChangeEnd={(endDate) => setForm(f => ({ ...f, endDate }))}
+          />
+          {(dirty || submitAttempted) && startDateError && (
+            <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{startDateError}</p>
+          )}
+          {(dirty || submitAttempted) && (endDateError || dateCompareError) && (
+            <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{endDateError || dateCompareError}</p>
+          )}
+        </div>
       </div>
     </BottomSheet>
   );
@@ -1161,7 +1425,9 @@ export function MoreScreen({
   onShowToast,
   section,
   setSection,
-  onOpenInbox
+  onOpenInbox,
+  onOpenSettings,
+  isReadOnly
 }: {
   trip: Trip;
   members: Member[];
@@ -1177,6 +1443,8 @@ export function MoreScreen({
   section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents";
   setSection: (section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents") => void;
   onOpenInbox?: () => void;
+  onOpenSettings?: (view?: "menu" | "auth" | "privacy" | "about" | "donate") => void;
+  isReadOnly?: boolean;
 }) {
   const [editingTrip, setEditingTrip] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
@@ -1187,6 +1455,8 @@ export function MoreScreen({
 
   // Modal confirmations states
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isArchiveConfirmOpen, setIsArchiveConfirmOpen] = useState(false);
+  const [isUnarchiveConfirmOpen, setIsUnarchiveConfirmOpen] = useState(false);
   const [isRestoreConfirmOpen, setIsRestoreConfirmOpen] = useState(false);
   const [selectedFileForRestore, setSelectedFileForRestore] = useState<File | null>(null);
   const [isFactoryResetConfirmOpen, setIsFactoryResetConfirmOpen] = useState(false);
@@ -1204,6 +1474,8 @@ export function MoreScreen({
     includeChecklist: true,
     includeBackupPlans: true,
     includeDocuments: false,
+    sharePin: "",
+    usePinProtection: false,
   });
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -1234,7 +1506,11 @@ export function MoreScreen({
     try {
       setShareLoading(true);
       const { createShareLink } = await import("../../services/cloudShareService");
-      await createShareLink(trip.id!, { ...shareOptions, mode: "request_edit" });
+      await createShareLink(trip.id!, { 
+        ...shareOptions, 
+        mode: "request_edit",
+        sharePin: shareOptions.usePinProtection && shareOptions.sharePin.length === 4 ? shareOptions.sharePin : undefined
+      });
     } catch (e: any) {
       alert("Lỗi khi tạo link chia sẻ. Vui lòng thử lại sau.");
       console.error(e);
@@ -1579,19 +1855,112 @@ export function MoreScreen({
             Quay lại
           </button>
         </div>
-        
+
+        {/* App settings items */}
         <div className="flex flex-col gap-2">
-          <ActionCard
-            icon={BadgeInfo}
-            title="Phiên bản ứng dụng"
-            iconBgColor="bg-slate-50"
-            iconTextColor="text-slate-600 border-slate-100"
-            rightElement={
-              <span className="text-sm font-black text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">
-                2.0.0
-              </span>
-            }
-          />
+          {/* Language */}
+          <button
+            onClick={() => onOpenSettings?.("menu")}
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8] hover:bg-slate-50/60 transition-all text-left focus:outline-none"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">
+                <Languages className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-[15px] font-bold text-[#030D2E]">Ngôn ngữ</h4>
+                <p className="text-[12px] text-slate-400 font-medium">Thay đổi ngôn ngữ hiển thị</p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-slate-400" />
+          </button>
+
+          {/* Theme */}
+          <button
+            onClick={() => onOpenSettings?.("menu")}
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8] hover:bg-slate-50/60 transition-all text-left focus:outline-none"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 border border-violet-100">
+                <Palette className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-[15px] font-bold text-[#030D2E]">Giao diện</h4>
+                <p className="text-[12px] text-slate-400 font-medium">Sáng, tối hoặc theo hệ thống</p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-slate-400" />
+          </button>
+
+          {/* Privacy */}
+          <button
+            onClick={() => onOpenSettings?.("privacy")}
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8] hover:bg-slate-50/60 transition-all text-left focus:outline-none"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
+                <Lock className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-[15px] font-bold text-[#030D2E]">Quyền riêng tư</h4>
+                <p className="text-[12px] text-slate-400 font-medium">Quản lý an toàn dữ liệu và quyền cá nhân</p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-slate-400" />
+          </button>
+
+          {/* About */}
+          <button
+            onClick={() => onOpenSettings?.("about")}
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8] hover:bg-slate-50/60 transition-all text-left focus:outline-none"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 border border-violet-100">
+                <Info className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-[15px] font-bold text-[#030D2E]">Thông tin ứng dụng</h4>
+                <p className="text-[12px] text-slate-400 font-medium">Khám phá thông tin và hành trình phát triển</p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-slate-400" />
+          </button>
+
+          {/* Donate */}
+          <button
+            onClick={() => onOpenSettings?.("donate")}
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8] hover:bg-slate-50/60 transition-all text-left focus:outline-none"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 border border-amber-100">
+                <Coffee className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-[15px] font-bold text-[#030D2E]">Ủng hộ tác giả</h4>
+                <p className="text-[12px] text-slate-400 font-medium">Nếu bạn thấy app hữu ích, cảm ơn rất nhiều</p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-slate-400" />
+          </button>
+
+          {/* Version */}
+          <div className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8]">
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-500 border border-slate-200/60">
+                <Package className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-[15px] font-bold text-[#030D2E]">Phiên bản</h4>
+                <p className="text-[12px] text-slate-400 font-medium">Phiên bản hiện tại trên thiết bị</p>
+              </div>
+            </div>
+            <span className="text-xs font-black text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">2.0.0</span>
+          </div>
+        </div>
+
+        {/* Danger zone */}
+        <div className="flex flex-col gap-2">
+          <p className="text-[11px] font-bold text-rose-400 uppercase tracking-widest px-1 pb-1">Vùng nguy hiểm</p>
           <ActionCard
             icon={Trash2}
             title="Khôi phục cài đặt gốc"
@@ -1603,7 +1972,7 @@ export function MoreScreen({
           />
         </div>
         
-        <div className="mt-12 text-center">
+        <div className="mt-8 text-center">
           <p className="text-[13.5px] font-bold text-slate-400">
             thực hiện bởi{" "}
             <a
@@ -1689,7 +2058,7 @@ export function MoreScreen({
 
         {/* Thao tác chính */}
         <section className="space-y-3">
-          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">Công cụ hành trình</h3>
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">Tính năng</h3>
           <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
             <ActionCard
               icon={MapPinned}
@@ -1738,7 +2107,7 @@ export function MoreScreen({
 
         {/* Hệ thống */}
         <section className="space-y-3">
-          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">HỆ THỐNG</h3>
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">QUẢN LÝ DỮ LIỆU</h3>
           <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
             <div className="flex flex-col gap-2 md:col-span-2">
               <ActionCard
@@ -1803,40 +2172,41 @@ export function MoreScreen({
                   <ActionCard
                     icon={Table2}
                     title="Xuất bảng tính Excel"
-                    onClick={() => exportTripExcel(tripData)}
+                    onClick={() => { exportTripExcel(tripData).catch(console.error); }}
                     iconBgColor="bg-emerald-50"
                     iconTextColor="text-emerald-600 border-emerald-100"
                   />
                 </div>
               )}
             </div>
-
-            <ActionCard
-              icon={BadgeInfo}
-              title="Phiên bản ứng dụng"
-              iconBgColor="bg-slate-50"
-              iconTextColor="text-slate-600 border-slate-100"
-              rightElement={
-                <span className="text-sm font-black text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">
-                  2.0.0
-                </span>
-              }
-            />
-
-            <ActionCard
-              icon={Coffee}
-              title="Ủng hộ dự án"
-              onClick={() => setIsDonateOpen(true)}
-              iconBgColor="bg-amber-50"
-              iconTextColor="text-amber-600 border-amber-100"
-            />
           </div>
         </section>
 
-        {/* Vùng nguy hiểm */}
+        {/* Vùng thao tác cẩn trọng */}
         <section className="space-y-3 pt-2">
-          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-rose-500/80">Vùng thao tác cẩn trọng</h3>
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-rose-500/80">Vùng nguy hiểm</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {!isReadOnly ? (
+              <ActionCard
+                icon={Lock}
+                title="Kết thúc chuyến đi"
+                onClick={() => setIsArchiveConfirmOpen(true)}
+                iconBgColor="bg-slate-100"
+                iconTextColor="text-slate-600 border-slate-200/60"
+                titleClassName="text-slate-700 font-semibold"
+                className="border-slate-200 bg-slate-50/50 hover:bg-slate-100/50 text-slate-700 focus:ring-slate-500/50 md:col-span-2"
+              />
+            ) : (
+              <ActionCard
+                icon={Unlock}
+                title="Khôi phục chuyến đi"
+                onClick={() => setIsUnarchiveConfirmOpen(true)}
+                iconBgColor="bg-emerald-50"
+                iconTextColor="text-emerald-600 border-emerald-100/60"
+                titleClassName="text-emerald-700 font-semibold"
+                className="border-emerald-100 bg-emerald-50/20 hover:bg-emerald-50/40 text-emerald-700 focus:ring-emerald-500/50 md:col-span-2"
+              />
+            )}
             <ActionCard
               icon={Trash2}
               title="Xóa vĩnh viễn chuyến đi"
@@ -2037,6 +2407,73 @@ export function MoreScreen({
                 )}
               </div>
 
+              {/* PIN Protection */}
+              <div className="rounded-2xl border border-slate-200/80 bg-slate-50/50 overflow-hidden">
+                <div
+                  onClick={() => setShareOptions(o => ({ ...o, usePinProtection: !o.usePinProtection, sharePin: "" }))}
+                  className="flex min-h-[52px] items-center justify-between py-3 px-4 cursor-pointer hover:bg-slate-50 transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+                      <Lock className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <span className="text-[14.5px] font-bold text-slate-700">Bảo vệ bằng mã PIN</span>
+                      <p className="text-[11.5px] text-slate-400 font-medium">Người xem cần nhập đúng PIN để mở</p>
+                    </div>
+                  </div>
+                  <ShareSwitch
+                    checked={shareOptions.usePinProtection}
+                    onChange={(val) => setShareOptions(o => ({ ...o, usePinProtection: val, sharePin: "" }))}
+                  />
+                </div>
+
+                {shareOptions.usePinProtection && (
+                  <div className="px-4 pb-4 pt-1 border-t border-slate-100 animate-fadeIn">
+                    <p className="text-[12px] text-slate-500 font-semibold mb-2.5">Nhập mã PIN 4 chữ số:</p>
+                    <div className="flex gap-3 justify-center">
+                      {[0,1,2,3].map((i) => (
+                        <input
+                          key={i}
+                          id={`pin-digit-${i}`}
+                          type="number"
+                          inputMode="numeric"
+                          maxLength={1}
+                          value={shareOptions.sharePin[i] || ""}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, "").slice(-1);
+                            const arr = shareOptions.sharePin.split("").slice(0,4);
+                            arr[i] = val;
+                            const newPin = arr.join("").slice(0,4);
+                            setShareOptions(o => ({ ...o, sharePin: newPin }));
+                            if (val && i < 3) {
+                              const next = document.getElementById(`pin-digit-${i+1}`);
+                              (next as HTMLInputElement)?.focus();
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Backspace" && !shareOptions.sharePin[i] && i > 0) {
+                              const prev = document.getElementById(`pin-digit-${i-1}`);
+                              (prev as HTMLInputElement)?.focus();
+                            }
+                          }}
+                          className="w-12 h-12 rounded-xl border-2 text-center text-[20px] font-black text-slate-800 focus:border-kat-primary focus:ring-2 focus:ring-kat-primary/20 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          style={{ borderColor: shareOptions.sharePin[i] ? undefined : undefined }}
+                        />
+                      ))}
+                    </div>
+                    {shareOptions.sharePin.length === 4 && (
+                      <p className="mt-2 text-center text-[12px] text-emerald-600 font-semibold flex items-center justify-center gap-1">
+                        <Check className="h-3 w-3" /> Mã PIN đã sẵn sàng
+                      </p>
+                    )}
+                    {shareOptions.usePinProtection && shareOptions.sharePin.length < 4 && (
+                      <p className="mt-2 text-center text-[12px] text-amber-500 font-semibold">Vui lòng nhập đủ 4 chữ số</p>
+                    )}
+                  </div>
+                )}
+              </div>
+
               {/* Action Buttons */}
               <div className="flex gap-3 pt-3">
                 <button
@@ -2049,7 +2486,7 @@ export function MoreScreen({
                 <button
                   type="button"
                   onClick={handleCreateLink}
-                  disabled={shareLoading}
+                  disabled={shareLoading || (shareOptions.usePinProtection && shareOptions.sharePin.length < 4)}
                   className="flex-[2] rounded-xl bg-kat-primary py-3 font-bold text-white hover:brightness-105 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none"
                 >
                   {shareLoading ? "Đang tạo link..." : "Tạo link chia sẻ"}
@@ -2158,6 +2595,79 @@ export function MoreScreen({
       </BottomSheet>
 
 
+
+      <BottomSheet 
+        isOpen={isArchiveConfirmOpen} 
+        onClose={() => setIsArchiveConfirmOpen(false)} 
+        title="Kết thúc chuyến đi?"
+      >
+        <div className="space-y-5">
+          <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-[13.5px] text-amber-800 font-semibold leading-relaxed">
+            Chuyến đi sẽ được lưu trữ vào <b>Archive</b> và chuyển sang chế độ <b>"Chỉ xem" (Read-only)</b>. Bạn không thể thay đổi dữ liệu trừ khi khôi phục lại.
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              onClick={() => setIsArchiveConfirmOpen(false)}
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+            >
+              Hủy
+            </button>
+             <button
+              type="button"
+              onClick={async () => {
+                setIsArchiveConfirmOpen(false);
+                if (trip.id) {
+                  await archiveTrip(trip.id);
+                  onShowToast?.("Đã kết thúc chuyến đi và đưa vào lưu trữ.");
+                }
+              }}
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-slate-800 border border-slate-700 px-6 font-bold text-white hover:bg-slate-900 active:scale-98 transition-all duration-200 shadow-sm"
+            >
+              <Lock className="h-5 w-5" />
+              Đồng ý kết thúc
+            </button>
+          </div>
+        </div>
+      </BottomSheet>
+
+      {/* Unarchive Confirm Modal */}
+      <BottomSheet 
+        isOpen={isUnarchiveConfirmOpen} 
+        onClose={() => setIsUnarchiveConfirmOpen(false)} 
+        title="Khôi phục chuyến đi?"
+      >
+        <div className="space-y-5">
+          <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 text-[13.5px] text-emerald-800 font-semibold leading-relaxed">
+            Chuyến đi sẽ được mở khóa. Bạn có thể tiếp tục thêm sự kiện, chi phí và viết nhật ký như bình thường.
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              onClick={() => setIsUnarchiveConfirmOpen(false)}
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+            >
+              Hủy
+            </button>
+             <button
+              type="button"
+              onClick={async () => {
+                setIsUnarchiveConfirmOpen(false);
+                if (trip.id) {
+                  await unarchiveTrip(trip.id);
+                  onShowToast?.("Đã khôi phục chuyến đi.");
+                }
+              }}
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-emerald-600 border border-emerald-500 px-6 font-bold text-white hover:bg-emerald-700 active:scale-98 transition-all duration-200 shadow-sm"
+            >
+              <Unlock className="h-5 w-5" />
+              Đồng ý khôi phục
+            </button>
+          </div>
+        </div>
+      </BottomSheet>
 
     </div>
   );

@@ -5,6 +5,7 @@
 import type { FirebaseApp } from "firebase/app";
 import type { Auth } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
+import type { FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -28,6 +29,7 @@ export const firebaseEnabled = hasFirebaseConfig;
 let cachedApp: FirebaseApp | null = null;
 let cachedAuth: Auth | null = null;
 let cachedDb: Firestore | null = null;
+let cachedStorage: FirebaseStorage | null = null;
 
 /**
  * Khởi tạo Firebase SDK (lazy-load).
@@ -37,27 +39,30 @@ export async function initFirebase() {
     throw new Error("Firebase config missing");
   }
   
-  if (cachedApp && cachedAuth && cachedDb) {
-    return { app: cachedApp, auth: cachedAuth, db: cachedDb };
+  if (cachedApp && cachedAuth && cachedDb && cachedStorage) {
+    return { app: cachedApp, auth: cachedAuth, db: cachedDb, storage: cachedStorage };
   }
 
   // Lazy load Firebase modules only when called
   const [
     { initializeApp, getApps },
     { getAuth },
-    { getFirestore }
+    { getFirestore },
+    { getStorage }
   ] = await Promise.all([
     import("firebase/app"),
     import("firebase/auth"),
-    import("firebase/firestore")
+    import("firebase/firestore"),
+    import("firebase/storage")
   ]);
 
   const apps = getApps();
   cachedApp = apps.length ? apps[0] : initializeApp(firebaseConfig);
   cachedAuth = getAuth(cachedApp);
   cachedDb = getFirestore(cachedApp);
+  cachedStorage = getStorage(cachedApp);
 
-  return { app: cachedApp, auth: cachedAuth, db: cachedDb };
+  return { app: cachedApp, auth: cachedAuth, db: cachedDb, storage: cachedStorage };
 }
 
 /**
