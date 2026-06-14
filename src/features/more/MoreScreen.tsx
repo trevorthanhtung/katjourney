@@ -1858,39 +1858,6 @@ export function MoreScreen({
 
         {/* App settings items */}
         <div className="flex flex-col gap-2">
-          {/* Language */}
-          <button
-            onClick={() => onOpenSettings?.("menu")}
-            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8] hover:bg-slate-50/60 transition-all text-left focus:outline-none"
-          >
-            <div className="flex items-center gap-3.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">
-                <Languages className="h-5 w-5" />
-              </div>
-              <div>
-                <h4 className="text-[15px] font-bold text-[#030D2E]">Ngôn ngữ</h4>
-                <p className="text-[12px] text-slate-400 font-medium">Thay đổi ngôn ngữ hiển thị</p>
-              </div>
-            </div>
-            <ChevronRight className="h-5 w-5 text-slate-400" />
-          </button>
-
-          {/* Theme */}
-          <button
-            onClick={() => onOpenSettings?.("menu")}
-            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8] hover:bg-slate-50/60 transition-all text-left focus:outline-none"
-          >
-            <div className="flex items-center gap-3.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 border border-violet-100">
-                <Palette className="h-5 w-5" />
-              </div>
-              <div>
-                <h4 className="text-[15px] font-bold text-[#030D2E]">Giao diện</h4>
-                <p className="text-[12px] text-slate-400 font-medium">Sáng, tối hoặc theo hệ thống</p>
-              </div>
-            </div>
-            <ChevronRight className="h-5 w-5 text-slate-400" />
-          </button>
 
           {/* Privacy */}
           <button
