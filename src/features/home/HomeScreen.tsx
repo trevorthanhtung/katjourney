@@ -335,16 +335,14 @@ export function HomeScreen({
                 <div className="mt-4 flex flex-wrap gap-2.5">
                   <button
                     onClick={() => exportTripPdf(tripData)}
-                    className="flex-1 min-w-[100px] h-10 flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#030D2E] font-bold text-[13px] transition-all motion-press"
+                    className="flex-1 min-w-[100px] h-10 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-[#030D2E] font-bold text-[13px] transition-all motion-press"
                   >
-                    <FileText className="w-4 h-4 text-slate-400" />
                     <span>Xuất PDF</span>
                   </button>
                   <button
                     onClick={() => { exportTripExcel(tripData).catch(console.error); }}
-                    className="flex-1 min-w-[100px] h-10 flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#030D2E] font-bold text-[13px] transition-all motion-press"
+                    className="flex-1 min-w-[100px] h-10 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-[#030D2E] font-bold text-[13px] transition-all motion-press"
                   >
-                    <Table2 className="w-4 h-4 text-slate-400" />
                     <span>Xuất Excel</span>
                   </button>
                 </div>

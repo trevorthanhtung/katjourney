@@ -1795,7 +1795,18 @@ export function MoreScreen({
 
         {/* Member List Section */}
         <section className="space-y-4">
-          <h3 className="text-[17px] font-extrabold text-[#030D2E] px-1">Danh sách người đồng hành {members.length > 0 && `(${members.length})`}</h3>
+          <div className="flex items-center justify-between px-1">
+            <h3 className="text-[17px] font-extrabold text-[#030D2E]">Danh sách người đồng hành {members.length > 0 && `(${members.length})`}</h3>
+            {members.length > 0 && !isReadOnly && (
+              <button
+                onClick={openNewMember}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary hover:bg-kat-primary/20 transition-all active:scale-95"
+                aria-label="Thêm người đồng hành"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+            )}
+          </div>
           
           {members.length ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
