@@ -95,26 +95,28 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
       </div>
 
       {/* 2. RIGHT SIDE - Zero-Friction Auth Form (Mobile-first) */}
-      <div className="flex flex-col justify-between items-center bg-white relative w-full h-full min-h-[100dvh] overflow-y-auto px-6 py-12 md:px-12 md:py-14 custom-scrollbar">
+      <div className="flex flex-col justify-between items-center relative w-full h-full min-h-[100dvh] overflow-y-auto px-6 py-8 md:px-12 md:py-14 custom-scrollbar bg-gradient-to-br from-[#E6F9F8] via-[#FFFDF8] to-[#FFF0F5]">
         
-        {/* Mobile Logo Header */}
-        <div className="w-full shrink-0 flex justify-center md:hidden mb-4">
-          <div className="flex items-center gap-2">
-            <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-8 w-8 object-contain" />
-            <span className="text-[17px] font-extrabold tracking-tight text-[#030D2E]">KAT Journey</span>
-          </div>
-        </div>
-        <div className="hidden md:block h-2 w-full shrink-0" />
+        {/* Noise overlay for spatial texture */}
+        <div 
+          className="absolute inset-0 z-0 opacity-[0.25] mix-blend-overlay pointer-events-none" 
+          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
+        />
 
-        {/* MIDDLE ACTIONS: Zero-Friction button stack */}
-        <div className="w-full max-w-sm mx-auto my-auto py-6 flex flex-col items-center">
+        <div className="hidden md:block h-2 w-full shrink-0 relative z-10" />
+
+        {/* MIDDLE ACTIONS: Glassmorphism Card */}
+        <div className="w-full max-w-[400px] mx-auto my-auto p-8 sm:p-10 bg-white/60 backdrop-blur-xl rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-white flex flex-col items-center relative z-10 animate-scaleUp">
           
-          {/* Header text */}
-          <div className="mb-8 text-center">
-            <h3 className="text-3xl font-extrabold tracking-tight text-[#030D2E] leading-tight">
+          {/* Header text with Logo */}
+          <div className="mb-10 text-center flex flex-col items-center">
+            <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-white shadow-sm border border-slate-100 mb-6 ring-4 ring-white/50">
+              <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-10 w-10 object-contain drop-shadow-sm" />
+            </div>
+            <h3 className="text-[32px] font-black tracking-tight text-[#030D2E] leading-tight">
               Bắt đầu hành trình
             </h3>
-            <p className="text-sm font-semibold text-slate-400 mt-2.5 max-w-[280px] mx-auto">
+            <p className="text-[15px] font-semibold text-slate-500 mt-3 max-w-[280px] mx-auto leading-relaxed">
               Tham gia cùng KAT Journey với 1 chạm.
             </p>
           </div>
@@ -128,17 +130,17 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
           )}
 
           {/* Action Button Stack, height h-14, gap-4 */}
-          <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col gap-3.5 w-full">
             {/* Google Login (Primary) */}
             <button
               onClick={handleGoogleLogin}
               disabled={loading !== null}
-              className="w-full flex items-center justify-center gap-3.5 h-14 rounded-[18px] border-2 border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-350 active:scale-[0.98] transition-all font-bold text-[16px] text-[#030D2E] shadow-sm hover:shadow-md disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-3.5 h-14 rounded-2xl bg-white hover:bg-slate-50 active:scale-[0.97] transition-all font-extrabold text-[16px] text-[#030D2E] shadow-[0_4px_14px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] border border-slate-100 disabled:opacity-60 disabled:scale-100 group"
             >
               {loading === "google" ? (
                 <Loader2 className="h-5.5 w-5.5 text-[#00BFB7] animate-spin" />
               ) : (
-                <GoogleIcon />
+                <div className="group-active:scale-95 transition-transform"><GoogleIcon /></div>
               )}
               Tiếp tục với Google
             </button>
@@ -147,12 +149,12 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             <button
               onClick={handleGuestLogin}
               disabled={loading !== null}
-              className="w-full flex items-center justify-center gap-3 h-14 rounded-[18px] border border-transparent bg-transparent hover:bg-slate-50 active:scale-[0.98] transition-all font-bold text-[15px] text-slate-400 hover:text-slate-800 disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-3 h-14 rounded-2xl border border-transparent bg-transparent hover:bg-black/5 active:scale-[0.97] transition-all font-bold text-[15px] text-slate-500 hover:text-slate-800 disabled:opacity-60 group"
             >
               {loading === "guest" ? (
                 <Loader2 className="h-5.5 w-5.5 text-slate-700 animate-spin" />
               ) : (
-                <Compass className="h-5.5 w-5.5 text-[#00BFB7]" />
+                <Compass className="h-5.5 w-5.5 text-slate-400 group-hover:text-slate-600 transition-colors group-active:scale-95" />
               )}
               Khám phá tư cách Khách
             </button>
@@ -161,8 +163,8 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
         </div>
 
         {/* BOTTOM SECTION: LEGAL FOOTER */}
-        <div className="w-full shrink-0 text-center pt-6 border-t border-slate-50">
-          <p className="text-[12px] leading-relaxed text-slate-400 font-medium max-w-xs mx-auto">
+        <div className="w-full shrink-0 text-center pt-8 pb-2 relative z-10">
+          <p className="text-[12.5px] leading-relaxed text-slate-500 font-medium max-w-xs mx-auto">
             Bằng việc tiếp tục, bạn đồng ý với{" "}
             <button 
               onClick={() => setLegalModal("terms")}
