@@ -937,7 +937,7 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
           </p>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-end w-full sm:w-auto gap-3">
           <div className="flex bg-[#E8E1D8]/40 p-1 rounded-xl">
             <button 
               onClick={() => setViewMode("list")}
