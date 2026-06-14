@@ -117,7 +117,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               Bắt đầu hành trình
             </h3>
             <p className="text-[15px] font-semibold text-slate-500 mt-3 max-w-[280px] mx-auto leading-relaxed">
-              Tham gia cùng KAT Journey với 1 chạm.
+              Lên kế hoạch, chia sẻ và lưu giữ trọn vẹn từng khoảnh khắc.
             </p>
           </div>
 
