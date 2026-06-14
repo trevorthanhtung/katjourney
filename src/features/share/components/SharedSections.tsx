@@ -351,12 +351,13 @@ export function SharedExpensesSection({
             <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 block text-center mb-1">Số tiền (đ)</span>
             <div className="flex items-center justify-center">
               <input
-                type="number"
-                inputMode="decimal"
+                type="text"
+                inputMode="numeric"
                 placeholder="0"
-                value={form.amount}
+                value={form.amount ? new Intl.NumberFormat('vi-VN').format(Number(form.amount)) : ""}
                 onChange={(e) => {
-                  setForm({ ...form, amount: e.target.value });
+                  const rawValue = e.target.value.replace(/\D/g, "");
+                  setForm({ ...form, amount: rawValue });
                   setErrors({ ...errors, amount: "" });
                 }}
                 className="w-full text-center text-3xl font-black text-[#030D2E] bg-transparent border-none outline-none placeholder-slate-300 focus:ring-0"
@@ -541,7 +542,7 @@ export function SharedExpensesSection({
           <button
             onClick={handleSave}
             disabled={isSaveDisabled}
-            className="mt-2 w-full h-[50px] rounded-[16px] bg-[#00BFB7] font-black text-[#030D2E] hover:brightness-105 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
+            className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
           >
             Gửi đề xuất
           </button>
@@ -995,7 +996,7 @@ export function SharedChecklistSection({
           <button
             onClick={handleSave}
             disabled={!form.title.trim()}
-            className="mt-2 w-full h-[50px] rounded-[16px] bg-[#00BFB7] font-black text-[#030D2E] hover:brightness-105 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
+            className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
           >
             Gửi đề xuất
           </button>
@@ -1278,7 +1279,7 @@ export function SharedJournalsSection({
               type="button"
               disabled={hasError}
               onClick={handleCreate}
-              className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#00BFB7] text-[#030D2E] px-6 font-black hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
+              className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white px-6 font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
             >
               <Save className="h-4.5 w-4.5" strokeWidth={2.5} />
               Lưu nhật ký
