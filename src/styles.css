@@ -59,6 +59,15 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+*, *::before, *::after {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  display: none !important;
+}
+
 body {
   min-width: 320px;
   min-height: 100vh;
