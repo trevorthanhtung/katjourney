@@ -63,7 +63,7 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
 
   async function executeDeleteItem() {
     if (!itemToDelete?.id) return;
-    await db.packingItems.delete(itemToDelete.id);
+    await db.packingItems.update(itemToDelete.id, { isDeleted: true });
     setItemToDelete(null);
   }
 

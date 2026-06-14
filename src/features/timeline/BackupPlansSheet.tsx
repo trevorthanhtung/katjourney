@@ -4,6 +4,7 @@ import { X, Plus, Pencil, Trash2, MapPin, DollarSign, AlignLeft, Route, HelpCirc
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, BackupPlan, BackupPlanType } from "../../db";
 import { DeleteConfirmModal } from "../../components/ui";
+import { getEmbedMapUrl } from "../../utils/mapUtils";
 
 interface BackupPlansSheetProps {
   tripId: number;
@@ -26,7 +27,7 @@ const typeLabels: Record<BackupPlanType, string> = {
 
 const typeColors: Record<BackupPlanType, string> = {
   food: "text-amber-750 bg-amber-50/50 border-amber-100/70",
-  place: "text-kat-primary-usable bg-kat-primary/5 border-kat-primary/10",
+  place: "text-indigo-700 bg-indigo-50 border-indigo-200",
   transport: "text-blue-700 bg-blue-50/50 border-blue-100/70",
   hotel: "text-indigo-700 bg-indigo-50/50 border-indigo-100/70",
   indoor: "text-purple-700 bg-purple-50/50 border-purple-100/70",
@@ -52,7 +53,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
 
   const plans = useLiveQuery(() => {
     let query = db.backupPlans.where("tripId").equals(tripId);
-    return query.toArray().then(all => all.filter(p => p.activityId === activityId && p.date === date));
+    return query.toArray().then(all => all.filter(p => !p.isDeleted && p.activityId === activityId && p.date === date));
   }, [tripId, activityId, date]) ?? [];
 
   useEffect(() => {
@@ -133,7 +134,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
 
   async function handleDeleteConfirm() {
     if (planToDelete?.id) {
-      await db.backupPlans.delete(planToDelete.id);
+      await db.backupPlans.update(planToDelete.id, { isDeleted: true });
       onShowToast?.("Đã xóa phương án");
     }
     setIsDeleteConfirmOpen(false);
@@ -157,7 +158,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
             {!isFormOpen && plans.length > 0 && (
               <button
                 onClick={handleOpenAdd}
-                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-kat-primary text-white px-3.5 text-[13px] font-extrabold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
+                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-indigo-600 text-white px-3.5 text-[13px] font-extrabold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
               >
                 <Plus className="w-4 h-4" strokeWidth={2.5} />
                 <span>Thêm</span>
@@ -180,7 +181,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                   value={title}
                   onChange={e => setTitle(e.target.value)}
                   placeholder="VD: Quán ăn gần khách sạn, điểm tham quan trong nhà..."
-                  className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-bold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:font-semibold placeholder:text-slate-400"
+                  className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-bold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:font-semibold placeholder:text-slate-400"
                 />
               </div>
 
@@ -212,7 +213,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                   value={reason}
                   onChange={e => setReason(e.target.value)}
                   placeholder="VD: Khi trời mưa, quán đóng cửa, quá đông..."
-                  className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400"
+                  className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                 />
               </div>
 
@@ -237,7 +238,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                         value={location}
                         onChange={e => setLocation(e.target.value)}
                         placeholder="VD: Quán B gần khách sạn"
-                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400"
+                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
 
@@ -248,7 +249,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                         value={mapLink}
                         onChange={e => setMapLink(e.target.value)}
                         placeholder="https://maps.google.com/..."
-                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400"
+                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
 
@@ -261,7 +262,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                         value={estimatedCost}
                         onChange={e => setEstimatedCost(e.target.value)}
                         placeholder="VD: 200000"
-                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400"
+                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
 
@@ -274,7 +275,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                         onChange={e => setNote(e.target.value)}
                         placeholder="VD: Gọi trước khi đến, nên đi taxi..."
                         rows={3}
-                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-kat-primary focus:ring-1 focus:ring-kat-primary/30 transition-all placeholder:text-slate-400 resize-none"
+                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400 resize-none"
                       />
                     </div>
                   </div>
@@ -290,7 +291,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                 </button>
                 <button
                   onClick={handleSave}
-                  className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-white bg-kat-primary hover:bg-kat-primary-usable transition-colors motion-press focus:outline-none"
+                  className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors motion-press focus:outline-none"
                 >
                   Lưu phương án
                 </button>
@@ -298,7 +299,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
             </div>
           ) : plans.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="w-16 h-16 rounded-full bg-kat-primary-light flex items-center justify-center text-kat-primary mb-4">
+              <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mb-4">
                 <Route className="w-8 h-8" />
               </div>
               <h4 className="text-[16px] font-extrabold text-[#030D2E] mb-2">Chưa có phương án dự phòng</h4>
@@ -307,7 +308,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
               </p>
               <button
                 onClick={handleOpenAdd}
-                className="flex items-center gap-2 px-6 py-3.5 bg-kat-primary text-white rounded-xl text-[14.5px] font-bold hover:bg-kat-primary-usable transition-colors motion-press"
+                className="flex items-center gap-2 px-6 py-3.5 bg-indigo-600 text-white rounded-xl text-[14.5px] font-bold hover:bg-indigo-700 transition-colors motion-press"
               >
                 <Plus className="w-5 h-5" />
                 Thêm phương án đầu tiên
@@ -317,7 +318,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
             <div className="space-y-4">
               <div className="space-y-3">
                 {plans.map(plan => (
-                  <div key={plan.id} className="p-4 rounded-2xl bg-white border border-[#E8E1D8] hover:border-kat-primary/20 transition-all">
+                  <div key={plan.id} className="p-4 rounded-2xl bg-white border border-[#E8E1D8] hover:border-indigo-200 transition-all">
                     <div className="flex flex-col justify-between h-full">
                       {/* Top content */}
                       <div>
@@ -360,24 +361,55 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                             {plan.note}
                           </p>
                         )}
+
+                        {/* Google Maps Embed */}
+                        {(plan.mapLink || plan.location) && (
+                          <div className="mt-3 space-y-2">
+                            {getEmbedMapUrl(plan.mapLink || plan.location || "", plan.location) && (
+                              <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm dark:border-gray-800 bg-slate-100 relative min-h-[140px]">
+                                <div className="absolute inset-0 flex items-center justify-center text-slate-400">
+                                  <span className="text-[12px] font-medium animate-pulse">Đang tải bản đồ...</span>
+                                </div>
+                                <iframe
+                                  title="Google Maps Embed"
+                                  width="100%"
+                                  height="140"
+                                  className="border-0 dark:opacity-80 relative z-10"
+                                  loading="lazy"
+                                  allowFullScreen
+                                  src={getEmbedMapUrl(plan.mapLink || plan.location || "", plan.location)}
+                                ></iframe>
+                              </div>
+                            )}
+                            <a 
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[12.5px] font-bold text-emerald-600 border border-emerald-100 hover:bg-emerald-100 transition-colors" 
+                              href={plan.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(plan.location || "")}`} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                            >
+                              <MapPin className="w-3.5 h-3.5" />
+                              Mở bằng ứng dụng Google Maps &rarr;
+                            </a>
+                          </div>
+                        )}
                       </div>
 
                       {/* Actions toolbar */}
                       <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
-                        {plan.mapLink ? (
-                          <a
-                            href={plan.mapLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors hover:underline"
-                          >
-                            Xem bản đồ
-                          </a>
-                        ) : (
-                          <div />
-                        )}
+                        <div className="flex-1 min-w-0">
+                          {plan.mapLink && !getEmbedMapUrl(plan.mapLink || plan.location || "") && (
+                            <a
+                              href={plan.mapLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-[12.5px] font-black text-indigo-600 hover:text-indigo-700 transition-colors hover:underline truncate"
+                            >
+                              Xem bản đồ
+                            </a>
+                          )}
+                        </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 shrink-0">
                           <button
                             onClick={() => handleOpenEdit(plan)}
                             className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-slate-650 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 active:scale-95 transition-all border border-slate-200/40 motion-press focus:outline-none"

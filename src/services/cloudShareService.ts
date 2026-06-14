@@ -9,6 +9,7 @@ export interface ShareOptions {
   includeChecklist: boolean;
   includeBackupPlans: boolean;
   includeDocuments: boolean;
+  sharePin?: string;
 }
 
 /**
@@ -93,6 +94,7 @@ export async function createShareLink(
     includeChecklist: options.includeChecklist,
     includeBackupPlans: options.includeBackupPlans,
     includeDocuments: options.includeDocuments,
+    sharePin: options.sharePin || null,
     trip: {
       id: String(trip.id),
       name: trip.title,

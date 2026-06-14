@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { 
   Globe, MapPin, CalendarDays, Clock, Route,
-  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert
+  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link
 } from "lucide-react";
 import { getViewShareData } from "../../services/cloudShareService";
 import { formatDate, classNames, getTripTiming, formatMoney } from "../../utils/helpers";
 import { EventItem, Expense, ChecklistItem, Member, JournalEntry, TravelDocument, BackupPlan } from "../../db";
 import { SharedActivitiesSection } from "./components/SharedActivitiesSection";
 import { SharedExpensesSection, SharedChecklistSection, SharedJournalsSection, SharedBackupPlansSection, SharedDocumentsSection } from "./components/SharedSections";
+import { getIdentity, saveIdentity, UserIdentity } from "../../services/identityService";
 
 interface SharedData {
   trip: any;
@@ -30,6 +31,29 @@ import { useSharedTrip } from "../../hooks/useSharedTrip";
 
 export default function SharedTripScreen({ token }: { token: string }) {
   const { data, error, loading } = useSharedTrip(token);
+  const [identityChecked, setIdentityChecked] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserIdentity | null>(null);
+  const [showIdentityModal, setShowIdentityModal] = useState(false);
+  
+  // Identity Modal state
+  const [pinInput, setPinInput] = useState("");
+  const [pinError, setPinError] = useState(false);
+  const [step, setStep] = useState<"pin" | "identity">("pin");
+
+  useEffect(() => {
+    if (data && data.trip) {
+      const saved = getIdentity(data.trip.id);
+      if (!saved) {
+        setShowIdentityModal(true);
+        if (!data.sharePin) {
+          setStep("identity");
+        }
+      } else {
+        setCurrentUser(saved);
+        setIdentityChecked(true);
+      }
+    }
+  }, [data]);
 
   if (loading) {
     return (
@@ -109,7 +133,109 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const checklistDone = checklist.filter((c: any) => c.completed).length;
   const checklistPercent = checklistTotal ? Math.round((checklistDone / checklistTotal) * 100) : 0;
 
-  const canRequestEdit = (data.mode === 'edit' || data.mode === 'request_edit') && !data.revoked;
+  let canRequestEdit = (data.mode === 'edit' || data.mode === 'request_edit') && !data.revoked;
+  if (currentUser?.isGuest && !currentUser?.canEdit) {
+    canRequestEdit = false;
+  }
+
+  if (showIdentityModal) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#FAF7F1] p-4">
+        <div className="w-full max-w-md rounded-[32px] bg-white p-6 shadow-xl border border-slate-100 animate-scaleIn">
+          <div className="flex flex-col items-center text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 mb-4">
+              {step === "pin" ? <ShieldAlert className="h-8 w-8" /> : <Users className="h-8 w-8" />}
+            </div>
+            <h2 className="text-[22px] font-extrabold text-[#030D2E]">
+              {step === "pin" ? "Trạm kiểm soát" : "Bạn là ai trong chuyến đi?"}
+            </h2>
+            <p className="mt-2 text-[14px] text-slate-500 font-medium leading-relaxed">
+              {step === "pin" 
+                ? "Chủ chuyến đi đã thiết lập mã PIN bảo mật. Vui lòng nhập mã để tiếp tục."
+                : "Chọn danh tính của bạn để tương tác, viết nhật ký và lưu lại kỷ niệm nhé."}
+            </p>
+
+            {step === "pin" && (
+              <div className="w-full mt-6 space-y-4">
+                <input
+                  type="text"
+                  maxLength={4}
+                  value={pinInput}
+                  onChange={(e) => {
+                    setPinInput(e.target.value.replace(/[^0-9]/g, ''));
+                    setPinError(false);
+                  }}
+                  className={classNames(
+                    "w-full h-14 rounded-2xl border bg-slate-50 px-4 text-center text-[24px] tracking-[0.5em] font-black focus:bg-white focus:outline-none transition-all",
+                    pinError ? "border-rose-300 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 text-rose-600" : "border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-slate-800"
+                  )}
+                  placeholder="****"
+                />
+                {pinError && <p className="text-sm font-bold text-rose-500">Mã PIN không chính xác!</p>}
+                <button
+                  onClick={() => {
+                    if (pinInput === data.sharePin) {
+                      setStep("identity");
+                    } else {
+                      setPinError(true);
+                    }
+                  }}
+                  className="w-full h-12 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 active:scale-95 transition-all"
+                >
+                  Xác nhận
+                </button>
+
+                <div className="relative py-2">
+                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200"></div></div>
+                  <div className="relative flex justify-center"><span className="bg-white px-3 text-[12px] font-bold text-slate-400 uppercase">Hoặc</span></div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    const idt: UserIdentity = { name: "Khách", isGuest: true, canEdit: false };
+                    saveIdentity(idt, trip.id);
+                    setCurrentUser(idt);
+                    setIdentityChecked(true);
+                    setShowIdentityModal(false);
+                  }}
+                  className="w-full h-12 rounded-xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 active:scale-95 transition-all"
+                >
+                  Tôi chỉ xem thôi
+                </button>
+              </div>
+            )}
+
+            {step === "identity" && (
+              <div className="w-full mt-6 space-y-3">
+                <div className="max-h-[300px] overflow-y-auto space-y-2 pr-1">
+                  {members.map((m: Member) => (
+                    <button
+                      key={m.id}
+                      onClick={() => {
+                        const idt: UserIdentity = { id: String(m.id), name: m.name, isGuest: true, canEdit: true };
+                        saveIdentity(idt, trip.id);
+                        setCurrentUser(idt);
+                        setIdentityChecked(true);
+                        setShowIdentityModal(false);
+                      }}
+                      className="w-full flex items-center gap-3 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 transition-all text-left group"
+                    >
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-200 group-hover:bg-indigo-200 text-slate-600 group-hover:text-indigo-700 font-black">
+                        {m.name.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="font-bold text-[15px]">{m.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!identityChecked) return null;
 
   return (
     <div className="font-sans text-kat-text bg-[#FAF7F1] min-h-screen">
@@ -167,6 +293,12 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   <Clock className="h-3.5 w-3.5 text-kat-primary" />
                   {durationText}
                 </span>
+                {trip.mediaLink && (
+                  <a href={trip.mediaLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/20 px-3 py-1 text-[12px] font-bold backdrop-blur-md border border-sky-400/30 shadow-inner text-sky-100 hover:bg-sky-500/30 transition-colors">
+                    <Link className="h-3 w-3" />
+                    Kho Ảnh Gốc
+                  </a>
+                )}
               </div>
             </div>
             
@@ -216,6 +348,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
             mode={canRequestEdit ? 'request_edit' : 'view'} 
             activities={activities} 
             changeRequests={changeRequests}
+            members={members}
+            guestName={currentUser?.name || "Khách"}
           />
         )}
 
@@ -228,6 +362,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                expenses={expenses} 
                changeRequests={changeRequests}
                members={members}
+               guestName={currentUser?.name || "Khách"}
              />
           )}
 
@@ -238,15 +373,18 @@ export default function SharedTripScreen({ token }: { token: string }) {
                checklist={checklist} 
                changeRequests={changeRequests}
                members={members}
+               guestName={currentUser?.name || "Khách"}
              />
           )}
 
           {data.includeJournals && (journals.length > 0 || canRequestEdit) && (
              <SharedJournalsSection 
+               tripId={trip.id}
                token={token} 
                mode={canRequestEdit ? 'request_edit' : 'view'} 
                journals={journals} 
                changeRequests={changeRequests}
+               guestName={currentUser?.name || "Khách"}
              />
           )}
 

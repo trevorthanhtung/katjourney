@@ -36,13 +36,13 @@ export function TripSearchModal({
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Live query all trip data
-  const events = useLiveQuery(() => db.events.where("tripId").equals(tripId).toArray(), [tripId]) ?? [];
-  const expenses = useLiveQuery(() => db.expenses.where("tripId").equals(tripId).toArray(), [tripId]) ?? [];
-  const checklist = useLiveQuery(() => db.checklist.where("tripId").equals(tripId).toArray(), [tripId]) ?? [];
-  const journals = useLiveQuery(() => db.journals.where("tripId").equals(tripId).toArray(), [tripId]) ?? [];
-  const members = useLiveQuery(() => db.members.where("tripId").equals(tripId).toArray(), [tripId]) ?? [];
-  const travelDocs = useLiveQuery(() => db.travelDocuments.where("tripId").equals(tripId).toArray(), [tripId]) ?? [];
-  const backupPlans = useLiveQuery(() => db.backupPlans.where("tripId").equals(tripId).toArray(), [tripId]) ?? [];
+  const events = useLiveQuery(async () => (await db.events.where("tripId").equals(tripId).toArray()).filter(e => !e.isDeleted), [tripId]) ?? [];
+  const expenses = useLiveQuery(async () => (await db.expenses.where("tripId").equals(tripId).toArray()).filter(e => !e.isDeleted), [tripId]) ?? [];
+  const checklist = useLiveQuery(async () => (await db.checklist.where("tripId").equals(tripId).toArray()).filter(c => !c.isDeleted), [tripId]) ?? [];
+  const journals = useLiveQuery(async () => (await db.journals.where("tripId").equals(tripId).toArray()).filter(j => !j.isDeleted), [tripId]) ?? [];
+  const members = useLiveQuery(async () => (await db.members.where("tripId").equals(tripId).toArray()).filter(m => !m.isDeleted), [tripId]) ?? [];
+  const travelDocs = useLiveQuery(async () => (await db.travelDocuments.where("tripId").equals(tripId).toArray()).filter(t => !t.isDeleted), [tripId]) ?? [];
+  const backupPlans = useLiveQuery(async () => (await db.backupPlans.where("tripId").equals(tripId).toArray()).filter(b => !b.isDeleted), [tripId]) ?? [];
 
   // Focus input on mount
   useEffect(() => {

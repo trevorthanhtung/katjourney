@@ -11,19 +11,26 @@ export function TripManagerScreen({
   trips,
   onOpenTrip,
   onCreateNew,
+  onOpenArchive,
   onShowToast,
 }: {
   trips: Trip[];
   onOpenTrip: (id: number) => void;
   onCreateNew: () => void;
+  onOpenArchive: () => void;
   onShowToast?: (msg: string) => void;
 }) {
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [tripToDelete, setTripToDelete] = useState<Trip | null>(null);
 
-  const allMembers = useLiveQuery(() => db.members.toArray()) ?? [];
-  const allExpenses = useLiveQuery(() => db.expenses.toArray()) ?? [];
-  const allChecklist = useLiveQuery(() => db.checklist.toArray()) ?? [];
+  const allMembersRaw = useLiveQuery(async () => (await db.members.toArray()).filter(m => !m.isDeleted));
+  const allExpensesRaw = useLiveQuery(async () => (await db.expenses.toArray()).filter(e => !e.isDeleted));
+  const allChecklistRaw = useLiveQuery(async () => (await db.checklist.toArray()).filter(c => !c.isDeleted));
+
+  const isLoading = allMembersRaw === undefined || allExpensesRaw === undefined || allChecklistRaw === undefined;
+  const allMembers = allMembersRaw ?? [];
+  const allExpenses = allExpensesRaw ?? [];
+  const allChecklist = allChecklistRaw ?? [];
 
   const memberCounts = allMembers.reduce((acc, m) => {
     acc[m.tripId] = (acc[m.tripId] || 0) + 1;
@@ -259,6 +266,14 @@ export function TripManagerScreen({
     );
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto w-full max-w-[1120px] px-4 py-6 md:px-6 md:pt-4 md:pb-16">
       {trips.length === 0 ? (
@@ -287,12 +302,20 @@ export function TripManagerScreen({
               <h1 className="text-[32px] md:text-[36px] font-black text-white tracking-tight leading-tight">Chuyến đi của bạn</h1>
               <p className="mt-1.5 text-[15.5px] font-semibold text-white/80 max-w-md">Lưu lịch trình, người đồng hành, chi phí và những việc cần chuẩn bị cho từng chuyến đi.</p>
             </div>
-            <button
-              onClick={onCreateNew}
-              className="flex h-[52px] w-full md:w-auto shrink-0 items-center justify-center rounded-[16px] bg-white text-[#030D2E] hover:bg-white/95 px-8 font-black text-[14.5px] shadow-sm active:scale-[0.98] transition-all duration-200 relative z-10 motion-press"
-            >
-              + Tạo chuyến đi
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0 relative z-10">
+              <button
+                onClick={onOpenArchive}
+                className="flex h-[52px] items-center justify-center rounded-[16px] bg-white/10 hover:bg-white/20 text-white px-6 font-bold text-[14.5px] shadow-sm border border-white/20 active:scale-[0.98] transition-all duration-200 motion-press"
+              >
+                Kỷ niệm
+              </button>
+              <button
+                onClick={onCreateNew}
+                className="flex h-[52px] items-center justify-center rounded-[16px] bg-white text-[#030D2E] hover:bg-white/95 px-8 font-black text-[14.5px] shadow-sm active:scale-[0.98] transition-all duration-200 motion-press"
+              >
+                + Tạo chuyến đi
+              </button>
+            </div>
           </div>
 
           {/* Featured Trip (Sắp diễn ra tiếp theo) */}

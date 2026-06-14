@@ -17,11 +17,16 @@ import {
   ChevronRight,
   Copy,
   Check,
-  PencilLine
+  PencilLine,
+  ImagePlus,
+  Loader2,
+  X,
+  Maximize2
 } from "lucide-react";
 import { db, TravelDocument } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { BottomSheet, Input, Textarea, Select, DeleteConfirmModal, classNames } from "../../components/ui";
+import { uploadDocumentImage } from "../../services/storageService";
 
 const typeOptions: Array<{ value: NonNullable<TravelDocument["type"]>; label: string }> = [
   { value: "ticket", label: "Vé di chuyển" },
@@ -77,8 +82,12 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
     code: "",
     date: "",
     link: "",
-    note: ""
+    note: "",
+    attachmentUrl: ""
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -93,9 +102,10 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           code: editing.code || "",
           date: editing.date || "",
           link: editing.link || "",
-          note: editing.note || ""
+          note: editing.note || "",
+          attachmentUrl: editing.attachmentUrl || ""
         });
-        if (editing.date || editing.link || editing.note) {
+        if (editing.date || editing.link || editing.note || editing.attachmentUrl) {
           setShowAdvanced(true);
         }
       } else {
@@ -105,13 +115,29 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           code: "",
           date: "",
           link: "",
-          note: ""
+          note: "",
+          attachmentUrl: ""
         });
       }
+      setSelectedFile(null);
+      setPreviewUrl(null);
       setSubmitAttempted(false);
       setDirty(false);
     }
   }, [editing, isOpen]);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => setPreviewUrl(e.target?.result as string);
+    reader.readAsDataURL(file);
+    
+    setSelectedFile(file);
+    setDirty(true);
+  };
 
   const titleError = !form.title.trim() ? "Vui lòng nhập tiêu đề." : "";
   const hasError = !!titleError;
@@ -120,31 +146,46 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
     setSubmitAttempted(true);
     if (hasError) return;
 
-    const payload: Omit<TravelDocument, "id"> = {
-      tripId,
-      title: form.title.trim(),
-      type: form.type,
-      code: form.code.trim(),
-      date: form.date,
-      link: form.link.trim(),
-      note: form.note.trim(),
-      updatedAt: new Date().toISOString()
-    };
+    setIsUploading(true);
+    let finalAttachmentUrl = form.attachmentUrl;
+    
+    try {
+      if (selectedFile) {
+        finalAttachmentUrl = await uploadDocumentImage(selectedFile, String(tripId));
+      }
 
-    if (editing?.id) {
-      await db.travelDocuments.update(editing.id, payload);
-      onShowToast?.("Đã cập nhật giấy tờ");
-    } else {
-      await db.travelDocuments.add({
-        ...payload,
-        createdAt: new Date().toISOString()
-      });
-      onShowToast?.("Đã lưu giấy tờ mới");
+      const payload: Omit<TravelDocument, "id"> = {
+        tripId,
+        title: form.title.trim(),
+        type: form.type,
+        code: form.code.trim(),
+        date: form.date,
+        link: form.link.trim(),
+        note: form.note.trim(),
+        attachmentUrl: finalAttachmentUrl,
+        updatedAt: new Date().toISOString()
+      };
+
+      if (editing?.id) {
+        await db.travelDocuments.update(editing.id, payload);
+        onShowToast?.("Đã cập nhật giấy tờ");
+      } else {
+        await db.travelDocuments.add({
+          ...payload,
+          createdAt: new Date().toISOString()
+        });
+        onShowToast?.("Đã lưu giấy tờ mới");
+      }
+      onClose();
+    } catch (e) {
+      console.error("Lỗi khi lưu tài liệu:", e);
+      onShowToast?.("Có lỗi xảy ra khi lưu tài liệu");
+    } finally {
+      setIsUploading(false);
     }
-    onClose();
   }
 
-  const isSaveDisabled = !form.title.trim();
+  const isSaveDisabled = !form.title.trim() || isUploading;
 
   const headerAction = (
     <button
@@ -153,7 +194,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
       disabled={isSaveDisabled}
       className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-primary hover:bg-kat-primary-usable text-[#030D2E] px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
     >
-      Lưu
+      {isUploading ? <Loader2 className="w-4 h-4 animate-spin text-slate-400" /> : "Lưu"}
     </button>
   );
 
@@ -233,6 +274,40 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
                   placeholder="VD: Giờ nhận phòng, hành lý, số điện thoại liên hệ..." 
                 />
               </div>
+              
+              {/* Image Upload Area */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-[#030D2E]">Ảnh đính kèm (Vé/CCCD/...)</label>
+                {(previewUrl || form.attachmentUrl) ? (
+                  <div className="relative w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
+                    <img 
+                      src={previewUrl || form.attachmentUrl} 
+                      alt="Preview" 
+                      className="w-full h-auto max-h-[400px] object-contain"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedFile(null);
+                        setPreviewUrl(null);
+                        setForm({...form, attachmentUrl: ""});
+                        setDirty(true);
+                      }}
+                      className="absolute top-2 right-2 bg-black/50 text-white p-1.5 rounded-full hover:bg-rose-500 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer text-slate-500">
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <ImagePlus className="w-6 h-6 mb-2 text-slate-400" />
+                      <p className="text-[13px]"><span className="font-semibold text-kat-primary-usable">Nhấn để tải ảnh lên</span></p>
+                    </div>
+                    <input type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
+                  </label>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -241,26 +316,29 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
   );
 }
 
-function DocumentCard({
-  doc,
-  onEdit,
-  onDelete,
+function DocumentCard({ 
+  doc, 
+  onEdit, 
+  onDelete, 
   idx = 0,
-  isSwiped,
-  onSwipe
-}: {
-  doc: TravelDocument;
-  onEdit: () => void;
-  onDelete: () => void;
+  isSwiped, 
+  onSwipe,
+  isReadOnly
+}: { 
+  doc: TravelDocument; 
+  onEdit: () => void; 
+  onDelete: () => void; 
   idx?: number;
-  isSwiped: boolean;
+  isSwiped: boolean; 
   onSwipe: (swiped: boolean) => void;
+  isReadOnly?: boolean;
 }) {
   const colors = typeColors[doc.type || "other"];
   const Icon = typeIcons[doc.type || "other"];
   const formattedDate = doc.date ? new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(doc.date)) : null;
 
   const [copied, setCopied] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -274,15 +352,18 @@ function DocumentCard({
   const touchEndX = React.useRef(0);
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (isReadOnly) return;
     touchStartX.current = e.touches[0].clientX;
     touchEndX.current = e.touches[0].clientX;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (isReadOnly) return;
     touchEndX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = () => {
+    if (isReadOnly) return;
     const diff = touchStartX.current - touchEndX.current;
     if (diff > 40) {
       onSwipe(true);
@@ -294,28 +375,30 @@ function DocumentCard({
   return (
     <div className={`relative overflow-hidden rounded-3xl motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}>
       {/* Background Action Buttons */}
-      <div className="absolute inset-y-0 right-0 z-0 flex items-center justify-end gap-2 pr-4 pl-12 bg-slate-50/60 rounded-3xl border border-slate-100">
-        <button 
-          className="flex h-11 w-11 items-center justify-center rounded-2xl text-slate-600 bg-white hover:bg-slate-50 active:scale-95 transition-all shadow-sm border border-slate-200/50 focus:outline-none" 
-          onClick={(e) => {
-            e.stopPropagation();
-            onEdit();
-          }}
-          title="Chỉnh sửa"
-        >
-          <PencilLine className="h-5 w-5" />
-        </button>
-        <button 
-          className="flex h-11 w-11 items-center justify-center rounded-2xl text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all shadow-sm border border-rose-100 focus:outline-none" 
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          title="Xóa"
-        >
-          <Trash2 className="h-5 w-5" />
-        </button>
-      </div>
+      {!isReadOnly && (
+        <div className="absolute inset-y-0 right-0 z-0 flex items-center justify-end gap-2 pr-4 pl-12 bg-slate-50/60 rounded-3xl border border-slate-100">
+          <button 
+            className="flex h-11 w-11 items-center justify-center rounded-2xl text-slate-600 bg-white hover:bg-slate-50 active:scale-95 transition-all shadow-sm border border-slate-200/50 focus:outline-none" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
+            title="Chỉnh sửa"
+          >
+            <PencilLine className="h-5 w-5" />
+          </button>
+          <button 
+            className="flex h-11 w-11 items-center justify-center rounded-2xl text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all shadow-sm border border-rose-100 focus:outline-none" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            title="Xóa"
+          >
+            <Trash2 className="h-5 w-5" />
+          </button>
+        </div>
+      )}
 
       {/* Main Card Content Overlay */}
       <article 
@@ -323,12 +406,14 @@ function DocumentCard({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onClick={(e) => {
-          e.stopPropagation();
-          onSwipe(!isSwiped);
+          if (!isReadOnly) {
+            e.stopPropagation();
+            onSwipe(!isSwiped);
+          }
         }}
         className={classNames(
           "relative z-10 flex flex-col justify-between rounded-3xl bg-[#FFFDF8] p-5 border border-[#E8E1D8] transition-all duration-200 hover:shadow-md cursor-pointer select-none",
-          isSwiped ? "-translate-x-28 border-slate-300" : "translate-x-0"
+          !isReadOnly && isSwiped ? "-translate-x-28 border-slate-300" : "translate-x-0"
         )}
       >
         <div>
@@ -379,6 +464,29 @@ function DocumentCard({
               {doc.note}
             </p>
           )}
+
+          {doc.attachmentUrl && (
+            <div className="mt-4">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Ảnh đính kèm</p>
+              <div 
+                className="relative w-full rounded-xl overflow-hidden border border-slate-200 cursor-pointer group bg-[#F8F9FA] flex justify-center items-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPreviewImage(doc.attachmentUrl || null);
+                }}
+              >
+                <img 
+                  src={doc.attachmentUrl} 
+                  alt={doc.title}
+                  loading="lazy"
+                  className="w-full h-auto max-h-[400px] object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                  <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Bottom link row */}
@@ -397,6 +505,32 @@ function DocumentCard({
           </div>
         )}
       </article>
+
+      {/* Lightbox */}
+      {previewImage && (
+        <div 
+          className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4 cursor-pointer backdrop-blur-sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            setPreviewImage(null);
+          }}
+        >
+          <img 
+            src={previewImage} 
+            alt="Fullscreen preview" 
+            className="max-w-full max-h-full object-contain"
+          />
+          <button 
+            className="absolute top-4 right-4 text-white bg-white/10 rounded-full p-2 hover:bg-white/20 transition-colors"
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              setPreviewImage(null); 
+            }}
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -404,13 +538,15 @@ function DocumentCard({
 export function TravelDocumentsSection({ 
   tripId, 
   onBack, 
-  onShowToast 
+  onShowToast,
+  isReadOnly
 }: { 
   tripId: number; 
   onBack: () => void; 
   onShowToast?: (msg: string) => void; 
+  isReadOnly?: boolean;
 }) {
-  const documents = useLiveQuery(() => db.travelDocuments.where("tripId").equals(tripId).toArray(), [tripId]) ?? [];
+  const documents = useLiveQuery(async () => (await db.travelDocuments.where("tripId").equals(tripId).toArray()).filter(d => !d.isDeleted), [tripId]) ?? [];
   const [selectedTypeFilter, setSelectedTypeFilter] = useState<string>("all");
   const [formOpen, setFormOpen] = useState(false);
   const [editingDoc, setEditingDoc] = useState<TravelDocument | null>(null);
@@ -423,7 +559,7 @@ export function TravelDocumentsSection({
 
   async function executeDelete() {
     if (!docToDelete?.id) return;
-    await db.travelDocuments.delete(docToDelete.id);
+    await db.travelDocuments.update(docToDelete.id, { isDeleted: true });
     onShowToast?.("Đã xóa thành công");
     setDocToDelete(null);
   }
@@ -458,7 +594,7 @@ export function TravelDocumentsSection({
             <p className="text-[14px] font-medium text-slate-500 mt-0.5">Lưu vé, mã đặt chỗ và thông tin quan trọng để tra cứu nhanh khi cần.</p>
           </div>
         </div>
-        {documents.length > 0 && (
+        {!isReadOnly && documents.length > 0 && (
           <button
             onClick={openNewForm}
             className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-5 text-[13.5px] font-bold hover:brightness-105 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center"

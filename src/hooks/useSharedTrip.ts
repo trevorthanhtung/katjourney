@@ -87,7 +87,10 @@ export function useSharedTrip(token: string) {
           }
 
           if (!unsubRequests) {
-            const q = query(collection(shareRef, 'changeRequests'), where('status', '==', 'pending'));
+            const q = query(
+              collection(shareRef, 'changeRequests'), 
+              where('status', 'in', ['pending', 'auto_approved'])
+            );
             unsubRequests = onSnapshot(q, (snap) => {
               setData((prev: any) => ({ ...prev, changeRequests: snap.docs.map(d => ({ id: d.id, ...d.data() })) }));
             });

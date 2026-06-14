@@ -1,6 +1,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { Backpack, CalendarDays, Calendar, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft, Search, Bell, BellRing, ChevronRight, Check, ListTodo, FileText, BookOpenText, Sparkles, Home } from "lucide-react";
+import { Backpack, CalendarDays, Calendar, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft, Search, Bell, BellRing, ChevronRight, Check, ListTodo, FileText, BookOpenText, Sparkles, Home, User, UserPlus, Heart, LogOut, Cloud, RefreshCw, Coffee, WifiOff, LockKeyhole } from "lucide-react";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "./db";
 
 // Components & Helpers
@@ -18,10 +19,17 @@ import { ExpensesScreen } from "./features/expenses/ExpensesScreen";
 import { ChecklistScreen } from "./features/checklist/ChecklistScreen";
 import { MoreScreen, TripForm } from "./features/more/MoreScreen";
 import { TripManagerScreen } from "./features/trips/TripManagerScreen";
+import { ArchiveGallery } from "./features/archive/ArchiveGallery";
 
 const SharedTripScreen = React.lazy(() => import("./features/share/SharedTripScreen"));
 import { useShareChangeRequests } from "./hooks/useShareChangeRequests";
 import { ShareChangeRequestsSheet } from "./features/share/components/ShareChangeRequestsSheet";
+import { SettingsSheet } from "./components/SettingsSheet";
+import { WelcomeScreen } from "./components/WelcomeScreen";
+import { useAuth } from "./hooks/useAuth";
+import { useCloudBackup } from "./hooks/useCloudBackup";
+import { signOutUser } from "./services/authService";
+import { useNetworkStatus } from "./hooks/useNetworkStatus";
 
 function NavButton({ 
   isActive, 
@@ -52,17 +60,61 @@ function NavButton({
 }
 
 function App() {
+  const { t } = useTranslation();
+  const isOnline = useNetworkStatus();
   const [activeTab, setActiveTab] = useState<"home" | "timeline" | "expenses" | "checklist" | "more">("home");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isRemindersOpen, setIsRemindersOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [moreSection, setMoreSection] = useState<"overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents">("overview");
   const [isAppInboxOpen, setIsAppInboxOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settingsInitialView, setSettingsInitialView] = useState<"menu" | "auth" | "privacy" | "about" | "donate">("menu");
 
-  const trips = useLiveQuery(() => db.trips.toArray()) ?? [];
+  const [expenseInitialAddState, setExpenseInitialAddState] = useState<{ date: string; eventId: number } | undefined>(undefined);
+
+  const [showWelcome, setShowWelcome] = useState(() => {
+    return localStorage.getItem("kat_journey_welcome_viewed") !== "true";
+  });
+  const { user, provider, isAuthenticated, loading: authLoading } = useAuth();
+  const syncProps = useCloudBackup();
+  const { isAutoBackingUp } = syncProps;
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+
+  const remindersRef = React.useRef<HTMLDivElement>(null);
+  const userMenuRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (isRemindersOpen && remindersRef.current && !remindersRef.current.contains(event.target as Node)) {
+        setIsRemindersOpen(false);
+      }
+      if (isUserMenuOpen && userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isRemindersOpen, isUserMenuOpen]);
+
+  React.useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      localStorage.removeItem("kat_journey_welcome_viewed");
+      localStorage.removeItem("kat_auth_mode");
+      setShowWelcome(true);
+    }
+  }, [isAuthenticated, authLoading]);
+
+  const tripsRaw = useLiveQuery(async () => (await db.trips.toArray()).filter(t => !t.isDeleted && t.status !== 'archived'));
+  const tripsLoading = tripsRaw === undefined;
+  const trips = tripsRaw ?? [];
   const [selectedTripId, setSelectedTripId] = useState<number | null>(null);
   const [isCreatingTrip, setIsCreatingTrip] = useState(false);
-  const [isManagingTrips, setIsManagingTrips] = useState(false);
+  const [isManagingTrips, setIsManagingTrips] = useState(true);
+  const [isViewingArchive, setIsViewingArchive] = useState(false);
   const [successToast, setSuccessToast] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -71,28 +123,53 @@ function App() {
   const isShareRoute = pathname.startsWith("/share/");
   const shareToken = isShareRoute ? pathname.replace("/share/", "") : null;
 
-  const showToast = (msg: string) => {
+  const showToast = React.useCallback((msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
-  };
-  
-  const tripId = isCreatingTrip || isManagingTrips ? null : (selectedTripId ?? trips[0]?.id ?? null);
-  const trip = useLiveQuery(() => (tripId ? db.trips.get(tripId) : undefined), [tripId]);
-  const members = useLiveQuery(() => (tripId ? db.members.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
-  const events = useLiveQuery(() => (tripId ? db.events.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
-  const expenses = useLiveQuery(() => (tripId ? db.expenses.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
-  const checklist = useLiveQuery(() => (tripId ? db.checklist.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
-  const journals = useLiveQuery(() => (tripId ? db.journals.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
-  const packingItems = useLiveQuery(() => (tripId ? db.packingItems.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
-  const travelDocuments = useLiveQuery(() => (tripId ? db.travelDocuments.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
-  const backupPlans = useLiveQuery(() => (tripId ? db.backupPlans.where("tripId").equals(tripId).toArray() : []), [tripId]) ?? [];
-  const { pendingRequests, activeToken } = useShareChangeRequests(trip);
-  const reminders = useTripReminders({ trip, checklist, travelDocuments, events, backupPlans, pendingRequestsCount: pendingRequests.length });
+  }, []);
 
-  const sharedExpenses = expenses.filter(e => e.splitType !== "personal");
+  React.useEffect(() => {
+    (window as any).showToastGlobal = showToast;
+    return () => {
+      (window as any).showToastGlobal = undefined;
+    };
+  }, [showToast]);
+  
+  const tripId = isCreatingTrip || isManagingTrips || isViewingArchive ? null : (selectedTripId ?? trips[0]?.id ?? null);
+  const trip = useLiveQuery(async () => {
+    if (!tripId) return undefined;
+    const t = await db.trips.get(tripId);
+    return t && !t.isDeleted ? t : undefined;
+  }, [tripId]);
+  const isReadOnly = trip?.status === 'archived';
+  const members = useLiveQuery(async () => tripId ? (await db.members.where("tripId").equals(tripId).toArray()).filter(m => !m.isDeleted) : [], [tripId]);
+  const events = useLiveQuery(async () => tripId ? (await db.events.where("tripId").equals(tripId).toArray()).filter(e => !e.isDeleted) : [], [tripId]);
+  const expenses = useLiveQuery(async () => tripId ? (await db.expenses.where("tripId").equals(tripId).toArray()).filter(e => !e.isDeleted) : [], [tripId]);
+  const checklist = useLiveQuery(async () => tripId ? (await db.checklist.where("tripId").equals(tripId).toArray()).filter(c => !c.isDeleted) : [], [tripId]);
+  const journals = useLiveQuery(async () => tripId ? (await db.journals.where("tripId").equals(tripId).toArray()).filter(j => !j.isDeleted) : [], [tripId]);
+  const packingItems = useLiveQuery(async () => tripId ? (await db.packingItems.where("tripId").equals(tripId).toArray()).filter(p => !p.isDeleted) : [], [tripId]);
+  const travelDocuments = useLiveQuery(async () => tripId ? (await db.travelDocuments.where("tripId").equals(tripId).toArray()).filter(d => !d.isDeleted) : [], [tripId]);
+  const backupPlans = useLiveQuery(async () => tripId ? (await db.backupPlans.where("tripId").equals(tripId).toArray()).filter(b => !b.isDeleted) : [], [tripId]);
+
+  // Khi tripId có giá trị, chờ tất cả data sẵn sàng trước khi render để tránh flash
+  const tripDataLoading = tripId !== null && (
+    trip === undefined ||
+    members === undefined ||
+    events === undefined ||
+    expenses === undefined ||
+    checklist === undefined ||
+    journals === undefined ||
+    packingItems === undefined ||
+    travelDocuments === undefined ||
+    backupPlans === undefined
+  );
+  const { pendingRequests, activeToken } = useShareChangeRequests(trip);
+  const reminders = useTripReminders({ trip, checklist: checklist ?? [], travelDocuments: travelDocuments ?? [], events: events ?? [], backupPlans: backupPlans ?? [], pendingRequestsCount: pendingRequests.length });
+
+  const sharedExpenses = (expenses ?? []).filter(e => e.splitType !== "personal");
   const totalSharedExpense = sharedExpenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-  const totalExpense = expenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-  const perPerson = members.length ? totalSharedExpense / members.length : 0;
+  const totalExpense = (expenses ?? []).reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const perPerson = (members ?? []).length ? totalSharedExpense / (members ?? []).length : 0;
 
   function navigateToMore(section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents") {
     setMoreSection(section);
@@ -193,6 +270,10 @@ function App() {
     );
   }
 
+  if (showWelcome && !isShareRoute) {
+    return <WelcomeScreen onDismiss={() => setShowWelcome(false)} />;
+  }
+
   return (
     <div className="font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text">
       <header className="sticky top-0 z-40 bg-kat-bg/90 px-4 pb-3 pt-3 backdrop-blur-xl border-b border-kat-border shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
@@ -245,7 +326,13 @@ function App() {
           </div>
           
           <div className="flex items-center gap-2 md:gap-3">
-            {!isManagingTrips && tripId && (
+            {isAutoBackingUp && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 animate-pulse shrink-0" title="Đang tự động sao lưu...">
+                <Cloud className="w-3.5 h-3.5 animate-spin shrink-0" />
+                <span className="text-[10px] font-black uppercase tracking-wider hidden sm:inline">Đang lưu...</span>
+              </div>
+            )}
+            {!isManagingTrips && tripId ? (
               <>
                 <button
                   onClick={() => setIsSearchOpen(true)}
@@ -255,7 +342,7 @@ function App() {
                   <Search className="h-4.5 w-4.5" />
                 </button>
 
-                <div className="relative">
+                <div className="relative" ref={remindersRef}>
                   <button
                     onClick={() => setIsRemindersOpen(!isRemindersOpen)}
                     className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
@@ -277,10 +364,6 @@ function App() {
                   {isRemindersOpen && isDesktop && (
                     <>
                       {/* Desktop overlay backdrop to close popover on click outside */}
-                      <div 
-                        className="fixed inset-0 z-40" 
-                        onClick={() => setIsRemindersOpen(false)} 
-                      />
                       
                       <div className="absolute right-0 mt-2.5 z-50 w-[360px] rounded-2xl bg-white border border-slate-200/80 shadow-floating overflow-hidden animate-fadeIn">
                         {/* Popover Header */}
@@ -299,24 +382,239 @@ function App() {
                 </div>
 
                 <button
-                  onClick={() => setIsManagingTrips(true)}
+                  onClick={() => {
+                    setIsManagingTrips(true);
+                    setIsViewingArchive(false);
+                  }}
                   className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
-                  title="Trang chủ (Danh sách chuyến đi)"
+                  title="Quay lại danh sách chuyến đi"
                 >
                   <Home className="h-4.5 w-4.5" />
                 </button>
               </>
-            )}
-          </div>
+            ) : (
+              isAuthenticated && user ? (
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className="flex h-9 w-9 items-center justify-center rounded-full overflow-hidden border border-kat-border/60 hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-95 transition-all shadow-sm focus:outline-none"
+                    title="Menu tài khoản"
+                  >
+                    {provider === "google" ? (
+                      user.photoURL ? (
+                        <img src={user.photoURL} alt="Avatar" className="h-full w-full object-cover" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[13px]">
+                          {user.displayName ? user.displayName.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() : "G"}
+                        </div>
+                      )
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-500">
+                        <User className="h-[18px] w-[18px] text-slate-500" />
+                      </div>
+                    )}
+                  </button>
+
+                  {isUserMenuOpen && (
+                    <>
+                      <div className="absolute right-0 mt-2 z-50 w-52 rounded-2xl bg-white border border-slate-200/80 shadow-floating p-1.5 animate-fadeIn">
+                        <div className="px-3.5 py-2.5 border-b border-slate-100/80">
+                          <p className="text-[13px] font-black text-[#030D2E] truncate text-left">
+                            {provider === "guest" ? "Khách" : (user.displayName || "Tài khoản ẩn danh")}
+                          </p>
+                          {provider !== "guest" && user.email && (
+                            <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
+                              {user.email}
+                            </p>
+                          )}
+                        </div>
+                        
+                        {provider === "guest" ? (
+                          <>
+                            <div className="py-1 space-y-0.5">
+                              <button
+                                onClick={() => {
+                                  setIsUserMenuOpen(false);
+                                  setSettingsInitialView("auth");
+                                  setIsSettingsOpen(true);
+                                }}
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                              >
+                                <User className="w-4 h-4 text-slate-400 shrink-0" />
+                                Hồ sơ & Tài khoản
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setIsUserMenuOpen(false);
+                                  setSettingsInitialView("menu");
+                                  setIsSettingsOpen(true);
+                                }}
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                              >
+                                <Settings className="w-4 h-4 text-slate-400 shrink-0" />
+                                Cài đặt ứng dụng
+                              </button>
+                            </div>
+                            <div className="border-t border-slate-100/80 pt-1 mt-1">
+                              <button
+                                onClick={() => {
+                                  setIsUserMenuOpen(false);
+                                  setIsLogoutConfirmOpen(true);
+                                }}
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 hover:bg-rose-50 transition-colors"
+                              >
+                                <LogOut className="w-4 h-4 text-rose-500 shrink-0" />
+                                Thoát Khách
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="py-1 space-y-0.5">
+                              <button
+                                onClick={() => {
+                                  setIsUserMenuOpen(false);
+                                  setSettingsInitialView("auth");
+                                  setIsSettingsOpen(true);
+                                }}
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                              >
+                                <User className="w-4 h-4 text-slate-400 shrink-0" />
+                                Hồ sơ & Tài khoản
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setIsUserMenuOpen(false);
+                                  setSettingsInitialView("menu");
+                                  setIsSettingsOpen(true);
+                                }}
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                              >
+                                <Settings className="w-4 h-4 text-slate-400 shrink-0" />
+                                Cài đặt ứng dụng
+                              </button>
+                            </div>
+                            <div className="border-t border-slate-100/80 pt-1 mt-1">
+                              <button
+                                onClick={() => {
+                                  setIsUserMenuOpen(false);
+                                  setIsLogoutConfirmOpen(true);
+                                }}
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 hover:bg-rose-50 transition-colors"
+                              >
+                                <LogOut className="w-4 h-4 text-rose-500 shrink-0" />
+                                Đăng xuất
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsSettingsOpen(true)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
+                  title="Cài đặt"
+                >
+                  <Settings className="h-[18px] w-[18px]" />
+                </button>
+            )
+          )}
+        </div>
         </div>
       </header>
+
+      {!isOnline && (
+        <div className="bg-amber-500 text-white px-4 py-2 flex items-center justify-center gap-2 shadow-sm animate-fadeIn z-40 relative">
+          <WifiOff className="w-4 h-4 shrink-0" />
+          <div className="text-[13px] font-bold">
+            {t("offline_warning")} <span className="hidden sm:inline font-medium"> - {t("offline_desc")}</span>
+          </div>
+        </div>
+      )}
+
+      {syncProps.hasCloudVersion && (
+        <div className="max-w-[1120px] mx-auto mt-4 mb-2 px-4 sm:px-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+            {/* Background decorative blob */}
+            <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl"></div>
+            <div className="absolute -left-6 -bottom-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl"></div>
+
+            <div className="relative flex items-center gap-3.5 z-10">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-blue-50 text-blue-600">
+                <Cloud className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-[14.5px] font-bold text-slate-800">Đã tìm thấy bản cập nhật mới</h3>
+                <p className="text-[13px] text-slate-500 mt-0.5 font-medium">Có dữ liệu mới nhất từ thiết bị khác của bạn.</p>
+              </div>
+            </div>
+            
+            <button
+              onClick={async () => {
+                try {
+                  showToast("Đang tải dữ liệu từ Cloud...");
+                  await syncProps.restoreNow("merge");
+                  syncProps.setHasCloudVersion(false);
+                  showToast("Đã cập nhật dữ liệu mới từ thiết bị khác.");
+                } catch (e: any) {
+                  showToast("Khôi phục thất bại: " + e.message);
+                }
+              }}
+              disabled={syncProps.isSyncing}
+              className="relative z-10 w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 text-white text-[13.5px] font-bold hover:bg-blue-700 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:pointer-events-none"
+            >
+              {syncProps.isSyncing ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Đang xử lý...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="w-4 h-4" />
+                  Đồng bộ ngay
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isReadOnly && !isManagingTrips && !isViewingArchive && !isCreatingTrip && (
+        <div className="max-w-[1120px] mx-auto mt-4 px-4 md:px-6 animate-fadeIn">
+          <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-stone-100/80 border border-stone-200/70">
+            <LockKeyhole className="w-3.5 h-3.5 text-stone-400 shrink-0" strokeWidth={2.5} />
+            <p className="text-[12.5px] text-stone-500 leading-snug">
+              Chuyến đi đã kết thúc &mdash; chỉ xem, không chỉnh sửa.
+            </p>
+          </div>
+        </div>
+      )}
 
       <main className={classNames(
         "mx-auto flex min-h-screen w-full max-w-[1120px] flex-col",
         (!isManagingTrips && tripId) ? "pb-24 md:pb-12" : "pb-12"
       )}>
         <div className="flex-1 px-4 md:px-6 py-6 md:py-8">
-          {isManagingTrips || (!tripId && !isCreatingTrip) ? (
+          {tripsLoading ? (
+            <div className="flex items-center justify-center py-32">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
+            </div>
+          ) : isViewingArchive ? (
+            <div key="archive" className="motion-page-enter">
+              <ArchiveGallery
+                onBack={() => { setIsViewingArchive(false); setIsManagingTrips(true); }}
+                onOpenTrip={(id) => {
+                  setSelectedTripId(id);
+                  setIsViewingArchive(false);
+                  setIsManagingTrips(false);
+                  setIsCreatingTrip(false);
+                }}
+              />
+            </div>
+          ) : isManagingTrips || (!tripId && !isCreatingTrip) ? (
             <div key="manager" className="motion-page-enter">
               <TripManagerScreen
                 trips={trips}
@@ -329,6 +627,10 @@ function App() {
                   setIsManagingTrips(false);
                   setIsCreatingTrip(true);
                 }}
+                onOpenArchive={() => {
+                  setIsManagingTrips(false);
+                  setIsViewingArchive(true);
+                }}
                 onShowToast={showToast}
               />
             </div>
@@ -336,7 +638,7 @@ function App() {
             <div key="creating" className="space-y-6 motion-page-enter">
               <ScreenTitle title="Chuyến đi mới" subtitle="Bắt đầu hành trình tiếp theo của bạn." />
               <div className="rounded-2xl border border-emerald-950/5 bg-white p-5 shadow-soft">
-                <TripForm isOpen={true} onClose={() => setIsCreatingTrip(false)} onSaved={(id) => {
+                <TripForm isOpen={true} onClose={() => { setIsCreatingTrip(false); setIsManagingTrips(true); }} onSaved={(id) => {
                   setIsCreatingTrip(false);
                   setIsManagingTrips(true);
                   setSuccessToast(id);
@@ -344,13 +646,17 @@ function App() {
                 }} />
               </div>
             </div>
+          ) : tripDataLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
+            </div>
           ) : trip && tripId ? (
             <div key={activeTab} className="motion-page-enter">
-              {activeTab === "home" && <HomeScreen trip={trip} members={members} events={events} expenses={expenses} checklist={checklist} travelDocuments={travelDocuments} totalExpense={totalExpense} perPerson={perPerson} onNavigateTab={setActiveTab} onNavigateMore={navigateToMore} onOpenInbox={() => setIsAppInboxOpen(true)} />}
-              {activeTab === "timeline" && <TimelineScreen trip={trip} events={events} />}
-              {activeTab === "expenses" && <ExpensesScreen expenses={expenses} members={members} totalExpense={totalExpense} perPerson={perPerson} tripId={tripId} />}
-              {activeTab === "checklist" && <ChecklistScreen checklist={checklist} tripId={tripId} />}
-              {activeTab === "more" && <MoreScreen trip={trip} members={members} events={events} expenses={expenses} checklist={checklist} journals={journals} packingItems={packingItems} travelDocuments={travelDocuments} onTripDeleted={() => { setSelectedTripId(null); setIsManagingTrips(true); showToast("Đã xóa chuyến đi khỏi danh sách."); }} onTripSelected={setSelectedTripId} onShowToast={showToast} section={moreSection} setSection={setMoreSection} onOpenInbox={() => setIsAppInboxOpen(true)} />}
+              {activeTab === "home" && <HomeScreen trip={trip} members={members ?? []} events={events ?? []} expenses={expenses ?? []} checklist={checklist ?? []} travelDocuments={travelDocuments ?? []} totalExpense={totalExpense} perPerson={perPerson} onNavigateTab={setActiveTab} onNavigateMore={navigateToMore} onOpenInbox={() => setIsAppInboxOpen(true)} isReadOnly={isReadOnly} />}
+              {activeTab === "timeline" && <TimelineScreen trip={trip} events={events ?? []} expenses={expenses ?? []} onAddExpense={(date, eventId) => { setExpenseInitialAddState({ date, eventId }); setActiveTab("expenses"); }} isReadOnly={isReadOnly} />}
+              {activeTab === "expenses" && <ExpensesScreen expenses={expenses ?? []} members={members ?? []} totalExpense={totalExpense} perPerson={perPerson} tripId={tripId} events={events ?? []} initialAddState={expenseInitialAddState} onClearInitialAddState={() => setExpenseInitialAddState(undefined)} isReadOnly={isReadOnly} />}
+              {activeTab === "checklist" && <ChecklistScreen checklist={checklist ?? []} tripId={tripId} isReadOnly={isReadOnly} />}
+              {activeTab === "more" && <MoreScreen trip={trip} members={members ?? []} events={events ?? []} expenses={expenses ?? []} checklist={checklist ?? []} journals={journals ?? []} packingItems={packingItems ?? []} travelDocuments={travelDocuments ?? []} onTripDeleted={() => { setSelectedTripId(null); setIsManagingTrips(true); showToast("Đã xóa chuyến đi khỏi danh sách."); }} onTripSelected={setSelectedTripId} onShowToast={showToast} section={moreSection} setSection={setMoreSection} onOpenInbox={() => setIsAppInboxOpen(true)} isReadOnly={isReadOnly} onOpenSettings={(view) => { setSettingsInitialView(view ?? "menu"); setIsSettingsOpen(true); }} />}
             </div>
           ) : (
             <div className="flex items-center justify-center py-20">
@@ -431,6 +737,15 @@ function App() {
         </div>
       )}
 
+      {(syncProps.isSyncing || syncProps.isAutoSyncingUI) && (
+        <div className="fixed bottom-24 md:bottom-6 right-6 z-50 animate-fadeIn pointer-events-none">
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/90 text-white shadow-lg backdrop-blur-sm border border-white/10 text-[12px] font-bold">
+            <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#00BFB7] shrink-0" />
+            <span>Đang đồng bộ từ Cloud...</span>
+          </div>
+        </div>
+      )}
+
       {tripId && (
         <TripSearchModal 
           tripId={tripId}
@@ -463,6 +778,46 @@ function App() {
           requests={pendingRequests}
         />
       )}
+
+      <SettingsSheet
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        initialView={settingsInitialView}
+        syncProps={syncProps}
+      />
+
+      <BottomSheet
+        isOpen={isLogoutConfirmOpen}
+        onClose={() => setIsLogoutConfirmOpen(false)}
+        title="Đăng xuất tài khoản?"
+      >
+        <div className="space-y-5">
+          <div className="rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8] p-4 text-[13.5px] text-slate-650 font-normal leading-relaxed text-left">
+            Bạn sắp đăng xuất khỏi thiết bị này. Đừng lo, toàn bộ dữ liệu đã sao lưu trên <strong className="font-semibold text-slate-800">Cloud</strong> vẫn được giữ <strong className="font-semibold text-slate-800">an toàn</strong>.
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              onClick={() => setIsLogoutConfirmOpen(false)}
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200 motion-press"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                setIsLogoutConfirmOpen(false);
+                await signOutUser();
+              }}
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 active:scale-[0.98] transition-all duration-200 motion-press"
+            >
+              <LogOut className="h-5 w-5" />
+              Đăng xuất
+            </button>
+          </div>
+        </div>
+      </BottomSheet>
     </div>
   );
 }

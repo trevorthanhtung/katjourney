@@ -53,12 +53,14 @@ function ChecklistItemRow({
   item,
   onToggleComplete,
   onEdit,
-  onDelete
+  onDelete,
+  isReadOnly
 }: {
   item: ChecklistItem;
   onToggleComplete: (item: ChecklistItem) => void;
   onEdit: (item: ChecklistItem) => void;
   onDelete: (item: ChecklistItem) => void;
+  isReadOnly?: boolean;
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -72,7 +74,11 @@ function ChecklistItemRow({
     >
       {/* Checkbox button */}
       <button
-        onClick={() => onToggleComplete(item)}
+        onClick={() => {
+          if (isReadOnly) return;
+          onToggleComplete(item);
+        }}
+        disabled={isReadOnly}
         className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-all duration-200 motion-press ${
           item.completed
             ? "bg-[#00BFB7]/20 text-[#00BFB7] border-transparent shadow-sm"
@@ -130,62 +136,64 @@ function ChecklistItemRow({
       </div>
 
       {/* Action menu trigger (min 44x44px target zone) */}
-      <div className="relative shrink-0 self-center">
-        <button
-          type="button"
-          className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsMenuOpen(!isMenuOpen);
-          }}
-          title="Tùy chọn"
-        >
-          <MoreHorizontal className="h-5 w-5" />
-        </button>
+      {!isReadOnly && (
+        <div className="relative shrink-0 self-center">
+          <button
+            type="button"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMenuOpen(!isMenuOpen);
+            }}
+            title="Tùy chọn"
+          >
+            <MoreHorizontal className="h-5 w-5" />
+          </button>
 
-        {isMenuOpen && (
-          <>
-            <div
-              className="fixed inset-0 z-30 cursor-default"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsMenuOpen(false);
-              }}
-            />
-            <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
-              <button
-                type="button"
+          {isMenuOpen && (
+            <>
+              <div
+                className="fixed inset-0 z-30 cursor-default"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsMenuOpen(false);
-                  onEdit(item);
                 }}
-                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
-              >
-                <Edit2 className="h-4 w-4 text-slate-500" />
-                Sửa
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsMenuOpen(false);
-                  onDelete(item);
-                }}
-                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
-              >
-                <Trash2 className="h-4 w-4" />
-                Xóa
-              </button>
-            </div>
-          </>
-        )}
-      </div>
+              />
+              <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMenuOpen(false);
+                    onEdit(item);
+                  }}
+                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+                >
+                  <Edit2 className="h-4 w-4 text-slate-500" />
+                  Sửa
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMenuOpen(false);
+                    onDelete(item);
+                  }}
+                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Xóa
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistItem[]; tripId: number }) {
+export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: ChecklistItem[]; tripId: number; isReadOnly?: boolean }) {
   // Modal & Form State
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -389,6 +397,7 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
               onToggleComplete={toggleComplete}
               onEdit={openEditForm}
               onDelete={setItemToDelete}
+              isReadOnly={isReadOnly}
             />
           ))}
         </div>
@@ -448,19 +457,23 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
             </div>
           </div>
 
-          {/* Action Trigger Button */}
-          <button
-            onClick={openAddForm}
-            className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-4 text-[13.5px] font-black shadow-sm hover:brightness-105 active:scale-95 transition-all motion-press w-full sm:w-auto shrink-0"
-          >
-            <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
-            <span>Thêm món</span>
-          </button>
+          {/* Desktop Add Button */}
+          {!isReadOnly && (
+            <div className="hidden md:block">
+              <button
+                onClick={openAddForm}
+                className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-4 text-[13.5px] font-black shadow-sm hover:brightness-105 active:scale-95 transition-all motion-press w-full sm:w-auto shrink-0"
+              >
+                <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
+                <span>Thêm món</span>
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
       {/* Quick Suggestions Horizontal Scroll Chips (Only if not empty) */}
-      {!isEmpty && (
+      {!isEmpty && !isReadOnly && (
         <section className="bg-kat-surface rounded-[24px] p-4 border border-kat-border/60 shadow-soft space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
@@ -490,7 +503,7 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
                     </>
                   ) : (
                     <>
-                      <Plus className="h-3.5 w-3.5 text-[#00BFB7] shrink-0" strokeWidth={2.5} />
+                      <Plus className="h-3.5 w-3.5 opacity-70 shrink-0" strokeWidth={3} />
                       <span className="truncate">{sug.label}</span>
                     </>
                   )}
@@ -517,52 +530,56 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
           </div>
           
           {/* Action Zone */}
-          <div className="flex justify-center">
-            <button 
-              onClick={openAddForm}
-              className="flex h-11 items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 text-kat-text px-6 text-[14px] font-bold hover:bg-kat-primary/20 active:scale-98 transition-all duration-200 shadow-sm"
-            >
-              <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
-              Thêm món đầu tiên
-            </button>
-          </div>
+          {!isReadOnly && (
+            <div className="flex justify-center">
+              <button 
+                onClick={openAddForm}
+                className="flex h-11 items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 text-kat-text px-6 text-[14px] font-bold hover:bg-kat-primary/20 active:scale-98 transition-all duration-200 shadow-sm"
+              >
+                <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
+                Thêm món đầu tiên
+              </button>
+            </div>
+          )}
           
           {/* Suggestion Zone */}
-          <div className="w-full pt-5 border-t border-kat-border/50">
-            <p className="text-[12px] font-bold text-kat-text/80 uppercase tracking-wider mb-3.5 flex items-center justify-center gap-1">
-              <Sparkles className="h-3.5 w-3.5 text-kat-accent-yellow" />
-              Gợi ý nhanh
-            </p>
-            <div className="flex flex-wrap justify-center gap-2.5">
-              {QUICK_SUGGESTIONS.map((sug) => {
-                const added = isAdded(sug.title);
-                return (
-                  <button
-                    key={sug.title}
-                    disabled={added}
-                    onClick={() => handleQuickAdd(sug.title, sug.category)}
-                    className={`h-[38px] px-3.5 rounded-xl border text-[12px] font-semibold flex items-center gap-1.5 transition-all active:scale-95 duration-200 ${
-                      added
-                        ? "bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed"
-                        : "bg-white border-kat-border text-kat-text hover:border-kat-primary hover:bg-kat-primary/5 hover:text-kat-primary shadow-sm"
-                    }`}
-                  >
-                    {added ? (
-                      <>
-                        <Check className="h-3.5 w-3.5 text-emerald-600 animate-fadeIn" strokeWidth={3} />
-                        <span>{sug.label} · Đã thêm</span>
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="h-3.5 w-3.5 text-kat-primary" strokeWidth={2.5} />
-                        <span>{sug.label}</span>
-                      </>
-                    )}
-                  </button>
-                );
-              })}
+          {!isReadOnly && (
+            <div className="w-full pt-5 border-t border-kat-border/50">
+              <p className="text-[12px] font-bold text-kat-text/80 uppercase tracking-wider mb-3.5 flex items-center justify-center gap-1">
+                <Sparkles className="h-3.5 w-3.5 text-kat-accent-yellow" />
+                Gợi ý nhanh
+              </p>
+              <div className="flex flex-wrap justify-center gap-2.5">
+                {QUICK_SUGGESTIONS.map((sug) => {
+                  const added = isAdded(sug.title);
+                  return (
+                    <button
+                      key={sug.title}
+                      disabled={added}
+                      onClick={() => handleQuickAdd(sug.title, sug.category)}
+                      className={`h-[38px] px-3.5 rounded-xl border text-[12px] font-semibold flex items-center gap-1.5 transition-all active:scale-95 duration-200 ${
+                        added
+                          ? "bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed"
+                          : "bg-white border-kat-border text-kat-text hover:border-kat-primary hover:bg-kat-primary/5 hover:text-kat-primary shadow-sm"
+                      }`}
+                    >
+                      {added ? (
+                        <>
+                          <Check className="h-3.5 w-3.5 text-emerald-600 animate-fadeIn" strokeWidth={3} />
+                          <span>{sug.label} · Đã thêm</span>
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="h-3.5 w-3.5 text-kat-primary" strokeWidth={2.5} />
+                          <span>{sug.label}</span>
+                        </>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       ) : (
         /* Checklist grouped by Categories (Grid on desktop, List on mobile) */
@@ -809,7 +826,7 @@ export function ChecklistScreen({ checklist, tripId }: { checklist: ChecklistIte
       )}
 
       {/* Floating Action Button (Mobile only) */}
-      {!isEmpty && (
+      {!isReadOnly && !isEmpty && (
         <button
           onClick={openAddForm}
           className="md:hidden fixed bottom-[96px] right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-kat-primary/10 border border-kat-primary/30 text-kat-primary shadow-floating motion-press hover:scale-105 duration-200"

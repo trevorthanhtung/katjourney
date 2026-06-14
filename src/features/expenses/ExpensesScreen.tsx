@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Trash2, WalletCards, Scale, UsersRound, UserRound, Calculator, ChartPie, ReceiptText, Route, Utensils, Hotel, Ticket, Tags, PencilLine, Info, UserCheck, ChevronRight, ShoppingBag, Gamepad2, Plane, Sparkles } from "lucide-react";
-import { db, Expense, Member } from "../../db";
+import { Plus, Trash2, WalletCards, Scale, UsersRound, UserRound, Calculator, ChartPie, ReceiptText, Route, Utensils, Hotel, Ticket, Tags, PencilLine, Info, UserCheck, ChevronRight, ShoppingBag, Gamepad2, Plane, Sparkles, CalendarDays } from "lucide-react";
+import { db, Expense, Member, EventItem } from "../../db";
 import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories } from "../../utils/helpers";
 import { BottomSheet, FormActions, Input, ScreenTitle, Select, DeleteConfirmModal, classNames } from "../../components/ui";
 
@@ -144,7 +144,8 @@ function ExpenseCard({
   onDelete,
   idx = 0,
   isSwiped,
-  onSwipe
+  onSwipe,
+  isReadOnly
 }: { 
   item: Expense; 
   onEdit: () => void; 
@@ -152,6 +153,7 @@ function ExpenseCard({
   idx?: number;
   isSwiped: boolean;
   onSwipe: (swiped: boolean) => void;
+  isReadOnly?: boolean;
 }) {
   const isPersonal = item.splitType === "personal";
   
@@ -187,10 +189,12 @@ function ExpenseCard({
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (isReadOnly) return;
     touchEndX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = () => {
+    if (isReadOnly) return;
     const diff = touchStartX.current - touchEndX.current;
     if (diff > 40) {
       onSwipe(true);
@@ -200,30 +204,32 @@ function ExpenseCard({
   };
   
   return (
-    <div className={`relative overflow-hidden rounded-3xl motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}>
+    <div className={`relative h-full overflow-hidden rounded-3xl motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}>
       {/* Background Action Buttons */}
-      <div className="absolute inset-y-0 right-0 z-0 flex items-center justify-end gap-2 pr-4 pl-12 bg-slate-50/60 rounded-3xl border border-slate-100">
-        <button 
-          className="flex h-11 w-11 items-center justify-center rounded-2xl text-slate-600 bg-white hover:bg-slate-50 active:scale-95 transition-all shadow-sm border border-slate-200/50 focus:outline-none" 
-          onClick={(e) => {
-            e.stopPropagation();
-            onEdit();
-          }}
-          title="Chỉnh sửa"
-        >
-          <PencilLine className="h-5 w-5" />
-        </button>
-        <button 
-          className="flex h-11 w-11 items-center justify-center rounded-2xl text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all shadow-sm border border-rose-100 focus:outline-none" 
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          title="Xóa"
-        >
-          <Trash2 className="h-5 w-5" />
-        </button>
-      </div>
+      {!isReadOnly && (
+        <div className="absolute inset-y-0 right-0 z-0 flex items-center justify-end gap-2 pr-4 pl-12 bg-slate-50/60 rounded-3xl border border-slate-100">
+          <button 
+            className="flex h-11 w-11 items-center justify-center rounded-2xl text-slate-600 bg-white hover:bg-slate-50 active:scale-95 transition-all shadow-sm border border-slate-200/50 focus:outline-none" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
+            title="Chỉnh sửa"
+          >
+            <PencilLine className="h-5 w-5" />
+          </button>
+          <button 
+            className="flex h-11 w-11 items-center justify-center rounded-2xl text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all shadow-sm border border-rose-100 focus:outline-none" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            title="Xóa"
+          >
+            <Trash2 className="h-5 w-5" />
+          </button>
+        </div>
+      )}
 
       {/* Main Card Content Overlay */}
       <article 
@@ -231,11 +237,12 @@ function ExpenseCard({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onClick={(e) => {
+          if (isReadOnly) return;
           e.stopPropagation();
           onSwipe(!isSwiped);
         }}
         className={classNames(
-          "relative z-10 flex items-center justify-between gap-4 rounded-3xl bg-[#FFFDF8] p-5 border border-[#E8E1D8] transition-all duration-200 hover:shadow-md cursor-pointer select-none",
+          "relative z-10 flex items-center justify-between gap-4 h-full rounded-3xl bg-[#FFFDF8] p-5 border border-[#E8E1D8] transition-all duration-200 hover:shadow-md cursor-pointer select-none",
           isSwiped ? "-translate-x-28 border-slate-300" : "translate-x-0"
         )}
       >
@@ -265,6 +272,12 @@ function ExpenseCard({
             <span className="font-medium">
               • {isPersonal ? (item.payer ? `Của: ${item.payer}` : "Cá nhân") : `Trả: ${item.payer || "Chưa chọn"}`}
             </span>
+            
+            {item.date && (
+              <span className="font-medium px-2 py-0.5 bg-slate-50 border border-slate-200/60 rounded-md">
+                {new Date(item.date).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
+              </span>
+            )}
           </div>
         </div>
 
@@ -283,6 +296,7 @@ function ExpenseForm({
   tripId, 
   members, 
   expenses, 
+  events,
   editing, 
   isOpen, 
   onClose,
@@ -291,6 +305,7 @@ function ExpenseForm({
   tripId: number; 
   members: Member[]; 
   expenses: Expense[]; 
+  events: EventItem[];
   editing: Expense | null; 
   isOpen: boolean; 
   onClose: () => void;
@@ -309,14 +324,18 @@ function ExpenseForm({
     payer: string; 
     category: string; 
     customCategory: string; 
-    splitType: "shared" | "personal" 
+    splitType: "shared" | "personal";
+    date: string;
+    eventId: string;
   }>({ 
     description: "", 
     amount: "", 
     payer: "", 
     category: categoryOptions[0], 
     customCategory: "", 
-    splitType: "shared" 
+    splitType: "shared",
+    date: new Date().toISOString().split('T')[0],
+    eventId: ""
   });
 
   const [errors, setErrors] = useState<{ 
@@ -340,8 +359,10 @@ function ExpenseForm({
           category: isCustom ? "Khác..." : editing.category,
           customCategory: isCustom && editing.category !== "Khác..." ? editing.category : "",
           splitType: editing.splitType ?? "shared",
+          date: editing.date || new Date().toISOString().split('T')[0],
+          eventId: editing.eventId ? String(editing.eventId) : ""
         });
-        if (editing.splitType === "personal" || isCustom || editing.category !== categoryOptions[0]) {
+        if (editing.date || editing.splitType === "personal" || editing.eventId) {
           setShowAdvanced(true);
         }
       } else {
@@ -351,11 +372,18 @@ function ExpenseForm({
           payer: members[0]?.name ?? "", 
           category: categoryOptions[0], 
           customCategory: "", 
-          splitType: "shared" 
+          splitType: "shared",
+          date: new Date().toISOString().split('T')[0],
+          eventId: ""
         });
       }
     }
   }, [editing, isOpen, members, categoryOptions]);
+
+  const filteredEvents = React.useMemo(() => {
+    if (!form.date) return [];
+    return events.filter(e => e.date === form.date && !e.isDeleted);
+  }, [events, form.date]);
 
   async function save() {
     const newErrors: typeof errors = {};
@@ -390,6 +418,9 @@ function ExpenseForm({
       payer: form.splitType === "personal" ? (form.payer || "") : form.payer, 
       category: finalCategory, 
       splitType: form.splitType,
+      date: form.date || undefined,
+      eventId: form.eventId ? form.eventId : undefined,
+      updatedAt: new Date().toISOString(),
       tripId 
     };
 
@@ -446,6 +477,19 @@ function ExpenseForm({
             <p className="text-rose-500 text-[12.5px] font-bold mt-1.5">{errors.amount}</p>
           )}
         </div>
+
+        {/* Date */}
+        <Input 
+          type="date"
+          label={
+            <span className="flex items-center gap-1.5">
+              <CalendarDays className="h-4 w-4 text-slate-500" />
+              Ngày chi tiêu
+            </span>
+          } 
+          value={form.date} 
+          onChange={(date) => { setForm({ ...form, date, eventId: "" }) }} 
+        />
 
         {/* Description */}
         <Input 
@@ -562,6 +606,24 @@ function ExpenseForm({
                     )}
                   </div>
                 )}
+
+                {filteredEvents.length > 0 && (
+                  <Select
+                    label={
+                      <span className="flex items-center gap-1.5">
+                        <Route className="h-4 w-4 text-slate-500" />
+                        Gắn vào lịch trình (Tùy chọn)
+                      </span>
+                    }
+                    value={form.eventId}
+                    onChange={(eventId) => setForm({ ...form, eventId })}
+                    options={["", ...filteredEvents.map(e => String(e.id))]}
+                    labels={{
+                      "": "Không gắn (Chi phí chung)",
+                      ...Object.fromEntries(filteredEvents.map(e => [String(e.id), e.title]))
+                    }}
+                  />
+                )}
               </div>
 
               {/* Segmented Control for Cost Calculation */}
@@ -614,15 +676,23 @@ function ExpenseForm({
 export function ExpensesScreen({
   expenses,
   members,
+  events,
   totalExpense,
   perPerson,
-  tripId
+  tripId,
+  initialAddState,
+  onClearInitialAddState,
+  isReadOnly
 }: {
   expenses: Expense[];
   members: Member[];
+  events: EventItem[];
   totalExpense: number;
   perPerson: number;
   tripId: number;
+  initialAddState?: { date: string; eventId: number };
+  onClearInitialAddState?: () => void;
+  isReadOnly?: boolean;
 }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
@@ -634,6 +704,27 @@ export function ExpensesScreen({
     setToastMessage(message);
     setTimeout(() => setToastMessage(null), 3000);
   };
+
+  useEffect(() => {
+    if (initialAddState && !isFormOpen && !editing) {
+      setIsFormOpen(true);
+      // We also need to pass the initialAddState to ExpenseForm somehow,
+      // But ExpenseForm expects `editing: Expense | null`. 
+      // We can pass a mock Expense to `editing` to pre-fill it.
+      setEditing({
+        id: undefined,
+        tripId,
+        amount: 0,
+        payer: members[0]?.name || "",
+        category: "Di chuyển", // Default category or something else
+        description: "",
+        date: initialAddState.date,
+        eventId: String(initialAddState.eventId),
+        splitType: "shared"
+      } as unknown as Expense);
+      onClearInitialAddState?.();
+    }
+  }, [initialAddState, isFormOpen, editing, members, tripId, onClearInitialAddState]);
 
   const byCategory = sumBy(expenses, (item) => item.category, (item) => Number(item.amount || 0));
   const paidByMember = {
@@ -658,7 +749,7 @@ export function ExpensesScreen({
 
   const executeDelete = async () => {
     if (!expenseToDelete?.id) return;
-    await db.expenses.delete(expenseToDelete.id);
+    await db.expenses.update(expenseToDelete.id, { isDeleted: true });
     setExpenseToDelete(null);
     showToast("Đã xóa khoản chi");
   };
@@ -678,15 +769,17 @@ export function ExpensesScreen({
             <h2 className="text-[32px] font-extrabold tracking-tight text-[#030D2E]">Chi phí</h2>
             <p className="mt-1 text-[15px] font-medium text-slate-500">Theo dõi chi tiêu, khoản đã trả và phần cần chia trong chuyến đi.</p>
           </div>
-          <div>
-            <button
-              onClick={openNewForm}
-              className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-5 text-[14px] font-bold text-kat-text shadow-sm hover:bg-kat-primary/20 motion-press h-[48px]"
-            >
-              <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
-              Thêm khoản chi
-            </button>
-          </div>
+          {!isReadOnly && (
+            <div>
+              <button
+                onClick={openNewForm}
+                className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-5 text-[14px] font-bold text-kat-text shadow-sm hover:bg-kat-primary/20 motion-press h-[48px]"
+              >
+                <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
+                Thêm khoản chi
+              </button>
+            </div>
+          )}
         </div>
         
         {/* Total Expense Hero */}
@@ -732,15 +825,17 @@ export function ExpensesScreen({
             </div>
             
             {/* Hộp nút thêm khoản chi trên Mobile */}
-            <div className="shrink-0 flex md:hidden items-center justify-end w-full">
-              <button 
-                onClick={openNewForm}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-kat-primary hover:bg-kat-primary-usable text-[#030D2E] px-6 py-3 text-[14px] font-bold shadow-sm motion-press h-[48px]"
-              >
-                <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
-                Thêm khoản chi
-              </button>
-            </div>
+            {!isReadOnly && (
+              <div className="shrink-0 flex md:hidden items-center justify-end w-full">
+                <button 
+                  onClick={openNewForm}
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-kat-primary hover:bg-kat-primary-usable text-[#030D2E] px-6 py-3 text-[14px] font-bold shadow-sm motion-press h-[48px]"
+                >
+                  <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
+                  Thêm khoản chi
+                </button>
+              </div>
+            )}
           </div>
         </section>
 
@@ -797,16 +892,24 @@ export function ExpensesScreen({
                 <p className="text-[13.5px] font-medium text-kat-muted mb-6 max-w-xs">
                   Ghi lại chi phí ăn uống, di chuyển, vé tham quan để hệ thống tự động cân đối chia tiền sau chuyến đi.
                 </p>
-                <button 
-                  onClick={openNewForm}
-                  className="flex h-10 items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/10 px-5 text-[13.5px] font-bold text-kat-primary hover:bg-kat-primary/15 motion-press shadow-sm"
-                >
-                  <Plus className="h-4 w-4" strokeWidth={2.5} />
-                  Thêm khoản chi
-                </button>
+                {!isReadOnly && (
+                  <button 
+                    onClick={openNewForm}
+                    className="flex h-10 items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/10 px-5 text-[13.5px] font-bold text-kat-primary hover:bg-kat-primary/15 motion-press shadow-sm"
+                  >
+                    <Plus className="h-4 w-4" strokeWidth={2.5} />
+                    Thêm khoản chi
+                  </button>
+                )}
               </div>
             ) : (
-              expenses.map((item, idx) => (
+              [...expenses]
+                .sort((a, b) => {
+                  const dateA = a.date ? new Date(a.date).getTime() : 0;
+                  const dateB = b.date ? new Date(b.date).getTime() : 0;
+                  return dateB - dateA;
+                })
+                .map((item, idx) => (
                 <ExpenseCard
                   key={item.id}
                   item={item}
@@ -821,6 +924,7 @@ export function ExpensesScreen({
                   idx={idx}
                   isSwiped={swipedExpenseId === item.id}
                   onSwipe={(swiped) => setSwipedExpenseId(swiped ? item.id! : null)}
+                  isReadOnly={isReadOnly}
                 />
               ))
             )}
@@ -851,6 +955,7 @@ export function ExpensesScreen({
         tripId={tripId}
         members={members}
         expenses={expenses}
+        events={events}
         editing={editing}
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
