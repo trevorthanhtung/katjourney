@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { db, JournalEntry, JournalMood } from "../../db";
 import { formatDate, moodLabels, today } from "../../utils/helpers";
-import { BottomSheet, FAB, Input, Textarea, DeleteConfirmModal } from "../../components/ui";
+import { BottomSheet, FAB, Input, Textarea, DatePicker, DeleteConfirmModal } from "../../components/ui";
 import { getIdentity } from "../../services/identityService";
 import { uploadJournalImage } from "../../services/storageService";
 import { getCurrentUser } from "../../services/authService";
@@ -87,8 +87,7 @@ function JournalForm({
       setDirty(true);
     } catch (err: any) {
       console.error(err);
-      alert("Lỗi: " + (err.message || "Tải ảnh thất bại"));
-      onShowToast?.("Lỗi tải ảnh lên. Vui lòng thử lại.");
+      onShowToast?.("Lỗi: " + (err.message || "Tải ảnh thất bại"));
     } finally {
       setUploading(false);
       if (e.target) e.target.value = '';
@@ -186,7 +185,7 @@ function JournalForm({
             type="button"
             disabled={hasError}
             onClick={save}
-            className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white px-6 font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
+            className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white px-6 font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#030D2E] disabled:active:scale-100 shadow-sm"
           >
             <Save className="h-4.5 w-4.5" strokeWidth={2.5} />
             Lưu nhật ký
@@ -196,19 +195,18 @@ function JournalForm({
     >
       <div className="space-y-4 md:space-y-5">
         {/* Date Field */}
-        <div>
-          <Input 
-            label={
-              <span className="flex items-center gap-1.5">
-                <CalendarDays className="h-4 w-4 text-slate-500" />
-                Ngày ghi lại
-              </span>
-            } 
-            type="date" 
-            value={form.date} 
-            onChange={(date) => { setForm({ ...form, date }); setDirty(true); }} 
-          />
-        </div>
+          <div className="mb-5">
+            <DatePicker 
+              label={
+                <span className="flex items-center gap-1.5">
+                  <CalendarDays className="h-4 w-4 text-slate-500" />
+                  Ngày ghi lại
+                </span>
+              } 
+              value={form.date} 
+              onChange={(date) => { setForm({ ...form, date }); setDirty(true); }} 
+            />
+          </div>
 
         {/* Title Field */}
         <div>
@@ -324,7 +322,7 @@ function JournalForm({
                 key={prompt}
                 type="button"
                 onClick={() => handlePromptClick(prompt)}
-                className="rounded-lg bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5 text-[12.5px] font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                className="rounded-lg bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5 text-[12.5px] font-bold text-slate-600 hover:bg-[#00BFB7]/10 hover:text-[#00BFB7] hover:border-[#00BFB7]/30 transition-all active:scale-95"
               >
                 + {prompt}
               </button>
@@ -654,7 +652,7 @@ export function JournalSection({
           icon={<PenLine className="h-6 w-6" strokeWidth={2.5} />} 
           label="Viết nhật ký" 
           onClick={openNewForm} 
-          className="md:hidden h-14 w-14 bg-kat-primary/10 border border-kat-primary/30 text-kat-primary hover:scale-105 duration-200 shadow-floating motion-press"
+          className="md:hidden h-14 w-14 bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] hover:scale-105 hover:bg-white/25 duration-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press"
         />
       )}
 

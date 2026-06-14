@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Check, Plus, Trash2, Luggage, Edit2, AlertCircle, User, X, Minus, Sparkles, FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, WalletCards, Sandwich, Package, BadgeCheck, CheckCircle2, ClipboardList, UserRoundCheck, StickyNote, Type, MoreHorizontal } from "lucide-react";
 import { ChecklistItem, db } from "../../db";
 import { getChecklistStats } from "../../utils/helpers";
 import { useLiveQuery } from "dexie-react-hooks";
-import { DeleteConfirmModal } from "../../components/ui";
+import { DeleteConfirmModal, Select } from "../../components/ui";
 
 const CATEGORIES = [
   "Giấy tờ",
@@ -63,6 +63,22 @@ function ChecklistItemRow({
   isReadOnly?: boolean;
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMenuOpen]);
 
   return (
     <div
@@ -137,10 +153,10 @@ function ChecklistItemRow({
 
       {/* Action menu trigger (min 44x44px target zone) */}
       {!isReadOnly && (
-        <div className="relative shrink-0 self-center">
+        <div className="relative shrink-0 self-center" ref={menuRef}>
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
             onClick={(e) => {
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
@@ -151,15 +167,7 @@ function ChecklistItemRow({
           </button>
 
           {isMenuOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-30 cursor-default"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsMenuOpen(false);
-                }}
-              />
-              <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
+            <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -185,7 +193,6 @@ function ChecklistItemRow({
                   Xóa
                 </button>
               </div>
-            </>
           )}
         </div>
       )}
@@ -346,6 +353,8 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
   const activeCategories = CATEGORIES.filter((cat) => groupedItems[cat].length > 0);
   const isAdded = (sugTitle: string) =>
     checklist.some((item) => item.title.toLowerCase().trim() === sugTitle.toLowerCase().trim());
+  
+  const allSuggestionsAdded = QUICK_SUGGESTIONS.every((sug) => isAdded(sug.title));
 
   // Determine status description text
   let statusText = "Chưa có món cần chuẩn bị.";
@@ -473,7 +482,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
       </section>
 
       {/* Quick Suggestions Horizontal Scroll Chips (Only if not empty) */}
-      {!isEmpty && !isReadOnly && (
+      {!isEmpty && !isReadOnly && !allSuggestionsAdded && (
         <section className="bg-kat-surface rounded-[24px] p-4 border border-kat-border/60 shadow-soft space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
@@ -529,21 +538,8 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             </p>
           </div>
           
-          {/* Action Zone */}
-          {!isReadOnly && (
-            <div className="flex justify-center">
-              <button 
-                onClick={openAddForm}
-                className="flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#030D2E] text-white px-6 text-[14px] font-bold hover:bg-[#030D2E]/90 active:scale-98 transition-all duration-200 shadow-sm"
-              >
-                <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
-                Thêm món đầu tiên
-              </button>
-            </div>
-          )}
-          
           {/* Suggestion Zone */}
-          {!isReadOnly && (
+          {!isReadOnly && !allSuggestionsAdded && (
             <div className="w-full pt-5 border-t border-kat-border/50">
               <p className="text-[12px] font-bold text-kat-text/80 uppercase tracking-wider mb-3.5 flex items-center justify-center gap-1">
                 <Sparkles className="h-3.5 w-3.5 text-kat-accent-yellow" />
@@ -726,36 +722,34 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
 
               {/* Assigned To */}
               <div className="space-y-1.5">
-                <label className="text-[13px] font-bold text-kat-text flex items-center gap-1.5">
-                  <UserRoundCheck className="h-4 w-4 text-slate-500" />
-                  Người phụ trách
-                </label>
                 {members.length === 0 ? (
-                  <div className="rounded-[16px] bg-[#FAF7F1] border border-kat-border/60 p-3 flex items-start gap-2.5">
-                    <User className="h-4 w-4 text-kat-muted shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="text-[12.5px] font-bold text-kat-text">Chưa có người đồng hành</h4>
-                      <p className="text-[11.5px] text-kat-muted mt-0.5 font-bold">Thêm người đồng hành trong Không gian chuyến đi để phân công chuẩn bị hành lý.</p>
+                  <>
+                    <label className="text-[13px] font-bold text-kat-text flex items-center gap-1.5">
+                      <UserRoundCheck className="h-4 w-4 text-slate-500" />
+                      Người phụ trách
+                    </label>
+                    <div className="rounded-[16px] bg-[#FAF7F1] border border-kat-border/60 p-3 flex items-start gap-2.5">
+                      <User className="h-4 w-4 text-kat-muted shrink-0 mt-0.5" />
+                      <div>
+                        <h4 className="text-[12.5px] font-bold text-kat-text">Chưa có người đồng hành</h4>
+                        <p className="text-[11.5px] text-kat-muted mt-0.5 font-bold">Thêm người đồng hành trong Không gian chuyến đi để phân công chuẩn bị hành lý.</p>
+                      </div>
                     </div>
-                  </div>
+                  </>
                 ) : (
-                  <div className="relative">
-                    <select
-                      className="w-full rounded-[14px] border border-kat-border bg-[#FAF7F1]/60 px-4 h-[46px] text-[14.5px] font-semibold text-kat-text outline-none transition-all focus:bg-white focus:ring-2 focus:ring-kat-primary appearance-none"
-                      value={assignedTo}
-                      onChange={(e) => setAssignedTo(e.target.value)}
-                    >
-                      <option value="">Chọn người đồng hành</option>
-                      {members.map((member) => (
-                        <option key={member.id} value={member.name}>
-                          {member.name} ({member.role || "Người đồng hành"})
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-kat-muted text-[10px]">
-                      ▼
-                    </div>
-                  </div>
+                  <Select
+                    label={
+                      <span className="flex items-center gap-1.5">
+                        <UserRoundCheck className="h-4 w-4 text-slate-500" />
+                        Người phụ trách
+                      </span>
+                    }
+                    value={assignedTo}
+                    onChange={setAssignedTo}
+                    options={members.map((m) => m.name)}
+                    labels={members.reduce((acc, m) => ({ ...acc, [m.name]: `${m.name} (${m.role || "Người đồng hành"})` }), {} as Record<string, string>)}
+                    placeholder="Chọn người đồng hành"
+                  />
                 )}
               </div>
 
@@ -826,10 +820,10 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
       )}
 
       {/* Floating Action Button (Mobile only) */}
-      {!isReadOnly && !isEmpty && (
+      {!isReadOnly && (
         <button
           onClick={openAddForm}
-          className="md:hidden fixed bottom-[96px] right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-kat-primary/10 border border-kat-primary/30 text-kat-primary shadow-floating motion-press hover:scale-105 duration-200"
+          className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
           style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
           aria-label="Thêm món chuẩn bị"
         >
@@ -849,7 +843,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
 
       {/* Toast Notification popup */}
       {toast && (
-        <div className="fixed bottom-24 left-1/2 z-50 motion-toast-enter">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 motion-toast-enter">
           <div className="bg-[#030D2E] text-white px-5 py-3 rounded-2xl shadow-floating flex items-center gap-3 border border-[#E8E1D8]/20">
             <div className="flex h-5.5 w-5.5 items-center justify-center rounded-full bg-kat-primary/20 text-kat-primary">
               <Check className="h-3.5 w-3.5" strokeWidth={3.5} />

@@ -32,11 +32,11 @@ export function FactoryResetModal({ isOpen, onClose }: FactoryResetModalProps) {
           <p>
             Hành động này sẽ xóa vĩnh viễn toàn bộ dữ liệu trên thiết bị này. Bạn không thể hoàn tác.
           </p>
-          <ul className="list-disc pl-5 space-y-1 text-slate-600 text-[13px]">
+          <ul className="list-disc pl-5 space-y-1 text-slate-650 text-[13px]">
             <li>Toàn bộ chuyến đi và lịch trình</li>
-            <li>Tất cả chi phí và nhật ký</li>
+            <li>Tất cả chi phí và nhật ký hành trình</li>
             <li>Dữ liệu gói đồ và checklist</li>
-            <li>Thông tin tài khoản đăng nhập</li>
+            <li>Thông tin tài khoản khách hiện tại</li>
           </ul>
         </div>
       }

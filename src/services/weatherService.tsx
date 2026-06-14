@@ -6,11 +6,21 @@ export interface WeatherForecast {
     temperature: number;
     weathercode: number;
     is_day: number;
+    humidity?: number;
+    windspeed?: number;
+    apparent_temperature?: number;
   };
   time: string[];
   weathercode: number[];
   temperature_2m_max: number[];
   temperature_2m_min: number[];
+  uv_index_max?: number[];
+  hourly?: {
+    time: string[];
+    temperature: number[];
+    weathercode: number[];
+    precipitation_probability: number[];
+  };
 }
 
 export interface GeocodingResult {
@@ -126,11 +136,10 @@ export async function getWeatherForecast(lat: number, lon: number, days: number 
     // If still no valid data, fetch from API
     if (!dataToReturn) {
       try {
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,is_day,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=${fetchDays}`);
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,is_day,weather_code,relative_humidity_2m,wind_speed_10m,apparent_temperature&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max&hourly=temperature_2m,weather_code,precipitation_probability&timezone=auto&forecast_days=${fetchDays}`);
         if (!res.ok) {
           console.error("Open-Meteo API Error:", res.status, res.statusText);
           // If rate limited, try to return stale cache from localStorage as a last resort
-          let foundStale = false;
           try {
              const stored = localStorage.getItem(`weather_${cacheKey}`);
              if (stored) {
@@ -149,16 +158,69 @@ export async function getWeatherForecast(lat: number, lon: number, days: number 
             const mappedCurrent = {
               temperature: currentObj.temperature_2m ?? currentObj.temperature,
               weathercode: currentObj.weather_code ?? currentObj.weathercode,
-              is_day: currentObj.is_day
+              is_day: currentObj.is_day,
+              humidity: currentObj.relative_humidity_2m ?? currentObj.humidity,
+              windspeed: currentObj.wind_speed_10m ?? currentObj.windspeed,
+              apparent_temperature: currentObj.apparent_temperature,
             };
             const mappedDaily = {
               time: data.daily.time,
               weathercode: data.daily.weather_code ?? data.daily.weathercode,
               temperature_2m_max: data.daily.temperature_2m_max,
-              temperature_2m_min: data.daily.temperature_2m_min
+              temperature_2m_min: data.daily.temperature_2m_min,
+              uv_index_max: data.daily.uv_index_max,
             };
             
-            const fullData = { ...mappedDaily, current: mappedCurrent };
+            // Slice hourly data to show next 24 hours
+            let mappedHourly = undefined;
+            if (data.hourly) {
+              const currentHourStr = new Date().toISOString().substring(0, 13) + ":00";
+              let startIndex = data.hourly.time.findIndex((t: string) => t.startsWith(currentHourStr));
+              if (startIndex === -1) startIndex = 0;
+              const endIndex = startIndex + 24;
+              
+              mappedHourly = {
+                time: data.hourly.time.slice(startIndex, endIndex),
+                temperature: (data.hourly.temperature_2m ?? data.hourly.temperature ?? []).slice(startIndex, endIndex),
+                weathercode: (data.hourly.weather_code ?? data.hourly.weathercode ?? []).slice(startIndex, endIndex),
+                precipitation_probability: (data.hourly.precipitation_probability ?? []).slice(startIndex, endIndex),
+              };
+            }
+            
+            // Fallback mock hourly forecast if not available
+            if (!mappedHourly) {
+              const minTemp = mappedDaily.temperature_2m_min[0] ?? 20;
+              const maxTemp = mappedDaily.temperature_2m_max[0] ?? 30;
+              const wcode = mappedCurrent.weathercode ?? 0;
+              
+              const times: string[] = [];
+              const temps: number[] = [];
+              const codes: number[] = [];
+              const precips: number[] = [];
+              
+              const now = new Date();
+              for (let i = 0; i < 24; i++) {
+                const h = new Date(now.getTime() + i * 60 * 60 * 1000);
+                times.push(h.toISOString());
+                const hour = h.getHours();
+                const rad = ((hour - 5) / 24) * 2 * Math.PI;
+                const factor = (Math.sin(rad - Math.PI / 2) + 1) / 2; // 0 to 1
+                const temp = minTemp + factor * (maxTemp - minTemp);
+                temps.push(Math.round(temp));
+                codes.push(wcode);
+                const isRainy = (wcode >= 51 && wcode <= 67) || (wcode >= 80 && wcode <= 82);
+                const isStormy = wcode >= 95 && wcode <= 99;
+                precips.push(isStormy ? 90 : isRainy ? 75 : 10);
+              }
+              mappedHourly = {
+                time: times,
+                temperature: temps,
+                weathercode: codes,
+                precipitation_probability: precips
+              };
+            }
+            
+            const fullData = { ...mappedDaily, current: mappedCurrent, hourly: mappedHourly };
             const cacheObj = { timestamp: Date.now(), data: fullData };
             weatherCache.set(cacheKey, cacheObj);
             try {
@@ -198,6 +260,8 @@ function applyDaysLimit(dataToReturn: WeatherForecast | null, days: number, fetc
       weathercode: dataToReturn.weathercode.slice(0, days),
       temperature_2m_max: dataToReturn.temperature_2m_max.slice(0, days),
       temperature_2m_min: dataToReturn.temperature_2m_min.slice(0, days),
+      uv_index_max: dataToReturn.uv_index_max?.slice(0, days),
+      hourly: dataToReturn.hourly,
     };
   }
 
@@ -225,22 +289,26 @@ export function getWeatherText(code: number): string {
 }
 
 export function getWeatherGradient(code: number): string {
-  // Sunny / Clear: Premium warm sunset orange/pink (from reference)
+  // Sunny / Clear: Rich warm amber → coral gold
   if (code === 0 || code === 1) {
-    return "linear-gradient(135deg, #FF8A7A 0%, #FFB66D 100%)";
+    return "linear-gradient(135deg, #F5A623 0%, #F76B1C 50%, #E8573D 100%)";
   }
-  // Partly Cloudy / Cloudy: Premium sky blue (from reference)
-  if (code === 2 || code === 3 || code === 45 || code === 48) {
-    return "linear-gradient(135deg, #6BB2FF 0%, #8CD1FF 100%)";
+  // Partly Cloudy: Premium sky blue → soft periwinkle
+  if (code === 2 || code === 3) {
+    return "linear-gradient(135deg, #4A90D9 0%, #6BAED6 55%, #A8C8E8 100%)";
   }
-  // Rain / Drizzle: Premium stormy blue/grey (from reference)
+  // Fog / Mist: Muted steel blue → cool grey
+  if (code === 45 || code === 48) {
+    return "linear-gradient(135deg, #6B7FA3 0%, #8A9DBF 55%, #B0BFCE 100%)";
+  }
+  // Drizzle / Rain: Deep ocean blue → slate
   if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
-    return "linear-gradient(135deg, #5B748E 0%, #465A6E 100%)";
+    return "linear-gradient(135deg, #2C4A6E 0%, #3D6080 50%, #536E8A 100%)";
   }
-  // Thunderstorm / Heavy Rain: Deep night blue/purple
+  // Thunderstorm: Deep midnight navy → stormy indigo
   if (code >= 95 && code <= 99) {
-    return "linear-gradient(135deg, #2A3B5C 0%, #172136 100%)";
+    return "linear-gradient(135deg, #1A1F3C 0%, #252D52 50%, #2E3B6E 100%)";
   }
-  // Default (Neutral Cloudy Blue)
-  return "linear-gradient(135deg, #8BA9D1 0%, #AEC8E4 100%)";
+  // Default (Neutral Blue)
+  return "linear-gradient(135deg, #4A7FA5 0%, #6A9FBF 55%, #92BFDA 100%)";
 }

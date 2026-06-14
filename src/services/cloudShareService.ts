@@ -1,6 +1,5 @@
 import { firebaseEnabled, initFirebase, ensureAnonymousUser } from '../lib/firebase';
 import { db as localDb } from '../db';
-import { doc, writeBatch, serverTimestamp, updateDoc } from 'firebase/firestore';
 
 export interface ShareOptions {
   mode: "view" | "edit" | "request_edit";
@@ -63,7 +62,8 @@ export async function createShareLink(
   const checklist = options.includeChecklist ? await localDb.checklist.where('tripId').equals(tripId).toArray() : [];
   const journals = options.includeJournals ? await localDb.journals.where('tripId').equals(tripId).toArray() : [];
   const backupPlans = options.includeBackupPlans ? await localDb.backupPlans.where('tripId').equals(tripId).toArray() : [];
-  const travelDocuments = options.includeDocuments ? await localDb.travelDocuments.where('tripId').equals(tripId).toArray() : [];
+  const travelDocumentsRaw = options.includeDocuments ? await localDb.travelDocuments.where('tripId').equals(tripId).toArray() : [];
+  const travelDocuments = travelDocumentsRaw.filter(d => !d.isPrivate);
 
   const randomUUID = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -177,7 +177,8 @@ export async function updateShareLink(
   const checklist = options.includeChecklist ? await localDb.checklist.where('tripId').equals(tripId).toArray() : [];
   const journals = options.includeJournals ? await localDb.journals.where('tripId').equals(tripId).toArray() : [];
   const backupPlans = options.includeBackupPlans ? await localDb.backupPlans.where('tripId').equals(tripId).toArray() : [];
-  const travelDocuments = options.includeDocuments ? await localDb.travelDocuments.where('tripId').equals(tripId).toArray() : [];
+  const travelDocumentsRaw = options.includeDocuments ? await localDb.travelDocuments.where('tripId').equals(tripId).toArray() : [];
+  const travelDocuments = travelDocumentsRaw.filter(d => !d.isPrivate);
 
   console.log("[CloudShare] Attempting to update parent document...");
   await updateDoc(shareRef, {
@@ -258,7 +259,7 @@ export async function getViewShareData(token: string) {
   const { db } = await initFirebase();
   
   // Use dynamic import so we don't increase initial bundle size
-  const { getDoc, collection, getDocs } = await import('firebase/firestore');
+  const { doc, getDoc, collection, getDocs } = await import('firebase/firestore');
   
   const shareRef = doc(db, 'publicShares', token);
   const shareSnap = await getDoc(shareRef);
