@@ -442,7 +442,7 @@ function ExpenseForm({
       type="button"
       onClick={save}
       disabled={isSaveDisabled}
-      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-primary hover:bg-kat-primary-usable text-[#030D2E] px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
+      className="inline-flex h-9 items-center justify-center rounded-xl bg-[#030D2E] hover:bg-[#030D2E]/90 text-white px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
     >
       {editing ? "Lưu" : "Thêm"}
     </button>
@@ -461,12 +461,13 @@ function ExpenseForm({
           <span className="text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-1">Số tiền (đ)</span>
           <div className="relative w-full max-w-[280px] flex items-center justify-center">
             <input
-              type="number"
+              type="text"
               pattern="[0-9]*"
               inputMode="numeric"
-              value={form.amount}
+              value={form.amount ? new Intl.NumberFormat('vi-VN').format(Number(form.amount)) : ""}
               onChange={(e) => {
-                setForm({ ...form, amount: e.target.value });
+                const rawValue = e.target.value.replace(/\D/g, "");
+                setForm({ ...form, amount: rawValue });
                 setErrors({ ...errors, amount: "" });
               }}
               placeholder="0"
