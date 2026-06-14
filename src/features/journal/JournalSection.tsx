@@ -651,10 +651,10 @@ export function JournalSection({
       {/* FAB Mobile button */}
       {!isReadOnly && (
         <FAB 
-          icon={<PenLine className="h-6 w-6" />} 
+          icon={<PenLine className="h-6 w-6" strokeWidth={2.5} />} 
           label="Viết nhật ký" 
           onClick={openNewForm} 
-          className="md:hidden h-16 w-16 bg-[#00BFB7] text-[#030D2E] hover:scale-105 shadow-lg motion-press"
+          className="md:hidden h-14 w-14 bg-kat-primary/10 border border-kat-primary/30 text-kat-primary hover:scale-105 duration-200 shadow-floating motion-press"
         />
       )}
 
