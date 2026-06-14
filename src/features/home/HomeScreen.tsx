@@ -176,11 +176,14 @@ export function HomeScreen({
       badge = "Đã kết thúc";
     }
 
-    const currentCode = forecast?.current?.weathercode || 0;
+    const currentCode = forecast?.current?.weathercode;
+    const bgGradient = (!forecast)
+      ? "linear-gradient(135deg, #FF9900 0%, #FF3366 45%, #00BFB7 100%)" // KAT Brand Gradient
+      : getWeatherGradient(currentCode!);
     
     return (
       <div className="mb-6 relative overflow-hidden rounded-3xl shadow-sm border border-slate-100 group transition-all duration-300">
-        <div className="absolute inset-0 z-0" style={{ background: getWeatherGradient(currentCode) }} />
+        <div className="absolute inset-0 z-0" style={{ background: bgGradient }} />
         
         <div className="relative z-10 flex flex-col md:flex-row p-5 md:p-8 justify-between gap-5 md:gap-6">
           <div className="flex flex-col items-start text-left max-w-2xl w-full md:w-auto flex-1">
