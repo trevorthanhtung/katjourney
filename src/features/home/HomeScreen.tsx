@@ -178,7 +178,7 @@ export function HomeScreen({
 
     const currentCode = forecast?.current?.weathercode;
     const bgGradient = (!forecast)
-      ? "linear-gradient(135deg, #FF9900 0%, #FF3366 45%, #00BFB7 100%)" // KAT Brand Gradient
+      ? "linear-gradient(135deg, #030D2E 0%, #003D4A 60%, #007C78 100%)" // Premium Dark Gradient
       : getWeatherGradient(currentCode!);
     
     return (
