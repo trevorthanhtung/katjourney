@@ -29,9 +29,9 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3 }: We
     return (
       <div className="w-full h-auto py-4 mb-6 rounded-3xl bg-rose-50 border border-rose-100 flex flex-col items-center justify-center text-rose-500 gap-1 px-4 text-center">
         <CloudRainWind className="w-6 h-6 mb-1 opacity-50" />
-        <span className="text-[12px] font-bold">Không thể tải thông tin thời tiết</span>
-        <span className="text-[10px] opacity-70">
-          Điểm đến: {destination || "Trống"} | Tọa độ: {latitude || "?"}, {longitude || "?"}
+        <span className="text-[12.5px] font-bold">Chưa thể tải thông tin thời tiết</span>
+        <span className="text-[11px] opacity-70">
+          {destination ? `Điểm đến: ${destination}` : "Vui lòng cập nhật địa điểm cụ thể"}
         </span>
       </div>
     );
