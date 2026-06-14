@@ -983,7 +983,7 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
         <div className="fixed bottom-[84px] right-4 z-40 md:hidden">
           <button
             onClick={() => openNewForm()}
-            className="flex h-14 w-14 items-center justify-center rounded-full bg-[#00BFB7] text-[#030D2E] shadow-lg shadow-[#00BFB7]/30 transition-transform active:scale-90 motion-press"
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-kat-primary/10 border border-kat-primary/30 text-kat-primary shadow-floating motion-press hover:scale-105 duration-200"
           >
             <Plus className="h-6 w-6" strokeWidth={2.5} />
           </button>
