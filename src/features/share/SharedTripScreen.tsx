@@ -253,7 +253,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           </div>
           <button
             onClick={() => window.location.href = "/"}
-            className="text-[13.5px] font-bold text-kat-primary hover:underline whitespace-nowrap"
+            className="flex items-center justify-center rounded-full bg-[#030D2E] px-4 py-1.5 text-[13px] font-black text-white hover:bg-[#030D2E]/90 active:scale-95 transition-all shadow-sm whitespace-nowrap"
           >
             Tạo chuyến đi của bạn
           </button>
