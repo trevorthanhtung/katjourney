@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { 
   Globe, MapPin, CalendarDays, Clock, Route,
-  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link
+  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link, X
 } from "lucide-react";
 import { getViewShareData } from "../../services/cloudShareService";
 import { formatDate, classNames, getTripTiming, formatMoney } from "../../utils/helpers";
@@ -39,6 +39,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [pinInput, setPinInput] = useState("");
   const [pinError, setPinError] = useState(false);
   const [step, setStep] = useState<"pin" | "identity">("pin");
+  const [isBannerVisible, setIsBannerVisible] = useState(true);
 
   useEffect(() => {
     if (data && data.trip) {
@@ -260,11 +261,19 @@ export default function SharedTripScreen({ token }: { token: string }) {
         </div>
       </header>
 
-      {canRequestEdit && (
-        <div className="sticky top-[53px] md:top-[61px] z-30 bg-[#030D2E] text-white px-4 py-2.5 text-center shadow-md animate-fadeIn">
-          <p className="text-[13.5px] font-bold">
-            Chế độ Đề xuất: Các thay đổi của bạn sẽ được gửi cho chủ chuyến đi xét duyệt.
-          </p>
+      {canRequestEdit && isBannerVisible && (
+        <div className="sticky top-[53px] md:top-[61px] z-30 bg-[#030D2E] text-white px-4 py-2.5 shadow-md animate-fadeIn flex items-center justify-between">
+          <div className="flex-1 text-center">
+            <p className="text-[13.5px] font-bold">
+              Chế độ Đề xuất: Các thay đổi của bạn sẽ được gửi cho chủ chuyến đi xét duyệt.
+            </p>
+          </div>
+          <button 
+            onClick={() => setIsBannerVisible(false)}
+            className="p-1 hover:bg-white/10 rounded-full transition-colors ml-2 flex-shrink-0"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
       )}
 

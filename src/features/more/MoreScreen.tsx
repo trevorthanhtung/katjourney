@@ -2280,18 +2280,7 @@ export function MoreScreen({
           setIsShareModalOpen(false);
         }}
         title="Chia sẻ chuyến đi"
-        subtitle={
-          <div className="space-y-2.5 mt-1">
-            <p className="text-[13.5px] text-slate-500 leading-relaxed">
-              Tạo link để người khác xem lịch trình và thông tin chuyến đi.
-            </p>
-            <div className="flex justify-start">
-              <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 border border-violet-100 px-2.5 py-0.5 text-[11px] font-bold text-violet-700">
-                Chế độ: Xem & đề xuất chỉnh sửa
-              </span>
-            </div>
-          </div>
-        }
+        subtitle="Tạo link để người khác xem lịch trình và thông tin chuyến đi."
       >
         <div className="space-y-5 px-1 pb-4">
           {!activeShareLink ? (
