@@ -539,8 +539,8 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
               <Check className="h-3.5 w-3.5" /> Khớp tọa độ thành công — Thời tiết đã tự động kết nối!
             </p>
           ) : (
-            <p className="mt-1.5 px-1 text-[11.5px] font-semibold text-slate-500 leading-normal flex items-start gap-1">
-              <span className="text-amber-500 font-extrabold text-[12px] leading-none mt-0.5 shrink-0">💡</span>
+            <p className="mt-1.5 px-1 text-[11.5px] font-semibold text-slate-500 leading-normal flex items-start gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-amber-500 shrink-0 mt-0.5" />
               <span>Chọn từ danh sách gợi ý khi gõ để tự động hiển thị dự báo thời tiết cho chuyến đi nhé.</span>
             </p>
           )}
