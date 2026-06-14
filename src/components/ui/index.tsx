@@ -113,10 +113,10 @@ export function FormActions({
   disabled?: boolean;
 }) {
   return (
-    <div className="flex gap-3 pt-2 w-full">
+    <div className="flex gap-2.5 pt-2 w-full">
       {onCancel && (
         <button
-          className="inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200 motion-press"
+          className="flex shrink-0 h-[52px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.96] transition-all duration-200 motion-press"
           type="button"
           onClick={onCancel}
         >
@@ -124,12 +124,12 @@ export function FormActions({
         </button>
       )}
       <button
-        className="inline-flex min-h-[50px] flex-1 items-center justify-center gap-2 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-6 font-black shadow-sm hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100"
+        className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-[#030D2E] text-white px-6 font-black shadow-sm hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed motion-press"
         type="button"
         onClick={onSave}
         disabled={disabled}
       >
-        <Check className="h-4.5 w-4.5" strokeWidth={2.5} />
+        <Check className="h-5 w-5" strokeWidth={2.5} />
         {saveLabel}
       </button>
     </div>

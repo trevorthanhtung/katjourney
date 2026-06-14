@@ -510,13 +510,13 @@ export function JournalSection({
           </div>
         </div>
         {!isReadOnly && (
-          <button
-            onClick={openNewForm}
-            className="hidden md:flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] px-5 text-[14px] font-black text-[#030D2E] transition-all hover:brightness-105 shadow-sm shrink-0 motion-press"
-          >
-            <PenLine className="w-4.5 h-4.5" strokeWidth={2.5} />
-            Viết nhật ký
-          </button>
+            <button
+              onClick={openNewForm}
+              className="hidden md:flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] px-5 text-[14px] font-black text-white transition-all hover:bg-[#030D2E]/90 shadow-sm shrink-0 motion-press"
+            >
+              <PenLine className="w-4.5 h-4.5" strokeWidth={2.5} />
+              Viết nhật ký
+            </button>
         )}
       </div>
 

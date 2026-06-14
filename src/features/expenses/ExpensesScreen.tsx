@@ -773,7 +773,7 @@ export function ExpensesScreen({
             <div>
               <button
                 onClick={openNewForm}
-                className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 px-5 text-[14px] font-bold text-kat-text shadow-sm hover:bg-kat-primary/20 motion-press h-[48px]"
+                className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-[#030D2E] px-5 text-[14px] font-bold text-white shadow-sm hover:bg-[#030D2E]/90 motion-press h-[48px]"
               >
                 <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
                 Thêm khoản chi
@@ -829,7 +829,7 @@ export function ExpensesScreen({
               <div className="shrink-0 flex md:hidden items-center justify-end w-full">
                 <button 
                   onClick={openNewForm}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-kat-primary hover:bg-kat-primary-usable text-[#030D2E] px-6 py-3 text-[14px] font-bold shadow-sm motion-press h-[48px]"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#030D2E] hover:bg-[#030D2E]/90 text-white px-6 py-3 text-[14px] font-bold shadow-sm motion-press h-[48px]"
                 >
                   <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
                   Thêm khoản chi
@@ -895,7 +895,7 @@ export function ExpensesScreen({
                 {!isReadOnly && (
                   <button 
                     onClick={openNewForm}
-                    className="flex h-10 items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/10 px-5 text-[13.5px] font-bold text-kat-primary hover:bg-kat-primary/15 motion-press shadow-sm"
+                    className="flex h-10 items-center justify-center gap-2 rounded-2xl bg-[#030D2E] px-5 text-[13.5px] font-bold text-white hover:bg-[#030D2E]/90 motion-press shadow-sm"
                   >
                     <Plus className="h-4 w-4" strokeWidth={2.5} />
                     Thêm khoản chi

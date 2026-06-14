@@ -1808,7 +1808,7 @@ export function MoreScreen({
               </p>
               <button
                 onClick={openNewMember}
-                className="mt-5 inline-flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-6 text-[14px] font-black transition-all hover:brightness-105 active:scale-95 shadow-sm"
+                className="mt-5 inline-flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white px-6 text-[14px] font-black transition-all hover:bg-[#030D2E]/90 active:scale-95 shadow-sm"
               >
                 <UserPlus className="w-4.5 h-4.5" strokeWidth={2.5} />
                 Thêm người đồng hành đầu tiên
@@ -2424,7 +2424,7 @@ export function MoreScreen({
                               (prev as HTMLInputElement)?.focus();
                             }
                           }}
-                          className="w-12 h-12 rounded-xl border-2 text-center text-[20px] font-black text-slate-800 focus:border-kat-primary focus:ring-2 focus:ring-kat-primary/20 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="w-12 h-12 rounded-xl border-2 text-center text-[20px] font-black text-slate-800 focus:border-[#030D2E] focus:ring-2 focus:ring-[#030D2E]/20 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           style={{ borderColor: shareOptions.sharePin[i] ? undefined : undefined }}
                         />
                       ))}
