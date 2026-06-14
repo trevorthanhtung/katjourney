@@ -231,7 +231,6 @@ function ActivityCard({
               </div>
             )}
           </div>
-          </div>
         </div>
       </div>
     </article>
