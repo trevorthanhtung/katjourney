@@ -192,7 +192,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
       type="button"
       onClick={save}
       disabled={isSaveDisabled}
-      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-primary hover:bg-kat-primary-usable text-[#030D2E] px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
+      className="inline-flex h-9 items-center justify-center rounded-xl bg-[#030D2E] text-white hover:bg-[#030D2E]/90 px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
     >
       {isUploading ? <Loader2 className="w-4 h-4 animate-spin text-slate-400" /> : "Lưu"}
     </button>
