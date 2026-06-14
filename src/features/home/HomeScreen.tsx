@@ -212,7 +212,7 @@ export function HomeScreen({
           </div>
 
           <div className="shrink-0 flex items-center justify-start md:justify-end w-auto gap-4 mt-1 md:mt-0">
-            {weatherLoading || !forecast ? (
+            {weatherLoading ? (
                <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 animate-pulse w-auto">
                  <div className="w-10 h-10 bg-white/20 rounded-xl"></div>
                  <div className="flex flex-col gap-2">
@@ -228,12 +228,12 @@ export function HomeScreen({
                    <span className="text-white/50 text-[10px]">Thêm điểm đến để xem thời tiết</span>
                  </div>
                </div>
-            ) : weatherError ? (
+            ) : (!trip.latitude || !trip.longitude) ? null : weatherError || !forecast ? (
                <div className="flex items-center gap-3 bg-red-500/20 backdrop-blur-md rounded-2xl p-4 border border-red-500/30 w-auto">
                  <CloudRainWind className="w-6 h-6 text-white/60" />
                  <div className="flex flex-col gap-1">
                    <span className="text-white font-bold text-[12px]">Không thể tải thời tiết</span>
-                   <span className="text-white/70 text-[10px]">Tọa độ không hợp lệ</span>
+                   <span className="text-white/70 text-[10px]">Lỗi kết nối</span>
                  </div>
                </div>
             ) : (
