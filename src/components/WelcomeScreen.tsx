@@ -60,7 +60,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] grid grid-cols-1 md:grid-cols-2 min-h-[100dvh] w-full bg-kat-bg overflow-hidden font-sans select-none">
+    <div className="fixed inset-0 z-[100] grid grid-cols-1 md:grid-cols-2 w-full bg-kat-bg overflow-hidden font-sans select-none">
       
       {/* 1. LEFT SIDE - Hero Image (Desktop only) */}
       <div className="hidden md:flex relative w-full h-full overflow-hidden select-text">
@@ -95,7 +95,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
       </div>
 
       {/* 2. RIGHT SIDE - Zero-Friction Auth Form (Mobile-first) */}
-      <div className="flex flex-col justify-between items-center relative w-full h-full min-h-[100dvh] overflow-y-auto px-6 py-8 md:px-12 md:py-14 custom-scrollbar bg-gradient-to-br from-[#E6F9F8] via-[#FFFDF8] to-[#FFF0F5]">
+      <div className="flex flex-col justify-between items-center relative w-full h-full overflow-y-auto px-6 py-8 pb-safe md:px-12 md:py-14 custom-scrollbar bg-gradient-to-br from-[#E6F9F8] via-[#FFFDF8] to-[#FFF0F5]">
         
         {/* Noise overlay for spatial texture */}
         <div 
