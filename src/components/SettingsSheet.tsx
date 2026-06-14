@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "../i18n";
 import { useTheme, type Theme } from "../hooks/useTheme";
 import { useNotification } from "../hooks/useNotification";
+import { showToast } from "./ui/ToastManager";
 import { 
   User, 
   Lock, 
@@ -537,29 +538,49 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps }: Setti
             </button>
 
             {/* Notifications */}
-            <button
-              type="button"
-              onClick={() => {
-                if (notificationPermission !== "granted") {
-                  void requestNotificationPermission();
-                }
-              }}
-              disabled={!isNotificationSupported || notificationPermission === "granted"}
-              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100 hover:bg-slate-100/70 transition-all text-left focus:outline-none disabled:cursor-default disabled:hover:bg-slate-50"
+            <div
+              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100"
             >
               <div className="flex items-center gap-3.5 min-w-0">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 shrink-0">
                   <Bell className="h-5 w-5" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 text-left">
                   <h4 className="text-[15px] font-bold text-slate-800">Thông báo</h4>
                   <p className="text-[12px] text-slate-400 font-medium">Nhắc lịch, chi phí và hoạt động chuyến đi</p>
                 </div>
               </div>
-              <span className={`shrink-0 rounded-full border px-3 py-1 text-[11px] font-black ${notificationBadgeClass()}`}>
-                {notificationLabel()}
-              </span>
-            </button>
+              
+              <button
+                type="button"
+                role="switch"
+                aria-checked={notificationPermission === "granted"}
+                disabled={!isNotificationSupported}
+                onClick={async () => {
+                  if (!isNotificationSupported) return;
+                  
+                  if (notificationPermission === "granted") {
+                    showToast("Để tắt thông báo, vui lòng cấu hình trong cài đặt trình duyệt của bạn.", "error");
+                  } else {
+                    const result = await requestNotificationPermission();
+                    if (result === "granted") {
+                      showToast("Đã bật nhận thông báo thành công!", "success");
+                    } else if (result === "denied") {
+                      showToast("Quyền thông báo bị từ chối. Hãy bật lại trong cài đặt trình duyệt.", "error");
+                    }
+                  }
+                }}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  notificationPermission === "granted" ? "bg-[#030D2E]" : "bg-slate-200"
+                } ${!isNotificationSupported ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                    notificationPermission === "granted" ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
 
             {/* About */}
             <button
