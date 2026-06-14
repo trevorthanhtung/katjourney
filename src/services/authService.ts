@@ -112,14 +112,30 @@ export async function signInWithGoogle(): Promise<User> {
 
 /**
  * Đăng xuất người dùng.
+ * Nếu là tài khoản Khách (Anonymous), tiến hành xóa tài khoản trên Firebase
+ * để tránh rác dữ liệu lưu trữ quá nhiều tài khoản ảo.
  */
 export async function signOutUser(): Promise<void> {
   if (!firebaseEnabled) return;
 
   try {
     const { auth } = await initFirebase();
-    await auth.signOut();
-    console.log("[AuthService] User signed out successfully.");
+    const currentUser = auth.currentUser;
+    
+    if (currentUser && currentUser.isAnonymous) {
+      console.log("[AuthService] Deleting anonymous user to clean up Firebase...");
+      try {
+        await currentUser.delete();
+        console.log("[AuthService] Anonymous user deleted successfully.");
+      } catch (delErr: any) {
+        // Fallback to normal sign out if delete fails (e.g. requires-recent-login)
+        console.warn("[AuthService] Could not delete anonymous user, falling back to sign out:", delErr);
+        await auth.signOut();
+      }
+    } else {
+      await auth.signOut();
+      console.log("[AuthService] User signed out successfully.");
+    }
   } catch (error: any) {
     console.error("[AuthService] signOutUser error:", error);
     throw new Error(getFriendlyAuthErrorMessage(error));
