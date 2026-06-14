@@ -460,9 +460,9 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
           {/* Desktop Add Button */}
           {!isReadOnly && (
             <div className="hidden md:block">
-              <button
+              <button 
                 onClick={openAddForm}
-                className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#00BFB7] text-[#030D2E] px-4 text-[13.5px] font-black shadow-sm hover:brightness-105 active:scale-95 transition-all motion-press w-full sm:w-auto shrink-0"
+                className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white px-4 text-[13.5px] font-black shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all motion-press w-full sm:w-auto shrink-0"
               >
                 <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
                 <span>Thêm món</span>
@@ -534,7 +534,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             <div className="flex justify-center">
               <button 
                 onClick={openAddForm}
-                className="flex h-11 items-center justify-center gap-2 rounded-2xl bg-kat-primary/10 border border-kat-primary/30 text-kat-text px-6 text-[14px] font-bold hover:bg-kat-primary/20 active:scale-98 transition-all duration-200 shadow-sm"
+                className="flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#030D2E] text-white px-6 text-[14px] font-bold hover:bg-[#030D2E]/90 active:scale-98 transition-all duration-200 shadow-sm"
               >
                 <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
                 Thêm món đầu tiên
@@ -814,7 +814,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               <button
                 type="button"
                 onClick={saveItem}
-                className="flex-[2] h-[50px] inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#00BFB7] text-[#030D2E] font-black hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
+                className="flex-[2] h-[50px] inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
                 disabled={!title.trim()}
               >
                 <Check className="h-4.5 w-4.5" strokeWidth={2.5} />
