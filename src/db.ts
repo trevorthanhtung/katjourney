@@ -96,6 +96,7 @@ export interface JournalEntry {
   postedAt?: string;
   updatedAt?: string;
   isDeleted?: boolean;
+  reactions?: Record<string, string[]>;
 }
 
 export interface PackingItem {

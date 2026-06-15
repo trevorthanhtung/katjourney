@@ -439,6 +439,35 @@ export function JournalSection({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [prefilledContent, setPrefilledContent] = useState("");
 
+  const [currentUserIdentity, setCurrentUserIdentity] = useState<string>("Trưởng nhóm");
+  const [activeReactionPopover, setActiveReactionPopover] = useState<number | null>(null);
+
+  useEffect(() => {
+    const identity = getIdentity(tripId);
+    getCurrentUser().then(firebaseUser => {
+      setCurrentUserIdentity(firebaseUser?.displayName || identity?.name || "Trưởng nhóm");
+    });
+  }, [tripId]);
+
+  async function handleToggleReaction(entry: JournalEntry, emoji: string) {
+    const reactions = { ...(entry.reactions || {}) };
+    const currentUsers = [...(reactions[emoji] || [])];
+    
+    if (currentUsers.includes(currentUserIdentity)) {
+      reactions[emoji] = currentUsers.filter(u => u !== currentUserIdentity);
+    } else {
+      reactions[emoji] = [...currentUsers, currentUserIdentity];
+    }
+    
+    if (reactions[emoji].length === 0) {
+      delete reactions[emoji];
+    }
+    
+    if (entry.id) {
+      await db.journals.update(entry.id, { reactions });
+    }
+  }
+
   // Delete flow state
   const [entryToDelete, setEntryToDelete] = useState<JournalEntry | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -684,6 +713,61 @@ export function JournalSection({
                         <p className="mt-1.5 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600">
                           {entry.content}
                         </p>
+                      </div>
+
+                      {/* Reactions bar */}
+                      <div className="px-4 pb-3.5 pt-2.5 border-t border-slate-100/60 flex flex-wrap items-center justify-between gap-2 bg-slate-50/20">
+                        <div className="flex flex-wrap gap-1.5">
+                          {Object.entries(entry.reactions || {}).map(([emoji, users]) => {
+                            if (!users || users.length === 0) return null;
+                            const hasReacted = users.includes(currentUserIdentity);
+                            return (
+                              <button
+                                key={emoji}
+                                onClick={() => handleToggleReaction(entry, emoji)}
+                                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12.5px] border transition-all active:scale-95 ${
+                                  hasReacted
+                                    ? "bg-indigo-50/70 border-indigo-200 text-indigo-700 font-bold"
+                                    : "bg-slate-50/80 border-slate-205 text-slate-500 hover:bg-slate-100"
+                                }`}
+                                title={users.join(", ")}
+                              >
+                                <span className="text-[14px]">{emoji}</span>
+                                <span className="text-[11.5px] font-black">{users.length}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        
+                        {/* Reaction Selector Trigger */}
+                        <div className="relative">
+                          <button
+                            onClick={() => setActiveReactionPopover(activeReactionPopover === entry.id ? null : (entry.id || null))}
+                            className="flex h-7 px-2.5 items-center justify-center gap-1 rounded-full border border-slate-200 hover:border-slate-300 text-slate-400 hover:text-slate-600 transition-colors text-[11.5px] font-bold"
+                          >
+                            <span>+ Thả cảm xúc</span>
+                          </button>
+                          
+                          {activeReactionPopover === entry.id && (
+                            <>
+                              <div className="fixed inset-0 z-40" onClick={() => setActiveReactionPopover(null)} />
+                              <div className="absolute right-0 bottom-full mb-2 z-50 flex gap-1 bg-white border border-slate-200 p-1.5 rounded-full shadow-md animate-scaleIn">
+                                {["❤️", "👍", "😂", "😮", "😢"].map((emoji) => (
+                                  <button
+                                    key={emoji}
+                                    onClick={() => {
+                                      handleToggleReaction(entry, emoji);
+                                      setActiveReactionPopover(null);
+                                    }}
+                                    className="w-8 h-8 flex items-center justify-center text-[18px] hover:bg-slate-50 active:scale-125 transition-transform rounded-full"
+                                  >
+                                    {emoji}
+                                  </button>
+                                ))}
+                              </div>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </article>
                   );

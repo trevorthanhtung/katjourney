@@ -1124,6 +1124,38 @@ export function SharedJournalsSection({
   const isRequestEdit = mode === 'request_edit';
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [deleteTargetId, setDeleteTargetId] = React.useState<JournalEntry | null>(null);
+
+  const [activeReactionPopover, setActiveReactionPopover] = React.useState<string | number | null>(null);
+  const resolvedGuestName = guestName || "Khách";
+
+  async function handleToggleReaction(entry: JournalEntry, emoji: string) {
+    const reactions = { ...(entry.reactions || {}) };
+    const currentUsers = [...(reactions[emoji] || [])];
+    
+    if (currentUsers.includes(resolvedGuestName)) {
+      reactions[emoji] = currentUsers.filter(u => u !== resolvedGuestName);
+    } else {
+      reactions[emoji] = [...currentUsers, resolvedGuestName];
+    }
+    
+    if (reactions[emoji].length === 0) {
+      delete reactions[emoji];
+    }
+    
+    try {
+      await submitChangeRequest(token, {
+        section: 'journals',
+        action: 'update',
+        targetId: String(entry.id),
+        before: entry as any,
+        after: { ...entry, reactions } as any,
+        status: 'auto_approved',
+        requesterName: resolvedGuestName
+      });
+    } catch (e: any) {
+      showToast("Lỗi: " + e.message, "error");
+    }
+  }
   const [form, setForm] = React.useState({ 
     date: new Date().toISOString().split('T')[0], 
     title: "", 
@@ -1167,7 +1199,9 @@ export function SharedJournalsSection({
 
     return list.map(item => {
       const pendingDelete = changeRequests.some(r => r.section === 'journals' && r.action === 'delete' && String(r.targetId) === String(item.id));
-      return { ...item, isPendingDelete: pendingDelete };
+      const latestUpdate = changeRequests.filter(r => r.section === 'journals' && r.action === 'update' && String(r.targetId) === String(item.id) && (r.status === 'pending' || r.status === 'auto_approved')).pop();
+      const mergedItem = latestUpdate ? { ...item, ...latestUpdate.after } : item;
+      return { ...mergedItem, isPendingDelete: pendingDelete };
     });
   }, [journals, changeRequests]);
 
@@ -1346,6 +1380,62 @@ export function SharedJournalsSection({
                           )}>
                             {j.content}
                           </p>
+                        </div>
+
+                        {/* Reactions bar */}
+                        <div className="px-4 pb-3.5 pt-2.5 border-t border-slate-100/60 flex flex-wrap items-center justify-between gap-2 bg-slate-50/20">
+                          <div className="flex flex-wrap gap-1.5">
+                            {Object.entries(j.reactions || {}).map(([emoji, usersVal]) => {
+                              const users = usersVal as string[];
+                              if (!users || users.length === 0) return null;
+                              const hasReacted = users.includes(resolvedGuestName);
+                              return (
+                                <button
+                                  key={emoji}
+                                  onClick={() => handleToggleReaction(j, emoji)}
+                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12.5px] border transition-all active:scale-95 ${
+                                    hasReacted
+                                      ? "bg-indigo-50/70 border-indigo-200 text-indigo-700 font-bold"
+                                      : "bg-slate-50/80 border-slate-205 text-slate-500 hover:bg-slate-100"
+                                  }`}
+                                  title={users.join(", ")}
+                                >
+                                  <span className="text-[14px]">{emoji}</span>
+                                  <span className="text-[11.5px] font-black">{users.length}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                          
+                          {/* Reaction Selector Trigger */}
+                          <div className="relative">
+                            <button
+                              onClick={() => setActiveReactionPopover(activeReactionPopover === j.id ? null : (j.id || null))}
+                              className="flex h-7 px-2.5 items-center justify-center gap-1 rounded-full border border-slate-200 hover:border-slate-300 text-slate-400 hover:text-slate-650 transition-colors text-[11.5px] font-bold"
+                            >
+                              <span>+ Thả cảm xúc</span>
+                            </button>
+                            
+                            {activeReactionPopover === j.id && (
+                              <>
+                                <div className="fixed inset-0 z-40" onClick={() => setActiveReactionPopover(null)} />
+                                <div className="absolute right-0 bottom-full mb-2 z-50 flex gap-1 bg-white border border-slate-200/80 p-1 rounded-full shadow-floating animate-scaleIn">
+                                  {["❤️", "👍", "😂", "😮", "😢"].map((emoji) => (
+                                    <button
+                                      key={emoji}
+                                      onClick={() => {
+                                        handleToggleReaction(j, emoji);
+                                        setActiveReactionPopover(null);
+                                      }}
+                                      className="w-8 h-8 flex items-center justify-center text-[18px] hover:bg-slate-50 active:scale-125 transition-transform rounded-full"
+                                    >
+                                      {emoji}
+                                    </button>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </article>
                     );
