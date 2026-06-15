@@ -1135,7 +1135,7 @@ export function SharedChecklistSection({
               : "text-slate-500 hover:text-slate-800"
           )}
         >
-          Chung (Cả đoàn)
+          Chung
         </button>
         <button
           type="button"
