@@ -309,7 +309,7 @@ export function SharedExpensesSection({
                     {activeMenuId === String(e.id) && (
                       <>
                         <div 
-                          className="fixed inset-0 z-35" 
+                          className="fixed inset-0 z-[35]" 
                           onClick={(ev) => {
                             ev.stopPropagation();
                             setActiveMenuId(null);
@@ -829,7 +829,7 @@ export function SharedChecklistSection({
                   {activeMenuId === String(c.id) && (
                     <>
                       <div 
-                        className="fixed inset-0 z-35" 
+                        className="fixed inset-0 z-[35]" 
                         onClick={(ev) => {
                           ev.stopPropagation();
                           setActiveMenuId(null);
@@ -1889,7 +1889,7 @@ export function SharedBackupPlansSection({
                   {activeMenuId === itemId && (
                     <>
                       <div
-                        className="fixed inset-0 z-35"
+                        className="fixed inset-0 z-[35]"
                         onClick={(ev) => {
                           ev.stopPropagation();
                           setActiveMenuId(null);
@@ -2294,7 +2294,8 @@ export function SharedMembersSection({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
-  
+  const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
+
   const [form, setForm] = useState({
     name: '',
     role: 'Người đồng hành',
@@ -2397,7 +2398,7 @@ export function SharedMembersSection({
             <div 
               key={member.id || member.name} 
               className={classNames(
-                "flex items-center gap-3 border p-3 rounded-2xl relative transition-all",
+                "flex items-center gap-3 border p-3 rounded-2xl transition-all",
                 member.isPendingCreate ? "bg-sky-50/40 border-sky-100/50" : "bg-slate-50/50 border-slate-150/40",
                 member.isPendingDelete ? "opacity-70 border-rose-100" : ""
               )}
@@ -2434,40 +2435,56 @@ export function SharedMembersSection({
               </div>
 
               {isRequestEdit && !isPending && !member.isOwner && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <div className="shrink-0">
                   <button 
                     onClick={(ev) => {
                       ev.stopPropagation();
-                      setActiveMenuId(activeMenuId === String(member.id) ? null : String(member.id));
+                      const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
+                      if (activeMenuId === String(member.id)) {
+                        setActiveMenuId(null);
+                        setMenuPos(null);
+                      } else {
+                        setActiveMenuId(String(member.id));
+                        setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+                      }
                     }}
                     className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all focus:outline-none"
                     title="Tùy chọn đề xuất"
                   >
                     <MoreVertical className="h-4 w-4" />
                   </button>
-                  
-                  {activeMenuId === String(member.id) && (
-                    <>
-                      <div className="fixed inset-0 z-35" onClick={() => setActiveMenuId(null)} />
-                      <div className="absolute right-0 top-full mt-1 z-40 w-32 rounded-xl bg-white border border-slate-200 shadow-floating py-1.5 animate-fadeIn">
-                        <button
-                          onClick={() => {
-                            setActiveMenuId(null);
-                            handleDelete(String(member.id));
-                          }}
-                          className="flex w-full items-center px-4 py-2 text-[13px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
-                        >
-                          Đề xuất xóa
-                        </button>
-                      </div>
-                    </>
-                  )}
                 </div>
               )}
             </div>
           );
         })}
       </div>
+
+      {/* Fixed-position dropdown — renders above everything */}
+      {activeMenuId && menuPos && (
+        <>
+          <div
+            className="fixed inset-0 z-[998]"
+            onClick={() => { setActiveMenuId(null); setMenuPos(null); }}
+          />
+          <div
+            className="fixed z-[999] w-36 rounded-xl bg-white border border-slate-200 shadow-lg py-1.5 animate-fadeIn"
+            style={{ top: menuPos.top, right: menuPos.right }}
+          >
+            <button
+              onClick={() => {
+                const id = activeMenuId;
+                setActiveMenuId(null);
+                setMenuPos(null);
+                handleDelete(id);
+              }}
+              className="flex w-full items-center px-4 py-2 text-[13px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+            >
+              Đề xuất xóa
+            </button>
+          </div>
+        </>
+      )}
 
       {isRequestEdit && (
         <button 
@@ -2549,4 +2566,5 @@ export function SharedMembersSection({
     </section>
   );
 }
+
 
