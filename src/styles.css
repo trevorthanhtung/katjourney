@@ -339,8 +339,11 @@ textarea {
 /* Hide scrollbars globally for scrollbar-none elements */
 .scrollbar-none::-webkit-scrollbar {
   display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 .scrollbar-none {
   -ms-overflow-style: none !important;  /* IE and Edge */
   scrollbar-width: none !important;  /* Firefox */
+  -webkit-overflow-scrolling: touch;
 }
