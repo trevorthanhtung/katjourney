@@ -441,7 +441,7 @@ export function Select({
         onClose={() => setIsOpen(false)}
         title={typeof label === 'string' ? `Chọn ${label.toLowerCase()}` : "Chọn tuỳ chọn"}
       >
-        <div className="space-y-1">
+        <div className="space-y-1 max-h-[60vh] overflow-y-auto scrollbar-none pb-2">
           {options.map((option) => {
             const isSelected = value === option;
             const displayLabel = option ? labels?.[option] ?? option : placeholder ?? "Chưa chọn";
