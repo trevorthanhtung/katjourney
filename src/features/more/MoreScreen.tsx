@@ -1391,7 +1391,10 @@ function MemberCardRow({
                   if (roleLower === "phụ trách hành lý") {
                     return <span title="Phụ trách hành lý" className="shrink-0 ml-0.5"><Luggage className="h-4.5 w-4.5 text-indigo-500" /></span>;
                   }
-                  return <span title={member.role || "Người đồng hành"} className="shrink-0 ml-0.5"><UsersRound className="h-4.5 w-4.5 text-slate-400" /></span>;
+                  if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
+                    return <span title={member.role || "Người đồng hành"} className="shrink-0 ml-0.5"><UsersRound className="h-4.5 w-4.5 text-slate-400" /></span>;
+                  }
+                  return <span title={member.role} className="shrink-0 ml-0.5"><BadgeCheck className="h-4.5 w-4.5 text-teal-500" /></span>;
                 })()}
               </div>
             </div>
