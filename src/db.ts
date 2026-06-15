@@ -1,4 +1,5 @@
 import Dexie, { Table } from "dexie";
+import { encryptObject, decryptObject } from "./lib/crypto";
 
 export type ChecklistSection = "Before Trip" | "During Trip" | "After Trip";
 export type JournalMood = "very_bad" | "bad" | "okay" | "good" | "great";
@@ -70,6 +71,9 @@ export interface Expense {
   splitType?: "shared" | "personal";
   date?: string;
   eventId?: string | number;
+  originalAmount?: number;
+  currency?: string;
+  exchangeRate?: number;
   updatedAt?: string;
   isDeleted?: boolean;
 }
@@ -322,11 +326,31 @@ tablesToTrack.forEach(table => {
     if (obj.isDeleted === undefined) {
       obj.isDeleted = false;
     }
+    
+    // Mã hóa obj trước khi lưu
+    const encrypted = encryptObject(obj);
+    // Xóa các key cũ có thể bị dư thừa (nếu cần) rồi assign lại
+    Object.keys(obj).forEach(k => delete obj[k]);
+    Object.assign(obj, encrypted);
   });
-  table.hook("updating", (modifications) => {
+  
+  table.hook("reading", (obj) => {
+    // Giải mã obj khi đọc
+    if (obj) {
+      const decrypted = decryptObject(obj);
+      Object.keys(obj).forEach(k => delete obj[k]);
+      Object.assign(obj, decrypted);
+    }
+    return obj;
+  });
+  
+  table.hook("updating", (modifications, primKey, obj) => {
     updateLocalTimestamp();
-    return { ...modifications, updatedAt: new Date().toISOString() };
+    const newMods = { ...modifications, updatedAt: new Date().toISOString() };
+    // Mã hóa các trường thay đổi
+    return encryptObject(newMods);
   });
+  
   table.hook("deleting", () => {
     updateLocalTimestamp();
   });

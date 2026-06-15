@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Trash2, WalletCards, Scale, UsersRound, UserRound, Calculator, ChartPie, ReceiptText, Route, Utensils, Hotel, Ticket, Tags, PencilLine, Info, UserCheck, ChevronRight, ShoppingBag, Gamepad2, Plane, Sparkles, CalendarDays } from "lucide-react";
+import { Plus, Trash2, WalletCards, Scale, UsersRound, UserRound, Calculator, ChartPie, ReceiptText, Route, Utensils, Hotel, Ticket, Tags, PencilLine, Info, UserCheck, ChevronRight, ChevronDown, ShoppingBag, Gamepad2, Plane, Sparkles, CalendarDays } from "lucide-react";
 import { db, Expense, Member, EventItem } from "../../db";
 import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories } from "../../utils/helpers";
 import { BottomSheet, FormActions, Input, ScreenTitle, Select, DatePicker, DeleteConfirmModal, classNames } from "../../components/ui";
 import { useModalHistory } from "../../hooks/useModalHistory";
+import { fetchExchangeRates, ExchangeRate } from "../../services/currencyService";
 
 export function CategoryBar({ percent, colorClass }: { percent: number; colorClass: string }) {
   return (
@@ -273,6 +274,11 @@ function ExpenseCard({
           <p className="font-bold text-[#030D2E] text-lg">
             {formatMoney(item.amount)}
           </p>
+          {item.originalAmount && item.currency && item.currency !== "VND" && (
+            <p className="text-[12px] font-medium text-slate-500 mt-0.5">
+              {new Intl.NumberFormat('en-US').format(item.originalAmount)} {item.currency}
+            </p>
+          )}
         </div>
       </article>
     </div>
@@ -305,6 +311,12 @@ function ExpenseForm({
     return [...defaultCats, ...uniqueUsedCats, "Khác..."];
   }, [expenses]);
 
+  const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
+  
+  useEffect(() => {
+    fetchExchangeRates().then(setExchangeRates);
+  }, []);
+
   const [form, setForm] = useState<{ 
     description: string; 
     amount: string; 
@@ -314,6 +326,8 @@ function ExpenseForm({
     splitType: "shared" | "personal";
     date: string;
     eventId: string;
+    currency: string;
+    exchangeRate: number;
   }>({ 
     description: "", 
     amount: "", 
@@ -322,7 +336,9 @@ function ExpenseForm({
     customCategory: "", 
     splitType: "shared",
     date: new Date().toISOString().split('T')[0],
-    eventId: ""
+    eventId: "",
+    currency: "VND",
+    exchangeRate: 1
   });
 
   const [errors, setErrors] = useState<{ 
@@ -332,6 +348,7 @@ function ExpenseForm({
   }>({});
 
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -341,13 +358,15 @@ function ExpenseForm({
         const isCustom = !categoryOptions.includes(editing.category) || editing.category === "Khác...";
         setForm({
           description: editing.description,
-          amount: String(editing.amount),
+          amount: String(editing.originalAmount || editing.amount),
           payer: editing.payer || "",
           category: isCustom ? "Khác..." : editing.category,
           customCategory: isCustom && editing.category !== "Khác..." ? editing.category : "",
           splitType: editing.splitType ?? "shared",
           date: editing.date || new Date().toISOString().split('T')[0],
-          eventId: editing.eventId ? String(editing.eventId) : ""
+          eventId: editing.eventId ? String(editing.eventId) : "",
+          currency: editing.currency || "VND",
+          exchangeRate: editing.exchangeRate || 1
         });
         if (editing.date || editing.splitType === "personal" || editing.eventId) {
           setShowAdvanced(true);
@@ -361,7 +380,9 @@ function ExpenseForm({
           customCategory: "", 
           splitType: "shared",
           date: new Date().toISOString().split('T')[0],
-          eventId: ""
+          eventId: "",
+          currency: "VND",
+          exchangeRate: 1
         });
       }
     }
@@ -385,6 +406,8 @@ function ExpenseForm({
       newErrors.amount = "Vui lòng nhập số tiền lớn hơn 0.";
     }
 
+    const vndAmount = form.currency === "VND" ? amountVal : Math.round(amountVal * form.exchangeRate);
+
     let finalCategory = form.category;
     if (form.category === "Khác...") {
       const trimmedCustom = form.customCategory.trim();
@@ -406,7 +429,10 @@ function ExpenseForm({
 
     const payload = { 
       description: form.description.trim() || `${finalCategory}`, 
-      amount: amountVal, 
+      amount: vndAmount,
+      originalAmount: form.currency === "VND" ? undefined : amountVal,
+      currency: form.currency === "VND" ? undefined : form.currency,
+      exchangeRate: form.currency === "VND" ? undefined : form.exchangeRate,
       payer: form.splitType === "personal" ? (form.payer || "") : form.payer, 
       category: finalCategory, 
       splitType: form.splitType,
@@ -450,13 +476,67 @@ function ExpenseForm({
       <div className="space-y-4">
         {/* Prominent Amount Input */}
         <div className="relative flex flex-col items-center justify-center py-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-          <span className="text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-1">Số tiền (đ)</span>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[12px] font-bold uppercase tracking-wider text-slate-400">Số tiền</span>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)}
+                className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white border border-slate-200 rounded-md px-2.5 py-1 text-[#030D2E] hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
+              >
+                {form.currency}
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </button>
+
+              {isCurrencyDropdownOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setIsCurrencyDropdownOpen(false)}
+                  />
+                  <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 w-[80px] bg-white border border-slate-200 rounded-xl shadow-lg z-20 overflow-hidden animate-scaleUp origin-top">
+                    <div className="max-h-[220px] overflow-y-auto custom-scrollbar flex flex-col py-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setForm({ ...form, currency: "VND", exchangeRate: 1 });
+                          setIsCurrencyDropdownOpen(false);
+                        }}
+                        className={classNames(
+                          "px-3 py-2 text-[13px] font-bold text-center transition-colors hover:bg-slate-50",
+                          form.currency === "VND" ? "text-kat-primary bg-kat-primary/5" : "text-slate-600"
+                        )}
+                      >
+                        VND
+                      </button>
+                      {exchangeRates.map((r) => (
+                        <button
+                          key={r.currencyCode}
+                          type="button"
+                          onClick={() => {
+                            setForm({ ...form, currency: r.currencyCode, exchangeRate: r.transfer });
+                            setIsCurrencyDropdownOpen(false);
+                          }}
+                          className={classNames(
+                            "px-3 py-2 text-[13px] font-bold text-center transition-colors hover:bg-slate-50",
+                            form.currency === r.currencyCode ? "text-kat-primary bg-kat-primary/5" : "text-slate-600"
+                          )}
+                        >
+                          {r.currencyCode}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
           <div className="relative w-full max-w-[280px] flex items-center justify-center">
             <input
               type="text"
               pattern="[0-9]*"
               inputMode="numeric"
-              value={form.amount ? new Intl.NumberFormat('vi-VN').format(Number(form.amount)) : ""}
+              value={form.amount ? new Intl.NumberFormat('en-US').format(Number(form.amount)) : ""}
               onChange={(e) => {
                 const rawValue = e.target.value.replace(/\D/g, "");
                 setForm({ ...form, amount: rawValue });
@@ -466,6 +546,16 @@ function ExpenseForm({
               className="w-full text-center text-3xl font-black text-[#030D2E] bg-transparent border-none outline-none placeholder-slate-300 focus:ring-0"
             />
           </div>
+          {form.currency !== "VND" && form.amount && (
+            <div className="mt-3 flex flex-col items-center">
+              <span className="text-[14px] font-bold text-slate-600">
+                ≈ {formatMoney(Math.round(Number(form.amount) * form.exchangeRate))}
+              </span>
+              <span className="text-[11px] font-medium text-slate-400 mt-1">
+                Tỷ giá: 1 {form.currency} = {new Intl.NumberFormat('vi-VN').format(form.exchangeRate)} đ
+              </span>
+            </div>
+          )}
           {errors.amount && (
             <p className="text-rose-500 text-[12.5px] font-bold mt-1.5">{errors.amount}</p>
           )}
