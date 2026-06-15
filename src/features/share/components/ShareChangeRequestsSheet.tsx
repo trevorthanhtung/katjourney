@@ -114,9 +114,19 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
           </div>
         ) : (
           requests.map(req => {
-            const requesterMember = members.find(m => 
+            let requesterMember = members.find(m => 
               (req.requesterName || "").trim().toLowerCase() === m.name.trim().toLowerCase()
             );
+            if (!requesterMember && (
+              (req.requesterName || "").trim().toLowerCase() === "trưởng nhóm" ||
+              (req.requesterName || "").trim().toLowerCase() === "trường nhóm"
+            )) {
+              requesterMember = members.find(m => 
+                m.role === "Trưởng nhóm" || 
+                m.role === "Trưởng đoàn" || 
+                m.role === "Người đại diện"
+              );
+            }
             let avatar = requesterMember?.avatar;
             if (!avatar) {
               const requesterName = req.requesterName || "Người được chia sẻ";
