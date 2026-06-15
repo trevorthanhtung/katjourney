@@ -3,6 +3,7 @@ import { Check, Edit3, Plus, Sparkles, Trash2, Luggage } from "lucide-react";
 import { db, PackingItem, PackingTripType } from "../../db";
 import { getChecklistStats, packingSuggestions, packingTripTypes } from "../../utils/helpers";
 import { BottomSheet, EmptyCard, FAB, FormActions, FormCard, IconButton, Input, ProgressRing, ScreenTitle, Select, DeleteConfirmModal, classNames } from "../../components/ui";
+import { useModalHistory } from "../../hooks/useModalHistory";
 
 export function PackingSection({ tripId, packingItems }: { tripId: number; packingItems: PackingItem[] }) {
   const [tripType, setTripType] = useState<PackingTripType>("Biển");
@@ -10,6 +11,14 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
   const [editing, setEditing] = useState<PackingItem | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<PackingItem | null>(null);
+
+  useModalHistory(isFormOpen, () => {
+    setIsFormOpen(false);
+    setEditing(null);
+    setTitle("");
+  }, "packing-form-modal");
+
+  useModalHistory(Boolean(itemToDelete), () => setItemToDelete(null), "delete-packing-confirm");
   
   // Cast section to "Before Trip" just to satisfy the getChecklistStats type which expects ChecklistItem
   const stats = getChecklistStats(packingItems.map((item) => ({ ...item, section: "Before Trip" as const })));

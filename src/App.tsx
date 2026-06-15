@@ -1,5 +1,5 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { Backpack, CalendarDays, Calendar, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft, Search, Bell, BellRing, ChevronRight, Check, ListTodo, FileText, BookOpenText, Sparkles, Home, User, UserPlus, Heart, LogOut, Cloud, RefreshCw, Coffee, WifiOff, LockKeyhole } from "lucide-react";
+import { Backpack, CalendarDays, Calendar, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft, Search, Bell, BellRing, ChevronRight, Check, ListTodo, FileText, BookOpenText, Sparkles, Home, User, UserPlus, Heart, LogOut, Cloud, RefreshCw, Coffee, WifiOff, LockKeyhole, Link } from "lucide-react";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "./db";
@@ -11,6 +11,7 @@ import { TripSearchModal } from "./components/TripSearchModal";
 import { GlobalToast } from "./components/ui/ToastManager";
 import { useTripReminders } from "./hooks/useTripReminders";
 import { useMediaQuery } from "./hooks/useMediaQuery";
+import { useModalHistory } from "./hooks/useModalHistory";
 
 // Screens
 import { HomeScreen } from "./features/home/HomeScreen";
@@ -49,12 +50,12 @@ function NavButton({
       className={classNames(
         "relative flex items-center justify-center rounded-full transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden motion-press",
         isActive 
-          ? "bg-kat-primary/10 text-kat-primary px-4 sm:px-5 h-[52px] gap-2" 
-          : "text-kat-text/60 hover:text-kat-text/80 w-[52px] h-[52px]"
+          ? "bg-kat-primary/10 text-kat-primary px-2.5 min-[360px]:px-4 sm:px-5 h-10 min-[360px]:h-[52px] gap-1.5 min-[360px]:gap-2" 
+          : "text-kat-text/60 hover:text-kat-text/80 w-10 min-[360px]:w-[52px] h-10 min-[360px]:h-[52px]"
       )}
     >
-      <Icon className={classNames("h-[22px] w-[22px] shrink-0 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]", isActive ? "scale-100" : "scale-[0.94]")} strokeWidth={isActive ? 2.5 : 2} />
-      {isActive && <span className="text-[14px] font-bold whitespace-nowrap">{label}</span>}
+      <Icon className={classNames("h-[19px] w-[19px] min-[360px]:h-[22px] min-[360px]:w-[22px] shrink-0 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]", isActive ? "scale-100" : "scale-[0.94]")} strokeWidth={isActive ? 2.5 : 2} />
+      {isActive && <span className="text-[12px] min-[360px]:text-[14px] font-bold whitespace-nowrap">{label}</span>}
     </button>
   );
 }
@@ -62,7 +63,10 @@ function NavButton({
 function App() {
   const { t } = useTranslation();
   const isOnline = useNetworkStatus();
-  const [activeTab, setActiveTab] = useState<"home" | "timeline" | "expenses" | "checklist" | "more">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "timeline" | "expenses" | "checklist" | "more">(() => {
+    const saved = localStorage.getItem("kat_active_tab");
+    return (saved as any) || "home";
+  });
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isRemindersOpen, setIsRemindersOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -72,6 +76,35 @@ function App() {
   const [settingsInitialView, setSettingsInitialView] = useState<"menu" | "auth" | "privacy" | "about" | "donate">("menu");
 
   const [expenseInitialAddState, setExpenseInitialAddState] = useState<{ date: string; eventId: number } | undefined>(undefined);
+
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [sharedLinkInput, setSharedLinkInput] = useState("");
+  const [recentSharedTrips, setRecentSharedTrips] = useState<{ token: string; title: string; date: string; timestamp: number }[]>([]);
+
+  React.useEffect(() => {
+    if (isImportModalOpen) {
+      const saved = localStorage.getItem("kat_recent_shared_trips");
+      if (saved) {
+        try {
+          setRecentSharedTrips(JSON.parse(saved));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  }, [isImportModalOpen]);
+
+  const parseToken = (input: string) => {
+    const trimmed = input.trim();
+    if (!trimmed) return "";
+    if (trimmed.includes("/share/")) {
+      const parts = trimmed.split("/share/");
+      if (parts.length > 1) {
+        return parts[1].split("/")[0].split("?")[0];
+      }
+    }
+    return trimmed;
+  };
 
   const [showWelcome, setShowWelcome] = useState(() => {
     return localStorage.getItem("kat_journey_welcome_viewed") !== "true";
@@ -111,10 +144,169 @@ function App() {
   const tripsRaw = useLiveQuery(async () => (await db.trips.toArray()).filter(t => !t.isDeleted && t.status !== 'archived'));
   const tripsLoading = tripsRaw === undefined;
   const trips = tripsRaw ?? [];
-  const [selectedTripId, setSelectedTripId] = useState<number | null>(null);
+  const [selectedTripId, setSelectedTripId] = useState<number | null>(() => {
+    const saved = localStorage.getItem("kat_selected_trip_id");
+    return saved ? Number(saved) : null;
+  });
   const [isCreatingTrip, setIsCreatingTrip] = useState(false);
-  const [isManagingTrips, setIsManagingTrips] = useState(true);
+  const [isManagingTrips, setIsManagingTrips] = useState<boolean>(() => {
+    const saved = localStorage.getItem("kat_is_managing_trips");
+    return saved ? saved === "true" : true;
+  });
   const [isViewingArchive, setIsViewingArchive] = useState(false);
+
+  React.useEffect(() => {
+    localStorage.setItem("kat_active_tab", activeTab);
+  }, [activeTab]);
+
+  React.useEffect(() => {
+    if (selectedTripId !== null) {
+      localStorage.setItem("kat_selected_trip_id", String(selectedTripId));
+    } else {
+      localStorage.removeItem("kat_selected_trip_id");
+    }
+  }, [selectedTripId]);
+
+  React.useEffect(() => {
+    localStorage.setItem("kat_is_managing_trips", String(isManagingTrips));
+  }, [isManagingTrips]);
+
+  // Synchronize global modals with browser back button
+  useModalHistory(isImportModalOpen, () => {
+    setIsImportModalOpen(false);
+    setSharedLinkInput("");
+  }, "import-modal");
+
+  useModalHistory(isSearchOpen, () => setIsSearchOpen(false), "search-modal");
+  useModalHistory(isRemindersOpen && !isDesktop, () => setIsRemindersOpen(false), "reminders-modal");
+  useModalHistory(isAppInboxOpen, () => setIsAppInboxOpen(false), "inbox-modal");
+  useModalHistory(isCreatingTrip, () => setIsCreatingTrip(false), "create-trip-modal");
+  useModalHistory(isSettingsOpen, () => setIsSettingsOpen(false), "settings-modal");
+  useModalHistory(isLogoutConfirmOpen, () => setIsLogoutConfirmOpen(false), "logout-modal");
+
+  // View history state synchronization
+  const isPopStateRef = React.useRef(false);
+  const lastHistoryStateRef = React.useRef<any>(null);
+  const historyDepthRef = React.useRef(0);
+
+  // Clear any dangling hash on boot
+  React.useEffect(() => {
+    if (window.location.hash) {
+      window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    const view = isViewingArchive ? "archive" : (isManagingTrips || !selectedTripId ? "manager" : "trip");
+    const initialState = {
+      view,
+      tripId: selectedTripId,
+      activeTab,
+      moreSection
+    };
+    window.history.replaceState(initialState, "");
+    lastHistoryStateRef.current = initialState;
+
+    const handlePopState = (event: PopStateEvent) => {
+      if (event.state?.isModal) return;
+
+      const state = event.state;
+      if (!state) return;
+
+      isPopStateRef.current = true;
+
+      if (state.view === "manager") {
+        setIsManagingTrips(true);
+        setIsViewingArchive(false);
+        setSelectedTripId(null);
+      } else if (state.view === "archive") {
+        setIsViewingArchive(true);
+        setIsManagingTrips(false);
+        setSelectedTripId(null);
+      } else if (state.view === "trip") {
+        setIsManagingTrips(false);
+        setIsViewingArchive(false);
+        if (state.tripId !== undefined) setSelectedTripId(state.tripId);
+        if (state.activeTab !== undefined) setActiveTab(state.activeTab);
+        if (state.moreSection !== undefined) setMoreSection(state.moreSection);
+      }
+
+      lastHistoryStateRef.current = state;
+
+      setTimeout(() => {
+        isPopStateRef.current = false;
+      }, 0);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  React.useEffect(() => {
+    if (isPopStateRef.current) return;
+
+    const view = isViewingArchive ? "archive" : (isManagingTrips || !selectedTripId ? "manager" : "trip");
+    const currentState = {
+      view,
+      tripId: selectedTripId,
+      activeTab,
+      moreSection
+    };
+
+    const prevState = lastHistoryStateRef.current;
+    if (!prevState) return;
+
+    const viewChanged = prevState.view !== currentState.view;
+    const tripChanged = prevState.tripId !== currentState.tripId;
+    const tabChanged = prevState.activeTab !== currentState.activeTab;
+    const sectionChanged = prevState.moreSection !== currentState.moreSection;
+
+    if (!viewChanged && !tripChanged && !tabChanged && !sectionChanged) {
+      return;
+    }
+
+    const goingBackToManager = viewChanged && currentState.view === "manager" && prevState.view !== "manager";
+    const goingBackToArchive = viewChanged && currentState.view === "archive" && prevState.view === "trip";
+    const goingBackToMoreOverview = sectionChanged && currentState.moreSection === "overview" && prevState.moreSection !== "overview";
+
+    if (goingBackToManager || goingBackToArchive || goingBackToMoreOverview) {
+      if (historyDepthRef.current > 0) {
+        historyDepthRef.current--;
+        window.history.back();
+        lastHistoryStateRef.current = currentState;
+        return;
+      }
+    }
+
+    let shouldPush = false;
+
+    if (viewChanged || tripChanged) {
+      shouldPush = true;
+    } else if (currentState.view === "trip") {
+      if (tabChanged) {
+        if (currentState.activeTab === "more" && currentState.moreSection !== "overview") {
+          shouldPush = true;
+        } else {
+          shouldPush = false;
+        }
+      } else if (sectionChanged) {
+        if (currentState.moreSection !== "overview") {
+          shouldPush = true;
+        } else {
+          shouldPush = false;
+        }
+      }
+    }
+
+    if (shouldPush) {
+      window.history.pushState(currentState, "");
+      historyDepthRef.current++;
+    } else {
+      window.history.replaceState(currentState, "");
+    }
+
+    lastHistoryStateRef.current = currentState;
+  }, [isManagingTrips, isViewingArchive, selectedTripId, activeTab, moreSection]);
   const [successToast, setSuccessToast] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -275,14 +467,14 @@ function App() {
   }
 
   return (
-    <div className="font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text">
-      <header className="sticky top-0 z-40 bg-kat-bg/90 px-4 pb-3 pt-3 backdrop-blur-xl border-b border-kat-border shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
+    <div className="font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg">
+      <header className="sticky top-0 z-40 bg-kat-bg/90 px-2.5 min-[360px]:px-4 pb-3 pt-3 backdrop-blur-xl border-b border-kat-border shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
         <GlobalToast />
         <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 select-none">
               <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[28px] w-[28px] object-contain drop-shadow-sm" />
-              <h1 className="text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap">KAT Journey</h1>
+              <h1 className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap hidden min-[340px]:block">KAT Journey</h1>
             </div>
             
             {/* Desktop Navigation */}
@@ -332,30 +524,39 @@ function App() {
                 <span className="text-[10px] font-black uppercase tracking-wider hidden sm:inline">Đang lưu...</span>
               </div>
             )}
+
+            <button
+              onClick={() => setIsImportModalOpen(true)}
+              className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
+              title="Xem chuyến đi qua link chia sẻ"
+            >
+              <Link className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
+            </button>
+
             {!isManagingTrips && tripId ? (
               <>
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
+                  className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
                   title="Tìm trong chuyến đi"
                 >
-                  <Search className="h-4.5 w-4.5" />
+                  <Search className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
                 </button>
 
                 <div className="relative" ref={remindersRef}>
                   <button
                     onClick={() => setIsRemindersOpen(!isRemindersOpen)}
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
+                    className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
                     title="Việc cần chú ý"
                   >
                     {reminders.length > 0 ? (
-                      <BellRing className="h-4.5 w-4.5 text-amber-500 animate-pulse" />
+                      <BellRing className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5 text-amber-500 animate-pulse" />
                     ) : (
-                      <Bell className="h-4.5 w-4.5" />
+                      <Bell className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
                     )}
                   </button>
                   {reminders.length > 0 && (
-                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-black text-white ring-2 ring-white pointer-events-none">
+                    <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 min-[360px]:h-4 min-[360px]:w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] min-[360px]:text-[10px] font-black text-white ring-2 ring-white pointer-events-none">
                       {reminders.length}
                     </span>
                   )}
@@ -386,10 +587,10 @@ function App() {
                     setIsManagingTrips(true);
                     setIsViewingArchive(false);
                   }}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
+                  className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
                   title="Quay lại danh sách chuyến đi"
                 >
-                  <Home className="h-4.5 w-4.5" />
+                  <Home className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
                 </button>
               </>
             ) : (
@@ -397,20 +598,20 @@ function App() {
                 <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className="flex h-9 w-9 items-center justify-center rounded-full overflow-hidden border border-kat-border/60 hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-95 transition-all shadow-sm focus:outline-none"
+                    className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full overflow-hidden border border-kat-border/60 hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
                     title="Menu tài khoản"
                   >
                     {provider === "google" ? (
                       user.photoURL ? (
                         <img src={user.photoURL} alt="Avatar" className="h-full w-full object-cover" />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[13px]">
+                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[11px] min-[360px]:text-[13px]">
                           {user.displayName ? user.displayName.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() : "G"}
                         </div>
                       )
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-500">
-                        <User className="h-[18px] w-[18px] text-slate-500" />
+                        <User className="h-4 w-4 min-[360px]:h-[18px] min-[360px]:w-[18px] text-slate-500" />
                       </div>
                     )}
                   </button>
@@ -515,10 +716,10 @@ function App() {
               ) : (
                 <button
                   onClick={() => setIsSettingsOpen(true)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none"
+                  className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
                   title="Cài đặt"
                 >
-                  <Settings className="h-[18px] w-[18px]" />
+                  <Settings className="h-4 w-4 min-[360px]:h-[18px] min-[360px]:w-[18px]" />
                 </button>
             )
           )}
@@ -594,10 +795,13 @@ function App() {
       )}
 
       <main className={classNames(
-        "mx-auto flex min-h-screen w-full max-w-[1120px] flex-col",
-        (!isManagingTrips && tripId) ? "pb-24 md:pb-12" : "pb-12"
+        "mx-auto flex flex-1 w-full max-w-[1120px] flex-col",
+        (!isManagingTrips && tripId) ? "pb-24 md:pb-12" : (isManagingTrips && trips?.length === 0 && !isViewingArchive && !isCreatingTrip) ? "pb-0" : "pb-12"
       )}>
-        <div className="flex-1 px-4 md:px-6 py-6 md:py-8">
+        <div className={classNames(
+          "flex-1 px-4 md:px-6 flex flex-col",
+          (isManagingTrips && trips?.length === 0 && !isViewingArchive && !isCreatingTrip) ? "py-0" : "py-6 md:py-8"
+        )}>
           {tripsLoading ? (
             <div className="flex items-center justify-center py-32">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
@@ -614,7 +818,7 @@ function App() {
               />
             </div>
           ) : isManagingTrips || !tripId ? (
-            <div key="manager" className="motion-page-enter">
+            <div key="manager" className={classNames("motion-page-enter", (isManagingTrips && trips?.length === 0) ? "flex-1 flex flex-col" : "")}>
               <TripManagerScreen
                 trips={trips}
                 onOpenTrip={(id) => {
@@ -655,7 +859,7 @@ function App() {
 
       {!isManagingTrips && tripId && (
         <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-slate-200/50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden pb-[env(safe-area-inset-bottom)]">
-          <div className="mx-auto max-w-[520px] flex h-[68px] items-center justify-between px-6">
+          <div className="mx-auto max-w-[520px] flex h-[68px] items-center justify-between px-2.5 min-[360px]:px-6">
             <NavButton
               isActive={activeTab === "home"}
               onClick={() => setActiveTab("home")}
@@ -694,22 +898,29 @@ function App() {
       )}
 
       {successToast && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 motion-toast-enter">
-          <div className="bg-kat-text text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-4">
-            <span className="text-[14px] font-medium">Đã tạo chuyến đi thành công</span>
-            <button 
-              onClick={() => {
-                setSelectedTripId(successToast);
-                setIsManagingTrips(false);
-                setSuccessToast(null);
-              }}
-              className="text-kat-primary font-bold text-[14px] hover:text-white transition-colors"
-            >
-              Xem chi tiết
-            </button>
-            <button onClick={() => setSuccessToast(null)} className="text-slate-400 hover:text-white p-1">
-              <X className="w-4 h-4" />
-            </button>
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-[420px] motion-toast-enter">
+          <div className="bg-[#030D2E] text-white px-5 py-3 rounded-2xl shadow-floating flex items-center justify-between gap-4 border border-[#E8E1D8]/20">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="flex h-5.5 w-5.5 shrink-0 items-center justify-center rounded-full bg-kat-primary/20 text-kat-primary">
+                <Check className="h-3.5 w-3.5" strokeWidth={3.5} />
+              </div>
+              <span className="text-[14px] font-bold tracking-wide text-sand">Đã tạo chuyến đi thành công</span>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <button 
+                onClick={() => {
+                  setSelectedTripId(successToast);
+                  setIsManagingTrips(false);
+                  setSuccessToast(null);
+                }}
+                className="text-kat-primary font-extrabold text-[14px] hover:text-[#00BFB7]/80 transition-colors whitespace-nowrap"
+              >
+                Xem chi tiết
+              </button>
+              <button onClick={() => setSuccessToast(null)} className="text-slate-400 hover:text-white p-1 transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -813,6 +1024,79 @@ function App() {
               Đăng xuất
             </button>
           </div>
+        </div>
+      </BottomSheet>
+
+      <BottomSheet
+        isOpen={isImportModalOpen}
+        onClose={() => {
+          setIsImportModalOpen(false);
+          setSharedLinkInput("");
+        }}
+        title="Xem chuyến đi được chia sẻ"
+      >
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-605 block">
+              Nhập liên kết chia sẻ chuyến đi
+            </label>
+            <div className="flex gap-2.5">
+              <input
+                type="text"
+                value={sharedLinkInput}
+                onChange={(e) => setSharedLinkInput(e.target.value)}
+                placeholder="Dán link chuyến đi được chia sẻ..."
+                className="w-full rounded-[14px] border border-slate-200 bg-slate-50 px-4 h-[50px] text-[15px] font-bold text-[#030D2E] outline-none transition-all focus:bg-white focus:ring-2 focus:ring-[#00BFB7] focus:border-transparent placeholder:text-slate-400"
+              />
+              <button
+                onClick={() => {
+                  const token = parseToken(sharedLinkInput);
+                  if (token) {
+                    window.location.href = "/share/" + token;
+                  } else {
+                    showToast("Liên kết không hợp lệ. Vui lòng thử lại!");
+                  }
+                }}
+                className="inline-flex h-[50px] shrink-0 items-center justify-center rounded-[14px] bg-[#030D2E] hover:bg-[#030D2E]/90 text-white px-6 font-black active:scale-[0.98] transition-all duration-200"
+              >
+                Xem ngay
+              </button>
+            </div>
+          </div>
+
+          {recentSharedTrips.length > 0 && (
+            <div className="space-y-3 pt-2">
+              <h4 className="text-[12px] font-black uppercase tracking-wider text-slate-400">
+                Lịch sử xem gần đây
+              </h4>
+              <div className="space-y-2">
+                {recentSharedTrips.map((trip) => (
+                  <div
+                    key={trip.token}
+                    onClick={() => {
+                      window.location.href = "/share/" + trip.token;
+                    }}
+                    className="group flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-[#FFFDF8] hover:bg-slate-50 hover:border-[#00BFB7]/20 cursor-pointer active:scale-[0.99] transition-all duration-200"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#00BFB7]/10 text-[#00BFB7]">
+                        <Plane className="h-5 w-5 -rotate-45" />
+                      </div>
+                      <div className="min-w-0 text-left">
+                        <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate group-hover:text-[#00BFB7] transition-colors">
+                          {trip.title}
+                        </p>
+                        <p className="text-[12px] font-semibold text-slate-400 mt-0.5">
+                          Khởi hành: {trip.date}
+                        </p>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-[#00BFB7] group-hover:translate-x-0.5 transition-all" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </BottomSheet>
     </div>

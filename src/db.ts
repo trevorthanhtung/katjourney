@@ -29,6 +29,8 @@ export interface Member {
   phone: string;
   role: string;
   note?: string;
+  gender?: "male" | "female" | "other" | string;
+  avatar?: string;
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string;

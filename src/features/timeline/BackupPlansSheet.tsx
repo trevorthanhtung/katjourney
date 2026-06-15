@@ -5,6 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, BackupPlan, BackupPlanType } from "../../db";
 import { DeleteConfirmModal } from "../../components/ui";
 import { getEmbedMapUrl } from "../../utils/mapUtils";
+import { useModalHistory } from "../../hooks/useModalHistory";
 
 interface BackupPlansSheetProps {
   tripId: number;
@@ -41,6 +42,13 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [planToDelete, setPlanToDelete] = useState<BackupPlan | null>(null);
   const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
+
+  useModalHistory(isFormOpen, () => {
+    setIsFormOpen(false);
+    setEditingPlan(null);
+  }, "backup-plan-form");
+
+  useModalHistory(isDeleteConfirmOpen, () => setIsDeleteConfirmOpen(false), "delete-backup-plan-confirm");
 
   // Form states
   const [title, setTitle] = useState("");
@@ -140,6 +148,16 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
     setIsDeleteConfirmOpen(false);
     setPlanToDelete(null);
   }
+
+  React.useEffect(() => {
+    if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

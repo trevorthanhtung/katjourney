@@ -92,6 +92,7 @@ function ShareSwitch({ checked, onChange }: { checked: boolean; onChange: (check
   );
 }
 import { ChecklistItem, db, deleteTripCascade, EventItem, Expense, JournalEntry, Member, PackingItem, Trip, archiveTrip, unarchiveTrip } from "../../db";
+import { getAvatarSvg, getRandomAvatarId } from "../../utils/avatars";
 import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
 import { 
   checklistSections, 
@@ -113,6 +114,7 @@ import { BottomSheet, FormActions, Input, ScreenTitle, TypedDeleteConfirmModal, 
 import { JournalSection } from "../journal/JournalSection";
 import { TravelDocumentsSection } from "./TravelDocumentsSection";
 import { searchLocation, GeocodingResult } from "../../services/weatherService";
+import { useModalHistory } from "../../hooks/useModalHistory";
 
 // --- LocationInput Component ---
 function LocationInput({
@@ -592,6 +594,7 @@ function MemberForm({
   const [selectedPreset, setSelectedPreset] = useState("Người đồng hành");
   const [customRole, setCustomRole] = useState("");
   const [note, setNote] = useState("");
+  const [gender, setGender] = useState<string>("male");
   
   const [dirty, setDirty] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
@@ -602,6 +605,7 @@ function MemberForm({
         setName(editing.name ?? "");
         setPhone(editing.phone ?? "");
         setNote(editing.note ?? "");
+        setGender(editing.gender ?? "male");
         
         const currentRole = editing.role ?? "Người đồng hành";
         if (PRESETS.includes(currentRole)) {
@@ -617,6 +621,7 @@ function MemberForm({
         setSelectedPreset("Người đồng hành");
         setCustomRole("");
         setNote("");
+        setGender("male");
       }
       setDirty(false);
       setSubmitAttempted(false);
@@ -638,12 +643,27 @@ function MemberForm({
     if (hasError) return;
 
     const finalRole = selectedPreset === "Khác" ? customRole.trim() : selectedPreset;
+    
+    // Generate avatar if not already present or if gender changed
+    let finalAvatar = editing?.avatar;
+    const existingMembers = await db.members.where({ tripId }).toArray();
+    
+    if (!editing?.id) {
+      const existingAvatars = existingMembers.map(m => m.avatar).filter(Boolean) as string[];
+      finalAvatar = getRandomAvatarId(gender, existingAvatars);
+    } else if (editing && editing.gender !== gender) {
+      const existingAvatars = existingMembers.filter(m => m.id !== editing.id).map(m => m.avatar).filter(Boolean) as string[];
+      finalAvatar = getRandomAvatarId(gender, existingAvatars);
+    }
+
     const payload = {
       tripId,
       name: name.trim(),
       phone: phone.trim(),
       role: finalRole,
       note: note.trim(),
+      gender,
+      avatar: finalAvatar,
       updatedAt: new Date().toISOString()
     };
 
@@ -718,6 +738,37 @@ function MemberForm({
           {(dirty || submitAttempted) && nameError && (
             <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{nameError}</p>
           )}
+        </div>
+
+        <div>
+          <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
+            <UserRound className="h-4 w-4 text-slate-500" />
+            Giới tính *
+          </span>
+          <div className="flex gap-2">
+            {[
+              { value: "male", label: "Nam" },
+              { value: "female", label: "Nữ" },
+              { value: "other", label: "Khác" }
+            ].map((g) => (
+              <button
+                key={g.value}
+                type="button"
+                onClick={() => {
+                  setGender(g.value);
+                  setDirty(true);
+                }}
+                className={classNames(
+                  "flex-1 rounded-2xl py-3 text-[14px] font-black transition-all duration-200 active:scale-95 border text-center justify-center flex items-center",
+                  gender === g.value
+                    ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#00BFB7] shadow-sm"
+                    : "bg-[#FFFDF8] border-[#E8E1D8] text-slate-600 hover:bg-slate-50"
+                )}
+              >
+                {g.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div>
@@ -1308,9 +1359,15 @@ function MemberCardRow({
     <div className="relative rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-4">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4 min-w-0 flex-1">
-          {/* Avatar Initials */}
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#00BFB7]/10 text-[#00BFB7] text-[18px] font-black shadow-inner">
-            {initial}
+          {/* Avatar */}
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm">
+            {member.avatar ? (
+              getAvatarSvg(member.avatar, "w-full h-full")
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-[#00BFB7]/10 text-[#00BFB7] text-[18px] font-black">
+                {initial}
+              </div>
+            )}
           </div>
 
           {/* Member details */}
@@ -1481,6 +1538,26 @@ export function MoreScreen({
 
   // Cloud share states
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+  // Sync hooks with history for closing modals on browser back action
+  useModalHistory(editingTrip, () => setEditingTrip(false), "edit-trip-modal");
+  useModalHistory(isMemberFormOpen, () => {
+    setIsMemberFormOpen(false);
+    setEditingMember(null);
+  }, "member-form-modal");
+  useModalHistory(isDataSectionOpen, () => setIsDataSectionOpen(false), "data-backup-modal");
+  useModalHistory(isDonateOpen, () => setIsDonateOpen(false), "donate-modal");
+  useModalHistory(isShareModalOpen, () => setIsShareModalOpen(false), "share-trip-modal");
+
+  useModalHistory(isDeleteConfirmOpen, () => setIsDeleteConfirmOpen(false), "delete-trip-confirm");
+  useModalHistory(isArchiveConfirmOpen, () => setIsArchiveConfirmOpen(false), "archive-trip-confirm");
+  useModalHistory(isUnarchiveConfirmOpen, () => setIsUnarchiveConfirmOpen(false), "unarchive-trip-confirm");
+  useModalHistory(isRestoreConfirmOpen, () => setIsRestoreConfirmOpen(false), "restore-confirm");
+  useModalHistory(isFactoryResetConfirmOpen, () => setIsFactoryResetConfirmOpen(false), "factory-reset-confirm");
+  useModalHistory(isDeleteMemberConfirmOpen, () => {
+    setIsDeleteMemberConfirmOpen(false);
+    setMemberToDelete(null);
+  }, "delete-member-confirm");
   const [shareLoading, setShareLoading] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
   const [shareOptions, setShareOptions] = useState({

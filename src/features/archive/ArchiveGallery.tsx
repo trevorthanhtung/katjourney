@@ -36,6 +36,21 @@ export function ArchiveGallery({
     return acc;
   }, {} as Record<number, number>);
 
+  const sortedTrips = [...archivedTrips].sort(
+    (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+  );
+
+  const tripsByYear: { [year: string]: Trip[] } = {};
+  sortedTrips.forEach(trip => {
+    const year = trip.startDate ? trip.startDate.split("-")[0] : "Chưa rõ năm";
+    if (!tripsByYear[year]) {
+      tripsByYear[year] = [];
+    }
+    tripsByYear[year].push(trip);
+  });
+
+  const years = Object.keys(tripsByYear).sort((a, b) => b.localeCompare(a));
+
   function getTripDurationText(trip: Trip) {
     const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
     if (isDayTrip) return "Đi trong ngày";
@@ -159,9 +174,22 @@ export function ArchiveGallery({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
-          {archivedTrips.map((trip, i) => (
-            <TripCard key={trip.id} trip={trip} index={i} />
+        <div className="space-y-10">
+          {years.map(year => (
+            <div key={year} className="space-y-5">
+              <div className="flex items-center gap-3">
+                <h2 className="text-[19px] font-black text-[#030D2E] tracking-tight">{year}</h2>
+                <div className="h-px flex-1 bg-slate-200" />
+                <span className="text-[11px] font-extrabold text-slate-500 bg-slate-100/75 border border-slate-200/50 px-3 py-1 rounded-full">
+                  {tripsByYear[year].length} chuyến đi
+                </span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
+                {tripsByYear[year].map((trip, i) => (
+                  <TripCard key={trip.id} trip={trip} index={i} />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       )}

@@ -3,6 +3,7 @@ import { Plus, Trash2, WalletCards, Scale, UsersRound, UserRound, Calculator, Ch
 import { db, Expense, Member, EventItem } from "../../db";
 import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories } from "../../utils/helpers";
 import { BottomSheet, FormActions, Input, ScreenTitle, Select, DatePicker, DeleteConfirmModal, classNames } from "../../components/ui";
+import { useModalHistory } from "../../hooks/useModalHistory";
 
 function CategoryBar({ percent, colorClass }: { percent: number; colorClass: string }) {
   return (
@@ -367,9 +368,14 @@ function ExpenseForm({
   }, [editing, isOpen, members, categoryOptions]);
 
   const filteredEvents = React.useMemo(() => {
-    if (!form.date) return [];
-    return events.filter(e => e.date === form.date && !e.isDeleted);
-  }, [events, form.date]);
+    return [...events]
+      .filter(e => !e.isDeleted)
+      .sort((a, b) => {
+        const dateComp = (a.date || "").localeCompare(b.date || "");
+        if (dateComp !== 0) return dateComp;
+        return (a.time || "").localeCompare(b.time || "");
+      });
+  }, [events]);
 
   async function save() {
     const newErrors: typeof errors = {};
@@ -482,7 +488,7 @@ function ExpenseForm({
           label={
             <span className="flex items-center gap-1.5">
               <ReceiptText className="h-4 w-4 text-slate-500" />
-              Khoản chi
+              Nội dung chi tiêu
             </span>
           } 
           value={form.description} 
@@ -606,7 +612,12 @@ function ExpenseForm({
                     options={["", ...filteredEvents.map(e => String(e.id))]}
                     labels={{
                       "": "Không gắn (Chi phí chung)",
-                      ...Object.fromEntries(filteredEvents.map(e => [String(e.id), e.title]))
+                      ...Object.fromEntries(filteredEvents.map(e => {
+                        const dateParts = (e.date || "").split('-');
+                        const shortDate = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}` : (e.date || "");
+                        const datePrefix = shortDate ? `(${shortDate}) ` : "";
+                        return [String(e.id), `${datePrefix}${e.title}`];
+                      }))
                     }}
                   />
                 )}
@@ -684,6 +695,13 @@ export function ExpensesScreen({
   const [editing, setEditing] = useState<Expense | null>(null);
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
   const [swipedExpenseId, setSwipedExpenseId] = useState<number | null>(null);
+
+  useModalHistory(isFormOpen, () => {
+    setIsFormOpen(false);
+    setEditing(null);
+  }, "expense-form-modal");
+
+  useModalHistory(Boolean(expenseToDelete), () => setExpenseToDelete(null), "delete-expense-confirm");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (message: string) => {
