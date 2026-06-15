@@ -1279,36 +1279,44 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         onClose={() => setIsRoadmapFormOpen(false)}
         title={`Lộ trình di chuyển - Ngày ${days.indexOf(roadmapEditDay) + 1}`}
       >
-        <div className="space-y-4 pb-4">
-          <Input
-            label={
-              <span className="flex flex-col gap-1">
-                <span className="flex items-center gap-1.5">
-                  <Route className="h-4 w-4 text-slate-500" />
-                  Link lộ trình Google Maps
-                </span>
-                <span className="text-xs font-normal text-slate-400">
-                  Dán link lộ trình tìm được trên Google Maps (chứa nhiều điểm đến/waypoint).
-                </span>
-              </span>
-            }
-            value={roadmapInputLink}
-            onChange={setRoadmapInputLink}
-            placeholder="VD: https://www.google.com/maps/dir/..."
-          />
+        <div className="space-y-5 pb-4">
           
-          {roadmapInputLink && (
-            <div className="flex justify-end">
-              <a
-                href={roadmapInputLink}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors"
-              >
-                <Map className="w-3.5 h-3.5" />
-                Mở link kiểm tra &rarr;
-              </a>
+          {/* Instruction card */}
+          <div className="flex items-start gap-3 bg-[#00BFB7]/8 border border-[#00BFB7]/20 rounded-2xl px-4 py-3">
+            <Route className="h-5 w-5 text-[#00BFB7] shrink-0 mt-0.5" />
+            <div>
+              <p className="text-[13px] font-bold text-[#030D2E]">Dán link lộ trình Google Maps</p>
+              <p className="text-[12px] text-slate-500 font-medium mt-0.5 leading-relaxed">
+                Vào Google Maps → chọn điểm đầu/cuối → nhấn <strong>Đường đi</strong> → sao chép link trên thanh địa chỉ.
+              </p>
             </div>
+          </div>
+
+          {/* Input */}
+          <div className="relative">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+              <Route className="h-4 w-4 text-[#00BFB7]" />
+            </div>
+            <input
+              type="url"
+              value={roadmapInputLink}
+              onChange={e => setRoadmapInputLink(e.target.value)}
+              placeholder="https://www.google.com/maps/dir/..."
+              className="w-full pl-11 pr-4 py-4 bg-white border-2 border-[#E8E1D8] rounded-2xl text-[14px] font-semibold text-[#030D2E] placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-[#00BFB7] focus:ring-2 focus:ring-[#00BFB7]/15 transition-all duration-200"
+            />
+          </div>
+
+          {/* Test link button – only show when there's input */}
+          {roadmapInputLink.trim() && (
+            <a
+              href={roadmapInputLink}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-[13.5px] font-bold text-emerald-700 hover:bg-emerald-100 transition-colors"
+            >
+              <Map className="w-4 h-4" />
+              Mở link kiểm tra &rarr;
+            </a>
           )}
 
           <FormActions
