@@ -603,14 +603,24 @@ export function JournalSection({
                             const authorMember = members.find(m => 
                               (entry.authorName || "").trim().toLowerCase() === m.name.trim().toLowerCase()
                             );
-                            const avatar = authorMember?.avatar;
+                            let avatar = authorMember?.avatar;
+                            if (!avatar) {
+                              const authorName = entry.authorName || "Trường nhóm";
+                              let hash = 0;
+                              for (let i = 0; i < authorName.length; i++) {
+                                hash = authorName.charCodeAt(i) + ((hash << 5) - hash);
+                              }
+                              const genderChar = (authorName.toLowerCase().includes("nữ") || 
+                                                  authorName.toLowerCase().includes("chị") || 
+                                                  authorName.toLowerCase().includes("mẹ") || 
+                                                  authorName.toLowerCase().includes("cô") || 
+                                                  authorName.toLowerCase().includes("bà")) ? "f" : "m";
+                              const num = (Math.abs(hash) % 10) + 1;
+                              avatar = `${genderChar}${num}`;
+                            }
                             return (
                               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full overflow-hidden bg-slate-200 text-slate-700 font-black text-[15px]">
-                                {avatar ? (
-                                  getAvatarSvg(avatar, "w-full h-full")
-                                ) : (
-                                  (entry.authorName || "T").charAt(0).toUpperCase()
-                                )}
+                                {getAvatarSvg(avatar, "w-full h-full")}
                               </div>
                             );
                           })()}
