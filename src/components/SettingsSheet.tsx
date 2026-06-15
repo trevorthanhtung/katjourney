@@ -844,7 +844,6 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 </div>
               </div>
               <ChevronRight className="h-5 w-5 text-slate-400" />
-              <ChevronRight className="h-5 w-5 text-slate-400" />
             </button>
 
             {/* Exchange Rates */}
