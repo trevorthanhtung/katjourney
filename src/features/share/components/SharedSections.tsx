@@ -3,7 +3,8 @@ import { createPortal } from 'react-dom';
 import { 
   WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, Plus, Pencil, Trash2, MoreVertical, LifeBuoy,
   ReceiptText, UserCheck, Tags, ChevronRight, Scale, Info, Check, X, Clock,
-  FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles, Route, HelpCircle, Users, MessageCircle
+  FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles, Route, HelpCircle, Users, MessageCircle,
+  Crown, UserRound, Luggage
 } from 'lucide-react';
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
 import { formatMoney, expenseCategories, formatDate, moodLabels } from '../../../utils/helpers';
@@ -2387,12 +2388,16 @@ export function SharedMembersSection({
   token,
   mode,
   members = [],
+  checklist = [],
+  expenses = [],
   changeRequests = [],
   guestName
 }: { 
   token: string;
   mode: string;
   members?: LocalMember[];
+  checklist?: ChecklistItem[];
+  expenses?: Expense[];
   changeRequests?: any[];
   guestName?: string;
 }) {
@@ -2523,70 +2528,126 @@ export function SharedMembersSection({
         </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {mergedMembers.map((member) => {
           const isPending = member.isPendingCreate || member.isPendingDelete;
+          const initial = member.name.trim().charAt(0).toUpperCase() || "?";
+          
+          // Helper computations
+          const assignedTasksCount = checklist.filter(c => c.assignedTo === member.name).length;
+          const memberExpenses = expenses.filter(e => e.payer === member.name);
+          const paidExpensesCount = memberExpenses.length;
+          const totalSpent = memberExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+
           return (
             <div 
               key={member.id || member.name} 
               className={classNames(
-                "flex items-center gap-3 border p-3 rounded-2xl transition-all",
-                member.isPendingCreate ? "bg-sky-50/40 border-sky-100/50" : "bg-slate-50/50 border-slate-150/40",
-                member.isPendingDelete ? "opacity-70 border-rose-100" : ""
+                "relative rounded-[24px] border transition-all flex flex-col justify-between gap-4 p-5 shadow-sm hover:shadow-md",
+                member.isPendingCreate ? "bg-sky-50/40 border-sky-100" : "bg-[#FFFDF8] border-[#E8E1D8]",
+                member.isPendingDelete ? "opacity-75 border-rose-100" : ""
               )}
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden bg-slate-100 border border-slate-200/50">
-                {member.avatar ? (
-                  getAvatarSvg(member.avatar, "w-full h-full")
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-indigo-50 text-indigo-600 font-bold text-[14px]">
-                    {(member.name || "?").charAt(0).toUpperCase()}
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-4 min-w-0 flex-1">
+                  {/* Avatar */}
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm">
+                    {member.avatar ? (
+                      getAvatarSvg(member.avatar, "w-full h-full")
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-[#00BFB7]/10 text-[#00BFB7] text-[18px] font-black">
+                        {initial}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Member details */}
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex items-center flex-wrap gap-2">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <UserRound className="h-4.5 w-4.5 text-[#030D2E]/60 shrink-0" />
+                        <h4 className={classNames(
+                          "text-[17px] font-extrabold text-[#030D2E] truncate",
+                          member.isPendingDelete ? "line-through text-slate-400" : ""
+                        )}>
+                          {member.name}
+                        </h4>
+                      </div>
+                      {(() => {
+                        const isLeader = member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện" || member.role?.toLowerCase() === "leader";
+                        return (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[#00BFB7]/10 border border-[#00BFB7]/20 px-2.5 py-0.5 text-[11px] font-bold text-[#00BFB7]">
+                            {isLeader && <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
+                            {member.role || "Bạn đồng hành"}
+                          </span>
+                        );
+                      })()}
+                      {member.isPendingCreate && (
+                        <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none">
+                          Đề xuất mới
+                        </span>
+                      )}
+                      {member.isPendingDelete && (
+                        <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 shrink-0 select-none">
+                          Đề xuất xóa
+                        </span>
+                      )}
+                    </div>
+                    {member.phone && (
+                      <p className="text-[13.5px] font-semibold text-slate-500">
+                        SĐT: <span className="text-[#030D2E]">{member.phone}</span>
+                      </p>
+                    )}
+                    {member.note && (
+                      <p className="text-[13px] font-medium text-slate-400 italic mt-1 bg-slate-50/70 p-2.5 rounded-xl border border-slate-100/50 break-words">
+                        "{member.note}"
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {isRequestEdit && !isPending && !(member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện" || member.role?.toLowerCase() === "leader") && (
+                  <div className="shrink-0">
+                    <button 
+                      onClick={(ev) => {
+                        ev.stopPropagation();
+                        const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
+                        if (activeMenuId === String(member.id)) {
+                          setActiveMenuId(null);
+                          setMenuPos(null);
+                        } else {
+                          setActiveMenuId(String(member.id));
+                          setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+                        }
+                      }}
+                      className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
+                      title="Tùy chọn đề xuất"
+                    >
+                      <MoreVertical className="h-5 w-5" />
+                    </button>
                   </div>
                 )}
               </div>
-              <div className="min-w-0 flex-1 pr-6">
-                <div className="flex flex-wrap items-baseline gap-1.5 min-w-0">
-                  <h4 className={classNames(
-                    "text-[14px] font-bold text-slate-800 truncate",
-                    member.isPendingDelete ? "line-through text-slate-400" : ""
-                  )}>
-                    {member.name}
-                  </h4>
-                  {member.isPendingCreate && (
-                    <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-1.5 py-0.5 text-[9px] font-bold text-sky-600 shrink-0 select-none">
-                      Đề xuất mới
-                    </span>
-                  )}
-                  {member.isPendingDelete && (
-                    <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-1.5 py-0.5 text-[9px] font-bold text-rose-600 shrink-0 select-none">
-                      Đề xuất xóa
-                    </span>
-                  )}
-                </div>
-                <p className="text-[11px] font-bold text-slate-400 mt-0.5">{member.role || "Bạn đồng hành"}</p>
-              </div>
 
-              {isRequestEdit && !isPending && !(member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện" || member.role?.toLowerCase() === "leader") && (
-                <div className="shrink-0">
-                  <button 
-                    onClick={(ev) => {
-                      ev.stopPropagation();
-                      const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
-                      if (activeMenuId === String(member.id)) {
-                        setActiveMenuId(null);
-                        setMenuPos(null);
-                      } else {
-                        setActiveMenuId(String(member.id));
-                        setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
-                      }
-                    }}
-                    className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all focus:outline-none"
-                    title="Tùy chọn đề xuất"
-                  >
-                    <MoreVertical className="h-4 w-4" />
-                  </button>
+              {/* Mini Stats Row */}
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-4 flex-wrap">
+                <div className="flex flex-wrap gap-2 text-[12px]">
+                  <span className={classNames(
+                    "flex items-center gap-1 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg",
+                    assignedTasksCount === 0 ? "text-slate-400 font-medium" : "text-slate-700 font-bold"
+                  )}>
+                    <Luggage className="h-3.5 w-3.5 text-current shrink-0" />
+                    {assignedTasksCount} việc
+                  </span>
+                  <span className={classNames(
+                    "flex items-center gap-1 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg",
+                    totalSpent === 0 ? "text-slate-400 font-medium" : "text-slate-700 font-bold"
+                  )}>
+                    <WalletCards className="h-3.5 w-3.5 text-current shrink-0" />
+                    Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
+                  </span>
                 </div>
-              )}
+              </div>
             </div>
           );
         })}

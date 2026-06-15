@@ -675,6 +675,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
               token={token}
               mode={canRequestEdit ? 'request_edit' : 'view'}
               members={members} 
+              checklist={checklist}
+              expenses={expenses}
               changeRequests={changeRequests}
               guestName={currentUser?.name || "Khách"}
             />
