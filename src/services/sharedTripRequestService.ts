@@ -1,7 +1,7 @@
 import { ensureCloudShareReady } from './cloudShareService';
 import { initFirebase, ensureAnonymousUser } from '../lib/firebase';
 
-export type ChangeRequestSection = 'activities' | 'expenses' | 'checklist' | 'journals' | 'backupPlans' | 'travelDocuments';
+export type ChangeRequestSection = 'activities' | 'expenses' | 'checklist' | 'journals' | 'backupPlans' | 'travelDocuments' | 'members';
 export type ChangeRequestAction = 'create' | 'update' | 'delete';
 
 export interface ChangeRequestPayload {
@@ -45,7 +45,8 @@ export async function submitChangeRequest(token: string, payload: ChangeRequestP
     checklist: 'includeChecklist',
     journals: 'includeJournals',
     backupPlans: 'includeBackupPlans',
-    travelDocuments: 'includeDocuments'
+    travelDocuments: 'includeDocuments',
+    members: null // Always allowed to request edit if link is editable
   };
 
   const flagName = sectionFlagMap[payload.section];
