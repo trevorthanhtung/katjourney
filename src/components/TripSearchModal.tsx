@@ -121,7 +121,7 @@ export function TripSearchModal({
             ref={inputRef}
             type="text"
             className="flex-1 text-[16px] font-bold text-slate-800 placeholder-slate-400 outline-none border-none bg-transparent"
-            placeholder="Tìm lịch trình, chi tiêu, hành lý, nhật ký..."
+            placeholder="Tìm lịch trình, chi tiêu, hành lý, bản tin..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -302,11 +302,11 @@ export function TripSearchModal({
                 </div>
               )}
 
-              {/* 5. Nhật ký */}
+              {/* 5. Bản tin */}
               {matchedJournals.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400">
-                    <BookOpen className="w-3.5 h-3.5" /> Nhật ký ({matchedJournals.length})
+                    <BookOpen className="w-3.5 h-3.5" /> Bản tin ({matchedJournals.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedJournals.map(item => (
@@ -316,7 +316,7 @@ export function TripSearchModal({
                         className="group flex items-center justify-between p-3 rounded-2xl border border-slate-100 bg-white hover:border-kat-primary/30 hover:bg-slate-50/35 cursor-pointer transition-all motion-press"
                       >
                         <div className="min-w-0 flex-1 pr-3">
-                          <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate">{item.title || "Nhật ký chuyến đi"}</p>
+                          <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate">{item.title || "Bản tin chuyến đi"}</p>
                           <p className="text-[12.5px] text-slate-400 font-semibold truncate mt-1">{item.content}</p>
                         </div>
                         <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />

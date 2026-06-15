@@ -1,5 +1,5 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { Backpack, CalendarDays, Calendar, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft, Search, Bell, BellRing, ChevronRight, Check, ListTodo, FileText, BookOpenText, Sparkles, Home, User, UserPlus, Heart, LogOut, Cloud, RefreshCw, Coffee, WifiOff, LockKeyhole, Link } from "lucide-react";
+import { Backpack, CalendarDays, Calendar, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft, Search, Bell, BellRing, ChevronRight, Check, ListTodo, FileText, BookOpenText, Sparkles, Home, User, UserPlus, Heart, LogOut, Cloud, RefreshCw, Coffee, WifiOff, LockKeyhole, Link, MessageCircle } from "lucide-react";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "./db";
@@ -27,6 +27,7 @@ import { useShareChangeRequests } from "./hooks/useShareChangeRequests";
 import { ShareChangeRequestsSheet } from "./features/share/components/ShareChangeRequestsSheet";
 import { SettingsSheet } from "./components/SettingsSheet";
 import { WelcomeScreen } from "./components/WelcomeScreen";
+import { ChatBox } from "./features/share/components/ChatBox";
 import { useAuth } from "./hooks/useAuth";
 import { useCloudBackup } from "./hooks/useCloudBackup";
 import { signOutUser } from "./services/authService";
@@ -135,9 +136,10 @@ function App() {
 
   React.useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      localStorage.removeItem("kat_journey_welcome_viewed");
-      localStorage.removeItem("kat_auth_mode");
-      setShowWelcome(true);
+      // Chỉ tự động hiện màn hình welcome nếu người dùng chưa từng hoàn thành bước chào mừng (hoặc đã đăng xuất)
+      if (localStorage.getItem("kat_journey_welcome_viewed") !== "true") {
+        setShowWelcome(true);
+      }
     }
   }, [isAuthenticated, authLoading]);
 
@@ -738,18 +740,18 @@ function App() {
 
       {syncProps.hasCloudVersion && (
         <div className="max-w-[1120px] mx-auto mt-4 mb-2 px-4 sm:px-6">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/40 shadow-sm p-3 sm:py-2.5 sm:px-4 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
             {/* Background decorative blob */}
-            <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl"></div>
-            <div className="absolute -left-6 -bottom-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl"></div>
+            <div className="absolute -right-6 -top-6 w-20 h-20 bg-blue-500/5 rounded-full blur-xl"></div>
+            <div className="absolute -left-6 -bottom-6 w-20 h-20 bg-indigo-500/5 rounded-full blur-xl"></div>
 
-            <div className="relative flex items-center gap-3.5 z-10">
-              <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-blue-50 text-blue-600">
-                <Cloud className="w-5 h-5" />
+            <div className="relative flex items-center gap-2.5 z-10 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0 border border-blue-50 text-blue-600">
+                <Cloud className="w-4.5 h-4.5" />
               </div>
-              <div>
-                <h3 className="text-[14.5px] font-bold text-slate-800">Đã tìm thấy bản cập nhật mới</h3>
-                <p className="text-[13px] text-slate-500 mt-0.5 font-medium">Có dữ liệu mới nhất từ thiết bị khác của bạn.</p>
+              <div className="min-w-0">
+                <h3 className="text-[13.5px] font-extrabold text-slate-800 leading-tight">Đã tìm thấy bản cập nhật mới</h3>
+                <p className="text-[12px] text-slate-500 mt-0.5 font-semibold leading-none truncate hidden sm:block">Có dữ liệu mới nhất từ thiết bị khác của bạn.</p>
               </div>
             </div>
             
@@ -764,16 +766,16 @@ function App() {
                 }
               }}
               disabled={syncProps.isSyncing}
-              className="relative z-10 w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 text-white text-[13.5px] font-bold hover:bg-blue-700 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:pointer-events-none"
+              className="relative z-10 shrink-0 px-4 py-2 rounded-lg bg-blue-600 text-white text-[12.5px] font-bold hover:bg-blue-700 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-1.5 disabled:opacity-70 disabled:pointer-events-none"
             >
               {syncProps.isSyncing ? (
                 <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                   Đang xử lý...
                 </>
               ) : (
                 <>
-                  <RefreshCw className="w-4 h-4" />
+                  <RefreshCw className="w-3.5 h-3.5" />
                   Đồng bộ ngay
                 </>
               )}
@@ -1020,6 +1022,9 @@ function App() {
               type="button"
               onClick={async () => {
                 setIsLogoutConfirmOpen(false);
+                localStorage.removeItem("kat_journey_welcome_viewed");
+                localStorage.removeItem("kat_auth_mode");
+                setShowWelcome(true);
                 await signOutUser();
               }}
               className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 active:scale-[0.98] transition-all duration-200 motion-press"

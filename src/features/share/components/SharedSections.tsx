@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, Plus, Pencil, Trash2, MoreVertical, LifeBuoy,
   ReceiptText, UserCheck, Tags, ChevronRight, Scale, Info, Check, X, Clock,
-  FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles, Route, HelpCircle, Users
+  FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles, Route, HelpCircle, Users, MessageCircle
 } from 'lucide-react';
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
 import { formatMoney, expenseCategories, formatDate, moodLabels } from '../../../utils/helpers';
@@ -49,6 +50,17 @@ export function SharedExpensesSection({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
+
+  useEffect(() => {
+    if (!activeMenuId) return;
+    const handleScroll = () => {
+      setActiveMenuId(null);
+      setMenuPos(null);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [activeMenuId]);
 
   const categoryOptions = React.useMemo(() => {
     const defaultCats = expenseCategories.filter(c => c !== "Khác");
@@ -294,49 +306,24 @@ export function SharedExpensesSection({
                   {formatMoney(e.amount)}
                 </span>
                 {isRequestEdit && !isPending && (
-                  <div className="relative shrink-0">
+                  <div className="shrink-0">
                     <button 
                       onClick={(ev) => {
                         ev.stopPropagation();
-                        setActiveMenuId(activeMenuId === String(e.id) ? null : String(e.id));
+                        const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
+                        if (activeMenuId === String(e.id)) {
+                          setActiveMenuId(null);
+                          setMenuPos(null);
+                        } else {
+                          setActiveMenuId(String(e.id));
+                          setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+                        }
                       }}
                       className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-50 active:scale-90 transition-all focus:outline-none"
                       title="Tùy chọn đề xuất"
                     >
                       <MoreVertical className="h-4.5 w-4.5" />
                     </button>
-                    
-                    {activeMenuId === String(e.id) && (
-                      <>
-                        <div 
-                          className="fixed inset-0 z-[35]" 
-                          onClick={(ev) => {
-                            ev.stopPropagation();
-                            setActiveMenuId(null);
-                          }}
-                        />
-                        <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-xl bg-white border border-slate-200/80 shadow-floating py-1.5 animate-fadeIn">
-                          <button
-                            onClick={() => {
-                              setActiveMenuId(null);
-                              startEdit(e);
-                            }}
-                            className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
-                          >
-                            Đề xuất sửa
-                          </button>
-                          <button
-                            onClick={() => {
-                              setActiveMenuId(null);
-                              handleDelete(String(e.id));
-                            }}
-                            className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
-                          >
-                            Đề xuất xóa
-                          </button>
-                        </div>
-                      </>
-                    )}
                   </div>
                 )}
               </div>
@@ -344,6 +331,47 @@ export function SharedExpensesSection({
           );
         })}
       </div>
+
+      {activeMenuId && menuPos && createPortal(
+        <>
+          <div 
+            className="fixed inset-0 z-[998]" 
+            onClick={() => {
+              setActiveMenuId(null);
+              setMenuPos(null);
+            }}
+          />
+          <div 
+            className="fixed z-[999] w-36 rounded-xl bg-white border border-slate-200 shadow-lg py-1.5 animate-fadeIn"
+            style={{ top: menuPos.top, right: menuPos.right }}
+          >
+            <button
+              onClick={() => {
+                const id = activeMenuId;
+                setActiveMenuId(null);
+                setMenuPos(null);
+                const item = expenses.find(x => String(x.id) === id);
+                if (item) startEdit(item);
+              }}
+              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+            >
+              Đề xuất sửa
+            </button>
+            <button
+              onClick={() => {
+                const id = activeMenuId;
+                setActiveMenuId(null);
+                setMenuPos(null);
+                handleDelete(id);
+              }}
+              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+            >
+              Đề xuất xóa
+            </button>
+          </div>
+        </>,
+        document.body
+      )}
       {isRequestEdit && (
         <button 
           onClick={startAdd} 
@@ -620,6 +648,17 @@ export function SharedChecklistSection({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
+
+  useEffect(() => {
+    if (!activeMenuId) return;
+    const handleScroll = () => {
+      setActiveMenuId(null);
+      setMenuPos(null);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [activeMenuId]);
   const [form, setForm] = useState({ 
     title: '',
     category: 'Giấy tờ',
@@ -814,55 +853,71 @@ export function SharedChecklistSection({
                 )}
               </div>
               {isRequestEdit && !isPending && (
-                <div className="relative shrink-0 ml-2">
+                <div className="shrink-0 ml-2">
                   <button 
                     onClick={(ev) => {
                       ev.stopPropagation();
-                      setActiveMenuId(activeMenuId === String(c.id) ? null : String(c.id));
+                      const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
+                      if (activeMenuId === String(c.id)) {
+                        setActiveMenuId(null);
+                        setMenuPos(null);
+                      } else {
+                        setActiveMenuId(String(c.id));
+                        setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+                      }
                     }}
                     className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-50 active:scale-90 transition-all focus:outline-none"
                     title="Tùy chọn đề xuất"
                   >
                     <MoreVertical className="h-4.5 w-4.5" />
                   </button>
-                  
-                  {activeMenuId === String(c.id) && (
-                    <>
-                      <div 
-                        className="fixed inset-0 z-[35]" 
-                        onClick={(ev) => {
-                          ev.stopPropagation();
-                          setActiveMenuId(null);
-                        }}
-                      />
-                      <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-xl bg-white border border-slate-200/80 shadow-floating py-1.5 animate-fadeIn">
-                        <button
-                          onClick={() => {
-                            setActiveMenuId(null);
-                            startEdit(c);
-                          }}
-                          className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
-                        >
-                          Đề xuất sửa
-                        </button>
-                        <button
-                          onClick={() => {
-                            setActiveMenuId(null);
-                            handleDelete(String(c.id));
-                          }}
-                          className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
-                        >
-                          Đề xuất xóa
-                        </button>
-                      </div>
-                    </>
-                  )}
                 </div>
               )}
             </div>
           );
         })}
       </div>
+
+      {activeMenuId && menuPos && createPortal(
+        <>
+          <div 
+            className="fixed inset-0 z-[998]" 
+            onClick={() => {
+              setActiveMenuId(null);
+              setMenuPos(null);
+            }}
+          />
+          <div 
+            className="fixed z-[999] w-36 rounded-xl bg-white border border-slate-200 shadow-lg py-1.5 animate-fadeIn"
+            style={{ top: menuPos.top, right: menuPos.right }}
+          >
+            <button
+              onClick={() => {
+                const id = activeMenuId;
+                setActiveMenuId(null);
+                setMenuPos(null);
+                const item = checklist.find(x => String(x.id) === id);
+                if (item) startEdit(item);
+              }}
+              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+            >
+              Đề xuất sửa
+            </button>
+            <button
+              onClick={() => {
+                const id = activeMenuId;
+                setActiveMenuId(null);
+                setMenuPos(null);
+                handleDelete(id);
+              }}
+              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+            >
+              Đề xuất xóa
+            </button>
+          </div>
+        </>,
+        document.body
+      )}
       {isRequestEdit && (
         <button 
           onClick={startAdd} 
@@ -1104,7 +1159,8 @@ export function SharedJournalsSection({
   journals, 
   changeRequests = [],
   guestName,
-  members = []
+  members = [],
+  renderChatBox
 }: { 
   tripId: string | number;
   token: string; 
@@ -1113,10 +1169,12 @@ export function SharedJournalsSection({
   changeRequests?: any[];
   guestName?: string;
   members?: Member[];
+  renderChatBox?: () => React.ReactNode;
 }) {
   const isRequestEdit = mode === 'request_edit';
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [deleteTargetId, setDeleteTargetId] = React.useState<JournalEntry | null>(null);
+  const [journalMode, setJournalMode] = React.useState<"posts" | "chat">("posts");
 
   const [activeReactionPopover, setActiveReactionPopover] = React.useState<string | number | null>(null);
   const resolvedGuestName = guestName || "Khách";
@@ -1199,7 +1257,7 @@ export function SharedJournalsSection({
   }, [journals, changeRequests]);
 
   const titleError = !form.title.trim() ? "Vui lòng nhập tiêu đề." : "";
-  const contentError = !form.content.trim() ? "Vui lòng nhập nội dung nhật ký." : "";
+  const contentError = !form.content.trim() ? "Vui lòng nhập nội dung bài viết." : "";
   const hasError = !!titleError || !!contentError;
 
   async function handleCreate() {
@@ -1250,19 +1308,45 @@ export function SharedJournalsSection({
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <div className="flex items-center gap-2">
           <BookOpenText className="h-5 w-5 text-sky-500" />
-          <h3 className="text-[16px] font-black text-[#030D2E]">Nhật ký chuyến đi</h3>
+          <h3 className="text-[16px] font-black text-[#030D2E]">Bản tin chuyến đi</h3>
         </div>
-        {isRequestEdit && (
+      </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+        {renderChatBox ? (
+          <div className="flex bg-slate-100 p-1.5 rounded-2xl w-full sm:max-w-[320px] shadow-inner">
+            <button
+              onClick={() => setJournalMode("posts")}
+              className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 ${
+                journalMode === "posts" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              <BookOpenText className="w-4 h-4" /> Bản tin
+            </button>
+            <button
+              onClick={() => setJournalMode("chat")}
+              className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 ${
+                journalMode === "chat" ? "bg-white text-[#00BFB7] shadow-sm" : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              <MessageCircle className="w-4 h-4" /> Trò chuyện
+            </button>
+          </div>
+        ) : (
+          <div />
+        )}
+
+        {isRequestEdit && journalMode === "posts" && (
           <button 
             onClick={() => setIsFormOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-600 font-bold rounded-full text-[13px] hover:bg-indigo-100 transition-colors"
+            className="flex items-center justify-center gap-1.5 px-4 py-2 bg-[#030D2E] text-white font-bold rounded-[14px] text-[13px] hover:bg-[#030D2E]/90 transition-all shadow-sm shrink-0 motion-press"
           >
-            <Pencil className="h-4 w-4" /> Viết nhật ký
+            <Pencil className="h-4 w-4" /> Đăng bài viết
           </button>
         )}
       </div>
 
-        {mergedJournals.length > 0 ? (
+      {journalMode === "posts" ? (
+        mergedJournals.length > 0 ? (
           <div className="space-y-6 md:space-y-8">
             {Object.entries(
               mergedJournals.reduce<Record<string, any[]>>((result, entry) => {
@@ -1350,7 +1434,7 @@ export function SharedJournalsSection({
                             <button 
                               onClick={() => handleDelete(j as JournalEntry)} 
                               className="flex h-8 w-8 items-center justify-center rounded-full text-rose-400 hover:text-rose-600 hover:bg-rose-50 transition-all motion-press"
-                              title="Đề xuất xóa nhật ký"
+                              title="Đề xuất xóa bài viết"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -1365,7 +1449,7 @@ export function SharedJournalsSection({
 
                         <div className="p-4 pt-3">
                           <h4 className="text-[17px] font-black text-[#030D2E] leading-snug break-words">
-                            {j.title || "Nhật ký chuyến đi"}
+                            {j.title || "Bản tin chuyến đi"}
                           </h4>
                           <p className={classNames(
                             "mt-1.5 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600",
@@ -1441,14 +1525,19 @@ export function SharedJournalsSection({
           <div className="space-y-4">
             <p className="text-center text-slate-400 text-sm font-medium py-4">Chưa có bài viết nào.</p>
           </div>
-        )}
+        )
+      ) : (
+        <div className="mt-4">
+          {renderChatBox?.()}
+        </div>
+      )}
 
       <BottomSheet 
         isOpen={isFormOpen} 
         onClose={() => {
           setIsFormOpen(false);
         }} 
-        title="Viết nhật ký hành trình"
+        title="Đăng bài viết bản tin"
         footer={
           <div className="flex gap-3 w-full">
             <button
@@ -1467,7 +1556,7 @@ export function SharedJournalsSection({
               className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white px-6 font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
             >
               <Save className="h-4.5 w-4.5" strokeWidth={2.5} />
-              Lưu nhật ký
+              Đăng bài viết
             </button>
           </div>
         }
@@ -1494,7 +1583,7 @@ export function SharedJournalsSection({
               label={
                 <span className="flex items-center gap-1.5">
                   <Type className="h-4 w-4 text-slate-500" />
-                  Tiêu đề nhật ký *
+                  Tiêu đề bài viết *
                 </span>
               } 
               value={form.title} 
@@ -1620,8 +1709,8 @@ export function SharedJournalsSection({
           await executeDelete(deleteTargetId);
           setDeleteTargetId(null);
         }}
-        title="Đề xuất xóa nhật ký?"
-        description="Bạn đang gửi đề xuất xóa nhật ký này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
+        title="Đề xuất xóa bài viết?"
+        description="Bạn đang gửi đề xuất xóa bài viết này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
         confirmLabel="Đề xuất xóa"
         itemName={deleteTargetId?.title}
       />
@@ -1647,6 +1736,17 @@ export function SharedBackupPlansSection({
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [deleteTargetId, setDeleteTargetId] = React.useState<BackupPlan | null>(null);
   const [activeMenuId, setActiveMenuId] = React.useState<string | null>(null);
+  const [menuPos, setMenuPos] = React.useState<{ top: number; right: number } | null>(null);
+
+  React.useEffect(() => {
+    if (!activeMenuId) return;
+    const handleScroll = () => {
+      setActiveMenuId(null);
+      setMenuPos(null);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [activeMenuId]);
   const [showValidationError, setShowValidationError] = React.useState(false);
   const [form, setForm] = React.useState({
     title: '',
@@ -1820,19 +1920,7 @@ export function SharedBackupPlansSection({
       </div>
       <div className="space-y-4">
         {mergedBackupPlans.length === 0 && (
-          <div className="rounded-xl border border-dashed border-slate-200 bg-[#FFFDF8] p-5 text-center">
-            <p className="text-[14px] font-bold text-slate-600">Chưa có phương án dự phòng.</p>
-            {isRequestEdit && (
-              <button
-                type="button"
-                onClick={startAdd}
-                className="mt-3 inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#030D2E] px-4 text-[13.5px] font-extrabold text-white shadow-sm transition-all hover:bg-[#030D2E]/90 active:scale-95"
-              >
-                <Plus className="h-4 w-4" />
-                Gửi đề xuất đầu tiên
-              </button>
-            )}
-          </div>
+          <p className="text-center text-slate-400 text-sm font-medium py-4">Chưa có phương án dự phòng.</p>
         )}
         {mergedBackupPlans.map(b => {
           const isPending = b.isPendingCreate || b.isPendingUpdate || b.isPendingDelete;
@@ -1873,54 +1961,25 @@ export function SharedBackupPlansSection({
                 )}
               </div>
               {isRequestEdit && !isPending && (
-                <div className="relative shrink-0 ml-2">
+                <div className="shrink-0 ml-2">
                   <button
                     type="button"
                     onClick={(ev) => {
                       ev.stopPropagation();
-                      setActiveMenuId(activeMenuId === itemId ? null : itemId);
+                      const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
+                      if (activeMenuId === itemId) {
+                        setActiveMenuId(null);
+                        setMenuPos(null);
+                      } else {
+                        setActiveMenuId(itemId);
+                        setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+                      }
                     }}
                     className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-white active:scale-90 transition-all focus:outline-none"
                     title="Tùy chọn đề xuất"
                   >
                     <MoreVertical className="h-4.5 w-4.5" />
                   </button>
-
-                  {activeMenuId === itemId && (
-                    <>
-                      <div
-                        className="fixed inset-0 z-[35]"
-                        onClick={(ev) => {
-                          ev.stopPropagation();
-                          setActiveMenuId(null);
-                        }}
-                      />
-                      <div className="absolute right-0 top-full mt-1 z-40 w-36 rounded-xl bg-white border border-slate-200/80 shadow-floating py-1.5 animate-fadeIn">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setActiveMenuId(null);
-                            startEdit(b);
-                          }}
-                          className="flex w-full items-center gap-2 px-4 py-2.5 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
-                        >
-                          <Pencil className="h-4 w-4" />
-                          Đề xuất sửa
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setActiveMenuId(null);
-                            handleDelete(b);
-                          }}
-                          className="flex w-full items-center gap-2 px-4 py-2.5 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          Đề xuất xóa
-                        </button>
-                      </div>
-                    </>
-                  )}
                 </div>
               )}
             </div>
@@ -1955,7 +2014,53 @@ export function SharedBackupPlansSection({
           );
         })}
       </div>
-      {isRequestEdit && mergedBackupPlans.length > 0 && (
+
+      {activeMenuId && menuPos && createPortal(
+        <>
+          <div 
+            className="fixed inset-0 z-[998]" 
+            onClick={() => {
+              setActiveMenuId(null);
+              setMenuPos(null);
+            }}
+          />
+          <div 
+            className="fixed z-[999] w-36 rounded-xl bg-white border border-slate-200 shadow-lg py-1.5 animate-fadeIn"
+            style={{ top: menuPos.top, right: menuPos.right }}
+          >
+            <button
+              type="button"
+              onClick={() => {
+                const id = activeMenuId;
+                setActiveMenuId(null);
+                setMenuPos(null);
+                const item = backupPlans.find(x => String(x.id) === id || ("pending-create-" + x.id) === id || ("pending-update-" + x.id) === id);
+                if (item) startEdit(item);
+              }}
+              className="flex w-full items-center gap-2 px-4 py-2.5 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+            >
+              <Pencil className="h-4 w-4" />
+              Đề xuất sửa
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const id = activeMenuId;
+                setActiveMenuId(null);
+                setMenuPos(null);
+                const item = backupPlans.find(x => String(x.id) === id || ("pending-create-" + x.id) === id || ("pending-update-" + x.id) === id);
+                if (item) handleDelete(item);
+              }}
+              className="flex w-full items-center gap-2 px-4 py-2.5 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+            >
+              <Trash2 className="h-4 w-4" />
+              Đề xuất xóa
+            </button>
+          </div>
+        </>,
+        document.body
+      )}
+      {isRequestEdit && (
         <button 
           onClick={startAdd} 
           className="mt-3 flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-[#FFFDF8] hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100 sm:hidden"
@@ -2296,6 +2401,16 @@ export function SharedMembersSection({
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
 
+  useEffect(() => {
+    if (!activeMenuId) return;
+    const handleScroll = () => {
+      setActiveMenuId(null);
+      setMenuPos(null);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [activeMenuId]);
+
   const [form, setForm] = useState({
     name: '',
     role: 'Người đồng hành',
@@ -2387,7 +2502,7 @@ export function SharedMembersSection({
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-blue-500" />
-          <h3 className="text-[16px] font-black text-[#030D2E]">Người đồng hành</h3>
+          <h3 className="text-[16px] font-black text-[#030D2E]">Thành viên</h3>
         </div>
       </div>
       
@@ -2461,7 +2576,7 @@ export function SharedMembersSection({
       </div>
 
       {/* Fixed-position dropdown — renders above everything */}
-      {activeMenuId && menuPos && (
+      {activeMenuId && menuPos && createPortal(
         <>
           <div
             className="fixed inset-0 z-[998]"
@@ -2483,27 +2598,28 @@ export function SharedMembersSection({
               Đề xuất xóa
             </button>
           </div>
-        </>
+        </>,
+        document.body
       )}
 
       {isRequestEdit && (
         <button 
           onClick={handleAdd} 
           className="flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-[#FFFDF8] hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
-          title="Đề xuất thêm người đồng hành"
+          title="Đề xuất thêm thành viên"
         >
-          <Plus className="h-4.5 w-4.5" /> Đề xuất thêm người đồng hành
+          <Plus className="h-4.5 w-4.5" /> Đề xuất thêm thành viên
         </button>
       )}
 
       <BottomSheet
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
-        title="Đề xuất thêm người đồng hành"
+        title="Đề xuất thêm thành viên"
       >
         <div className="flex flex-col gap-5 py-2">
           <Input 
-            label="Tên người đồng hành *" 
+            label="Tên thành viên *" 
             value={form.name} 
             onChange={(name) => {
               setForm({ ...form, name });
@@ -2512,7 +2628,7 @@ export function SharedMembersSection({
             placeholder="VD: Nguyễn Văn A" 
           />
           {showValidationError && (
-            <p className="text-rose-500 text-[12.5px] font-bold -mt-3 pl-1">Vui lòng nhập tên người đồng hành.</p>
+            <p className="text-rose-500 text-[12.5px] font-bold -mt-3 pl-1">Vui lòng nhập tên thành viên.</p>
           )}
 
           <div className="space-y-2">
@@ -2558,7 +2674,7 @@ export function SharedMembersSection({
           await executeDelete(deleteTargetId);
           setDeleteTargetId(null);
         }}
-        title="Đề xuất xóa người đồng hành?"
+        title="Đề xuất xóa thành viên?"
         description="Bạn đang gửi đề xuất xóa thành viên này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất."
         confirmLabel="Đề xuất xóa"
         itemName={members.find(m => String(m.id) === deleteTargetId)?.name}

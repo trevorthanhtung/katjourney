@@ -20,7 +20,7 @@ export function ConfirmDeleteTripDialog({
       onClose={onClose}
       onConfirm={onConfirm}
       title="Xóa vĩnh viễn chuyến đi này?"
-      description="Hành động này sẽ xóa vĩnh viễn toàn bộ dữ liệu của chuyến đi, bao gồm thành viên, lịch trình, chi phí, chuẩn bị, nhật ký, giấy tờ và phương án dự phòng khỏi thiết bị này. Bạn không thể hoàn tác."
+      description="Hành động này sẽ xóa vĩnh viễn toàn bộ dữ liệu của chuyến đi, bao gồm thành viên, lịch trình, chi phí, chuẩn bị, bản tin hành trình, giấy tờ và phương án dự phòng khỏi thiết bị này. Bạn không thể hoàn tác."
       warning={
         <span className="font-bold">
           Để xác nhận, vui lòng nhập chính xác chữ XÓA.

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Route, 
   Clock, 
@@ -55,6 +56,16 @@ export function SharedActivitiesSection({
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
+
+  useEffect(() => {
+    if (!activeMenuId) return;
+    const handleScroll = () => {
+      setActiveMenuId(null);
+      setMenuPos(null);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [activeMenuId]);
   const [form, setForm] = useState({ 
     title: '', 
     date: '', 
@@ -377,7 +388,7 @@ export function SharedActivitiesSection({
       )}
 
       {/* Fixed-position dropdown — renders above everything */}
-      {activeMenuId && menuPos && (
+      {activeMenuId && menuPos && createPortal(
         <>
           <div
             className="fixed inset-0 z-[998]"
@@ -410,7 +421,8 @@ export function SharedActivitiesSection({
               Đề xuất xóa
             </button>
           </div>
-        </>
+        </>,
+        document.body
       )}
 
       <BottomSheet

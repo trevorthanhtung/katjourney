@@ -34,7 +34,7 @@ export function FactoryResetModal({ isOpen, onClose }: FactoryResetModalProps) {
           </p>
           <ul className="list-disc pl-5 space-y-1 text-slate-650 text-[13px]">
             <li>Toàn bộ chuyến đi và lịch trình</li>
-            <li>Tất cả chi phí và nhật ký hành trình</li>
+            <li>Tất cả chi phí và bản tin hành trình</li>
             <li>Dữ liệu gói đồ và checklist</li>
             <li>Thông tin tài khoản khách hiện tại</li>
           </ul>

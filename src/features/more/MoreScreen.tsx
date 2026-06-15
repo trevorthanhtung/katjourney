@@ -66,7 +66,8 @@ import {
   Info,
   Palette,
   Languages,
-  Package
+  Package,
+  MessageCircle
 } from "lucide-react";
 
 function ShareSwitch({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) {
@@ -113,6 +114,7 @@ import { exportTripExcel, exportTripPdf } from "../../utils/exports";
 import { BottomSheet, FormActions, Input, ScreenTitle, TypedDeleteConfirmModal, classNames } from "../../components/ui";
 import { JournalSection } from "../journal/JournalSection";
 import { TravelDocumentsSection } from "./TravelDocumentsSection";
+import { ChatBox } from "../share/components/ChatBox";
 import { searchLocation, GeocodingResult } from "../../services/weatherService";
 import { useModalHistory } from "../../hooks/useModalHistory";
 
@@ -628,7 +630,7 @@ function MemberForm({
     }
   }, [editing, isOpen]);
 
-  const nameError = !name.trim() ? "Vui lòng nhập tên người đồng hành." : "";
+  const nameError = !name.trim() ? "Vui lòng nhập tên thành viên." : "";
   
   const phoneClean = phone.trim();
   const isPhoneInvalid = phoneClean !== "" && !/^(0[3|5|7|8|9])[0-9]{8}$/.test(phoneClean);
@@ -669,14 +671,14 @@ function MemberForm({
 
     if (editing?.id) {
       await db.members.update(editing.id, payload);
-      onShowToast?.("Đã cập nhật người đồng hành");
+      onShowToast?.("Đã cập nhật thành viên");
       onClose();
     } else {
       await db.members.add({
         ...payload,
         createdAt: new Date().toISOString()
       });
-      onShowToast?.("Đã thêm người đồng hành");
+      onShowToast?.("Đã thêm thành viên");
       onClose();
     }
   }
@@ -696,7 +698,7 @@ function MemberForm({
     <BottomSheet 
       isOpen={isOpen} 
       onClose={onClose} 
-      title={editing ? "Sửa người đồng hành" : "Thêm người đồng hành"}
+      title={editing ? "Sửa thành viên" : "Thêm thành viên"}
       footer={
         <div className="flex gap-3 w-full">
           <button
@@ -717,7 +719,7 @@ function MemberForm({
             ) : (
               <UserPlus className="h-4.5 w-4.5" strokeWidth={2.5} />
             )}
-            {editing ? "Lưu thông tin" : "Thêm người đồng hành"}
+            {editing ? "Lưu thông tin" : "Thêm thành viên"}
           </button>
         </div>
       }
@@ -728,7 +730,7 @@ function MemberForm({
             label={
               <span className="flex items-center gap-1.5">
                 <UserRound className="h-4 w-4 text-slate-500" />
-                Tên người đồng hành *
+                Tên thành viên *
               </span>
             } 
             value={name} 
@@ -875,19 +877,19 @@ function DeleteMemberConfirmModal({
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={onConfirm}
-      title="Xóa người đồng hành này?"
+      title="Xóa thành viên này?"
       itemName={memberName}
       warning={
         hasExpenses || hasChecklist
-          ? "Người đồng hành này đang liên quan đến chi phí hoặc checklist. Hãy kiểm tra trước khi xóa."
+          ? "Thành viên này đang liên quan đến chi phí hoặc checklist. Hãy kiểm tra trước khi xóa."
           : undefined
       }
       description={
         <>
-          Người đồng hành <span className="font-extrabold text-[#030D2E]">{memberName}</span> sẽ không còn xuất hiện trong danh sách chuyến đi. Các dữ liệu liên quan như chi phí hoặc phân công có thể cần được kiểm tra lại.
+          Thành viên <span className="font-extrabold text-[#030D2E]">{memberName}</span> sẽ không còn xuất hiện trong danh sách chuyến đi. Các dữ liệu liên quan như chi phí hoặc phân công có thể cần được kiểm tra lại.
         </>
       }
-      confirmLabel="Xóa người đồng hành"
+      confirmLabel="Xóa thành viên"
     />
   );
 }
@@ -915,7 +917,7 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
         {/* QR Code Card */}
         <div className="w-[85%] max-w-[280px] p-4 bg-[#FFFDF8] border border-[#E8E1D8] rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
           <img 
-            src="/donates.webp" 
+            src="/donates.png" 
             alt="Donate QR Code" 
             className="w-full h-auto rounded-[16px] object-contain aspect-square" 
             onError={(e) => {
@@ -929,8 +931,8 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
 
         {/* Save QR action */}
         <a 
-          href="/donates.webp" 
-          download="kat-journey-donate-qr.webp"
+          href="/donates.png" 
+          download="kat-journey-donate-qr.png"
           className="text-[13px] font-bold text-[#00BFB7] hover:underline flex items-center gap-1 active:scale-95 transition-all"
         >
           Lưu mã QR về máy
@@ -1105,7 +1107,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.journalCount}</span>
-            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Trang nhật ký</span>
+            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Bài viết</span>
           </div>
         </div>
       </div>
@@ -1173,14 +1175,14 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           <p className="mt-2 text-[26px] md:text-[30px] font-black text-[#030D2E]">{mood}</p>
         ) : (
           <div className="flex flex-col items-center mt-2">
-            <p className="text-[16px] font-extrabold text-[#030D2E] mb-1.5">Chưa có đủ nhật ký để tổng kết cảm xúc chuyến đi.</p>
-            <p className="text-[14px] font-semibold text-slate-500 mb-5 max-w-sm">Viết thêm nhật ký để lưu lại cảm xúc và khoảnh khắc đáng nhớ.</p>
+            <p className="text-[16px] font-extrabold text-[#030D2E] mb-1.5">Chưa có đủ bài viết để tổng kết cảm xúc chuyến đi.</p>
+            <p className="text-[14px] font-semibold text-slate-500 mb-5 max-w-sm">Đăng thêm bản tin để lưu lại cảm xúc và khoảnh khắc đáng nhớ.</p>
             <button 
               onClick={() => setSection("journal")}
               className="flex items-center justify-center gap-2 rounded-2xl bg-[#030D2E] px-5 py-2.5 text-[14px] font-extrabold text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm"
             >
               <BookOpenText className="h-4.5 w-4.5 text-blue-500" />
-              Ghi nhật ký đầu tiên
+              Đăng bài viết đầu tiên
             </button>
           </div>
         )}
@@ -1195,7 +1197,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">DẤU ẤN ĐẦU TIÊN</h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
-            {firstMomentText || "Chưa có dấu ấn đầu tiên. Hãy thêm mục lịch trình hoặc ghi nhật ký để lưu lại khoảnh khắc mở đầu."}
+            {firstMomentText || "Chưa có dấu ấn đầu tiên. Hãy thêm mục lịch trình hoặc đăng bài viết để lưu lại khoảnh khắc mở đầu."}
           </p>
         </div>
 
@@ -1641,7 +1643,7 @@ export function MoreScreen({
   async function executeDeleteMember() {
     if (!memberToDelete?.id) return;
     await db.members.delete(memberToDelete.id);
-    onShowToast?.("Đã xóa người đồng hành");
+    onShowToast?.("Đã xóa thành viên");
     setIsDeleteMemberConfirmOpen(false);
     setMemberToDelete(null);
   }
@@ -1704,7 +1706,30 @@ export function MoreScreen({
     }
   };
 
-  if (section === "journal") return <JournalSection tripId={trip.id!} journals={journals} onShowToast={onShowToast} onBack={() => setSection("overview")} isReadOnly={isReadOnly} />;
+  if (section === "journal") {
+    return (
+      <JournalSection 
+        tripId={trip.id!} 
+        journals={journals} 
+        onShowToast={onShowToast} 
+        onBack={() => setSection("overview")} 
+        isReadOnly={isReadOnly} 
+        renderChatBox={trip.shareToken ? () => (
+          <ChatBox 
+            token={trip.shareToken!} 
+            currentUser={{ 
+              name: members?.find(m => m.role === "Trưởng nhóm" || m.role === "Leader")?.name || members?.[0]?.name || "Trưởng nhóm", 
+              role: "Trưởng nhóm",
+              isGuest: false, 
+              canEdit: true 
+            }} 
+            inline={true}
+            isReadOnly={isReadOnly}
+          />
+        ) : undefined}
+      />
+    );
+  }
   if (section === "wrapped") return <WrappedSection data={tripData} setSection={setSection} />;
   if (section === "documents") return <TravelDocumentsSection tripId={trip.id!} onBack={() => setSection("overview")} onShowToast={onShowToast} isReadOnly={isReadOnly} />;
   
@@ -1725,7 +1750,7 @@ export function MoreScreen({
               <ArrowLeft className="h-5 w-5" />
             </button>
             <div>
-              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-[#030D2E]">Người đồng hành</h2>
+              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-[#030D2E]">Thành viên</h2>
               <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Quản lý những người cùng tham gia và chia sẻ hành trình.</p>
             </div>
           </div>
@@ -1735,7 +1760,7 @@ export function MoreScreen({
               onClick={openNewMember}
             >
               <UserPlus className="w-4.5 h-4.5" strokeWidth={2.5} />
-              Thêm người đồng hành
+              Thêm thành viên
             </button>
           )}
         </div>
@@ -1746,7 +1771,7 @@ export function MoreScreen({
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                 <div className="flex flex-col">
-                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Người đồng hành</span>
+                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Thành viên</span>
                   <span className="text-[18px] md:text-[20px] font-black text-[#030D2E] mt-1">{members.length} người</span>
                 </div>
                 <div className="flex flex-col">
@@ -1772,14 +1797,14 @@ export function MoreScreen({
               {members.length < 2 && (
                 <div className="pt-3 border-t border-slate-100 flex items-start gap-2.5 text-[13px] font-semibold text-slate-500">
                   <UsersRound className="h-4.5 w-4.5 text-[#00BFB7] shrink-0" />
-                  <p>Thêm người đồng hành để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ ràng hơn.</p>
+                  <p>Thêm thành viên để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ ràng hơn.</p>
                 </div>
               )}
             </div>
           ) : (
             <div className="flex items-start gap-2.5 py-1 text-[14px] md:text-[15px] font-semibold text-slate-500 leading-relaxed">
               <UsersRound className="h-5 w-5 text-[#00BFB7] shrink-0 mt-0.5" />
-              <span>Thêm người đồng hành để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ ràng hơn.</span>
+              <span>Thêm thành viên để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ ràng hơn.</span>
             </div>
           )}
         </div>
@@ -1787,7 +1812,7 @@ export function MoreScreen({
         {/* Member List Section */}
         <section className="space-y-4">
           <div className="flex items-center justify-between px-1">
-            <h3 className="text-[17px] font-extrabold text-[#030D2E]">Danh sách người đồng hành {members.length > 0 && `(${members.length})`}</h3>
+            <h3 className="text-[17px] font-extrabold text-[#030D2E]">Danh sách thành viên {members.length > 0 && `(${members.length})`}</h3>
           </div>
           
           {members.length ? (
@@ -1813,9 +1838,9 @@ export function MoreScreen({
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
                 <UsersRound className="h-6 w-6" />
               </div>
-              <h3 className="text-[16px] font-bold text-[#030D2E]">Chưa có người đồng hành nào</h3>
+              <h3 className="text-[16px] font-bold text-[#030D2E]">Chưa có thành viên nào</h3>
               <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
-                Thêm người đồng hành để cùng chia chi phí, chuẩn bị hành lý và lưu lại vai trò trong chuyến đi.
+                Thêm thành viên để cùng chia chi phí, chuẩn bị hành lý và lưu lại vai trò trong chuyến đi.
               </p>
             </div>
           )}
@@ -1972,7 +1997,7 @@ export function MoreScreen({
         <div>
           <h2 className="text-[32px] font-extrabold tracking-tight text-[#030D2E]">Không gian chuyến đi</h2>
           <p className="mt-1 text-[15px] font-medium text-slate-500">
-            Tùy chỉnh thông tin, người đồng hành và dữ liệu cho hành trình của bạn.
+            Tùy chỉnh thông tin, thành viên và dữ liệu cho hành trình của bạn.
           </p>
         </div>
 
@@ -2009,7 +2034,7 @@ export function MoreScreen({
             <div className="flex flex-wrap gap-2 pt-2.5 border-t border-slate-200/60 mt-1">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-kat-primary-soft border border-kat-primary/20 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable">
                 <UsersRound className="h-3.5 w-3.5" />
-                {members.length} người đồng hành
+                {members.length} thành viên
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0081BE]/8 border border-[#0081BE]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#0081BE]">
                 <Route className="h-3.5 w-3.5" />
@@ -2041,7 +2066,7 @@ export function MoreScreen({
             />
             <ActionCard
               icon={UsersRound}
-              title="Người đồng hành"
+              title="Thành viên"
               onClick={() => setSection("members")}
               iconBgColor="bg-amber-50"
               iconTextColor="text-amber-600 border-amber-100"
@@ -2055,7 +2080,7 @@ export function MoreScreen({
             />
             <ActionCard
               icon={BookOpenText}
-              title="Nhật ký hành trình"
+              title="Bản tin hành trình"
               onClick={() => setSection("journal")}
               iconBgColor="bg-emerald-50"
               iconTextColor="text-emerald-600 border-emerald-100"
@@ -2071,7 +2096,6 @@ export function MoreScreen({
               icon={Share2}
               title="Chia sẻ chuyến đi"
               onClick={handleShareTrip}
-              disabled={isReadOnly}
               iconBgColor="bg-violet-50"
               iconTextColor="text-violet-600 border-violet-100"
             />
@@ -2235,7 +2259,7 @@ export function MoreScreen({
           await factoryReset();
         }}
         title="Khôi phục cài đặt gốc?"
-        description="Hành động này sẽ xóa toàn bộ dữ liệu KAT Journey trên thiết bị hiện tại, bao gồm chuyến đi, lịch trình, chi phí, nhật ký và dữ liệu liên quan. Không thể hoàn tác."
+        description="Hành động này sẽ xóa toàn bộ dữ liệu KAT Journey trên thiết bị hiện tại, bao gồm chuyến đi, lịch trình, chi phí, bản tin hành trình và dữ liệu liên quan. Không thể hoàn tác."
         confirmLabel="Xóa toàn bộ dữ liệu"
       />
 
@@ -2269,7 +2293,7 @@ export function MoreScreen({
                   />
                 </div>
 
-                {/* Row: Bao gồm nhật ký */}
+                {/* Row: Bao gồm bản tin */}
                 <div 
                   onClick={() => setShareOptions({ ...shareOptions, includeJournals: !shareOptions.includeJournals })}
                   className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-150/60 rounded-2xl cursor-pointer transition-all"
@@ -2278,7 +2302,7 @@ export function MoreScreen({
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-50 text-violet-500">
                       <BookOpenText className="h-4.5 w-4.5" />
                     </span>
-                    <span className="text-[14.5px] font-bold text-slate-700">Bao gồm nhật ký</span>
+                    <span className="text-[14.5px] font-bold text-slate-700">Bao gồm bản tin</span>
                   </div>
                   <ShareSwitch 
                     checked={shareOptions.includeJournals} 
@@ -2549,7 +2573,7 @@ export function MoreScreen({
         <div className="space-y-5">
           <div className="rounded-[20px] bg-emerald-50/80 border border-emerald-100 p-5 text-[14px] text-emerald-800 font-medium leading-relaxed relative overflow-hidden">
             <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 rounded-l-[20px]" />
-            Chuyến đi sẽ được <b className="text-emerald-700">mở khóa trở lại</b>. Bạn có thể tiếp tục lên lịch trình, ghi chép nhật ký và quản lý chi phí như bình thường.
+            Chuyến đi sẽ được <b className="text-emerald-700">mở khóa trở lại</b>. Bạn có thể tiếp tục lên lịch trình, đăng bài viết bản tin và quản lý chi phí như bình thường.
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">

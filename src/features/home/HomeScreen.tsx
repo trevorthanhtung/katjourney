@@ -37,6 +37,7 @@ import { useWeather } from "../../hooks/useWeather";
 import { useModalHistory } from "../../hooks/useModalHistory";
 import { getWeatherIcon, getWeatherGradient, getWeatherText } from "../../services/weatherService";
 import { WeatherDetailsModal } from "../timeline/WeatherDetailsModal";
+import { getAvatarSvg } from "../../utils/avatars";
 
 function QuickAction({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
   return (
@@ -117,7 +118,7 @@ export function HomeScreen({
   // Reusable helper to render visual Avatar Group + concise description for companions
   const renderCompanions = () => {
     if (members.length === 0) {
-      return <span className="font-semibold text-slate-400">Chưa có người đồng hành</span>;
+      return <span className="font-semibold text-slate-400">Chưa có thành viên</span>;
     }
     
     // First member's first name
@@ -150,10 +151,16 @@ export function HomeScreen({
             return (
               <div 
                 key={member.id || i} 
-                className={`inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-white text-[12px] font-bold ${colorClass}`}
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-white overflow-hidden bg-slate-50 shadow-sm"
                 title={member.name}
               >
-                {initials}
+                {member.avatar ? (
+                  getAvatarSvg(member.avatar, "w-full h-full")
+                ) : (
+                  <div className={`flex h-full w-full items-center justify-center text-[12px] font-bold ${colorClass}`}>
+                    {initials}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -342,22 +349,22 @@ export function HomeScreen({
               </div>
             </div>
 
-            {/* Nhật ký card */}
+            {/* Bản tin card */}
             <div className="rounded-3xl bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] motion-card-enter motion-delay-2 flex items-start gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-600 border border-violet-200/40">
                 <BookOpen className="h-6 w-6" />
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-base font-extrabold text-[#030D2E]">Nhật ký chuyến đi</h4>
+                <h4 className="text-base font-extrabold text-[#030D2E]">Bản tin chuyến đi</h4>
                 <p className="text-[13px] font-semibold text-slate-500 mt-1 leading-relaxed">
-                  {journals.length > 0 ? `${journals.length} trang nhật ký đã được lưu.` : "Chưa có trang nhật ký nào được ghi lại."}
+                  {journals.length > 0 ? `${journals.length} bài viết bản tin đã được chia sẻ.` : "Chưa có bài viết bản tin nào được chia sẻ."}
                 </p>
                 {!isReadOnly && (
                     <button
                       onClick={() => onNavigateMore("journal")}
                       className="mt-3.5 flex items-center justify-center rounded-xl bg-violet-600 hover:bg-violet-600/90 text-white px-4 py-2 text-[12.5px] font-black transition-all duration-200 motion-press shadow-sm"
                     >
-                      <span>Viết nhật ký</span>
+                      <span>Đăng bản tin</span>
                     </button>
                 )}
               </div>
@@ -403,7 +410,7 @@ export function HomeScreen({
                   <Users className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">Người đồng hành</p>
+                  <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
                   <div className="mt-1.5">
                     {renderCompanions()}
                   </div>
@@ -582,7 +589,7 @@ export function HomeScreen({
                     <Users className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Người đồng hành</p>
+                    <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
                     <div className="mt-1.5">
                       {renderCompanions()}
                     </div>
@@ -876,7 +883,7 @@ export function HomeScreen({
                     <Users className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Người đồng hành</p>
+                    <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
                     <div className="mt-1.5">
                       {renderCompanions()}
                     </div>
