@@ -320,7 +320,17 @@ export default function SharedTripScreen({ token }: { token: string }) {
             ) : (
               <div className="space-y-3 flex-1 min-h-0 flex flex-col">
                 <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-2xl bg-slate-50/50 custom-scrollbar">
-                  {members.map((m: Member) => (
+                  {members
+                    .filter((m: Member) => {
+                      const roleLower = (m.role || "").trim().toLowerCase();
+                      return !(
+                        roleLower === "trưởng nhóm" ||
+                        roleLower === "trưởng đoàn" ||
+                        roleLower === "người đại diện" ||
+                        roleLower === "leader"
+                      );
+                    })
+                    .map((m: Member) => (
                     <button
                       key={m.id}
                       onClick={() => {
