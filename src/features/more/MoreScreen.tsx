@@ -66,7 +66,8 @@ import {
   Palette,
   Languages,
   Package,
-  MessageCircle
+  MessageCircle,
+  Globe
 } from "lucide-react";
 
 function ShareSwitch({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) {
@@ -2218,7 +2219,7 @@ export function MoreScreen({
               iconTextColor="text-indigo-600 border-indigo-100"
             />
             <ActionCard
-              icon={BookOpenText}
+              icon={Globe}
               title="Bản tin hành trình"
               onClick={() => setSection("journal")}
               iconBgColor="bg-emerald-50"
