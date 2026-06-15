@@ -1575,6 +1575,27 @@ export function MoreScreen({
 
   const tripData = { trip, members, events, expenses, checklist, journals, packingItems, travelDocuments };
 
+  const sortedMembers = React.useMemo(() => {
+    const list = [...members];
+    const isLeader = (m: Member) => {
+      const roleLower = (m.role || "").trim().toLowerCase();
+      return (
+        roleLower === "trưởng nhóm" ||
+        roleLower === "trưởng đoàn" ||
+        roleLower === "người đại diện" ||
+        roleLower === "leader"
+      );
+    };
+    list.sort((a, b) => {
+      const aLeader = isLeader(a);
+      const bLeader = isLeader(b);
+      if (aLeader && !bLeader) return -1;
+      if (!aLeader && bLeader) return 1;
+      return 0;
+    });
+    return list;
+  }, [members]);
+
   async function handleShareTrip() {
     if (!firebaseEnabled) {
       showToast("Chưa cấu hình Firebase. Vui lòng kiểm tra môi trường (env).", "error");
@@ -1733,26 +1754,7 @@ export function MoreScreen({
   if (section === "documents") return <TravelDocumentsSection tripId={trip.id!} onBack={() => setSection("overview")} onShowToast={onShowToast} isReadOnly={isReadOnly} />;
   
   if (section === "members") {
-    const sortedMembers = React.useMemo(() => {
-      const list = [...members];
-      const isLeader = (m: Member) => {
-        const roleLower = (m.role || "").trim().toLowerCase();
-        return (
-          roleLower === "trưởng nhóm" ||
-          roleLower === "trưởng đoàn" ||
-          roleLower === "người đại diện" ||
-          roleLower === "leader"
-        );
-      };
-      list.sort((a, b) => {
-        const aLeader = isLeader(a);
-        const bLeader = isLeader(b);
-        if (aLeader && !bLeader) return -1;
-        if (!aLeader && bLeader) return 1;
-        return 0;
-      });
-      return list;
-    }, [members]);
+
 
     const membersWithTasks = members.filter(m => checklist.some(c => c.assignedTo === m.name)).length;
     const membersWithExpenses = members.filter(m => expenses.some(e => e.payer === m.name)).length;
