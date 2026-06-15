@@ -1186,9 +1186,9 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                             setRoadmapEditDay(selectedRoadmapDay);
                             setIsRoadmapFormOpen(true);
                           }}
-                          className="text-indigo-600 hover:text-indigo-700 font-bold flex items-center gap-1 cursor-pointer"
+                          className="text-[#00BFB7] hover:opacity-85 font-bold flex items-center gap-1 cursor-pointer"
                         >
-                          <Edit3 className="w-3.5 h-3.5" />
+                          {mapUrl && <Edit3 className="w-3.5 h-3.5" />}
                           {mapUrl ? "Sửa" : "Thêm"}
                         </button>
                       )}
