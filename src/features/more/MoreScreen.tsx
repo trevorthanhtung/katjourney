@@ -1520,7 +1520,6 @@ export function MoreScreen({
   const [editingTrip, setEditingTrip] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [isMemberFormOpen, setIsMemberFormOpen] = useState(false);
-  const [importing, setImporting] = useState(false);
   const [isDataSectionOpen, setIsDataSectionOpen] = useState(false);
   const [isDonateOpen, setIsDonateOpen] = useState(false);
 
@@ -1528,8 +1527,6 @@ export function MoreScreen({
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [isArchiveConfirmOpen, setIsArchiveConfirmOpen] = useState(false);
   const [isUnarchiveConfirmOpen, setIsUnarchiveConfirmOpen] = useState(false);
-  const [isRestoreConfirmOpen, setIsRestoreConfirmOpen] = useState(false);
-  const [selectedFileForRestore, setSelectedFileForRestore] = useState<File | null>(null);
   const [isFactoryResetConfirmOpen, setIsFactoryResetConfirmOpen] = useState(false);
 
   // Delete Member Confirm Dialog states
@@ -1552,7 +1549,6 @@ export function MoreScreen({
   useModalHistory(isDeleteConfirmOpen, () => setIsDeleteConfirmOpen(false), "delete-trip-confirm");
   useModalHistory(isArchiveConfirmOpen, () => setIsArchiveConfirmOpen(false), "archive-trip-confirm");
   useModalHistory(isUnarchiveConfirmOpen, () => setIsUnarchiveConfirmOpen(false), "unarchive-trip-confirm");
-  useModalHistory(isRestoreConfirmOpen, () => setIsRestoreConfirmOpen(false), "restore-confirm");
   useModalHistory(isFactoryResetConfirmOpen, () => setIsFactoryResetConfirmOpen(false), "factory-reset-confirm");
   useModalHistory(isDeleteMemberConfirmOpen, () => {
     setIsDeleteMemberConfirmOpen(false);
@@ -1668,107 +1664,7 @@ export function MoreScreen({
     }
   }
 
-  async function importTrip(file?: File) {
-    if (!file) return;
-    setImporting(true);
-    try {
-      const parsed = JSON.parse(await file.text()) as Partial<import("../../utils/helpers").TripExport>;
-      if (parsed.app !== "KAT Journey" || !parsed.trip?.title) {
-        throw new Error("Tệp không đúng định dạng KAT Journey.");
-      }
 
-      const newTripId = await db.transaction("rw", [db.trips, db.members, db.events, db.expenses, db.checklist, db.journals, db.packingItems, db.travelDocuments, db.backupPlans], async () => {
-        const importedTrip = parsed.trip!;
-        const id = await db.trips.add({
-          title: `${importedTrip.title} (import)`,
-          location: importedTrip.location ?? "",
-          startDate: importedTrip.startDate || today,
-          endDate: importedTrip.endDate || importedTrip.startDate || today,
-          createdAt: new Date().toISOString()
-        });
-
-        const importedMembers = (parsed.members ?? []).map((member) => ({
-            tripId: id,
-            name: member.name ?? "",
-            phone: member.phone ?? "",
-            role: member.role ?? ""
-          }));
-        const importedEvents = (parsed.events ?? []).map((event) => ({
-            tripId: id,
-            date: event.date || today,
-            time: event.time ?? "",
-            title: event.title ?? "",
-            location: event.location ?? "",
-            notes: event.notes ?? "",
-            mapLink: event.mapLink ?? "",
-            completed: Boolean(event.completed)
-          }));
-        const importedExpenses = (parsed.expenses ?? []).map((expense) => ({
-            tripId: id,
-            amount: Number(expense.amount || 0),
-            payer: expense.payer ?? "",
-            category: expense.category ?? "Khác",
-            description: expense.description ?? "",
-            splitType: expense.splitType ?? "shared"
-          }));
-        const importedChecklist = (parsed.checklist ?? []).map((item) => ({
-            tripId: id,
-            section: checklistSections.includes(item.section as import("../../db").ChecklistSection) ? (item.section as import("../../db").ChecklistSection) : "Before Trip",
-            title: item.title ?? "",
-            completed: Boolean(item.completed)
-          }));
-        const importedJournals = (parsed.journals ?? []).map((entry) => ({
-            tripId: id,
-            date: entry.date || today,
-            title: entry.title ?? "",
-            content: entry.content ?? "",
-            mood: (["very_bad", "bad", "okay", "good", "great"].includes(entry.mood as string)) ? (entry.mood as import("../../db").JournalMood) : "okay"
-          }));
-        const importedPackingItems = (parsed.packingItems ?? []).map((item) => ({
-            tripId: id,
-            tripType: packingTripTypes.includes(item.tripType as import("../../db").PackingTripType) ? (item.tripType as import("../../db").PackingTripType) : "Thành phố",
-            title: item.title ?? "",
-            completed: Boolean(item.completed)
-          }));
-        const importedDocuments = (parsed.travelDocuments ?? []).map((doc) => ({
-            tripId: id,
-            title: doc.title ?? "",
-            type: doc.type ?? "other",
-            code: doc.code ?? "",
-            date: doc.date ?? "",
-            link: doc.link ?? "",
-            note: doc.note ?? ""
-          }));
-        const importedBackupPlans = (parsed.backupPlans ?? []).map((plan) => ({
-            tripId: id,
-            title: plan.title ?? "",
-            type: plan.type ?? "other",
-            reason: plan.reason ?? "",
-            location: plan.location ?? "",
-            note: plan.note ?? "",
-            activityId: plan.activityId,
-            date: plan.date
-          }));
-
-        if (importedMembers.length) await db.members.bulkAdd(importedMembers);
-        if (importedEvents.length) await db.events.bulkAdd(importedEvents);
-        if (importedExpenses.length) await db.expenses.bulkAdd(importedExpenses);
-        if (importedChecklist.length) await db.checklist.bulkAdd(importedChecklist);
-        if (importedJournals.length) await db.journals.bulkAdd(importedJournals);
-        if (importedPackingItems.length) await db.packingItems.bulkAdd(importedPackingItems);
-        if (importedDocuments.length) await db.travelDocuments.bulkAdd(importedDocuments);
-        if (importedBackupPlans.length) await db.backupPlans.bulkAdd(importedBackupPlans);
-        return id;
-      });
-
-      onTripSelected(newTripId);
-      onShowToast?.("Đã nhập bản sao lưu thành công.");
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : "Không thể import tệp này.", "error");
-    } finally {
-      setImporting(false);
-    }
-  }
 
   async function factoryReset() {
     try {
@@ -2204,7 +2100,7 @@ export function MoreScreen({
               />
               
               {isDataSectionOpen && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pl-4 border-l border-slate-200 mt-1 animate-fadeIn">
+                <div className="flex flex-col gap-2 pl-4 border-l border-slate-200 mt-1 animate-fadeIn">
                   <ActionCard
                     icon={Download}
                     title="Sao lưu hành trình"
@@ -2213,30 +2109,6 @@ export function MoreScreen({
                     iconTextColor="text-sky-600 border-sky-100"
                   />
                   
-                  <label className="group flex w-full cursor-pointer items-center justify-between bg-[#FFFDF8] border border-[#E8E1D8] px-4 py-3 rounded-2xl min-h-[56px] text-left hover:bg-slate-50/60 transition-all focus-within:ring-2 focus-within:ring-[#00BFB7]/50 motion-press md:motion-hover-lift">
-                    <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                      <div className="flex shrink-0 h-10 w-10 items-center justify-center rounded-xl border bg-indigo-50 text-indigo-600 border-indigo-100">
-                        <ArchiveRestore className="h-5.5 w-5.5" strokeWidth={2.2} />
-                      </div>
-                      <span className="text-base font-medium text-[#030D2E] truncate leading-tight">
-                        {importing ? "Đang nhập..." : "Khôi phục hành trình"}
-                      </span>
-                    </div>
-                    <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-                    <input
-                      className="sr-only"
-                      type="file"
-                      accept=".kattrip,application/json"
-                      onChange={(event) => {
-                        const file = event.target.files?.[0];
-                        if (file) {
-                          setSelectedFileForRestore(file);
-                          setIsRestoreConfirmOpen(true);
-                        }
-                        event.target.value = "";
-                      }}
-                    />
-                  </label>
 
                   <ActionCard
                     icon={FileText}
@@ -2626,48 +2498,7 @@ export function MoreScreen({
         </div>
       </BottomSheet>
 
-      {/* Import Trip Confirmation Modal */}
-      <BottomSheet 
-        isOpen={isRestoreConfirmOpen} 
-        onClose={() => {
-          setIsRestoreConfirmOpen(false);
-          setSelectedFileForRestore(null);
-        }} 
-        title="Khôi phục hành trình?"
-      >
-        <div className="space-y-5">
-          <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-[13.5px] text-amber-800 font-semibold leading-relaxed">
-            Dữ liệu hiện tại có thể bị thay đổi sau khi nhập bản sao lưu. Vui lòng đảm bảo tệp của bạn là hợp lệ trước khi tiến hành.
-          </div>
 
-          <div className="pt-2 flex flex-col sm:flex-row gap-3">
-            <button
-              type="button"
-              onClick={() => {
-                setIsRestoreConfirmOpen(false);
-                setSelectedFileForRestore(null);
-              }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
-            >
-              Hủy
-            </button>
-             <button
-              type="button"
-              onClick={async () => {
-                setIsRestoreConfirmOpen(false);
-                if (selectedFileForRestore) {
-                  await importTrip(selectedFileForRestore);
-                }
-                setSelectedFileForRestore(null);
-              }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-[#030D2E] border border-[#030D2E] px-6 font-bold text-white hover:bg-[#030D2E]/90 active:scale-98 transition-all duration-200 shadow-sm"
-            >
-              <Upload className="h-5 w-5" />
-              Khôi phục
-            </button>
-          </div>
-        </div>
-      </BottomSheet>
 
 
 

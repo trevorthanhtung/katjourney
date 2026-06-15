@@ -24,6 +24,19 @@ const getSWRegistration = (timeoutMs = 4000): Promise<ServiceWorkerRegistration 
 export function useNotification() {
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [isSupported, setIsSupported] = useState(false);
+  const [enabled, setEnabledState] = useState(() => {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem('kat_notifications_enabled') !== 'false';
+    }
+    return true;
+  });
+
+  const setEnabled = (val: boolean) => {
+    setEnabledState(val);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('kat_notifications_enabled', val ? 'true' : 'false');
+    }
+  };
 
   useEffect(() => {
     const supported = getNotificationSupport();
@@ -59,6 +72,10 @@ export function useNotification() {
       showToast('Chưa có quyền gửi thông báo!', 'error');
       return;
     }
+    if (!enabled) {
+      showToast('Thông báo ứng dụng hiện đang tắt trong cài đặt!', 'error');
+      return;
+    }
 
     try {
       const registration = await getSWRegistration();
@@ -82,6 +99,8 @@ export function useNotification() {
     permission,
     requestPermission,
     sendTestNotification,
-    isSupported
+    isSupported,
+    enabled,
+    setEnabled
   };
 }

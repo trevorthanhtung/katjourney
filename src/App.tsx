@@ -756,7 +756,6 @@ function App() {
             <button
               onClick={async () => {
                 try {
-                  showToast("Đang tải dữ liệu từ Cloud...");
                   await syncProps.restoreNow("merge");
                   syncProps.setHasCloudVersion(false);
                   showToast("Đã cập nhật dữ liệu mới từ thiết bị khác.");
@@ -972,6 +971,7 @@ function App() {
           onClose={() => setIsAppInboxOpen(false)}
           token={activeToken}
           requests={pendingRequests}
+          members={members ?? []}
         />
       )}
 
@@ -992,6 +992,10 @@ function App() {
         onClose={() => setIsSettingsOpen(false)}
         initialView={settingsInitialView}
         syncProps={syncProps}
+        onTripSelected={(id) => {
+          setSelectedTripId(id);
+          setIsManagingTrips(false);
+        }}
       />
 
       <BottomSheet

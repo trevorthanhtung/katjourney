@@ -11,6 +11,7 @@ import { showToast } from '../../../components/ui/ToastManager';
 import { uploadJournalImage } from '../../../services/storageService';
 import { getIdentity } from '../../../services/identityService';
 import { BottomSheet, Input, Select, Textarea, DatePicker, DeleteConfirmModal } from '../../../components/ui';
+import { getAvatarSvg } from '../../../utils/avatars';
 
 const classNames = (...classes: any[]) => classes.filter(Boolean).join(' ');
 
@@ -402,7 +403,7 @@ export function SharedExpensesSection({
             label={
               <span className="flex items-center gap-1.5">
                 <ReceiptText className="h-4 w-4 text-slate-500" />
-                Khoản chi
+                Nội dung chi tiêu
               </span>
             } 
             value={form.description} 
@@ -1109,7 +1110,8 @@ export function SharedJournalsSection({
   mode, 
   journals, 
   changeRequests = [],
-  guestName
+  guestName,
+  members = []
 }: { 
   tripId: string | number;
   token: string; 
@@ -1117,6 +1119,7 @@ export function SharedJournalsSection({
   journals: JournalEntry[]; 
   changeRequests?: any[];
   guestName?: string;
+  members?: Member[];
 }) {
   const isRequestEdit = mode === 'request_edit';
   const [isFormOpen, setIsFormOpen] = React.useState(false);
@@ -1261,9 +1264,21 @@ export function SharedJournalsSection({
                       >
                         <div className="flex items-center justify-between gap-4 p-4 pb-3">
                           <div className="flex items-center gap-2.5">
-                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-700 font-black text-[15px]">
-                              {(j.authorName || "T").charAt(0).toUpperCase()}
-                            </div>
+                            {(() => {
+                              const authorMember = members.find(m => 
+                                (j.authorName || "").trim().toLowerCase() === m.name.trim().toLowerCase()
+                              );
+                              const avatar = authorMember?.avatar;
+                              return (
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full overflow-hidden bg-slate-200 text-slate-700 font-black text-[15px]">
+                                  {avatar ? (
+                                    getAvatarSvg(avatar, "w-full h-full")
+                                  ) : (
+                                    (j.authorName || "T").charAt(0).toUpperCase()
+                                  )}
+                                </div>
+                              );
+                            })()}
                             <div className="flex flex-col">
                               <span className="text-[14px] font-extrabold text-slate-800">{j.authorName || "Trưởng nhóm"}</span>
                               {j.isPendingDelete ? (

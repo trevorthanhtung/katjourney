@@ -39,6 +39,8 @@ import {
   UserX,
   RotateCcw,
   Bell,
+  ArchiveRestore,
+  Upload,
 } from "lucide-react";
 import { BottomSheet } from "./ui";
 import { useAuth } from "../hooks/useAuth";
@@ -48,11 +50,14 @@ import { db } from "../db";
 import { clearTemporaryFiles } from "../utils/dataActions";
 import { DeleteAccountModal } from "./DeleteAccountModal";
 import { FactoryResetModal } from "./FactoryResetModal";
+import { useModalHistory } from "../hooks/useModalHistory";
+import { today, checklistSections, packingTripTypes } from "../utils/helpers";
 
 interface SettingsSheetProps {
   isOpen: boolean;
   onClose: () => void;
   initialView?: SettingsView;
+  onTripSelected?: (id: number | null) => void;
   syncProps: {
     isSyncing: boolean;
     isAutoBackingUp: boolean;
@@ -109,9 +114,15 @@ function SegmentedControl<T extends string>({
 }
 
 
-export function SettingsSheet({ isOpen, onClose, initialView, syncProps }: SettingsSheetProps) {
+export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripSelected }: SettingsSheetProps) {
   const { user, loading: authLoading, provider, isAuthenticated } = useAuth();
-  const { permission: notificationPermission, requestPermission: requestNotificationPermission, isSupported: isNotificationSupported } = useNotification();
+  const { 
+    permission: notificationPermission, 
+    requestPermission: requestNotificationPermission, 
+    isSupported: isNotificationSupported,
+    enabled: notificationEnabled,
+    setEnabled: setNotificationEnabled
+  } = useNotification();
   const { 
     isSyncing, 
     isAutoBackingUp, 
@@ -138,6 +149,14 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps }: Setti
   const [restoreMode, setRestoreMode] = useState<"merge" | "replace">("merge");
   const [syncError, setSyncError] = useState<string | null>(null);
   const [syncSuccess, setSyncSuccess] = useState<string | null>(null);
+
+  // Restore from file states
+  const [importing, setImporting] = useState(false);
+  const [selectedFileForRestore, setSelectedFileForRestore] = useState<File | null>(null);
+  const [isRestoreFileConfirmOpen, setIsRestoreFileConfirmOpen] = useState(false);
+
+  // Modal history registration
+  useModalHistory(isRestoreFileConfirmOpen, () => setIsRestoreFileConfirmOpen(false), "restore-file-confirm");
 
   useEffect(() => {
     if (user) {
@@ -293,6 +312,109 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps }: Setti
       setSyncError("Khôi phục thất bại: " + (err.message || err));
     }
   };
+
+  async function importTrip(file?: File) {
+    if (!file) return;
+    setImporting(true);
+    try {
+      const parsed = JSON.parse(await file.text()) as any;
+      if (parsed.app !== "KAT Journey" || !parsed.trip?.title) {
+        throw new Error("Tệp không đúng định dạng KAT Journey.");
+      }
+
+      const newTripId = await db.transaction("rw", [db.trips, db.members, db.events, db.expenses, db.checklist, db.journals, db.packingItems, db.travelDocuments, db.backupPlans], async () => {
+        const importedTrip = parsed.trip!;
+        const id = await db.trips.add({
+          title: `${importedTrip.title} (import)`,
+          location: importedTrip.location ?? "",
+          startDate: importedTrip.startDate || today,
+          endDate: importedTrip.endDate || importedTrip.startDate || today,
+          createdAt: new Date().toISOString()
+        });
+
+        const importedMembers = (parsed.members ?? []).map((member: any) => ({
+          tripId: id,
+          name: member.name ?? "",
+          phone: member.phone ?? "",
+          role: member.role ?? ""
+        }));
+        const importedEvents = (parsed.events ?? []).map((event: any) => ({
+          tripId: id,
+          date: event.date || today,
+          time: event.time ?? "",
+          title: event.title ?? "",
+          location: event.location ?? "",
+          notes: event.notes ?? "",
+          mapLink: event.mapLink ?? "",
+          completed: Boolean(event.completed)
+        }));
+        const importedExpenses = (parsed.expenses ?? []).map((expense: any) => ({
+          tripId: id,
+          amount: Number(expense.amount || 0),
+          payer: expense.payer ?? "",
+          category: expense.category ?? "Khác",
+          description: expense.description ?? "",
+          splitType: expense.splitType ?? "shared"
+        }));
+        const importedChecklist = (parsed.checklist ?? []).map((item: any) => ({
+          tripId: id,
+          section: checklistSections.includes(item.section) ? item.section : "Before Trip",
+          title: item.title ?? "",
+          completed: Boolean(item.completed)
+        }));
+        const importedJournals = (parsed.journals ?? []).map((entry: any) => ({
+          tripId: id,
+          date: entry.date || today,
+          title: entry.title ?? "",
+          content: entry.content ?? "",
+          mood: (["very_bad", "bad", "okay", "good", "great"].includes(entry.mood as string)) ? entry.mood : "okay"
+        }));
+        const importedPackingItems = (parsed.packingItems ?? []).map((item: any) => ({
+          tripId: id,
+          tripType: packingTripTypes.includes(item.tripType) ? item.tripType : "Thành phố",
+          title: item.title ?? "",
+          completed: Boolean(item.completed)
+        }));
+        const importedDocuments = (parsed.travelDocuments ?? []).map((doc: any) => ({
+          tripId: id,
+          title: doc.title ?? "",
+          type: doc.type ?? "other",
+          code: doc.code ?? "",
+          date: doc.date ?? "",
+          link: doc.link ?? "",
+          note: doc.note ?? ""
+        }));
+        const importedBackupPlans = (parsed.backupPlans ?? []).map((plan: any) => ({
+          tripId: id,
+          title: plan.title ?? "",
+          type: plan.type ?? "other",
+          reason: plan.reason ?? "",
+          location: plan.location ?? "",
+          note: plan.note ?? "",
+          activityId: plan.activityId,
+          date: plan.date
+        }));
+
+        if (importedMembers.length) await db.members.bulkAdd(importedMembers);
+        if (importedEvents.length) await db.events.bulkAdd(importedEvents);
+        if (importedExpenses.length) await db.expenses.bulkAdd(importedExpenses);
+        if (importedChecklist.length) await db.checklist.bulkAdd(importedChecklist);
+        if (importedJournals.length) await db.journals.bulkAdd(importedJournals);
+        if (importedPackingItems.length) await db.packingItems.bulkAdd(importedPackingItems);
+        if (importedDocuments.length) await db.travelDocuments.bulkAdd(importedDocuments);
+        if (importedBackupPlans.length) await db.backupPlans.bulkAdd(importedBackupPlans);
+        return id;
+      });
+
+      onTripSelected?.(newTripId);
+      onClose();
+      showToast("Đã nhập bản sao lưu thành công.");
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : "Không thể import tệp này.", "error");
+    } finally {
+      setImporting(false);
+    }
+  }
 
   const renderBackupSection = () => {
     const backupTimeStr = lastBackupAt
@@ -538,49 +660,61 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps }: Setti
             </button>
 
             {/* Notifications */}
-            <div
-              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100"
-            >
-              <div className="flex items-center gap-3.5 min-w-0">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 shrink-0">
-                  <Bell className="h-5 w-5" />
-                </div>
-                <div className="min-w-0 text-left">
-                  <h4 className="text-[15px] font-bold text-slate-800">Thông báo</h4>
-                  <p className="text-[12px] text-slate-400 font-medium">Nhắc lịch, chi phí và hoạt động chuyến đi</p>
-                </div>
-              </div>
-              
-              <button
-                type="button"
-                role="switch"
-                aria-checked={notificationPermission === "granted"}
-                disabled={!isNotificationSupported}
-                onClick={async () => {
-                  if (!isNotificationSupported) return;
+            {(() => {
+              const isNotificationActive = isNotificationSupported && notificationPermission === "granted" && notificationEnabled;
+              return (
+                <div
+                  className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100"
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 shrink-0">
+                      <Bell className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 text-left">
+                      <h4 className="text-[15px] font-bold text-slate-800">Thông báo</h4>
+                      <p className="text-[12px] text-slate-400 font-medium">Nhắc lịch, chi phí và hoạt động chuyến đi</p>
+                    </div>
+                  </div>
                   
-                  if (notificationPermission === "granted") {
-                    showToast("Để tắt thông báo, vui lòng cấu hình trong cài đặt trình duyệt của bạn.", "error");
-                  } else {
-                    const result = await requestNotificationPermission();
-                    if (result === "granted") {
-                      showToast("Đã bật nhận thông báo thành công!", "success");
-                    } else if (result === "denied") {
-                      showToast("Quyền thông báo bị từ chối. Hãy bật lại trong cài đặt trình duyệt.", "error");
-                    }
-                  }
-                }}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  notificationPermission === "granted" ? "bg-[#030D2E]" : "bg-slate-200"
-                } ${!isNotificationSupported ? "opacity-50 cursor-not-allowed" : ""}`}
-              >
-                <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
-                    notificationPermission === "granted" ? "translate-x-5" : "translate-x-0"
-                  }`}
-                />
-              </button>
-            </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={isNotificationActive}
+                    disabled={!isNotificationSupported}
+                    onClick={async () => {
+                      if (!isNotificationSupported) return;
+                      
+                      if (notificationPermission !== "granted") {
+                        const result = await requestNotificationPermission();
+                        if (result === "granted") {
+                          setNotificationEnabled(true);
+                          showToast("Đã bật nhận thông báo thành công!", "success");
+                        } else if (result === "denied") {
+                          showToast("Quyền thông báo bị từ chối. Hãy bật lại trong cài đặt trình duyệt.", "error");
+                        }
+                      } else {
+                        const nextState = !notificationEnabled;
+                        setNotificationEnabled(nextState);
+                        if (nextState) {
+                          showToast("Đã bật nhận thông báo từ ứng dụng.", "success");
+                        } else {
+                          showToast("Đã tắt nhận thông báo từ ứng dụng.", "success");
+                        }
+                      }
+                    }}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                      isNotificationActive ? "bg-[#030D2E]" : "bg-slate-200"
+                    } ${!isNotificationSupported ? "opacity-50 cursor-not-allowed" : ""}`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                        isNotificationActive ? "translate-x-5" : "translate-x-0"
+                      }`}
+                    />
+                  </button>
+                </div>
+              );
+            })()}
 
             {/* About */}
             <button
@@ -650,7 +784,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps }: Setti
             </div>
 
             {/* ── Section: Quản lý dữ liệu ── */}
-            <div className="pt-2">
+            <div className="pt-2 space-y-2">
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1 pb-2">Quản lý dữ liệu</p>
               <button
                 type="button"
@@ -685,6 +819,34 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps }: Setti
                     </span>
                   : <ChevronRight className="h-5 w-5 text-slate-400" />}
               </button>
+
+              <label className="group flex w-full cursor-pointer items-center justify-between bg-slate-50 border border-slate-100 px-4 py-4 rounded-[20px] text-left hover:bg-slate-100/70 transition-all focus-within:ring-2 focus-within:ring-[#00BFB7]/50">
+                <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                  <div className="flex shrink-0 h-10 w-10 items-center justify-center rounded-full border bg-indigo-50 text-indigo-600 border-indigo-100">
+                    <ArchiveRestore className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-[15px] font-bold text-slate-800">
+                      {importing ? "Đang nhập..." : "Khôi phục hành trình"}
+                    </h4>
+                    <p className="text-[12px] text-slate-400 font-medium">Nhập chuyến đi từ tệp sao lưu (.kattrip)</p>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-slate-400" />
+                <input
+                  className="sr-only"
+                  type="file"
+                  accept=".kattrip,application/json"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) {
+                      setSelectedFileForRestore(file);
+                      setIsRestoreFileConfirmOpen(true);
+                    }
+                    event.target.value = "";
+                  }}
+                />
+              </label>
             </div>
 
             {/* ── Section: Vùng nguy hiểm ── */}
@@ -1121,6 +1283,51 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps }: Setti
         </div>
       </div>
     </BottomSheet>
+
+    {/* Import Trip Confirmation Modal */}
+    <BottomSheet 
+      isOpen={isRestoreFileConfirmOpen} 
+      onClose={() => {
+        setIsRestoreFileConfirmOpen(false);
+        setSelectedFileForRestore(null);
+      }} 
+      title="Khôi phục hành trình?"
+    >
+      <div className="space-y-5 text-left">
+        <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-[13.5px] text-amber-800 font-semibold leading-relaxed flex items-start gap-2.5">
+          <AlertTriangle className="w-5 h-5 text-amber-650 shrink-0 mt-0.5" />
+          <span>Dữ liệu hiện tại có thể bị thay đổi sau khi nhập bản sao lưu. Vui lòng đảm bảo tệp của bạn là hợp lệ trước khi tiến hành.</span>
+        </div>
+
+        <div className="pt-2 flex flex-col sm:flex-row gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setIsRestoreFileConfirmOpen(false);
+              setSelectedFileForRestore(null);
+            }}
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              setIsRestoreFileConfirmOpen(false);
+              if (selectedFileForRestore) {
+                await importTrip(selectedFileForRestore);
+              }
+              setSelectedFileForRestore(null);
+            }}
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-[#030D2E] border border-[#030D2E] px-6 font-bold text-white hover:bg-[#030D2E]/90 active:scale-98 transition-all duration-200 shadow-sm"
+          >
+            <Upload className="h-5 w-5" />
+            Khôi phục
+          </button>
+        </div>
+      </div>
+    </BottomSheet>
+
       <DeleteAccountModal
         isOpen={isDeleteAccountOpen}
         onClose={() => setIsDeleteAccountOpen(false)}
