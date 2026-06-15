@@ -24,7 +24,8 @@ import {
   Sparkles,
   Image as ImageIcon,
   Loader2,
-  MessageCircle
+  MessageCircle,
+  MapPinOff
 } from "lucide-react";
 import { db, JournalEntry, JournalMood, Member } from "../../db";
 import { getAvatarSvg } from "../../utils/avatars";
@@ -34,6 +35,7 @@ import { getIdentity } from "../../services/identityService";
 import { uploadJournalImage } from "../../services/storageService";
 import { getCurrentUser } from "../../services/authService";
 import { useModalHistory } from "../../hooks/useModalHistory";
+import { getCurrentPosition, reverseGeocode } from "../../services/locationService";
 
 const moodOptionList: Array<{ value: JournalMood; label: string }> = [
   { value: "good", label: "Vui" },
@@ -76,10 +78,20 @@ function JournalForm({
   onClearPrefilled: () => void;
   onShowToast?: (msg: string) => void;
 }) {
-  const [form, setForm] = useState({ date: today, title: "", content: "", mood: "good" as JournalMood, imageUrl: "" });
+  const [form, setForm] = useState({ 
+    date: today, 
+    title: "", 
+    content: "", 
+    mood: "good" as JournalMood, 
+    imageUrl: "",
+    locationName: "",
+    latitude: undefined as number | undefined,
+    longitude: undefined as number | undefined
+  });
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,12 +111,40 @@ function JournalForm({
     }
   };
 
+  const fetchLocation = () => {
+    setIsLocating(true);
+    getCurrentPosition()
+      .then(async (pos) => {
+        try {
+          const geo = await reverseGeocode(pos.latitude, pos.longitude);
+          setForm(prev => ({ ...prev, latitude: pos.latitude, longitude: pos.longitude, locationName: geo.displayName }));
+        } catch (e) {
+          setForm(prev => ({ ...prev, latitude: pos.latitude, longitude: pos.longitude, locationName: "Vị trí không xác định" }));
+        }
+      })
+      .catch(e => {
+        console.warn("Location fetch failed:", e);
+        onShowToast?.("Không thể lấy vị trí. Bạn có đang bật GPS không?");
+      })
+      .finally(() => setIsLocating(false));
+  };
+
   useEffect(() => {
     if (isOpen) {
       if (editing) {
-        setForm({ date: editing.date, title: editing.title, content: editing.content, mood: editing.mood, imageUrl: editing.imageUrl || "" });
+        setForm({ 
+          date: editing.date, 
+          title: editing.title, 
+          content: editing.content, 
+          mood: editing.mood, 
+          imageUrl: editing.imageUrl || "",
+          locationName: editing.locationName || "",
+          latitude: editing.latitude,
+          longitude: editing.longitude
+        });
       } else {
-        setForm({ date: today, title: "", content: prefilledContent || "", mood: "good", imageUrl: "" });
+        setForm({ date: today, title: "", content: prefilledContent || "", mood: "good", imageUrl: "", locationName: "", latitude: undefined, longitude: undefined });
+        fetchLocation();
       }
       setSubmitAttempted(false);
       setDirty(false);
@@ -133,6 +173,9 @@ function JournalForm({
       content: form.content.trim(),
       mood: form.mood,
       imageUrl: form.imageUrl || undefined,
+      locationName: form.locationName || undefined,
+      latitude: form.latitude,
+      longitude: form.longitude,
       authorId: resolvedId,
       authorName: resolvedName,
       postedAt: editing?.postedAt || now, // giữ nguyên postedAt khi edit
@@ -213,7 +256,6 @@ function JournalForm({
             />
           </div>
 
-        {/* Title Field */}
         <div>
           <Input 
             label={
@@ -228,6 +270,26 @@ function JournalForm({
           />
           {(dirty || submitAttempted) && titleError && (
             <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{titleError}</p>
+          )}
+          
+          {isLocating ? (
+            <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
+              <MapPin className="h-3.5 w-3.5" />
+              <span className="flex items-center gap-1.5 text-slate-400"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Đang lấy vị trí...</span>
+            </div>
+          ) : form.locationName ? (
+            <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
+              <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+              <span>Đang ở <span className="font-bold text-kat-primary">{form.locationName}</span></span>
+              <button type="button" onClick={() => setForm({...form, locationName: "", latitude: undefined, longitude: undefined})} className="ml-1 px-1 text-slate-300 hover:text-rose-500 transition-colors font-bold text-[14px] leading-none" title="Xóa vị trí">×</button>
+            </div>
+          ) : (
+            <div className="mt-2 flex items-center gap-1.5 px-1 animate-fadeIn">
+              <button type="button" onClick={fetchLocation} className="flex items-center gap-1.5 text-[12.5px] font-bold text-slate-400 hover:text-kat-primary transition-colors focus:outline-none">
+                <MapPinOff className="h-3.5 w-3.5" />
+                <span>Nhấn để đính kèm vị trí</span>
+              </button>
+            </div>
           )}
         </div>
 
@@ -743,7 +805,13 @@ export function JournalSection({
                         <h4 className="text-[17px] font-black text-[#030D2E] leading-snug break-words">
                           {entry.title || "Bản tin chuyến đi"}
                         </h4>
-                        <p className="mt-1.5 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600">
+                        {entry.locationName && (
+                          <div className="mt-1 flex items-center gap-1.5 text-[13px] font-medium text-slate-500">
+                            <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+                            <span>{entry.locationName}</span>
+                          </div>
+                        )}
+                        <p className="mt-2 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600">
                           {entry.content}
                         </p>
                       </div>

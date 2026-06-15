@@ -34,6 +34,7 @@ import { getTripReminders } from "../../utils/reminderRules";
 import { exportTripPdf, exportTripExcel } from "../../utils/exports";
 import { CloudRainWind } from "lucide-react";
 import { useWeather } from "../../hooks/useWeather";
+import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather";
 import { useModalHistory } from "../../hooks/useModalHistory";
 import { getWeatherIcon, getWeatherGradient, getWeatherText } from "../../services/weatherService";
 import { WeatherDetailsModal } from "../timeline/WeatherDetailsModal";
@@ -86,8 +87,27 @@ export function HomeScreen({
 
   // Weather data
   const { forecast, loading: weatherLoading, error: weatherError } = useWeather(trip.location, trip.latitude, trip.longitude, 1);
+  const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
   useModalHistory(weatherModalOpen, () => setWeatherModalOpen(false), "weather-modal");
+
+  // Packing tip based on GPS vs destination temp
+  const packingTip = (() => {
+    if (!forecast || !myForecast) return null;
+    const destTemp = forecast.current?.temperature ?? ((forecast.temperature_2m_max?.[0] ?? 0) + (forecast.temperature_2m_min?.[0] ?? 0)) / 2;
+    const myTemp = myForecast.current?.temperature ?? ((myForecast.temperature_2m_max?.[0] ?? 0) + (myForecast.temperature_2m_min?.[0] ?? 0)) / 2;
+    const destCode = forecast.current?.weathercode ?? forecast.weathercode?.[0] ?? 0;
+    const myCode = myForecast.current?.weathercode ?? myForecast.weathercode?.[0] ?? 0;
+    const diff = destTemp - myTemp;
+    const isDestRainy = (destCode >= 51 && destCode <= 67) || (destCode >= 80 && destCode <= 82) || (destCode >= 95 && destCode <= 99);
+    const isMyRainy = (myCode >= 51 && myCode <= 67) || (myCode >= 80 && myCode <= 82) || (myCode >= 95 && myCode <= 99);
+    if (isDestRainy && !isMyRainy) return { emoji: "🌧️", message: `Điểm đến đang có mưa, đừng quên bỏ ô vào vali!`, color: "bg-sky-500/15 border-sky-400/30 text-white" };
+    if (diff <= -7) return { emoji: "🧥", message: `Lạnh hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Nhớ mang áo ấm!`, color: "bg-white/15 border-white/25 text-white" };
+    if (diff <= -4) return { emoji: "🧣", message: `Mát hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Mang áo khoác mỏng nhé.`, color: "bg-white/15 border-white/25 text-white" };
+    if (diff >= 7) return { emoji: "☀️", message: `Nóng hơn nơi bạn ${Math.round(diff)}°C. Chuẩn bị kem chống nắng!`, color: "bg-amber-500/15 border-amber-400/30 text-white" };
+    if (diff >= 4) return { emoji: "🕶️", message: `Ấm hơn nơi bạn ${Math.round(diff)}°C. Đừng quên kính mát.`, color: "bg-orange-500/15 border-orange-400/30 text-white" };
+    return null;
+  })();
 
   if (!trip) return null;
   const timing = getTripTiming(trip);
@@ -201,55 +221,32 @@ export function HomeScreen({
       : fallbackGradient;
     
     return (
-      <div className="mb-6 relative overflow-hidden rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white/10 group hover:shadow-[0_15px_45px_rgba(0,0,0,0.18)] hover:scale-[1.002] transition-all duration-500 ease-out">
-        <div className="absolute inset-0 z-0" style={{ background: bgGradient }} />
+      <div 
+        className="mb-6 relative rounded-[32px] p-6 text-white overflow-hidden shadow-xl border border-white/5 group hover:shadow-2xl hover:scale-[1.002] transition-all duration-500 ease-out"
+        style={{ background: bgGradient }}
+      >
+        {/* Subtle World Map Watermark */}
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
         
-        {/* Glass reflection gloss */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/10 opacity-70 pointer-events-none" />
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
-        
-        {/* Transparent Compass Background Icon */}
-        <Compass className="absolute -right-12 -bottom-12 w-64 h-64 text-white/[0.04] rotate-12 pointer-events-none transition-all group-hover:scale-110 group-hover:rotate-[24deg] duration-1000 ease-out" />
-
-        <div className="relative z-10 flex flex-col md:flex-row p-5 md:p-8 justify-between gap-5 md:gap-6">
-          <div className="flex flex-col items-start text-left max-w-2xl w-full md:w-auto flex-1">
-            {status === "active" && (
-              <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-[11px] font-extrabold tracking-wider text-white shadow-[0_2px_8px_rgba(255,255,255,0.1)] backdrop-blur-md border border-white/20 mb-2.5">
-                <span className="relative flex h-1.5 w-1.5 mr-1.5 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
-                </span>
-                Đang diễn ra
-              </span>
-            )}
-            {status === "upcoming" && (
-              <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[11px] font-extrabold tracking-wider text-white/90 shadow-[0_2px_8px_rgba(255,255,255,0.05)] backdrop-blur-md border border-white/10 mb-2.5">
-                <span className="relative flex h-1.5 w-1.5 mr-1.5 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
-                </span>
-                Sắp diễn ra
-              </span>
-            )}
-            {status === "past" && (
-              <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-[11px] font-extrabold tracking-wider text-white/70 shadow-[0_2px_8px_rgba(255,255,255,0.02)] backdrop-blur-md border border-white/10 mb-2.5">
-                Đã kết thúc
-              </span>
-            )}
-
-            <h2 className="text-2xl md:text-4xl font-extrabold leading-tight tracking-tight drop-shadow-sm text-white mb-2 line-clamp-2">{trip.title}</h2>
-            
-            <div className="flex flex-wrap gap-1.5 mt-auto">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[12px] font-semibold backdrop-blur-md border border-white/10 shadow-inner text-white">
-                <MapPin className="h-3 w-3 text-white/80" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="space-y-4">
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-md">
+              ● {status === "past" ? "Đã kết thúc" : status === "active" ? "Đang diễn ra" : "Sắp diễn ra"}
+            </span>
+            <h2 className="text-[28px] font-black leading-tight tracking-tight drop-shadow-sm">
+              {trip.title}
+            </h2>
+            <div className="flex flex-wrap gap-2.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
+                <MapPin className="h-3.5 w-3.5 text-white/70" />
                 {trip.location || "Đang lên kế hoạch"}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[12px] font-semibold backdrop-blur-md border border-white/10 shadow-inner text-white">
-                <CalendarDays className="h-3 w-3 text-white/80" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
+                <CalendarDays className="h-3.5 w-3.5 text-white/70" />
                 {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[12px] font-semibold backdrop-blur-md border border-white/10 shadow-inner text-white">
-                <Clock className="h-3 w-3 text-white/80" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
+                <Clock className="h-3.5 w-3.5 text-white/70" />
                 {durationText}
               </span>
               {trip.mediaLink && (
@@ -261,9 +258,21 @@ export function HomeScreen({
             </div>
           </div>
 
-          <div className="shrink-0 flex items-center justify-center md:justify-end w-full md:w-auto gap-4 mt-3 md:mt-0">
+          <div className="flex flex-col items-center md:items-end gap-3 shrink-0 w-full sm:w-[290px] md:w-[290px] justify-center md:justify-end">
+            {/* Timing box */}
+            <div className="relative overflow-hidden flex flex-col items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md px-6 py-4 border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_8px_16px_rgba(0,0,0,0.1)] w-full text-center shrink-0 min-h-[72px]">
+              <div className="absolute -right-4 -top-4 w-12 h-12 bg-white/10 rounded-full blur-md"></div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
+                {status === "past" ? "Trạng thái" : "Hành trình"}
+              </p>
+              <p className="mt-1.5 text-[22px] font-black text-white drop-shadow-sm tracking-tight leading-none">
+                {timing.label}
+              </p>
+            </div>
+
+            {/* Weather Widget */}
             {weatherLoading ? (
-               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 animate-pulse w-auto">
+               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-3xl p-4 border border-white/20 animate-pulse w-full">
                  <div className="w-10 h-10 bg-white/20 rounded-xl"></div>
                  <div className="flex flex-col gap-2">
                    <div className="w-16 h-3 bg-white/20 rounded-full"></div>
@@ -271,7 +280,7 @@ export function HomeScreen({
                  </div>
                </div>
             ) : (!trip.location?.trim() && !trip.latitude) ? (
-               <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 w-auto">
+               <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-3xl p-4 border border-white/10 w-full">
                  <MapPin className="w-6 h-6 text-white/40" />
                  <div className="flex flex-col gap-0.5">
                    <span className="text-white/80 font-bold text-[12px]">Chưa có điểm đến</span>
@@ -279,7 +288,7 @@ export function HomeScreen({
                  </div>
                </div>
             ) : (!trip.latitude || !trip.longitude) ? null : weatherError || !forecast ? (
-               <div className="flex items-center gap-3 bg-red-500/20 backdrop-blur-md rounded-2xl p-4 border border-red-500/30 w-auto">
+               <div className="flex items-center gap-3 bg-red-500/20 backdrop-blur-md rounded-3xl p-4 border border-red-500/30 w-full">
                  <CloudRainWind className="w-6 h-6 text-white/60" />
                  <div className="flex flex-col gap-1">
                    <span className="text-white font-bold text-[12px]">Không thể tải thời tiết</span>
@@ -287,33 +296,50 @@ export function HomeScreen({
                  </div>
                </div>
             ) : (
-              <button
+              <div
                 onClick={() => setWeatherModalOpen(true)}
-                className="flex items-center gap-4 bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl p-4 shadow-[0_4px_24px_rgba(255,255,255,0.05)] transition-all duration-300 hover:bg-white/25 hover:scale-[1.03] active:scale-[0.97] w-auto text-left cursor-pointer"
+                className="flex flex-col items-stretch bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-4.5 gap-3 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 w-full text-left cursor-pointer select-none"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-4xl md:text-5xl font-black text-white drop-shadow-sm tracking-tighter">
-                    {Math.round(forecast.current?.temperature || 20)}°
-                  </span>
-                  <div className="flex flex-col ml-1">
-                    <span className="mb-[-4px] flex items-center justify-center h-8">
-                      {getWeatherIcon(forecast.current?.weathercode || 0, "w-7 h-7 drop-shadow-md")}
+                {/* Weather Info Block */}
+                <div className="flex items-center justify-between gap-4 w-full">
+                  <div className="flex items-center gap-2">
+                    <span className="text-4xl md:text-5xl font-black text-white drop-shadow-sm tracking-tighter">
+                      {Math.round(forecast.current?.temperature || 20)}°
                     </span>
-                    <span className="text-[12px] font-bold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
-                      {getWeatherText(forecast.current?.weathercode || 0)}
+                    <div className="flex flex-col ml-1 flex-shrink-0">
+                      <span className="mb-[-4px] flex items-center justify-center h-8">
+                        {getWeatherIcon(forecast.current?.weathercode || 0, "w-7 h-7 drop-shadow-md")}
+                      </span>
+                      <span className="text-[12px] font-extrabold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
+                        {getWeatherText(forecast.current?.weathercode || 0)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-px h-10 bg-white/20 mx-1" />
+                  <div className="flex flex-col text-right whitespace-nowrap">
+                    <span className="text-[11.5px] font-extrabold text-white/95">
+                      Cao: {Math.round(forecast.temperature_2m_max[0])}°
+                    </span>
+                    <span className="text-[11.5px] font-bold text-white/70">
+                      Thấp: {Math.round(forecast.temperature_2m_min[0])}°
                     </span>
                   </div>
                 </div>
-                <div className="w-px h-10 bg-white/20 mx-1" />
-                <div className="flex flex-col text-right whitespace-nowrap">
-                  <span className="text-[11px] font-bold text-white/90">
-                    Cao: {Math.round(forecast.temperature_2m_max[0])}°
-                  </span>
-                  <span className="text-[11px] font-medium text-white/70">
-                    Thấp: {Math.round(forecast.temperature_2m_min[0])}°
-                  </span>
-                </div>
-              </button>
+
+                {/* Divider - only visible when packingTip exists */}
+                {packingTip && (
+                  <div className="h-px bg-white/15 w-full my-0.5" />
+                )}
+
+                {/* Packing Tip Block */}
+                {packingTip && (
+                  <div className="w-full flex items-center">
+                    <p className="text-[12px] font-extrabold text-white/95 leading-normal whitespace-normal break-words">
+                      {packingTip.message}
+                    </p>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -323,9 +349,50 @@ export function HomeScreen({
 
   // 3. Layout for completed trips
   const renderPastLayout = () => {
+    const checklistPercent = checklistStats.total > 0 
+      ? Math.round((checklistStats.completed / checklistStats.total) * 100) 
+      : 0;
+
     return (
-      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
-        {/* Left Column: Nhìn lại chuyến đi */}
+      <div className="space-y-6">
+        {/* Quick Stats Grid */}
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
+            <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
+              <Users className="h-5 w-5" />
+            </div>
+            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Thành viên</p>
+          </div>
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
+            <div className="w-11 h-11 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+              <CalendarDays className="h-5 w-5" />
+            </div>
+            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{events.length}</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lịch trình</p>
+          </div>
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500"></div>
+            <div className="w-11 h-11 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+              <Receipt className="h-5 w-5" />
+            </div>
+            <p className="text-[18px] font-black text-[#030D2E] leading-none mb-1 truncate max-w-full px-1">{formatMoney(totalExpense)}</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chi phí</p>
+          </div>
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-purple-500"></div>
+            <div className="w-11 h-11 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
+              <Briefcase className="h-5 w-5" />
+            </div>
+            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{checklistPercent}%</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chuẩn bị</p>
+          </div>
+        </section>
+
+        <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
+          {/* Left Column: Nhìn lại chuyến đi */}
         <section className="space-y-4">
           <h3 className="text-[17px] font-extrabold text-[#030D2E] px-1 motion-title-enter">Nhìn lại chuyến đi</h3>
           
@@ -399,76 +466,8 @@ export function HomeScreen({
           </div>
         </section>
 
-        {/* Right Column: Tổng quan hành trình */}
-        <section className="space-y-4">
-          <h3 className="text-[17px] font-extrabold text-[#030D2E] px-1 motion-title-enter">Tổng quan hành trình</h3>
-          
-          <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 motion-card-enter motion-delay-2">
-            <ul className="space-y-6">
-              <li className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 border border-blue-100/50">
-                  <Users className="h-5 w-5" />
-                </div>
-                <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
-                  <div className="mt-1.5">
-                    {renderCompanions()}
-                  </div>
-                </div>
-              </li>
-
-              <li className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-100/50">
-                  <CalendarDays className="h-5 w-5" />
-                </div>
-                <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">Lịch trình đã ghi</p>
-                  {events.length > 0 ? (
-                    <p className="mt-0.5 text-[15px] font-extrabold text-[#030D2E]">
-                      {events.length} hoạt động đã được ghi lại
-                    </p>
-                  ) : (
-                    <div>
-                      <p className="mt-0.5 text-[14px] font-semibold text-slate-400">Chưa có lịch trình được ghi lại</p>
-                      {!isReadOnly && (
-                        <button 
-                          onClick={() => onNavigateTab("timeline")}
-                          className="mt-1.5 text-[12.5px] font-bold text-kat-primary hover:text-kat-primary-usable transition-all motion-press text-left"
-                        >
-                          Bổ sung lịch trình
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </li>
-
-              <li className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600 border border-rose-100/50">
-                  <Briefcase className="h-5 w-5" />
-                </div>
-                <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
-                  <p className="mt-0.5 text-[15px] font-extrabold text-[#030D2E]">
-                    {checklistStats.total > 0 
-                      ? `${checklistStats.completed} / ${checklistStats.total} món hành lý` 
-                      : "Chưa có món nào trong checklist"}
-                  </p>
-                </div>
-              </li>
-
-              <li className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/50">
-                  <Receipt className="h-5 w-5" />
-                </div>
-                <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">Tổng đã chi chuyến đi</p>
-                  <p className="mt-0.5 text-[15px] font-extrabold text-[#030D2E]">{formatMoney(totalExpense)}</p>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </section>
+        {/* Right column removed because Quick Stats grid now handles overview */}
+        </div>
       </div>
     );
   };
@@ -476,10 +475,50 @@ export function HomeScreen({
   // 4. Layout for upcoming trips
   const renderUpcomingLayout = () => {
     const reminders = getTripReminders({ trip, members, events, expenses, checklist, travelDocuments });
+    const checklistPercent = checklistStats.total > 0 
+      ? Math.round((checklistStats.completed / checklistStats.total) * 100) 
+      : 0;
 
     return (
-      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
-        {/* Left Column: Hoạt động tiếp theo & Nhắc việc trước chuyến đi */}
+      <div className="space-y-6">
+        {/* Quick Stats Grid */}
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
+            <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
+              <Users className="h-5 w-5" />
+            </div>
+            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Thành viên</p>
+          </div>
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
+            <div className="w-11 h-11 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+              <CalendarDays className="h-5 w-5" />
+            </div>
+            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{events.length}</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lịch trình</p>
+          </div>
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500"></div>
+            <div className="w-11 h-11 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+              <Receipt className="h-5 w-5" />
+            </div>
+            <p className="text-[18px] font-black text-[#030D2E] leading-none mb-1 truncate max-w-full px-1">{formatMoney(totalExpense)}</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chi phí</p>
+          </div>
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-purple-500"></div>
+            <div className="w-11 h-11 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
+              <Briefcase className="h-5 w-5" />
+            </div>
+            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{checklistPercent}%</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chuẩn bị</p>
+          </div>
+        </section>
+
+        <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
+          {/* Left Column: Hoạt động tiếp theo & Nhắc việc trước chuyến đi */}
         <div className="space-y-4 md:space-y-6">
           {/* Hoạt động tiếp theo */}
           <section className="space-y-4">
@@ -577,59 +616,8 @@ export function HomeScreen({
           </section>
         </div>
 
-        {/* Right Column: Tổng quan hành trình & Giấy tờ & đặt chỗ */}
+        {/* Right Column: Giấy tờ & đặt chỗ */}
         <div className="space-y-6">
-          {/* Tổng quan hành trình */}
-          <section className="space-y-4">
-            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Tổng quan hành trình</h3>
-            <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 motion-card-enter motion-delay-3">
-              <ul className="space-y-6">
-                <li className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 border border-blue-100/50">
-                    <Users className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
-                    <div className="mt-1.5">
-                      {renderCompanions()}
-                    </div>
-                  </div>
-                </li>
-                <li className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600 border border-rose-100/50">
-                    <Briefcase className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
-                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">
-                      {checklistStats.total > 0 ? `${checklistStats.completed} / ${checklistStats.total} món hành lý` : "Chưa có món nào được lên checklist"}
-                    </p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-100/50">
-                    <CalendarDays className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Lịch trình kế tiếp</p>
-                    <p className="mt-0.5 truncate text-[15px] font-extrabold text-kat-text">
-                      {nextEvent ? nextEvent.title : "Chưa có hoạt động nào"}
-                    </p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/50">
-                    <Receipt className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Dự kiến chi phí</p>
-                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">{formatMoney(totalExpense)}</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </section>
-
           {/* Giấy tờ & đặt chỗ */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Giấy tờ & đặt chỗ</h3>
@@ -680,6 +668,7 @@ export function HomeScreen({
             </div>
           </section>
         </div>
+      </div>
       </div>
     );
   };
@@ -963,6 +952,8 @@ export function HomeScreen({
         onClose={() => setWeatherModalOpen(false)}
         destination={trip.location || "Điểm đến"}
         forecast={forecast}
+        currentLocationForecast={myForecast}
+        currentLocationName={myLocationName}
       />
     </>
   );

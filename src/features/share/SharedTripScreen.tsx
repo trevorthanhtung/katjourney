@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { 
-  Globe, MapPin, CalendarDays, Clock, Route,
+  Globe, MapPin, CalendarDays, Clock, Route, CloudRainWind,
   Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link, X, MessageCircle, UserRoundCog,
   Crown, Car, Luggage, UsersRound, BadgeCheck,
   Plus, Edit3, Map, Compass, GitBranch, Check, ChevronDown
@@ -14,6 +14,10 @@ import { getIdentity, saveIdentity, UserIdentity } from "../../services/identity
 import { getAvatarSvg } from "../../utils/avatars";
 import { ChatBox } from "./components/ChatBox";
 import { WeatherWidget } from "../timeline/WeatherWidget";
+import { useWeather } from "../../hooks/useWeather";
+import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather";
+import { getWeatherIcon, getWeatherText, getWeatherGradient } from "../../services/weatherService";
+import { WeatherDetailsModal } from "../timeline/WeatherDetailsModal";
 import { BottomSheet, FormActions, Select } from "../../components/ui";
 import { SharedBackupPlansSheet } from "./components/SharedBackupPlansSheet";
 
@@ -40,6 +44,35 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const { data, error, loading } = useSharedTrip(token);
   const [identityChecked, setIdentityChecked] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserIdentity | null>(null);
+
+  // Weather states
+  const { forecast, loading: weatherLoading, error: weatherError } = useWeather(
+    data?.trip?.destination || data?.trip?.location,
+    data?.trip?.latitude,
+    data?.trip?.longitude,
+    1
+  );
+  const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
+  const [weatherModalOpen, setWeatherModalOpen] = useState(false);
+
+  // Packing tip based on GPS vs destination temp
+  const packingTip = (() => {
+    if (!forecast || !myForecast) return null;
+    const destTemp = forecast.current?.temperature ?? ((forecast.temperature_2m_max?.[0] ?? 0) + (forecast.temperature_2m_min?.[0] ?? 0)) / 2;
+    const myTemp = myForecast.current?.temperature ?? ((myForecast.temperature_2m_max?.[0] ?? 0) + (myForecast.temperature_2m_min?.[0] ?? 0)) / 2;
+    const destCode = forecast.current?.weathercode ?? forecast.weathercode?.[0] ?? 0;
+    const myCode = myForecast.current?.weathercode ?? myForecast.weathercode?.[0] ?? 0;
+    const diff = destTemp - myTemp;
+    const isDestRainy = (destCode >= 51 && destCode <= 67) || (destCode >= 80 && destCode <= 82) || (destCode >= 95 && destCode <= 99);
+    const isMyRainy = (myCode >= 51 && myCode <= 67) || (myCode >= 80 && myCode <= 82) || (myCode >= 95 && myCode <= 99);
+    if (isDestRainy && !isMyRainy) return { emoji: "🌧️", message: `Điểm đến đang có mưa, đừng quên bỏ ô vào vali!`, color: "bg-sky-500/15 border-sky-400/30 text-white" };
+    if (diff <= -7) return { emoji: "🧥", message: `Lạnh hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Nhớ mang áo ấm!`, color: "bg-white/15 border-white/25 text-white" };
+    if (diff <= -4) return { emoji: "🧣", message: `Mát hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Mang áo khoác mỏng nhé.`, color: "bg-white/15 border-white/25 text-white" };
+    if (diff >= 7) return { emoji: "☀️", message: `Nóng hơn nơi bạn ${Math.round(diff)}°C. Chuẩn bị kem chống nắng!`, color: "bg-amber-500/15 border-amber-400/30 text-white" };
+    if (diff >= 4) return { emoji: "🕶️", message: `Ấm hơn nơi bạn ${Math.round(diff)}°C. Đừng quên kính mát.`, color: "bg-orange-500/15 border-orange-400/30 text-white" };
+    return null;
+  })();
+
   const [showIdentityModal, setShowIdentityModal] = useState(false);
   
   // Identity Modal state
@@ -288,11 +321,16 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   // Status-aware hero gradient (matches HomeScreen logic)
   const status = timing.status;
-  const heroBg = status === "past"
+  const currentCode = forecast?.current?.weathercode;
+  const fallbackBg = status === "past"
     ? "linear-gradient(135deg, #2D1B4E 0%, #4A2C6E 50%, #6B3A8A 100%)"
     : status === "active"
     ? "linear-gradient(135deg, #0F4C81 0%, #1565C0 55%, #1976D2 100%)"
     : "linear-gradient(135deg, #1A3A5C 0%, #1E4976 55%, #2460A7 100%)";
+
+  const heroBg = (forecast && currentCode != null)
+    ? getWeatherGradient(currentCode)
+    : fallbackBg;
   
   // Stats
   const totalExpense = expenses.reduce((sum: number, item: any) => sum + Number(item.amount || 0), 0);
@@ -543,8 +581,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
       <header className="sticky top-0 z-40 bg-[#FFFDF8]/90 backdrop-blur-xl border-b border-slate-100 px-2.5 min-[360px]:px-4 pb-3 pt-3 shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
         <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
           <div className="flex items-center gap-1.5 min-[360px]:gap-2 select-none shrink-0">
-            <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
-            <span className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-[#030D2E] whitespace-nowrap hidden min-[400px]:block shrink-0">KAT Journey</span>
+            <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden md:block h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
+            <span className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-[#030D2E] whitespace-nowrap shrink-0">KAT Journey</span>
             <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-1.5 min-[360px]:px-2 py-0.5 text-[10px] font-bold text-indigo-600 whitespace-nowrap shrink-0">
               <Share2 className="h-3 w-3 shrink-0" /> Chia sẻ
             </span>
@@ -616,17 +654,89 @@ export default function SharedTripScreen({ token }: { token: string }) {
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+            <div className="flex flex-col items-center md:items-end gap-3 shrink-0 w-full sm:w-[290px] md:w-[290px] justify-center md:justify-end">
               {/* Timing box */}
-              <div className="relative overflow-hidden flex flex-col items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md px-6 py-4 border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_8px_16px_rgba(0,0,0,0.1)] w-full sm:w-auto text-center">
+              <div className="relative overflow-hidden flex flex-col items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md px-6 py-4 border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_8px_16px_rgba(0,0,0,0.1)] w-full text-center shrink-0 min-h-[72px]">
                 <div className="absolute -right-4 -top-4 w-12 h-12 bg-white/10 rounded-full blur-md"></div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
                   {status === "past" ? "Trạng thái" : "Hành trình"}
                 </p>
-                <p className="mt-1.5 text-[22px] font-black text-white drop-shadow-sm tracking-tight">
+                <p className="mt-1.5 text-[22px] font-black text-white drop-shadow-sm tracking-tight leading-none">
                   {timing.label}
                 </p>
               </div>
+
+              {/* Weather Widget */}
+              {weatherLoading ? (
+                 <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-3xl p-4 border border-white/20 animate-pulse w-full">
+                   <div className="w-10 h-10 bg-white/20 rounded-xl"></div>
+                   <div className="flex flex-col gap-2">
+                     <div className="w-16 h-3 bg-white/20 rounded-full"></div>
+                     <div className="w-10 h-3 bg-white/20 rounded-full"></div>
+                   </div>
+                 </div>
+              ) : (!trip.destination?.trim() && !trip.latitude) ? (
+                 <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-3xl p-4 border border-white/10 w-full">
+                   <MapPin className="w-6 h-6 text-white/40" />
+                   <div className="flex flex-col gap-0.5">
+                     <span className="text-white/80 font-bold text-[12px]">Chưa có điểm đến</span>
+                     <span className="text-white/50 text-[10px]">Thêm điểm đến để xem thời tiết</span>
+                   </div>
+                 </div>
+              ) : (!trip.latitude || !trip.longitude) ? null : weatherError || !forecast ? (
+                 <div className="flex items-center gap-3 bg-red-500/20 backdrop-blur-md rounded-3xl p-4 border border-red-500/30 w-full">
+                   <CloudRainWind className="w-6 h-6 text-white/60" />
+                   <div className="flex flex-col gap-1">
+                     <span className="text-white font-bold text-[12px]">Không thể tải thời tiết</span>
+                     <span className="text-white/70 text-[10px]">Lỗi kết nối</span>
+                   </div>
+                 </div>
+              ) : (
+                <div
+                  onClick={() => setWeatherModalOpen(true)}
+                  className="flex flex-col items-stretch bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-4.5 gap-3 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 w-full text-left cursor-pointer select-none"
+                >
+                  {/* Weather Info Block */}
+                  <div className="flex items-center justify-between gap-4 w-full">
+                    <div className="flex items-center gap-2">
+                      <span className="text-4xl md:text-5xl font-black text-white drop-shadow-sm tracking-tighter">
+                        {Math.round(forecast.current?.temperature || 20)}°
+                      </span>
+                      <div className="flex flex-col ml-1 flex-shrink-0">
+                        <span className="mb-[-4px] flex items-center justify-center h-8">
+                          {getWeatherIcon(forecast.current?.weathercode || 0, "w-7 h-7 drop-shadow-md")}
+                        </span>
+                        <span className="text-[12px] font-extrabold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
+                          {getWeatherText(forecast.current?.weathercode || 0)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="w-px h-10 bg-white/20 mx-1" />
+                    <div className="flex flex-col text-right whitespace-nowrap">
+                      <span className="text-[11.5px] font-extrabold text-white/95">
+                        Cao: {Math.round(forecast.temperature_2m_max[0])}°
+                      </span>
+                      <span className="text-[11.5px] font-bold text-white/70">
+                        Thấp: {Math.round(forecast.temperature_2m_min[0])}°
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Divider - only visible when packingTip exists */}
+                  {packingTip && (
+                    <div className="h-px bg-white/15 w-full my-0.5" />
+                  )}
+
+                  {/* Packing Tip Block */}
+                  {packingTip && (
+                    <div className="w-full flex items-center">
+                      <p className="text-[12px] font-extrabold text-white/95 leading-normal whitespace-normal break-words">
+                        {packingTip.message}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -955,6 +1065,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
           {activeTab === "expenses" && data.includeExpenses && (expenses.length > 0 || canRequestEdit) && (
             <SharedExpensesSection 
+              trip={trip}
               token={token} 
               mode={expensesMode} 
               expenses={expenses} 
@@ -1157,6 +1268,15 @@ export default function SharedTripScreen({ token }: { token: string }) {
           guestName={currentUser?.name || "Khách"}
         />
       )}
+
+      <WeatherDetailsModal
+        isOpen={weatherModalOpen}
+        onClose={() => setWeatherModalOpen(false)}
+        destination={trip.destination || trip.location || "Điểm đến"}
+        forecast={forecast}
+        currentLocationForecast={myForecast}
+        currentLocationName={myLocationName}
+      />
 
     </div>
   );

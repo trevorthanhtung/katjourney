@@ -1,15 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { X, Droplets, Wind, Sun, Thermometer, CloudLightning, CloudRain, CloudSun, Compass, Eye } from "lucide-react";
+import { X } from "lucide-react";
 import { WeatherForecast, getWeatherIcon, getWeatherText, getWeatherGradient } from "../../services/weatherService";
+import {
+  SunIcon,
+  PartlyCloudyIcon,
+  CloudyIcon,
+  FogIcon,
+  RainIcon,
+  ThunderstormIcon,
+  ThermometerIcon,
+  HumidityIcon,
+  WindIcon
+} from "../../components/WeatherIcons";
 
 interface WeatherDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   destination: string;
   forecast: WeatherForecast | null;
+  currentLocationForecast?: WeatherForecast | null;
+  currentLocationName?: string | null;
 }
 
-export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: WeatherDetailsModalProps) {
+export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, currentLocationForecast, currentLocationName }: WeatherDetailsModalProps) {
   const [shouldRender, setShouldRender] = useState(isOpen);
   const [animate, setAnimate] = useState(false);
   const [errorState, setErrorState] = useState<string | null>(null);
@@ -56,7 +69,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
       return {
         title: "Thời tiết lý tưởng cho hoạt động ngoài trời",
         desc: "Trời nắng đẹp và quang đãng. Rất thích hợp để đi tắm biển, leo núi, cắm trại hoặc chụp ảnh ngoài trời. Đừng quên bôi kem chống nắng và mang kính râm nhé!",
-        icon: <Sun className="w-5 h-5 text-amber-600 animate-spin" style={{ animationDuration: '12s' }} />,
+        icon: <SunIcon className="w-7 h-7" />,
         bg: "bg-amber-500/10 border-amber-500/20 text-amber-900",
         badgeBg: "bg-amber-500/20 text-amber-800"
       };
@@ -64,8 +77,8 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
     if (code === 2 || code === 3) {
       return {
         title: "Thời tiết dịu mát, thuận tiện di chuyển",
-        desc: "Trời nhiều mây mát mẻ, không quá nắng gắt. Rất thích hợp để đi bộ dạo phố cổ, đi chợ đêm hoặc tham quan danh lam thắng cảnh mà không lo bị kiệt sức.",
-        icon: <CloudSun className="w-5 h-5 text-sky-600" />,
+        desc: "Trời nhiều mây mát mẽ, không quá nắng gắt. Rất thích hợp để đi bộ dạo phố cổ, đi chợ đêm hoặc tham quan danh lam thắng cảnh mà không lo bị kiệt sức.",
+        icon: <PartlyCloudyIcon className="w-7 h-7" />,
         bg: "bg-sky-500/10 border-sky-500/20 text-sky-900",
         badgeBg: "bg-sky-500/20 text-sky-800"
       };
@@ -74,7 +87,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
       return {
         title: "Sương mù mờ ảo, chú ý đường đèo dốc",
         desc: "Không khí lạnh có sương mù đẹp mộng mơ. Thích hợp đi quán cà phê lãng mạn, ăn lẩu nóng. Nếu tự lái xe hoặc đi phượt bằng xe máy, hãy bật đèn cảnh báo và đi chậm.",
-        icon: <Compass className="w-5 h-5 text-slate-600 animate-pulse" />,
+        icon: <FogIcon className="w-7 h-7" />,
         bg: "bg-slate-500/10 border-slate-500/20 text-slate-900",
         badgeBg: "bg-slate-500/20 text-slate-800"
       };
@@ -83,7 +96,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
       return {
         title: "Có mưa rào, hãy chuyển hướng vui chơi trong nhà",
         desc: "Trời ẩm ướt và có mưa. Bạn nên ưu tiên đi bảo tàng, khu vui chơi trong nhà, thủy cung, ghé các quán cà phê hoặc tự tay làm quà lưu niệm.",
-        icon: <CloudRain className="w-5 h-5 text-blue-600 animate-bounce" />,
+        icon: <RainIcon className="w-7 h-7" />,
         bg: "bg-blue-500/10 border-blue-500/20 text-blue-900",
         badgeBg: "bg-blue-500/20 text-blue-800"
       };
@@ -92,7 +105,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
       return {
         title: "Dông bão nguy hiểm, nên nghỉ ngơi tại phòng",
         desc: "Thời tiết xấu kèm theo sấm sét nguy hiểm. Tránh tuyệt đối đi thuyền, bơi biển hoặc đi rừng. Hãy mua đồ ăn về phòng cùng chơi board game hoặc xem phim thư giãn nhé.",
-        icon: <CloudLightning className="w-5 h-5 text-indigo-600 animate-pulse" />,
+        icon: <ThunderstormIcon className="w-7 h-7" />,
         bg: "bg-indigo-500/10 border-indigo-500/20 text-indigo-900",
         badgeBg: "bg-indigo-500/20 text-indigo-800"
       };
@@ -100,7 +113,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
     return {
       title: "Thời tiết thích hợp cho kỳ nghỉ",
       desc: "Điều kiện thời tiết bình thường. Hãy theo dõi các khung giờ trong ngày để lên lịch trình đi chơi hợp lý nhất.",
-      icon: <Thermometer className="w-5 h-5 text-teal-600" />,
+      icon: <ThermometerIcon className="w-7 h-7" />,
       bg: "bg-teal-500/10 border-teal-500/20 text-teal-900",
       badgeBg: "bg-teal-500/20 text-teal-800"
     };
@@ -284,6 +297,74 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
             </div>
           </div>
 
+          {/* Dual Weather Comparison Card */}
+          {currentLocationForecast && (() => {
+            const myTemp = Math.round(currentLocationForecast.current?.temperature ?? ((currentLocationForecast.temperature_2m_max?.[0] ?? 0) + (currentLocationForecast.temperature_2m_min?.[0] ?? 0)) / 2);
+            const myCode = currentLocationForecast.current?.weathercode ?? currentLocationForecast.weathercode?.[0] ?? 0;
+            const myHumidity = currentLocationForecast.current?.humidity ?? null;
+            const myWind = currentLocationForecast.current?.windspeed ?? null;
+            const diff = currentTemp - myTemp;
+            const diffLabel = diff === 0 ? "Giống nơi bạn" : diff > 0 ? `+${Math.round(diff)}°C so với nơi bạn` : `${Math.round(diff)}°C so với nơi bạn`;
+            const diffColor = diff >= 4 ? "text-amber-600" : diff <= -4 ? "text-sky-600" : "text-slate-500";
+            return (
+              <div className="space-y-2.5">
+                <h4 className="text-[13.5px] font-extrabold text-[#030D2E] text-left px-0.5">So sánh với nơi bạn đang ở</h4>
+                <div className="bg-white/60 border border-slate-200/50 rounded-2xl p-4 shadow-inner">
+                  <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                    {/* Current location column */}
+                    <div className="flex flex-col items-center gap-1.5 text-center">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 line-clamp-1 max-w-full">{currentLocationName ?? "Nơi bạn ở"}</span>
+                      <div className="flex items-center justify-center h-8">
+                        {getWeatherIcon(myCode, "w-7 h-7 drop-shadow-sm")}
+                      </div>
+                      <span className="text-3xl font-black text-[#030D2E] tracking-tighter leading-none">{myTemp}°</span>
+                      <div className="flex flex-col items-center gap-1.5 mt-0.5">
+                        {myHumidity !== null && (
+                          <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-500">
+                            <HumidityIcon className="w-3.5 h-3.5" />
+                            <span>{myHumidity}%</span>
+                          </div>
+                        )}
+                        {myWind !== null && (
+                          <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-500">
+                            <WindIcon className="w-3.5 h-3.5" />
+                            <span>{myWind} km/h</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Middle arrow + diff */}
+                    <div className="flex flex-col items-center gap-1 px-1">
+                      <div className="w-px h-6 bg-slate-200" />
+                      <span className={`text-[10px] font-extrabold text-center whitespace-nowrap ${diffColor}`}>{diffLabel}</span>
+                      <div className="w-px h-6 bg-slate-200" />
+                    </div>
+
+                    {/* Destination column */}
+                    <div className="flex flex-col items-center gap-1.5 text-center">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 line-clamp-1 max-w-full">{destination}</span>
+                      <div className="flex items-center justify-center h-8">
+                        {getWeatherIcon(currentCode, "w-7 h-7 drop-shadow-sm")}
+                      </div>
+                      <span className="text-3xl font-black text-[#030D2E] tracking-tighter leading-none">{currentTemp}°</span>
+                      <div className="flex flex-col items-center gap-1.5 mt-0.5">
+                        <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-400">
+                          <HumidityIcon className="w-3.5 h-3.5" />
+                          <span>{humidity}%</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-400">
+                          <WindIcon className="w-3.5 h-3.5" />
+                          <span>{windspeed} km/h</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Hourly 24-Hour Forecast */}
           {forecast.hourly && (
             <div className="space-y-2.5">
@@ -333,7 +414,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
               <div className="bg-white/60 border border-slate-200/50 rounded-2xl p-4 flex flex-col text-left justify-between h-24 shadow-inner">
                 <div className="flex items-center justify-between text-slate-400">
                   <span className="text-[11px] font-extrabold uppercase tracking-wide">Cảm giác thực tế</span>
-                  <Thermometer className="w-4 h-4" />
+                  <ThermometerIcon className="w-5 h-5 text-rose-500" />
                 </div>
                 <div className="flex items-baseline gap-1 mt-auto">
                   <span className="text-2xl font-black text-[#030D2E]">{apparentTemp}°</span>
@@ -347,7 +428,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
               <div className="bg-white/60 border border-slate-200/50 rounded-2xl p-4 flex flex-col text-left justify-between h-24 shadow-inner">
                 <div className="flex items-center justify-between text-slate-400">
                   <span className="text-[11px] font-extrabold uppercase tracking-wide">Độ ẩm</span>
-                  <Droplets className="w-4 h-4 text-sky-500" />
+                  <HumidityIcon className="w-5 h-5 text-sky-500" />
                 </div>
                 <div className="flex flex-col mt-auto">
                   <span className="text-2xl font-black text-[#030D2E]">{humidity}%</span>
@@ -364,7 +445,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
               <div className="bg-white/60 border border-slate-200/50 rounded-2xl p-4 flex flex-col text-left justify-between h-24 shadow-inner">
                 <div className="flex items-center justify-between text-slate-400">
                   <span className="text-[11px] font-extrabold uppercase tracking-wide">Tốc độ gió</span>
-                  <Wind className="w-4 h-4 text-emerald-500 animate-pulse" />
+                  <WindIcon className="w-5 h-5 text-slate-400" />
                 </div>
                 <div className="flex items-baseline gap-1 mt-auto">
                   <span className="text-2xl font-black text-[#030D2E]">{windspeed}</span>
@@ -376,7 +457,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
               <div className="bg-white/60 border border-slate-200/50 rounded-2xl p-4 flex flex-col text-left justify-between h-24 shadow-inner">
                 <div className="flex items-center justify-between text-slate-400">
                   <span className="text-[11px] font-extrabold uppercase tracking-wide">Chỉ số UV</span>
-                  <Sun className="w-4 h-4 text-amber-500" />
+                  <SunIcon className="w-5 h-5 text-amber-500" />
                 </div>
                 <div className="flex flex-col mt-auto">
                   <div className="flex items-baseline gap-1.5">

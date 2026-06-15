@@ -46,6 +46,7 @@ import {
   Calendar,
   Copy,
   CircleDollarSign,
+  MapPin,
 } from "lucide-react";
 import { BottomSheet } from "./ui";
 import { useAuth } from "../hooks/useAuth";
@@ -165,6 +166,9 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
   // Restore from file states
   const [importing, setImporting] = useState(false);
+  const [gpsEnabled, setGpsEnabled] = useState(
+    localStorage.getItem("kat_gps_enabled") !== "false"
+  );
   const [selectedFileForRestore, setSelectedFileForRestore] = useState<File | null>(null);
   const [isRestoreFileConfirmOpen, setIsRestoreFileConfirmOpen] = useState(false);
 
@@ -829,10 +833,61 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               );
             })()}
 
+              {/* GPS Setting */}
+              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-[20px] border border-slate-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] mb-3">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-600 border border-blue-100 shrink-0">
+                    <MapPin className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <h4 className="text-[15px] font-bold text-slate-800">Vị trí</h4>
+                    <p className="text-[12px] text-slate-400 font-medium">Tự động gợi ý địa điểm và ngoại tệ</p>
+                  </div>
+                </div>
+                
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={gpsEnabled}
+                  onClick={() => {
+                    const nextState = !gpsEnabled;
+                    setGpsEnabled(nextState);
+                    localStorage.setItem("kat_gps_enabled", String(nextState));
+                    showToast(nextState ? "Đã bật tự động truy cập GPS." : "Đã tắt tự động truy cập GPS.", "success");
+                  }}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    gpsEnabled ? "bg-[#030D2E]" : "bg-slate-200"
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                      gpsEnabled ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+
+            {/* Exchange Rates */}
+            <button
+              onClick={() => setView("exchangeRates")}
+              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100 hover:bg-slate-100/70 transition-all text-left focus:outline-none mb-3"
+            >
+              <div className="flex items-center gap-3.5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+                  <CircleDollarSign className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 text-left">
+                  <h4 className="text-[15px] font-bold text-slate-800">Tỉ giá ngoại tệ</h4>
+                  <p className="text-[12px] text-slate-400 font-medium">Dữ liệu trực tuyến từ Vietcombank</p>
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 text-slate-400" />
+            </button>
+
             {/* About */}
             <button
               onClick={() => setView("about")}
-              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100 hover:bg-slate-100/70 transition-all text-left focus:outline-none"
+              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100 hover:bg-slate-100/70 transition-all text-left focus:outline-none mb-3"
             >
               <div className="flex items-center gap-3.5">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-50 text-violet-600 border border-violet-100">
@@ -841,23 +896,6 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 <div>
                   <h4 className="text-[15px] font-bold text-slate-800">Thông tin ứng dụng</h4>
                   <p className="text-[12px] text-slate-400 font-medium">Khám phá thông tin và hành trình phát triển</p>
-                </div>
-              </div>
-              <ChevronRight className="h-5 w-5 text-slate-400" />
-            </button>
-
-            {/* Exchange Rates */}
-            <button
-              onClick={() => setView("exchangeRates")}
-              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100 hover:bg-slate-100/70 transition-all text-left focus:outline-none"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
-                  <CircleDollarSign className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="text-[15px] font-bold text-slate-800">Tỉ giá ngoại tệ</h4>
-                  <p className="text-[12px] text-slate-400 font-medium">Cập nhật theo thời gian thực từ Vietcombank</p>
                 </div>
               </div>
               <ChevronRight className="h-5 w-5 text-slate-400" />
@@ -872,9 +910,9 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-100">
                   <Coffee className="h-5 w-5" />
                 </div>
-                <div>
+                <div className="min-w-0 text-left">
                   <h4 className="text-[15px] font-bold text-slate-800">Ủng hộ tác giả</h4>
-                  <p className="text-[12px] text-slate-400 font-medium">Nếu bạn thấy app hữu ích, cảm ơn rất nhiều</p>
+                  <p className="text-[12px] text-slate-400 font-medium">Tiếp thêm động lực để ứng dụng phát triển hơn</p>
                 </div>
               </div>
               <ChevronRight className="h-5 w-5 text-slate-400" />

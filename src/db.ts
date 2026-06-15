@@ -14,6 +14,7 @@ export interface Trip {
   endDate: string;
   latitude?: number;
   longitude?: number;
+  defaultCurrency?: string;
   createdAt: string;
   shareToken?: string;
   sharePin?: string;
@@ -105,6 +106,9 @@ export interface JournalEntry {
   authorId?: string;
   authorName?: string;
   imageUrl?: string;
+  locationName?: string;
+  latitude?: number;
+  longitude?: number;
   postedAt?: string;
   updatedAt?: string;
   isDeleted?: boolean;
@@ -330,7 +334,7 @@ tablesToTrack.forEach(table => {
     // Mã hóa obj trước khi lưu
     const encrypted = encryptObject(obj);
     // Xóa các key cũ có thể bị dư thừa (nếu cần) rồi assign lại
-    Object.keys(obj).forEach(k => delete obj[k]);
+    Object.keys(obj).forEach(k => delete (obj as any)[k]);
     Object.assign(obj, encrypted);
   });
   
@@ -338,7 +342,7 @@ tablesToTrack.forEach(table => {
     // Giải mã obj khi đọc
     if (obj) {
       const decrypted = decryptObject(obj);
-      Object.keys(obj).forEach(k => delete obj[k]);
+      Object.keys(obj).forEach(k => delete (obj as any)[k]);
       Object.assign(obj, decrypted);
     }
     return obj;

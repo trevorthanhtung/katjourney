@@ -563,8 +563,8 @@ function App() {
         <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
           <div className="flex items-center gap-3 shrink-0">
             <div className="flex items-center gap-1.5 min-[360px]:gap-2 select-none shrink-0">
-              <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
-              <h1 className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap hidden min-[400px]:block shrink-0">KAT Journey</h1>
+              <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden md:block h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
+              <h1 className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap shrink-0">KAT Journey</h1>
             </div>
             
             {/* Desktop Navigation */}
