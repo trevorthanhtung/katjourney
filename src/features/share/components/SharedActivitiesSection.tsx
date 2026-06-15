@@ -367,15 +367,21 @@ export function SharedActivitiesSection({
                         ></iframe>
                       </div>
                     )}
-                    <a 
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[13px] font-bold text-emerald-600 border border-emerald-100 hover:bg-emerald-100 transition-colors" 
-                      href={item.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
-                      target="_blank" 
-                      rel="noreferrer"
-                    >
-                      <Map className="w-3.5 h-3.5" />
-                      Mở bằng ứng dụng Google Maps &rarr;
-                    </a>
+                    {(() => {
+                      const isRoute = item.mapLink && (item.mapLink.includes("/maps/dir/") || item.mapLink.includes("maps/dir"));
+                      return (
+                        <a 
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[13px] font-bold text-emerald-600 border border-emerald-100 hover:bg-emerald-100 transition-colors" 
+                          href={item.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
+                          target="_blank" 
+                          rel="noreferrer"
+                        >
+                          {isRoute ? <Route className="w-3.5 h-3.5" /> : <Map className="w-3.5 h-3.5" />}
+                          {isRoute ? "Xem lộ trình di chuyển (Roadmap) " : "Mở bằng ứng dụng Google Maps "}
+                          &rarr;
+                        </a>
+                      );
+                    })()}
                   </div>
                 )}
               </div>
@@ -490,17 +496,30 @@ export function SharedActivitiesSection({
                 <span className="flex flex-col gap-1">
                   <span className="flex items-center gap-1.5">
                     <Map className="h-4 w-4 text-slate-500" />
-                    Link bản đồ (Tuỳ chọn)
+                    Link bản đồ / Lộ trình (Roadmap)
                   </span>
                   <span className="text-xs font-normal text-slate-400">
-                    Chỉ cần điền nếu địa điểm quá khó tìm và hệ thống nhận diện sai.
+                    Gắn link địa điểm hoặc link lộ trình di chuyển (maps/dir/...) của Google Maps.
                   </span>
                 </span>
               }
               value={form.mapLink}
               onChange={val => setForm({ ...form, mapLink: val })}
-              placeholder="https://maps.google.com/..."
+              placeholder="VD: https://www.google.com/maps/dir/..."
             />
+            {form.mapLink && (
+              <div className="mt-1 flex justify-end">
+                <a
+                  href={form.mapLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors"
+                >
+                  <Map className="w-3.5 h-3.5" />
+                  Mở link kiểm tra &rarr;
+                </a>
+              </div>
+            )}
           </div>
 
           {/* Notes */}
