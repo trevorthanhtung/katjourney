@@ -546,6 +546,7 @@ function App() {
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/30 border-t-kat-primary"></div>
         </div>
       }>
+        <GlobalToast />
         <SharedTripScreen token={shareToken} />
       </React.Suspense>
     );
