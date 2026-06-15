@@ -302,18 +302,19 @@ export default function SharedTripScreen({ token }: { token: string }) {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 select-none">
               <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[28px] w-[28px] object-contain drop-shadow-sm" />
-              <h1 className="text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap">KAT Journey</h1>
+              <h1 className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap hidden sm:block">KAT Journey</h1>
             </div>
-            <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2.5 py-0.5 text-[11px] font-bold text-violet-700 select-none">
+            <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2 py-0.5 text-[9.5px] min-[360px]:text-[11px] font-bold text-violet-700 select-none whitespace-nowrap">
               <Share2 className="h-3 w-3" />
               Bản chia sẻ
             </span>
           </div>
           <button
             onClick={() => window.location.href = "/"}
-            className="flex items-center justify-center rounded-full bg-[#030D2E] px-4 py-1.5 text-[13px] font-black text-white hover:bg-[#030D2E]/90 active:scale-95 transition-all shadow-sm whitespace-nowrap"
+            className="flex items-center justify-center rounded-full bg-[#030D2E] px-3.5 py-1.5 text-[11px] min-[360px]:text-[13px] font-black text-white hover:bg-[#030D2E]/90 active:scale-95 transition-all shadow-sm whitespace-nowrap"
           >
-            Tạo chuyến đi của bạn
+            <span className="hidden sm:inline">Tạo chuyến đi của bạn</span>
+            <span className="sm:hidden">Tạo chuyến đi</span>
           </button>
         </div>
       </header>
@@ -479,6 +480,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                journals={journals} 
                changeRequests={changeRequests}
                guestName={currentUser?.name || "Khách"}
+               members={members}
              />
           )}
 

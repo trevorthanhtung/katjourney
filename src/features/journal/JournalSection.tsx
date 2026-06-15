@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLiveQuery } from "dexie-react-hooks";
 import { 
   BookOpen, 
   Calendar, 
@@ -23,7 +24,8 @@ import {
   Image as ImageIcon,
   Loader2
 } from "lucide-react";
-import { db, JournalEntry, JournalMood } from "../../db";
+import { db, JournalEntry, JournalMood, Member } from "../../db";
+import { getAvatarSvg } from "../../utils/avatars";
 import { formatDate, moodLabels, today } from "../../utils/helpers";
 import { BottomSheet, FAB, Input, Textarea, DatePicker, DeleteConfirmModal } from "../../components/ui";
 import { getIdentity } from "../../services/identityService";
@@ -429,6 +431,10 @@ export function JournalSection({
   onBack?: () => void;
   isReadOnly?: boolean;
 }) {
+  const members = useLiveQuery(async () => {
+    return (await db.members.where("tripId").equals(tripId).toArray()).filter(m => !m.isDeleted);
+  }, [tripId]) || [];
+
   const [editing, setEditing] = useState<JournalEntry | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [prefilledContent, setPrefilledContent] = useState("");
@@ -593,9 +599,21 @@ export function JournalSection({
                     >
                       <div className="flex items-center justify-between gap-4 p-4 pb-3">
                         <div className="flex items-center gap-2.5">
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-700 font-black text-[15px]">
-                            {(entry.authorName || "T").charAt(0).toUpperCase()}
-                          </div>
+                          {(() => {
+                            const authorMember = members.find(m => 
+                              (entry.authorName || "").trim().toLowerCase() === m.name.trim().toLowerCase()
+                            );
+                            const avatar = authorMember?.avatar;
+                            return (
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full overflow-hidden bg-slate-200 text-slate-700 font-black text-[15px]">
+                                {avatar ? (
+                                  getAvatarSvg(avatar, "w-full h-full")
+                                ) : (
+                                  (entry.authorName || "T").charAt(0).toUpperCase()
+                                )}
+                              </div>
+                            );
+                          })()}
                           <div className="flex flex-col">
                             <span className="text-[14px] font-extrabold text-slate-800">{entry.authorName || "Trưởng nhóm"}</span>
                             <div className="flex items-center gap-1.5 mt-0.5">

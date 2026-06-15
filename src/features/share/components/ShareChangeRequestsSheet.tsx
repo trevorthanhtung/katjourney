@@ -5,15 +5,18 @@ import { BottomSheet } from '../../../components/ui';
 import { approveChangeRequest, rejectChangeRequest } from '../../../services/shareApprovalService';
 import { showToast } from '../../../components/ui/ToastManager';
 import { formatMoney } from '../../../utils/helpers';
+import { Member } from '../../../db';
+import { getAvatarSvg } from '../../../utils/avatars';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   token: string;
   requests: AppChangeRequest[];
+  members?: Member[];
 }
 
-export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests }: Props) {
+export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, members = [] }: Props) {
   const [isApproving, setIsApproving] = useState<string | null>(null);
 
   async function handleApprove(requestId: string) {
@@ -110,44 +113,57 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests }: P
             <p className="text-[14px] font-bold text-slate-500">Chưa có yêu cầu chỉnh sửa nào.</p>
           </div>
         ) : (
-          requests.map(req => (
-            <div key={req.id} className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-kat-primary/10 flex items-center justify-center">
-                    <span className="text-kat-primary font-bold text-[13px]">
-                      {req.requesterName ? req.requesterName.charAt(0).toUpperCase() : '?'}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-[14px] font-bold text-slate-800">{req.requesterName || "Người được chia sẻ"}</p>
-                    <p className="text-[11px] font-medium text-slate-400">
-                      {req.createdAt ? new Date(req.createdAt.toMillis()).toLocaleString() : 'Vừa xong'}
-                    </p>
+          requests.map(req => {
+            const requesterMember = members.find(m => 
+              (req.requesterName || "").trim().toLowerCase() === m.name.trim().toLowerCase()
+            );
+            const avatar = requesterMember?.avatar;
+
+            return (
+              <div key={req.id} className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 border border-slate-200/50">
+                      {avatar ? (
+                        getAvatarSvg(avatar, "w-full h-full")
+                      ) : (
+                        <span className="text-kat-primary font-bold text-[13px]">
+                          {req.requesterName ? req.requesterName.charAt(0).toUpperCase() : '?'}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-[14px] font-bold text-slate-800">{req.requesterName || "Người được chia sẻ"}</p>
+                      <p className="text-[11px] font-medium text-slate-400">
+                        {req.createdAt ? new Date(req.createdAt.toMillis()).toLocaleString() : 'Vừa xong'}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {renderChangeDetails(req)}
+                <div className="mt-3">
+                  {renderChangeDetails(req)}
+                </div>
 
-              <div className="mt-4 flex gap-2">
-                <button
-                  onClick={() => handleReject(req.id)}
-                  disabled={isApproving !== null}
-                  className="flex-1 rounded-xl bg-slate-100 py-2 text-[13px] font-bold text-slate-600 hover:bg-slate-200 transition-colors disabled:opacity-50"
-                >
-                  {isApproving === req.id ? 'Đang xử lý...' : 'Từ chối'}
-                </button>
-                <button
-                  onClick={() => handleApprove(req.id)}
-                  disabled={isApproving !== null}
-                  className="flex-1 rounded-xl bg-kat-primary py-2 text-[13px] font-bold text-white hover:brightness-105 transition-colors disabled:opacity-50"
-                >
-                  {isApproving === req.id ? 'Đang xử lý...' : 'Đồng ý áp dụng'}
-                </button>
+                <div className="mt-4 flex gap-2">
+                  <button
+                    onClick={() => handleReject(req.id)}
+                    disabled={isApproving !== null}
+                    className="flex-1 rounded-xl bg-slate-100 py-2 text-[13px] font-bold text-slate-600 hover:bg-slate-200 transition-colors disabled:opacity-50"
+                  >
+                    {isApproving === req.id ? 'Đang xử lý...' : 'Từ chối'}
+                  </button>
+                  <button
+                    onClick={() => handleApprove(req.id)}
+                    disabled={isApproving !== null}
+                    className="flex-1 rounded-xl bg-kat-primary py-2 text-[13px] font-bold text-white hover:brightness-105 transition-colors disabled:opacity-50"
+                  >
+                    {isApproving === req.id ? 'Đang xử lý...' : 'Đồng ý áp dụng'}
+                  </button>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </BottomSheet>
