@@ -2387,7 +2387,7 @@ export function SharedMembersSection({
   const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
 
   const [roleChangeMemberId, setRoleChangeMemberId] = useState<string | null>(null);
-  const [selectedRole, setSelectedRole] = useState<string>('Người đồng hành');
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(['Người đồng hành']);
 
   useEffect(() => {
     if (!activeMenuId) return;
@@ -2461,7 +2461,7 @@ export function SharedMembersSection({
     const member = members.find(m => String(m.id) === roleChangeMemberId);
     if (!member) return;
 
-    const finalRole = selectedRole;
+    const finalRole = selectedRoles.join(", ");
     if (!finalRole) {
       showToast('Vui lòng chọn vai trò mới.', 'error');
       return;
@@ -2794,11 +2794,8 @@ export function SharedMembersSection({
                   setRoleChangeMemberId(id);
                   const currentRole = mem.role || 'Người đồng hành';
                   const presets = ["Người đồng hành", "Quản lý chi phí", "Tài xế", "Dẫn đường"];
-                  if (presets.includes(currentRole)) {
-                    setSelectedRole(currentRole);
-                  } else {
-                    setSelectedRole('Người đồng hành');
-                  }
+                  const existingRoles = currentRole.split(',').map((r: string) => r.trim()).filter((r: string) => presets.includes(r));
+                  setSelectedRoles(existingRoles.length > 0 ? existingRoles : ['Người đồng hành']);
                 }
               }}
               className="flex w-full items-center px-4 py-2 text-[13px] font-bold text-slate-700 hover:bg-slate-50 transition-colors border-b border-slate-100"
@@ -2915,12 +2912,19 @@ export function SharedMembersSection({
             <span className="text-[13px] font-bold text-slate-700 block">Chọn vai trò mới</span>
             <div className="grid grid-cols-2 gap-2">
               {["Người đồng hành", "Quản lý chi phí", "Tài xế", "Dẫn đường"].map((r) => {
-                const isSelected = selectedRole === r;
+                const isSelected = selectedRoles.includes(r);
                 return (
                   <button
                     key={r}
                     type="button"
-                    onClick={() => setSelectedRole(r)}
+                    onClick={() => setSelectedRoles(prev => {
+                      if (r === 'Người đồng hành') return ['Người đồng hành'];
+                      if (prev.includes(r)) {
+                        const filtered = prev.filter(x => x !== r);
+                        return filtered.length === 0 ? ['Người đồng hành'] : filtered;
+                      }
+                      return prev.filter(x => x !== 'Người đồng hành').concat(r);
+                    })}
                     className={classNames(
                       "py-2.5 px-3 text-left text-[12.5px] font-bold rounded-xl transition-all border",
                       isSelected 
