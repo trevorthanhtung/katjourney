@@ -6,6 +6,7 @@ import type { FirebaseApp } from "firebase/app";
 import type { Auth } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
 import type { FirebaseStorage } from "firebase/storage";
+import type { AppCheck } from "firebase/app-check";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -30,6 +31,7 @@ let cachedApp: FirebaseApp | null = null;
 let cachedAuth: Auth | null = null;
 let cachedDb: Firestore | null = null;
 let cachedStorage: FirebaseStorage | null = null;
+let cachedAppCheck: AppCheck | null = null;
 
 /**
  * Khởi tạo Firebase SDK (lazy-load).
@@ -68,7 +70,19 @@ export async function initFirebase() {
   cachedDb = getFirestore(cachedApp);
   cachedStorage = getStorage(cachedApp);
 
-  return { app: cachedApp, auth: cachedAuth, db: cachedDb, storage: cachedStorage };
+  // Khởi tạo App Check nếu có cấu hình site key
+  const appCheckSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+  if (appCheckSiteKey && !cachedAppCheck) {
+    // Để App Check debug hoạt động trên localhost, có thể bật dòng sau trong môi trường dev:
+    // self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    const { initializeAppCheck, ReCaptchaEnterpriseProvider } = await import("firebase/app-check");
+    cachedAppCheck = initializeAppCheck(cachedApp, {
+      provider: new ReCaptchaEnterpriseProvider(appCheckSiteKey),
+      isTokenAutoRefreshEnabled: true
+    });
+  }
+
+  return { app: cachedApp, auth: cachedAuth, db: cachedDb, storage: cachedStorage, appCheck: cachedAppCheck };
 }
 
 /**
