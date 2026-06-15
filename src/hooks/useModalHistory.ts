@@ -14,6 +14,12 @@ import { useEffect, useRef } from "react";
  */
 export function useModalHistory(isOpen: boolean, onClose: () => void, modalHash: string) {
   const isNavigatingRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+
+  // Always keep the ref updated with the latest callback
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (isOpen) {
@@ -28,7 +34,7 @@ export function useModalHistory(isOpen: boolean, onClose: () => void, modalHash:
         // If the hash changed and is no longer the target hash, close the modal
         if (window.location.hash !== targetHash) {
           isNavigatingRef.current = true;
-          onClose();
+          onCloseRef.current();
         }
       };
 
@@ -43,5 +49,5 @@ export function useModalHistory(isOpen: boolean, onClose: () => void, modalHash:
         isNavigatingRef.current = false;
       };
     }
-  }, [isOpen, onClose, modalHash]);
+  }, [isOpen, modalHash]);
 }
