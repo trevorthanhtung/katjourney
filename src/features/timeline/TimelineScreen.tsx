@@ -1301,6 +1301,23 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               type="url"
               value={roadmapInputLink}
               onChange={e => setRoadmapInputLink(e.target.value)}
+              onPaste={e => {
+                const pasted = e.clipboardData.getData("text").trim();
+                if (pasted && pasted.startsWith("http")) {
+                  // Đặt giá trị rồi auto-save sau 1 tick để state kịp cập nhật
+                  setTimeout(async () => {
+                    if (!roadmapEditDay) return;
+                    const currentRoadmaps = { ...(trip.dayRoadmaps || {}) };
+                    currentRoadmaps[roadmapEditDay] = pasted;
+                    await db.trips.update(trip.id!, { dayRoadmaps: currentRoadmaps });
+                    if (trip.shareToken) {
+                      const { updateSharedTripRoadmaps } = await import("../../services/sharedTripEditService");
+                      await updateSharedTripRoadmaps(trip.shareToken, currentRoadmaps);
+                    }
+                    setIsRoadmapFormOpen(false);
+                  }, 50);
+                }
+              }}
               placeholder="https://www.google.com/maps/dir/..."
               className="w-full pl-11 pr-4 py-4 bg-white border-2 border-[#E8E1D8] rounded-2xl text-[14px] font-semibold text-[#030D2E] placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-[#00BFB7] focus:ring-2 focus:ring-[#00BFB7]/15 transition-all duration-200"
             />
