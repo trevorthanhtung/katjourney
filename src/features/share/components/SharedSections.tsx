@@ -2719,7 +2719,7 @@ export function SharedMembersSection({
                   </div>
                 </div>
 
-                {isRequestEdit && !isPending && !(() => {
+                {isRequestEdit && !isPending && member.name === guestName && !(() => {
                   const r = (member.role || "").toLowerCase();
                   return r.includes("trưởng đoàn") || r.includes("trưởng nhóm") || r.includes("người đại diện") || r.includes("leader");
                 })() && (
