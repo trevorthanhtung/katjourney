@@ -12,7 +12,6 @@ import {
   Sparkles, 
   Table2, 
   Trash2, 
-  Upload,
   RefreshCw,
   Users, 
   MapPin, 
@@ -2133,39 +2132,6 @@ export function MoreScreen({
                     iconTextColor="text-sky-600 border-sky-100"
                   />
 
-                  <label className="flex w-full items-center gap-3 px-4 py-3.5 rounded-[16px] bg-white border border-[#E8E1D8]/80 cursor-pointer hover:bg-slate-50 active:scale-[0.99] transition-all shadow-sm">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-50 border border-violet-100 text-violet-600">
-                      <Upload className="h-4.5 w-4.5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-bold text-[#030D2E]">Nhập từ file .katjourney</p>
-                      <p className="text-[11px] text-slate-400 font-medium">Khôi phục chuyến đi từ bản sao lưu</p>
-                    </div>
-                    <input
-                      type="file"
-                      accept=".katjourney,application/json"
-                      className="sr-only"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        e.target.value = "";
-                        try {
-                          const parsed = JSON.parse(await file.text()) as any;
-                          if (parsed.app !== "KAT Journey" || !parsed.trip?.title) {
-                            onShowToast?.("Tệp không đúng định dạng KAT Journey.");
-                            return;
-                          }
-                          // Trigger a custom event to open the import preview in SettingsSheet
-                          // Since MoreScreen doesn't have direct access, we dispatch a custom event
-                          const evt = new CustomEvent("kat:import-preview", { detail: parsed });
-                          window.dispatchEvent(evt);
-                        } catch {
-                          onShowToast?.("Không đọc được tệp. Vui lòng thử lại.");
-                        }
-                      }}
-                    />
-                  </label>
-                  
 
                   <ActionCard
                     icon={FileText}
