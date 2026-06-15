@@ -6,6 +6,11 @@ export function getEmbedMapUrl(input: string, fallbackLocation?: string): string
 
   let query = input.trim();
 
+  // Do not show embed iframe for directions/route (roadmap) links
+  if (query.includes("/maps/dir/") || query.includes("maps/dir")) {
+    return "";
+  }
+
   // If input is a URL, try to extract a useful query
   if (query.startsWith("http")) {
     try {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, Plus, Pencil, Trash2, MapPin, DollarSign, AlignLeft, Route, HelpCircle, ChevronRight } from "lucide-react";
+import { X, Plus, Pencil, Trash2, MapPin, DollarSign, AlignLeft, Route, HelpCircle, ChevronRight, Map } from "lucide-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, BackupPlan, BackupPlanType } from "../../db";
 import { DeleteConfirmModal } from "../../components/ui";
@@ -261,12 +261,24 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                     </div>
 
                     <div>
-                      <label className="block text-[13px] font-bold text-slate-700 mb-1.5">Link Google Maps</label>
+                      <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+                        <span>Link Google Maps / Lộ trình (Roadmap)</span>
+                        {mapLink && (
+                          <a
+                            href={mapLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-emerald-600 hover:text-emerald-700 font-bold hover:underline"
+                          >
+                            Mở link kiểm tra &rarr;
+                          </a>
+                        )}
+                      </label>
                       <input
                         type="url"
                         value={mapLink}
                         onChange={e => setMapLink(e.target.value)}
-                        placeholder="https://maps.google.com/..."
+                        placeholder="VD: https://www.google.com/maps/dir/..."
                         className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
@@ -399,15 +411,21 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                                 ></iframe>
                               </div>
                             )}
-                            <a 
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[12.5px] font-bold text-emerald-600 border border-emerald-100 hover:bg-emerald-100 transition-colors" 
-                              href={plan.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(plan.location || "")}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                            >
-                              <MapPin className="w-3.5 h-3.5" />
-                              Mở bằng ứng dụng Google Maps &rarr;
-                            </a>
+                            {(() => {
+                              const isRoute = plan.mapLink && (plan.mapLink.includes("/maps/dir/") || plan.mapLink.includes("maps/dir"));
+                              return (
+                                <a 
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[12.5px] font-bold text-emerald-600 border border-emerald-100 hover:bg-emerald-100 transition-colors" 
+                                  href={plan.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(plan.location || "")}`} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                >
+                                  {isRoute ? <Route className="w-3.5 h-3.5" /> : <Map className="w-3.5 h-3.5" />}
+                                  {isRoute ? "Xem lộ trình di chuyển (Roadmap) " : "Mở bằng ứng dụng Google Maps "}
+                                  &rarr;
+                                </a>
+                              );
+                            })()}
                           </div>
                         )}
                       </div>
