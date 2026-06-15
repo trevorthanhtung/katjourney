@@ -4,7 +4,7 @@ import {
   Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link, X
 } from "lucide-react";
 import { getViewShareData } from "../../services/cloudShareService";
-import { formatDate, classNames, getTripTiming, formatMoney } from "../../utils/helpers";
+import { formatDate, classNames, getTripTiming, formatMoney, daysBetween } from "../../utils/helpers";
 import { getWeatherGradient } from "../../services/weatherService";
 import { EventItem, Expense, ChecklistItem, Member, JournalEntry, TravelDocument, BackupPlan } from "../../db";
 import { SharedActivitiesSection } from "./components/SharedActivitiesSection";
@@ -165,6 +165,18 @@ export default function SharedTripScreen({ token }: { token: string }) {
     travelDocuments = [],
     changeRequests = []
   } = data;
+
+  const tripDays = daysBetween(trip.startDate, trip.endDate);
+  const eventDays = Array.from(new Set(activities.map((e: any) => e.date)));
+  const days = Array.from(new Set([...tripDays, ...eventDays])).filter(Boolean).sort() as string[];
+
+  const [selectedRoadmapDay, setSelectedRoadmapDay] = useState<string>("");
+
+  useEffect(() => {
+    if (days.length > 0 && !selectedRoadmapDay) {
+      setSelectedRoadmapDay(days[0]);
+    }
+  }, [days, selectedRoadmapDay]);
 
   const isDayTrip = trip.startDate === trip.endDate;
   let durationText = "Trong ngày";
@@ -457,6 +469,83 @@ export default function SharedTripScreen({ token }: { token: string }) {
         <div className="space-y-6">
           {activeTab === "activities" && (
             <div className="space-y-6">
+              {/* Shared Roadmap Widget */}
+              {days.length > 0 && (
+                <div className="rounded-3xl bg-white p-5 border border-slate-200/60 shadow-sm space-y-4">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                      <Route className="h-4 w-4" />
+                    </span>
+                    <h4 className="text-[15px] font-extrabold text-[#030D2E]">Lộ trình di chuyển</h4>
+                  </div>
+
+                  {/* Day selector tabs inside the widget */}
+                  {days.length > 1 && (
+                    <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-none">
+                      {days.map((d, idx) => {
+                        const isActive = selectedRoadmapDay === d;
+                        const hasLink = !!trip.dayRoadmaps?.[d];
+                        return (
+                          <button
+                            key={d}
+                            type="button"
+                            onClick={() => setSelectedRoadmapDay(d)}
+                            className={classNames(
+                              "px-3 py-1.5 rounded-xl text-[12px] font-bold whitespace-nowrap border shrink-0 transition-all active:scale-95 cursor-pointer",
+                              isActive
+                                ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
+                                : hasLink
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-[#030D2E]/10"
+                                  : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
+                            )}
+                          >
+                            Ngày {idx + 1}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Roadmap details for selected day */}
+                  {(() => {
+                    const dayIndex = days.indexOf(selectedRoadmapDay);
+                    const dateParts = selectedRoadmapDay ? selectedRoadmapDay.split('-') : [];
+                    const dateLabel = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}` : selectedRoadmapDay;
+                    const mapUrl = trip.dayRoadmaps?.[selectedRoadmapDay] || "";
+                    const isRoute = mapUrl && (mapUrl.includes("/maps/dir/") || mapUrl.includes("maps/dir"));
+
+                    return (
+                      <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-3.5 space-y-3">
+                        <div className="text-[12px] font-semibold text-slate-400">
+                          Ngày {dayIndex + 1} ({dateLabel})
+                        </div>
+
+                        {mapUrl ? (
+                          <div className="space-y-2.5">
+                            <p className="text-[13px] font-medium text-slate-600">
+                              {isRoute ? "Chủ chuyến đi đã cấu hình lộ trình cho ngày này." : "Bản đồ/địa điểm được liên kết cho ngày này."}
+                            </p>
+                            <a
+                              href={mapUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer"
+                            >
+                              <Route className="w-4 h-4" />
+                              Mở lộ trình &rarr;
+                            </a>
+                          </div>
+                        ) : (
+                          <div className="text-center py-2">
+                            <p className="text-[12.5px] font-semibold text-slate-400">Chưa có lộ trình cho ngày này</p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+
               {(activities.length > 0 || canRequestEdit) && (
                 <SharedActivitiesSection 
                   token={token} 

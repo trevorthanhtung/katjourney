@@ -582,6 +582,35 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
   const [isBackupPlansOpen, setIsBackupPlansOpen] = useState(false);
   const [backupPlanCtx, setBackupPlanCtx] = useState<{ activityId?: number; date?: string }>({});
 
+  const [selectedRoadmapDay, setSelectedRoadmapDay] = useState<string>("");
+  const [isRoadmapFormOpen, setIsRoadmapFormOpen] = useState(false);
+  const [roadmapEditDay, setRoadmapEditDay] = useState<string>("");
+  const [roadmapInputLink, setRoadmapInputLink] = useState("");
+
+  useEffect(() => {
+    if (filterDay !== "all") {
+      setSelectedRoadmapDay(filterDay);
+    } else if (days.length > 0 && !selectedRoadmapDay) {
+      setSelectedRoadmapDay(days[0]);
+    }
+  }, [filterDay, days, selectedRoadmapDay]);
+
+  const handleSaveRoadmap = async () => {
+    if (!roadmapEditDay) return;
+    const currentRoadmaps = { ...(trip.dayRoadmaps || {}) };
+    if (roadmapInputLink.trim()) {
+      currentRoadmaps[roadmapEditDay] = roadmapInputLink.trim();
+    } else {
+      delete currentRoadmaps[roadmapEditDay];
+    }
+    await db.trips.update(trip.id!, { dayRoadmaps: currentRoadmaps });
+    if (trip.shareToken) {
+      const { updateSharedTripRoadmaps } = await import("../../services/sharedTripEditService");
+      await updateSharedTripRoadmaps(trip.shareToken, currentRoadmaps);
+    }
+    setIsRoadmapFormOpen(false);
+  };
+
   useModalHistory(isFormOpen, () => {
     setIsFormOpen(false);
     setEditing(null);
@@ -1101,6 +1130,110 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
             </div>
           </div>
 
+          {/* Roadmap Widget */}
+          {days.length > 0 && (
+            <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                  <Route className="h-4 w-4" />
+                </span>
+                <h4 className="text-[15px] font-extrabold text-[#030D2E]">Lộ trình di chuyển</h4>
+              </div>
+
+              {/* Day selector tabs inside the widget */}
+              {days.length > 1 && (
+                <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-none">
+                  {days.map((d, idx) => {
+                    const isActive = selectedRoadmapDay === d;
+                    const hasLink = !!trip.dayRoadmaps?.[d];
+                    return (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => setSelectedRoadmapDay(d)}
+                        className={classNames(
+                          "px-3 py-1.5 rounded-xl text-[12px] font-bold whitespace-nowrap border shrink-0 transition-all active:scale-95 cursor-pointer",
+                          isActive
+                            ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
+                            : hasLink
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100/50"
+                              : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
+                        )}
+                      >
+                        Ngày {idx + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Roadmap details for selected day */}
+              {(() => {
+                const dayIndex = days.indexOf(selectedRoadmapDay);
+                const dateLabel = selectedRoadmapDay ? formatDateShort(selectedRoadmapDay) : "";
+                const mapUrl = trip.dayRoadmaps?.[selectedRoadmapDay] || "";
+                const isRoute = mapUrl && (mapUrl.includes("/maps/dir/") || mapUrl.includes("maps/dir"));
+
+                return (
+                  <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-3.5 space-y-3">
+                    <div className="flex items-center justify-between text-[12px] font-semibold text-slate-400">
+                      <span>Ngày {dayIndex + 1} ({dateLabel})</span>
+                      {!isReadOnly && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setRoadmapInputLink(mapUrl);
+                            setRoadmapEditDay(selectedRoadmapDay);
+                            setIsRoadmapFormOpen(true);
+                          }}
+                          className="text-indigo-600 hover:text-indigo-700 font-bold flex items-center gap-1 cursor-pointer"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          {mapUrl ? "Sửa" : "Thêm"}
+                        </button>
+                      )}
+                    </div>
+
+                    {mapUrl ? (
+                      <div className="space-y-2.5">
+                        <p className="text-[13px] font-medium text-slate-600">
+                          {isRoute ? "Đã có link lộ trình cho ngày này." : "Đã liên kết bản đồ cho ngày này."}
+                        </p>
+                        <a
+                          href={mapUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer"
+                        >
+                          <Route className="w-4 h-4" />
+                          Mở lộ trình &rarr;
+                        </a>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 text-center py-2">
+                        <p className="text-[12.5px] font-semibold text-slate-400">Chưa có lộ trình ngày này</p>
+                        {!isReadOnly && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setRoadmapInputLink("");
+                              setRoadmapEditDay(selectedRoadmapDay);
+                              setIsRoadmapFormOpen(true);
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-[12px] font-bold text-slate-600 shadow-sm transition-all cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            Gắn link lộ trình
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
           <WeatherWidget destination={trip.location} latitude={trip.latitude} longitude={trip.longitude} days={tripDays.length} />
           
           {/* Gợi ý hành trình has been replaced by the redesigned WeatherWidget above */}
@@ -1139,6 +1272,52 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         isOpen={isBackupPlansOpen}
         onClose={() => setIsBackupPlansOpen(false)}
       />
+
+      {/* Roadmap Edit Bottom Sheet */}
+      <BottomSheet
+        isOpen={isRoadmapFormOpen}
+        onClose={() => setIsRoadmapFormOpen(false)}
+        title={`Lộ trình di chuyển - Ngày ${days.indexOf(roadmapEditDay) + 1}`}
+      >
+        <div className="space-y-4 pb-4">
+          <Input
+            label={
+              <span className="flex flex-col gap-1">
+                <span className="flex items-center gap-1.5">
+                  <Route className="h-4 w-4 text-slate-500" />
+                  Link lộ trình Google Maps
+                </span>
+                <span className="text-xs font-normal text-slate-400">
+                  Dán link lộ trình tìm được trên Google Maps (chứa nhiều điểm đến/waypoint).
+                </span>
+              </span>
+            }
+            value={roadmapInputLink}
+            onChange={setRoadmapInputLink}
+            placeholder="VD: https://www.google.com/maps/dir/..."
+          />
+          
+          {roadmapInputLink && (
+            <div className="flex justify-end">
+              <a
+                href={roadmapInputLink}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors"
+              >
+                <Map className="w-3.5 h-3.5" />
+                Mở link kiểm tra &rarr;
+              </a>
+            </div>
+          )}
+
+          <FormActions
+            onCancel={() => setIsRoadmapFormOpen(false)}
+            onSave={handleSaveRoadmap}
+            saveLabel="Lưu lộ trình"
+          />
+        </div>
+      </BottomSheet>
 
       {/* Grid Day Picker Bottom Sheet */}
       <BottomSheet

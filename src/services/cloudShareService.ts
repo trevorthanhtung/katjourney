@@ -102,6 +102,7 @@ export async function createShareLink(
       startDate: trip.startDate,
       endDate: trip.endDate,
       tripType: trip.tripType || "multiDay",
+      dayRoadmaps: trip.dayRoadmaps || null,
     }
   });
 
@@ -197,6 +198,7 @@ export async function updateShareLink(
       startDate: trip.startDate,
       endDate: trip.endDate,
       tripType: trip.tripType || "multiDay",
+      dayRoadmaps: trip.dayRoadmaps || null,
     }
   });
 
