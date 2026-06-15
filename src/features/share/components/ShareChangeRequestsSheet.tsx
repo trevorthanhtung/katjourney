@@ -117,20 +117,28 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
             const requesterMember = members.find(m => 
               (req.requesterName || "").trim().toLowerCase() === m.name.trim().toLowerCase()
             );
-            const avatar = requesterMember?.avatar;
+            let avatar = requesterMember?.avatar;
+            if (!avatar) {
+              const requesterName = req.requesterName || "Người được chia sẻ";
+              let hash = 0;
+              for (let i = 0; i < requesterName.length; i++) {
+                hash = requesterName.charCodeAt(i) + ((hash << 5) - hash);
+              }
+              const genderChar = (requesterName.toLowerCase().includes("nữ") || 
+                                  requesterName.toLowerCase().includes("chị") || 
+                                  requesterName.toLowerCase().includes("mẹ") || 
+                                  requesterName.toLowerCase().includes("cô") || 
+                                  requesterName.toLowerCase().includes("bà")) ? "f" : "m";
+              const num = (Math.abs(hash) % 10) + 1;
+              avatar = `${genderChar}${num}`;
+            }
 
             return (
               <div key={req.id} className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
                 <div className="flex justify-between items-start">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 border border-slate-200/50">
-                      {avatar ? (
-                        getAvatarSvg(avatar, "w-full h-full")
-                      ) : (
-                        <span className="text-kat-primary font-bold text-[13px]">
-                          {req.requesterName ? req.requesterName.charAt(0).toUpperCase() : '?'}
-                        </span>
-                      )}
+                      {getAvatarSvg(avatar, "w-full h-full")}
                     </div>
                     <div>
                       <p className="text-[14px] font-bold text-slate-800">{req.requesterName || "Người được chia sẻ"}</p>
