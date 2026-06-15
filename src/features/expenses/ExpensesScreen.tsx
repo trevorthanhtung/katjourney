@@ -488,47 +488,66 @@ function ExpenseForm({
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               </button>
 
-              {isCurrencyDropdownOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setIsCurrencyDropdownOpen(false)}
-                  />
-                  <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 w-[80px] bg-white border border-slate-200 rounded-xl shadow-lg z-20 overflow-hidden animate-scaleUp origin-top">
-                    <div className="max-h-[220px] overflow-y-auto custom-scrollbar flex flex-col py-1">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setForm({ ...form, currency: "VND", exchangeRate: 1 });
-                          setIsCurrencyDropdownOpen(false);
-                        }}
-                        className={classNames(
-                          "px-3 py-2 text-[13px] font-bold text-center transition-colors hover:bg-slate-50",
-                          form.currency === "VND" ? "text-kat-primary bg-kat-primary/5" : "text-slate-600"
-                        )}
-                      >
-                        VND
-                      </button>
-                      {exchangeRates.map((r) => (
+              {/* Thẻ select ảo (native) đè lên trên ở bản Mobile */}
+              <select
+                value={form.currency}
+                onChange={(e) => {
+                  const currency = e.target.value;
+                  const rate = exchangeRates.find(r => r.currencyCode === currency)?.transfer || 1;
+                  setForm({ ...form, currency, exchangeRate: currency === "VND" ? 1 : rate });
+                }}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer md:hidden"
+              >
+                <option value="VND">VND</option>
+                {exchangeRates.map(r => (
+                  <option key={r.currencyCode} value={r.currencyCode}>{r.currencyCode}</option>
+                ))}
+              </select>
+
+              {/* Custom dropdown cho Desktop */}
+              <div className="hidden md:block">
+                {isCurrencyDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setIsCurrencyDropdownOpen(false)}
+                    />
+                    <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 w-[80px] bg-white border border-slate-200 rounded-xl shadow-lg z-20 overflow-hidden animate-scaleUp origin-top">
+                      <div className="max-h-[220px] overflow-y-auto custom-scrollbar flex flex-col py-1">
                         <button
-                          key={r.currencyCode}
                           type="button"
                           onClick={() => {
-                            setForm({ ...form, currency: r.currencyCode, exchangeRate: r.transfer });
+                            setForm({ ...form, currency: "VND", exchangeRate: 1 });
                             setIsCurrencyDropdownOpen(false);
                           }}
                           className={classNames(
                             "px-3 py-2 text-[13px] font-bold text-center transition-colors hover:bg-slate-50",
-                            form.currency === r.currencyCode ? "text-kat-primary bg-kat-primary/5" : "text-slate-600"
+                            form.currency === "VND" ? "text-kat-primary bg-kat-primary/5" : "text-slate-600"
                           )}
                         >
-                          {r.currencyCode}
+                          VND
                         </button>
-                      ))}
+                        {exchangeRates.map((r) => (
+                          <button
+                            key={r.currencyCode}
+                            type="button"
+                            onClick={() => {
+                              setForm({ ...form, currency: r.currencyCode, exchangeRate: r.transfer });
+                              setIsCurrencyDropdownOpen(false);
+                            }}
+                            className={classNames(
+                              "px-3 py-2 text-[13px] font-bold text-center transition-colors hover:bg-slate-50",
+                              form.currency === r.currencyCode ? "text-kat-primary bg-kat-primary/5" : "text-slate-600"
+                            )}
+                          >
+                            {r.currencyCode}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
           <div className="relative w-full max-w-[280px] flex items-center justify-center">
