@@ -392,35 +392,37 @@ export default function SharedTripScreen({ token }: { token: string }) {
       )}
 
       {/* Header */}
-      <header className="bg-[#FFFDF8] border-b border-slate-100 px-4 py-3 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="KAT Journey" className="h-8 w-8 rounded-lg shadow-sm" />
-          <span className="text-lg font-black text-[#030D2E] tracking-tight">KAT Journey</span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-2 py-0.5 text-[10px] font-bold text-indigo-600">
-            <Share2 className="h-3 w-3" /> Chia sẻ
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          {/* Switch identity button */}
-          {currentUser && (
+      <header className="bg-[#FFFDF8] border-b border-slate-100 px-4 py-3 shadow-sm">
+        <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between">
+          <div className="flex items-center gap-2 select-none">
+            <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[28px] w-[28px] object-contain drop-shadow-sm" />
+            <span className="text-lg font-black text-[#030D2E] tracking-tight">KAT Journey</span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-2 py-0.5 text-[10px] font-bold text-indigo-600">
+              <Share2 className="h-3 w-3" /> Chia sẻ
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Switch identity button */}
+            {currentUser && (
+              <button
+                onClick={() => {
+                  setStep("identity");
+                  setShowIdentityModal(true);
+                }}
+                title="Chọn lại người dùng"
+                className="flex items-center gap-1.5 min-h-[36px] px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[12px] font-bold text-slate-650 hover:text-slate-900 shadow-sm transition-all active:scale-[0.97]"
+              >
+                <UserRoundCog className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{currentUser.name}</span>
+              </button>
+            )}
             <button
-              onClick={() => {
-                setStep("identity");
-                setShowIdentityModal(true);
-              }}
-              title="Chọn lại người dùng"
-              className="flex items-center gap-1.5 min-h-[36px] px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[12px] font-bold text-slate-600 hover:text-slate-900 shadow-sm transition-all active:scale-[0.97]"
+              onClick={() => window.location.href = "/"}
+              className="min-h-[38px] text-[13px] font-black text-white bg-[#030D2E] hover:bg-[#030D2E]/90 px-4 rounded-xl shadow-sm transition-all active:scale-[0.97]"
             >
-              <UserRoundCog className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">{currentUser.name}</span>
+              Tạo chuyến đi
             </button>
-          )}
-          <button
-            onClick={() => window.location.href = "/"}
-            className="min-h-[38px] text-[13px] font-black text-white bg-[#030D2E] hover:bg-[#030D2E]/90 px-4 rounded-xl shadow-sm transition-all active:scale-[0.97]"
-          >
-            Tạo chuyến đi
-          </button>
+          </div>
         </div>
       </header>
 
