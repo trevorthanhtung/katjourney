@@ -402,6 +402,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           longitude: t.longitude,
           mediaLink: t.mediaLink,
           dayRoadmaps: t.dayRoadmaps,
+          shareToken: t.shareToken,
+          sharePin: t.sharePin,
           status: t.status === "archived" ? "archived" : "active",
           createdAt: new Date().toISOString(),
         });
