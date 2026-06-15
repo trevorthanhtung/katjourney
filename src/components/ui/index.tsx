@@ -413,7 +413,7 @@ export function Select({
   placeholder,
   labels
 }: {
-  label: React.ReactNode;
+  label?: React.ReactNode;
   value: string;
   onChange: (value: string) => void;
   options: string[];
@@ -424,7 +424,7 @@ export function Select({
 
   return (
     <div className="block">
-      <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
+      {label && <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>}
       <button
         type="button"
         onClick={() => setIsOpen(true)}
