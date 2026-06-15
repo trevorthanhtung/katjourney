@@ -16,15 +16,18 @@ import {
   Hotel,
   Coffee,
   ShoppingBag,
-  CircleEllipsis
+  CircleEllipsis,
+  GitBranch,
+  WalletCards
 } from 'lucide-react';
-import { EventItem, Member } from '../../../db';
-import { classNames, formatDate } from '../../../utils/helpers';
+import { EventItem, Member, Expense, BackupPlan, Trip } from '../../../db';
+import { classNames, formatDate, daysBetween } from '../../../utils/helpers';
 import { getEmbedMapUrl } from '../../../utils/mapUtils';
 import { submitChangeRequest } from '../../../services/sharedTripRequestService';
 import { showToast } from '../../../components/ui/ToastManager';
 import { BottomSheet, Input, Textarea, Select, DatePicker, TimePicker, DeleteConfirmModal } from '../../../components/ui';
 import { User, UserRoundCheck } from 'lucide-react';
+import { SharedBackupPlansSheet } from './SharedBackupPlansSheet';
 
 const ACTIVITY_CATEGORIES = [
   { id: "transport", label: "Di chuyển", icon: Route, bgColor: "bg-blue-50 text-blue-600 border-blue-100", activeBg: "bg-blue-100 border-blue-400 text-blue-700" },
@@ -36,26 +39,85 @@ const ACTIVITY_CATEGORIES = [
   { id: "other", label: "Khác", icon: CircleEllipsis, bgColor: "bg-slate-50 text-slate-600 border-slate-100", activeBg: "bg-slate-100 border-slate-400 text-slate-700" }
 ];
 
+function getCategory(id?: string) {
+  return ACTIVITY_CATEGORIES.find(c => c.id === id) || ACTIVITY_CATEGORIES[ACTIVITY_CATEGORIES.length - 1];
+}
+
 export function SharedActivitiesSection({ 
   token, 
   mode, 
+  backupPlansMode,
   activities, 
   changeRequests = [],
   members = [],
-  guestName
+  guestName,
+  expenses = [],
+  backupPlans = [],
+  trip
 }: { 
   token: string; 
   mode: string; 
+  backupPlansMode?: string;
   activities: EventItem[];
   changeRequests?: any[];
   members?: Member[];
   guestName?: string;
+  expenses?: Expense[];
+  backupPlans?: BackupPlan[];
+  trip?: Trip;
 }) {
+  const tripDays = React.useMemo(() => {
+    if (!trip?.startDate || !trip?.endDate) return [];
+    return daysBetween(trip.startDate, trip.endDate);
+  }, [trip]);
+
+  const dateLabels = React.useMemo(() => {
+    return tripDays.reduce((acc, date, idx) => {
+      acc[date] = `Ngày ${idx + 1} (${formatDate(date)})`;
+      return acc;
+    }, {} as Record<string, string>);
+  }, [tripDays]);
+
+  const mergedBackupPlans = React.useMemo(() => {
+    const list = backupPlans.map(item => {
+      const pendingDelete = changeRequests.some(r => r.section === 'backupPlans' && r.action === 'delete' && String(r.targetId) === String(item.id));
+      const updateReq = changeRequests.find(r => r.section === 'backupPlans' && r.action === 'update' && String(r.targetId) === String(item.id));
+
+      if (updateReq) {
+        return {
+          ...item,
+          ...updateReq.after,
+          isPendingUpdate: true,
+          changeRequestId: updateReq.id
+        };
+      }
+
+      return {
+        ...item,
+        isPendingDelete: pendingDelete
+      };
+    });
+
+    const pendingCreates = changeRequests.filter(r => r.section === 'backupPlans' && r.action === 'create');
+    pendingCreates.forEach(r => {
+      list.push({
+        id: "pending-create-" + r.id,
+        ...r.after,
+        isPendingCreate: true,
+        changeRequestId: r.id
+      } as any);
+    });
+
+    return list;
+  }, [backupPlans, changeRequests]);
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
+  const [selectedBackupActivity, setSelectedBackupActivity] = useState<EventItem | null>(null);
+  const [isBackupPlansSheetOpen, setIsBackupPlansSheetOpen] = useState(false);
 
   useEffect(() => {
     if (!activeMenuId) return;
@@ -76,7 +138,11 @@ export function SharedActivitiesSection({
     type: 'other'
   });
 
-  const isRequestEdit = mode === 'request_edit';
+  const isRequestEdit = mode === 'request_edit' || mode === 'edit';
+  const isDirectEdit = mode === 'edit';
+  
+  const isBackupPlansRequestEdit = (backupPlansMode || mode) === 'request_edit' || (backupPlansMode || mode) === 'edit';
+  const isBackupPlansDirectEdit = (backupPlansMode || mode) === 'edit';
 
   const mergedActivities = React.useMemo(() => {
     const list = activities.map(item => {
@@ -122,7 +188,7 @@ export function SharedActivitiesSection({
   function startAdd() {
     setForm({ 
       title: '', 
-      date: '', 
+      date: tripDays[0] || '', 
       time: '', 
       location: '', 
       notes: '', 
@@ -160,16 +226,19 @@ export function SharedActivitiesSection({
     }
     
     try {
+      const status = isDirectEdit ? 'auto_approved' : undefined;
+      const successMessage = isDirectEdit ? 'Đã cập nhật trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.';
       if (!editingId) {
         await submitChangeRequest(token, {
           section: 'activities',
           action: 'create',
           after: form,
           note: '',
+          status,
           requesterName: guestName
         });
         setIsFormOpen(false);
-        showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+        showToast(successMessage);
       } else {
         const currentItem = activities.find(a => String(a.id) === editingId);
         await submitChangeRequest(token, {
@@ -178,15 +247,16 @@ export function SharedActivitiesSection({
           targetId: editingId,
           before: currentItem as any,
           after: form,
+          status,
           requesterName: guestName
         });
         setEditingId(null);
         setIsFormOpen(false);
-        showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+        showToast(successMessage);
       }
     } catch (e: any) {
       console.error(e);
-      showToast('Lỗi khi gửi đề xuất: ' + e.message, 'error');
+      showToast((isDirectEdit ? 'Lỗi cập nhật: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error');
     }
   }
 
@@ -202,11 +272,12 @@ export function SharedActivitiesSection({
         action: 'delete',
         targetId: id,
         before: currentItem as any,
+        status: isDirectEdit ? 'auto_approved' : undefined,
         requesterName: guestName
       });
-      showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+      showToast(isDirectEdit ? 'Đã xóa trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
     } catch (e: any) {
-      showToast('Lỗi khi gửi đề xuất: ' + e.message, 'error');
+      showToast((isDirectEdit ? 'Lỗi xóa: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error');
     }
   }
 
@@ -222,12 +293,17 @@ export function SharedActivitiesSection({
       <div className="space-y-6">
         {mergedActivities.map((item, idx) => {
           const isPending = item.isPendingCreate || item.isPendingUpdate || item.isPendingDelete;
+          const category = getCategory(item.type);
+          const CatIcon = category.icon;
           return (
             <div key={item.id} className="relative flex gap-4 pl-1 group">
               <div className="absolute bottom-0 left-[21px] top-8 w-0.5 bg-slate-200 group-last:bg-transparent" />
               <div className="relative z-10 flex shrink-0 mt-1">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 ring-4 ring-white shadow-sm border border-slate-200/60">
-                  <MapPinned className="h-4.5 w-4.5" />
+                <div className={classNames(
+                  "flex h-10 w-10 items-center justify-center rounded-full ring-4 ring-white shadow-sm border",
+                  category.bgColor
+                )}>
+                  <CatIcon className="h-4.5 w-4.5" strokeWidth={2.2} />
                 </div>
               </div>
               
@@ -249,17 +325,17 @@ export function SharedActivitiesSection({
                     
                     {item.isPendingDelete && (
                       <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 shrink-0 select-none animate-fadeIn">
-                        Đề xuất xóa
+                        {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? 'Đang xóa...' : 'Đề xuất xóa'}
                       </span>
                     )}
                     {item.isPendingCreate && (
                       <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none animate-fadeIn">
-                        Đề xuất mới
+                        {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
                       </span>
                     )}
                     {item.isPendingUpdate && (
                       <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 shrink-0 select-none animate-fadeIn">
-                        Đề xuất sửa
+                        {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
                       </span>
                     )}
                   </div>
@@ -288,19 +364,24 @@ export function SharedActivitiesSection({
                 </div>
 
                 <div className={classNames(
-                  "mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] font-medium text-slate-500",
+                  "mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[13px] font-medium text-slate-500",
                   item.isPendingDelete ? "opacity-60" : ""
                 )}>
                   {item.time && (
                     <span className={classNames(
-                      "flex items-center gap-1 font-bold text-kat-primary",
+                      "flex items-center gap-1 font-bold text-kat-primary bg-indigo-50/50 px-2 py-0.5 rounded-lg border border-indigo-100/40",
                       item.isPendingDelete ? "line-through text-slate-400" : ""
                     )}>
                       <Clock className="h-3.5 w-3.5" />
                       {item.time}
                     </span>
                   )}
-                  <span className={item.isPendingDelete ? "line-through" : ""}>{formatDate(item.date)}</span>
+                  <span className={classNames("bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100", item.isPendingDelete ? "line-through" : "")}>{formatDate(item.date)}</span>
+                  
+                  <span className={classNames("text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border", category.bgColor)}>
+                    {category.label}
+                  </span>
+
                   {item.assignee && (
                     <span className={classNames(
                       "flex items-center gap-1 font-bold text-slate-500",
@@ -315,7 +396,7 @@ export function SharedActivitiesSection({
 
                 {item.location && (
                   <p className={classNames(
-                    "mt-1.5 text-[13.5px] text-slate-600 flex items-start gap-1.5",
+                    "mt-2 text-[13.5px] text-slate-600 flex items-start gap-1.5",
                     item.isPendingDelete ? "line-through opacity-60" : ""
                   )}>
                     <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-slate-400" />
@@ -371,6 +452,46 @@ export function SharedActivitiesSection({
                     })()}
                   </div>
                 )}
+
+                {/* Expenses & Backup plans linked */}
+                {(() => {
+                  const linkedExpenses = expenses.filter(exp => String(exp.eventId) === String(item.id));
+                  const backupCount = mergedBackupPlans.filter(p => p.activityId !== undefined && String(p.activityId) === String(item.id) && !p.isDeleted).length;
+                  return (
+                    <>
+                      {linkedExpenses.length > 0 && (
+                        <div className="mt-3 border-t border-slate-100/70 pt-2 flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                          {linkedExpenses.map(exp => (
+                            <div key={exp.id} className="flex items-center gap-1 px-2.5 py-1 bg-rose-50 text-rose-700 text-[11.5px] rounded-lg border border-rose-200 shadow-sm font-semibold">
+                              <WalletCards className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                              <span className="font-extrabold">{new Intl.NumberFormat('vi-VN').format(exp.amount)}đ</span>
+                              <span className="text-rose-600 truncate max-w-[120px] font-medium">- {exp.description || exp.category}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {(backupCount > 0 || isBackupPlansRequestEdit) && (
+                        <div className="mt-2.5" onClick={(e) => e.stopPropagation()}>
+                          <button 
+                            onClick={() => { 
+                              setSelectedBackupActivity(item);
+                              setIsBackupPlansSheetOpen(true);
+                            }}
+                            className={classNames(
+                              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] font-bold border transition-colors motion-press cursor-pointer focus:outline-none",
+                              backupCount > 0 
+                                ? "bg-indigo-50 text-indigo-600 border-indigo-150 hover:bg-indigo-100"
+                                : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-700"
+                            )}
+                          >
+                            <GitBranch className="w-3.5 h-3.5" />
+                            <span>{backupCount > 0 ? `${backupCount} phương án dự phòng` : (isBackupPlansDirectEdit ? "Thêm phương án dự phòng" : "Đề xuất phương án dự phòng")}</span>
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           );
@@ -381,9 +502,9 @@ export function SharedActivitiesSection({
         <button 
           onClick={startAdd} 
           className="mt-6 flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-[#FFFDF8] hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
-          title="Đề xuất thêm"
+          title={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
         >
-          <Plus className="h-4.5 w-4.5" /> Đề xuất thêm
+          <Plus className="h-4.5 w-4.5" /> {isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
         </button>
       )}
 
@@ -407,7 +528,7 @@ export function SharedActivitiesSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
             >
-              Đề xuất sửa
+              {isDirectEdit ? "Sửa" : "Đề xuất sửa"}
             </button>
             <button
               onClick={() => {
@@ -418,7 +539,7 @@ export function SharedActivitiesSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
             >
-              Đề xuất xóa
+              {isDirectEdit ? "Xóa" : "Đề xuất xóa"}
             </button>
           </div>
         </>,
@@ -431,7 +552,7 @@ export function SharedActivitiesSection({
           setIsFormOpen(false);
           setEditingId(null);
         }}
-        title={editingId ? "Đề xuất sửa hoạt động" : "Đề xuất thêm hoạt động"}
+        title={isDirectEdit ? (editingId ? "Sửa hoạt động" : "Thêm hoạt động") : (editingId ? "Đề xuất sửa hoạt động" : "Đề xuất thêm hoạt động")}
       >
         <div className="flex flex-col gap-5 py-2">
           {/* Item Name */}
@@ -476,16 +597,31 @@ export function SharedActivitiesSection({
 
           {/* Date & Time Selectors */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <DatePicker
-                label={
-                  <span className="flex items-center gap-1.5">
-                    <CalendarDays className="h-4 w-4 text-slate-500" />
-                    Ngày thực hiện *
-                  </span>
-                }
-                value={form.date}
-                onChange={val => setForm({ ...form, date: val })}
-              />
+              {tripDays.length > 0 ? (
+                <Select
+                  label={
+                    <span className="flex items-center gap-1.5">
+                      <CalendarDays className="h-4 w-4 text-slate-500" />
+                      Chọn ngày *
+                    </span>
+                  }
+                  value={form.date}
+                  onChange={val => setForm({ ...form, date: val })}
+                  options={tripDays}
+                  labels={dateLabels}
+                />
+              ) : (
+                <DatePicker
+                  label={
+                    <span className="flex items-center gap-1.5">
+                      <CalendarDays className="h-4 w-4 text-slate-500" />
+                      Ngày thực hiện *
+                    </span>
+                  }
+                  value={form.date}
+                  onChange={val => setForm({ ...form, date: val })}
+                />
+              )}
             <TimePicker
               label={
                 <span className="flex items-center gap-1.5">
@@ -564,7 +700,7 @@ export function SharedActivitiesSection({
             onClick={handleSave}
             className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
           >
-            Gửi đề xuất
+            {isDirectEdit ? (editingId ? "Lưu hoạt động" : "Thêm hoạt động") : "Gửi đề xuất"}
           </button>
         </div>
       </BottomSheet>
@@ -577,10 +713,27 @@ export function SharedActivitiesSection({
           await executeDelete(deleteTargetId);
           setDeleteTargetId(null);
         }}
-        title="Đề xuất xóa hoạt động?"
-        description="Bạn đang gửi đề xuất xóa hoạt động này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
-        confirmLabel="Đề xuất xóa"
+        title={isDirectEdit ? "Xóa hoạt động?" : "Đề xuất xóa hoạt động?"}
+        description={isDirectEdit ? "Bạn có chắc chắn muốn xóa hoạt động này? Hành động này không thể hoàn tác." : "Bạn đang gửi đề xuất xóa hoạt động này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."}
+        confirmLabel={isDirectEdit ? "Xóa" : "Đề xuất xóa"}
         itemName={activities.find(a => String(a.id) === deleteTargetId)?.title}
+      />
+
+      <SharedBackupPlansSheet
+        token={token}
+        tripId={trip?.id || 0}
+        activityId={selectedBackupActivity?.id}
+        activityTitle={selectedBackupActivity?.title}
+        date={selectedBackupActivity?.date}
+        isOpen={isBackupPlansSheetOpen}
+        onClose={() => {
+          setIsBackupPlansSheetOpen(false);
+          setSelectedBackupActivity(null);
+        }}
+        backupPlans={backupPlans}
+        changeRequests={changeRequests}
+        mode={backupPlansMode || mode}
+        guestName={guestName || "Khách"}
       />
     </section>
   );

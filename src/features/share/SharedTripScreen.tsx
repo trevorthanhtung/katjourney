@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { 
   Globe, MapPin, CalendarDays, Clock, Route,
-  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link, X, MessageCircle, UserRoundCog
+  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link, X, MessageCircle, UserRoundCog,
+  Crown, Car, Luggage, UsersRound, BadgeCheck
 } from "lucide-react";
 import { getViewShareData } from "../../services/cloudShareService";
 import { formatDate, classNames, getTripTiming, formatMoney, daysBetween } from "../../utils/helpers";
-import { getWeatherGradient, getWeatherIcon, getWeatherText } from "../../services/weatherService";
-import { useWeather } from "../../hooks/useWeather";
 import { EventItem, Expense, ChecklistItem, Member, JournalEntry, TravelDocument, BackupPlan } from "../../db";
 import { SharedActivitiesSection } from "./components/SharedActivitiesSection";
-import { SharedExpensesSection, SharedChecklistSection, SharedJournalsSection, SharedBackupPlansSection, SharedDocumentsSection, SharedMembersSection } from "./components/SharedSections";
+import { SharedExpensesSection, SharedChecklistSection, SharedJournalsSection, SharedDocumentsSection, SharedMembersSection } from "./components/SharedSections";
 import { getIdentity, saveIdentity, UserIdentity } from "../../services/identityService";
 import { getAvatarSvg } from "../../utils/avatars";
 import { ChatBox } from "./components/ChatBox";
+import { WeatherWidget } from "../timeline/WeatherWidget";
 
 interface SharedData {
   trip: any;
@@ -45,20 +45,43 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [step, setStep] = useState<"pin" | "identity">("pin");
   const [isBannerVisible, setIsBannerVisible] = useState(true);
 
+  const renderRoleIcons = (role: string) => {
+    const roles = (role || "Người đồng hành")
+      .split(",")
+      .map(r => r.trim().toLowerCase())
+      .filter(Boolean);
+
+    return (
+      <div className="flex items-center gap-1 flex-wrap justify-end">
+        {roles.map((roleLower, i) => {
+          if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
+            return <span key={i} title="Trưởng nhóm" className="shrink-0"><Crown className="h-3.5 w-3.5 text-amber-500" /></span>;
+          }
+          if (roleLower === "quản lý chi phí") {
+            return <span key={i} title="Quản lý chi phí" className="shrink-0"><WalletCards className="h-3.5 w-3.5 text-emerald-500" /></span>;
+          }
+          if (roleLower === "tài xế") {
+            return <span key={i} title="Tài xế" className="shrink-0"><Car className="h-3.5 w-3.5 text-blue-500" /></span>;
+          }
+          if (roleLower === "phụ trách hành lý") {
+            return <span key={i} title="Phụ trách hành lý" className="shrink-0"><Luggage className="h-3.5 w-3.5 text-indigo-500" /></span>;
+          }
+          if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
+            return <span key={i} title="Người đồng hành" className="shrink-0"><UsersRound className="h-3.5 w-3.5 text-slate-400" /></span>;
+          }
+          return <span key={i} title={roleLower} className="shrink-0"><BadgeCheck className="h-3.5 w-3.5 text-teal-500" /></span>;
+        })}
+      </div>
+    );
+  };
+
   // Chat state
   const [showChatBox, setShowChatBox] = useState(false);
 
   const [activeTab, setActiveTab] = useState<string>("activities");
   const [selectedRoadmapDay, setSelectedRoadmapDay] = useState<string>("");
 
-  // Weather
-  const weatherDest = data?.trip?.destination || data?.trip?.location;
-  const { forecast: weatherForecast, loading: weatherLoading } = useWeather(
-    weatherDest,
-    data?.trip?.latitude,
-    data?.trip?.longitude,
-    3
-  );
+
 
   const tripDays = data?.trip ? daysBetween(data.trip.startDate, data.trip.endDate) : [];
   const eventDays = data?.activities ? Array.from(new Set(data.activities.map((e: any) => e.date))) : [];
@@ -73,9 +96,11 @@ export default function SharedTripScreen({ token }: { token: string }) {
   useEffect(() => {
     if (data && data.trip) {
       const saved = getIdentity(data.trip.id);
-      if (!saved) {
+      const pendingSwap = localStorage.getItem("kat_pending_swap_" + data.trip.id) === "true";
+      
+      if (!saved || pendingSwap) {
         setShowIdentityModal(true);
-        if (!data.sharePin) {
+        if (pendingSwap || !data.sharePin) {
           setStep("identity");
         }
       } else {
@@ -238,6 +263,60 @@ export default function SharedTripScreen({ token }: { token: string }) {
     canRequestEdit = false;
   }
 
+  const isOwnerOrAdmin = currentUser && !currentUser.isGuest;
+  const userRoleLower = (currentUser?.role || "").trim().toLowerCase();
+
+  // Mode for Activities (Lịch trình) - Driver or Trưởng nhóm has direct edit
+  const activitiesMode = (
+    isOwnerOrAdmin || 
+    userRoleLower.includes("tài xế") || 
+    userRoleLower.includes("trưởng nhóm") || 
+    userRoleLower.includes("trưởng đoàn") || 
+    userRoleLower.includes("leader")
+  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+
+  // Mode for Expenses (Chi phí) - Cost Manager or Trưởng nhóm has direct edit
+  const expensesMode = (
+    isOwnerOrAdmin || 
+    userRoleLower.includes("quản lý chi phí") || 
+    userRoleLower.includes("trưởng nhóm") || 
+    userRoleLower.includes("trưởng đoàn") || 
+    userRoleLower.includes("leader")
+  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+
+  // Mode for Checklist (Chuẩn bị) - Trưởng nhóm has direct edit
+  const checklistMode = (
+    isOwnerOrAdmin || 
+    userRoleLower.includes("trưởng nhóm") || 
+    userRoleLower.includes("trưởng đoàn") || 
+    userRoleLower.includes("leader")
+  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+
+  // Mode for Backup Plans - Driver or Leader has direct edit
+  const backupPlansMode = (
+    isOwnerOrAdmin || 
+    userRoleLower.includes("tài xế") || 
+    userRoleLower.includes("trưởng nhóm") || 
+    userRoleLower.includes("trưởng đoàn") || 
+    userRoleLower.includes("leader")
+  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+
+  // Mode for Documents (Tài liệu)
+  const documentsMode = (
+    isOwnerOrAdmin || 
+    userRoleLower.includes("trưởng nhóm") || 
+    userRoleLower.includes("trưởng đoàn") || 
+    userRoleLower.includes("leader")
+  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+
+  // Mode for Members (Thành viên)
+  const membersMode = (
+    isOwnerOrAdmin || 
+    userRoleLower.includes("trưởng nhóm") || 
+    userRoleLower.includes("trưởng đoàn") || 
+    userRoleLower.includes("leader")
+  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+
   // Navigation Tabs construction
   const tabsList = [
     {id: "activities", label: "Lịch trình", show: (activities.length > 0 || (data.includeBackupPlans && backupPlans.length > 0) || canRequestEdit), icon: Route },
@@ -255,7 +334,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
           {/* Close button — only show when user already has an identity (re-selecting) */}
           {currentUser && (
             <button
-              onClick={() => setShowIdentityModal(false)}
+              onClick={() => {
+                localStorage.removeItem("kat_pending_swap_" + trip.id);
+                setShowIdentityModal(false);
+              }}
               className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors z-10"
               title="Đóng, giữ lựa chọn cũ"
             >
@@ -331,29 +413,34 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       );
                     })
                     .map((m: Member) => (
-                    <button
-                      key={m.id}
-                      onClick={() => {
-                        const guest = { name: m.name, role: m.role, isGuest: true, canEdit: true };
-                        saveIdentity(guest, trip.id);
-                        setCurrentUser(guest);
-                        setShowIdentityModal(false);
-                        setIdentityChecked(true);
-                      }}
-                      className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors"
-                    >
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden bg-slate-200">
-                        {m.avatar ? getAvatarSvg(m.avatar, "w-full h-full") : <Users className="h-4 w-4 text-slate-400" />}
-                      </div>
-                      <span className="text-[14px] font-bold text-slate-800">{m.name}</span>
-                    </button>
-                  ))}
+                      <button
+                        key={m.id}
+                        onClick={() => {
+                          const guest = { name: m.name, role: m.role, isGuest: true, canEdit: true };
+                          saveIdentity(guest, trip.id);
+                          localStorage.removeItem("kat_pending_swap_" + trip.id);
+                          setCurrentUser(guest);
+                          setShowIdentityModal(false);
+                          setIdentityChecked(true);
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden bg-slate-200">
+                          {m.avatar ? getAvatarSvg(m.avatar, "w-full h-full") : <Users className="h-4 w-4 text-slate-400" />}
+                        </div>
+                        <div className="flex items-center justify-between flex-1 pr-1">
+                          <span className="text-[14px] font-bold text-slate-800">{m.name}</span>
+                          {renderRoleIcons(m.role || "")}
+                        </div>
+                      </button>
+                    ))}
                 </div>
                 
                 <button
                   onClick={() => {
                     const guest = { name: "Người xem", isGuest: true, canEdit: false };
                     saveIdentity(guest, trip.id);
+                    localStorage.removeItem("kat_pending_swap_" + trip.id);
                     setCurrentUser(guest);
                     setShowIdentityModal(false);
                     setIdentityChecked(true);
@@ -376,10 +463,16 @@ export default function SharedTripScreen({ token }: { token: string }) {
   return (
     <div className="min-h-screen bg-[#FFFDF8]">
       {/* Banner */}
-      {isBannerVisible && canRequestEdit && (
-        <div className="bg-[#0C1938] text-white py-2 px-4 text-center text-[12px] font-semibold flex justify-between items-center shadow-md select-none border-b border-white/5">
+      {isBannerVisible && (userRoleLower.includes("tài xế") || userRoleLower.includes("quản lý chi phí") || canRequestEdit) && (
+        <div className={classNames(
+          "text-white py-2 px-4 text-center text-[12px] font-semibold flex justify-between items-center shadow-md select-none border-b border-white/5",
+          (userRoleLower.includes("tài xế") || userRoleLower.includes("quản lý chi phí")) ? "bg-[#005c56]" : "bg-[#0C1938]"
+        )}>
           <div className="flex-1 text-center pr-6">
-            Chế độ Đề xuất: Các thay đổi của bạn sẽ được gửi cho chủ chuyến đi xét duyệt.
+            {(userRoleLower.includes("tài xế") || userRoleLower.includes("quản lý chi phí")) 
+              ? `Vai trò "${currentUser?.role}": Bạn có quyền chỉnh sửa trực tiếp phần được phân công.`
+              : "Chế độ Đề xuất: Các thay đổi của bạn sẽ được gửi cho chủ chuyến đi xét duyệt."
+            }
           </div>
           <button 
             onClick={() => setIsBannerVisible(false)}
@@ -406,6 +499,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             {currentUser && (
               <button
                 onClick={() => {
+                  localStorage.setItem("kat_pending_swap_" + trip.id, "true");
                   setStep("identity");
                   setShowIdentityModal(true);
                 }}
@@ -477,42 +571,6 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   {timing.label}
                 </p>
               </div>
-
-              {/* Weather widget */}
-              {weatherLoading ? (
-                <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 animate-pulse">
-                  <div className="w-10 h-10 bg-white/20 rounded-xl" />
-                  <div className="flex flex-col gap-2">
-                    <div className="w-16 h-3 bg-white/20 rounded-full" />
-                    <div className="w-10 h-3 bg-white/20 rounded-full" />
-                  </div>
-                </div>
-              ) : weatherForecast ? (
-                <div className="flex items-center gap-4 bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl p-4 shadow-[0_4px_24px_rgba(255,255,255,0.05)]">
-                  <div className="flex items-center gap-2">
-                    <span className="text-4xl font-black text-white drop-shadow-sm tracking-tighter">
-                      {Math.round(weatherForecast.current?.temperature || 20)}°
-                    </span>
-                    <div className="flex flex-col ml-1">
-                      <span className="mb-[-4px] flex items-center justify-center h-8">
-                        {getWeatherIcon(weatherForecast.current?.weathercode || 0, "w-7 h-7 drop-shadow-md")}
-                      </span>
-                      <span className="text-[12px] font-bold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
-                        {getWeatherText(weatherForecast.current?.weathercode || 0)}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="w-px h-10 bg-white/20 mx-1" />
-                  <div className="flex flex-col text-right whitespace-nowrap">
-                    <span className="text-[11px] font-bold text-white/90">
-                      Cao: {Math.round(weatherForecast.temperature_2m_max[0])}°
-                    </span>
-                    <span className="text-[11px] font-medium text-white/70">
-                      Thấp: {Math.round(weatherForecast.temperature_2m_min[0])}°
-                    </span>
-                  </div>
-                </div>
-              ) : null}
             </div>
           </div>
         </section>
@@ -570,110 +628,155 @@ export default function SharedTripScreen({ token }: { token: string }) {
         {/* Dynamic Section Contents */}
         <div className="space-y-6">
           {activeTab === "activities" && (
-            <div className="space-y-6">
-              {/* Shared Roadmap Widget */}
-              {days.length > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:gap-8 items-start">
+              {/* Left Column: Activities & Backup Plans */}
+              <div className="space-y-6">
+                {(activities.length > 0 || canRequestEdit) && (
+                  <SharedActivitiesSection 
+                    token={token} 
+                    mode={activitiesMode} 
+                    backupPlansMode={backupPlansMode}
+                    activities={activities} 
+                    changeRequests={changeRequests}
+                    members={members}
+                    guestName={currentUser?.name || "Khách"}
+                    expenses={expenses}
+                    backupPlans={backupPlans}
+                    trip={trip}
+                  />
+                )}
+              </div>
+
+              {/* Right Column: Sidebar Widgets */}
+              <div className="space-y-6">
+                {/* 1. Trip Info context card */}
                 <div className="rounded-3xl bg-white p-5 border border-slate-200/60 shadow-sm space-y-4">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
                       <Route className="h-4 w-4" />
                     </span>
-                    <h4 className="text-[15px] font-extrabold text-[#030D2E]">Lộ trình di chuyển</h4>
+                    <h4 className="text-[15px] font-extrabold text-[#030D2E]">Thông tin hành trình</h4>
                   </div>
-
-                  {/* Day selector tabs inside the widget */}
-                  {days.length > 1 && (
-                    <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-none">
-                      {days.map((d, idx) => {
-                        const isActive = selectedRoadmapDay === d;
-                        const hasLink = !!trip.dayRoadmaps?.[d];
-                        return (
-                          <button
-                            key={d}
-                            type="button"
-                            onClick={() => setSelectedRoadmapDay(d)}
-                            className={classNames(
-                              "px-3 py-1.5 rounded-xl text-[12px] font-bold whitespace-nowrap border shrink-0 transition-all active:scale-95 cursor-pointer",
-                              isActive
-                                ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
-                                : hasLink
-                                  ? "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-[#030D2E]/10"
-                                  : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
-                            )}
-                          >
-                            Ngày {idx + 1}
-                          </button>
-                        );
-                      })}
+                  
+                  <div className="space-y-3 text-[14px] font-medium text-slate-600 border-t border-slate-100 pt-3">
+                    <div className="flex items-center justify-between border-b border-slate-50 pb-2">
+                      <span className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-slate-400" />
+                        Điểm đến
+                      </span>
+                      <span className="font-bold text-[#030D2E]">{trip.destination || trip.location || "Chưa xác định"}</span>
                     </div>
-                  )}
-
-                  {/* Roadmap details for selected day */}
-                  {(() => {
-                    const dayIndex = days.indexOf(selectedRoadmapDay);
-                    const dateParts = selectedRoadmapDay ? selectedRoadmapDay.split('-') : [];
-                    const dateLabel = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}` : selectedRoadmapDay;
-                    const mapUrl = trip.dayRoadmaps?.[selectedRoadmapDay] || "";
-                    const isRoute = mapUrl && (mapUrl.includes("/maps/dir/") || mapUrl.includes("maps/dir"));
-
-                    return (
-                      <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-3.5 space-y-3">
-                        <div className="text-[12px] font-semibold text-slate-400">
-                          Ngày {dayIndex + 1} ({dateLabel})
-                        </div>
-
-                        {mapUrl ? (
-                          <div className="space-y-2.5">
-                            <p className="text-[13px] font-medium text-slate-600">
-                              {isRoute ? "Chủ chuyến đi đã cấu hình lộ trình cho ngày này." : "Bản đồ/địa điểm được liên kết cho ngày này."}
-                            </p>
-                            <a
-                              href={mapUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer"
-                            >
-                              <Route className="w-4 h-4" />
-                              Mở lộ trình &rarr;
-                            </a>
-                          </div>
-                        ) : (
-                          <div className="text-center py-2">
-                            <p className="text-[12.5px] font-semibold text-slate-400">Chưa có lộ trình cho ngày này</p>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })()}
+                    <div className="flex items-center justify-between border-b border-slate-50 pb-2">
+                      <span className="flex items-center gap-2">
+                        <CalendarDays className="h-4 w-4 text-slate-400" />
+                        Thời gian
+                      </span>
+                      <span className="font-bold text-[#030D2E]">
+                        {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between pb-1">
+                      <span className="flex items-center gap-2">
+                        <Route className="h-4 w-4 text-slate-400" />
+                        Mục lịch trình
+                      </span>
+                      <span className="font-bold text-[#030D2E]">{activities.length} mục</span>
+                    </div>
+                  </div>
                 </div>
-              )}
 
-              {(activities.length > 0 || canRequestEdit) && (
-                <SharedActivitiesSection 
-                  token={token} 
-                  mode={canRequestEdit ? 'request_edit' : 'view'} 
-                  activities={activities} 
-                  changeRequests={changeRequests}
-                  members={members}
-                  guestName={currentUser?.name || "Khách"}
+                {/* 2. Shared Roadmap Widget */}
+                {days.length > 0 && (
+                  <div className="rounded-3xl bg-white p-5 border border-slate-200/60 shadow-sm space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                        <Route className="h-4 w-4" />
+                      </span>
+                      <h4 className="text-[15px] font-extrabold text-[#030D2E]">Lộ trình di chuyển</h4>
+                    </div>
+
+                    {/* Day selector tabs inside the widget */}
+                    {days.length > 1 && (
+                      <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-none">
+                        {days.map((d, idx) => {
+                          const isActive = selectedRoadmapDay === d;
+                          const hasLink = !!trip.dayRoadmaps?.[d];
+                          return (
+                            <button
+                              key={d}
+                              type="button"
+                              onClick={() => setSelectedRoadmapDay(d)}
+                              className={classNames(
+                                "px-3 py-1.5 rounded-xl text-[12px] font-bold whitespace-nowrap border shrink-0 transition-all active:scale-95 cursor-pointer",
+                                isActive
+                                  ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
+                                  : hasLink
+                                    ? "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-[#030D2E]/10"
+                                    : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
+                              )}
+                            >
+                              Ngày {idx + 1}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Roadmap details for selected day */}
+                    {(() => {
+                      const dayIndex = days.indexOf(selectedRoadmapDay);
+                      const dateParts = selectedRoadmapDay ? selectedRoadmapDay.split('-') : [];
+                      const dateLabel = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}` : selectedRoadmapDay;
+                      const mapUrl = trip.dayRoadmaps?.[selectedRoadmapDay] || "";
+                      const isRoute = mapUrl && (mapUrl.includes("/maps/dir/") || mapUrl.includes("maps/dir"));
+
+                      return (
+                        <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-3.5 space-y-3">
+                          <div className="text-[12px] font-semibold text-slate-400">
+                            Ngày {dayIndex + 1} ({dateLabel})
+                          </div>
+
+                          {mapUrl ? (
+                            <div className="space-y-2.5">
+                              <p className="text-[13px] font-medium text-slate-600">
+                                {isRoute ? "Chủ chuyến đi đã cấu hình lộ trình cho ngày này." : "Bản đồ/địa điểm được liên kết cho ngày này."}
+                              </p>
+                              <a
+                                href={mapUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer"
+                              >
+                                <Route className="w-4 h-4" />
+                                Mở lộ trình &rarr;
+                              </a>
+                            </div>
+                          ) : (
+                            <div className="text-center py-2">
+                              <p className="text-[12.5px] font-semibold text-slate-400">Chưa có lộ trình cho ngày này</p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {/* 3. Weather Forecast Widget */}
+                <WeatherWidget 
+                  destination={trip.destination || trip.location} 
+                  latitude={trip.latitude} 
+                  longitude={trip.longitude} 
+                  days={tripDays.length || 3} 
                 />
-              )}
-              {data.includeBackupPlans && (backupPlans.length > 0 || canRequestEdit) && (
-                <SharedBackupPlansSection 
-                  token={token} 
-                  mode={canRequestEdit ? 'request_edit' : 'view'} 
-                  backupPlans={backupPlans} 
-                  changeRequests={changeRequests}
-                  guestName={currentUser?.name || "Khách"}
-                />
-              )}
+              </div>
             </div>
           )}
 
           {activeTab === "members" && (members.length > 0 || canRequestEdit) && (
             <SharedMembersSection 
               token={token}
-              mode={canRequestEdit ? 'request_edit' : 'view'}
+              mode={membersMode}
               members={members} 
               checklist={checklist}
               expenses={expenses}
@@ -685,7 +788,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           {activeTab === "expenses" && data.includeExpenses && (expenses.length > 0 || canRequestEdit) && (
             <SharedExpensesSection 
               token={token} 
-              mode={canRequestEdit ? 'request_edit' : 'view'} 
+              mode={expensesMode} 
               expenses={expenses} 
               changeRequests={changeRequests}
               members={members}
@@ -697,7 +800,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           {activeTab === "checklist" && data.includeChecklist && (checklist.length > 0 || canRequestEdit) && (
             <SharedChecklistSection 
               token={token} 
-              mode={canRequestEdit ? 'request_edit' : 'view'} 
+              mode={checklistMode} 
               checklist={checklist} 
               changeRequests={changeRequests}
               members={members}
@@ -728,7 +831,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           {activeTab === "others" && data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit) && (
             <SharedDocumentsSection 
               token={token} 
-              mode={canRequestEdit ? 'request_edit' : 'view'} 
+              mode={documentsMode} 
               documents={travelDocuments} 
               changeRequests={changeRequests}
               guestName={currentUser?.name || "Khách"}

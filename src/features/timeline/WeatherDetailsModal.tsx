@@ -12,6 +12,7 @@ interface WeatherDetailsModalProps {
 export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: WeatherDetailsModalProps) {
   const [shouldRender, setShouldRender] = useState(isOpen);
   const [animate, setAnimate] = useState(false);
+  const [errorState, setErrorState] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -29,28 +30,28 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
 
   if (!shouldRender || !forecast) return null;
 
-  const currentCode = forecast.current?.weathercode ?? forecast.weathercode[0] ?? 0;
-  const currentTemp = forecast.current?.temperature ?? Math.round((forecast.temperature_2m_max[0] + forecast.temperature_2m_min[0]) / 2);
-  const apparentTemp = forecast.current?.apparent_temperature ?? currentTemp;
-  const maxTemp = Math.round(forecast.temperature_2m_max[0]);
-  const minTemp = Math.round(forecast.temperature_2m_min[0]);
-  const humidity = forecast.current?.humidity ?? 70;
-  const windspeed = forecast.current?.windspeed ?? 12;
-  const uvIndex = forecast.uv_index_max?.[0] ?? 5;
+  try {
+    const currentCode = forecast.current?.weathercode ?? forecast.weathercode?.[0] ?? 0;
+    const currentTemp = forecast.current?.temperature ?? Math.round(((forecast.temperature_2m_max?.[0] ?? 0) + (forecast.temperature_2m_min?.[0] ?? 0)) / 2);
+    const apparentTemp = forecast.current?.apparent_temperature ?? currentTemp;
+    const maxTemp = Math.round(forecast.temperature_2m_max?.[0] ?? 0);
+    const minTemp = Math.round(forecast.temperature_2m_min?.[0] ?? 0);
+    const humidity = forecast.current?.humidity ?? 70;
+    const windspeed = forecast.current?.windspeed ?? 12;
+    const uvIndex = forecast.uv_index_max?.[0] ?? 5;
 
-  const bgGradient = getWeatherGradient(currentCode);
-  const weatherText = getWeatherText(currentCode);
-  const recommendation = getTravelRecommendation(currentCode);
+    const bgGradient = getWeatherGradient(currentCode);
+    const weatherText = getWeatherText(currentCode);
 
-  // Generate falling rain drops array
-  const isRainy = (currentCode >= 51 && currentCode <= 67) || (currentCode >= 80 && currentCode <= 82);
-  const isStormy = currentCode >= 95 && currentCode <= 99;
-  const isCloudy = currentCode === 2 || currentCode === 3;
-  const isFoggy = currentCode === 45 || currentCode === 48;
-  const isSunny = currentCode === 0 || currentCode === 1;
+    // Generate falling rain drops array
+    const isRainy = (currentCode >= 51 && currentCode <= 67) || (currentCode >= 80 && currentCode <= 82);
+    const isStormy = currentCode >= 95 && currentCode <= 99;
+    const isCloudy = currentCode === 2 || currentCode === 3;
+    const isFoggy = currentCode === 45 || currentCode === 48;
+    const isSunny = currentCode === 0 || currentCode === 1;
 
-  // Render weather recommendations based on code
-  function getTravelRecommendation(code: number) {
+    // Render weather recommendations based on code
+    function getTravelRecommendation(code: number) {
     if (code === 0 || code === 1) {
       return {
         title: "Thời tiết lý tưởng cho hoạt động ngoài trời",
@@ -104,6 +105,8 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
       badgeBg: "bg-teal-500/20 text-teal-800"
     };
   }
+
+  const recommendation = getTravelRecommendation(currentCode);
 
   // Get UV Index Rating Text
   function getUvRating(uv: number) {
@@ -287,11 +290,11 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
               <h4 className="text-[13.5px] font-extrabold text-[#030D2E] text-left px-0.5">Dự báo 24 giờ tới</h4>
               
               <div className="flex overflow-x-auto gap-3.5 pb-2 pt-1 px-0.5 custom-scrollbar">
-                {forecast.hourly.time.map((timeStr, idx) => {
+                {forecast.hourly.time?.map((timeStr, idx) => {
                   const hour = new Date(timeStr).getHours();
-                  const temp = Math.round(forecast.hourly!.temperature[idx]);
-                  const code = forecast.hourly!.weathercode[idx];
-                  const precip = forecast.hourly!.precipitation_probability[idx] ?? 0;
+                  const temp = Math.round(forecast.hourly?.temperature?.[idx] ?? 0);
+                  const code = forecast.hourly?.weathercode?.[idx] ?? 0;
+                  const precip = forecast.hourly?.precipitation_probability?.[idx] ?? 0;
                   
                   return (
                     <div 
@@ -392,4 +395,25 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast }: 
       </div>
     </div>
   );
+  } catch (err: any) {
+    return (
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="bg-white p-6 rounded-2xl max-w-sm w-full text-center">
+          <div className="text-red-500 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-bold text-slate-800 mb-2">Lỗi hiển thị thời tiết</h3>
+          <p className="text-sm text-slate-500 mb-4">{err.message}</p>
+          <button 
+            onClick={onClose}
+            className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition-colors"
+          >
+            Đóng
+          </button>
+        </div>
+      </div>
+    );
+  }
 }

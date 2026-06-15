@@ -98,7 +98,8 @@ export function SharedExpensesSection({
 
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  const isRequestEdit = mode === 'request_edit';
+  const isRequestEdit = mode === 'request_edit' || mode === 'edit';
+  const isDirectEdit = mode === 'edit';
 
   useEffect(() => {
     if (isFormOpen) {
@@ -220,18 +221,20 @@ export function SharedExpensesSection({
     };
 
     try {
+      const status = isDirectEdit ? 'auto_approved' : undefined;
+      const successMessage = isDirectEdit ? 'Đã cập nhật trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.';
       if (!editingId) {
-        await submitChangeRequest(token, { section: 'expenses', action: 'create', after: payload, requesterName: guestName });
+        await submitChangeRequest(token, { section: 'expenses', action: 'create', after: payload, status, requesterName: guestName });
         setIsFormOpen(false);
-        showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+        showToast(successMessage);
       } else {
         const before = expenses.find(e => String(e.id) === editingId);
-        await submitChangeRequest(token, { section: 'expenses', action: 'update', targetId: editingId, before: before as any, after: payload, requesterName: guestName });
+        await submitChangeRequest(token, { section: 'expenses', action: 'update', targetId: editingId, before: before as any, after: payload, status, requesterName: guestName });
         setEditingId(null);
         setIsFormOpen(false);
-        showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+        showToast(successMessage);
       }
-    } catch (e: any) { showToast('Lỗi khi gửi đề xuất: ' + e.message, 'error'); }
+    } catch (e: any) { showToast((isDirectEdit ? 'Lỗi cập nhật: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); }
   }
 
   async function handleDelete(id: string) {
@@ -241,9 +244,16 @@ export function SharedExpensesSection({
   async function executeDelete(id: string) {
     try {
       const before = expenses.find(e => String(e.id) === id);
-      await submitChangeRequest(token, { section: 'expenses', action: 'delete', targetId: id, before: before as any, requesterName: guestName });
-      showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
-    } catch (e: any) { showToast('Lỗi khi gửi đề xuất: ' + e.message, 'error'); }
+      await submitChangeRequest(token, { 
+        section: 'expenses', 
+        action: 'delete', 
+        targetId: id, 
+        before: before as any, 
+        status: isDirectEdit ? 'auto_approved' : undefined,
+        requesterName: guestName 
+      });
+      showToast(isDirectEdit ? 'Đã xóa trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+    } catch (e: any) { showToast((isDirectEdit ? 'Lỗi xóa: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); }
   }
 
   const isSaveDisabled = !form.amount.trim() || (form.splitType === "shared" && members.length > 0 && !form.payer);
@@ -285,17 +295,17 @@ export function SharedExpensesSection({
                 
                 {e.isPendingDelete && (
                   <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 shrink-0 select-none animate-fadeIn">
-                    Đề xuất xóa
+                    {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang xóa...' : 'Đề xuất xóa'}
                   </span>
                 )}
                 {e.isPendingCreate && (
                   <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none animate-fadeIn">
-                    Đề xuất mới
+                    {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
                   </span>
                 )}
                 {e.isPendingUpdate && (
                   <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 shrink-0 select-none animate-fadeIn">
-                    Đề xuất sửa
+                    {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
                   </span>
                 )}
               </div>
@@ -356,7 +366,7 @@ export function SharedExpensesSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
             >
-              Đề xuất sửa
+              {isDirectEdit ? "Sửa chi phí" : "Đề xuất sửa"}
             </button>
             <button
               onClick={() => {
@@ -367,7 +377,7 @@ export function SharedExpensesSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
             >
-              Đề xuất xóa
+              {isDirectEdit ? "Xóa chi phí" : "Đề xuất xóa"}
             </button>
           </div>
         </>,
@@ -377,9 +387,9 @@ export function SharedExpensesSection({
         <button 
           onClick={startAdd} 
           className="mt-3 flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-[#FFFDF8] hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
-          title="Đề xuất thêm"
+          title={isDirectEdit ? "Thêm chi phí" : "Đề xuất thêm"}
         >
-          <Plus className="h-4.5 w-4.5" /> Đề xuất thêm
+          <Plus className="h-4.5 w-4.5" /> {isDirectEdit ? "Thêm chi phí" : "Đề xuất thêm"}
         </button>
       )}
 
@@ -389,7 +399,7 @@ export function SharedExpensesSection({
           setIsFormOpen(false);
           setEditingId(null);
         }}
-        title={editingId ? "Đề xuất sửa chi phí" : "Đề xuất thêm chi phí"}
+        title={isDirectEdit ? (editingId ? "Sửa chi phí" : "Thêm chi phí") : (editingId ? "Đề xuất sửa chi phí" : "Đề xuất thêm chi phí")}
       >
         <div className="flex flex-col gap-5 py-2">
           {/* Amount Box */}
@@ -607,7 +617,7 @@ export function SharedExpensesSection({
             disabled={isSaveDisabled}
             className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
           >
-            Gửi đề xuất
+            {isDirectEdit ? (editingId ? "Lưu khoản chi" : "Thêm khoản chi") : "Gửi đề xuất"}
           </button>
         </div>
       </BottomSheet>
@@ -620,9 +630,9 @@ export function SharedExpensesSection({
           await executeDelete(deleteTargetId);
           setDeleteTargetId(null);
         }}
-        title="Đề xuất xóa khoản chi?"
-        description="Bạn đang gửi đề xuất xóa khoản chi này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
-        confirmLabel="Đề xuất xóa"
+        title={isDirectEdit ? "Xóa khoản chi?" : "Đề xuất xóa khoản chi?"}
+        description={isDirectEdit ? "Bạn có chắc chắn muốn xóa khoản chi này? Hành động này không thể hoàn tác." : "Bạn đang gửi đề xuất xóa khoản chi này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."}
+        confirmLabel={isDirectEdit ? "Xóa" : "Đề xuất xóa"}
         itemName={expenses.find(e => String(e.id) === deleteTargetId)?.description}
       />
     </section>
@@ -670,7 +680,8 @@ export function SharedChecklistSection({
   });
   const [showValidationError, setShowValidationError] = useState(false);
   
-  const isRequestEdit = mode === 'request_edit';
+  const isRequestEdit = mode === 'request_edit' || mode === 'edit';
+  const isDirectEdit = mode === 'edit';
 
   useEffect(() => {
     if (isFormOpen) {
@@ -743,8 +754,9 @@ export function SharedChecklistSection({
   async function handleToggle(item: ChecklistItem) {
     if (!isRequestEdit) return;
     try {
-      await submitChangeRequest(token, { section: 'checklist', action: 'update', targetId: String(item.id), before: item as any, after: { completed: !item.completed }, requesterName: guestName });
-      showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+      const status = isDirectEdit ? 'auto_approved' : undefined;
+      await submitChangeRequest(token, { section: 'checklist', action: 'update', targetId: String(item.id), before: item as any, after: { completed: !item.completed }, status, requesterName: guestName });
+      showToast(isDirectEdit ? 'Đã cập nhật trạng thái!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
     } catch (e: any) { showToast('Lỗi: ' + e.message, 'error'); }
   }
 
@@ -766,18 +778,20 @@ export function SharedChecklistSection({
     };
 
     try {
+      const status = isDirectEdit ? 'auto_approved' : undefined;
+      const successMessage = isDirectEdit ? 'Đã cập nhật trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.';
       if (!editingId) {
-        await submitChangeRequest(token, { section: 'checklist', action: 'create', after: payload, requesterName: guestName });
+        await submitChangeRequest(token, { section: 'checklist', action: 'create', after: payload, status, requesterName: guestName });
         setIsFormOpen(false);
-        showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+        showToast(successMessage);
       } else {
         const before = checklist.find(c => String(c.id) === editingId);
-        await submitChangeRequest(token, { section: 'checklist', action: 'update', targetId: editingId, before: before as any, after: payload, requesterName: guestName });
+        await submitChangeRequest(token, { section: 'checklist', action: 'update', targetId: editingId, before: before as any, after: payload, status, requesterName: guestName });
         setEditingId(null);
         setIsFormOpen(false);
-        showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+        showToast(successMessage);
       }
-    } catch (e: any) { showToast('Lỗi: ' + e.message, 'error'); }
+    } catch (e: any) { showToast((isDirectEdit ? 'Lỗi cập nhật: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); }
   }
 
   async function handleDelete(id: string) {
@@ -787,9 +801,16 @@ export function SharedChecklistSection({
   async function executeDelete(id: string) {
     try {
       const before = checklist.find(c => String(c.id) === id);
-      await submitChangeRequest(token, { section: 'checklist', action: 'delete', targetId: id, before: before as any, requesterName: guestName });
-      showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
-    } catch (e: any) { showToast('Lỗi: ' + e.message, 'error'); }
+      await submitChangeRequest(token, { 
+        section: 'checklist', 
+        action: 'delete', 
+        targetId: id, 
+        before: before as any, 
+        status: isDirectEdit ? 'auto_approved' : undefined,
+        requesterName: guestName 
+      });
+      showToast(isDirectEdit ? 'Đã xóa trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+    } catch (e: any) { showToast((isDirectEdit ? 'Lỗi xóa: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); }
   }
 
   return (
@@ -824,17 +845,17 @@ export function SharedChecklistSection({
                   </span>
                   {c.isPendingDelete && (
                     <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 shrink-0 select-none animate-fadeIn">
-                      Đề xuất xóa
+                      {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? 'Đang xóa...' : 'Đề xuất xóa'}
                     </span>
                   )}
                   {c.isPendingCreate && (
                     <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none animate-fadeIn">
-                      Đề xuất mới
+                      {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
                     </span>
                   )}
                   {c.isPendingUpdate && (
                     <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 shrink-0 select-none animate-fadeIn">
-                      Đề xuất sửa
+                      {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
                     </span>
                   )}
                 </div>
@@ -902,7 +923,7 @@ export function SharedChecklistSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
             >
-              Đề xuất sửa
+              {isDirectEdit ? "Sửa" : "Đề xuất sửa"}
             </button>
             <button
               onClick={() => {
@@ -913,7 +934,7 @@ export function SharedChecklistSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
             >
-              Đề xuất xóa
+              {isDirectEdit ? "Xóa" : "Đề xuất xóa"}
             </button>
           </div>
         </>,
@@ -923,9 +944,9 @@ export function SharedChecklistSection({
         <button 
           onClick={startAdd} 
           className="mt-3 flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-[#FFFDF8] hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
-          title="Đề xuất thêm"
+          title={isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm"}
         >
-          <Plus className="h-4.5 w-4.5" /> Đề xuất thêm
+          <Plus className="h-4.5 w-4.5" /> {isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm"}
         </button>
       )}
 
@@ -935,7 +956,7 @@ export function SharedChecklistSection({
           setIsFormOpen(false);
           setEditingId(null);
         }}
-        title={editingId ? "Đề xuất sửa chuẩn bị" : "Đề xuất thêm chuẩn bị"}
+        title={isDirectEdit ? (editingId ? "Sửa chuẩn bị" : "Thêm chuẩn bị") : (editingId ? "Đề xuất sửa chuẩn bị" : "Đề xuất thêm chuẩn bị")}
       >
         <div className="flex flex-col gap-5 py-2">
           {/* Item Name */}
@@ -1384,11 +1405,10 @@ export function SharedJournalsSection({
                                 (j.authorName || "").trim().toLowerCase() === "trưởng nhóm" ||
                                 (j.authorName || "").trim().toLowerCase() === "trường nhóm"
                               )) {
-                                authorMember = members.find(m => 
-                                  m.role === "Trưởng nhóm" || 
-                                  m.role === "Trưởng đoàn" || 
-                                  m.role === "Người đại diện"
-                                );
+                                authorMember = members.find(m => {
+                                  const r = (m.role || "").toLowerCase();
+                                  return r.includes("trưởng nhóm") || r.includes("trưởng đoàn") || r.includes("người đại diện");
+                                });
                               }
                               let avatar = authorMember?.avatar;
                               if (!avatar) {
@@ -1719,506 +1739,6 @@ export function SharedJournalsSection({
   );
 }
 
-export function SharedBackupPlansSection({ 
-  token, 
-  mode, 
-  backupPlans, 
-  changeRequests = [],
-  guestName
-}: { 
-  token: string; 
-  mode: string; 
-  backupPlans: BackupPlan[]; 
-  changeRequests?: any[];
-  guestName?: string;
-}) {
-  const isRequestEdit = mode === 'request_edit';
-  const [editingId, setEditingId] = React.useState<string | null>(null);
-  const [isFormOpen, setIsFormOpen] = React.useState(false);
-  const [deleteTargetId, setDeleteTargetId] = React.useState<BackupPlan | null>(null);
-  const [activeMenuId, setActiveMenuId] = React.useState<string | null>(null);
-  const [menuPos, setMenuPos] = React.useState<{ top: number; right: number } | null>(null);
-
-  React.useEffect(() => {
-    if (!activeMenuId) return;
-    const handleScroll = () => {
-      setActiveMenuId(null);
-      setMenuPos(null);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [activeMenuId]);
-  const [showValidationError, setShowValidationError] = React.useState(false);
-  const [form, setForm] = React.useState({
-    title: '',
-    type: 'other',
-    reason: '',
-    location: '',
-    mapLink: '',
-    estimatedCost: '',
-    note: ''
-  });
-
-  const typeOptions = [
-    { value: 'food', label: 'Ăn uống' },
-    { value: 'place', label: 'Địa điểm thay thế' },
-    { value: 'transport', label: 'Di chuyển' },
-    { value: 'hotel', label: 'Lưu trú' },
-    { value: 'indoor', label: 'Trong nhà' },
-    { value: 'weather', label: 'Thời tiết xấu' },
-    { value: 'other', label: 'Khác' }
-  ];
-  const [showAdditionalInfo, setShowAdditionalInfo] = React.useState(false);
-
-  React.useEffect(() => {
-    if (!isFormOpen) return;
-
-    setShowValidationError(false);
-    if (editingId) {
-      const item = backupPlans.find(b => String(b.id) === editingId);
-      if (item) {
-        setForm({
-          title: item.title || '',
-          type: item.type || 'other',
-          reason: item.reason || '',
-          location: item.location || '',
-          mapLink: item.mapLink || '',
-          estimatedCost: item.estimatedCost ? String(item.estimatedCost) : '',
-          note: item.note || ''
-        });
-      }
-    } else {
-      setForm({
-        title: '',
-        type: 'other',
-        reason: '',
-        location: '',
-        mapLink: '',
-        estimatedCost: '',
-        note: ''
-      });
-      setShowAdditionalInfo(false);
-    }
-  }, [backupPlans, editingId, isFormOpen]);
-
-  const mergedBackupPlans = React.useMemo(() => {
-    const list = backupPlans.map(item => {
-      const pendingDelete = changeRequests.some(r => r.section === 'backupPlans' && r.action === 'delete' && String(r.targetId) === String(item.id));
-      const updateReq = changeRequests.find(r => r.section === 'backupPlans' && r.action === 'update' && String(r.targetId) === String(item.id));
-
-      if (updateReq) {
-        return {
-          ...item,
-          ...updateReq.after,
-          isPendingUpdate: true,
-          changeRequestId: updateReq.id
-        };
-      }
-
-      return {
-        ...item,
-        isPendingDelete: pendingDelete
-      };
-    });
-
-    const pendingCreates = changeRequests.filter(r => r.section === 'backupPlans' && r.action === 'create');
-    pendingCreates.forEach(r => {
-      list.push({
-        id: "pending-create-" + r.id,
-        ...r.after,
-        isPendingCreate: true,
-        changeRequestId: r.id
-      } as any);
-    });
-
-    return list;
-  }, [backupPlans, changeRequests]);
-
-  function startAdd() {
-    setEditingId(null);
-    setIsFormOpen(true);
-  }
-
-  function startEdit(item: BackupPlan) {
-    setEditingId(String(item.id));
-    setIsFormOpen(true);
-  }
-
-  async function handleSave() {
-    if (!form.title.trim()) {
-      setShowValidationError(true);
-      return;
-    }
-
-    const costValue = form.estimatedCost.trim() ? Number(form.estimatedCost.replace(/\D/g, '')) : undefined;
-    const payload = {
-      title: form.title.trim(),
-      type: form.type,
-      reason: form.reason.trim() || undefined,
-      location: form.location.trim() || undefined,
-      mapLink: form.mapLink.trim() || undefined,
-      estimatedCost: costValue,
-      note: form.note.trim() || undefined,
-      updatedAt: new Date().toISOString()
-    };
-
-    try {
-      if (!editingId) {
-        await submitChangeRequest(token, {
-          section: 'backupPlans',
-          action: 'create',
-          after: { ...payload, createdAt: new Date().toISOString() },
-          requesterName: guestName
-        });
-      } else {
-        const before = backupPlans.find(b => String(b.id) === editingId);
-        await submitChangeRequest(token, {
-          section: 'backupPlans',
-          action: 'update',
-          targetId: editingId,
-          before: before as any,
-          after: payload,
-          requesterName: guestName
-        });
-        setEditingId(null);
-      }
-
-      setIsFormOpen(false);
-      showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
-    } catch (e: any) {
-      showToast('Lỗi khi gửi đề xuất: ' + e.message, 'error');
-    }
-  }
-
-  async function handleDelete(b: BackupPlan) {
-    setDeleteTargetId(b);
-  }
-
-  async function executeDelete(b: BackupPlan) {
-    try {
-      await submitChangeRequest(token, { section: 'backupPlans', action: 'delete', targetId: String(b.id), before: b as any, requesterName: guestName });
-      showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
-    } catch (e: any) { showToast('Lỗi: ' + e.message, 'error'); }
-  }
-
-  return (
-    <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm">
-      <div className="flex items-center justify-between gap-3 mb-3 border-b border-slate-100 pb-3">
-        <div className="flex items-center gap-2 min-w-0">
-          <LifeBuoy className="h-5 w-5 text-[#00BFB7]" />
-          <h3 className="text-[16px] font-black text-[#030D2E]">Kế hoạch dự phòng</h3>
-        </div>
-        {isRequestEdit && (
-          <button
-            type="button"
-            onClick={startAdd}
-            className="hidden sm:inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-[#030D2E] px-3.5 text-[13px] font-extrabold text-white shadow-sm transition-all hover:bg-[#030D2E]/90 active:scale-95"
-          >
-            <Plus className="h-4 w-4" />
-            Đề xuất thêm
-          </button>
-        )}
-      </div>
-      <div className="space-y-4">
-        {mergedBackupPlans.length === 0 && (
-          <p className="text-center text-slate-400 text-sm font-medium py-4">Chưa có phương án dự phòng.</p>
-        )}
-        {mergedBackupPlans.map(b => {
-          const isPending = b.isPendingCreate || b.isPendingUpdate || b.isPendingDelete;
-          const itemId = String(b.id);
-
-          return (
-          <div 
-            key={b.id} 
-            className={classNames(
-              "rounded-xl p-4 border transition-all",
-              b.isPendingCreate || b.isPendingUpdate ? "bg-sky-50/40 border-sky-100/70" : "",
-              b.isPendingDelete ? "border-rose-100 bg-slate-50/50 opacity-70" : "",
-              !isPending ? "bg-indigo-50/20 border-indigo-100/40" : ""
-            )}
-          >
-            <div className="flex justify-between items-start">
-              <div className="flex flex-wrap items-baseline gap-2 min-w-0">
-                <h4 className={classNames(
-                  "text-[14px] font-bold text-indigo-900 break-words",
-                  b.isPendingDelete ? "line-through text-slate-400" : ""
-                )}>
-                  <span className="text-indigo-950/60 font-medium">Sự cố:</span> {b.title}
-                </h4>
-                {b.isPendingCreate && (
-                  <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 select-none animate-fadeIn">
-                    Đề xuất mới
-                  </span>
-                )}
-                {b.isPendingUpdate && (
-                  <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 select-none animate-fadeIn">
-                    Đề xuất sửa
-                  </span>
-                )}
-                {b.isPendingDelete && (
-                  <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 select-none animate-fadeIn">
-                    Đề xuất xóa
-                  </span>
-                )}
-              </div>
-              {isRequestEdit && !isPending && (
-                <div className="shrink-0 ml-2">
-                  <button
-                    type="button"
-                    onClick={(ev) => {
-                      ev.stopPropagation();
-                      const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
-                      if (activeMenuId === itemId) {
-                        setActiveMenuId(null);
-                        setMenuPos(null);
-                      } else {
-                        setActiveMenuId(itemId);
-                        setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
-                      }
-                    }}
-                    className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-white active:scale-90 transition-all focus:outline-none"
-                    title="Tùy chọn đề xuất"
-                  >
-                    <MoreVertical className="h-4.5 w-4.5" />
-                  </button>
-                </div>
-              )}
-            </div>
-            {b.reason && (
-              <p className={classNames(
-                "mt-1.5 text-[13.5px] text-slate-650 font-medium leading-relaxed whitespace-pre-wrap",
-                b.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
-              )}>
-                <span className="text-slate-500 font-medium">Phương án xử lý:</span> {b.reason}
-              </p>
-            )}
-            {(b.location || b.estimatedCost || b.note) && !b.isPendingDelete && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {b.location && (
-                  <span className="inline-flex items-center rounded-lg bg-white/80 border border-slate-200 px-2.5 py-1 text-[12.5px] font-bold text-slate-600">
-                    {b.location}
-                  </span>
-                )}
-                {b.estimatedCost && (
-                  <span className="inline-flex items-center rounded-lg bg-white/80 border border-slate-200 px-2.5 py-1 text-[12.5px] font-bold text-slate-600">
-                    {formatMoney(Number(b.estimatedCost))}
-                  </span>
-                )}
-                {b.note && (
-                  <span className="inline-flex items-center rounded-lg bg-white/80 border border-slate-200 px-2.5 py-1 text-[12.5px] font-bold text-slate-600">
-                    {b.note}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-          );
-        })}
-      </div>
-
-      {activeMenuId && menuPos && createPortal(
-        <>
-          <div 
-            className="fixed inset-0 z-[998]" 
-            onClick={() => {
-              setActiveMenuId(null);
-              setMenuPos(null);
-            }}
-          />
-          <div 
-            className="fixed z-[999] w-36 rounded-xl bg-white border border-slate-200 shadow-lg py-1.5 animate-fadeIn"
-            style={{ top: menuPos.top, right: menuPos.right }}
-          >
-            <button
-              type="button"
-              onClick={() => {
-                const id = activeMenuId;
-                setActiveMenuId(null);
-                setMenuPos(null);
-                const item = backupPlans.find(x => String(x.id) === id || ("pending-create-" + x.id) === id || ("pending-update-" + x.id) === id);
-                if (item) startEdit(item);
-              }}
-              className="flex w-full items-center gap-2 px-4 py-2.5 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
-            >
-              <Pencil className="h-4 w-4" />
-              Đề xuất sửa
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                const id = activeMenuId;
-                setActiveMenuId(null);
-                setMenuPos(null);
-                const item = backupPlans.find(x => String(x.id) === id || ("pending-create-" + x.id) === id || ("pending-update-" + x.id) === id);
-                if (item) handleDelete(item);
-              }}
-              className="flex w-full items-center gap-2 px-4 py-2.5 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
-            >
-              <Trash2 className="h-4 w-4" />
-              Đề xuất xóa
-            </button>
-          </div>
-        </>,
-        document.body
-      )}
-      {isRequestEdit && (
-        <button 
-          onClick={startAdd} 
-          className="mt-3 flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-[#FFFDF8] hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100 sm:hidden"
-          title="Đề xuất thêm"
-        >
-          <Plus className="h-4.5 w-4.5" /> Đề xuất thêm
-        </button>
-      )}
-
-      <BottomSheet
-        isOpen={isFormOpen}
-        onClose={() => {
-          setIsFormOpen(false);
-          setEditingId(null);
-        }}
-        title={editingId ? "Đề xuất sửa phương án" : "Đề xuất thêm phương án"}
-        subtitle="Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
-      >
-        <div className="flex flex-col gap-5 py-2">
-          <div className="space-y-1.5">
-            <label className="text-[13px] font-bold text-slate-700 flex items-center gap-1.5">
-              <Type className="h-4 w-4 text-slate-500" />
-              Tên phương án *
-            </label>
-            <input
-              className={classNames(
-                "w-full rounded-[14px] border bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#030D2E] placeholder-slate-400",
-                showValidationError ? "border-red-500 ring-2 ring-red-500" : "border-slate-200 focus:border-[#030D2E]"
-              )}
-              value={form.title}
-              onChange={(e) => {
-                setForm({ ...form, title: e.target.value });
-                if (e.target.value.trim()) setShowValidationError(false);
-              }}
-              placeholder="VD: Quán ăn gần khách sạn, điểm tham quan trong nhà..."
-            />
-            {showValidationError && (
-              <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1">Vui lòng nhập tên phương án.</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[13px] font-bold text-slate-700 block">Loại phương án</label>
-            <div className="flex flex-wrap gap-2">
-              {typeOptions.map(option => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setForm({ ...form, type: option.value })}
-                  className={classNames(
-                    "h-9 rounded-full border px-3 text-[13px] font-bold transition-all active:scale-95",
-                    form.type === option.value
-                      ? "border-[#030D2E] bg-[#030D2E]/10 text-[#030D2E]"
-                      : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-[13px] font-bold text-slate-700 flex items-center gap-1.5">
-              <HelpCircle className="h-4 w-4 text-slate-400" />
-              Dùng khi nào?
-            </label>
-            <input
-              className="w-full rounded-[14px] border border-slate-200 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#030D2E] focus:border-[#030D2E] placeholder-slate-400"
-              value={form.reason}
-              onChange={(e) => setForm({ ...form, reason: e.target.value })}
-              placeholder="VD: Khi trời mưa, quán đóng cửa, quá đông..."
-            />
-          </div>
-
-          <div className="border-t border-slate-200 pt-4 mt-1">
-            <button
-              type="button"
-              onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
-              className="w-full flex items-center justify-between text-[13.5px] font-extrabold text-slate-700 hover:text-[#030D2E] focus:outline-none transition-colors"
-            >
-              <span>Thông tin bổ sung</span>
-              <ChevronRight className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${showAdditionalInfo ? 'rotate-90' : ''}`} />
-            </button>
-
-            {showAdditionalInfo && (
-              <div className="space-y-4 mt-4 animate-fadeIn">
-                <Input
-                  label="Địa điểm"
-                  value={form.location}
-                  onChange={(location) => setForm({ ...form, location })}
-                  placeholder="VD: Quán B gần khách sạn"
-                />
-
-                <Input
-                  label="Link Google Maps"
-                  value={form.mapLink}
-                  onChange={(mapLink) => setForm({ ...form, mapLink })}
-                  placeholder="https://maps.google.com/..."
-                />
-
-                <Input
-                  label="Chi phí dự kiến"
-                  value={form.estimatedCost ? new Intl.NumberFormat('vi-VN').format(Number(form.estimatedCost)) : ''}
-                  onChange={(value) => setForm({ ...form, estimatedCost: value.replace(/\D/g, '') })}
-                  placeholder="VD: 200000"
-                />
-
-                <Textarea
-                  label="Ghi chú"
-                  value={form.note}
-                  onChange={(note) => setForm({ ...form, note })}
-                  placeholder="VD: Gọi trước khi đến, nên đi taxi..."
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => {
-                setIsFormOpen(false);
-                setEditingId(null);
-              }}
-              className="h-12 flex-1 rounded-2xl bg-slate-100 text-[14px] font-extrabold text-slate-600 transition-colors hover:bg-slate-200 active:scale-[0.98]"
-            >
-              Hủy
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              className="h-12 flex-1 rounded-2xl bg-[#030D2E] text-[14px] font-extrabold text-white shadow-sm transition-all hover:bg-[#030D2E]/90 active:scale-[0.98]"
-            >
-              {editingId ? 'Gửi đề xuất sửa' : 'Gửi đề xuất thêm'}
-            </button>
-          </div>
-        </div>
-      </BottomSheet>
-
-      <DeleteConfirmModal
-        isOpen={deleteTargetId !== null}
-        onClose={() => setDeleteTargetId(null)}
-        onConfirm={async () => {
-          if (!deleteTargetId) return;
-          await executeDelete(deleteTargetId);
-          setDeleteTargetId(null);
-        }}
-        title="Đề xuất xóa phương án?"
-        description="Bạn đang gửi đề xuất xóa phương án dự phòng này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
-        confirmLabel="Đề xuất xóa"
-        itemName={deleteTargetId?.title}
-      />
-    </section>
-  );
-}
-
 export function SharedDocumentsSection({ 
   token, 
   mode, 
@@ -2447,10 +1967,10 @@ export function SharedMembersSection({
       const isLeader = (m: LocalMember) => {
         const roleLower = (m.role || "").trim().toLowerCase();
         return (
-          roleLower === "trưởng nhóm" ||
-          roleLower === "trưởng đoàn" ||
-          roleLower === "người đại diện" ||
-          roleLower === "leader"
+          roleLower.includes("trưởng nhóm") ||
+          roleLower.includes("trưởng đoàn") ||
+          roleLower.includes("người đại diện") ||
+          roleLower.includes("leader")
         );
       };
       const aLeader = isLeader(a);
@@ -2573,23 +2093,33 @@ export function SharedMembersSection({
                           {member.name}
                         </h4>
                         {(() => {
-                          const roleLower = (member.role || "").trim().toLowerCase();
-                          if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
-                            return <span title="Trưởng nhóm" className="shrink-0 ml-0.5"><Crown className="h-4.5 w-4.5 text-amber-500" /></span>;
-                          }
-                          if (roleLower === "quản lý chi phí") {
-                            return <span title="Quản lý chi phí" className="shrink-0 ml-0.5"><WalletCards className="h-4.5 w-4.5 text-emerald-500" /></span>;
-                          }
-                          if (roleLower === "tài xế") {
-                            return <span title="Tài xế" className="shrink-0 ml-0.5"><Car className="h-4.5 w-4.5 text-blue-500" /></span>;
-                          }
-                          if (roleLower === "phụ trách hành lý") {
-                            return <span title="Phụ trách hành lý" className="shrink-0 ml-0.5"><Luggage className="h-4.5 w-4.5 text-indigo-500" /></span>;
-                          }
-                          if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
-                            return <span title={member.role || "Người đồng hành"} className="shrink-0 ml-0.5"><Users className="h-4.5 w-4.5 text-slate-400" /></span>;
-                          }
-                          return <span title={member.role} className="shrink-0 ml-0.5"><BadgeCheck className="h-4.5 w-4.5 text-teal-500" /></span>;
+                          const roles = (member.role || "Người đồng hành")
+                            .split(",")
+                            .map(r => r.trim().toLowerCase())
+                            .filter(Boolean);
+                          
+                          return (
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              {roles.map((roleLower, i) => {
+                                if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
+                                  return <span key={i} title="Trưởng nhóm" className="shrink-0"><Crown className="h-4.5 w-4.5 text-amber-500" /></span>;
+                                }
+                                if (roleLower === "quản lý chi phí") {
+                                  return <span key={i} title="Quản lý chi phí" className="shrink-0"><WalletCards className="h-4.5 w-4.5 text-emerald-500" /></span>;
+                                }
+                                if (roleLower === "tài xế") {
+                                  return <span key={i} title="Tài xế" className="shrink-0"><Car className="h-4.5 w-4.5 text-blue-500" /></span>;
+                                }
+                                if (roleLower === "phụ trách hành lý") {
+                                  return <span key={i} title="Phụ trách hành lý" className="shrink-0"><Luggage className="h-4.5 w-4.5 text-indigo-500" /></span>;
+                                }
+                                if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
+                                  return <span key={i} title="Người đồng hành" className="shrink-0"><Users className="h-4.5 w-4.5 text-slate-400" /></span>;
+                                }
+                                return <span key={i} title={roleLower} className="shrink-0"><BadgeCheck className="h-4.5 w-4.5 text-teal-500" /></span>;
+                              })}
+                            </div>
+                          );
                         })()}
                       </div>
                       {member.isPendingCreate && (
@@ -2616,7 +2146,10 @@ export function SharedMembersSection({
                   </div>
                 </div>
 
-                {isRequestEdit && !isPending && !(member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện" || member.role?.toLowerCase() === "leader") && (
+                {isRequestEdit && !isPending && !(() => {
+                  const r = (member.role || "").toLowerCase();
+                  return r.includes("trưởng đoàn") || r.includes("trưởng nhóm") || r.includes("người đại diện") || r.includes("leader");
+                })() && (
                   <div className="shrink-0">
                     <button 
                       onClick={(ev) => {
