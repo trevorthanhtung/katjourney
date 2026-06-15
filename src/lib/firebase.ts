@@ -56,9 +56,15 @@ export async function initFirebase() {
     import("firebase/storage")
   ]);
 
+  const { setPersistence, browserLocalPersistence } = await import("firebase/auth");
+
   const apps = getApps();
   cachedApp = apps.length ? apps[0] : initializeApp(firebaseConfig);
   cachedAuth = getAuth(cachedApp);
+
+  // Đảm bảo session được lưu vào localStorage để không bị đăng xuất khi reload
+  await setPersistence(cachedAuth, browserLocalPersistence);
+
   cachedDb = getFirestore(cachedApp);
   cachedStorage = getStorage(cachedApp);
 

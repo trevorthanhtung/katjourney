@@ -44,6 +44,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
 
   const [activeTab, setActiveTab] = useState<string>("activities");
+  const [selectedRoadmapDay, setSelectedRoadmapDay] = useState<string>("");
 
   useEffect(() => {
     if (data && data.trip) {
@@ -170,13 +171,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const eventDays = Array.from(new Set(activities.map((e: any) => e.date)));
   const days = Array.from(new Set([...tripDays, ...eventDays])).filter(Boolean).sort() as string[];
 
-  const [selectedRoadmapDay, setSelectedRoadmapDay] = useState<string>("");
 
-  useEffect(() => {
-    if (days.length > 0 && !selectedRoadmapDay) {
-      setSelectedRoadmapDay(days[0]);
-    }
-  }, [days, selectedRoadmapDay]);
 
   const isDayTrip = trip.startDate === trip.endDate;
   let durationText = "Trong ngày";

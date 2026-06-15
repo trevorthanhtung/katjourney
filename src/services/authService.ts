@@ -79,7 +79,7 @@ export async function signInWithGoogle(): Promise<User> {
 
   try {
     const { auth } = await initFirebase();
-    const { GoogleAuthProvider, signInWithPopup, linkWithPopup } = await import("firebase/auth");
+    const { GoogleAuthProvider, signInWithPopup, linkWithPopup, signInWithCredential } = await import("firebase/auth");
     
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
@@ -95,7 +95,19 @@ export async function signInWithGoogle(): Promise<User> {
         return result.user;
       } catch (linkError: any) {
         console.error("[AuthService] Link account error:", linkError);
-        // Trả về lỗi đã được dịch nghĩa
+
+        // Nếu Google account này đã liên kết với account KAT Journey khác,
+        // tự động đăng nhập vào account đó thay vì báo lỗi
+        if (
+          linkError.code === "auth/credential-already-in-use" &&
+          linkError.credential
+        ) {
+          console.log("[AuthService] Google account already in use — signing in with existing credential instead...");
+          const result = await signInWithCredential(auth, linkError.credential);
+          console.log("[AuthService] Signed in with existing Google account:", result.user.uid);
+          return result.user;
+        }
+
         throw new Error(getFriendlyAuthErrorMessage(linkError));
       }
     } else {
