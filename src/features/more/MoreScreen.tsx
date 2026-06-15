@@ -1733,6 +1733,27 @@ export function MoreScreen({
   if (section === "documents") return <TravelDocumentsSection tripId={trip.id!} onBack={() => setSection("overview")} onShowToast={onShowToast} isReadOnly={isReadOnly} />;
   
   if (section === "members") {
+    const sortedMembers = React.useMemo(() => {
+      const list = [...members];
+      const isLeader = (m: Member) => {
+        const roleLower = (m.role || "").trim().toLowerCase();
+        return (
+          roleLower === "trưởng nhóm" ||
+          roleLower === "trưởng đoàn" ||
+          roleLower === "người đại diện" ||
+          roleLower === "leader"
+        );
+      };
+      list.sort((a, b) => {
+        const aLeader = isLeader(a);
+        const bLeader = isLeader(b);
+        if (aLeader && !bLeader) return -1;
+        if (!aLeader && bLeader) return 1;
+        return 0;
+      });
+      return list;
+    }, [members]);
+
     const membersWithTasks = members.filter(m => checklist.some(c => c.assignedTo === m.name)).length;
     const membersWithExpenses = members.filter(m => expenses.some(e => e.payer === m.name)).length;
 
@@ -1814,9 +1835,9 @@ export function MoreScreen({
             <h3 className="text-[17px] font-extrabold text-[#030D2E]">Danh sách thành viên {members.length > 0 && `(${members.length})`}</h3>
           </div>
           
-          {members.length ? (
+          {sortedMembers.length ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {members.map((member) => (
+              {sortedMembers.map((member) => (
                 <MemberCardRow
                   key={member.id}
                   member={member}
