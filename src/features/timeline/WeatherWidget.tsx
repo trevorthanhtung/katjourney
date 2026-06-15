@@ -17,12 +17,12 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3 }: We
 
   if (!destination?.trim() && !latitude && !longitude) {
     return (
-      <div className="w-full mb-6 rounded-3xl bg-slate-50 border border-slate-100 p-5 shadow-sm flex flex-col items-center justify-center text-center gap-2">
-        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200/50 text-slate-400">
-          <CloudRainWind className="w-5 h-5" />
+      <div className="w-full mb-6 rounded-3xl bg-gradient-to-b from-sky-50/20 via-sky-50/5 to-white border border-slate-200/40 p-5 shadow-[0_4px_20px_rgba(3,13,46,0.02)] flex flex-col items-center justify-center text-center gap-2">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 text-sky-500 mb-1 shadow-sm animate-pulse">
+          <CloudRainWind className="w-5.5 h-5.5" />
         </span>
-        <span className="text-[13.5px] font-bold text-slate-500">Chưa có điểm đến</span>
-        <span className="text-[11px] text-slate-400 max-w-[200px]">Hãy thêm điểm đến cho chuyến đi để xem dự báo thời tiết tại đây.</span>
+        <span className="text-[14px] font-black text-[#030D2E]">Chưa có điểm đến</span>
+        <span className="text-[11.5px] text-slate-500/80 font-medium max-w-[220px] leading-relaxed">Hãy thêm điểm đến cho chuyến đi để xem dự báo thời tiết tại đây.</span>
       </div>
     );
   }

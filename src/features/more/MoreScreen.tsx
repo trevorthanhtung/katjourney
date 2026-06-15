@@ -588,7 +588,7 @@ function MemberForm({
   onClose: () => void;
   onShowToast?: (msg: string) => void;
 }) {
-  const PRESETS = ["Trưởng nhóm", "Quản lý chi phí", "Tài xế", "Người đồng hành"];
+  const PRESETS = ["Trưởng nhóm", "Quản lý chi phí", "Tài xế", "Dẫn đường", "Người đồng hành"];
   
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -705,6 +705,7 @@ function MemberForm({
       case "Trưởng nhóm": return <Crown className="h-3.5 w-3.5 text-amber-500" />;
       case "Quản lý chi phí": return <WalletCards className="h-3.5 w-3.5 text-emerald-500" />;
       case "Tài xế": return <Car className="h-3.5 w-3.5 text-blue-500" />;
+      case "Dẫn đường": return <Compass className="h-3.5 w-3.5 text-sky-500" />;
       case "Phụ trách hành lý": return <Luggage className="h-3.5 w-3.5 text-indigo-500" />;
       default: return null;
     }
@@ -1357,56 +1358,108 @@ function MemberCardRow({
   const paidExpensesCount = memberExpenses.length;
   const totalSpent = memberExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
 
+  const roleLower = (member.role || "").trim().toLowerCase();
+  const isLeader = roleLower.includes("trưởng nhóm") || roleLower.includes("trưởng đoàn") || roleLower.includes("leader");
+  const isCost = roleLower.includes("quản lý chi phí");
+  const isDriver = roleLower.includes("tài xế");
+  const isGuide = roleLower.includes("dẫn đường");
+  const isLuggage = roleLower.includes("hành lý") || roleLower.includes("phụ trách hành lý");
+
+  let cardBg = "bg-gradient-to-br from-slate-50/20 via-white to-white border-slate-200/60";
+  let borderAccent = "border-l-4 border-l-slate-400";
+
+  if (isLeader) {
+    cardBg = "bg-gradient-to-br from-amber-50/30 via-white to-white border-slate-200/60";
+    borderAccent = "border-l-4 border-l-amber-500";
+  } else if (isCost) {
+    cardBg = "bg-gradient-to-br from-emerald-50/30 via-white to-white border-slate-200/60";
+    borderAccent = "border-l-4 border-l-emerald-500";
+  } else if (isDriver) {
+    cardBg = "bg-gradient-to-br from-blue-50/30 via-white to-white border-slate-200/60";
+    borderAccent = "border-l-4 border-l-blue-500";
+  } else if (isGuide) {
+    cardBg = "bg-gradient-to-br from-sky-50/30 via-white to-white border-slate-200/60";
+    borderAccent = "border-l-4 border-l-sky-500";
+  } else if (isLuggage) {
+    cardBg = "bg-gradient-to-br from-indigo-50/30 via-white to-white border-slate-200/60";
+    borderAccent = "border-l-4 border-l-indigo-500";
+  }
+
+  const renderRoleBadge = (role: string) => {
+    const rLower = (role || "Người đồng hành").trim().toLowerCase();
+    if (rLower.includes("trưởng nhóm") || rLower.includes("trưởng đoàn") || rLower.includes("leader")) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200/50 shadow-sm shrink-0 select-none">
+          <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-500/10 shrink-0" />
+          Trưởng nhóm
+        </span>
+      );
+    }
+    if (rLower.includes("quản lý chi phí")) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200/50 shadow-sm shrink-0 select-none">
+          <WalletCards className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+          Quản lý chi phí
+        </span>
+      );
+    }
+    if (rLower.includes("tài xế")) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200/50 shadow-sm shrink-0 select-none">
+          <Car className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+          Tài xế
+        </span>
+      );
+    }
+    if (rLower.includes("dẫn đường")) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-sky-50 text-sky-700 border border-sky-200/50 shadow-sm shrink-0 select-none">
+          <Compass className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+          Dẫn đường
+        </span>
+      );
+    }
+    if (rLower.includes("phụ trách hành lý") || rLower.includes("hành lý")) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200/50 shadow-sm shrink-0 select-none">
+          <Luggage className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+          Hành lý
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-50 text-slate-600 border border-slate-200/60 shrink-0 select-none">
+        <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+        Bạn đồng hành
+      </span>
+    );
+  };
+
   return (
-    <div className="relative rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-4">
+    <div className={classNames(
+      "relative rounded-3xl border transition-all flex flex-col justify-between gap-4.5 p-5 shadow-[0_4px_15px_rgba(3,13,46,0.015)] hover:shadow-[0_8px_25px_rgba(3,13,46,0.04)] hover:scale-[1.005] duration-200",
+      cardBg,
+      borderAccent
+    )}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4 min-w-0 flex-1">
           {/* Avatar */}
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
             {member.avatar ? (
               getAvatarSvg(member.avatar, "w-full h-full")
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-[#00BFB7]/10 text-[#00BFB7] text-[18px] font-black">
+              <div className="flex h-full w-full items-center justify-center bg-indigo-50 text-indigo-600 text-[18px] font-black">
                 {initial}
               </div>
             )}
           </div>
 
           {/* Member details */}
-          <div className="min-w-0 flex-1 space-y-1">
+          <div className="min-w-0 flex-1 space-y-1.5">
             <div className="flex items-center flex-wrap gap-2">
-              <div className="flex items-center gap-1.5 min-w-0">
-                <UserRound className="h-4.5 w-4.5 text-[#030D2E]/60 shrink-0" />
-                <h4 className="text-[17px] font-extrabold text-[#030D2E] truncate">{member.name}</h4>
-                {(() => {
-                  const roles = (member.role || "Người đồng hành")
-                    .split(",")
-                    .map(r => r.trim().toLowerCase())
-                    .filter(Boolean);
-                  
-                  return (
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      {roles.map((roleLower, i) => {
-                        if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
-                          return <span key={i} title="Trưởng nhóm" className="shrink-0"><Crown className="h-4.5 w-4.5 text-amber-500" /></span>;
-                        }
-                        if (roleLower === "quản lý chi phí") {
-                          return <span key={i} title="Quản lý chi phí" className="shrink-0"><WalletCards className="h-4.5 w-4.5 text-emerald-500" /></span>;
-                        }
-                        if (roleLower === "tài xế") {
-                          return <span key={i} title="Tài xế" className="shrink-0"><Car className="h-4.5 w-4.5 text-blue-500" /></span>;
-                        }
-                        if (roleLower === "phụ trách hành lý") {
-                          return <span key={i} title="Phụ trách hành lý" className="shrink-0"><Luggage className="h-4.5 w-4.5 text-indigo-500" /></span>;
-                        }
-                        if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
-                          return <span key={i} title="Người đồng hành" className="shrink-0"><UsersRound className="h-4.5 w-4.5 text-slate-400" /></span>;
-                        }
-                        return <span key={i} title={roleLower} className="shrink-0"><BadgeCheck className="h-4.5 w-4.5 text-teal-500" /></span>;
-                      })}
-                    </div>
-                  );
-                })()}
+              <div className="flex items-center gap-2 min-w-0">
+                <h4 className="text-[16.5px] font-extrabold text-[#030D2E] truncate leading-tight">{member.name}</h4>
+                {renderRoleBadge(member.role || "Người đồng hành")}
               </div>
             </div>
             {member.phone && (
@@ -1479,20 +1532,24 @@ function MemberCardRow({
       </div>
 
       {/* Mini Stats Row */}
-      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-4 flex-wrap">
+      <div className="pt-3 border-t border-slate-100/60 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex flex-wrap gap-2 text-[12px]">
           <span className={classNames(
-            "flex items-center gap-1 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg",
-            assignedTasksCount === 0 ? "text-slate-400 font-medium" : "text-slate-700 font-bold"
+            "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
+            assignedTasksCount === 0 
+              ? "bg-slate-50/50 border-slate-100 text-slate-400 font-semibold" 
+              : "bg-sky-50/50 border-sky-100 text-sky-700 font-bold"
           )}>
-            <Luggage className="h-3.5 w-3.5 text-current shrink-0" />
+            <Luggage className="h-3.5 w-3.5 shrink-0" />
             {assignedTasksCount} việc
           </span>
           <span className={classNames(
-            "flex items-center gap-1 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg",
-            totalSpent === 0 ? "text-slate-400 font-medium" : "text-slate-700 font-bold"
+            "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
+            totalSpent === 0 
+              ? "bg-slate-50/50 border-slate-100 text-slate-400 font-semibold" 
+              : "bg-emerald-50/50 border-emerald-100 text-emerald-700 font-bold"
           )}>
-            <WalletCards className="h-3.5 w-3.5 text-current shrink-0" />
+            <WalletCards className="h-3.5 w-3.5 shrink-0" />
             Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
           </span>
         </div>
@@ -1520,7 +1577,9 @@ export function MoreScreen({
   setSection,
   onOpenInbox,
   onOpenSettings,
-  isReadOnly
+  isReadOnly,
+  isAutoSyncing,
+  lastSyncedAt
 }: {
   trip: Trip;
   members: Member[];
@@ -1538,6 +1597,8 @@ export function MoreScreen({
   onOpenInbox?: () => void;
   onOpenSettings?: (view?: "menu" | "auth" | "privacy" | "about" | "donate") => void;
   isReadOnly?: boolean;
+  isAutoSyncing?: boolean;
+  lastSyncedAt?: Date | null;
 }) {
   const [editingTrip, setEditingTrip] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
@@ -1579,14 +1640,36 @@ export function MoreScreen({
   const [shareLoading, setShareLoading] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
   const [shareOptions, setShareOptions] = useState({
-    includeExpenses: true,
-    includeJournals: true,
-    includeChecklist: true,
-    includeBackupPlans: true,
-    includeDocuments: false,
-    sharePin: "",
-    usePinProtection: false,
+    includeExpenses: trip.shareIncludeExpenses ?? true,
+    includeJournals: trip.shareIncludeJournals ?? true,
+    includeChecklist: trip.shareIncludeChecklist ?? true,
+    includeBackupPlans: trip.shareIncludeBackupPlans ?? true,
+    includeDocuments: trip.shareIncludeDocuments ?? false,
+    sharePin: trip.sharePin ?? "",
+    usePinProtection: trip.shareUsePinProtection ?? false,
   });
+
+  useEffect(() => {
+    setShareOptions({
+      includeExpenses: trip.shareIncludeExpenses ?? true,
+      includeJournals: trip.shareIncludeJournals ?? true,
+      includeChecklist: trip.shareIncludeChecklist ?? true,
+      includeBackupPlans: trip.shareIncludeBackupPlans ?? true,
+      includeDocuments: trip.shareIncludeDocuments ?? false,
+      sharePin: trip.sharePin ?? "",
+      usePinProtection: trip.shareUsePinProtection ?? false,
+    });
+  }, [
+    trip.id,
+    trip.shareIncludeExpenses,
+    trip.shareIncludeJournals,
+    trip.shareIncludeChecklist,
+    trip.shareIncludeBackupPlans,
+    trip.shareIncludeDocuments,
+    trip.shareUsePinProtection,
+    trip.sharePin
+  ]);
+
   const [copiedLink, setCopiedLink] = useState(false);
 
   const activeShareLink = trip.shareToken ? {
@@ -1639,6 +1722,16 @@ export function MoreScreen({
       await createShareLink(trip.id!, { 
         ...shareOptions, 
         mode: "request_edit",
+        sharePin: shareOptions.usePinProtection && shareOptions.sharePin.length === 4 ? shareOptions.sharePin : undefined
+      });
+      // Save sharing configuration to local Dexie so background sync knows about it!
+      await db.trips.update(trip.id!, {
+        shareIncludeExpenses: shareOptions.includeExpenses,
+        shareIncludeJournals: shareOptions.includeJournals,
+        shareIncludeChecklist: shareOptions.includeChecklist,
+        shareIncludeBackupPlans: shareOptions.includeBackupPlans,
+        shareIncludeDocuments: shareOptions.includeDocuments,
+        shareUsePinProtection: shareOptions.usePinProtection,
         sharePin: shareOptions.usePinProtection && shareOptions.sharePin.length === 4 ? shareOptions.sharePin : undefined
       });
     } catch (e: any) {
@@ -2531,6 +2624,23 @@ export function MoreScreen({
                     <Copy className="h-4 w-4" />
                   )}
                 </button>
+              </div>
+
+              {/* Status display */}
+              <div className="text-[12px] font-semibold flex items-center gap-2 bg-slate-50 border border-slate-150/50 rounded-xl py-2 px-3 animate-fadeIn">
+                {isAutoSyncing ? (
+                  <>
+                    <RefreshCw className="h-3.5 w-3.5 animate-spin text-sky-600" />
+                    <span className="text-sky-700">Đang tự động đồng bộ các thay đổi mới nhất...</span>
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-3.5 w-3.5 text-emerald-600" strokeWidth={3} />
+                    <span className="text-emerald-700">
+                      Tự động đồng bộ khi có thay đổi. Lần cuối: {lastSyncedAt ? lastSyncedAt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Vừa xong'}
+                    </span>
+                  </>
+                )}
               </div>
 
               {/* Success actions */}

@@ -31,6 +31,7 @@ import { ChatBox } from "./features/share/components/ChatBox";
 import { useAuth } from "./hooks/useAuth";
 import { useCloudBackup } from "./hooks/useCloudBackup";
 import { signOutUser } from "./services/authService";
+import { updateShareLink } from "./services/cloudShareService";
 import { useNetworkStatus } from "./hooks/useNetworkStatus";
 
 function NavButton({ 
@@ -364,6 +365,92 @@ function App() {
   const totalSharedExpense = sharedExpenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
   const totalExpense = (expenses ?? []).reduce((sum, item) => sum + Number(item.amount || 0), 0);
   const perPerson = (members ?? []).length ? totalSharedExpense / (members ?? []).length : 0;
+
+  // --- AUTO SYNC FOR SHARED TRIP ---
+  const [isAutoSyncing, setIsAutoSyncing] = useState(false);
+  const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
+  const lastSyncedFingerprintRef = React.useRef<string>("");
+
+  const currentFingerprint = React.useMemo(() => {
+    if (!trip) return "";
+    const parts = [
+      trip.title,
+      trip.location,
+      trip.startDate,
+      trip.endDate,
+      trip.tripType,
+      JSON.stringify(trip.dayRoadmaps || {}),
+      trip.status,
+      trip.shareIncludeExpenses,
+      trip.shareIncludeJournals,
+      trip.shareIncludeChecklist,
+      trip.shareIncludeBackupPlans,
+      trip.shareIncludeDocuments,
+      trip.shareUsePinProtection,
+      trip.sharePin,
+      (members ?? []).map(m => `${m.id}-${m.updatedAt || ""}`).join(","),
+      (events ?? []).map(e => `${e.id}-${e.updatedAt || ""}`).join(","),
+      trip.shareIncludeExpenses ?? true ? (expenses ?? []).map(e => `${e.id}-${e.updatedAt || ""}`).join(",") : "",
+      trip.shareIncludeChecklist ?? true ? (checklist ?? []).map(c => `${c.id}-${c.updatedAt || ""}`).join(",") : "",
+      trip.shareIncludeJournals ?? true ? (journals ?? []).map(j => `${j.id}-${j.updatedAt || ""}`).join(",") : "",
+      trip.shareIncludeBackupPlans ?? true ? (backupPlans ?? []).map(b => `${b.id}-${b.updatedAt || ""}`).join(",") : "",
+      trip.shareIncludeDocuments ?? false ? (travelDocuments ?? []).map(d => `${d.id}-${d.updatedAt || ""}`).join(",") : "",
+    ];
+    return parts.join("|");
+  }, [
+    trip,
+    members,
+    events,
+    expenses,
+    checklist,
+    journals,
+    backupPlans,
+    travelDocuments,
+  ]);
+
+  React.useEffect(() => {
+    if (!trip || !trip.shareToken || isReadOnly) {
+      lastSyncedFingerprintRef.current = "";
+      return;
+    }
+
+    if (!lastSyncedFingerprintRef.current) {
+      lastSyncedFingerprintRef.current = currentFingerprint;
+      return;
+    }
+
+    if (lastSyncedFingerprintRef.current === currentFingerprint) {
+      return;
+    }
+
+    lastSyncedFingerprintRef.current = currentFingerprint;
+
+    const timer = setTimeout(async () => {
+      setIsAutoSyncing(true);
+      try {
+        console.log("[AutoSync] Syncing changes...");
+        const options = {
+          mode: "request_edit" as const,
+          includeExpenses: trip.shareIncludeExpenses ?? true,
+          includeJournals: trip.shareIncludeJournals ?? true,
+          includeChecklist: trip.shareIncludeChecklist ?? true,
+          includeBackupPlans: trip.shareIncludeBackupPlans ?? true,
+          includeDocuments: trip.shareIncludeDocuments ?? false,
+          sharePin: trip.sharePin,
+        };
+        await updateShareLink(trip.id!, trip.shareToken!, options);
+        setLastSyncedAt(new Date());
+        console.log("[AutoSync] Sync successful.");
+      } catch (err) {
+        console.error("[AutoSync] Background sync failed:", err);
+      } finally {
+        setIsAutoSyncing(false);
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [currentFingerprint, trip, isReadOnly]);
+  // --- END AUTO SYNC ---
 
   function navigateToMore(section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents") {
     setMoreSection(section);
@@ -846,7 +933,7 @@ function App() {
               {activeTab === "timeline" && <TimelineScreen trip={trip} events={events ?? []} expenses={expenses ?? []} onAddExpense={(date, eventId) => { setExpenseInitialAddState({ date, eventId }); setActiveTab("expenses"); }} isReadOnly={isReadOnly} />}
               {activeTab === "expenses" && <ExpensesScreen expenses={expenses ?? []} members={members ?? []} totalExpense={totalExpense} perPerson={perPerson} tripId={tripId} events={events ?? []} initialAddState={expenseInitialAddState} onClearInitialAddState={() => setExpenseInitialAddState(undefined)} isReadOnly={isReadOnly} />}
               {activeTab === "checklist" && <ChecklistScreen checklist={checklist ?? []} tripId={tripId} isReadOnly={isReadOnly} />}
-              {activeTab === "more" && <MoreScreen trip={trip} members={members ?? []} events={events ?? []} expenses={expenses ?? []} checklist={checklist ?? []} journals={journals ?? []} packingItems={packingItems ?? []} travelDocuments={travelDocuments ?? []} onTripDeleted={() => { setSelectedTripId(null); setIsManagingTrips(true); showToast("Đã xóa chuyến đi khỏi danh sách."); }} onTripSelected={setSelectedTripId} onShowToast={showToast} section={moreSection} setSection={setMoreSection} onOpenInbox={() => setIsAppInboxOpen(true)} isReadOnly={isReadOnly} onOpenSettings={(view) => { setSettingsInitialView(view ?? "menu"); setIsSettingsOpen(true); }} />}
+              {activeTab === "more" && <MoreScreen trip={trip} members={members ?? []} events={events ?? []} expenses={expenses ?? []} checklist={checklist ?? []} journals={journals ?? []} packingItems={packingItems ?? []} travelDocuments={travelDocuments ?? []} onTripDeleted={() => { setSelectedTripId(null); setIsManagingTrips(true); showToast("Đã xóa chuyến đi khỏi danh sách."); }} onTripSelected={setSelectedTripId} onShowToast={showToast} section={moreSection} setSection={setMoreSection} onOpenInbox={() => setIsAppInboxOpen(true)} isReadOnly={isReadOnly} onOpenSettings={(view) => { setSettingsInitialView(view ?? "menu"); setIsSettingsOpen(true); }} isAutoSyncing={isAutoSyncing} lastSyncedAt={lastSyncedAt} />}
             </div>
           ) : (
             <div className="flex items-center justify-center py-20">

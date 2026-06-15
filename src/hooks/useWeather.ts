@@ -23,6 +23,18 @@ export function useWeather(destination?: string, latitude?: number, longitude?: 
         let lat = latitude;
         let lon = longitude;
 
+        if ((!lat || !lon) && destination) {
+          try {
+            const geocode = await geocodeDestination(destination);
+            if (geocode) {
+              lat = geocode.latitude;
+              lon = geocode.longitude;
+            }
+          } catch (e) {
+            console.error("Fallback geocoding failed", e);
+          }
+        }
+
         if (!lat || !lon) {
           if (isMounted) {
             setError(true);

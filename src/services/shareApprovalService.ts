@@ -7,7 +7,7 @@ export async function approveChangeRequest(token: string, requestId: string): Pr
   await ensureCloudShareReady();
   const user = await ensureAnonymousUser();
   const { db } = await initFirebase();
-  const { doc, getDoc, updateDoc, setDoc, deleteDoc, serverTimestamp } = await import('firebase/firestore');
+  const { doc, getDoc, updateDoc, setDoc, deleteDoc, serverTimestamp, runTransaction } = await import('firebase/firestore');
 
   const shareRef = doc(db, 'publicShares', token);
   const shareSnap = await getDoc(shareRef);
@@ -23,17 +23,27 @@ export async function approveChangeRequest(token: string, requestId: string): Pr
   }
 
   const requestRef = doc(shareRef, 'changeRequests', requestId);
-  const requestSnap = await getDoc(requestRef);
-
-  if (!requestSnap.exists()) {
-    throw new Error('Yêu cầu không tồn tại.');
-  }
-
-  const requestData = requestSnap.data();
-
-  if (requestData.status !== 'pending' && requestData.status !== 'auto_approved') {
-    throw new Error('Yêu cầu đã được xử lý.');
-  }
+  
+  // Use a transaction to exclusively claim this request, preventing multiple tabs from processing it simultaneously
+  const requestData = await runTransaction(db, async (transaction) => {
+    const requestSnap = await transaction.get(requestRef);
+    if (!requestSnap.exists()) {
+      throw new Error('Yêu cầu không tồn tại.');
+    }
+    const data = requestSnap.data();
+    if (data.status !== 'pending' && data.status !== 'auto_approved') {
+      throw new Error('Yêu cầu đã được xử lý.');
+    }
+    
+    // Claim it by updating status
+    transaction.update(requestRef, {
+      status: 'approved',
+      reviewedByUid: user.uid,
+      reviewedAt: serverTimestamp()
+    });
+    
+    return data;
+  });
 
   const tripId = shareData.sourceTripId;
   const trip = await localDb.trips.get(Number(tripId));
@@ -91,13 +101,6 @@ export async function approveChangeRequest(token: string, requestId: string): Pr
   } catch (err: any) {
     throw new Error('Lỗi khi đồng bộ lên Firebase: ' + err.message);
   }
-
-  // 3. Mark as approved
-  await updateDoc(requestRef, {
-    status: 'approved',
-    reviewedAt: serverTimestamp(),
-    reviewedByUid: user.uid
-  });
 }
 
 export async function rejectChangeRequest(token: string, requestId: string): Promise<void> {

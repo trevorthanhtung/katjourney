@@ -4,16 +4,18 @@ import {
   WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, Plus, Pencil, Trash2, MoreVertical, LifeBuoy,
   ReceiptText, UserCheck, Tags, ChevronRight, Scale, Info, Check, X, Clock,
   FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles, Route, HelpCircle, Users, MessageCircle,
-  Crown, UserRound, Luggage, Car
+  Crown, UserRound, Luggage, Car, Calculator, ChartPie, UsersRound,
+  Plane, Utensils, Hotel, Ticket, ShoppingBag, Gamepad2, Compass
 } from 'lucide-react';
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
-import { formatMoney, expenseCategories, formatDate, moodLabels } from '../../../utils/helpers';
+import { formatMoney, expenseCategories, formatDate, moodLabels, sumBy, getSettlementSuggestions } from '../../../utils/helpers';
 import { submitChangeRequest } from '../../../services/sharedTripRequestService';
 import { showToast } from '../../../components/ui/ToastManager';
 import { uploadJournalImage } from '../../../services/storageService';
 import { getIdentity } from '../../../services/identityService';
 import { BottomSheet, Input, Select, Textarea, DatePicker, DeleteConfirmModal } from '../../../components/ui';
 import { getAvatarSvg, getRandomAvatarId } from '../../../utils/avatars';
+import { BreakdownSection, CategoryBar, SettlementCard } from '../../expenses/ExpensesScreen';
 
 const classNames = (...classes: any[]) => classes.filter(Boolean).join(' ');
 
@@ -49,9 +51,60 @@ export function SharedExpensesSection({
 }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
+
+  const getCategoryDetails = (category: string) => {
+    switch (category) {
+      case "Di chuyển":
+        return {
+          icon: Route,
+          bg: "bg-blue-50 text-blue-600 border-blue-150/50"
+        };
+      case "Vé máy bay":
+        return {
+          icon: Plane,
+          bg: "bg-indigo-50 text-indigo-600 border-indigo-150/50"
+        };
+      case "Ăn uống":
+        return {
+          icon: Utensils,
+          bg: "bg-rose-50 text-rose-600 border-rose-150/50"
+        };
+      case "Lưu trú":
+        return {
+          icon: Hotel,
+          bg: "bg-slate-100 text-[#030D2E] border-slate-200"
+        };
+      case "Vé tham quan":
+        return {
+          icon: Ticket,
+          bg: "bg-amber-50 text-amber-600 border-amber-150/50"
+        };
+      case "Mua sắm":
+        return {
+          icon: ShoppingBag,
+          bg: "bg-purple-50 text-purple-600 border-purple-150/50"
+        };
+      case "Vui chơi & Giải trí":
+        return {
+          icon: Gamepad2,
+          bg: "bg-emerald-50 text-emerald-600 border-emerald-150/50"
+        };
+      case "Chuẩn bị hành lý":
+        return {
+          icon: Sparkles,
+          bg: "bg-sky-50 text-sky-600 border-sky-150/50"
+        };
+      default:
+        return {
+          icon: Tags,
+          bg: "bg-slate-50 text-slate-500 border-slate-200/50"
+        };
+    }
+  };
 
   useEffect(() => {
     if (!activeMenuId) return;
@@ -145,7 +198,7 @@ export function SharedExpensesSection({
 
   // Merge pending change requests into expenses list for visual diffs
   const mergedExpenses = React.useMemo(() => {
-    const list = expenses.map(item => {
+    const list = expenses.filter((e: any) => !e.isDeleted).map(item => {
       const pendingDelete = changeRequests.some(r => r.section === 'expenses' && r.action === 'delete' && String(r.targetId) === String(item.id));
       const updateReq = changeRequests.find(r => r.section === 'expenses' && r.action === 'update' && String(r.targetId) === String(item.id));
       
@@ -167,7 +220,7 @@ export function SharedExpensesSection({
       return item;
     });
 
-    const pendingCreates = changeRequests.filter(r => r.section === 'expenses' && r.action === 'create');
+    const pendingCreates = changeRequests.filter(r => r.section === 'expenses' && r.action === 'create' && r.status === 'pending');
     pendingCreates.forEach(r => {
       list.push({
         id: "pending-create-" + r.id,
@@ -221,6 +274,7 @@ export function SharedExpensesSection({
     };
 
     try {
+      setIsSubmitting(true);
       const status = isDirectEdit ? 'auto_approved' : undefined;
       const successMessage = isDirectEdit ? 'Đã cập nhật trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.';
       if (!editingId) {
@@ -234,7 +288,11 @@ export function SharedExpensesSection({
         setIsFormOpen(false);
         showToast(successMessage);
       }
-    } catch (e: any) { showToast((isDirectEdit ? 'Lỗi cập nhật: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); }
+    } catch (e: any) { 
+      showToast((isDirectEdit ? 'Lỗi cập nhật: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); 
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   async function handleDelete(id: string) {
@@ -256,92 +314,247 @@ export function SharedExpensesSection({
     } catch (e: any) { showToast((isDirectEdit ? 'Lỗi xóa: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); }
   }
 
+  const activeExpenses = mergedExpenses.filter(e => !e.isPendingDelete);
+  
+  const totalExpense = activeExpenses.reduce((acc, cur) => acc + cur.amount, 0);
+  const sharedExpensesList = activeExpenses.filter((e) => e.splitType === "shared");
+  const personalExpensesList = activeExpenses.filter((e) => e.splitType === "personal");
+
+  const totalShared = sharedExpensesList.reduce((acc, cur) => acc + cur.amount, 0);
+  const totalPersonal = personalExpensesList.reduce((acc, cur) => acc + cur.amount, 0);
+
+  const activeMembers = members.length > 0 ? members.length : 1;
+  const avgPerPerson = Math.round(totalShared / activeMembers);
+
+  const categoryBreakdown = React.useMemo(() => {
+    const acc: Record<string, number> = {};
+    activeExpenses.forEach((e) => {
+      acc[e.category] = (acc[e.category] || 0) + e.amount;
+    });
+    return acc;
+  }, [activeExpenses]);
+
+  const payerBreakdown = React.useMemo(() => {
+    const acc: Record<string, number> = {};
+    activeExpenses.forEach((e) => {
+      if (e.payer) acc[e.payer] = (acc[e.payer] || 0) + e.amount;
+    });
+    return acc;
+  }, [activeExpenses]);
+
+  const settlements = React.useMemo(() => {
+    return getSettlementSuggestions(members, sharedExpensesList);
+  }, [sharedExpensesList, members]);
+
   const isSaveDisabled = !form.amount.trim() || (form.splitType === "shared" && members.length > 0 && !form.payer);
 
   return (
-    <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
-        <div className="flex items-center gap-2">
-          <WalletCards className="h-5 w-5 text-amber-500" />
-          <h3 className="text-[16px] font-black text-[#030D2E]">Chi phí chuyến đi</h3>
+    <div className="space-y-6">
+      {/* Dashboard Section */}
+      <section className="rounded-3xl border border-[#030D2E]/10 bg-white p-6 shadow-sm overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+          <WalletCards className="w-32 h-32" />
         </div>
-      </div>
-      <div className="divide-y divide-slate-100 border-t border-b border-slate-100/50 mt-1">
-        {mergedExpenses.map((e, idx) => {
-          const isPending = e.isPendingCreate || e.isPendingUpdate || e.isPendingDelete;
-          return (
-            <div 
-              key={e.id} 
-              className={classNames(
-                "flex justify-between items-center py-3 px-4 transition-all rounded-xl", 
-                idx % 2 === 0 ? "bg-slate-50/40" : "bg-transparent",
-                e.isPendingCreate || e.isPendingUpdate ? "bg-sky-50/40 border border-sky-100/50 my-1 py-3.5" : "",
-                e.isPendingDelete ? "bg-slate-50/30 opacity-70" : ""
-              )}
-            >
-              <div className="flex flex-wrap items-baseline gap-2 min-w-0 flex-1">
-                <span className={classNames(
-                  "text-[14.5px] font-semibold text-slate-700 break-words",
-                  e.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
-                )}>
-                  {e.description}
-                </span>
+        <div className="relative z-10 flex items-center justify-between mb-2 border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2">
+            <ReceiptText className="w-4 h-4 text-slate-400" />
+            <span className="text-[11px] font-black uppercase tracking-widest text-slate-500">Tổng chi phí chuyến đi</span>
+          </div>
+        </div>
+        <div className="relative z-10 mt-1">
+          <span className="text-4xl sm:text-5xl font-black tracking-tight text-[#030D2E] drop-shadow-sm">
+            {formatMoney(totalExpense)}
+          </span>
+        </div>
 
-                {e.date && (
-                  <span className="inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium bg-slate-100/80 text-slate-500 shrink-0">
-                    {new Date(e.date).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
-                  </span>
-                )}
-                
-                {e.isPendingDelete && (
-                  <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 shrink-0 select-none animate-fadeIn">
-                    {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang xóa...' : 'Đề xuất xóa'}
-                  </span>
-                )}
-                {e.isPendingCreate && (
-                  <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none animate-fadeIn">
-                    {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
-                  </span>
-                )}
-                {e.isPendingUpdate && (
-                  <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 shrink-0 select-none animate-fadeIn">
-                    {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-3">
-                <span className={classNames(
-                  "text-[14.5px] font-bold text-[#030D2E]",
-                  e.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
-                )}>
-                  {formatMoney(e.amount)}
-                </span>
-                {isRequestEdit && !isPending && (
-                  <div className="shrink-0">
-                    <button 
-                      onClick={(ev) => {
-                        ev.stopPropagation();
-                        const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
-                        if (activeMenuId === String(e.id)) {
-                          setActiveMenuId(null);
-                          setMenuPos(null);
-                        } else {
-                          setActiveMenuId(String(e.id));
-                          setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
-                        }
-                      }}
-                      className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-50 active:scale-90 transition-all focus:outline-none"
-                      title="Tùy chọn đề xuất"
-                    >
-                      <MoreVertical className="h-4.5 w-4.5" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+        <div className="mt-6 grid gap-3 sm:grid-cols-3 relative z-10">
+          <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100 hover:border-slate-200">
+            <span className="text-[10px] font-black uppercase tracking-widest text-kat-primary flex items-center gap-1.5 mb-1.5">
+              <Users className="w-3.5 h-3.5" />
+              Chi chung
+            </span>
+            <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(totalShared)}</span>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100 hover:border-slate-200">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5 mb-1.5">
+              <UserRound className="w-3.5 h-3.5" />
+              Chi cá nhân
+            </span>
+            <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(totalPersonal)}</span>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100 hover:border-slate-200">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5 mb-1.5">
+              <Calculator className="w-3.5 h-3.5" />
+              Bình quân / người
+            </span>
+            <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(avgPerPerson)}</span>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid gap-4 sm:grid-cols-2 animate-fadeIn" style={{ animationDelay: '100ms' }}>
+        <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-50 text-teal-600">
+              <ChartPie className="h-4 w-4" />
+            </span>
+            <h3 className="text-[14px] font-extrabold text-[#030D2E]">Chi phí theo hạng mục</h3>
+          </div>
+          <BreakdownSection items={categoryBreakdown} total={totalExpense} emptyText="Chưa có khoản chi nào để phân tích." />
+        </section>
+
+        <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+              <UsersRound className="h-4.5 w-4.5" />
+            </span>
+            <h3 className="text-[14px] font-extrabold text-[#030D2E]">Chi phí theo người trả</h3>
+          </div>
+          <BreakdownSection items={payerBreakdown} total={totalExpense} emptyText="Chưa có khoản chi nào để phân tích." />
+        </section>
       </div>
+
+      <SettlementCard members={members} expenses={activeExpenses} settlements={settlements} />
+
+      {/* Expenses List */}
+      <section className="bg-white rounded-3xl border border-slate-200/60 p-5 shadow-sm mt-6 animate-fadeIn">
+        <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2">
+            <ReceiptText className="h-5 w-5 text-amber-500" />
+            <h3 className="text-[16px] font-black text-[#030D2E]">Danh sách khoản chi</h3>
+          </div>
+        </div>
+        {mergedExpenses.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-10 text-center bg-slate-50/35 rounded-2xl border border-dashed border-slate-200/80 my-2">
+            <ReceiptText className="h-10 w-10 text-slate-350 mb-2.5 animate-pulse" />
+            <p className="text-[13px] font-bold text-slate-400">Chưa có khoản chi nào trong danh sách</p>
+            <p className="text-[11.5px] text-slate-400/80 mt-1 max-w-xs px-4">Đề xuất thêm chi phí để chia đều và quyết toán sau chuyến đi.</p>
+          </div>
+        ) : (
+          <div className="space-y-2.5 mt-3">
+            {mergedExpenses.map((e, idx) => {
+              const isPending = e.isPendingCreate || e.isPendingUpdate || e.isPendingDelete;
+              const catDetails = getCategoryDetails(e.category);
+              const CatIcon = catDetails.icon;
+              
+              return (
+                <div 
+                  key={e.id} 
+                  className={classNames(
+                    "flex justify-between items-center p-3.5 bg-white border border-slate-100 hover:border-slate-200 hover:shadow-[0_2px_8px_rgba(3,13,46,0.03)] rounded-2xl transition-all duration-200 hover:-translate-y-0.5", 
+                    e.isPendingCreate || e.isPendingUpdate ? "bg-sky-50/30 border-sky-100/50" : "",
+                    e.isPendingDelete ? "bg-slate-50/30 opacity-70" : ""
+                  )}
+                >
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    {/* Icon container */}
+                    <span className={classNames(
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border transition-colors",
+                      catDetails.bg
+                    )}>
+                      <CatIcon className="h-5 w-5" />
+                    </span>
+
+                    {/* Info text stack */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={classNames(
+                          "text-[14px] font-bold text-[#030D2E] break-words line-clamp-1",
+                          e.isPendingDelete ? "line-through text-slate-400/60" : ""
+                        )}>
+                          {e.description || e.category}
+                        </span>
+
+                        {/* Pending Request Badges */}
+                        {e.isPendingDelete && (
+                          <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-1.5 py-0.5 text-[9.5px] font-bold text-rose-600 shrink-0 select-none animate-fadeIn">
+                            {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang xóa...' : 'Đề xuất xóa'}
+                          </span>
+                        )}
+                        {e.isPendingCreate && (
+                          <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-1.5 py-0.5 text-[9.5px] font-bold text-sky-600 shrink-0 select-none animate-fadeIn">
+                            {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
+                          </span>
+                        )}
+                        {e.isPendingUpdate && (
+                          <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-1.5 py-0.5 text-[9.5px] font-bold text-amber-600 shrink-0 select-none animate-fadeIn">
+                            {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Subtitle Details Line */}
+                      <div className="flex items-center gap-2 mt-0.5 text-[11px] font-bold text-slate-400">
+                        {e.date && (
+                          <span className="flex items-center gap-1 shrink-0">
+                            <CalendarDays className="h-3.5 w-3.5 text-slate-300" />
+                            {new Date(e.date).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                          </span>
+                        )}
+
+                        {/* Payer info */}
+                        {e.payer && (
+                          <>
+                            <span className="text-slate-300">•</span>
+                            <span className="truncate max-w-[80px] sm:max-w-[120px]">
+                              Trả bởi: <span className="text-slate-500 font-extrabold">{e.payer}</span>
+                            </span>
+                          </>
+                        )}
+
+                        {/* Split type badge */}
+                        {e.splitType && (
+                          <>
+                            <span className="text-slate-300">•</span>
+                            <span className={classNames(
+                              "px-1.5 py-0.2 rounded-md text-[9.5px] font-extrabold border shrink-0",
+                              e.splitType === "shared" 
+                                ? "bg-indigo-50/50 border-indigo-100/60 text-indigo-600"
+                                : "bg-slate-50 border-slate-100 text-slate-500"
+                            )}>
+                              {e.splitType === "shared" ? "Chi chung" : "Cá nhân"}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Amount and edit menu */}
+                  <div className="flex items-center gap-1.5 pl-3">
+                    <span className={classNames(
+                      "text-[15px] font-black text-[#030D2E] whitespace-nowrap",
+                      e.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
+                    )}>
+                      {formatMoney(e.amount)}
+                    </span>
+                    {isRequestEdit && !isPending && (
+                      <div className="shrink-0">
+                        <button 
+                          onClick={(ev) => {
+                            ev.stopPropagation();
+                            const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
+                            if (activeMenuId === String(e.id)) {
+                              setActiveMenuId(null);
+                              setMenuPos(null);
+                            } else {
+                              setActiveMenuId(String(e.id));
+                              setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+                            }
+                          }}
+                          className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-50 active:scale-90 transition-all focus:outline-none cursor-pointer"
+                          title="Tùy chọn đề xuất"
+                        >
+                          <MoreVertical className="h-4.5 w-4.5" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
       {activeMenuId && menuPos && createPortal(
         <>
@@ -386,10 +599,10 @@ export function SharedExpensesSection({
       {isRequestEdit && (
         <button 
           onClick={startAdd} 
-          className="mt-3 flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-[#FFFDF8] hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
+          className="mt-4 flex h-12 w-full items-center justify-center gap-1.5 text-[13px] font-bold text-[#030D2E] bg-white hover:bg-slate-50 border border-dashed border-slate-200 hover:border-indigo-300 hover:text-indigo-600 rounded-2xl transition-all active:scale-[0.98] shadow-sm cursor-pointer"
           title={isDirectEdit ? "Thêm chi phí" : "Đề xuất thêm"}
         >
-          <Plus className="h-4.5 w-4.5" /> {isDirectEdit ? "Thêm chi phí" : "Đề xuất thêm"}
+          <Plus className="h-4 w-4" /> {isDirectEdit ? "Thêm chi phí" : "Đề xuất thêm"}
         </button>
       )}
 
@@ -614,10 +827,10 @@ export function SharedExpensesSection({
 
           <button
             onClick={handleSave}
-            disabled={isSaveDisabled}
+            disabled={isSaveDisabled || isSubmitting}
             className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
           >
-            {isDirectEdit ? (editingId ? "Lưu khoản chi" : "Thêm khoản chi") : "Gửi đề xuất"}
+            {isSubmitting ? "Đang xử lý..." : isDirectEdit ? (editingId ? "Lưu khoản chi" : "Thêm khoản chi") : "Gửi đề xuất"}
           </button>
         </div>
       </BottomSheet>
@@ -636,6 +849,7 @@ export function SharedExpensesSection({
         itemName={expenses.find(e => String(e.id) === deleteTargetId)?.description}
       />
     </section>
+    </div>
   );
 }
 
@@ -716,7 +930,7 @@ export function SharedChecklistSection({
 
   // Merge pending change requests into checklist for visual diffs
   const mergedChecklist = React.useMemo(() => {
-    const list = checklist.map(item => {
+    const list = checklist.filter((c: any) => !c.isDeleted).map(item => {
       const pendingDelete = changeRequests.some(r => r.section === 'checklist' && r.action === 'delete' && String(r.targetId) === String(item.id));
       const updateReq = changeRequests.find(r => r.section === 'checklist' && r.action === 'update' && String(r.targetId) === String(item.id));
       
@@ -738,7 +952,7 @@ export function SharedChecklistSection({
       return item;
     });
 
-    const pendingCreates = changeRequests.filter(r => r.section === 'checklist' && r.action === 'create');
+    const pendingCreates = changeRequests.filter(r => r.section === 'checklist' && r.action === 'create' && r.status === 'pending');
     pendingCreates.forEach(r => {
       list.push({
         id: "pending-create-" + r.id,
@@ -814,66 +1028,149 @@ export function SharedChecklistSection({
   }
 
   return (
-    <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
-        <div className="flex items-center gap-2">
-          <CheckCircle className="h-5 w-5 text-purple-500" />
-          <h3 className="text-[16px] font-black text-[#030D2E]">Danh sách chuẩn bị</h3>
+    <section className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all duration-300">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-purple-50 text-purple-600">
+            <CheckCircle className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-[16px] font-black text-[#030D2E]">Danh sách chuẩn bị</h3>
+            <p className="text-[11px] text-slate-400 font-bold mt-0.5">
+              Chuẩn bị hành lý và đồ dùng trước chuyến đi
+            </p>
+          </div>
         </div>
+        {mergedChecklist.length > 0 && (
+          <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-100/50">
+            Đã xong {mergedChecklist.filter(c => c.completed).length}/{mergedChecklist.length}
+          </span>
+        )}
       </div>
-      <div className="divide-y divide-slate-100 border-t border-b border-slate-100/50 mt-1">
-        {mergedChecklist.map((c, idx) => {
+
+      {/* Items List */}
+      <div className="flex flex-col gap-2.5 mt-2">
+        {mergedChecklist.map((c) => {
           const isPending = c.isPendingCreate || c.isPendingUpdate || c.isPendingDelete;
           return (
             <div 
               key={c.id} 
+              onClick={() => handleToggle(c)}
               className={classNames(
-                "flex justify-between items-center py-3 px-4 transition-all rounded-xl", 
-                idx % 2 === 0 ? "bg-slate-50/40" : "bg-transparent",
-                c.isPendingCreate || c.isPendingUpdate ? "bg-sky-50/40 border border-sky-100/50 my-1 py-3.5" : "",
-                c.isPendingDelete ? "bg-slate-50/30 opacity-70" : ""
+                "flex justify-between items-center p-3.5 transition-all rounded-2xl border", 
+                isRequestEdit ? "cursor-pointer" : "cursor-default",
+                c.completed 
+                  ? "bg-slate-50/50 border-slate-100/80 opacity-80" 
+                  : "bg-white border-slate-100 hover:border-slate-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.03)]",
+                c.isPendingCreate || c.isPendingUpdate ? "bg-sky-50/40 border-sky-100/50" : "",
+                c.isPendingDelete ? "bg-slate-50/30 border-rose-100 opacity-70 pointer-events-none" : ""
               )}
             >
-              <div className="flex items-start gap-3 flex-1 min-w-0">
-                <div className="flex flex-wrap items-baseline gap-2 min-w-0">
-                  <span className={classNames(
-                    "text-[14.5px] font-semibold break-words", 
-                    c.completed ? 'text-slate-400 line-through' : 'text-slate-700',
-                    c.isPendingDelete ? 'line-through text-slate-400 opacity-60' : ''
-                  )}>
-                    {c.title}
-                  </span>
-                  {c.isPendingDelete && (
-                    <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 shrink-0 select-none animate-fadeIn">
-                      {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? 'Đang xóa...' : 'Đề xuất xóa'}
-                    </span>
-                  )}
-                  {c.isPendingCreate && (
-                    <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none animate-fadeIn">
-                      {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
-                    </span>
-                  )}
-                  {c.isPendingUpdate && (
-                    <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 shrink-0 select-none animate-fadeIn">
-                      {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
-                    </span>
-                  )}
-                </div>
-                {c.assignedTo && (
-                  <div className="mt-1">
-                    <span 
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold"
-                      style={{
-                        backgroundColor: `hsl(${c.assignedTo.charCodeAt(0) * 137.5 % 360}, 70%, 90%)`,
-                        color: `hsl(${c.assignedTo.charCodeAt(0) * 137.5 % 360}, 70%, 30%)`
-                      }}
-                    >
-                      <User className="h-3 w-3" />
-                      {c.assignedTo}
-                    </span>
+              <div className="flex items-start gap-3.5 flex-1 min-w-0">
+                {/* Interactive Checkbox */}
+                {isRequestEdit ? (
+                  <div className="flex-shrink-0 mt-0.5">
+                    {c.completed ? (
+                      <div className="w-5.5 h-5.5 rounded-lg bg-purple-600 text-white flex items-center justify-center transition-all scale-100 shadow-sm shadow-purple-200">
+                        <Check className="h-3.5 w-3.5 stroke-[3.5]" />
+                      </div>
+                    ) : (
+                      <div className="w-5.5 h-5.5 rounded-lg border-2 border-slate-300 hover:border-purple-500 bg-white transition-all scale-100" />
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex-shrink-0 mt-0.5">
+                    {c.completed ? (
+                      <div className="w-5.5 h-5.5 rounded-lg bg-slate-200 text-slate-500 flex items-center justify-center">
+                        <Check className="h-3.5 w-3.5 stroke-[3]" />
+                      </div>
+                    ) : (
+                      <div className="w-5.5 h-5.5 rounded-lg border-2 border-slate-200 bg-slate-50" />
+                    )}
                   </div>
                 )}
+
+                {/* Item Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={classNames(
+                      "text-[14px] font-bold break-words leading-tight", 
+                      c.completed ? 'text-slate-400 line-through font-medium' : 'text-[#030D2E]',
+                      c.isPendingDelete ? 'line-through text-slate-400 opacity-60 font-medium' : ''
+                    )}>
+                      {c.title}
+                    </span>
+                    {c.quantity && c.quantity > 1 && (
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-slate-100 text-[11px] font-extrabold text-slate-500">
+                        x{c.quantity}
+                      </span>
+                    )}
+
+                    {/* Pending Request Status Badges */}
+                    {c.isPendingDelete && (
+                      <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 shrink-0 select-none animate-fadeIn">
+                        {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? 'Đang xóa...' : 'Đề xuất xóa'}
+                      </span>
+                    )}
+                    {c.isPendingCreate && (
+                      <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none animate-fadeIn">
+                        {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
+                      </span>
+                    )}
+                    {c.isPendingUpdate && (
+                      <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 shrink-0 select-none animate-fadeIn">
+                        {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Metadata and Badges */}
+                  <div className="flex items-center gap-2.5 mt-1.5 flex-wrap">
+                    {c.category && (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-400">
+                        {(() => {
+                          const CatIcon = CATEGORY_ICONS[c.category] || Package;
+                          return <CatIcon className="h-3 w-3 text-slate-400" />;
+                        })()}
+                        {c.category}
+                      </span>
+                    )}
+
+                    {c.assignedTo && (
+                      <span 
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-bold"
+                        style={{
+                          backgroundColor: `hsl(${c.assignedTo.charCodeAt(0) * 137.5 % 360}, 75%, 95%)`,
+                          color: `hsl(${c.assignedTo.charCodeAt(0) * 137.5 % 360}, 70%, 35%)`,
+                          border: `1px solid hsl(${c.assignedTo.charCodeAt(0) * 137.5 % 360}, 70%, 90%)`
+                        }}
+                      >
+                        <User className="h-2.5 w-2.5" />
+                        {c.assignedTo}
+                      </span>
+                    )}
+
+                    {c.priority && c.priority !== 'normal' && (
+                      <span className={classNames(
+                        "inline-flex items-center px-1.5 py-0.5 rounded-md text-[9.5px] font-extrabold uppercase tracking-wide",
+                        c.priority === 'required' ? "bg-rose-50 text-rose-600 border border-rose-100/50" : "bg-amber-50 text-amber-600 border border-amber-100/50"
+                      )}>
+                        {c.priority === 'required' ? 'Bắt buộc' : 'Quan trọng'}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Note */}
+                  {c.note && (
+                    <p className="text-[11.5px] text-slate-400 mt-1 pl-1.5 border-l-2 border-slate-200 italic font-medium">
+                      {c.note}
+                    </p>
+                  )}
+                </div>
               </div>
+
+              {/* Actions Menu */}
               {isRequestEdit && !isPending && (
                 <div className="shrink-0 ml-2">
                   <button 
@@ -888,7 +1185,7 @@ export function SharedChecklistSection({
                         setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
                       }
                     }}
-                    className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-50 active:scale-90 transition-all focus:outline-none"
+                    className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 active:scale-90 transition-all focus:outline-none"
                     title="Tùy chọn đề xuất"
                   >
                     <MoreVertical className="h-4.5 w-4.5" />
@@ -899,6 +1196,19 @@ export function SharedChecklistSection({
           );
         })}
       </div>
+
+      {/* Empty State */}
+      {mergedChecklist.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-8 px-4 text-center bg-slate-50/50 rounded-2xl border border-dashed border-slate-200/60 my-2">
+          <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-400 mb-3">
+            <Luggage className="h-6 w-6" />
+          </div>
+          <h4 className="text-[14px] font-bold text-[#030D2E]">Chưa có chuẩn bị nào</h4>
+          <p className="text-[11.5px] text-slate-400 mt-1 font-bold max-w-[220px]">
+            Hãy thêm các vật dụng cần thiết để chuẩn bị cho chuyến đi
+          </p>
+        </div>
+      )}
 
       {activeMenuId && menuPos && createPortal(
         <>
@@ -940,13 +1250,15 @@ export function SharedChecklistSection({
         </>,
         document.body
       )}
+
+      {/* Add Button */}
       {isRequestEdit && (
         <button 
           onClick={startAdd} 
-          className="mt-3 flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-[#FFFDF8] hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
+          className="mt-4 flex h-11 w-full items-center justify-center gap-2 text-[13.5px] font-bold text-purple-600 bg-purple-50 hover:bg-purple-100/80 active:scale-[0.99] rounded-xl transition-all shadow-sm shadow-purple-100/30"
           title={isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm"}
         >
-          <Plus className="h-4.5 w-4.5" /> {isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm"}
+          <Plus className="h-4 w-4 stroke-[3]" /> {isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm"}
         </button>
       )}
 
@@ -1193,7 +1505,8 @@ export function SharedJournalsSection({
   members?: Member[];
   renderChatBox?: () => React.ReactNode;
 }) {
-  const isRequestEdit = mode === 'request_edit';
+  const isRequestEdit = mode === 'request_edit' || mode === 'edit';
+  const isDirectEdit = mode === 'edit';
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [deleteTargetId, setDeleteTargetId] = React.useState<JournalEntry | null>(null);
   const [journalMode, setJournalMode] = React.useState<"posts" | "chat">("posts");
@@ -1257,8 +1570,8 @@ export function SharedJournalsSection({
   };
 
   const mergedJournals = React.useMemo(() => {
-    const list = [...journals];
-    const creations = changeRequests.filter(r => r.section === 'journals' && r.action === 'create' && (r.status === 'pending' || r.status === 'auto_approved'));
+    const list = [...journals].filter((j: any) => !j.isDeleted);
+    const creations = changeRequests.filter(r => r.section === 'journals' && r.action === 'create' && r.status === 'pending');
     creations.forEach(r => {
       list.push({ id: r.id, ...(r.after as any) });
     });
@@ -1271,11 +1584,15 @@ export function SharedJournalsSection({
     });
 
     return list.map(item => {
-      const pendingDelete = changeRequests.some(r => r.section === 'journals' && r.action === 'delete' && String(r.targetId) === String(item.id));
+      const pendingDelete = changeRequests.some(r => r.section === 'journals' && r.action === 'delete' && String(r.targetId) === String(item.id) && (!r.status || r.status === 'pending'));
+      const autoApprovedDelete = changeRequests.some(r => r.section === 'journals' && r.action === 'delete' && String(r.targetId) === String(item.id) && r.status === 'auto_approved');
+      
+      if (autoApprovedDelete) return null;
+
       const latestUpdate = changeRequests.filter(r => r.section === 'journals' && r.action === 'update' && String(r.targetId) === String(item.id) && (r.status === 'pending' || r.status === 'auto_approved')).pop();
       const mergedItem = latestUpdate ? { ...item, ...latestUpdate.after } : item;
       return { ...mergedItem, isPendingDelete: pendingDelete };
-    });
+    }).filter(Boolean) as any[];
   }, [journals, changeRequests]);
 
   const titleError = !form.title.trim() ? "Vui lòng nhập tiêu đề." : "";
@@ -1320,8 +1637,16 @@ export function SharedJournalsSection({
 
   async function executeDelete(j: JournalEntry) {
     try {
-      await submitChangeRequest(token, { section: 'journals', action: 'delete', targetId: String(j.id), before: j as any, requesterName: guestName });
-      showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+      const autoApprove = isDirectEdit || j.authorName === resolvedGuestName;
+      await submitChangeRequest(token, { 
+        section: 'journals', 
+        action: 'delete', 
+        targetId: String(j.id), 
+        before: j as any, 
+        requesterName: guestName,
+        status: autoApprove ? 'auto_approved' : undefined
+      });
+      showToast(autoApprove ? 'Đã xóa bài viết.' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
     } catch (e: any) { showToast('Lỗi: ' + e.message, 'error'); }
   }
 
@@ -1451,11 +1776,11 @@ export function SharedJournalsSection({
                             </div>
                           </div>
                           
-                          {isRequestEdit && !j.isPendingDelete && (
+                          {isRequestEdit && !j.isPendingDelete && (isDirectEdit || j.authorName === resolvedGuestName) && (
                             <button 
                               onClick={() => handleDelete(j as JournalEntry)} 
                               className="flex h-8 w-8 items-center justify-center rounded-full text-rose-400 hover:text-rose-600 hover:bg-rose-50 transition-all motion-press"
-                              title="Đề xuất xóa bài viết"
+                              title={isDirectEdit || j.authorName === resolvedGuestName ? "Xóa bài viết" : "Đề xuất xóa bài viết"}
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -1730,9 +2055,21 @@ export function SharedJournalsSection({
           await executeDelete(deleteTargetId);
           setDeleteTargetId(null);
         }}
-        title="Đề xuất xóa bài viết?"
-        description="Bạn đang gửi đề xuất xóa bài viết này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
-        confirmLabel="Đề xuất xóa"
+        title={
+          deleteTargetId && (isDirectEdit || deleteTargetId.authorName === resolvedGuestName)
+            ? "Xóa bài viết?"
+            : "Đề xuất xóa bài viết?"
+        }
+        description={
+          deleteTargetId && (isDirectEdit || deleteTargetId.authorName === resolvedGuestName)
+            ? "Bạn có chắc chắn muốn xóa bài viết này? Hành động này không thể hoàn tác."
+            : "Bạn đang gửi đề xuất xóa bài viết này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
+        }
+        confirmLabel={
+          deleteTargetId && (isDirectEdit || deleteTargetId.authorName === resolvedGuestName)
+            ? "Xóa"
+            : "Đề xuất xóa"
+        }
         itemName={deleteTargetId?.title}
       />
     </section>
@@ -1901,6 +2238,7 @@ export function SharedDocumentsSection({
 interface LocalMember extends Member {
   isPendingDelete?: boolean;
   isPendingCreate?: boolean;
+  isPendingUpdate?: boolean;
   isOwner?: boolean;
 }
 
@@ -1913,18 +2251,21 @@ export function SharedMembersSection({
   changeRequests = [],
   guestName
 }: { 
-  token: string;
-  mode: string;
-  members?: LocalMember[];
-  checklist?: ChecklistItem[];
-  expenses?: Expense[];
-  changeRequests?: any[];
-  guestName?: string;
+  token: string; 
+  mode: string; 
+  members?: LocalMember[]; 
+  checklist?: ChecklistItem[]; 
+  expenses?: Expense[]; 
+  changeRequests?: any[]; 
+  guestName?: string; 
 }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
+
+  const [roleChangeMemberId, setRoleChangeMemberId] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<string>('Người đồng hành');
 
   useEffect(() => {
     if (!activeMenuId) return;
@@ -1946,15 +2287,25 @@ export function SharedMembersSection({
   const isRequestEdit = mode === 'request_edit';
 
   const mergedMembers = React.useMemo(() => {
-    const list: LocalMember[] = members.map(item => {
-      const pendingDelete = changeRequests.some(r => r.section === 'members' && r.action === 'delete' && String(r.targetId) === String(item.id));
+    const list: LocalMember[] = members.filter((m: any) => !m.isDeleted).map(item => {
+      const pendingDelete = changeRequests.some(r => r.section === 'members' && r.action === 'delete' && String(r.targetId) === String(item.id) && (!r.status || r.status === 'pending'));
+      const updateReq = changeRequests.find(r => r.section === 'members' && r.action === 'update' && String(r.targetId) === String(item.id) && (!r.status || r.status === 'pending'));
+      
+      if (updateReq) {
+        return {
+          ...item,
+          role: updateReq.after?.role as string,
+          isPendingUpdate: true,
+          isPendingDelete: pendingDelete
+        };
+      }
       return {
         ...item,
         isPendingDelete: pendingDelete
       };
     });
 
-    const pendingCreates = changeRequests.filter(r => r.section === 'members' && r.action === 'create');
+    const pendingCreates = changeRequests.filter(r => r.section === 'members' && r.action === 'create' && r.status === 'pending');
     pendingCreates.forEach(r => {
       list.push({
         id: ("pending-create-" + r.id) as any,
@@ -1982,6 +2333,45 @@ export function SharedMembersSection({
 
     return list;
   }, [members, changeRequests]);
+
+  async function handleRoleChangeSubmit() {
+    if (!roleChangeMemberId) return;
+    const member = members.find(m => String(m.id) === roleChangeMemberId);
+    if (!member) return;
+
+    const finalRole = selectedRole;
+    if (!finalRole) {
+      showToast('Vui lòng chọn vai trò mới.', 'error');
+      return;
+    }
+
+    const payload = {
+      section: 'members' as const,
+      action: 'update' as const,
+      targetId: String(member.id),
+      before: {
+        id: member.id,
+        name: member.name,
+        role: member.role || 'Người đồng hành',
+        avatar: member.avatar
+      },
+      after: {
+        id: member.id,
+        name: member.name,
+        role: finalRole,
+        avatar: member.avatar
+      },
+      requesterName: guestName
+    };
+
+    try {
+      await submitChangeRequest(token, payload);
+      setRoleChangeMemberId(null);
+      showToast('Đã gửi đề xuất thay đổi vai trò. Chủ nhóm sẽ duyệt.');
+    } catch (e: any) {
+      showToast('Lỗi: ' + e.message, 'error');
+    }
+  }
 
   async function handleAdd() {
     setForm({ name: '', role: 'Người đồng hành', gender: 'male' });
@@ -2058,73 +2448,131 @@ export function SharedMembersSection({
           const memberExpenses = expenses.filter(e => e.payer === member.name);
           const paidExpensesCount = memberExpenses.length;
           const totalSpent = memberExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+          const roleLower = (member.role || "").trim().toLowerCase();
+          const isLeader = roleLower.includes("trưởng nhóm") || roleLower.includes("trưởng đoàn") || roleLower.includes("leader");
+          const isCost = roleLower.includes("quản lý chi phí");
+          const isDriver = roleLower.includes("tài xế");
+          const isGuide = roleLower.includes("dẫn đường");
+          const isLuggage = roleLower.includes("hành lý") || roleLower.includes("phụ trách hành lý");
+          
+          let cardBg = "bg-gradient-to-br from-slate-50/20 via-white to-white border-slate-200/60";
+          let borderAccent = "border-l-4 border-l-slate-400";
+          
+          if (member.isPendingCreate) {
+            cardBg = "bg-gradient-to-br from-sky-55/40 via-white to-white border-sky-200/80";
+            borderAccent = "border-l-4 border-l-sky-500";
+          } else if (member.isPendingDelete) {
+            cardBg = "bg-gradient-to-br from-rose-50/40 via-white to-white border-rose-200/80 opacity-80";
+            borderAccent = "border-l-4 border-l-rose-450";
+          } else if (isLeader) {
+            cardBg = "bg-gradient-to-br from-amber-50/30 via-white to-white border-slate-200/60";
+            borderAccent = "border-l-4 border-l-amber-500";
+          } else if (isCost) {
+            cardBg = "bg-gradient-to-br from-emerald-50/30 via-white to-white border-slate-200/60";
+            borderAccent = "border-l-4 border-l-emerald-500";
+          } else if (isDriver) {
+            cardBg = "bg-gradient-to-br from-blue-50/30 via-white to-white border-slate-200/60";
+            borderAccent = "border-l-4 border-l-blue-500";
+          } else if (isGuide) {
+            cardBg = "bg-gradient-to-br from-sky-50/30 via-white to-white border-slate-200/60";
+            borderAccent = "border-l-4 border-l-sky-500";
+          } else if (isLuggage) {
+            cardBg = "bg-gradient-to-br from-indigo-50/30 via-white to-white border-slate-200/60";
+            borderAccent = "border-l-4 border-l-indigo-500";
+          }
+
+          const renderRoleBadge = (role: string) => {
+            const rLower = (role || "Người đồng hành").trim().toLowerCase();
+            if (rLower.includes("trưởng nhóm") || rLower.includes("trưởng đoàn") || rLower.includes("leader")) {
+              return (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200/50 shadow-sm shrink-0 select-none">
+                  <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-500/10 shrink-0" />
+                  Trưởng nhóm
+                </span>
+              );
+            }
+            if (rLower.includes("quản lý chi phí")) {
+              return (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200/50 shadow-sm shrink-0 select-none">
+                  <WalletCards className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  Quản lý chi phí
+                </span>
+              );
+            }
+            if (rLower.includes("tài xế")) {
+              return (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200/50 shadow-sm shrink-0 select-none">
+                  <Car className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                  Tài xế
+                </span>
+              );
+            }
+            if (rLower.includes("dẫn đường")) {
+              return (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-sky-50 text-sky-700 border border-sky-200/50 shadow-sm shrink-0 select-none">
+                  <Compass className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                  Dẫn đường
+                </span>
+              );
+            }
+            if (rLower.includes("phụ trách hành lý") || rLower.includes("hành lý")) {
+              return (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200/50 shadow-sm shrink-0 select-none">
+                  <Luggage className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                  Hành lý
+                </span>
+              );
+            }
+            return (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-50 text-slate-600 border border-slate-200/60 shrink-0 select-none">
+                <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                Bạn đồng hành
+              </span>
+            );
+          };
 
           return (
             <div 
               key={member.id || member.name} 
               className={classNames(
-                "relative rounded-[24px] border transition-all flex flex-col justify-between gap-4 p-5 shadow-sm hover:shadow-md",
-                member.isPendingCreate ? "bg-sky-50/40 border-sky-100" : "bg-[#FFFDF8] border-[#E8E1D8]",
-                member.isPendingDelete ? "opacity-75 border-rose-100" : ""
+                "relative rounded-3xl border transition-all flex flex-col justify-between gap-4.5 p-5 shadow-[0_4px_15px_rgba(3,13,46,0.015)] hover:shadow-[0_8px_25px_rgba(3,13,46,0.04)] hover:scale-[1.005] duration-200",
+                cardBg,
+                borderAccent
               )}
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4 min-w-0 flex-1">
                   {/* Avatar */}
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
                     {member.avatar ? (
                       getAvatarSvg(member.avatar, "w-full h-full")
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-[#00BFB7]/10 text-[#00BFB7] text-[18px] font-black">
+                      <div className="flex h-full w-full items-center justify-center bg-indigo-50 text-indigo-600 text-[18px] font-black">
                         {initial}
                       </div>
                     )}
                   </div>
 
                   {/* Member details */}
-                  <div className="min-w-0 flex-1 space-y-1">
+                  <div className="min-w-0 flex-1 space-y-1.5">
                     <div className="flex items-center flex-wrap gap-2">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <UserRound className="h-4.5 w-4.5 text-[#030D2E]/60 shrink-0" />
+                      <div className="flex items-center gap-2 min-w-0">
                         <h4 className={classNames(
-                          "text-[17px] font-extrabold text-[#030D2E] truncate",
+                          "text-[16.5px] font-extrabold text-[#030D2E] truncate leading-tight",
                           member.isPendingDelete ? "line-through text-slate-400" : ""
                         )}>
                           {member.name}
                         </h4>
-                        {(() => {
-                          const roles = (member.role || "Người đồng hành")
-                            .split(",")
-                            .map(r => r.trim().toLowerCase())
-                            .filter(Boolean);
-                          
-                          return (
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              {roles.map((roleLower, i) => {
-                                if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
-                                  return <span key={i} title="Trưởng nhóm" className="shrink-0"><Crown className="h-4.5 w-4.5 text-amber-500" /></span>;
-                                }
-                                if (roleLower === "quản lý chi phí") {
-                                  return <span key={i} title="Quản lý chi phí" className="shrink-0"><WalletCards className="h-4.5 w-4.5 text-emerald-500" /></span>;
-                                }
-                                if (roleLower === "tài xế") {
-                                  return <span key={i} title="Tài xế" className="shrink-0"><Car className="h-4.5 w-4.5 text-blue-500" /></span>;
-                                }
-                                if (roleLower === "phụ trách hành lý") {
-                                  return <span key={i} title="Phụ trách hành lý" className="shrink-0"><Luggage className="h-4.5 w-4.5 text-indigo-500" /></span>;
-                                }
-                                if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
-                                  return <span key={i} title="Người đồng hành" className="shrink-0"><Users className="h-4.5 w-4.5 text-slate-400" /></span>;
-                                }
-                                return <span key={i} title={roleLower} className="shrink-0"><BadgeCheck className="h-4.5 w-4.5 text-teal-500" /></span>;
-                              })}
-                            </div>
-                          );
-                        })()}
+                        {renderRoleBadge(member.role || "Người đồng hành")}
                       </div>
                       {member.isPendingCreate && (
-                        <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none">
+                        <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none animate-pulse">
                           Đề xuất mới
+                        </span>
+                      )}
+                      {member.isPendingUpdate && (
+                        <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 shrink-0 select-none">
+                          Đề xuất đổi vai trò
                         </span>
                       )}
                       {member.isPendingDelete && (
@@ -2163,7 +2611,7 @@ export function SharedMembersSection({
                           setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
                         }
                       }}
-                      className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
+                      className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/80 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
                       title="Tùy chọn đề xuất"
                     >
                       <MoreVertical className="h-5 w-5" />
@@ -2173,20 +2621,24 @@ export function SharedMembersSection({
               </div>
 
               {/* Mini Stats Row */}
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-4 flex-wrap">
+              <div className="pt-3 border-t border-slate-100/60 flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex flex-wrap gap-2 text-[12px]">
                   <span className={classNames(
-                    "flex items-center gap-1 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg",
-                    assignedTasksCount === 0 ? "text-slate-400 font-medium" : "text-slate-700 font-bold"
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
+                    assignedTasksCount === 0 
+                      ? "bg-slate-50/50 border-slate-100 text-slate-400 font-semibold" 
+                      : "bg-sky-50/50 border-sky-100 text-sky-700 font-bold"
                   )}>
-                    <Luggage className="h-3.5 w-3.5 text-current shrink-0" />
+                    <Luggage className="h-3.5 w-3.5 shrink-0" />
                     {assignedTasksCount} việc
                   </span>
                   <span className={classNames(
-                    "flex items-center gap-1 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg",
-                    totalSpent === 0 ? "text-slate-400 font-medium" : "text-slate-700 font-bold"
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
+                    totalSpent === 0 
+                      ? "bg-slate-50/50 border-slate-100 text-slate-400 font-semibold" 
+                      : "bg-emerald-50/50 border-emerald-100 text-emerald-700 font-bold"
                   )}>
-                    <WalletCards className="h-3.5 w-3.5 text-current shrink-0" />
+                    <WalletCards className="h-3.5 w-3.5 shrink-0" />
                     Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
                   </span>
                 </div>
@@ -2207,6 +2659,27 @@ export function SharedMembersSection({
             className="fixed z-[999] w-36 rounded-xl bg-white border border-slate-200 shadow-lg py-1.5 animate-fadeIn"
             style={{ top: menuPos.top, right: menuPos.right }}
           >
+            <button
+              onClick={() => {
+                const id = activeMenuId;
+                setActiveMenuId(null);
+                setMenuPos(null);
+                const mem = members.find(m => String(m.id) === id);
+                if (mem) {
+                  setRoleChangeMemberId(id);
+                  const currentRole = mem.role || 'Người đồng hành';
+                  const presets = ["Người đồng hành", "Quản lý chi phí", "Tài xế", "Dẫn đường"];
+                  if (presets.includes(currentRole)) {
+                    setSelectedRole(currentRole);
+                  } else {
+                    setSelectedRole('Người đồng hành');
+                  }
+                }
+              }}
+              className="flex w-full items-center px-4 py-2 text-[13px] font-bold text-slate-700 hover:bg-slate-50 transition-colors border-b border-slate-100"
+            >
+              Đổi vai trò
+            </button>
             <button
               onClick={() => {
                 const id = activeMenuId;
@@ -2300,6 +2773,51 @@ export function SharedMembersSection({
         confirmLabel="Đề xuất xóa"
         itemName={members.find(m => String(m.id) === deleteTargetId)?.name}
       />
+
+      <BottomSheet
+        isOpen={roleChangeMemberId !== null}
+        onClose={() => setRoleChangeMemberId(null)}
+        title="Đề xuất đổi vai trò"
+      >
+        <div className="flex flex-col gap-5 py-2">
+          <div className="space-y-1">
+            <p className="text-[13.5px] font-bold text-slate-500">
+              Thành viên: <span className="font-extrabold text-[#030D2E]">{members.find(m => String(m.id) === roleChangeMemberId)?.name}</span>
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <span className="text-[13px] font-bold text-slate-700 block">Chọn vai trò mới</span>
+            <div className="grid grid-cols-2 gap-2">
+              {["Người đồng hành", "Quản lý chi phí", "Tài xế", "Dẫn đường"].map((r) => {
+                const isSelected = selectedRole === r;
+                return (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setSelectedRole(r)}
+                    className={classNames(
+                      "py-2.5 px-3 text-left text-[12.5px] font-bold rounded-xl transition-all border",
+                      isSelected 
+                        ? "bg-blue-50 border-blue-200 text-blue-700 shadow-sm" 
+                        : "bg-white border-slate-200 text-slate-650 hover:bg-slate-50"
+                    )}
+                  >
+                    {r}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <button
+            onClick={handleRoleChangeSubmit}
+            className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm"
+          >
+            Gửi đề xuất đổi vai trò
+          </button>
+        </div>
+      </BottomSheet>
     </section>
   );
 }

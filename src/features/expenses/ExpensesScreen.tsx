@@ -5,7 +5,7 @@ import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories } from 
 import { BottomSheet, FormActions, Input, ScreenTitle, Select, DatePicker, DeleteConfirmModal, classNames } from "../../components/ui";
 import { useModalHistory } from "../../hooks/useModalHistory";
 
-function CategoryBar({ percent, colorClass }: { percent: number; colorClass: string }) {
+export function CategoryBar({ percent, colorClass }: { percent: number; colorClass: string }) {
   return (
     <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100/80">
       <div className={`h-full rounded-full transition-all duration-500 ease-out ${colorClass}`} style={{ width: `${percent}%` }} />
@@ -13,7 +13,7 @@ function CategoryBar({ percent, colorClass }: { percent: number; colorClass: str
   );
 }
 
-function BreakdownSection({ 
+export function BreakdownSection({ 
   items, 
   total, 
   emptyText 
@@ -63,7 +63,7 @@ function BreakdownSection({
   );
 }
 
-function SettlementCard({ 
+export function SettlementCard({ 
   members, 
   expenses, 
   settlements 

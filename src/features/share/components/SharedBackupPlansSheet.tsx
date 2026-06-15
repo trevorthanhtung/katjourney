@@ -117,7 +117,10 @@ export function SharedBackupPlansSheet({
       } as any);
     });
 
-    return list.filter(p => p.activityId !== undefined && String(p.activityId) === String(activityId) && !p.isDeleted);
+    return list.filter(p => {
+      const matchActivity = !activityId ? (!p.activityId && !p.date) : (String(p.activityId) === String(activityId));
+      return matchActivity && !p.isDeleted;
+    });
   }, [backupPlans, changeRequests, activityId]);
 
   useEffect(() => {
@@ -351,7 +354,7 @@ export function SharedBackupPlansSheet({
 
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center justify-between">
-                        <span>Link Google Maps / Lộ trình (Roadmap)</span>
+                        <span>Link bản đồ</span>
                         {mapLink && (
                           <a
                             href={mapLink}
@@ -541,7 +544,7 @@ export function SharedBackupPlansSheet({
                                     rel="noopener noreferrer"
                                   >
                                     {isRoute ? <Route className="w-3.5 h-3.5" /> : <Map className="w-3.5 h-3.5" />}
-                                    {isRoute ? "Xem lộ trình di chuyển (Roadmap) " : "Mở bằng ứng dụng Google Maps "}
+                                    {isRoute ? "Xem lộ trình di chuyển " : "Mở bằng ứng dụng Google Maps "}
                                     &rarr;
                                   </a>
                                 );

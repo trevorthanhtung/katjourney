@@ -262,7 +262,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
 
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center justify-between">
-                        <span>Link Google Maps / Lộ trình (Roadmap)</span>
+                        <span>Link bản đồ</span>
                         {mapLink && (
                           <a
                             href={mapLink}
@@ -421,7 +421,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                                   rel="noopener noreferrer"
                                 >
                                   {isRoute ? <Route className="w-3.5 h-3.5" /> : <Map className="w-3.5 h-3.5" />}
-                                  {isRoute ? "Xem lộ trình di chuyển (Roadmap) " : "Mở bằng ứng dụng Google Maps "}
+                                  {isRoute ? "Xem lộ trình di chuyển " : "Mở bằng ứng dụng Google Maps "}
                                   &rarr;
                                 </a>
                               );
