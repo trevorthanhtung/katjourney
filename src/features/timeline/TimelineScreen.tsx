@@ -602,6 +602,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
   const [isRoadmapFormOpen, setIsRoadmapFormOpen] = useState(false);
   const [roadmapEditDay, setRoadmapEditDay] = useState<string>("");
   const [roadmapInputLink, setRoadmapInputLink] = useState("");
+  const [roadmapTabsExpanded, setRoadmapTabsExpanded] = useState(false);
 
   useEffect(() => {
     if (filterDay !== "all") {
@@ -1112,7 +1113,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         <div className="space-y-6">
           {/* Roadmap Widget */}
           {days.length > 0 && (
-            <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4">
+            <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4 min-w-0 overflow-hidden">
               <div className="flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
                   <Route className="h-4 w-4" />
@@ -1121,37 +1122,69 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               </div>
 
               {/* Day selector tabs inside the widget */}
-              {days.length > 1 && (
-                <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-none">
-                  {days.map((d, idx) => {
-                    const isActive = selectedRoadmapDay === d;
-                    const hasLink = !!trip.dayRoadmaps?.[d];
-                    return (
-                      <button
-                        key={d}
-                        type="button"
-                        onClick={() => setSelectedRoadmapDay(d)}
-                        className={classNames(
-                          "px-3 py-1.5 rounded-xl text-[12px] font-bold whitespace-nowrap border shrink-0 transition-all active:scale-95 cursor-pointer",
-                          isActive
-                            ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
-                            : hasLink
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100/50"
-                              : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
-                        )}
-                      >
-                        Ngày {idx + 1}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+              {days.length > 1 && (() => {
+                const MAX_TABS = 3;
+                const visibleDays = roadmapTabsExpanded ? days : days.slice(0, MAX_TABS);
+                const hiddenCount = days.length - MAX_TABS;
+                return (
+                  <div className={roadmapTabsExpanded ? "max-h-[108px] overflow-y-auto scrollbar-none" : ""}>
+                    <div className="flex gap-1 flex-wrap">
+                      {visibleDays.map((d) => {
+                        const isActive = selectedRoadmapDay === d;
+                        const hasLink = !!trip.dayRoadmaps?.[d];
+                        return (
+                          <button
+                            key={d}
+                            type="button"
+                            onClick={() => setSelectedRoadmapDay(d)}
+                            className={classNames(
+                              "px-2.5 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap border shrink-0 transition-all active:scale-95 cursor-pointer",
+                              isActive
+                                ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
+                                : hasLink
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100/50"
+                                  : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
+                            )}
+                          >
+                            Ngày {days.indexOf(d) + 1}
+                          </button>
+                        );
+                      })}
+                      {!roadmapTabsExpanded && hiddenCount > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setRoadmapTabsExpanded(true)}
+                          className="px-2.5 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap border shrink-0 border-slate-200 bg-slate-50 text-slate-500 hover:bg-slate-100 transition-all active:scale-95 cursor-pointer"
+                        >
+                          +{hiddenCount} ngày
+                        </button>
+                      )}
+                      {roadmapTabsExpanded && days.length > MAX_TABS && (
+                        <button
+                          type="button"
+                          onClick={() => setRoadmapTabsExpanded(false)}
+                          className="px-2.5 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap border shrink-0 border-slate-200 bg-slate-50 text-slate-400 hover:bg-slate-100 transition-all active:scale-95 cursor-pointer"
+                        >
+                          ✕ gọn
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Roadmap details for selected day */}
               {(() => {
                 const dayIndex = days.indexOf(selectedRoadmapDay);
                 const dateLabel = selectedRoadmapDay ? formatDateShort(selectedRoadmapDay) : "";
-                const mapUrl = trip.dayRoadmaps?.[selectedRoadmapDay] || "";
+                const manualMapUrl = trip.dayRoadmaps?.[selectedRoadmapDay] || "";
+                // Fallback: lấy mapLink từ activity "Di chuyển" trong ngày này
+                const dayActivities = events.filter(e => e.date === selectedRoadmapDay);
+                const travelActivity = dayActivities.find(e => e.mapLink && (e.category === 'Di chuyển' || e.category === 'travel'));
+                const fallbackActivity = !travelActivity ? dayActivities.find(e => e.mapLink) : null;
+                const autoMapUrl = (travelActivity || fallbackActivity)?.mapLink || "";
+                const mapUrl = manualMapUrl || autoMapUrl;
+                const isAuto = !manualMapUrl && !!autoMapUrl;
                 const isRoute = mapUrl && (mapUrl.includes("/maps/dir/") || mapUrl.includes("maps/dir"));
 
                 return (
@@ -1176,8 +1209,13 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
 
                     {mapUrl ? (
                       <div className="space-y-2.5">
-                        <p className="text-[13px] font-medium text-slate-600">
+                        <p className="text-[13px] font-medium text-slate-600 flex items-center gap-1.5 flex-wrap">
                           {isRoute ? "Đã có link lộ trình cho ngày này." : "Đã liên kết bản đồ cho ngày này."}
+                          {isAuto && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-sky-50 border border-sky-100 text-[10.5px] font-bold text-sky-500">
+                              Từ lịch trình
+                            </span>
+                          )}
                         </p>
                         <a
                           href={mapUrl}
