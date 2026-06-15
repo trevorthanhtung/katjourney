@@ -161,8 +161,22 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
   const [selectedFileForRestore, setSelectedFileForRestore] = useState<File | null>(null);
   const [isRestoreFileConfirmOpen, setIsRestoreFileConfirmOpen] = useState(false);
 
+  // Import preview modal
+  const [importPreview, setImportPreview] = useState<{
+    parsed: any;
+    tripName: string;
+    exportedAt: string;
+    memberCount: number;
+    eventCount: number;
+    expenseCount: number;
+    checklistCount: number;
+    journalCount: number;
+  } | null>(null);
+  const [isImportPreviewOpen, setIsImportPreviewOpen] = useState(false);
+
   // Modal history registration
   useModalHistory(isRestoreFileConfirmOpen, () => setIsRestoreFileConfirmOpen(false), "restore-file-confirm");
+  useModalHistory(isImportPreviewOpen, () => setIsImportPreviewOpen(false), "import-preview");
 
   useEffect(() => {
     if (user) {
@@ -170,6 +184,27 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
     }
     setIsEditingName(false);
   }, [user, isOpen]);
+
+  // Listen for import-preview event dispatched from MoreScreen
+  useEffect(() => {
+    function handleImportEvent(e: Event) {
+      const parsed = (e as CustomEvent).detail;
+      if (!parsed) return;
+      setImportPreview({
+        parsed,
+        tripName: parsed.trip?.title ?? "Không có tên",
+        exportedAt: parsed.exportedAt ?? "",
+        memberCount: (parsed.members ?? []).length,
+        eventCount: (parsed.events ?? []).length,
+        expenseCount: (parsed.expenses ?? []).length,
+        checklistCount: (parsed.checklist ?? []).length,
+        journalCount: (parsed.journals ?? []).length,
+      });
+      setIsImportPreviewOpen(true);
+    }
+    window.addEventListener("kat:import-preview", handleImportEvent);
+    return () => window.removeEventListener("kat:import-preview", handleImportEvent);
+  }, []);
 
   const handleUpdateName = async () => {
     if (!newName.trim()) return;
@@ -277,7 +312,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `kat-journey-backup-${dateStr}.kattrip`;
+      link.download = `kat-journey-backup-${dateStr}.katjourney`;
       link.click();
       URL.revokeObjectURL(url);
     } catch (err: any) {
@@ -321,86 +356,137 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
     }
   };
 
-  async function importTrip(file?: File) {
+  /** Step 1: Read file and show preview modal */
+  async function previewImportFile(file?: File) {
     if (!file) return;
-    setImporting(true);
     try {
       const parsed = JSON.parse(await file.text()) as any;
+      if (parsed.app !== "KAT Journey" || !parsed.trip?.title) {
+        showToast("Tệp không đúng định dạng KAT Journey.", "error");
+        return;
+      }
+      setImportPreview({
+        parsed,
+        tripName: parsed.trip.title ?? "Không có tên",
+        exportedAt: parsed.exportedAt ?? "",
+        memberCount: (parsed.members ?? []).length,
+        eventCount: (parsed.events ?? []).length,
+        expenseCount: (parsed.expenses ?? []).length,
+        checklistCount: (parsed.checklist ?? []).length,
+        journalCount: (parsed.journals ?? []).length,
+      });
+      setIsImportPreviewOpen(true);
+    } catch {
+      showToast("Không đọc được tệp. Đảm bảo file đúng định dạng .katjourney", "error");
+    }
+  }
+
+  /** Step 2: Confirmed — do the actual import with all fields */
+  async function importTrip(parsed?: any) {
+    if (!parsed) return;
+    setImporting(true);
+    try {
       if (parsed.app !== "KAT Journey" || !parsed.trip?.title) {
         throw new Error("Tệp không đúng định dạng KAT Journey.");
       }
 
       const newTripId = await db.transaction("rw", [db.trips, db.members, db.events, db.expenses, db.checklist, db.journals, db.packingItems, db.travelDocuments, db.backupPlans], async () => {
-        const importedTrip = parsed.trip!;
+        const t = parsed.trip!;
         const id = await db.trips.add({
-          title: `${importedTrip.title} (import)`,
-          location: importedTrip.location ?? "",
-          startDate: importedTrip.startDate || today,
-          endDate: importedTrip.endDate || importedTrip.startDate || today,
-          createdAt: new Date().toISOString()
+          title: t.title,
+          location: t.location ?? t.destination ?? "",
+          tripType: t.tripType,
+          startDate: t.startDate || today,
+          endDate: t.endDate || t.startDate || today,
+          latitude: t.latitude,
+          longitude: t.longitude,
+          mediaLink: t.mediaLink,
+          dayRoadmaps: t.dayRoadmaps,
+          status: t.status === "archived" ? "archived" : "active",
+          createdAt: new Date().toISOString(),
         });
 
-        const importedMembers = (parsed.members ?? []).map((member: any) => ({
+        const importedMembers = (parsed.members ?? []).map((m: any) => ({
           tripId: id,
-          name: member.name ?? "",
-          phone: member.phone ?? "",
-          role: member.role ?? ""
+          name: m.name ?? "",
+          phone: m.phone ?? "",
+          role: m.role ?? "",
+          note: m.note ?? "",
+          gender: m.gender,
+          avatar: m.avatar,
         }));
-        const importedEvents = (parsed.events ?? []).map((event: any) => ({
+        const importedEvents = (parsed.events ?? []).map((e: any) => ({
           tripId: id,
-          date: event.date || today,
-          time: event.time ?? "",
-          title: event.title ?? "",
-          location: event.location ?? "",
-          notes: event.notes ?? "",
-          mapLink: event.mapLink ?? "",
-          completed: Boolean(event.completed)
+          date: e.date || today,
+          time: e.time ?? "",
+          title: e.title ?? "",
+          location: e.location ?? "",
+          notes: e.notes ?? "",
+          mapLink: e.mapLink ?? "",
+          completed: Boolean(e.completed),
+          assignee: e.assignee,
+          type: e.type,
         }));
-        const importedExpenses = (parsed.expenses ?? []).map((expense: any) => ({
+        const importedExpenses = (parsed.expenses ?? []).map((ex: any) => ({
           tripId: id,
-          amount: Number(expense.amount || 0),
-          payer: expense.payer ?? "",
-          category: expense.category ?? "Khác",
-          description: expense.description ?? "",
-          splitType: expense.splitType ?? "shared"
+          amount: Number(ex.amount || 0),
+          payer: ex.payer ?? "",
+          category: ex.category ?? "Khác",
+          description: ex.description ?? "",
+          splitType: ex.splitType ?? "shared",
+          date: ex.date,
+          eventId: ex.eventId,
         }));
-        const importedChecklist = (parsed.checklist ?? []).map((item: any) => ({
+        const importedChecklist = (parsed.checklist ?? []).map((c: any) => ({
           tripId: id,
-          section: checklistSections.includes(item.section) ? item.section : "Before Trip",
-          title: item.title ?? "",
-          completed: Boolean(item.completed)
+          section: checklistSections.includes(c.section) ? c.section : "Before Trip",
+          title: c.title ?? "",
+          completed: Boolean(c.completed),
+          category: c.category,
+          quantity: c.quantity,
+          assignedTo: c.assignedTo,
+          priority: (["normal", "important", "required"].includes(c.priority)) ? c.priority : "normal",
+          note: c.note,
         }));
-        const importedJournals = (parsed.journals ?? []).map((entry: any) => ({
+        const importedJournals = (parsed.journals ?? []).map((j: any) => ({
           tripId: id,
-          date: entry.date || today,
-          title: entry.title ?? "",
-          content: entry.content ?? "",
-          mood: (["very_bad", "bad", "okay", "good", "great"].includes(entry.mood as string)) ? entry.mood : "okay"
+          date: j.date || today,
+          title: j.title ?? "",
+          content: j.content ?? "",
+          mood: (["very_bad", "bad", "okay", "good", "great"].includes(j.mood)) ? j.mood : "okay",
+          authorName: j.authorName,
+          imageUrl: j.imageUrl,
+          postedAt: j.postedAt,
+          reactions: j.reactions,
         }));
-        const importedPackingItems = (parsed.packingItems ?? []).map((item: any) => ({
+        const importedPackingItems = (parsed.packingItems ?? []).map((p: any) => ({
           tripId: id,
-          tripType: packingTripTypes.includes(item.tripType) ? item.tripType : "Thành phố",
-          title: item.title ?? "",
-          completed: Boolean(item.completed)
+          tripType: packingTripTypes.includes(p.tripType) ? p.tripType : "Thành phố",
+          title: p.title ?? "",
+          completed: Boolean(p.completed),
         }));
-        const importedDocuments = (parsed.travelDocuments ?? []).map((doc: any) => ({
+        const importedDocuments = (parsed.travelDocuments ?? []).map((d: any) => ({
           tripId: id,
-          title: doc.title ?? "",
-          type: doc.type ?? "other",
-          code: doc.code ?? "",
-          date: doc.date ?? "",
-          link: doc.link ?? "",
-          note: doc.note ?? ""
+          title: d.title ?? "",
+          type: d.type ?? "other",
+          code: d.code ?? "",
+          date: d.date ?? "",
+          link: d.link ?? "",
+          attachmentUrl: d.attachmentUrl,
+          isPrivate: Boolean(d.isPrivate),
+          note: d.note ?? "",
         }));
-        const importedBackupPlans = (parsed.backupPlans ?? []).map((plan: any) => ({
+        const importedBackupPlans = (parsed.backupPlans ?? []).map((b: any) => ({
           tripId: id,
-          title: plan.title ?? "",
-          type: plan.type ?? "other",
-          reason: plan.reason ?? "",
-          location: plan.location ?? "",
-          note: plan.note ?? "",
-          activityId: plan.activityId,
-          date: plan.date
+          title: b.title ?? "",
+          type: b.type ?? "other",
+          reason: b.reason ?? "",
+          location: b.location ?? "",
+          mapLink: b.mapLink ?? "",
+          estimatedCost: b.estimatedCost,
+          note: b.note ?? "",
+          activityId: b.activityId,
+          date: b.date,
         }));
 
         if (importedMembers.length) await db.members.bulkAdd(importedMembers);
@@ -415,8 +501,10 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
       });
 
       onTripSelected?.(newTripId);
+      setIsImportPreviewOpen(false);
+      setImportPreview(null);
       onClose();
-      showToast("Đã nhập bản sao lưu thành công.");
+      showToast("Đã nhập chuyến đi thành công!");
     } catch (error) {
       showToast(error instanceof Error ? error.message : "Không thể import tệp này.", "error");
     } finally {
@@ -528,7 +616,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 aria-checked={autoBackupEnabled}
                 onClick={() => setAutoBackupEnabled(!autoBackupEnabled)}
                 className={`relative inline-flex h-6.5 w-11.5 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-250 ease-in-out focus:outline-none ${
-                  autoBackupEnabled ? "bg-[#00BFB7]" : "bg-slate-200"
+                  autoBackupEnabled ? "bg-[#030D2E]" : "bg-slate-200"
                 }`}
               >
                 <span
@@ -843,20 +931,17 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                     <h4 className="text-[15px] font-bold text-slate-800">
                       {importing ? "Đang nhập..." : "Khôi phục hành trình"}
                     </h4>
-                    <p className="text-[12px] text-slate-400 font-medium">Nhập chuyến đi từ tệp sao lưu (.kattrip)</p>
+                    <p className="text-[12px] text-slate-400 font-medium">Nhập chuyến đi từ tệp sao lưu (.katjourney)</p>
                   </div>
                 </div>
                 <ChevronRight className="h-5 w-5 text-slate-400" />
                 <input
                   className="sr-only"
                   type="file"
-                  accept=".kattrip,application/json"
+                  accept=".katjourney,application/json"
                   onChange={(event) => {
                     const file = event.target.files?.[0];
-                    if (file) {
-                      setSelectedFileForRestore(file);
-                      setIsRestoreFileConfirmOpen(true);
-                    }
+                    if (file) previewImportFile(file);
                     event.target.value = "";
                   }}
                 />
@@ -1039,9 +1124,13 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       )}
                       <div className="mt-2.5">
                         {provider === "google" ? (
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-slate-50 border border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#34A853]" />
-                            Tài khoản Google
+                          <div className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wider bg-slate-50 border border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+                            <span className="text-[#4285F4]">G</span>
+                            <span className="text-[#EA4335]">O</span>
+                            <span className="text-[#FBBC05]">O</span>
+                            <span className="text-[#4285F4]">G</span>
+                            <span className="text-[#34A853]">L</span>
+                            <span className="text-[#EA4335]">E</span>
                           </div>
                         ) : (
                           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-250/50 shadow-[inset_0_1px_1px_rgba(245,158,11,0.05)]">
@@ -1088,24 +1177,13 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                         className="w-full flex items-center justify-center gap-2.5 h-11.5 rounded-[16px] border border-[#E8E1D8]/60 bg-slate-50/50 text-slate-650 hover:bg-slate-50 hover:text-[#030D2E] active:scale-[0.98] transition-all font-bold text-[13px] disabled:opacity-60 shadow-sm"
                       >
                         <Download className="h-4.5 w-4.5 text-slate-500 shrink-0" />
-                        Sao lưu dữ liệu thủ công (.kattrip)
+                        Sao lưu dữ liệu thủ công (.katjourney)
                       </button>
                     </div>
                   </>
                 )}
 
-                {provider === "google" && (
-                  <div className="pt-1">
-                    <button
-                      onClick={handleSignOut}
-                      disabled={actionLoading !== null}
-                      className="w-full flex items-center justify-center gap-2 h-11.5 rounded-[16px] border border-red-200 bg-red-50/40 text-red-655 hover:bg-red-50 hover:text-red-700 active:scale-[0.98] transition-all font-bold text-[13px] disabled:opacity-60 shadow-sm"
-                    >
-                      <LogOut className="h-4.5 w-4.5 text-red-500 shrink-0" />
-                      Đăng xuất tài khoản
-                    </button>
-                  </div>
-                )}
+
                 {renderBackupSection()}
               </div>
             )}
@@ -1414,6 +1492,82 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
         isOpen={isFactoryResetOpen}
         onClose={() => setIsFactoryResetOpen(false)}
       />
+
+      {/* ── Import Preview Modal ── */}
+      {isImportPreviewOpen && importPreview && (
+        <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white w-full max-w-md rounded-[28px] border border-[#E8E1D8] shadow-2xl overflow-hidden animate-scaleUp">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">
+                  <ArchiveRestore className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-[16px] font-black text-[#030D2E]">Xác nhận nhập chuyến đi</h3>
+                  <p className="text-[11px] text-slate-400 font-medium">Kiểm tra thông tin trước khi nhập</p>
+                </div>
+              </div>
+              <button
+                onClick={() => { setIsImportPreviewOpen(false); setImportPreview(null); }}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Trip info */}
+            <div className="px-6 py-5 space-y-4">
+              <div className="rounded-2xl bg-indigo-50 border border-indigo-100 p-4">
+                <p className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">Tên chuyến đi</p>
+                <p className="text-[18px] font-black text-[#030D2E] leading-tight">{importPreview.tripName}</p>
+                {importPreview.exportedAt && (
+                  <p className="text-[11px] text-indigo-400 font-medium mt-1">
+                    Xuất lúc: {new Date(importPreview.exportedAt).toLocaleString("vi-VN")}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: "Thành viên", value: importPreview.memberCount },
+                  { label: "Lịch trình", value: importPreview.eventCount },
+                  { label: "Chi phí", value: importPreview.expenseCount },
+                  { label: "Chuẩn bị", value: importPreview.checklistCount },
+                  { label: "Nhật ký", value: importPreview.journalCount },
+                ].map(item => (
+                  <div key={item.label} className="rounded-xl bg-slate-50 border border-slate-100 p-3 text-center">
+                    <p className="text-[20px] font-black text-[#030D2E]">{item.value}</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">{item.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              <p className="text-[12px] text-slate-400 font-medium text-center leading-relaxed">
+                Dữ liệu sẽ được thêm vào thiết bị này. Chuyến đi hiện có sẽ không bị ảnh hưởng.
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2.5 px-6 pb-6">
+              <button
+                onClick={() => { setIsImportPreviewOpen(false); setImportPreview(null); }}
+                className="flex-1 inline-flex min-h-[48px] items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 font-bold text-slate-600 hover:bg-slate-100 active:scale-[0.98] transition-all"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={() => importTrip(importPreview.parsed)}
+                disabled={importing}
+                className="flex-1 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all disabled:opacity-60 shadow-sm"
+              >
+                {importing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                {importing ? "Đang nhập..." : "Nhập ngay"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

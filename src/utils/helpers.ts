@@ -205,16 +205,16 @@ export function getWrappedStats({ trip, members, events, expenses, checklist, jo
 
 export interface TripExport {
   app: "KAT Journey";
-  version: 1;
+  version: 2;
   appVersion?: string;
   exportedAt: string;
-  trip: Trip;
-  members: Member[];
+  trip: import("../db").Trip;
+  members: import("../db").Member[];
   events: import("../db").EventItem[];
-  expenses: Expense[];
-  checklist: ChecklistItem[];
-  journals?: JournalEntry[];
-  packingItems?: PackingItem[];
+  expenses: import("../db").Expense[];
+  checklist: import("../db").ChecklistItem[];
+  journals?: import("../db").JournalEntry[];
+  packingItems?: import("../db").PackingItem[];
   travelDocuments?: import("../db").TravelDocument[];
   backupPlans?: import("../db").BackupPlan[];
 }
@@ -222,8 +222,8 @@ export interface TripExport {
 export function createTripExport({ trip, members, events, expenses, checklist, journals, packingItems, travelDocuments, backupPlans }: TripData): TripExport {
   return {
     app: "KAT Journey",
-    version: 1,
-    appVersion: "1.0.0",
+    version: 2,
+    appVersion: (import.meta as any).env?.VITE_APP_VERSION ?? "2.0.0",
     exportedAt: new Date().toISOString(),
     trip,
     members,
