@@ -2575,10 +2575,11 @@ export function SharedMembersSection({
                       </div>
                       {(() => {
                         const isLeader = member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện" || member.role?.toLowerCase() === "leader";
+                        if (!isLeader) return null;
                         return (
                           <span className="inline-flex items-center gap-1 rounded-full bg-[#00BFB7]/10 border border-[#00BFB7]/20 px-2.5 py-0.5 text-[11px] font-bold text-[#00BFB7]">
-                            {isLeader && <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
-                            {member.role || "Bạn đồng hành"}
+                            <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                            {member.role}
                           </span>
                         );
                       })()}
