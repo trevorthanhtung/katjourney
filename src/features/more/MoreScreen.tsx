@@ -1377,17 +1377,11 @@ function MemberCardRow({
               <div className="flex items-center gap-1.5 min-w-0">
                 <UserRound className="h-4.5 w-4.5 text-[#030D2E]/60 shrink-0" />
                 <h4 className="text-[17px] font-extrabold text-[#030D2E] truncate">{member.name}</h4>
+                {(() => {
+                  const isLeader = member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện";
+                  return isLeader ? <Crown className="h-4.5 w-4.5 text-amber-500 shrink-0 ml-0.5" /> : null;
+                })()}
               </div>
-              {(() => {
-                const isLeader = member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện";
-                if (!isLeader) return null;
-                return (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-[#00BFB7]/10 border border-[#00BFB7]/20 px-2.5 py-0.5 text-[11px] font-bold text-[#00BFB7]">
-                    <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                    {member.role}
-                  </span>
-                );
-              })()}
             </div>
             {member.phone && (
               <p className="text-[13.5px] font-semibold text-slate-500">
