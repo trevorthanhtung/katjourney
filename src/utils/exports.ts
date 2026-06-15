@@ -70,7 +70,7 @@ export function exportTripPdf(data: TripData) {
       doc.setFontSize(7.5);
       doc.setTextColor(...C_SLATE);
       hLine(12);
-      doc.text("KAT Journey — Nhật ký & Tổng kết chuyến đi", MARGIN_L, 10);
+      doc.text("KAT Journey — Bản tin & Tổng kết chuyến đi", MARGIN_L, 10);
       hLine(282);
       doc.text("thanhtungg.", MARGIN_L, 287);
       doc.text(`Trang ${i} / ${totalPages}`, PAGE_W - MARGIN_R, 287, { align: "right" });

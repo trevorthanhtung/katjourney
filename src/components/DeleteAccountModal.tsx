@@ -53,7 +53,7 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
             <ul className="list-disc pl-5 space-y-1 text-slate-650 text-[12.5px]">
               <li>Tài khoản đăng nhập trên hệ thống</li>
               <li>Toàn bộ chuyến đi và lịch trình đã lưu</li>
-              <li>Tất cả chi phí, nhật ký hành trình</li>
+              <li>Tất cả chi phí, bản tin hành trình</li>
               <li>Danh sách chuẩn bị hành lý & giấy tờ</li>
             </ul>
           </div>

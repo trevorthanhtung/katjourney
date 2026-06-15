@@ -41,6 +41,10 @@ import {
   Bell,
   ArchiveRestore,
   Upload,
+  GitMerge,
+  Clock,
+  Calendar,
+  Copy,
 } from "lucide-react";
 import { BottomSheet } from "./ui";
 import { useAuth } from "../hooks/useAuth";
@@ -121,7 +125,9 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
     requestPermission: requestNotificationPermission, 
     isSupported: isNotificationSupported,
     enabled: notificationEnabled,
-    setEnabled: setNotificationEnabled
+    setEnabled: setNotificationEnabled,
+    fcmToken,
+    isFcmLoading
   } = useNotification();
   const { 
     isSyncing, 
@@ -222,6 +228,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
     setActionLoading("signout");
     setErrorMsg(null);
     try {
+      localStorage.removeItem("kat_journey_welcome_viewed");
+      localStorage.removeItem("kat_auth_mode");
       await signOutUser();
       setView("auth");
     } catch (err: any) {
@@ -434,40 +442,43 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
     return (
       <div className="border-t border-[#E8E1D8]/60 pt-5 mt-4 space-y-4 text-left animate-fadeIn">
-        <div className="flex items-center gap-2.5 mb-1 px-1">
-          <div className="flex h-9.5 w-9.5 items-center justify-center rounded-xl bg-[#00BFB7]/10 text-[#00BFB7] border border-[#00BFB7]/25 shrink-0">
-            <Cloud className={`w-5 h-5 ${(isSyncing || isAutoBackingUp) ? "animate-spin" : ""}`} />
+        <div className="flex items-center gap-3 mb-1 px-1">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#030D2E] to-[#1E293B] text-white shadow-sm shrink-0">
+            <Cloud className={`w-5.5 h-5.5 ${(isSyncing || isAutoBackingUp) ? "animate-spin" : ""}`} />
           </div>
           <div>
-            <h4 className="text-[15px] font-black text-[#030D2E]">Đồng bộ dữ liệu</h4>
-            <p className="text-[11.5px] text-slate-400 font-medium">Tự động sao lưu và bảo mật dữ liệu</p>
+            <h4 className="text-[15.5px] font-black text-[#030D2E]">Đồng bộ dữ liệu</h4>
+            <p className="text-[12px] text-slate-455 font-semibold">Tự động sao lưu và bảo mật dữ liệu</p>
           </div>
         </div>
 
         {hasCloudVersion && (
-          <div className="rounded-[22px] bg-amber-50/60 border border-amber-200/50 p-4 text-[13.5px] text-amber-800 font-bold leading-relaxed flex items-start gap-3 animate-fadeIn shadow-soft">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 text-amber-600 border border-amber-200/50 shrink-0 mt-0.5">
+          <div className="rounded-[22px] bg-amber-50/60 border border-amber-200/40 p-4.5 text-[13.5px] text-amber-900 font-bold leading-relaxed flex items-start gap-3.5 animate-fadeIn shadow-soft relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-amber-500" />
+            <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-amber-100 text-amber-750 shrink-0 mt-0.5">
               <AlertTriangle className="w-4.5 h-4.5" />
             </div>
-            <span className="pt-0.5">Có phiên bản mới hơn trên Cloud. Vui lòng bấm Đồng bộ để tải về.</span>
+            <span className="pt-0.5 flex-1">Có phiên bản mới hơn trên Cloud. Vui lòng bấm Đồng bộ để tải về.</span>
           </div>
         )}
 
         {syncError && (
-          <div className="rounded-[22px] bg-rose-50/60 border border-rose-200/50 p-4 text-[13.5px] text-rose-800 font-bold leading-relaxed flex items-start gap-3 animate-fadeIn shadow-soft">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-100 text-rose-600 border border-rose-200/50 shrink-0 mt-0.5">
+          <div className="rounded-[22px] bg-rose-50/60 border border-rose-200/40 p-4.5 text-[13.5px] text-rose-900 font-bold leading-relaxed flex items-start gap-3.5 animate-fadeIn shadow-soft relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-rose-500" />
+            <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-rose-100 text-rose-700 shrink-0 mt-0.5">
               <AlertTriangle className="w-4.5 h-4.5" />
             </div>
-            <span className="pt-0.5">{syncError}</span>
+            <span className="pt-0.5 flex-1">{syncError}</span>
           </div>
         )}
 
         {syncSuccess && (
-          <div className="rounded-[22px] bg-emerald-50/60 border border-emerald-200/50 p-4 text-[13.5px] text-[#0F766E] font-bold leading-relaxed flex items-start gap-3 animate-fadeIn shadow-soft">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 text-[#0F766E] border border-emerald-200/50 shrink-0 mt-0.5">
+          <div className="rounded-[22px] bg-emerald-50/60 border border-emerald-200/40 p-4.5 text-[13.5px] text-[#0F766E] font-bold leading-relaxed flex items-start gap-3.5 animate-fadeIn shadow-soft relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
+            <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-emerald-100 text-[#0F766E] shrink-0 mt-0.5">
               <Check className="w-4.5 h-4.5" strokeWidth={3.5} />
             </div>
-            <span className="pt-0.5">{syncSuccess}</span>
+            <span className="pt-0.5 flex-1">{syncSuccess}</span>
           </div>
         )}
 
@@ -478,29 +489,35 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
         ) : (
           <>
             {/* 2. Status Card (Thông tin tĩnh) */}
-            <div className="bg-[#FFFDF8] border border-[#E8E1D8] rounded-[22px] p-4 flex justify-between items-center text-[13.5px] font-bold text-slate-500 min-h-[54px] shadow-soft hover:shadow-md transition-all duration-300 motion-hover-lift">
-              <span className="text-slate-400 font-bold">Lần đồng bộ cuối</span>
+            <div className="bg-[#FFFDF8] border border-[#E8E1D8] rounded-[22px] p-4.5 flex justify-between items-center text-[13.5px] font-bold text-slate-500 min-h-[60px] shadow-soft">
+              <span className="text-slate-550 font-bold">Lần đồng bộ cuối</span>
               {lastBackupAt && backupTimeStr && backupDateStr ? (
-                <div className="flex gap-1.5 items-center">
-                  <span className="font-black text-[#030D2E] bg-slate-50 border border-[#E8E1D8] px-3.5 py-1.5 rounded-full text-[13px]">{backupTimeStr}</span>
-                  <span className="font-black text-[#030D2E] bg-slate-50 border border-[#E8E1D8] px-3.5 py-1.5 rounded-full text-[13px]">{backupDateStr}</span>
+                <div className="flex gap-2 items-center">
+                  <div className="inline-flex items-center gap-1.5 font-black text-[#030D2E] bg-slate-50 border border-[#E8E1D8] px-3.5 py-1.5 rounded-full text-[13px]">
+                    <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span>{backupTimeStr}</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 font-black text-[#030D2E] bg-slate-50 border border-[#E8E1D8] px-3.5 py-1.5 rounded-full text-[13px]">
+                    <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span>{backupDateStr}</span>
+                  </div>
                 </div>
               ) : (
-                <span className="font-black text-[#030D2E] bg-slate-50 border border-[#E8E1D8] px-3.5 py-1.5 rounded-full text-[13px]">
+                <span className="font-black text-slate-450 bg-slate-50 border border-[#E8E1D8] px-4 py-1.5 rounded-full text-[13px]">
                   Chưa từng đồng bộ
                 </span>
               )}
             </div>
 
             {/* 3. Action Card (Thiết lập) */}
-            <div className="flex items-center justify-between p-4 rounded-[22px] border border-[#E8E1D8] bg-[#FFFDF8] min-h-[72px] shadow-soft hover:shadow-md transition-all duration-300 motion-hover-lift">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9.5 w-9.5 items-center justify-center rounded-xl bg-[#00BFB7]/10 text-[#00BFB7] border border-[#00BFB7]/20">
-                  <Cloud className="w-4.5 h-4.5" />
+            <div className="flex items-center justify-between p-4.5 rounded-[22px] border border-[#E8E1D8] bg-[#FFFDF8] min-h-[76px] shadow-soft">
+              <div className="flex items-center gap-3.5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50/70 text-indigo-600 border border-indigo-100/40 shrink-0">
+                  <Cloud className="w-5 h-5" />
                 </div>
                 <div className="text-left pr-2">
-                  <span className="text-[13.5px] font-black text-[#030D2E]">Tự động sao lưu lên Cloud</span>
-                  <p className="text-[11.5px] text-slate-400 font-medium mt-0.5 leading-normal">Sao lưu ngầm sau khi thay đổi dữ liệu 5s</p>
+                  <span className="text-[14px] font-black text-[#030D2E]">Tự động sao lưu lên Cloud</span>
+                  <p className="text-[12px] text-slate-455 font-semibold mt-0.5 leading-normal">Sao lưu ngầm sau khi thay đổi dữ liệu 5s</p>
                 </div>
               </div>
               
@@ -510,12 +527,12 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 role="switch"
                 aria-checked={autoBackupEnabled}
                 onClick={() => setAutoBackupEnabled(!autoBackupEnabled)}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-250 ease-in-out focus:outline-none ${
+                className={`relative inline-flex h-6.5 w-11.5 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-250 ease-in-out focus:outline-none ${
                   autoBackupEnabled ? "bg-[#00BFB7]" : "bg-slate-200"
                 }`}
               >
                 <span
-                  className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md transform transition-transform duration-250 ease-in-out ${
+                  className={`pointer-events-none inline-block h-5.5 w-5.5 rounded-full bg-white shadow-md transform transition-transform duration-250 ease-in-out ${
                     autoBackupEnabled ? "translate-x-5" : "translate-x-0"
                   }`}
                 />
@@ -528,7 +545,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           <button
             onClick={handleSync}
             disabled={!user || isSyncing}
-            className="w-full flex items-center justify-center gap-2.5 h-13 rounded-[18px] bg-gradient-to-r from-[#00BFB7] to-[#00AFA8] text-[#030D2E] hover:brightness-[1.03] active:scale-[0.97] transition-all font-black text-[15px] shadow-[0_4px_14px_rgba(0,191,183,0.2)] hover:shadow-[0_6px_20px_rgba(0,191,183,0.35)] disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none shrink-0 motion-press"
+            className="w-full flex items-center justify-center gap-2.5 h-13 rounded-[20px] bg-[#030D2E] text-white hover:bg-[#030D2E]/95 active:scale-[0.97] transition-all font-black text-[15px] shadow-[0_4px_14px_rgba(3,13,46,0.25)] hover:shadow-[0_6px_20px_rgba(3,13,46,0.4)] disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none shrink-0 motion-press"
           >
             {isSyncing ? (
               <>
@@ -640,9 +657,6 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
         {view === "menu" && (
           <div className="flex flex-col gap-2">
 
-
-
-            {/* Privacy */}
             <button
               onClick={() => setView("privacy")}
               className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100 hover:bg-slate-100/70 transition-all text-left focus:outline-none"
@@ -946,13 +960,13 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             ) : (
               <div className="space-y-6">
                 {/* Unified User Info Card with Edit Display Name support */}
-                <div className="flex items-center gap-4 p-5 rounded-[24px] bg-[#FFFDF8] border border-[#E8E1D8] shadow-soft hover:shadow-md transition-all duration-350 motion-hover-lift">
+                <div className="flex items-center gap-4.5 p-5 rounded-[24px] bg-gradient-to-br from-[#FFFDF8] to-[#FAF7F1]/80 border border-[#E8E1D8] shadow-soft hover:shadow-md transition-all duration-350">
                   {provider === "google" ? (
                     user.photoURL ? (
                       <img 
                         src={user.photoURL} 
                         alt={user.displayName || "Avatar"} 
-                        className="h-14 w-14 rounded-full border border-slate-200 object-cover shadow-sm shrink-0"
+                        className="h-14 w-14 rounded-full border border-slate-200/80 object-cover shadow-sm shrink-0 ring-2 ring-slate-100"
                       />
                     ) : (
                       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-lg shadow-inner shrink-0">
@@ -960,7 +974,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       </div>
                     )
                   ) : (
-                    <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#00BFB7] via-[#0081BE] to-[#6366F1] text-white shadow-[0_4px_16px_rgba(0,191,183,0.25)] border-2 border-white shrink-0">
+                    <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-[#0081BE] via-[#00BFB7] to-[#80EAD6] text-white shadow-[0_4px_16px_rgba(0,191,183,0.2)] border-2 border-white shrink-0">
                       <User className="h-6.5 w-6.5 text-white" />
                       <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
@@ -975,7 +989,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                         type="text"
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
-                        className="flex-1 h-9 px-3 text-[14px] font-bold text-[#030D2E] rounded-xl border border-[#E8E1D8] bg-white focus:outline-none focus:border-[#00BFB7] focus:ring-1 focus:ring-[#00BFB7]/40 min-w-0"
+                        className="flex-1 h-10 px-3 text-[14.5px] font-bold text-[#030D2E] rounded-xl border border-[#E8E1D8] bg-white focus:outline-none focus:border-[#00BFB7] focus:ring-1 focus:ring-[#00BFB7]/40 min-w-0"
                         placeholder="Tên hiển thị..."
                         autoFocus
                         onKeyDown={(e) => {
@@ -986,7 +1000,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       <button
                         onClick={handleUpdateName}
                         disabled={actionLoading !== null || !newName.trim()}
-                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#00BFB7] text-[#030D2E] hover:brightness-105 active:scale-95 transition-all shrink-0 disabled:opacity-50"
+                        className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#00BFB7] text-[#030D2E] hover:brightness-105 active:scale-95 transition-all shrink-0 disabled:opacity-50"
                       >
                         {actionLoading === "guest" ? (
                           <Loader2 className="w-4.5 h-4.5 animate-spin" />
@@ -997,7 +1011,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       <button
                         onClick={() => setIsEditingName(false)}
                         disabled={actionLoading !== null}
-                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-slate-200 active:scale-95 transition-all shrink-0"
+                        className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-slate-200 active:scale-95 transition-all shrink-0"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -1010,7 +1024,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                           className="flex items-center gap-2 text-left hover:opacity-85 transition-all min-w-0 group"
                           title="Đổi tên hiển thị"
                         >
-                          <h3 className="text-[17px] font-black text-[#030D2E] leading-snug truncate">
+                          <h3 className="text-[17.5px] font-black text-[#030D2E] leading-snug truncate">
                             {user.displayName || (provider === "guest" ? "Tài khoản cục bộ" : "Tài khoản ẩn danh")}
                           </h3>
                           <div className="p-1.5 text-slate-400 group-hover:text-[#00BFB7] group-hover:bg-slate-100 rounded-lg shrink-0 transition-all">
@@ -1019,24 +1033,18 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                         </button>
                       </div>
                       {provider === "google" && user.email && (
-                        <p className="text-[13px] text-slate-500 font-semibold leading-normal truncate mt-0.5">
+                        <p className="text-[13px] text-slate-455 font-semibold leading-normal truncate mt-0.5">
                           {user.email}
                         </p>
                       )}
                       <div className="mt-2.5">
                         {provider === "google" ? (
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-[0.15em] bg-slate-50 border border-slate-200 shadow-sm">
-                            <span>
-                              <span className="text-[#4285F4]">G</span>
-                              <span className="text-[#EA4335]">o</span>
-                              <span className="text-[#FBBC05]">o</span>
-                              <span className="text-[#4285F4]">g</span>
-                              <span className="text-[#34A853]">l</span>
-                              <span className="text-[#EA4335]">e</span>
-                            </span>
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-slate-50 border border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#34A853]" />
+                            Tài khoản Google
                           </div>
                         ) : (
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider bg-amber-50/60 text-amber-700 border border-amber-200/50 shadow-[inset_0_1px_1px_rgba(245,158,11,0.05)]">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-250/50 shadow-[inset_0_1px_1px_rgba(245,158,11,0.05)]">
                             <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
                             Chưa đồng bộ
                           </div>
@@ -1049,12 +1057,13 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 {provider === "guest" && (
                   <>
                     {/* Upsell Message Box */}
-                    <div className="p-4.5 rounded-[22px] border-l-4 border-l-[#00BFB7] bg-[#FFFDF8] border-y border-r border-[#E8E1D8] text-left flex items-start gap-3.5 shadow-soft hover:shadow-md transition-all duration-300">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#00BFB7]/10 text-[#00BFB7] shrink-0">
+                    <div className="p-4.5 rounded-[22px] bg-gradient-to-br from-[#00BFB7]/5 to-[#00BFB7]/2 bg-white border border-[#00BFB7]/20 text-left flex items-start gap-3.5 shadow-soft relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-[#00BFB7]" />
+                      <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-[#00BFB7]/10 text-[#00BFB7] shrink-0 mt-0.5">
                         <Info className="w-4.5 h-4.5" />
                       </div>
-                      <p className="text-[13px] font-medium leading-relaxed text-slate-600">
-                        Toàn bộ lịch trình và chi phí đang được lưu tạm trên thiết bị này. Hãy liên kết tài khoản để sao lưu <strong className="font-black text-[#030D2E]">an toàn</strong> lên đám mây và mở khóa tính năng <strong className="font-black text-[#030D2E]">chia sẻ chuyến đi</strong>.
+                      <p className="text-[13px] font-semibold leading-relaxed text-slate-600">
+                        Toàn bộ lịch trình và chi phí đang được lưu tạm trên thiết bị này. Hãy liên kết tài khoản để sao lưu <strong className="font-extrabold text-[#030D2E]">an toàn</strong> lên đám mây và mở khóa tính năng <strong className="font-extrabold text-[#030D2E]">chia sẻ chuyến đi</strong>.
                       </p>
                     </div>
 
@@ -1063,7 +1072,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       <button
                         onClick={handleGoogleSignIn}
                         disabled={actionLoading !== null}
-                        className="w-full flex items-center justify-center gap-3 h-13 rounded-[18px] border border-[#E8E1D8] bg-[#FFFDF8] hover:bg-white hover:border-[#00BFB7]/40 active:scale-[0.98] transition-all motion-hover-lift font-extrabold text-[14.5px] text-[#030D2E] shadow-soft hover:shadow-md disabled:opacity-60"
+                        className="w-full flex items-center justify-center gap-3 h-13 rounded-[20px] border border-[#E8E1D8] bg-white hover:bg-slate-50 active:scale-[0.98] transition-all font-bold text-[14.5px] text-[#030D2E] shadow-sm hover:shadow-md disabled:opacity-60 relative overflow-hidden"
                       >
                         {actionLoading === "google" ? (
                           <Loader2 className="h-5 w-5 text-[#00BFB7] animate-spin" />
@@ -1076,13 +1085,26 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       <button
                         onClick={handleBackupAllData}
                         disabled={actionLoading !== null}
-                        className="w-full flex items-center justify-center gap-2 h-11.5 rounded-[16px] border border-[#E8E1D8] bg-[#FAF7F1]/50 text-slate-500 hover:bg-[#FAF7F1] hover:text-[#030D2E] hover:border-[#E8E1D8] active:scale-[0.98] transition-all font-bold text-[13px] disabled:opacity-60 shadow-sm motion-hover-lift"
+                        className="w-full flex items-center justify-center gap-2.5 h-11.5 rounded-[16px] border border-[#E8E1D8]/60 bg-slate-50/50 text-slate-650 hover:bg-slate-50 hover:text-[#030D2E] active:scale-[0.98] transition-all font-bold text-[13px] disabled:opacity-60 shadow-sm"
                       >
-                        <Download className="h-4.5 w-4.5 text-slate-400" />
+                        <Download className="h-4.5 w-4.5 text-slate-500 shrink-0" />
                         Sao lưu dữ liệu thủ công (.kattrip)
                       </button>
                     </div>
                   </>
+                )}
+
+                {provider === "google" && (
+                  <div className="pt-1">
+                    <button
+                      onClick={handleSignOut}
+                      disabled={actionLoading !== null}
+                      className="w-full flex items-center justify-center gap-2 h-11.5 rounded-[16px] border border-red-200 bg-red-50/40 text-red-655 hover:bg-red-50 hover:text-red-700 active:scale-[0.98] transition-all font-bold text-[13px] disabled:opacity-60 shadow-sm"
+                    >
+                      <LogOut className="h-4.5 w-4.5 text-red-500 shrink-0" />
+                      Đăng xuất tài khoản
+                    </button>
+                  </div>
                 )}
                 {renderBackupSection()}
               </div>
@@ -1100,7 +1122,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             <div className="space-y-3.5 text-[14px] font-semibold text-slate-600 leading-relaxed">
               <p>
-                <strong>Lưu trữ an toàn trên thiết bị (Offline-first):</strong> Toàn bộ thông tin chi tiết về chuyến đi, chi phí và nhật ký hành trình được cất giữ an toàn ngay trong bộ nhớ điện thoại của bạn. Bạn có thể tra cứu lịch trình mọi lúc, mọi nơi kể cả khi không có mạng.
+                <strong>Lưu trữ an toàn trên thiết bị (Offline-first):</strong> Toàn bộ thông tin chi tiết về chuyến đi, chi phí và bản tin hành trình được cất giữ an toàn ngay trong bộ nhớ điện thoại của bạn. Bạn có thể tra cứu lịch trình mọi lúc, mọi nơi kể cả khi không có mạng.
               </p>
               <p>
                 <strong>Bảo mật danh tính tuyệt đối:</strong> Hệ thống đăng nhập được thiết lập để xác minh danh tính nghiêm ngặt. Việc này đảm bảo tài khoản và mọi kế hoạch của bạn được phân quyền an toàn, chỉ duy nhất bạn (chính chủ) mới có quyền quản lý và chỉnh sửa.
@@ -1133,13 +1155,13 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               Hơn cả một công cụ lên kế hoạch, KAT Journey là người bạn đồng hành giúp bạn kiểm soát chi tiêu, sắp xếp lịch trình và gói ghém trọn vẹn mọi khoảnh khắc đáng nhớ.
             </p>
 
-            <div className="w-full max-w-md rounded-[20px] border border-slate-100 bg-slate-50/70 p-4 text-left">
-              <h4 className="text-[13px] font-black text-[#030D2E]">Công nghệ & giấy phép</h4>
+            <div className="w-full max-w-lg rounded-[24px] border border-[#E8E1D8]/60 bg-[#FFFDF8] p-5 text-left shadow-soft">
+              <h4 className="text-[13.5px] font-black text-[#030D2E]">Công nghệ & giấy phép</h4>
               <p className="mt-2 text-[12.5px] font-semibold leading-relaxed text-slate-500">
-                KAT Journey được xây dựng với React, Vite, Dexie, Firebase và các thư viện mã nguồn mở khác. Firebase được dùng cho đăng nhập, đồng bộ và chia sẻ dữ liệu khi bạn bật các tính năng liên quan.
+                KAT Journey được xây dựng bằng React, Vite, Dexie và Firebase. Hệ thống chỉ sử dụng Firebase để đồng bộ và chia sẻ khi bạn chủ động đăng nhập.
               </p>
-              <p className="mt-2 text-[12px] font-medium leading-relaxed text-slate-400">
-                Các thư viện mã nguồn mở thuộc bản quyền và giấy phép của tác giả tương ứng.
+              <p className="mt-2 text-[11.5px] font-medium leading-relaxed text-slate-400">
+                Chúng mình xin gửi lời cảm ơn chân thành đến các tác giả và cộng đồng mã nguồn mở đã đồng hành cùng dự án.
               </p>
             </div>
 
@@ -1185,7 +1207,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             <div className="w-[85%] max-w-[280px] p-4 bg-[#FFFDF8] border border-[#E8E1D8] rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
               <img 
-                src="/donates.webp" 
+                src="/donates.png" 
                 alt="Donate QR Code" 
                 className="w-full h-auto rounded-[16px] object-contain aspect-square" 
                 onError={(e) => {
@@ -1198,8 +1220,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             </div>
 
             <a 
-              href="/donates.webp" 
-              download="kat-journey-donate-qr.webp"
+              href="/donates.png" 
+              download="kat-journey-donate-qr.png"
               className="text-[13px] font-bold text-[#00BFB7] hover:underline flex items-center gap-1 active:scale-95 transition-all"
             >
               <Download className="w-4 h-4" />
@@ -1224,43 +1246,95 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
       title="Khôi phục dữ liệu từ Cloud?"
     >
       <div className="space-y-5 text-left">
-        <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-[13.5px] text-amber-800 font-semibold leading-relaxed flex items-start gap-2.5">
+        <div className="rounded-2xl bg-amber-50/60 border border-amber-100 p-4 text-[13px] text-amber-900 font-bold leading-relaxed flex items-start gap-3 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-amber-500" />
           <AlertTriangle className="w-5 h-5 text-amber-650 shrink-0 mt-0.5" />
-          <span>Dữ liệu trên thiết bị có thể bị thay đổi. Vui lòng chọn phương thức khôi phục phù hợp.</span>
+          <span>Dữ liệu trên thiết bị này có thể bị thay đổi. Vui lòng cân nhắc chọn phương thức khôi phục phù hợp bên dưới.</span>
         </div>
 
-        <div className="space-y-3">
-          <label className="flex items-start gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-all cursor-pointer">
+        <div className="space-y-3.5">
+          {/* Option 1: Merge */}
+          <label className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-200 cursor-pointer select-none shadow-sm hover:shadow-md ${
+            restoreMode === "merge"
+              ? "border-indigo-600 bg-indigo-50/30 ring-1 ring-indigo-500/20"
+              : "border-slate-200 bg-[#FFFDF8] hover:bg-slate-50/50"
+          }`}>
             <input
               type="radio"
               name="restoreMode"
               value="merge"
               checked={restoreMode === "merge"}
               onChange={() => setRestoreMode("merge")}
-              className="mt-1 h-4 w-4 text-[#00BFB7] focus:ring-[#00BFB7]"
+              className="sr-only"
             />
-            <div className="text-left">
-              <p className="text-[14px] font-bold text-[#030D2E]">Hợp nhất dữ liệu (Merge)</p>
-              <p className="text-[12px] text-slate-400 font-medium mt-0.5 leading-normal">
-                Giữ nguyên các dữ liệu hiện có trên thiết bị và chỉ bổ sung thêm các chuyến đi/dữ liệu mới từ bản sao lưu.
+            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+              restoreMode === "merge" 
+                ? "bg-indigo-600 text-white border-indigo-600" 
+                : "bg-slate-100 text-slate-500 border-slate-200"
+            }`}>
+              <GitMerge className="w-5.5 h-5.5" />
+            </div>
+            <div className="text-left min-w-0 flex-1">
+              <p className={`text-[14.5px] font-black leading-tight ${
+                restoreMode === "merge" ? "text-indigo-950" : "text-[#030D2E]"
+              }`}>
+                Hợp nhất dữ liệu (Merge)
               </p>
+              <p className="text-[12px] text-slate-500 font-semibold mt-1 leading-normal">
+                Giữ nguyên dữ liệu hiện tại, chỉ bổ sung thêm chuyến đi và bài viết mới từ bản sao lưu.
+              </p>
+            </div>
+            <div className={`h-5.5 w-5.5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200 ${
+              restoreMode === "merge" 
+                ? "border-indigo-600 bg-white" 
+                : "border-slate-300 bg-white"
+            }`}>
+              {restoreMode === "merge" && (
+                <div className="h-3 w-3 rounded-full bg-indigo-600" />
+              )}
             </div>
           </label>
 
-          <label className="flex items-start gap-3 p-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-all cursor-pointer">
+          {/* Option 2: Replace */}
+          <label className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-200 cursor-pointer select-none shadow-sm hover:shadow-md ${
+            restoreMode === "replace"
+              ? "border-rose-600 bg-rose-50/30 ring-1 ring-rose-500/20"
+              : "border-slate-200 bg-[#FFFDF8] hover:bg-slate-50/50"
+          }`}>
             <input
               type="radio"
               name="restoreMode"
               value="replace"
               checked={restoreMode === "replace"}
               onChange={() => setRestoreMode("replace")}
-              className="mt-1 h-4 w-4 text-[#00BFB7] focus:ring-[#00BFB7]"
+              className="sr-only"
             />
-            <div className="text-left">
-              <p className="text-[14px] font-bold text-[#030D2E]">Thay thế hoàn toàn (Replace)</p>
-              <p className="text-[12px] text-slate-400 font-medium mt-0.5 leading-normal text-rose-600">
-                CẢNH BÁO: Xóa sạch toàn bộ dữ liệu hiện tại trên thiết bị và ghi đè bằng toàn bộ dữ liệu từ bản sao lưu trên Cloud.
+            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+              restoreMode === "replace" 
+                ? "bg-rose-600 text-white border-rose-600" 
+                : "bg-slate-100 text-slate-500 border-slate-200"
+            }`}>
+              <Trash2 className="w-5.5 h-5.5" />
+            </div>
+            <div className="text-left min-w-0 flex-1">
+              <p className={`text-[14.5px] font-black leading-tight ${
+                restoreMode === "replace" ? "text-rose-950" : "text-[#030D2E]"
+              }`}>
+                Thay thế hoàn toàn (Replace)
               </p>
+              <p className="text-[12px] text-slate-500 font-semibold mt-1 leading-normal">
+                <span className="font-extrabold text-rose-650 uppercase tracking-wider block text-[10.5px] mb-0.5">CẢNH BÁO NGUY HIỂM</span>
+                Xóa sạch toàn bộ dữ liệu trên thiết bị này và ghi đè bằng bản sao lưu trên Cloud.
+              </p>
+            </div>
+            <div className={`h-5.5 w-5.5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200 ${
+              restoreMode === "replace" 
+                ? "border-rose-600 bg-white" 
+                : "border-slate-300 bg-white"
+            }`}>
+              {restoreMode === "replace" && (
+                <div className="h-3 w-3 rounded-full bg-rose-600" />
+              )}
             </div>
           </label>
         </div>
@@ -1276,7 +1350,11 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           <button
             type="button"
             onClick={handleRestore}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#00BFB7] text-[#030D2E] px-6 font-black hover:brightness-105 active:scale-[0.98] transition-all duration-200 motion-press"
+            className={`flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] text-white px-6 font-black active:scale-[0.98] transition-all duration-200 motion-press shadow-sm ${
+              restoreMode === "replace"
+                ? "bg-rose-600 hover:bg-rose-700 hover:shadow-rose-100"
+                : "bg-[#030D2E] hover:bg-[#030D2E]/90 hover:shadow-indigo-100"
+            }`}
           >
             Tiếp tục
           </button>

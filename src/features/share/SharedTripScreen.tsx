@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { 
   Globe, MapPin, CalendarDays, Clock, Route,
-  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link, X
+  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link, X, MessageCircle
 } from "lucide-react";
 import { getViewShareData } from "../../services/cloudShareService";
 import { formatDate, classNames, getTripTiming, formatMoney, daysBetween } from "../../utils/helpers";
@@ -11,6 +11,7 @@ import { SharedActivitiesSection } from "./components/SharedActivitiesSection";
 import { SharedExpensesSection, SharedChecklistSection, SharedJournalsSection, SharedBackupPlansSection, SharedDocumentsSection, SharedMembersSection } from "./components/SharedSections";
 import { getIdentity, saveIdentity, UserIdentity } from "../../services/identityService";
 import { getAvatarSvg } from "../../utils/avatars";
+import { ChatBox } from "./components/ChatBox";
 
 interface SharedData {
   trip: any;
@@ -43,8 +44,21 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [step, setStep] = useState<"pin" | "identity">("pin");
   const [isBannerVisible, setIsBannerVisible] = useState(true);
 
+  // Chat state
+  const [showChatBox, setShowChatBox] = useState(false);
+
   const [activeTab, setActiveTab] = useState<string>("activities");
   const [selectedRoadmapDay, setSelectedRoadmapDay] = useState<string>("");
+
+  const tripDays = data?.trip ? daysBetween(data.trip.startDate, data.trip.endDate) : [];
+  const eventDays = data?.activities ? Array.from(new Set(data.activities.map((e: any) => e.date))) : [];
+  const days = Array.from(new Set([...tripDays, ...eventDays])).filter(Boolean).sort() as string[];
+
+  useEffect(() => {
+    if (days.length > 0 && !selectedRoadmapDay) {
+      setSelectedRoadmapDay(days[0]);
+    }
+  }, [days, selectedRoadmapDay]);
 
   useEffect(() => {
     if (data && data.trip) {
@@ -55,6 +69,11 @@ export default function SharedTripScreen({ token }: { token: string }) {
           setStep("identity");
         }
       } else {
+        const member = data.members?.find((m: any) => m.name === saved.name);
+        if (member) {
+          saved.role = member.role;
+          saveIdentity(saved, data.trip.id);
+        }
         setCurrentUser(saved);
         setIdentityChecked(true);
       }
@@ -97,7 +116,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
         // Add to front
         list.unshift({
           token,
-          title: data.trip.title || "Chuyến đi không tên",
+          title: data.trip.title || data.trip.name || "Chuyến đi không tên",
           date: dateStr,
           timestamp: Date.now()
         });
@@ -156,7 +175,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   }
 
   const { 
-    trip, 
+    trip: rawTrip, 
     activities = [], 
     members = [], 
     expenses = [], 
@@ -167,10 +186,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
     changeRequests = []
   } = data;
 
-  const tripDays = daysBetween(trip.startDate, trip.endDate);
-  const eventDays = Array.from(new Set(activities.map((e: any) => e.date)));
-  const days = Array.from(new Set([...tripDays, ...eventDays])).filter(Boolean).sort() as string[];
-
+  const trip = rawTrip ? { ...rawTrip, title: rawTrip.title || rawTrip.name } : {} as any;
 
 
   const isDayTrip = trip.startDate === trip.endDate;
@@ -208,22 +224,25 @@ export default function SharedTripScreen({ token }: { token: string }) {
   if (currentUser?.isGuest && !currentUser?.canEdit) {
     canRequestEdit = false;
   }
+  if (data.trip?.status === 'archived') {
+    canRequestEdit = false;
+  }
 
   // Navigation Tabs construction
   const tabsList = [
     {id: "activities", label: "Lịch trình", show: (activities.length > 0 || (data.includeBackupPlans && backupPlans.length > 0) || canRequestEdit), icon: Route },
-    {id: "members", label: "Đồng hành", show: members.length > 0 || canRequestEdit, icon: Users },
+    {id: "members", label: "Thành viên", show: members.length > 0 || canRequestEdit, icon: Users },
     {id: "expenses", label: "Chi phí", show: data.includeExpenses && (expenses.length > 0 || canRequestEdit), icon: WalletCards },
     {id: "checklist", label: "Chuẩn bị", show: data.includeChecklist && (checklist.length > 0 || canRequestEdit), icon: CheckCircle },
-    {id: "journals", label: "Nhật ký", show: data.includeJournals && (journals.length > 0 || canRequestEdit), icon: BookOpenText },
+    {id: "journals", label: "Bản tin", show: data.includeJournals && (journals.length > 0 || canRequestEdit), icon: BookOpenText },
     {id: "others", label: "Tài liệu", show: data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit), icon: FileText },
   ].filter(t => t.show);
 
   if (showIdentityModal) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#FAF7F1] p-4 animate-fadeIn">
-        <div className="w-full max-w-md rounded-[32px] bg-white p-6 shadow-xl border border-slate-100 animate-scaleIn">
-          <div className="flex flex-col items-center text-center">
+      <div className="fixed inset-0 flex items-center justify-center bg-[#FAF7F1] p-4 animate-fadeIn overflow-hidden z-50">
+        <div className="w-full max-w-md max-h-[90dvh] rounded-[32px] bg-white p-6 shadow-xl border border-slate-100 animate-scaleIn flex flex-col">
+          <div className="flex flex-col items-center text-center shrink-0">
             {/* Icon */}
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 mb-4">
               {step === "pin"
@@ -243,7 +262,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             </p>
           </div>
 
-          <div className="mt-6">
+          <div className="mt-6 flex-1 min-h-0 flex flex-col">
             {step === "pin" ? (
               <div className="space-y-4">
                 <input
@@ -279,13 +298,13 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 </button>
               </div>
             ) : (
-              <div className="space-y-3">
-                <div className="max-h-[200px] overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-2xl bg-slate-50/50">
+              <div className="space-y-3 flex-1 min-h-0 flex flex-col">
+                <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-2xl bg-slate-50/50 custom-scrollbar">
                   {members.map((m: Member) => (
                     <button
                       key={m.id}
                       onClick={() => {
-                        const guest = { name: m.name, isGuest: true, canEdit: true };
+                        const guest = { name: m.name, role: m.role, isGuest: true, canEdit: true };
                         saveIdentity(guest, trip.id);
                         setCurrentUser(guest);
                         setShowIdentityModal(false);
@@ -299,22 +318,23 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       <span className="text-[14px] font-bold text-slate-800">{m.name}</span>
                     </button>
                   ))}
-                  <button
-                    onClick={() => {
-                      const guest = { name: "Người xem", isGuest: true, canEdit: false };
-                      saveIdentity(guest, trip.id);
-                      setCurrentUser(guest);
-                      setShowIdentityModal(false);
-                      setIdentityChecked(true);
-                    }}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors"
-                  >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-200 text-slate-400">
-                      <Globe className="h-4 w-4" />
-                    </div>
-                    <span className="text-[14px] font-bold text-slate-600">Tôi chỉ muốn xem bản tin chuyến đi</span>
-                  </button>
                 </div>
+                
+                <button
+                  onClick={() => {
+                    const guest = { name: "Người xem", isGuest: true, canEdit: false };
+                    saveIdentity(guest, trip.id);
+                    setCurrentUser(guest);
+                    setShowIdentityModal(false);
+                    setIdentityChecked(true);
+                  }}
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors border border-slate-100 rounded-2xl bg-slate-50/50 shrink-0"
+                >
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-200 text-slate-400">
+                    <Globe className="h-4 w-4" />
+                  </div>
+                  <span className="text-[14px] font-bold text-slate-600">Tôi chỉ muốn xem bản tin chuyến đi</span>
+                </button>
               </div>
             )}
           </div>
@@ -327,7 +347,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
     <div className="min-h-screen bg-[#FFFDF8]">
       {/* Banner */}
       {isBannerVisible && canRequestEdit && (
-        <div className="sticky top-0 z-50 bg-[#0C1938] text-white py-2 px-4 text-center text-[12px] font-semibold flex justify-between items-center shadow-md select-none border-b border-white/5">
+        <div className="bg-[#0C1938] text-white py-2 px-4 text-center text-[12px] font-semibold flex justify-between items-center shadow-md select-none border-b border-white/5">
           <div className="flex-1 text-center pr-6">
             Chế độ Đề xuất: Các thay đổi của bạn sẽ được gửi cho chủ chuyến đi xét duyệt.
           </div>
@@ -342,7 +362,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       )}
 
       {/* Header */}
-      <header className="sticky top-0 z-45 bg-[#FFFDF8]/90 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between shadow-sm">
+      <header className="bg-[#FFFDF8] border-b border-slate-100 px-4 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
           <img src="/logo.png" alt="KAT Journey" className="h-8 w-8 rounded-lg shadow-sm" />
           <span className="text-lg font-black text-[#030D2E] tracking-tight">KAT Journey</span>
@@ -438,7 +458,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           )}
         </section>
 
-        <section className="bg-slate-100/80 p-1.5 rounded-2xl flex gap-1 overflow-x-auto scrollbar-none border border-slate-200/50 sticky top-[57px] z-40 backdrop-blur-md">
+        <section className="bg-slate-100/80 p-1.5 rounded-2xl flex gap-1 overflow-x-auto scrollbar-none border border-slate-200/50">
           {tabsList.map((tab) => {
             const IconComponent = tab.icon;
             const isActive = activeTab === tab.id;
@@ -605,6 +625,14 @@ export default function SharedTripScreen({ token }: { token: string }) {
               changeRequests={changeRequests}
               guestName={currentUser?.name || "Khách"}
               members={members}
+              renderChatBox={currentUser ? () => (
+                <ChatBox 
+                  token={token} 
+                  currentUser={currentUser} 
+                  inline={true}
+                  isReadOnly={!canRequestEdit || data.trip.status === 'archived'}
+                />
+              ) : undefined}
             />
           )}
 
@@ -626,6 +654,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           </p>
         </div>
       </main>
+
     </div>
   );
 }

@@ -53,7 +53,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
     if (section === 'activities') sectionName = 'Lịch trình';
     if (section === 'expenses') sectionName = 'Chi phí';
     if (section === 'checklist') sectionName = 'Chuẩn bị';
-    if (section === 'journals') sectionName = 'Nhật ký';
+    if (section === 'journals') sectionName = 'Bản tin';
     if (section === 'backupPlans') sectionName = 'Phương án dự phòng';
     if (section === 'travelDocuments') sectionName = 'Giấy tờ';
 

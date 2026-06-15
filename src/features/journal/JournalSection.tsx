@@ -22,7 +22,8 @@ import {
   Save,
   Sparkles,
   Image as ImageIcon,
-  Loader2
+  Loader2,
+  MessageCircle
 } from "lucide-react";
 import { db, JournalEntry, JournalMood, Member } from "../../db";
 import { getAvatarSvg } from "../../utils/avatars";
@@ -110,7 +111,7 @@ function JournalForm({
   }, [editing, isOpen, prefilledContent]);
 
   const titleError = !form.title.trim() ? "Vui lòng nhập tiêu đề." : "";
-  const contentError = !form.content.trim() ? "Vui lòng nhập nội dung nhật ký." : "";
+  const contentError = !form.content.trim() ? "Vui lòng nhập nội dung bài viết." : "";
   const hasError = !!titleError || !!contentError;
 
   async function save() {
@@ -138,10 +139,10 @@ function JournalForm({
 
     if (editing?.id) {
       await db.journals.update(editing.id, { ...payload, updatedAt: now });
-      onShowToast?.("Đã cập nhật nhật ký");
+      onShowToast?.("Đã cập nhật bài viết");
     } else {
       await db.journals.add(payload);
-      onShowToast?.("Đã lưu nhật ký");
+      onShowToast?.("Đã đăng bản tin");
     }
     
     onClearPrefilled();
@@ -171,7 +172,7 @@ function JournalForm({
         onClearPrefilled();
         onClose();
       }} 
-      title={editing ? "Sửa nhật ký hành trình" : "Viết nhật ký hành trình"}
+      title={editing ? "Sửa bài viết bản tin" : "Đăng bài viết bản tin"}
       footer={
         <div className="flex gap-3 w-full">
           <button
@@ -191,7 +192,7 @@ function JournalForm({
             className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white px-6 font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#030D2E] disabled:active:scale-100 shadow-sm"
           >
             <Save className="h-4.5 w-4.5" strokeWidth={2.5} />
-            Lưu nhật ký
+            Đăng bài viết
           </button>
         </div>
       }
@@ -217,7 +218,7 @@ function JournalForm({
             label={
               <span className="flex items-center gap-1.5">
                 <Type className="h-4 w-4 text-slate-500" />
-                Tiêu đề nhật ký *
+                Tiêu đề bài viết *
               </span>
             } 
             value={form.title} 
@@ -351,9 +352,9 @@ function DeleteJournalConfirmModal({
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={onConfirm}
-      title="Xóa nhật ký này?"
-      description="Nhật ký sẽ không còn xuất hiện trong chuyến đi. Sau khi xóa, không thể hoàn tác."
-      confirmLabel="Xóa nhật ký"
+      title="Xóa bài viết này?"
+      description="Bài viết sẽ không còn xuất hiện trên bản tin. Sau khi xóa, không thể hoàn tác."
+      confirmLabel="Xóa bài viết"
     />
   );
 }
@@ -373,7 +374,7 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
           <BookOpenText className="h-6 w-6" />
         </div>
-        <h3 className="text-[16px] font-bold text-[#030D2E]">Chưa có nhật ký nào</h3>
+        <h3 className="text-[16px] font-bold text-[#030D2E]">Chưa có bài viết nào</h3>
         <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
           Bắt đầu bằng một cảm xúc, một nơi đã ghé qua hoặc một khoảnh khắc bạn muốn nhớ.
         </p>
@@ -423,13 +424,15 @@ export function JournalSection({
   journals,
   onShowToast,
   onBack,
-  isReadOnly
+  isReadOnly,
+  renderChatBox
 }: { 
   tripId: number; 
   journals: JournalEntry[];
   onShowToast?: (msg: string) => void;
   onBack?: () => void;
   isReadOnly?: boolean;
+  renderChatBox?: () => React.ReactNode;
 }) {
   const members = useLiveQuery(async () => {
     return (await db.members.where("tripId").equals(tripId).toArray()).filter(m => !m.isDeleted);
@@ -438,6 +441,7 @@ export function JournalSection({
   const [editing, setEditing] = useState<JournalEntry | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [prefilledContent, setPrefilledContent] = useState("");
+  const [journalMode, setJournalMode] = useState<"posts" | "chat">("posts");
 
   const [currentUserIdentity, setCurrentUserIdentity] = useState<string>("Trưởng nhóm");
   const [activeReactionPopover, setActiveReactionPopover] = useState<number | null>(null);
@@ -529,7 +533,7 @@ export function JournalSection({
   async function executeDelete() {
     if (entryToDelete?.id) {
       await db.journals.update(entryToDelete.id, { isDeleted: true });
-      onShowToast?.("Đã xóa nhật ký");
+      onShowToast?.("Đã xóa bài viết");
     }
     setIsDeleteOpen(false);
     setEntryToDelete(null);
@@ -550,22 +554,50 @@ export function JournalSection({
             </button>
           )}
           <div>
-            <h1 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-[#030D2E]">Nhật ký hành trình</h1>
+            <h1 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-[#030D2E]">Bản tin hành trình</h1>
             <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Lưu lại cảm xúc, câu chuyện và những khoảnh khắc đáng nhớ.</p>
           </div>
         </div>
-        {!isReadOnly && (
+      </div>
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+        {renderChatBox ? (
+          <div className="flex bg-slate-100 p-1.5 rounded-2xl w-full sm:max-w-[320px] shadow-inner">
+            <button
+              onClick={() => setJournalMode("posts")}
+              className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 ${
+                journalMode === "posts" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              <BookOpenText className="w-4 h-4" /> Bản tin
+            </button>
+            <button
+              onClick={() => setJournalMode("chat")}
+              className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 ${
+                journalMode === "chat" ? "bg-white text-[#00BFB7] shadow-sm" : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              <MessageCircle className="w-4 h-4" /> Trò chuyện
+            </button>
+          </div>
+        ) : (
+          <div />
+        )}
+
+        {!isReadOnly && journalMode === "posts" && (
             <button
               onClick={openNewForm}
               className="hidden md:flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] px-5 text-[14px] font-black text-white transition-all hover:bg-[#030D2E]/90 shadow-sm shrink-0 motion-press"
             >
               <PenLine className="w-4.5 h-4.5" strokeWidth={2.5} />
-              Viết nhật ký
+              Đăng bài viết
             </button>
         )}
       </div>
 
-      {/* Journal Overview Card */}
+      {journalMode === "posts" ? (
+        <>
+          {/* Journal Overview Card */}
       <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft">
         <div className="flex items-center gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
@@ -575,10 +607,10 @@ export function JournalSection({
             <div>
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <BookOpenText className="h-3.5 w-3.5 text-kat-primary shrink-0" />
-                Nhật ký đã viết
+                Bài viết đã đăng
               </span>
               <span className="text-[15px] md:text-[17px] font-black text-[#030D2E] mt-1 block truncate">
-                {journalCount > 0 ? `${journalCount} trang` : "Chưa có trang nào"}
+                {journalCount > 0 ? `${journalCount} bài viết` : "Chưa có bài viết nào"}
               </span>
             </div>
             <div>
@@ -685,14 +717,14 @@ export function JournalSection({
                             <button 
                               className="flex h-8 w-8 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 transition-all motion-press" 
                               onClick={() => openEditForm(entry)}
-                              title="Sửa nhật ký"
+                              title="Sửa bài viết"
                             >
                               <Edit3 className="h-4 w-4" />
                             </button>
                             <button 
                               className="flex h-8 w-8 items-center justify-center rounded-full text-rose-500 hover:bg-rose-50 transition-all motion-press" 
                               onClick={() => triggerDelete(entry)}
-                              title="Xóa nhật ký"
+                              title="Xóa bài viết"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -708,7 +740,7 @@ export function JournalSection({
 
                       <div className="p-4 pt-3">
                         <h4 className="text-[17px] font-black text-[#030D2E] leading-snug break-words">
-                          {entry.title || "Nhật ký chuyến đi"}
+                          {entry.title || "Bản tin chuyến đi"}
                         </h4>
                         <p className="mt-1.5 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600">
                           {entry.content}
@@ -780,11 +812,18 @@ export function JournalSection({
         <JournalEmptyState onPromptClick={handlePromptClick} onWrite={openNewForm} />
       )}
 
+        </>
+      ) : (
+        <div className="mt-4">
+          {renderChatBox?.()}
+        </div>
+      )}
+
       {/* FAB Mobile button */}
-      {!isReadOnly && (
+      {!isReadOnly && journalMode === "posts" && (
         <FAB 
           icon={<PenLine className="h-6 w-6" strokeWidth={2.5} />} 
-          label="Viết nhật ký" 
+          label="Đăng bản tin" 
           onClick={openNewForm} 
           className="md:hidden h-14 w-14 bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] hover:scale-105 hover:bg-white/25 duration-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press"
         />
