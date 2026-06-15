@@ -595,14 +595,24 @@ export function JournalSection({
                   return (
                     <article 
                       key={entry.id} 
-                      className={`break-inside-avoid mb-4 group rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] shadow-soft hover:shadow-md transition-all flex flex-col motion-card-enter overflow-hidden motion-delay-${Math.min(idx + 1, 5)}`}
+                    className={`break-inside-avoid mb-4 group rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] shadow-soft hover:shadow-md transition-all flex flex-col motion-card-enter overflow-hidden motion-delay-${Math.min(idx + 1, 5)}`}
                     >
                       <div className="flex items-center justify-between gap-4 p-4 pb-3">
                         <div className="flex items-center gap-2.5">
                           {(() => {
-                            const authorMember = members.find(m => 
+                            let authorMember = members.find(m => 
                               (entry.authorName || "").trim().toLowerCase() === m.name.trim().toLowerCase()
                             );
+                            if (!authorMember && (
+                              (entry.authorName || "").trim().toLowerCase() === "trưởng nhóm" ||
+                              (entry.authorName || "").trim().toLowerCase() === "trường nhóm"
+                            )) {
+                              authorMember = members.find(m => 
+                                m.role === "Trưởng nhóm" || 
+                                m.role === "Trưởng đoàn" || 
+                                m.role === "Người đại diện"
+                              );
+                            }
                             let avatar = authorMember?.avatar;
                             if (!avatar) {
                               const authorName = entry.authorName || "Trường nhóm";

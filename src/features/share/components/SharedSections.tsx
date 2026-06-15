@@ -1265,9 +1265,19 @@ export function SharedJournalsSection({
                         <div className="flex items-center justify-between gap-4 p-4 pb-3">
                           <div className="flex items-center gap-2.5">
                             {(() => {
-                              const authorMember = members.find(m => 
+                              let authorMember = members.find(m => 
                                 (j.authorName || "").trim().toLowerCase() === m.name.trim().toLowerCase()
                               );
+                              if (!authorMember && (
+                                (j.authorName || "").trim().toLowerCase() === "trưởng nhóm" ||
+                                (j.authorName || "").trim().toLowerCase() === "trường nhóm"
+                              )) {
+                                authorMember = members.find(m => 
+                                  m.role === "Trưởng nhóm" || 
+                                  m.role === "Trưởng đoàn" || 
+                                  m.role === "Người đại diện"
+                                );
+                              }
                               let avatar = authorMember?.avatar;
                               if (!avatar) {
                                 const authorName = j.authorName || "Trường nhóm";
