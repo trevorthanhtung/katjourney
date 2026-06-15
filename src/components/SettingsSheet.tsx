@@ -45,6 +45,7 @@ import {
   Clock,
   Calendar,
   Copy,
+  CircleDollarSign,
 } from "lucide-react";
 import { BottomSheet } from "./ui";
 import { useAuth } from "../hooks/useAuth";
@@ -56,6 +57,7 @@ import { DeleteAccountModal } from "./DeleteAccountModal";
 import { FactoryResetModal } from "./FactoryResetModal";
 import { useModalHistory } from "../hooks/useModalHistory";
 import { today, checklistSections, packingTripTypes } from "../utils/helpers";
+import { fetchExchangeRates, ExchangeRate } from "../services/currencyService";
 
 interface SettingsSheetProps {
   isOpen: boolean;
@@ -74,7 +76,7 @@ interface SettingsSheetProps {
   };
 }
 
-type SettingsView = "menu" | "auth" | "privacy" | "about" | "donate";
+type SettingsView = "menu" | "auth" | "privacy" | "about" | "donate" | "exchangeRates";
 
 const GoogleIcon = () => (
   <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
@@ -141,6 +143,11 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
   } = syncProps;
 
   const [view, setView] = useState<SettingsView>("menu");
+  const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
+  
+  useEffect(() => {
+    fetchExchangeRates().then(setExchangeRates);
+  }, []);
   const [actionLoading, setActionLoading] = useState<"google" | "guest" | "signout" | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -673,6 +680,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
         return "Thông tin ứng dụng";
       case "donate":
         return "Ủng hộ tác giả";
+      case "exchangeRates":
+        return "Tỉ giá ngoại tệ";
       default:
         return "Cài đặt";
     }
@@ -832,6 +841,24 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 <div>
                   <h4 className="text-[15px] font-bold text-slate-800">Thông tin ứng dụng</h4>
                   <p className="text-[12px] text-slate-400 font-medium">Khám phá thông tin và hành trình phát triển</p>
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 text-slate-400" />
+              <ChevronRight className="h-5 w-5 text-slate-400" />
+            </button>
+
+            {/* Exchange Rates */}
+            <button
+              onClick={() => setView("exchangeRates")}
+              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100 hover:bg-slate-100/70 transition-all text-left focus:outline-none"
+            >
+              <div className="flex items-center gap-3.5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+                  <CircleDollarSign className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-[15px] font-bold text-slate-800">Tỉ giá ngoại tệ</h4>
+                  <p className="text-[12px] text-slate-400 font-medium">Cập nhật theo thời gian thực từ Vietcombank</p>
                 </div>
               </div>
               <ChevronRight className="h-5 w-5 text-slate-400" />
@@ -1310,6 +1337,58 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             <button
               type="button"
+              onClick={() => setView("menu")}
+              className="w-full inline-flex min-h-[48px] items-center justify-center rounded-[16px] bg-slate-100 border border-slate-200 text-slate-700 px-6 font-bold hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+            >
+              Quay lại menu
+            </button>
+          </div>
+        )}
+
+        {view === "exchangeRates" && (
+          <div className="space-y-5 animate-fadeIn">
+            <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 overflow-hidden">
+              <div className="flex items-center justify-between mb-4 px-1">
+                <div className="flex items-center gap-2 text-slate-600">
+                  <CircleDollarSign className="w-4 h-4" />
+                  <span className="text-[13px] font-bold">Vietcombank</span>
+                </div>
+                <div className="text-[12px] font-medium text-slate-400">Đơn vị: VNĐ</div>
+              </div>
+
+              <div className="space-y-2">
+                {exchangeRates.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-6 text-slate-400">
+                    <Loader2 className="w-5 h-5 animate-spin mb-2" />
+                    <span className="text-[13px] font-medium">Đang tải tỉ giá...</span>
+                  </div>
+                ) : (
+                  exchangeRates.map((rate, idx) => (
+                    <div 
+                      key={rate.currencyCode} 
+                      className="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-100 shadow-sm"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center font-bold text-slate-700 text-[13px] border border-slate-100">
+                          {rate.currencyCode}
+                        </div>
+                        <span className="text-[13px] font-bold text-slate-800">{rate.currencyName}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-[14px] font-black text-kat-primary">
+                          {new Intl.NumberFormat('vi-VN').format(rate.transfer)}
+                        </div>
+                        <div className="text-[11px] font-medium text-slate-400 mt-0.5">
+                          Chuyển khoản
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <button
               onClick={() => setView("menu")}
               className="w-full inline-flex min-h-[48px] items-center justify-center rounded-[16px] bg-slate-100 border border-slate-200 text-slate-700 px-6 font-bold hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
             >
