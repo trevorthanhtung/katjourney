@@ -14,7 +14,7 @@ import { getIdentity, saveIdentity, UserIdentity } from "../../services/identity
 import { getAvatarSvg } from "../../utils/avatars";
 import { ChatBox } from "./components/ChatBox";
 import { WeatherWidget } from "../timeline/WeatherWidget";
-import { BottomSheet, FormActions } from "../../components/ui";
+import { BottomSheet, FormActions, Select } from "../../components/ui";
 import { SharedBackupPlansSheet } from "./components/SharedBackupPlansSheet";
 
 interface SharedData {
@@ -91,7 +91,6 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [isRoadmapFormOpen, setIsRoadmapFormOpen] = useState(false);
   const [roadmapInputLink, setRoadmapInputLink] = useState("");
   const [roadmapEditDay, setRoadmapEditDay] = useState("");
-  const [roadmapTabsExpanded, setRoadmapTabsExpanded] = useState(false);
 
   const handleSaveRoadmap = async () => {
     if (!roadmapEditDay) return;
@@ -727,57 +726,24 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       <h4 className="text-[15px] font-extrabold text-[#030D2E]">Lộ trình di chuyển</h4>
                     </div>
 
-                    {/* Day selector tabs inside the widget */}
-                    {days.length > 1 && (() => {
-                      const MAX_TABS = 3;
-                      const visibleDays = roadmapTabsExpanded ? days : days.slice(0, MAX_TABS);
-                      const hiddenCount = days.length - MAX_TABS;
-                      return (
-                        <div className={roadmapTabsExpanded ? "max-h-[108px] overflow-y-auto scrollbar-none" : ""}>
-                          <div className="flex gap-1 flex-wrap">
-                            {visibleDays.map((d) => {
-                              const isActive = selectedRoadmapDay === d;
-                              const hasLink = !!trip.dayRoadmaps?.[d];
-                              return (
-                                <button
-                                  key={d}
-                                  type="button"
-                                  onClick={() => setSelectedRoadmapDay(d)}
-                                  className={classNames(
-                                    "px-2.5 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap border shrink-0 transition-all active:scale-95 cursor-pointer",
-                                    isActive
-                                      ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
-                                      : hasLink
-                                        ? "bg-emerald-50 text-emerald-700 border-emerald-100/80 hover:bg-emerald-100"
-                                        : "bg-slate-50 text-slate-500 border-slate-200/60 hover:bg-slate-100"
-                                  )}
-                                >
-                                  Ngày {days.indexOf(d) + 1}
-                                </button>
-                              );
-                            })}
-                            {!roadmapTabsExpanded && hiddenCount > 0 && (
-                              <button
-                                type="button"
-                                onClick={() => setRoadmapTabsExpanded(true)}
-                                className="px-2.5 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap border shrink-0 border-slate-200/60 bg-slate-50 text-slate-500 hover:bg-slate-100 transition-all active:scale-95 cursor-pointer"
-                              >
-                                +{hiddenCount} ngày
-                              </button>
-                            )}
-                            {roadmapTabsExpanded && days.length > MAX_TABS && (
-                              <button
-                                type="button"
-                                onClick={() => setRoadmapTabsExpanded(false)}
-                                className="px-2.5 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap border shrink-0 border-slate-200/60 bg-slate-50 text-slate-400 hover:bg-slate-100 transition-all active:scale-95 cursor-pointer"
-                              >
-                                ✕ gọn
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })()}
+                    {/* Day selector using Select component */}
+                    {days.length > 1 && (
+                      <div className="pt-2">
+                        <Select
+                          value={selectedRoadmapDay}
+                          onChange={(val) => setSelectedRoadmapDay(val)}
+                          options={days}
+                          labels={Object.fromEntries(
+                            days.map((d, idx) => {
+                              const dateParts = d.split('-');
+                              const shortDate = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}` : d;
+                              return [d, `Ngày ${idx + 1} (${shortDate})`];
+                            })
+                          )}
+                          placeholder="Chọn ngày"
+                        />
+                      </div>
+                    )}
 
 
                     {/* Roadmap details for selected day */}
