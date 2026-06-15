@@ -4,6 +4,7 @@ import { ChecklistItem, db } from "../../db";
 import { getChecklistStats } from "../../utils/helpers";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DeleteConfirmModal, Select } from "../../components/ui";
+import { useModalHistory } from "../../hooks/useModalHistory";
 
 const CATEGORIES = [
   "Giấy tờ",
@@ -205,6 +206,14 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [itemToDelete, setItemToDelete] = useState<ChecklistItem | null>(null);
+
+  useModalHistory(isFormOpen, () => {
+    setIsFormOpen(false);
+    setEditingId(null);
+  }, "checklist-form-modal");
+
+  useModalHistory(Boolean(itemToDelete), () => setItemToDelete(null), "delete-checklist-confirm");
+
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Giấy tờ");
   const [quantity, setQuantity] = useState(1);

@@ -34,6 +34,7 @@ import { getTripReminders } from "../../utils/reminderRules";
 import { exportTripPdf, exportTripExcel } from "../../utils/exports";
 import { CloudRainWind } from "lucide-react";
 import { useWeather } from "../../hooks/useWeather";
+import { useModalHistory } from "../../hooks/useModalHistory";
 import { getWeatherIcon, getWeatherGradient, getWeatherText } from "../../services/weatherService";
 import { WeatherDetailsModal } from "../timeline/WeatherDetailsModal";
 
@@ -85,6 +86,7 @@ export function HomeScreen({
   // Weather data
   const { forecast, loading: weatherLoading, error: weatherError } = useWeather(trip.location, trip.latitude, trip.longitude, 1);
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
+  useModalHistory(weatherModalOpen, () => setWeatherModalOpen(false), "weather-modal");
 
   if (!trip) return null;
   const timing = getTripTiming(trip);

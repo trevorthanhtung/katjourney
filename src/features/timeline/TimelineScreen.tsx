@@ -34,6 +34,7 @@ import { BackupPlansSheet } from "./BackupPlansSheet";
 import { TimelineCalendarView } from "./TimelineCalendarView";
 import { getEmbedMapUrl } from "../../utils/mapUtils";
 import { WeatherWidget } from "./WeatherWidget";
+import { useModalHistory } from "../../hooks/useModalHistory";
 
 // Define categories for PWA Travel 2027
 const ACTIVITY_CATEGORIES = [
@@ -237,11 +238,26 @@ function ActivityCard({
   );
 }
 
-function DayHeader({ day, index, isToday, totalExpense = 0 }: { day: string; index: number; isToday: boolean; totalExpense?: number }) {
+function DayHeader({ 
+  day, 
+  index, 
+  isToday, 
+  totalExpense = 0,
+  hasMultipleDays = false
+}: { 
+  day: string; 
+  index: number; 
+  isToday: boolean; 
+  totalExpense?: number;
+  hasMultipleDays?: boolean;
+}) {
   return (
     <div 
       id={`day-section-${day}`} 
-      className="scroll-mt-[180px] sticky top-[115px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+      className={classNames(
+        "scroll-mt-[180px] sticky z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40",
+        hasMultipleDays ? "top-[121px] md:top-[129px]" : "top-[60px] md:top-[68px]"
+      )}
     >
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#030D2E] text-white font-black text-[14px] shadow-sm">
@@ -529,7 +545,6 @@ function EventForm({
     </BottomSheet>
   );
 }
-
 export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isReadOnly }: { trip: Trip; events: EventItem[]; expenses?: Expense[]; onAddExpense?: (date: string, eventId: number) => void; isReadOnly?: boolean }) {
   const tripDays = daysBetween(trip.startDate, trip.endDate);
   const eventDays = Array.from(new Set(events.map((e) => e.date)));
@@ -541,12 +556,27 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
   const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<EventItem | null>(null);
-const [formDefaultDate, setFormDefaultDate] = useState<string>("");
+  const [formDefaultDate, setFormDefaultDate] = useState<string>("");
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<EventItem | null>(null);
 
   const [isBackupPlansOpen, setIsBackupPlansOpen] = useState(false);
   const [backupPlanCtx, setBackupPlanCtx] = useState<{ activityId?: number; date?: string }>({});
+
+  useModalHistory(isFormOpen, () => {
+    setIsFormOpen(false);
+    setEditing(null);
+  }, "activity-form-modal");
+
+  useModalHistory(isBackupPlansOpen, () => {
+    setIsBackupPlansOpen(false);
+    setBackupPlanCtx({});
+  }, "backup-plans-modal");
+
+  useModalHistory(isDeleteConfirmOpen, () => {
+    setIsDeleteConfirmOpen(false);
+    setEventToDelete(null);
+  }, "delete-event-confirm");
 
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
 
@@ -794,7 +824,7 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
 
           return (
             <div key={day} className="space-y-4">
-              <DayHeader day={day} index={index} isToday={isToday} totalExpense={totalDayExpense} />
+              <DayHeader day={day} index={index} isToday={isToday} totalExpense={totalDayExpense} hasMultipleDays={days.length > 1} />
               <div className="px-1">
                 {dayEvents.map((item, idx) => (
                   <ActivityCard 
@@ -942,7 +972,7 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
 
       {/* Sticky Day Nav Block */}
       {viewMode === "list" && days.length > 1 && (
-        <div className="sticky top-0 z-30 -mx-4 px-4 py-3 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-slate-200/50 mb-6 shadow-sm md:mx-0 md:px-0 md:rounded-b-2xl">
+        <div className="sticky top-[60px] md:top-[68px] z-30 -mx-4 px-4 py-3 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-slate-200/50 mb-6 shadow-sm md:mx-0 md:px-0 md:rounded-b-2xl">
           {renderDayNav()}
         </div>
       )}
@@ -966,7 +996,7 @@ const [formDefaultDate, setFormDefaultDate] = useState<string>("");
           {events.length === 0 && viewMode === "list" ? (
             /* Compact Empty Timeline Card */
             <div id="timeline-top">
-              <DayHeader day={trip.startDate} index={0} isToday={tripIsActive && trip.startDate === today} />
+              <DayHeader day={trip.startDate} index={0} isToday={tripIsActive && trip.startDate === today} hasMultipleDays={days.length > 1} />
               <div className="px-1 relative flex gap-4 pl-1">
                 {/* Circle marker */}
                 <div className="relative z-10 flex shrink-0">

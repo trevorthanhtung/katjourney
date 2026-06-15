@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Calendar, MapPin, Plane, Trash2, Edit3, Compass, Users, Map, WalletCards, Trophy, Sparkles } from "lucide-react";
+import { Calendar, MapPin, Plane, Trash2, Edit3, Compass, Users, Map, WalletCards, Trophy, Sparkles, Link, ChevronRight } from "lucide-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Trip, db, deleteTripCascade } from "../../db";
 import { formatDate, getTripTiming } from "../../utils/helpers";
 import { TripForm } from "../more/MoreScreen";
-import { TypedDeleteConfirmModal } from "../../components/ui";
+import { TypedDeleteConfirmModal, BottomSheet } from "../../components/ui";
 import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
 
 export function TripManagerScreen({
@@ -23,14 +23,17 @@ export function TripManagerScreen({
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [tripToDelete, setTripToDelete] = useState<Trip | null>(null);
 
+
   const allMembersRaw = useLiveQuery(async () => (await db.members.toArray()).filter(m => !m.isDeleted));
   const allExpensesRaw = useLiveQuery(async () => (await db.expenses.toArray()).filter(e => !e.isDeleted));
   const allChecklistRaw = useLiveQuery(async () => (await db.checklist.toArray()).filter(c => !c.isDeleted));
+  const archivedTripsRaw = useLiveQuery(async () => (await db.trips.toArray()).filter(t => !t.isDeleted && t.status === 'archived'));
 
-  const isLoading = allMembersRaw === undefined || allExpensesRaw === undefined || allChecklistRaw === undefined;
+  const isLoading = allMembersRaw === undefined || allExpensesRaw === undefined || allChecklistRaw === undefined || archivedTripsRaw === undefined;
   const allMembers = allMembersRaw ?? [];
   const allExpenses = allExpensesRaw ?? [];
   const allChecklist = allChecklistRaw ?? [];
+  const archivedTripsCount = archivedTripsRaw?.length ?? 0;
 
   const memberCounts = allMembers.reduce((acc, m) => {
     acc[m.tripId] = (acc[m.tripId] || 0) + 1;
@@ -232,7 +235,7 @@ export function TripManagerScreen({
           </h4>
 
           {/* Glanceable Grid Info */}
-          <div className="grid grid-cols-2 gap-2 text-[12px] font-bold text-slate-650 mb-1">
+          <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 text-[12px] font-bold text-slate-650 mb-1">
             <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-2 py-1.5 rounded-lg min-w-0">
               <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
               <span className="truncate">{trip.location || "Chưa xác định"}</span>
@@ -319,31 +322,42 @@ export function TripManagerScreen({
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1120px] px-4 py-6 md:px-6 md:pt-4 md:pb-16">
+    <div className={`mx-auto w-full max-w-[1120px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center px-2.5 min-[360px]:px-4 py-0 md:py-0" : "px-4 py-6 md:px-6 md:pt-4 md:pb-16"}`}>
       {trips.length === 0 ? (
-        <div className="mt-8 md:mt-16 flex flex-col items-center justify-center rounded-[32px] bg-[#FFFDF8] p-8 md:p-12 text-center border border-[#E8E1D8] shadow-floating hover:shadow-xl hover:border-[#00BFB7]/35 transition-all duration-500 mx-auto max-w-[540px] relative overflow-hidden motion-page-enter motion-hover-lift">
+        <div className="flex flex-col items-center justify-center rounded-[32px] bg-[#FFFDF8] p-5 sm:p-8 md:p-12 text-center border border-[#E8E1D8] shadow-floating hover:shadow-xl hover:border-[#00BFB7]/35 transition-all duration-500 mx-auto w-full max-w-[540px] relative overflow-hidden motion-page-enter motion-hover-lift">
           {/* Ambient Background Glows */}
           <div className="absolute -right-10 -top-10 w-44 h-44 bg-[#00BFB7]/5 blur-[40px] rounded-full pointer-events-none" />
           <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-indigo-500/5 blur-[50px] rounded-full pointer-events-none" />
           
           <Map className="absolute -right-12 -top-12 w-48 h-48 text-kat-primary/[0.03] rotate-12 pointer-events-none" />
           
-          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-[24px] bg-gradient-to-br from-[#00BFB7] via-[#00AFA8] to-[#0081BE] text-white shadow-[0_8px_24px_rgba(0,191,183,0.3)] relative z-10 border-2 border-white transform hover:rotate-12 transition-all duration-300">
+          <div className="mb-4 sm:mb-6 flex h-20 w-20 items-center justify-center rounded-[24px] bg-gradient-to-br from-[#00BFB7] via-[#00AFA8] to-[#0081BE] text-white shadow-[0_8px_24px_rgba(0,191,183,0.3)] relative z-10 border-2 border-white transform hover:rotate-12 transition-all duration-300">
             <Plane className="h-9 w-9 text-white -rotate-45" />
           </div>
           
-          <h3 className="mb-3 text-[24px] font-black text-kat-text tracking-tight relative z-10">Chưa có chuyến đi nào</h3>
-          <p className="mb-8 text-[14.5px] font-semibold text-slate-500 leading-relaxed max-w-[340px] relative z-10">
+          <h3 className="mb-2 sm:mb-3 text-[22px] sm:text-[24px] font-black text-kat-text tracking-tight relative z-10">Chưa có chuyến đi nào</h3>
+          <p className="mb-5 sm:mb-8 text-[13.5px] sm:text-[14.5px] font-semibold text-slate-500 leading-relaxed max-w-[340px] relative z-10">
             Tạo chuyến đi đầu tiên để bắt đầu lên lịch trình, quản lý chi phí và chuẩn bị hành lý.
           </p>
           
           <button
             onClick={onCreateNew}
-            className="group flex h-13 w-full items-center justify-center gap-2 rounded-[18px] bg-gradient-to-r from-[#00BFB7] to-[#00AFA8] text-[#030D2E] px-6 font-black text-[15px] hover:brightness-[1.03] active:scale-[0.97] transition-all duration-300 relative z-10 shadow-[0_6px_20px_rgba(0,191,183,0.25)] hover:shadow-[0_8px_28px_rgba(0,191,183,0.4)] motion-press"
+            className="group flex h-11 sm:h-13 w-full items-center justify-center gap-1.5 sm:gap-2 rounded-[18px] bg-gradient-to-r from-[#00BFB7] to-[#00AFA8] text-[#030D2E] px-4 sm:px-6 font-black text-[14px] sm:text-[15px] hover:brightness-[1.03] active:scale-[0.97] transition-all duration-300 relative z-10 shadow-[0_6px_20px_rgba(0,191,183,0.25)] hover:shadow-[0_8px_28px_rgba(0,191,183,0.4)] motion-press"
           >
             <span className="text-[18px] leading-none group-hover:rotate-90 transition-transform duration-300 font-bold">+</span>
             Tạo chuyến đi đầu tiên
           </button>
+
+          {archivedTripsCount > 0 && (
+            <button
+              onClick={onOpenArchive}
+              className="mt-3.5 flex h-11 sm:h-13 w-full items-center justify-center gap-2 rounded-[18px] border-2 border-kat-primary/30 hover:border-kat-primary bg-white text-[#030D2E] px-4 sm:px-6 font-extrabold text-[14px] sm:text-[15px] active:scale-[0.97] hover:bg-slate-50 transition-all duration-300 relative z-10 motion-press"
+            >
+              <Sparkles className="w-4 h-4 text-kat-primary shrink-0" />
+              Xem kỷ niệm chuyến đi ({archivedTripsCount})
+            </button>
+          )}
+          
         </div>
       ) : (
         <>
@@ -364,6 +378,7 @@ export function TripManagerScreen({
             </div>
             
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0 relative z-10">
+
               <button
                 onClick={onOpenArchive}
                 className="group relative flex h-[52px] items-center justify-center gap-2.5 rounded-[16px] bg-white/[0.06] hover:bg-white/[0.12] text-white px-7 font-bold text-[14.5px] border border-white/15 backdrop-blur-xl overflow-hidden active:scale-[0.98] hover:border-white/25 transition-all duration-300 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.3)]"
@@ -492,6 +507,8 @@ export function TripManagerScreen({
         onClose={() => setTripToDelete(null)}
         onConfirm={executeDeleteTrip}
       />
+
+
     </div>
   );
 }

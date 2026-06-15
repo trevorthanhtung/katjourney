@@ -27,6 +27,7 @@ import { db, TravelDocument } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { BottomSheet, Input, Textarea, Select, DatePicker, DeleteConfirmModal, classNames } from "../../components/ui";
 import { uploadDocumentImage } from "../../services/storageService";
+import { useModalHistory } from "../../hooks/useModalHistory";
 
 const typeOptions: Array<{ value: NonNullable<TravelDocument["type"]>; label: string }> = [
   { value: "ticket", label: "Vé di chuyển" },
@@ -555,6 +556,13 @@ export function TravelDocumentsSection({
   const [editingDoc, setEditingDoc] = useState<TravelDocument | null>(null);
   const [docToDelete, setDocToDelete] = useState<TravelDocument | null>(null);
   const [swipedDocId, setSwipedDocId] = useState<number | null>(null);
+
+  useModalHistory(formOpen, () => {
+    setFormOpen(false);
+    setEditingDoc(null);
+  }, "travel-document-form");
+
+  useModalHistory(Boolean(docToDelete), () => setDocToDelete(null), "delete-document-confirm");
 
   const filteredDocs = selectedTypeFilter === "all" 
     ? documents 

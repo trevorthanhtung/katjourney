@@ -971,6 +971,16 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps }: Setti
               Hơn cả một công cụ lên kế hoạch, KAT Journey là người bạn đồng hành giúp bạn kiểm soát chi tiêu, sắp xếp lịch trình và gói ghém trọn vẹn mọi khoảnh khắc đáng nhớ.
             </p>
 
+            <div className="w-full max-w-md rounded-[20px] border border-slate-100 bg-slate-50/70 p-4 text-left">
+              <h4 className="text-[13px] font-black text-[#030D2E]">Công nghệ & giấy phép</h4>
+              <p className="mt-2 text-[12.5px] font-semibold leading-relaxed text-slate-500">
+                KAT Journey được xây dựng với React, Vite, Dexie, Firebase và các thư viện mã nguồn mở khác. Firebase được dùng cho đăng nhập, đồng bộ và chia sẻ dữ liệu khi bạn bật các tính năng liên quan.
+              </p>
+              <p className="mt-2 text-[12px] font-medium leading-relaxed text-slate-400">
+                Các thư viện mã nguồn mở thuộc bản quyền và giấy phép của tác giả tương ứng.
+              </p>
+            </div>
+
             <div className="pt-4 text-center">
               <p className="text-[13px] font-semibold text-slate-400">
                 thực hiện bởi{" "}

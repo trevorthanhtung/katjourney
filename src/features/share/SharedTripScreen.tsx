@@ -10,6 +10,7 @@ import { EventItem, Expense, ChecklistItem, Member, JournalEntry, TravelDocument
 import { SharedActivitiesSection } from "./components/SharedActivitiesSection";
 import { SharedExpensesSection, SharedChecklistSection, SharedJournalsSection, SharedBackupPlansSection, SharedDocumentsSection } from "./components/SharedSections";
 import { getIdentity, saveIdentity, UserIdentity } from "../../services/identityService";
+import { getAvatarSvg } from "../../utils/avatars";
 
 interface SharedData {
   trip: any;
@@ -56,6 +57,38 @@ export default function SharedTripScreen({ token }: { token: string }) {
       }
     }
   }, [data]);
+
+  useEffect(() => {
+    if (data && data.trip) {
+      try {
+        const savedRaw = localStorage.getItem("kat_recent_shared_trips");
+        let list = savedRaw ? JSON.parse(savedRaw) : [];
+        if (!Array.isArray(list)) list = [];
+        
+        // Remove existing item with same token
+        list = list.filter((item: any) => item.token !== token);
+        
+        // Format date display
+        const dateParts = data.trip.startDate ? data.trip.startDate.split('-') : [];
+        const dateStr = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}` : (data.trip.startDate || "");
+        
+        // Add to front
+        list.unshift({
+          token,
+          title: data.trip.title || "Chuyến đi không tên",
+          date: dateStr,
+          timestamp: Date.now()
+        });
+        
+        // Keep max 3
+        list = list.slice(0, 3);
+        
+        localStorage.setItem("kat_recent_shared_trips", JSON.stringify(list));
+      } catch (e) {
+        console.error("Error saving recent shared trip", e);
+      }
+    }
+  }, [data, token]);
 
   if (loading) {
     return (
@@ -226,7 +259,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
             {step === "identity" && (
               <div className="w-full mt-6 space-y-3">
                 <div className="max-h-[300px] overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-                  {members.map((m: Member) => (
+                  {members
+                    .filter((m: Member) => m.role !== "Trưởng đoàn" && m.role !== "Trưởng nhóm" && m.role !== "Người đại diện")
+                    .map((m: Member) => (
                     <button
                       key={m.id}
                       onClick={() => {
@@ -238,8 +273,12 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       }}
                       className="w-full flex items-center gap-3 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 transition-all text-left group"
                     >
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-200 group-hover:bg-indigo-200 text-slate-600 group-hover:text-indigo-700 font-black">
-                        {m.name.charAt(0).toUpperCase()}
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden bg-slate-250 border border-slate-200/50 shadow-sm font-black text-slate-600">
+                        {m.avatar ? (
+                          getAvatarSvg(m.avatar, "w-full h-full")
+                        ) : (
+                          m.name.charAt(0).toUpperCase()
+                        )}
                       </div>
                       <span className="font-bold text-[15px]">{m.name}</span>
                     </button>

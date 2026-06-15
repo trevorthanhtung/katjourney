@@ -29,6 +29,7 @@ import { BottomSheet, FAB, Input, Textarea, DatePicker, DeleteConfirmModal } fro
 import { getIdentity } from "../../services/identityService";
 import { uploadJournalImage } from "../../services/storageService";
 import { getCurrentUser } from "../../services/authService";
+import { useModalHistory } from "../../hooks/useModalHistory";
 
 const moodOptionList: Array<{ value: JournalMood; label: string }> = [
   { value: "good", label: "Vui" },
@@ -435,6 +436,17 @@ export function JournalSection({
   // Delete flow state
   const [entryToDelete, setEntryToDelete] = useState<JournalEntry | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  useModalHistory(isFormOpen, () => {
+    setIsFormOpen(false);
+    setEditing(null);
+    setPrefilledContent("");
+  }, "journal-form-modal");
+
+  useModalHistory(isDeleteOpen, () => {
+    setIsDeleteOpen(false);
+    setEntryToDelete(null);
+  }, "delete-journal-confirm");
 
   const sorted = [...journals].sort((a, b) => {
     const ta = a.postedAt || `${a.date}T00:00:00`;

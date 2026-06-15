@@ -129,6 +129,26 @@ export function TimePicker({
     setIsOpen(false);
   };
 
+  const handleHourScroll = () => {
+    if (!hourRef.current) return;
+    const scrollTop = hourRef.current.scrollTop;
+    const index = Math.round(scrollTop / 44);
+    const h = hours[index];
+    if (h && tempHour !== h) {
+      setTempHour(h);
+    }
+  };
+
+  const handleMinScroll = () => {
+    if (!minRef.current) return;
+    const scrollTop = minRef.current.scrollTop;
+    const index = Math.round(scrollTop / 44);
+    const m = minutes[index];
+    if (m && tempMinute !== m) {
+      setTempMinute(m);
+    }
+  };
+
   return (
     <div className="block">
       <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
@@ -156,6 +176,7 @@ export function TimePicker({
             {/* Hours column */}
             <div 
               ref={hourRef}
+              onScroll={handleHourScroll}
               className="flex-1 h-full overflow-y-auto snap-y snap-mandatory scrollbar-hide py-[78px] px-2 relative z-10"
             >
               {hours.map(h => (
@@ -180,6 +201,7 @@ export function TimePicker({
             {/* Minutes column */}
             <div 
               ref={minRef}
+              onScroll={handleMinScroll}
               className="flex-1 h-full overflow-y-auto snap-y snap-mandatory scrollbar-hide py-[78px] px-2 relative z-10"
             >
               {minutes.map(m => (
@@ -596,28 +618,38 @@ export function BottomSheet({
   footer?: React.ReactNode;
   headerAction?: React.ReactNode;
 }) {
+  React.useEffect(() => {
+    if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center p-0 md:p-6">
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center p-0 sm:p-6">
       {/* Backdrop */}
       <div className="absolute inset-0 motion-modal-overlay bg-slate-900/35 backdrop-blur-sm" onClick={onClose} />
       
       {/* Sheet / Dialog */}
-      <div className="relative z-10 flex w-full flex-col max-h-[90vh] md:max-h-[min(720px,calc(100vh-48px))] motion-sheet-dialog md:motion-modal-dialog rounded-t-[32px] md:rounded-[24px] bg-white pb-safe shadow-floating md:mx-auto md:w-full md:max-w-[600px] overflow-hidden">
+      <div className="relative z-10 flex w-full flex-col max-h-[90vh] sm:max-h-[min(720px,calc(100vh-48px))] motion-sheet-dialog sm:motion-modal-dialog rounded-t-[32px] sm:rounded-[24px] bg-white pb-safe shadow-floating sm:mx-auto sm:w-full sm:max-w-[600px] overflow-hidden">
         {/* Drag handle (mobile only) */}
-        <div className="flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 md:hidden" />
+        <div className="flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 sm:hidden" />
         
         {/* Header */}
-        <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-5 md:px-6 py-3.5 md:py-4 gap-3">
+        <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-5 sm:px-6 py-3.5 sm:py-4 gap-3">
           <div className="pr-2 min-w-0 flex-1">
-            <h3 className="text-[20px] md:text-[22px] font-bold text-slate-900 leading-snug truncate">{title}</h3>
+            <h3 className="text-[20px] sm:text-[22px] font-bold text-slate-900 leading-snug truncate">{title}</h3>
             {subtitle && <div className="mt-1 text-[13.5px] text-slate-500 leading-relaxed">{subtitle}</div>}
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {headerAction}
             <button 
-              className="flex shrink-0 h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 focus:outline-none" 
+              className="flex shrink-0 h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 focus:outline-none" 
               onClick={onClose}
               title="Đóng"
               aria-label="Đóng"
@@ -628,13 +660,13 @@ export function BottomSheet({
         </div>
         
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-5 md:px-6 py-4 md:py-5 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-4 sm:py-5 custom-scrollbar">
           {children}
         </div>
-
+ 
         {/* Footer */}
         {footer && (
-          <div className="flex-none border-t border-slate-100 bg-[#FFFDF8] px-5 md:px-6 py-3.5 md:py-4">
+          <div className="flex-none border-t border-slate-100 bg-[#FFFDF8] px-5 sm:px-6 py-3.5 sm:py-4">
             {footer}
           </div>
         )}
