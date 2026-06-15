@@ -37,3 +37,13 @@ export async function deleteSharedDocument(token: string, collectionName: string
   const docRef = doc(db, 'publicShares', token, collectionName, id);
   await deleteDoc(docRef);
 }
+
+export async function updateSharedTripRoadmaps(token: string, dayRoadmaps: Record<string, string>) {
+  await ensureAnonymousUser();
+  const { db } = await initFirebase();
+  
+  const docRef = doc(db, 'publicShares', token);
+  await updateDoc(docRef, {
+    "trip.dayRoadmaps": dayRoadmaps
+  });
+}

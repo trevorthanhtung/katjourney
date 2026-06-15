@@ -20,6 +20,7 @@ export interface Trip {
   updatedAt?: string;
   isDeleted?: boolean;
   status?: 'active' | 'archived';
+  dayRoadmaps?: Record<string, string>;
 }
 
 export interface Member {
