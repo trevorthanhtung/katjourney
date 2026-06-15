@@ -132,18 +132,6 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             <p className="text-[15px] font-semibold text-slate-500 mt-3 max-w-[280px] mx-auto leading-relaxed">
               Lên kế hoạch, chia sẻ và lưu giữ trọn vẹn từng khoảnh khắc.
             </p>
-            
-            <div className="flex items-center justify-center gap-3 mt-4 pt-1 text-slate-400">
-              <div className="flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full h-8 w-8 transition-all hover:bg-white hover:text-sky-500 hover:border-sky-100 hover:shadow-sm">
-                <Globe className="h-[18px] w-[18px]" strokeWidth={2.5} />
-              </div>
-              <div className="flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full h-8 w-8 transition-all hover:bg-white hover:text-emerald-500 hover:border-emerald-100 hover:shadow-sm">
-                <AndroidIcon className="h-4 w-4" />
-              </div>
-              <div className="flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full h-8 w-8 transition-all hover:bg-white hover:text-slate-800 hover:border-slate-200 hover:shadow-sm">
-                <AppleIcon className="h-[18px] w-[18px] mb-0.5" />
-              </div>
-            </div>
           </div>
 
           {/* Error display */}
@@ -189,6 +177,11 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
 
         {/* BOTTOM SECTION: LEGAL FOOTER */}
         <div className="w-full shrink-0 text-center pt-8 pb-2 relative z-10">
+          <div className="flex items-center justify-center gap-5 text-slate-300 opacity-80 mb-5" title="Sẵn sàng trên đa nền tảng">
+            <Globe className="h-[18px] w-[18px] hover:text-sky-400 transition-colors" strokeWidth={2.5} />
+            <AndroidIcon className="h-[18px] w-[18px] hover:text-emerald-400 transition-colors" />
+            <AppleIcon className="h-[20px] w-[20px] hover:text-slate-400 transition-colors" />
+          </div>
           <p className="text-[12.5px] leading-relaxed text-slate-500 font-medium max-w-xs mx-auto">
             Bằng việc tiếp tục, bạn đồng ý với{" "}
             <button 
