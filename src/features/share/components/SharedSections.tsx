@@ -4,7 +4,7 @@ import {
   WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, Plus, Pencil, Trash2, MoreVertical, LifeBuoy,
   ReceiptText, UserCheck, Tags, ChevronRight, Scale, Info, Check, X, Clock,
   FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles, Route, HelpCircle, Users, MessageCircle,
-  Crown, UserRound, Luggage
+  Crown, UserRound, Luggage, Car
 } from 'lucide-react';
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
 import { formatMoney, expenseCategories, formatDate, moodLabels } from '../../../utils/helpers';
@@ -2573,8 +2573,20 @@ export function SharedMembersSection({
                           {member.name}
                         </h4>
                         {(() => {
-                          const isLeader = member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện" || member.role?.toLowerCase() === "leader";
-                          return isLeader ? <Crown className="h-4.5 w-4.5 text-amber-500 shrink-0 ml-0.5" /> : null;
+                          const roleLower = (member.role || "").trim().toLowerCase();
+                          if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
+                            return <span title="Trưởng nhóm" className="shrink-0 ml-0.5"><Crown className="h-4.5 w-4.5 text-amber-500" /></span>;
+                          }
+                          if (roleLower === "quản lý chi phí") {
+                            return <span title="Quản lý chi phí" className="shrink-0 ml-0.5"><WalletCards className="h-4.5 w-4.5 text-emerald-500" /></span>;
+                          }
+                          if (roleLower === "tài xế") {
+                            return <span title="Tài xế" className="shrink-0 ml-0.5"><Car className="h-4.5 w-4.5 text-blue-500" /></span>;
+                          }
+                          if (roleLower === "phụ trách hành lý") {
+                            return <span title="Phụ trách hành lý" className="shrink-0 ml-0.5"><Luggage className="h-4.5 w-4.5 text-indigo-500" /></span>;
+                          }
+                          return <span title={member.role || "Người đồng hành"} className="shrink-0 ml-0.5"><Users className="h-4.5 w-4.5 text-slate-400" /></span>;
                         })()}
                       </div>
                       {member.isPendingCreate && (
