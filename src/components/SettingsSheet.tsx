@@ -852,8 +852,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100 hover:bg-slate-100/70 transition-all text-left focus:outline-none"
             >
               <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
-                  <CircleDollarSign className="h-5 w-5" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-emerald-100 shadow-sm overflow-hidden p-1.5">
+                  <img src="/vcb-logo.png" alt="VCB Logo" className="w-full h-full object-contain" />
                 </div>
                 <div>
                   <h4 className="text-[15px] font-bold text-slate-800">Tỉ giá ngoại tệ</h4>
@@ -1349,7 +1349,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 overflow-hidden">
               <div className="flex items-center justify-between mb-4 px-1">
                 <div className="flex items-center gap-2 text-slate-600">
-                  <CircleDollarSign className="w-4 h-4" />
+                  <img src="/vcb-logo.png" alt="VCB Logo" className="w-5 h-5 object-contain drop-shadow-sm" />
                   <span className="text-[13px] font-bold">Vietcombank</span>
                 </div>
                 <div className="text-[12px] font-medium text-slate-400">Đơn vị: VNĐ</div>
