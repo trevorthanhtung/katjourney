@@ -5,6 +5,7 @@ import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories } from 
 import { BottomSheet, FormActions, Input, ScreenTitle, Select, DatePicker, DeleteConfirmModal, classNames } from "../../components/ui";
 import { useModalHistory } from "../../hooks/useModalHistory";
 import { fetchExchangeRates, ExchangeRate } from "../../services/currencyService";
+import { getCurrentPosition, reverseGeocode, getCurrencyForCountry } from "../../services/locationService";
 
 export function CategoryBar({ percent, colorClass }: { percent: number; colorClass: string }) {
   return (
@@ -293,7 +294,8 @@ function ExpenseForm({
   editing, 
   isOpen, 
   onClose,
-  onSaved 
+  onSaved,
+  onShowToast
 }: { 
   tripId: number; 
   members: Member[]; 
@@ -303,6 +305,7 @@ function ExpenseForm({
   isOpen: boolean; 
   onClose: () => void;
   onSaved: (msg: string) => void;
+  onShowToast?: (msg: string) => void;
 }) {
   const categoryOptions = React.useMemo(() => {
     const defaultCats = expenseCategories.filter(c => c !== "Khác");
@@ -387,6 +390,41 @@ function ExpenseForm({
       }
     }
   }, [editing, isOpen, members, categoryOptions]);
+
+  // Auto-detect currency when creating a new expense
+  useEffect(() => {
+    if (isOpen && !editing && exchangeRates.length > 0) {
+      db.trips.get(tripId).then(trip => {
+        if (trip?.defaultCurrency && trip.defaultCurrency !== "VND") {
+          const matchedRate = exchangeRates.find(r => r.currencyCode === trip.defaultCurrency);
+          if (matchedRate) {
+            setForm(prev => ({ ...prev, currency: trip.defaultCurrency!, exchangeRate: matchedRate.transfer }));
+            return; // Skip GPS if defaultCurrency is available
+          }
+        }
+        
+        // Fallback to GPS
+        getCurrentPosition()
+          .then(async (pos) => {
+            try {
+              const geo = await reverseGeocode(pos.latitude, pos.longitude);
+              const suggestedCurrency = getCurrencyForCountry(geo.countryCode);
+              if (suggestedCurrency && suggestedCurrency !== "VND") {
+                const matchedRate = exchangeRates.find(r => r.currencyCode === suggestedCurrency);
+                if (matchedRate) {
+                  setForm(prev => ({ ...prev, currency: suggestedCurrency, exchangeRate: matchedRate.transfer }));
+                }
+              }
+            } catch (e) {
+              // Ignore geocode errors
+            }
+          })
+          .catch(() => {
+            // Ignore GPS errors (permissions, offline)
+          });
+      });
+    }
+  }, [isOpen, editing, exchangeRates, tripId]);
 
   const filteredEvents = React.useMemo(() => {
     return [...events]
@@ -1045,6 +1083,7 @@ export function ExpensesScreen({
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSaved={showToast}
+        onShowToast={showToast}
       />
     </div>
   );

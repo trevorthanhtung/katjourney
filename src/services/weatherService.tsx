@@ -1,5 +1,15 @@
 import React from "react";
-import { Sun, CloudSun, CloudFog, CloudRain, CloudLightning, Thermometer } from "lucide-react";
+import {
+  SunIcon,
+  PartlyCloudyIcon,
+  CloudyIcon,
+  FogIcon,
+  RainIcon,
+  DrizzleIcon,
+  ThunderstormIcon,
+  SnowIcon,
+  ThermometerIcon
+} from "../components/WeatherIcons";
 
 export interface WeatherForecast {
   current?: {
@@ -29,6 +39,7 @@ export interface GeocodingResult {
   longitude: number;
   admin1?: string;
   country?: string;
+  country_code?: string;
 }
 
 const geocodeCache = new Map<string, GeocodingResult | null>();
@@ -268,14 +279,38 @@ function applyDaysLimit(dataToReturn: WeatherForecast | null, days: number, fetc
   return dataToReturn;
 }
 
-export function getWeatherIcon(code: number, className: string = "w-5 h-5"): React.ReactNode {
-  if (code === 0) return <Sun className={`${className} text-amber-500`} strokeWidth={2.5} />;
-  if ([1, 2, 3].includes(code)) return <CloudSun className={`${className} text-sky-500`} strokeWidth={2.5} />;
-  if ([45, 48].includes(code)) return <CloudFog className={`${className} text-slate-400`} strokeWidth={2.5} />;
-  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return <CloudRain className={`${className} text-blue-500`} strokeWidth={2.5} />;
-  if (code >= 95 && code <= 99) return <CloudLightning className={`${className} text-indigo-500`} strokeWidth={2.5} />;
-  return <Thermometer className={`${className} text-slate-500`} strokeWidth={2.5} />;
+// Map Tailwind w-N or w-[Npx] class to an approximate font-size class for emoji
+function emojiSizeFromClass(className: string): string {
+  const match = className.match(/w-\[?(\d+(?:\.\d+)?)/);
+  if (!match) return "text-2xl";
+  const n = parseFloat(match[1]);
+  if (n <= 12) return "text-xs";
+  if (n <= 14) return "text-sm";
+  if (n <= 16) return "text-base";
+  if (n <= 18) return "text-lg";
+  if (n <= 20) return "text-xl";
+  if (n <= 22) return "text-[22px]";
+  if (n <= 24) return "text-2xl";
+  if (n <= 28) return "text-[28px]";
+  return "text-4xl";
 }
+
+export function getWeatherIcon(code: number, className: string = "w-5 h-5"): React.ReactNode {
+  if (code === 0)                                          return <SunIcon className={className} />;
+  else if (code === 1)                                     return <PartlyCloudyIcon className={className} />;
+  else if (code === 2)                                     return <PartlyCloudyIcon className={className} />;
+  else if (code === 3)                                     return <CloudyIcon className={className} />;
+  else if (code === 45 || code === 48)                     return <FogIcon className={className} />;
+  else if (code >= 51 && code <= 55)                       return <DrizzleIcon className={className} />;
+  else if (code === 56 || code === 57)                     return <SnowIcon className={className} />;
+  else if (code >= 61 && code <= 67)                       return <RainIcon className={className} />;
+  else if (code >= 71 && code <= 77)                       return <SnowIcon className={className} />;
+  else if (code === 80 || code === 81 || code === 82)      return <RainIcon className={className} />;
+  else if (code === 85 || code === 86)                     return <SnowIcon className={className} />;
+  else if (code >= 95 && code <= 99)                       return <ThunderstormIcon className={className} />;
+  else                                                     return <ThermometerIcon className={className} />;
+}
+
 
 export function getWeatherText(code: number): string {
   if (code === 0) return "Trời quang";

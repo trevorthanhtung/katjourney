@@ -117,6 +117,7 @@ import { TravelDocumentsSection } from "./TravelDocumentsSection";
 import { ChatBox } from "../share/components/ChatBox";
 import { searchLocation, GeocodingResult } from "../../services/weatherService";
 import { useModalHistory } from "../../hooks/useModalHistory";
+import { getCurrencyForCountry } from "../../services/locationService";
 
 // --- LocationInput Component ---
 function LocationInput({
@@ -435,6 +436,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
     location: string;
     latitude?: number;
     longitude?: number;
+    defaultCurrency?: string;
     tripType: "dayTrip" | "multiDay";
     startDate: string;
     endDate: string;
@@ -443,6 +445,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
     location: trip?.location ?? "",
     latitude: trip?.latitude,
     longitude: trip?.longitude,
+    defaultCurrency: trip?.defaultCurrency,
     tripType: trip?.tripType ?? (trip?.startDate === trip?.endDate ? "dayTrip" : "multiDay"),
     startDate: trip?.startDate ?? today,
     endDate: trip?.endDate ?? today
@@ -532,10 +535,11 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
           </span>
           <LocationInput
             value={form.location}
-            onChange={(location) => setForm((f) => ({ ...f, location, latitude: undefined, longitude: undefined }))}
+            onChange={(location) => setForm((f) => ({ ...f, location, latitude: undefined, longitude: undefined, defaultCurrency: undefined }))}
             onSelectResult={(result) => {
               const display = [result.name, result.admin1, result.country].filter(Boolean).join(", ");
-              setForm((f) => ({ ...f, location: display, latitude: result.latitude, longitude: result.longitude }));
+              const currency = result.country_code ? getCurrencyForCountry(result.country_code) : undefined;
+              setForm((f) => ({ ...f, location: display, latitude: result.latitude, longitude: result.longitude, defaultCurrency: currency || undefined }));
             }}
           />
           {form.latitude && form.longitude ? (

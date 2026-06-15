@@ -7,7 +7,7 @@ import {
   ReceiptText, UserCheck, Tags, ChevronRight, Scale, Info, Check, X, Clock,
   FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles, Route, HelpCircle, Users, MessageCircle, Globe,
   Crown, UserRound, Luggage, Car, Calculator, ChartPie, UsersRound,
-  Plane, Utensils, Hotel, Ticket, ShoppingBag, Gamepad2, Compass, ChevronDown
+  Plane, Utensils, Hotel, Ticket, ShoppingBag, Gamepad2, Compass, ChevronDown, MapPin, MapPinOff
 } from 'lucide-react';
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
 import { formatMoney, expenseCategories, formatDate, moodLabels, sumBy, getSettlementSuggestions } from '../../../utils/helpers';
@@ -15,6 +15,7 @@ import { submitChangeRequest } from '../../../services/sharedTripRequestService'
 import { showToast } from '../../../components/ui/ToastManager';
 import { uploadJournalImage } from '../../../services/storageService';
 import { getIdentity } from '../../../services/identityService';
+import { getCurrentPosition, reverseGeocode, getCurrencyForCountry } from '../../../services/locationService';
 import { BottomSheet, Input, Select, Textarea, DatePicker, DeleteConfirmModal } from '../../../components/ui';
 import { getAvatarSvg, getRandomAvatarId } from '../../../utils/avatars';
 import { BreakdownSection, CategoryBar, SettlementCard } from '../../expenses/ExpensesScreen';
@@ -36,6 +37,7 @@ const CATEGORY_ICONS: Record<string, any> = {
 
 
 export function SharedExpensesSection({ 
+  trip,
   token, 
   mode, 
   expenses, 
@@ -44,6 +46,7 @@ export function SharedExpensesSection({
   events = [],
   guestName
 }: { 
+  trip?: any;
   token: string; 
   mode: string; 
   expenses: Expense[]; 
@@ -167,6 +170,61 @@ export function SharedExpensesSection({
   const isRequestEdit = mode === 'request_edit' || mode === 'edit';
   const isDirectEdit = mode === 'edit';
 
+  const fetchLocationForExpense = React.useCallback(async (rates: ExchangeRate[]) => {
+    // 1. Try explicit defaultCurrency
+    if (trip?.defaultCurrency && trip.defaultCurrency !== "VND") {
+      const matchedRate = rates.find(r => r.currencyCode === trip.defaultCurrency);
+      if (matchedRate) {
+        setForm(prev => ({ ...prev, currency: trip.defaultCurrency!, exchangeRate: matchedRate.transfer }));
+        return; // Skip GPS if defaultCurrency is available
+      }
+    }
+    
+    // 2. Fallback to parsing destination name (if trip was shared before defaultCurrency was added)
+    if (trip?.destination) {
+      const destStr = String(trip.destination).toLowerCase();
+      let guessedCurrency = null;
+      if (destStr.includes("nhật bản") || destStr.includes("japan") || destStr.includes("tokyo")) guessedCurrency = "JPY";
+      else if (destStr.includes("hàn quốc") || destStr.includes("korea") || destStr.includes("seoul")) guessedCurrency = "KRW";
+      else if (destStr.includes("thái lan") || destStr.includes("thailand") || destStr.includes("bangkok")) guessedCurrency = "THB";
+      else if (destStr.includes("singapore")) guessedCurrency = "SGD";
+      else if (destStr.includes("trung quốc") || destStr.includes("china")) guessedCurrency = "CNY";
+      else if (destStr.includes("đài loan") || destStr.includes("taiwan")) guessedCurrency = "TWD";
+      else if (destStr.includes("mỹ") || destStr.includes("usa") || destStr.includes("hoa kỳ")) guessedCurrency = "USD";
+      else if (destStr.includes("anh") || destStr.includes("uk") || destStr.includes("london")) guessedCurrency = "GBP";
+      else if (destStr.includes("châu âu") || destStr.includes("pháp") || destStr.includes("đức") || destStr.includes("ý")) guessedCurrency = "EUR";
+
+      if (guessedCurrency) {
+        const matchedRate = rates.find(r => r.currencyCode === guessedCurrency);
+        if (matchedRate) {
+          setForm(prev => ({ ...prev, currency: guessedCurrency, exchangeRate: matchedRate.transfer }));
+          return;
+        }
+      }
+    }
+    
+    // 3. Fallback to GPS
+    try {
+      const pos = await getCurrentPosition();
+      const geo = await reverseGeocode(pos.latitude, pos.longitude);
+      const suggestedCurrency = getCurrencyForCountry(geo.countryCode);
+      
+      setForm(prev => {
+        let newForm = { ...prev };
+        if (suggestedCurrency && suggestedCurrency !== "VND") {
+          const matchedRate = rates.find(r => r.currencyCode === suggestedCurrency);
+          if (matchedRate) {
+            newForm.currency = suggestedCurrency;
+            newForm.exchangeRate = matchedRate.transfer;
+          }
+        }
+        return newForm;
+      });
+    } catch (err: any) {
+      // Silently ignore GPS fetch errors as it's just for currency suggestion
+    }
+  }, [trip]);
+
   useEffect(() => {
     if (isFormOpen) {
       setErrors({});
@@ -204,9 +262,10 @@ export function SharedExpensesSection({
           currency: "VND",
           exchangeRate: 1
         });
+        fetchLocationForExpense(exchangeRates);
       }
     }
-  }, [editingId, isFormOpen, members, categoryOptions, expenses]);
+  }, [editingId, isFormOpen, members, categoryOptions, expenses, exchangeRates, fetchLocationForExpense]);
 
   const filteredEvents = React.useMemo(() => {
     if (!form.date || !events) return [];
@@ -1744,9 +1803,13 @@ export function SharedJournalsSection({
     title: "", 
     content: "", 
     mood: "good" as "good" | "okay" | "great" | "very_bad" | "bad", 
-    imageUrl: "" 
+    imageUrl: "",
+    locationName: "",
+    latitude: undefined as number | undefined,
+    longitude: undefined as number | undefined
   });
   const [uploading, setUploading] = React.useState(false);
+  const [isLocating, setIsLocating] = React.useState(false);
   const [submitAttempted, setSubmitAttempted] = React.useState(false);
   const [dirty, setDirty] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -1765,6 +1828,27 @@ export function SharedJournalsSection({
       setUploading(false);
     }
   };
+
+  const fetchLocation = React.useCallback(async () => {
+    setIsLocating(true);
+    try {
+      const pos = await getCurrentPosition();
+      const geo = await reverseGeocode(pos.latitude, pos.longitude);
+      setForm(prev => ({...prev, locationName: geo.displayName, latitude: pos.latitude, longitude: pos.longitude}));
+    } catch (err: any) {
+      if (err.message !== "GPS is disabled by user setting") {
+        showToast(err.message || "Không thể lấy vị trí.", "error");
+      }
+    } finally {
+      setIsLocating(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (isFormOpen && !form.locationName && !form.latitude) {
+      fetchLocation();
+    }
+  }, [isFormOpen, fetchLocation]);
 
   const mergedJournals = React.useMemo(() => {
     const list = [...journals].filter((j: any) => !j.isDeleted);
@@ -1808,12 +1892,15 @@ export function SharedJournalsSection({
         content: form.content.trim(),
         mood: form.mood,
         imageUrl: form.imageUrl || undefined,
+        locationName: form.locationName || undefined,
+        latitude: form.latitude,
+        longitude: form.longitude,
         authorId: identity?.id || "guest",
         authorName: guestName || identity?.name || "Khách",
         postedAt: now,
       };
       await submitChangeRequest(token, { section: 'journals', action: 'create', after: payload, status: 'auto_approved', requesterName: guestName });
-      setForm({ date: new Date().toISOString().split('T')[0], title: "", content: "", mood: "good", imageUrl: "" });
+      setForm({ date: new Date().toISOString().split('T')[0], title: "", content: "", mood: "good", imageUrl: "", locationName: "", latitude: undefined, longitude: undefined });
       setSubmitAttempted(false);
       setDirty(false);
       setIsFormOpen(false);
@@ -1994,6 +2081,12 @@ export function SharedJournalsSection({
                           <h4 className="text-[17px] font-black text-[#030D2E] leading-snug break-words">
                             {j.title || "Bản tin chuyến đi"}
                           </h4>
+                          {j.locationName && (
+                            <div className="mt-1 flex items-center gap-1.5 text-[13px] font-medium text-slate-500">
+                              <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+                              <span>{j.locationName}</span>
+                            </div>
+                          )}
                           <p className={classNames(
                             "mt-1.5 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600",
                             j.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
@@ -2135,6 +2228,26 @@ export function SharedJournalsSection({
             />
             {(dirty || submitAttempted) && titleError && (
               <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{titleError}</p>
+            )}
+
+            {isLocating ? (
+              <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
+                <MapPin className="h-3.5 w-3.5" />
+                <span className="flex items-center gap-1.5 text-slate-400"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Đang lấy vị trí...</span>
+              </div>
+            ) : form.locationName ? (
+              <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
+                <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+                <span>Đang ở <span className="font-bold text-kat-primary">{form.locationName}</span></span>
+                <button type="button" onClick={() => setForm({...form, locationName: "", latitude: undefined, longitude: undefined})} className="ml-1 px-1 text-slate-300 hover:text-rose-500 transition-colors font-bold text-[14px] leading-none" title="Xóa vị trí">×</button>
+              </div>
+            ) : (
+              <div className="mt-2 flex items-center gap-1.5 px-1 animate-fadeIn">
+                <button type="button" onClick={fetchLocation} className="flex items-center gap-1.5 text-[12.5px] font-bold text-slate-400 hover:text-kat-primary transition-colors focus:outline-none">
+                  <MapPinOff className="h-3.5 w-3.5" />
+                  <span>Nhấn để đính kèm vị trí</span>
+                </button>
+              </div>
             )}
           </div>
   

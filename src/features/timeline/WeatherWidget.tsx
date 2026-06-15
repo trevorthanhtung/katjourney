@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { CloudRainWind } from "lucide-react";
 import { getWeatherIcon } from "../../services/weatherService";
 import { useWeather } from "../../hooks/useWeather";
+import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather";
 import { WeatherDetailsModal } from "./WeatherDetailsModal";
 
 interface WeatherWidgetProps {
@@ -11,9 +12,49 @@ interface WeatherWidgetProps {
   days?: number;
 }
 
+// Helper to determine packing tip from temp difference and weather codes
+function getPackingTip(
+  destTemp: number,
+  myTemp: number,
+  destCode: number,
+  myCode: number
+): { emoji: string; message: string; color: string } | null {
+  const diff = destTemp - myTemp;
+  const isDestRainy = (destCode >= 51 && destCode <= 67) || (destCode >= 80 && destCode <= 82) || (destCode >= 95 && destCode <= 99);
+  const isMyRainy = (myCode >= 51 && myCode <= 67) || (myCode >= 80 && myCode <= 82) || (myCode >= 95 && myCode <= 99);
+
+  if (isDestRainy && !isMyRainy) {
+    return { emoji: "🌧️", message: `Điểm đến đang có mưa, đừng quên bỏ ô vào vali nhé!`, color: "bg-sky-50 border-sky-200 text-sky-800" };
+  }
+  if (diff <= -7) {
+    return { emoji: "🧥", message: `Điểm đến lạnh hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Nhớ mang áo ấm!`, color: "bg-indigo-50 border-indigo-200 text-indigo-800" };
+  }
+  if (diff <= -4) {
+    return { emoji: "🧣", message: `Điểm đến mát hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Mang theo áo khoác mỏng nhé.`, color: "bg-blue-50 border-blue-200 text-blue-800" };
+  }
+  if (diff >= 7) {
+    return { emoji: "☀️", message: `Điểm đến nóng hơn nơi bạn ${Math.round(diff)}°C. Chuẩn bị đồ mát và kem chống nắng!`, color: "bg-amber-50 border-amber-200 text-amber-800" };
+  }
+  if (diff >= 4) {
+    return { emoji: "🕶️", message: `Điểm đến ấm hơn nơi bạn ${Math.round(diff)}°C. Đừng quên kính mát và áo mỏng.`, color: "bg-orange-50 border-orange-200 text-orange-800" };
+  }
+  return null;
+}
+
 export function WeatherWidget({ destination, latitude, longitude, days = 3 }: WeatherWidgetProps) {
   const { loading, error, forecast } = useWeather(destination, latitude, longitude, days);
+  const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
+
+  // Compute packing tip
+  const packingTip = (() => {
+    if (!forecast || !myForecast) return null;
+    const destTemp = forecast.current?.temperature ?? ((forecast.temperature_2m_max?.[0] ?? 0) + (forecast.temperature_2m_min?.[0] ?? 0)) / 2;
+    const myTemp = myForecast.current?.temperature ?? ((myForecast.temperature_2m_max?.[0] ?? 0) + (myForecast.temperature_2m_min?.[0] ?? 0)) / 2;
+    const destCode = forecast.current?.weathercode ?? forecast.weathercode?.[0] ?? 0;
+    const myCode = myForecast.current?.weathercode ?? myForecast.weathercode?.[0] ?? 0;
+    return getPackingTip(destTemp, myTemp, destCode, myCode);
+  })();
 
   if (!destination?.trim() && !latitude && !longitude) {
     return (
@@ -75,6 +116,13 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3 }: We
               {days} ngày
             </span>
           </button>
+
+          {/* Smart Packing Tip Banner */}
+          {packingTip && (
+            <div className={`mx-4 mb-3 flex items-center gap-2.5 rounded-2xl border px-3.5 py-2.5 ${packingTip.color}`}>
+              <p className="text-[12px] font-bold leading-snug">{packingTip.message}</p>
+            </div>
+          )}
 
           <div className="flex flex-col px-5 pb-5 max-h-[350px] overflow-y-auto pr-1 custom-scrollbar divide-y divide-slate-100">
             {forecast?.time.map((dateStr, idx) => {
@@ -146,6 +194,8 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3 }: We
         onClose={() => setWeatherModalOpen(false)}
         destination={destination}
         forecast={forecast}
+        currentLocationForecast={myForecast}
+        currentLocationName={myLocationName}
       />
     </>
   );
