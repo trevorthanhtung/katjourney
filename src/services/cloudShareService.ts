@@ -59,7 +59,8 @@ export async function createShareLink(
   
   // Conditionally fetch optional data
   const expenses = options.includeExpenses ? await localDb.expenses.where('tripId').equals(tripId).toArray() : [];
-  const checklist = options.includeChecklist ? await localDb.checklist.where('tripId').equals(tripId).toArray() : [];
+  const checklistRaw = options.includeChecklist ? await localDb.checklist.where('tripId').equals(tripId).toArray() : [];
+  const checklist = checklistRaw.filter(c => !c.isPrivate);
   const journals = options.includeJournals ? await localDb.journals.where('tripId').equals(tripId).toArray() : [];
   const backupPlans = options.includeBackupPlans ? await localDb.backupPlans.where('tripId').equals(tripId).toArray() : [];
   const travelDocumentsRaw = options.includeDocuments ? await localDb.travelDocuments.where('tripId').equals(tripId).toArray() : [];
@@ -178,7 +179,8 @@ export async function updateShareLink(
   
   // Conditionally fetch optional data
   const expenses = options.includeExpenses ? await localDb.expenses.where('tripId').equals(tripId).toArray() : [];
-  const checklist = options.includeChecklist ? await localDb.checklist.where('tripId').equals(tripId).toArray() : [];
+  const checklistRaw = options.includeChecklist ? await localDb.checklist.where('tripId').equals(tripId).toArray() : [];
+  const checklist = checklistRaw.filter(c => !c.isPrivate);
   const journals = options.includeJournals ? await localDb.journals.where('tripId').equals(tripId).toArray() : [];
   const backupPlans = options.includeBackupPlans ? await localDb.backupPlans.where('tripId').equals(tripId).toArray() : [];
   const travelDocumentsRaw = options.includeDocuments ? await localDb.travelDocuments.where('tripId').equals(tripId).toArray() : [];
