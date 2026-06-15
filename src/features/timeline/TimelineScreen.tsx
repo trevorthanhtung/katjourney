@@ -249,13 +249,15 @@ function DayHeader({
   index, 
   isToday, 
   totalExpense = 0,
-  hasMultipleDays = false
+  hasMultipleDays = false,
+  mapUrl
 }: { 
   day: string; 
   index: number; 
   isToday: boolean; 
   totalExpense?: number;
   hasMultipleDays?: boolean;
+  mapUrl?: string;
 }) {
   return (
     <div 
@@ -270,7 +272,21 @@ function DayHeader({
           {index + 1}
         </div>
         <div>
-          <h4 className="text-[16px] font-extrabold text-[#030D2E]">Ngày {index + 1}</h4>
+          <div className="flex items-center gap-2">
+            <h4 className="text-[16px] font-extrabold text-[#030D2E]">Ngày {index + 1}</h4>
+            {mapUrl && (
+              <a
+                href={mapUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100/50 text-[11px] font-extrabold tracking-wide transition-all active:scale-95 shadow-sm"
+                title="Mở bản đồ lộ trình"
+              >
+                <MapPin className="w-3 h-3 text-emerald-600" />
+                <span>Bản đồ</span>
+              </a>
+            )}
+          </div>
           <p className="text-[13px] font-semibold text-slate-500">{formatDate(day)}</p>
         </div>
       </div>
@@ -872,7 +888,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
 
           return (
             <div key={day} className="space-y-4">
-              <DayHeader day={day} index={index} isToday={isToday} totalExpense={totalDayExpense} hasMultipleDays={days.length > 1} />
+              <DayHeader day={day} index={index} isToday={isToday} totalExpense={totalDayExpense} hasMultipleDays={days.length > 1} mapUrl={trip.dayRoadmaps?.[day]} />
               <div className="px-1">
                 {dayEvents.map((item, idx) => (
                   <ActivityCard 
@@ -1044,7 +1060,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           {events.length === 0 && viewMode === "list" ? (
             /* Compact Empty Timeline Card */
             <div id="timeline-top">
-              <DayHeader day={trip.startDate} index={0} isToday={tripIsActive && trip.startDate === today} hasMultipleDays={days.length > 1} />
+              <DayHeader day={trip.startDate} index={0} isToday={tripIsActive && trip.startDate === today} hasMultipleDays={days.length > 1} mapUrl={trip.dayRoadmaps?.[trip.startDate]} />
               <div className="px-1 relative flex gap-4 pl-1">
                 {/* Circle marker */}
                 <div className="relative z-10 flex shrink-0">
@@ -1094,42 +1110,6 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
 
         {/* Right Column: Dynamic smart widgets */}
         <div className="space-y-6">
-          {/* Mini Trip Context Card */}
-          <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
-                <Route className="h-4 w-4" />
-              </span>
-              <h4 className="text-[15px] font-extrabold text-[#030D2E]">Thông tin hành trình</h4>
-            </div>
-            
-            <div className="space-y-3 text-[14px] font-medium text-slate-600">
-              <div className="flex items-center justify-between border-b border-slate-50 pb-2">
-                <span className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-slate-400" />
-                  Điểm đến
-                </span>
-                <span className="font-bold text-[#030D2E]">{trip.location || "Chưa xác định"}</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-slate-50 pb-2">
-                <span className="flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4 text-slate-400" />
-                  Thời gian
-                </span>
-                <span className="font-bold text-[#030D2E]">
-                  {trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
-                </span>
-              </div>
-              <div className="flex items-center justify-between pb-1">
-                <span className="flex items-center gap-2">
-                  <Route className="h-4 w-4 text-slate-400" />
-                  Mục lịch trình
-                </span>
-                <span className="font-bold text-[#030D2E]">{events.length} mục</span>
-              </div>
-            </div>
-          </div>
-
           {/* Roadmap Widget */}
           {days.length > 0 && (
             <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4">
@@ -1235,6 +1215,42 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           )}
 
           <WeatherWidget destination={trip.location} latitude={trip.latitude} longitude={trip.longitude} days={tripDays.length} />
+
+          {/* Mini Trip Context Card */}
+          <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
+                <Route className="h-4 w-4" />
+              </span>
+              <h4 className="text-[15px] font-extrabold text-[#030D2E]">Thông tin hành trình</h4>
+            </div>
+            
+            <div className="space-y-3 text-[14px] font-medium text-slate-600">
+              <div className="flex items-center justify-between border-b border-slate-50 pb-2">
+                <span className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-slate-400" />
+                  Điểm đến
+                </span>
+                <span className="font-bold text-[#030D2E]">{trip.location || "Chưa xác định"}</span>
+              </div>
+              <div className="flex items-center justify-between border-b border-slate-50 pb-2">
+                <span className="flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4 text-slate-400" />
+                  Thời gian
+                </span>
+                <span className="font-bold text-[#030D2E]">
+                  {trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
+                </span>
+              </div>
+              <div className="flex items-center justify-between pb-1">
+                <span className="flex items-center gap-2">
+                  <Route className="h-4 w-4 text-slate-400" />
+                  Mục lịch trình
+                </span>
+                <span className="font-bold text-[#030D2E]">{events.length} mục</span>
+              </div>
+            </div>
+          </div>
           
           {/* Gợi ý hành trình has been replaced by the redesigned WeatherWidget above */}
         </div>

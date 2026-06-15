@@ -21,6 +21,12 @@ export interface Trip {
   isDeleted?: boolean;
   status?: 'active' | 'archived';
   dayRoadmaps?: Record<string, string>;
+  shareIncludeExpenses?: boolean;
+  shareIncludeJournals?: boolean;
+  shareIncludeChecklist?: boolean;
+  shareIncludeBackupPlans?: boolean;
+  shareIncludeDocuments?: boolean;
+  shareUsePinProtection?: boolean;
 }
 
 export interface Member {

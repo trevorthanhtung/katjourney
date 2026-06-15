@@ -79,7 +79,7 @@ export function SharedActivitiesSection({
   }, [tripDays]);
 
   const mergedBackupPlans = React.useMemo(() => {
-    const list = backupPlans.map(item => {
+    const list = backupPlans.filter((p: any) => !p.isDeleted).map(item => {
       const pendingDelete = changeRequests.some(r => r.section === 'backupPlans' && r.action === 'delete' && String(r.targetId) === String(item.id));
       const updateReq = changeRequests.find(r => r.section === 'backupPlans' && r.action === 'update' && String(r.targetId) === String(item.id));
 
@@ -98,7 +98,7 @@ export function SharedActivitiesSection({
       };
     });
 
-    const pendingCreates = changeRequests.filter(r => r.section === 'backupPlans' && r.action === 'create');
+    const pendingCreates = changeRequests.filter(r => r.section === 'backupPlans' && r.action === 'create' && r.status === 'pending');
     pendingCreates.forEach(r => {
       list.push({
         id: "pending-create-" + r.id,
@@ -145,7 +145,7 @@ export function SharedActivitiesSection({
   const isBackupPlansDirectEdit = (backupPlansMode || mode) === 'edit';
 
   const mergedActivities = React.useMemo(() => {
-    const list = activities.map(item => {
+    const list = activities.filter((a: any) => !a.isDeleted).map(item => {
       const pendingDelete = changeRequests.some(r => r.section === 'activities' && r.action === 'delete' && String(r.targetId) === String(item.id));
       const updateReq = changeRequests.find(r => r.section === 'activities' && r.action === 'update' && String(r.targetId) === String(item.id));
       
@@ -167,7 +167,7 @@ export function SharedActivitiesSection({
       return item;
     });
 
-    const pendingCreates = changeRequests.filter(r => r.section === 'activities' && r.action === 'create');
+    const pendingCreates = changeRequests.filter(r => r.section === 'activities' && r.action === 'create' && r.status === 'pending');
     pendingCreates.forEach(r => {
       list.push({
         id: `pending-create-${r.id}`,
@@ -184,6 +184,37 @@ export function SharedActivitiesSection({
 
     return list;
   }, [activities, changeRequests]);
+
+  const [filterDay, setFilterDay] = React.useState<string>("all");
+  const [isDayPickerOpen, setIsDayPickerOpen] = React.useState(false);
+
+  const days = React.useMemo(() => {
+    const dates = mergedActivities.map(e => e.date).filter(Boolean);
+    return Array.from(new Set([...tripDays, ...dates])).filter(Boolean).sort();
+  }, [mergedActivities, tripDays]);
+
+  const displayedActivities = React.useMemo(() => {
+    if (filterDay === "all") return mergedActivities;
+    return mergedActivities.filter(a => a.date === filterDay);
+  }, [mergedActivities, filterDay]);
+
+  const hasMoreDays = days.length > 3;
+  const visibleDays = days.slice(0, 3);
+  const selectedIdx = days.indexOf(filterDay);
+  if (filterDay !== "all" && selectedIdx >= 3) {
+    if (!visibleDays.includes(filterDay)) {
+      visibleDays.push(filterDay);
+    }
+  }
+
+  function formatDateShort(dateStr: string) {
+    if (!dateStr) return "";
+    const parts = dateStr.split("-");
+    if (parts.length === 3) {
+      return `${parts[2]}/${parts[1]}`;
+    }
+    return dateStr;
+  }
 
   function startAdd() {
     setForm({ 
@@ -282,25 +313,149 @@ export function SharedActivitiesSection({
   }
 
   return (
-    <section className="bg-white rounded-3xl border border-slate-200/60 p-5 md:p-6 shadow-sm">
-      <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+    <>
+      <section className="bg-white rounded-3xl border border-slate-200/50 p-5 md:p-6 shadow-[0_2px_12px_rgba(3,13,46,0.02)]">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Route className="h-6 w-6 text-kat-primary" />
-          <h3 className="text-[18px] font-black text-[#030D2E]">Lịch trình chi tiết</h3>
+          <Route className="w-5 h-5 text-[#00A19D]" />
+          <h3 className="text-[18px] font-black text-[#030D2E] tracking-tight">Lịch trình chi tiết</h3>
         </div>
       </div>
 
+      {days.length > 0 && (
+        <div 
+          className="flex items-center gap-2 overflow-x-auto py-1 mb-4 w-full select-none shrink-0 scrollbar-none"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {/* "Tất cả" tab */}
+          <button
+            type="button"
+            onClick={() => setFilterDay("all")}
+            className={classNames(
+              "flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer",
+              filterDay === "all"
+                ? "bg-[#030D2E] text-white border-[#030D2E] shadow-md shadow-[#030D2E]/15"
+                : "bg-slate-50 border-slate-200/60 text-slate-650 hover:bg-slate-100/80"
+            )}
+          >
+            <span>Tất cả</span>
+            <span className={classNames(
+              "text-[10px] font-bold px-1.5 py-0.5 rounded-full",
+              filterDay === "all" ? "bg-white/20 text-white" : "bg-slate-200/60 text-slate-550"
+            )}>
+              {mergedActivities.length}
+            </span>
+          </button>
+
+          {/* Day tabs */}
+          {visibleDays.map((day) => {
+            const idx = days.indexOf(day);
+            const hasEvents = mergedActivities.some(e => e.date === day);
+            const isActive = filterDay === day;
+            return (
+              <button
+                key={day}
+                type="button"
+                onClick={() => setFilterDay(day)}
+                className={classNames(
+                  "flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer",
+                  isActive
+                    ? "bg-[#030D2E] text-white border-[#030D2E] shadow-md shadow-[#030D2E]/15"
+                    : "bg-slate-50 border-slate-200/60 text-slate-650 hover:bg-slate-100/80"
+                )}
+              >
+                <span>Ngày {idx + 1}</span>
+                {hasEvents ? (
+                  <span className={classNames(
+                    "w-1.5 h-1.5 rounded-full shrink-0",
+                    isActive ? "bg-white" : "bg-kat-primary"
+                  )} />
+                ) : (
+                  <span className="text-[10.5px] text-slate-400 font-semibold">({formatDateShort(day)})</span>
+                )}
+              </button>
+            );
+          })}
+
+          {hasMoreDays && (
+            <button
+              type="button"
+              onClick={() => setIsDayPickerOpen(true)}
+              className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border border-slate-200/60 bg-white text-slate-600 hover:bg-slate-50 shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer"
+            >
+              <CalendarDays className="w-3.5 h-3.5 text-slate-500" />
+              <span>Xem thêm ({days.length - 3})</span>
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="space-y-6">
-        {mergedActivities.map((item, idx) => {
+        {(()=>{
+          const groups = activeDays.map(day => ({
+             id: day,
+             index: days.indexOf(day),
+             title: `Ngày ${days.indexOf(day) + 1}`,
+             subtitle: formatDate(day),
+             icon: days.indexOf(day) + 1 as string | number,
+             activities: displayedActivities.filter(a => a.date === day)
+          })).filter(g => g.activities.length > 0 || filterDay !== "all");
+
+          if (filterDay === "all") {
+             const undated = displayedActivities.filter(a => !a.date);
+             if (undated.length > 0) {
+               groups.push({
+                 id: "undated",
+                 index: -1,
+                 title: "Chưa phân ngày",
+                 subtitle: "Các hoạt động chưa có ngày",
+                 icon: "?",
+                 activities: undated
+               });
+             }
+          }
+
+          return groups.map(group => (
+            <div key={group.id} className="space-y-6 mt-6 first:mt-0 animate-fadeIn">
+              <div className="flex items-center gap-3">
+                <div className={classNames(
+                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl font-black text-[13.5px] border shadow-sm",
+                  group.id === "undated" 
+                    ? "bg-slate-400 text-white border-transparent" 
+                    : "bg-indigo-50/50 text-indigo-600 border-indigo-100/40"
+                )}>
+                  {group.icon}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-[15.5px] font-black text-[#030D2E] tracking-tight">{group.title}</h4>
+                    {group.id !== "undated" && trip?.dayRoadmaps?.[group.id] && (
+                      <a
+                        href={trip.dayRoadmaps[group.id]}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100/50 text-[10px] font-extrabold tracking-wide transition-all active:scale-95 shadow-sm"
+                        title="Mở bản đồ lộ trình"
+                      >
+                        <MapPin className="w-3 h-3 text-emerald-600" />
+                        <span>Bản đồ</span>
+                      </a>
+                    )}
+                  </div>
+                  <p className="text-[11.5px] font-bold text-slate-400 mt-0.5">{group.subtitle}</p>
+                </div>
+              </div>
+              <div className="space-y-6">
+                {group.activities.map((item, idx) => {
           const isPending = item.isPendingCreate || item.isPendingUpdate || item.isPendingDelete;
           const category = getCategory(item.type);
           const CatIcon = category.icon;
           return (
             <div key={item.id} className="relative flex gap-4 pl-1 group">
-              <div className="absolute bottom-0 left-[21px] top-8 w-0.5 bg-slate-200 group-last:bg-transparent" />
+              <div className="absolute bottom-0 left-[19px] top-8 w-0.5 bg-slate-100 group-last:bg-transparent" />
               <div className="relative z-10 flex shrink-0 mt-1">
                 <div className={classNames(
-                  "flex h-10 w-10 items-center justify-center rounded-full ring-4 ring-white shadow-sm border",
+                  "flex h-10 w-10 items-center justify-center rounded-full ring-4 ring-white shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-100",
                   category.bgColor
                 )}>
                   <CatIcon className="h-4.5 w-4.5" strokeWidth={2.2} />
@@ -309,7 +464,7 @@ export function SharedActivitiesSection({
               
               <div 
                 className={classNames(
-                  "flex flex-col w-full min-w-0 pt-0.5 pb-4 border-b border-slate-100/70 group-last:border-transparent transition-all rounded-2xl px-3",
+                  "flex flex-col w-full min-w-0 pt-0.5 pb-4 border-b border-slate-100/60 group-last:border-transparent transition-all rounded-2xl px-3",
                   item.isPendingCreate || item.isPendingUpdate ? "bg-sky-50/40 border border-sky-100/50 my-1 py-3" : "",
                   item.isPendingDelete ? "bg-slate-50/30 opacity-70" : ""
                 )}
@@ -317,7 +472,7 @@ export function SharedActivitiesSection({
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-wrap items-baseline gap-2">
                     <h4 className={classNames(
-                      "text-[15px] font-bold text-[#030D2E] break-words",
+                      "text-[15.5px] font-black text-[#030D2E] break-words tracking-tight",
                       item.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
                     )}>
                       {item.title}
@@ -369,16 +524,16 @@ export function SharedActivitiesSection({
                 )}>
                   {item.time && (
                     <span className={classNames(
-                      "flex items-center gap-1 font-bold text-kat-primary bg-indigo-50/50 px-2 py-0.5 rounded-lg border border-indigo-100/40",
+                      "flex items-center gap-1 font-bold text-[#00AFA8] bg-indigo-50/50 px-2 py-0.5 rounded-lg border border-indigo-100/40",
                       item.isPendingDelete ? "line-through text-slate-400" : ""
                     )}>
                       <Clock className="h-3.5 w-3.5" />
                       {item.time}
                     </span>
                   )}
-                  <span className={classNames("bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100", item.isPendingDelete ? "line-through" : "")}>{formatDate(item.date)}</span>
+                  <span className={classNames("bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100/60", item.isPendingDelete ? "line-through" : "")}>{formatDate(item.date)}</span>
                   
-                  <span className={classNames("text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border", category.bgColor)}>
+                  <span className={classNames("text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-slate-100", category.bgColor)}>
                     {category.label}
                   </span>
 
@@ -400,16 +555,16 @@ export function SharedActivitiesSection({
                     item.isPendingDelete ? "line-through opacity-60" : ""
                   )}>
                     <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-slate-400" />
-                    <span className="break-words">{item.location}</span>
+                    <span className="break-words font-medium">{item.location}</span>
                   </p>
                 )}
 
                 {item.notes && (
                   <div className={classNames(
-                    "mt-2 rounded-xl bg-slate-50 p-3 border border-slate-100",
+                    "mt-2 rounded-xl bg-slate-50/70 p-3 border border-slate-100",
                     item.isPendingDelete ? "opacity-60" : ""
                   )}>
-                    <p className={classNames("text-[13px] text-slate-600 whitespace-pre-wrap", item.isPendingDelete ? "line-through" : "")}>{item.notes}</p>
+                    <p className={classNames("text-[13px] text-slate-600 whitespace-pre-wrap leading-relaxed", item.isPendingDelete ? "line-through" : "")}>{item.notes}</p>
                   </div>
                 )}
 
@@ -439,13 +594,13 @@ export function SharedActivitiesSection({
                       const isRoute = item.mapLink && (item.mapLink.includes("/maps/dir/") || item.mapLink.includes("maps/dir"));
                       return (
                         <a 
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[13px] font-bold text-emerald-600 border border-emerald-100 hover:bg-emerald-100 transition-colors" 
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[13px] font-bold text-emerald-600 border border-emerald-100/80 hover:bg-emerald-100 transition-colors" 
                           href={item.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
                           target="_blank" 
                           rel="noreferrer"
                         >
                           {isRoute ? <Route className="w-3.5 h-3.5" /> : <Map className="w-3.5 h-3.5" />}
-                          {isRoute ? "Xem lộ trình di chuyển (Roadmap) " : "Mở bằng ứng dụng Google Maps "}
+                          {isRoute ? "Xem lộ trình di chuyển " : "Mở bằng ứng dụng Google Maps "}
                           &rarr;
                         </a>
                       );
@@ -455,17 +610,18 @@ export function SharedActivitiesSection({
 
                 {/* Expenses & Backup plans linked */}
                 {(() => {
-                  const linkedExpenses = expenses.filter(exp => String(exp.eventId) === String(item.id));
+                  const rawLinkedExpenses = expenses.filter(exp => String(exp.eventId) === String(item.id));
+                  const linkedExpenses = rawLinkedExpenses.filter((exp, index, self) => index === self.findIndex((t) => t.amount === exp.amount && t.description === exp.description));
                   const backupCount = mergedBackupPlans.filter(p => p.activityId !== undefined && String(p.activityId) === String(item.id) && !p.isDeleted).length;
                   return (
                     <>
                       {linkedExpenses.length > 0 && (
-                        <div className="mt-3 border-t border-slate-100/70 pt-2 flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        <div className="mt-3 border-t border-slate-100/40 pt-2 flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
                           {linkedExpenses.map(exp => (
-                            <div key={exp.id} className="flex items-center gap-1 px-2.5 py-1 bg-rose-50 text-rose-700 text-[11.5px] rounded-lg border border-rose-200 shadow-sm font-semibold">
-                              <WalletCards className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                              <span className="font-extrabold">{new Intl.NumberFormat('vi-VN').format(exp.amount)}đ</span>
-                              <span className="text-rose-600 truncate max-w-[120px] font-medium">- {exp.description || exp.category}</span>
+                            <div key={exp.id} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rose-50/60 text-rose-700 text-[11px] rounded-xl border border-rose-100 shadow-[0_1px_4px_rgba(229,10,98,0.03)] font-bold">
+                              <WalletCards className="w-3 h-3 text-rose-500" />
+                              <span>{new Intl.NumberFormat('vi-VN').format(exp.amount)}đ</span>
+                              <span className="text-rose-500/80 font-medium truncate max-w-[110px]">&middot; {exp.description || exp.category}</span>
                             </div>
                           ))}
                         </div>
@@ -480,8 +636,8 @@ export function SharedActivitiesSection({
                             className={classNames(
                               "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] font-bold border transition-colors motion-press cursor-pointer focus:outline-none",
                               backupCount > 0 
-                                ? "bg-indigo-50 text-indigo-600 border-indigo-150 hover:bg-indigo-100"
-                                : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-700"
+                                ? "bg-indigo-50/60 text-indigo-650 border-indigo-100 hover:bg-indigo-100 shadow-[0_1px_4px_rgba(79,70,229,0.03)]"
+                                : "bg-slate-50/40 text-slate-500 border border-dashed border-slate-200 hover:bg-slate-100/60 hover:text-slate-700"
                             )}
                           >
                             <GitBranch className="w-3.5 h-3.5" />
@@ -496,17 +652,22 @@ export function SharedActivitiesSection({
             </div>
           );
         })}
+              </div>
+            </div>
+          ));
+        })()}
       </div>
 
       {isRequestEdit && (
         <button 
           onClick={startAdd} 
-          className="mt-6 flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-[#FFFDF8] hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
+          className="mt-8 flex h-12 w-full items-center justify-center gap-2 text-[14px] font-black text-[#030D2E] bg-slate-50/50 hover:bg-indigo-50/40 border-2 border-dashed border-slate-200/60 hover:border-indigo-200/70 hover:text-indigo-600 rounded-2xl transition-all duration-200 shadow-sm cursor-pointer"
           title={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
         >
           <Plus className="h-4.5 w-4.5" /> {isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
         </button>
       )}
+    </section>
 
       {/* Fixed-position dropdown — renders above everything */}
       {activeMenuId && menuPos && createPortal(
@@ -657,7 +818,7 @@ export function SharedActivitiesSection({
                 <span className="flex flex-col gap-1">
                   <span className="flex items-center gap-1.5">
                     <Map className="h-4 w-4 text-slate-500" />
-                    Link bản đồ / Lộ trình (Roadmap)
+                    Link bản đồ
                   </span>
                   <span className="text-xs font-normal text-slate-400">
                     Gắn link địa điểm hoặc link lộ trình di chuyển (maps/dir/...) của Google Maps.
@@ -735,7 +896,80 @@ export function SharedActivitiesSection({
         mode={backupPlansMode || mode}
         guestName={guestName || "Khách"}
       />
-    </section>
+      <BottomSheet
+        isOpen={isDayPickerOpen}
+        onClose={() => setIsDayPickerOpen(false)}
+        title="Chọn nhanh ngày lịch trình"
+      >
+        <div className="space-y-4">
+          <p className="text-[13.5px] font-semibold text-slate-500 pb-1">
+            Chọn một ngày cụ thể dưới đây để lọc xem chi tiết hoạt động hoặc chọn "Tất cả các ngày".
+          </p>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[60vh] overflow-y-auto pr-1 scrollbar-none pb-4">
+            <button
+              type="button"
+              onClick={() => {
+                setFilterDay("all");
+                setIsDayPickerOpen(false);
+              }}
+              className={classNames(
+                "flex flex-col items-center justify-center p-3 rounded-[16px] border text-center transition-all duration-200 active:scale-95 min-h-[72px] cursor-pointer",
+                filterDay === "all"
+                  ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
+                  : "bg-[#FFFDF8] border-slate-200 text-slate-700 hover:bg-slate-50"
+              )}
+            >
+              <span className="text-[13.5px] font-extrabold">Tất cả các ngày</span>
+              <span className={classNames(
+                "text-[10px] font-bold mt-1 px-1.5 py-0.5 rounded-full",
+                filterDay === "all" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
+              )}>
+                {mergedActivities.length} mục
+              </span>
+            </button>
+
+            {days.map((day, idx) => {
+              const isActive = filterDay === day;
+              const count = mergedActivities.filter(e => e.date === day).length;
+              return (
+                <button
+                  key={day}
+                  type="button"
+                  onClick={() => {
+                    setFilterDay(day);
+                    setIsDayPickerOpen(false);
+                  }}
+                  className={classNames(
+                    "flex flex-col items-center justify-center p-3 rounded-[16px] border text-center transition-all duration-200 active:scale-95 min-h-[72px] cursor-pointer",
+                    isActive
+                      ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
+                      : "bg-[#FFFDF8] border-slate-200 text-slate-700 hover:bg-slate-50"
+                  )}
+                >
+                  <span className="text-[13.5px] font-extrabold">Ngày {idx + 1}</span>
+                  <span className={classNames(
+                    "text-[10.5px] font-medium mt-0.5",
+                    isActive ? "text-slate-200" : "text-slate-400"
+                  )}>
+                    {formatDateShort(day)}
+                  </span>
+                  {count > 0 && (
+                    <span className={classNames(
+                      "text-[9px] font-black mt-1 px-1.5 py-0.2 rounded-full",
+                      isActive ? "bg-white/20 text-white" : "bg-kat-primary/15 text-kat-primary"
+                    )}>
+                      {count} mục
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </BottomSheet>
+
+    </>
   );
 }
 

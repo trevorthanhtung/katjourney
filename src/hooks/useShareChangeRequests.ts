@@ -4,6 +4,8 @@ import { approveChangeRequest } from '../services/shareApprovalService';
 import { firebaseEnabled, initFirebase } from '../lib/firebase';
 import { Trip } from '../db';
 
+const processingReqs = new Set<string>();
+
 export interface AppChangeRequest {
   id: string;
   status: 'pending' | 'approved' | 'rejected' | 'auto_approved';
@@ -62,10 +64,18 @@ export function useShareChangeRequests(trip: Trip | undefined) {
             // Auto-process auto_approved requests
             const autoReqs = allReqs.filter(r => r.status === 'auto_approved');
             autoReqs.forEach(async (req) => {
+              if (processingReqs.has(req.id)) return;
+              processingReqs.add(req.id);
               try {
                 await approveChangeRequest(token, req.id);
               } catch (e) {
                 console.error("Auto-approve failed:", e);
+              } finally {
+                // We keep it in the set for a little while to prevent race conditions
+                // if the snapshot fires again before the update is fully committed
+                setTimeout(() => {
+                  processingReqs.delete(req.id);
+                }, 2000);
               }
             });
 

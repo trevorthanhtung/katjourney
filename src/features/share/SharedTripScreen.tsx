@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { 
   Globe, MapPin, CalendarDays, Clock, Route,
   Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link, X, MessageCircle, UserRoundCog,
-  Crown, Car, Luggage, UsersRound, BadgeCheck
+  Crown, Car, Luggage, UsersRound, BadgeCheck,
+  Plus, Edit3, Map, Compass, GitBranch
 } from "lucide-react";
 import { getViewShareData } from "../../services/cloudShareService";
 import { formatDate, classNames, getTripTiming, formatMoney, daysBetween } from "../../utils/helpers";
@@ -13,6 +14,8 @@ import { getIdentity, saveIdentity, UserIdentity } from "../../services/identity
 import { getAvatarSvg } from "../../utils/avatars";
 import { ChatBox } from "./components/ChatBox";
 import { WeatherWidget } from "../timeline/WeatherWidget";
+import { BottomSheet, FormActions } from "../../components/ui";
+import { SharedBackupPlansSheet } from "./components/SharedBackupPlansSheet";
 
 interface SharedData {
   trip: any;
@@ -44,6 +47,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [pinError, setPinError] = useState(false);
   const [step, setStep] = useState<"pin" | "identity">("pin");
   const [isBannerVisible, setIsBannerVisible] = useState(true);
+  const [isGlobalBackupOpen, setIsGlobalBackupOpen] = useState(false);
 
   const renderRoleIcons = (role: string) => {
     const roles = (role || "Người đồng hành")
@@ -63,6 +67,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
           if (roleLower === "tài xế") {
             return <span key={i} title="Tài xế" className="shrink-0"><Car className="h-3.5 w-3.5 text-blue-500" /></span>;
           }
+          if (roleLower === "dẫn đường") {
+            return <span key={i} title="Dẫn đường" className="shrink-0"><Compass className="h-3.5 w-3.5 text-sky-500" /></span>;
+          }
           if (roleLower === "phụ trách hành lý") {
             return <span key={i} title="Phụ trách hành lý" className="shrink-0"><Luggage className="h-3.5 w-3.5 text-indigo-500" /></span>;
           }
@@ -79,7 +86,31 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [showChatBox, setShowChatBox] = useState(false);
 
   const [activeTab, setActiveTab] = useState<string>("activities");
+  const [hasInitializedTab, setHasInitializedTab] = useState(false);
   const [selectedRoadmapDay, setSelectedRoadmapDay] = useState<string>("");
+  const [isRoadmapFormOpen, setIsRoadmapFormOpen] = useState(false);
+  const [roadmapInputLink, setRoadmapInputLink] = useState("");
+  const [roadmapEditDay, setRoadmapEditDay] = useState("");
+
+  const handleSaveRoadmap = async () => {
+    if (!roadmapEditDay) return;
+    try {
+      const currentRoadmaps = { ...(trip.dayRoadmaps || {}) };
+      if (roadmapInputLink.trim()) {
+        currentRoadmaps[roadmapEditDay] = roadmapInputLink.trim();
+      } else {
+        delete currentRoadmaps[roadmapEditDay];
+      }
+      
+      const { updateSharedTripRoadmaps } = await import("../../services/sharedTripEditService");
+      await updateSharedTripRoadmaps(token, currentRoadmaps);
+      
+      setIsRoadmapFormOpen(false);
+    } catch (err) {
+      console.error("Lỗi khi lưu lộ trình:", err);
+      alert("Không thể lưu lộ trình. Vui lòng kiểm tra kết nối mạng.");
+    }
+  };
 
 
 
@@ -115,24 +146,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
     }
   }, [data]);
 
-  useEffect(() => {
-    // Select first available tab based on what's included in shared content
-    if (data) {
-      if (activities.length > 0 || canRequestEdit) {
-        setActiveTab("activities");
-      } else if (members.length > 0 || canRequestEdit) {
-        setActiveTab("members");
-      } else if (data.includeExpenses && (expenses.length > 0 || canRequestEdit)) {
-        setActiveTab("expenses");
-      } else if (data.includeChecklist && (checklist.length > 0 || canRequestEdit)) {
-        setActiveTab("checklist");
-      } else if (data.includeJournals && (journals.length > 0 || canRequestEdit)) {
-        setActiveTab("journals");
-      } else {
-        setActiveTab("others");
-      }
-    }
-  }, [data]);
+
 
   useEffect(() => {
     if (data && data.trip) {
@@ -165,6 +179,36 @@ export default function SharedTripScreen({ token }: { token: string }) {
       }
     }
   }, [data, token]);
+
+  useEffect(() => {
+    // Select first available tab based on what's included in shared content, only on initial load
+    if (data && !hasInitializedTab) {
+      const activities = data.activities || [];
+      const backupPlans = data.backupPlans || [];
+      const members = data.members || [];
+      const expenses = data.expenses || [];
+      const checklist = data.checklist || [];
+      const journals = data.journals || [];
+      
+      const isOwnerOrAdmin = currentUser?.role === "owner" || currentUser?.role === "admin";
+      const canRequestEdit = Boolean(isOwnerOrAdmin || (data.trip?.status !== 'archived' && (currentUser?.role || currentUser?.role === "member")));
+
+      if (activities.length > 0 || (data.includeBackupPlans && backupPlans.length > 0) || canRequestEdit) {
+        setActiveTab("activities");
+      } else if (members.length > 0 || canRequestEdit) {
+        setActiveTab("members");
+      } else if (data.includeExpenses && (expenses.length > 0 || canRequestEdit)) {
+        setActiveTab("expenses");
+      } else if (data.includeChecklist && (checklist.length > 0 || canRequestEdit)) {
+        setActiveTab("checklist");
+      } else if (data.includeJournals && (journals.length > 0 || canRequestEdit)) {
+        setActiveTab("journals");
+      } else {
+        setActiveTab("others");
+      }
+      setHasInitializedTab(true);
+    }
+  }, [data, hasInitializedTab, currentUser]);
 
   if (loading) {
     return (
@@ -270,6 +314,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const activitiesMode = (
     isOwnerOrAdmin || 
     userRoleLower.includes("tài xế") || 
+    userRoleLower.includes("dẫn đường") || 
     userRoleLower.includes("trưởng nhóm") || 
     userRoleLower.includes("trưởng đoàn") || 
     userRoleLower.includes("leader")
@@ -296,6 +341,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const backupPlansMode = (
     isOwnerOrAdmin || 
     userRoleLower.includes("tài xế") || 
+    userRoleLower.includes("dẫn đường") || 
     userRoleLower.includes("trưởng nhóm") || 
     userRoleLower.includes("trưởng đoàn") || 
     userRoleLower.includes("leader")
@@ -317,14 +363,22 @@ export default function SharedTripScreen({ token }: { token: string }) {
     userRoleLower.includes("leader")
   ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
 
+  // Mode for Journals (Bản tin)
+  const journalsMode = (
+    isOwnerOrAdmin || 
+    userRoleLower.includes("trưởng nhóm") || 
+    userRoleLower.includes("trưởng đoàn") || 
+    userRoleLower.includes("leader")
+  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+
   // Navigation Tabs construction
   const tabsList = [
     {id: "activities", label: "Lịch trình", show: (activities.length > 0 || (data.includeBackupPlans && backupPlans.length > 0) || canRequestEdit), icon: Route },
-    {id: "members", label: "Thành viên", show: members.length > 0 || canRequestEdit, icon: Users },
+    {id: "journals", label: "Bản tin", show: data.includeJournals && (journals.length > 0 || canRequestEdit), icon: BookOpenText },
     {id: "expenses", label: "Chi phí", show: data.includeExpenses && (expenses.length > 0 || canRequestEdit), icon: WalletCards },
     {id: "checklist", label: "Chuẩn bị", show: data.includeChecklist && (checklist.length > 0 || canRequestEdit), icon: CheckCircle },
-    {id: "journals", label: "Bản tin", show: data.includeJournals && (journals.length > 0 || canRequestEdit), icon: BookOpenText },
     {id: "others", label: "Tài liệu", show: data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit), icon: FileText },
+    {id: "members", label: "Thành viên", show: members.length > 0 || canRequestEdit, icon: Users },
   ].filter(t => t.show);
 
   if (showIdentityModal) {
@@ -461,15 +515,15 @@ export default function SharedTripScreen({ token }: { token: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFDF8]">
+    <div className="min-h-screen bg-kat-bg">
       {/* Banner */}
-      {isBannerVisible && (userRoleLower.includes("tài xế") || userRoleLower.includes("quản lý chi phí") || canRequestEdit) && (
+      {isBannerVisible && (userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí") || canRequestEdit) && (
         <div className={classNames(
           "text-white py-2 px-4 text-center text-[12px] font-semibold flex justify-between items-center shadow-md select-none border-b border-white/5",
-          (userRoleLower.includes("tài xế") || userRoleLower.includes("quản lý chi phí")) ? "bg-[#005c56]" : "bg-[#0C1938]"
+          (userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí")) ? "bg-[#005c56]" : "bg-[#0C1938]"
         )}>
           <div className="flex-1 text-center pr-6">
-            {(userRoleLower.includes("tài xế") || userRoleLower.includes("quản lý chi phí")) 
+            {(userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí")) 
               ? `Vai trò "${currentUser?.role}": Bạn có quyền chỉnh sửa trực tiếp phần được phân công.`
               : "Chế độ Đề xuất: Các thay đổi của bạn sẽ được gửi cho chủ chuyến đi xét duyệt."
             }
@@ -521,7 +575,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-[1120px] mx-auto px-2.5 min-[360px]:px-4 py-6 space-y-6">
         
         {/* Hero Card */}
         <section 
@@ -563,11 +617,12 @@ export default function SharedTripScreen({ token }: { token: string }) {
             
             <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
               {/* Timing box */}
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md p-4 border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] w-full sm:w-auto">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-white/60">
+              <div className="relative overflow-hidden flex flex-col items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md px-6 py-4 border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_8px_16px_rgba(0,0,0,0.1)] w-full sm:w-auto text-center">
+                <div className="absolute -right-4 -top-4 w-12 h-12 bg-white/10 rounded-full blur-md"></div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
                   {status === "past" ? "Trạng thái" : "Hành trình"}
                 </p>
-                <p className="mt-1 text-[20px] font-black text-white drop-shadow-sm">
+                <p className="mt-1.5 text-[22px] font-black text-white drop-shadow-sm tracking-tight">
                   {timing.label}
                 </p>
               </div>
@@ -577,33 +632,45 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
         {/* Quick Stats Grid */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="rounded-2xl border border-slate-200/60 bg-white p-4 text-center shadow-sm">
-            <Users className="mx-auto h-6 w-6 text-blue-500 mb-2" />
-            <p className="text-[20px] font-black text-[#030D2E]">{members.length}</p>
-            <p className="text-[12px] font-bold text-slate-500 uppercase">Thành viên</p>
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
+            <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
+              <Users className="h-5 w-5" />
+            </div>
+            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Thành viên</p>
           </div>
-          <div className="rounded-2xl border border-slate-200/60 bg-white p-4 text-center shadow-sm">
-            <Route className="mx-auto h-6 w-6 text-emerald-500 mb-2" />
-            <p className="text-[20px] font-black text-[#030D2E]">{activities.length}</p>
-            <p className="text-[12px] font-bold text-slate-500 uppercase">Lịch trình</p>
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
+            <div className="w-11 h-11 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+              <Route className="h-5 w-5" />
+            </div>
+            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{activities.length}</p>
+            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lịch trình</p>
           </div>
           {data.includeExpenses && (
-            <div className="rounded-2xl border border-slate-200/60 bg-white p-4 text-center shadow-sm">
-              <WalletCards className="mx-auto h-6 w-6 text-amber-500 mb-2" />
-              <p className="text-[16px] font-black text-[#030D2E] truncate">{formatMoney(totalExpense)}</p>
-              <p className="text-[12px] font-bold text-slate-500 uppercase mt-1">Chi phí</p>
+            <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500"></div>
+              <div className="w-11 h-11 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+                <WalletCards className="h-5 w-5" />
+              </div>
+              <p className="text-[18px] font-black text-[#030D2E] leading-none mb-1 truncate max-w-full px-1">{formatMoney(totalExpense)}</p>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chi phí</p>
             </div>
           )}
           {data.includeChecklist && (
-            <div className="rounded-2xl border border-slate-200/60 bg-white p-4 text-center shadow-sm">
-              <CheckCircle className="mx-auto h-6 w-6 text-purple-500 mb-2" />
-              <p className="text-[20px] font-black text-[#030D2E]">{checklistPercent}%</p>
-              <p className="text-[12px] font-bold text-slate-500 uppercase">Chuẩn bị</p>
+            <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-purple-500"></div>
+              <div className="w-11 h-11 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
+                <CheckCircle className="h-5 w-5" />
+              </div>
+              <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{checklistPercent}%</p>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chuẩn bị</p>
             </div>
           )}
         </section>
 
-        <section className="bg-slate-100/80 p-1.5 rounded-2xl flex gap-1 overflow-x-auto scrollbar-none border border-slate-200/50">
+        <section className="bg-slate-100/60 backdrop-blur-md p-1 rounded-2xl flex gap-1 overflow-x-auto scrollbar-none border border-slate-200/40 shadow-inner">
           {tabsList.map((tab) => {
             const IconComponent = tab.icon;
             const isActive = activeTab === tab.id;
@@ -612,13 +679,13 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={classNames(
-                  "flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-extrabold text-[13px] whitespace-nowrap transition-all duration-200",
+                  "flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-extrabold text-[13px] whitespace-nowrap transition-all duration-200 cursor-pointer",
                   isActive 
-                    ? "bg-white text-[#030D2E] shadow-sm border border-slate-200/10" 
-                    : "text-slate-500 hover:text-slate-700"
+                    ? "bg-white text-[#030D2E] shadow-[0_2px_8px_rgba(3,13,46,0.08)] scale-[1.02] border border-slate-100" 
+                    : "text-slate-500 hover:text-slate-800 hover:bg-white/40"
                 )}
               >
-                <IconComponent className={classNames("h-4 w-4", isActive ? "text-indigo-600" : "text-slate-400")} />
+                <IconComponent className={classNames("h-4 w-4 transition-colors", isActive ? "text-indigo-600" : "text-slate-500")} />
                 {tab.label}
               </button>
             );
@@ -649,45 +716,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
               {/* Right Column: Sidebar Widgets */}
               <div className="space-y-6">
-                {/* 1. Trip Info context card */}
-                <div className="rounded-3xl bg-white p-5 border border-slate-200/60 shadow-sm space-y-4">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
-                      <Route className="h-4 w-4" />
-                    </span>
-                    <h4 className="text-[15px] font-extrabold text-[#030D2E]">Thông tin hành trình</h4>
-                  </div>
-                  
-                  <div className="space-y-3 text-[14px] font-medium text-slate-600 border-t border-slate-100 pt-3">
-                    <div className="flex items-center justify-between border-b border-slate-50 pb-2">
-                      <span className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-slate-400" />
-                        Điểm đến
-                      </span>
-                      <span className="font-bold text-[#030D2E]">{trip.destination || trip.location || "Chưa xác định"}</span>
-                    </div>
-                    <div className="flex items-center justify-between border-b border-slate-50 pb-2">
-                      <span className="flex items-center gap-2">
-                        <CalendarDays className="h-4 w-4 text-slate-400" />
-                        Thời gian
-                      </span>
-                      <span className="font-bold text-[#030D2E]">
-                        {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between pb-1">
-                      <span className="flex items-center gap-2">
-                        <Route className="h-4 w-4 text-slate-400" />
-                        Mục lịch trình
-                      </span>
-                      <span className="font-bold text-[#030D2E]">{activities.length} mục</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 2. Shared Roadmap Widget */}
+                {/* 1. Shared Roadmap Widget */}
                 {days.length > 0 && (
-                  <div className="rounded-3xl bg-white p-5 border border-slate-200/60 shadow-sm space-y-4">
+                  <div className="rounded-3xl bg-white p-5 border border-slate-200/50 shadow-[0_2px_12px_rgba(3,13,46,0.02)] space-y-4">
                     <div className="flex items-center gap-2">
                       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
                         <Route className="h-4 w-4" />
@@ -711,8 +742,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                 isActive
                                   ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
                                   : hasLink
-                                    ? "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-[#030D2E]/10"
-                                    : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100"
+                                    ? "bg-emerald-50 text-emerald-700 border-emerald-100/80 hover:bg-emerald-100"
+                                    : "bg-slate-50 text-slate-500 border-slate-200/60 hover:bg-slate-100"
                               )}
                             >
                               Ngày {idx + 1}
@@ -732,28 +763,56 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
                       return (
                         <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-3.5 space-y-3">
-                          <div className="text-[12px] font-semibold text-slate-400">
-                            Ngày {dayIndex + 1} ({dateLabel})
+                          <div className="flex items-center justify-between text-[12px] font-semibold text-slate-400">
+                            <span>Ngày {dayIndex + 1} ({dateLabel})</span>
+                            {activitiesMode === "edit" && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setRoadmapInputLink(mapUrl);
+                                  setRoadmapEditDay(selectedRoadmapDay);
+                                  setIsRoadmapFormOpen(true);
+                                }}
+                                className="text-[#00BFB7] hover:opacity-85 font-bold flex items-center gap-1 cursor-pointer"
+                              >
+                                {mapUrl && <Edit3 className="w-3.5 h-3.5" />}
+                                {mapUrl ? "Sửa" : "Thêm"}
+                              </button>
+                            )}
                           </div>
 
                           {mapUrl ? (
                             <div className="space-y-2.5">
                               <p className="text-[13px] font-medium text-slate-600">
-                                {isRoute ? "Chủ chuyến đi đã cấu hình lộ trình cho ngày này." : "Bản đồ/địa điểm được liên kết cho ngày này."}
+                                {isRoute ? "Đã có link lộ trình cho ngày này." : "Đã liên kết bản đồ cho ngày này."}
                               </p>
                               <a
                                 href={mapUrl}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer"
+                                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
                               >
                                 <Route className="w-4 h-4" />
                                 Mở lộ trình &rarr;
                               </a>
                             </div>
                           ) : (
-                            <div className="text-center py-2">
-                              <p className="text-[12.5px] font-semibold text-slate-400">Chưa có lộ trình cho ngày này</p>
+                            <div className="space-y-2 text-center py-2">
+                              <p className="text-[12.5px] font-semibold text-slate-400">Chưa có lộ trình ngày này</p>
+                              {activitiesMode === "edit" && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setRoadmapInputLink("");
+                                    setRoadmapEditDay(selectedRoadmapDay);
+                                    setIsRoadmapFormOpen(true);
+                                  }}
+                                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-[12px] font-bold text-slate-655 hover:text-slate-900 shadow-sm transition-all cursor-pointer"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                  Gắn link lộ trình
+                                </button>
+                              )}
                             </div>
                           )}
                         </div>
@@ -762,13 +821,106 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   </div>
                 )}
 
-                {/* 3. Weather Forecast Widget */}
+                {/* 2. Weather Forecast Widget */}
                 <WeatherWidget 
                   destination={trip.destination || trip.location} 
                   latitude={trip.latitude} 
                   longitude={trip.longitude} 
                   days={tripDays.length || 3} 
                 />
+
+                {/* 3. Shared General Backup Plans Widget */}
+                {data.includeBackupPlans && (
+                  <div className="rounded-3xl bg-white p-5 border border-slate-200/50 shadow-[0_2px_12px_rgba(3,13,46,0.02)] space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+                          <GitBranch className="h-4 w-4" />
+                        </span>
+                        <div>
+                          <h4 className="text-[15px] font-extrabold text-[#030D2E]">Dự phòng chung</h4>
+                          <p className="text-[11px] text-slate-500/80 font-medium">Áp dụng cho toàn bộ chuyến đi</p>
+                        </div>
+                      </div>
+                      
+                      {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length > 0 && (
+                        <button
+                          onClick={() => setIsGlobalBackupOpen(true)}
+                          className="px-2.5 py-1 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 font-bold text-[12px] hover:bg-slate-100 transition-colors cursor-pointer"
+                        >
+                          Xem ({backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length})
+                        </button>
+                      )}
+                    </div>
+
+                    {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length > 0 ? (
+                      <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+                        {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).map((plan: BackupPlan) => (
+                          <div key={plan.id} className="text-[13px] font-semibold text-[#030D2E] bg-slate-50/70 rounded-xl px-3 py-2.5 border border-slate-100/50 flex items-center justify-between gap-2">
+                            <span className="truncate">{plan.title}</span>
+                            <button
+                              onClick={() => setIsGlobalBackupOpen(true)}
+                              className="text-indigo-650 hover:text-indigo-800 shrink-0 text-[12px] font-bold"
+                            >
+                              Chi tiết &rarr;
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200/60">
+                        <p className="text-[12.5px] font-bold text-slate-400">Chưa có dự phòng chung</p>
+                        <p className="text-[11px] text-slate-400 mt-0.5">Các phương án áp dụng cho toàn bộ chuyến đi.</p>
+                      </div>
+                    )}
+
+                    {canRequestEdit && (
+                      <button
+                        onClick={() => setIsGlobalBackupOpen(true)}
+                        className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-indigo-200/80 text-indigo-600 font-bold text-[13px] hover:bg-indigo-50 transition-colors motion-press cursor-pointer"
+                      >
+                        <Plus className="w-4 h-4" />
+                        {backupPlansMode === 'edit' ? 'Thêm phương án' : 'Đề xuất phương án'}
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* 4. Trip Info context card */}
+                <div className="rounded-3xl bg-white p-5 border border-slate-200/50 shadow-[0_2px_12px_rgba(3,13,46,0.02)] space-y-4">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#030D2E]/5 text-[#030D2E]">
+                      <Route className="h-4 w-4" />
+                    </span>
+                    <h4 className="text-[15px] font-extrabold text-[#030D2E]">Thông tin hành trình</h4>
+                  </div>
+                  
+                  <div className="space-y-3 text-[13.5px] font-semibold text-slate-500 border-t border-slate-100 pt-3">
+                    <div className="flex items-center justify-between border-b border-slate-100/40 pb-2.5">
+                      <span className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-slate-400" />
+                        Điểm đến
+                      </span>
+                      <span className="font-black text-[#030D2E]">{trip.destination || trip.location || "Chưa xác định"}</span>
+                    </div>
+                    <div className="flex items-center justify-between border-b border-slate-100/40 pb-2.5">
+                      <span className="flex items-center gap-2">
+                        <CalendarDays className="h-4 w-4 text-slate-400" />
+                        Thời gian
+                      </span>
+                      <span className="font-black text-[#030D2E]">
+                        {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between pb-0.5">
+                      <span className="flex items-center gap-2">
+                        <Route className="h-4 w-4 text-slate-400" />
+                        Mục lịch trình
+                      </span>
+                      <span className="font-black text-[#030D2E]">{activities.length} mục</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -812,7 +964,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             <SharedJournalsSection 
               tripId={trip.id}
               token={token} 
-              mode={canRequestEdit ? 'request_edit' : 'view'} 
+              mode={journalsMode} 
               journals={journals} 
               changeRequests={changeRequests}
               guestName={currentUser?.name || "Khách"}
@@ -846,6 +998,93 @@ export default function SharedTripScreen({ token }: { token: string }) {
           </p>
         </div>
       </main>
+
+      {/* Roadmap Edit Bottom Sheet */}
+      <BottomSheet
+        isOpen={isRoadmapFormOpen}
+        onClose={() => setIsRoadmapFormOpen(false)}
+        title={`Lộ trình di chuyển - Ngày ${days.indexOf(roadmapEditDay) + 1}`}
+      >
+        <div className="space-y-5 pb-4">
+          
+          {/* Instruction card */}
+          <div className="flex items-start gap-3 bg-[#00BFB7]/8 border border-[#00BFB7]/20 rounded-2xl px-4 py-3">
+            <Route className="h-5 w-5 text-[#00BFB7] shrink-0 mt-0.5" />
+            <div>
+              <p className="text-[13px] font-bold text-[#030D2E]">Dán link lộ trình Google Maps</p>
+              <p className="text-[12px] text-slate-500 font-medium mt-0.5 leading-relaxed">
+                Vào Google Maps → chọn điểm đầu/cuối → nhấn <strong>Đường đi</strong> → sao chép link trên thanh địa chỉ.
+              </p>
+            </div>
+          </div>
+
+          {/* Input */}
+          <div className="relative">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+              <Route className="h-4 w-4 text-[#00BFB7]" />
+            </div>
+            <input
+              type="url"
+              value={roadmapInputLink}
+              onChange={e => setRoadmapInputLink(e.target.value)}
+              onPaste={e => {
+                const pasted = e.clipboardData.getData("text").trim();
+                if (pasted && pasted.startsWith("http")) {
+                  // Đặt giá trị rồi auto-save sau 1 tick để state kịp cập nhật
+                  setTimeout(async () => {
+                    if (!roadmapEditDay) return;
+                    try {
+                      const currentRoadmaps = { ...(trip.dayRoadmaps || {}) };
+                      currentRoadmaps[roadmapEditDay] = pasted;
+                      
+                      const { updateSharedTripRoadmaps } = await import("../../services/sharedTripEditService");
+                      await updateSharedTripRoadmaps(token, currentRoadmaps);
+                      
+                      setIsRoadmapFormOpen(false);
+                    } catch (err) {
+                      console.error("Lỗi khi lưu lộ trình:", err);
+                      alert("Không thể lưu lộ trình. Vui lòng kiểm tra kết nối mạng.");
+                    }
+                  }, 50);
+                }
+              }}
+              placeholder="https://www.google.com/maps/dir/..."
+              className="w-full pl-11 pr-4 py-4 bg-white border-2 border-[#E8E1D8] rounded-2xl text-[14px] font-semibold text-[#030D2E] placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-[#00BFB7] focus:ring-2 focus:ring-[#00BFB7]/15 transition-all duration-200"
+            />
+          </div>
+
+          {/* Test link button – only show when there's input */}
+          {roadmapInputLink.trim() && (
+            <a
+              href={roadmapInputLink}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-[13.5px] font-bold text-emerald-700 hover:bg-emerald-100 transition-colors"
+            >
+              <Map className="w-4 h-4" />
+              Mở link kiểm tra &rarr;
+            </a>
+          )}
+
+          <FormActions
+            onCancel={() => setIsRoadmapFormOpen(false)}
+            onSave={handleSaveRoadmap}
+            saveLabel="Lưu lộ trình"
+          />
+        </div>
+      </BottomSheet>
+      {data.includeBackupPlans && (
+        <SharedBackupPlansSheet
+          token={token}
+          tripId={trip.id}
+          isOpen={isGlobalBackupOpen}
+          onClose={() => setIsGlobalBackupOpen(false)}
+          backupPlans={backupPlans}
+          changeRequests={changeRequests}
+          mode={backupPlansMode || (canRequestEdit ? "request_edit" : "view")}
+          guestName={currentUser?.name || "Khách"}
+        />
+      )}
 
     </div>
   );

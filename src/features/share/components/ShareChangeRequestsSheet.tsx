@@ -56,6 +56,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
     if (section === 'journals') sectionName = 'Bản tin';
     if (section === 'backupPlans') sectionName = 'Phương án dự phòng';
     if (section === 'travelDocuments') sectionName = 'Giấy tờ';
+    if (section === 'members') sectionName = 'Thành viên';
 
     let actionName = action === 'create' ? 'Thêm' : action === 'update' ? 'Sửa' : 'Xóa';
     
@@ -65,10 +66,31 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
     const formatObj = (o: any) => {
       if (!o) return '';
       if (o.title) return o.title;
+      if (o.name && o.role) return `${o.name} (${o.role})`;
+      if (o.name) return o.name;
       if (o.description && o.amount) return `${o.description} (${formatMoney(o.amount)})`;
       if (o.description) return o.description;
       return JSON.stringify(o);
     };
+
+    if (section === 'members' && action === 'update') {
+      const memberName = (before as any)?.name || (after as any)?.name || 'Thành viên';
+      const oldRole = (before as any)?.role || 'Người đồng hành';
+      const newRole = (after as any)?.role || 'Người đồng hành';
+      return (
+        <div className="mt-2 space-y-1">
+          <p className="text-[13px] font-bold text-slate-700">Mục: {sectionName} • Đổi vai trò</p>
+          <div className="text-[13px] mt-1 font-medium text-slate-800">
+            Xin đổi vai trò cho <span className="font-bold">{memberName}</span>:
+            <div className="flex items-center gap-2 mt-1 pl-2 border-l-2 border-slate-200">
+              <span className="text-slate-400 line-through">{oldRole}</span>
+              <span className="text-slate-400">→</span>
+              <span className="text-[#00BFB7] font-bold">{newRole}</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     if (action === 'create') {
       afterText = formatObj(after);

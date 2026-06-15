@@ -706,34 +706,34 @@ export function HomeScreen({
 
     return (
       <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
-        {/* Left Column: Hôm nay focus */}
+        {/* Left Column: Hôm nay focus & Giấy tờ quan trọng */}
         <div className="space-y-4 md:space-y-6">
-          {/* Day Mode Top Card */}
-          <section id="today-widget" className="rounded-3xl bg-white p-4 md:p-6 border border-slate-100 shadow-sm space-y-4 md:space-y-5 motion-card-enter motion-delay-1">
-            {/* Phương án dự phòng hôm nay */}
-            {todayBackupPlans.length > 0 && (
-              <div className="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-                  <GitBranch className="w-5 h-5" />
+          {/* Lịch trình hôm nay */}
+          <section className="space-y-4">
+            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Lịch trình hôm nay</h3>
+            <div className="rounded-3xl bg-white p-5 border border-slate-100 shadow-sm space-y-4 motion-card-enter motion-delay-1">
+              {/* Phương án dự phòng hôm nay */}
+              {todayBackupPlans.length > 0 && (
+                <div className="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+                    <GitBranch className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[14.5px] font-extrabold text-[#030D2E]">Phương án dự phòng hôm nay</h4>
+                    <p className="text-[13px] font-semibold text-slate-500 mt-0.5">
+                      Bạn có {todayBackupPlans.length} phương án dự phòng cho hôm nay.
+                    </p>
+                    <button 
+                      onClick={() => onNavigateTab("timeline")}
+                      className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-[12.5px] font-bold text-indigo-600 hover:bg-slate-50 transition-colors motion-press"
+                    >
+                      Xem phương án <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-[14.5px] font-extrabold text-[#030D2E]">Phương án dự phòng hôm nay</h4>
-                  <p className="text-[13px] font-semibold text-slate-500 mt-0.5">
-                    Bạn có {todayBackupPlans.length} phương án dự phòng cho hôm nay.
-                  </p>
-                  <button 
-                    onClick={() => onNavigateTab("timeline")}
-                    className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-[12.5px] font-bold text-indigo-600 hover:bg-slate-50 transition-colors motion-press"
-                  >
-                    Xem phương án <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* Hoạt động tiếp theo / Lịch trình hôm nay */}
-            <div className="space-y-3">
-              <h4 className="text-[12.5px] font-black uppercase tracking-wider text-slate-400">Lịch trình hôm nay</h4>
+              {/* Hoạt động hôm nay */}
               {todayEvents.length === 0 ? (
                 <div className="p-4 rounded-2xl border border-slate-100/80 bg-slate-50/20 text-center">
                   <p className="text-[13px] font-semibold text-slate-400">Không có lịch trình nào được lên kế hoạch hôm nay.</p>
@@ -775,52 +775,6 @@ export function HomeScreen({
                         </div>
                       </button>
                     ))}
-                </div>
-              )}
-            </div>
-
-            {/* Chuẩn bị còn thiếu (Món còn thiếu) */}
-            <div className="space-y-3">
-              <h4 className="text-[12.5px] font-black uppercase tracking-wider text-slate-400">Chuẩn bị còn thiếu</h4>
-              {checklist.length === 0 ? (
-                <div className="p-4 rounded-2xl border border-slate-100/80 bg-slate-50/20 text-center">
-                  <p className="text-[13px] font-semibold text-slate-400">Chưa có món nào được lên checklist.</p>
-                </div>
-              ) : (
-                <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
-                  {displayChecklist.map((item, idx) => (
-                    <button 
-                      key={item.id}
-                      onClick={() => item.id && db.checklist.update(item.id, { completed: !item.completed })}
-                      className={`w-full min-h-[46px] flex items-center justify-between p-3 px-4 rounded-2xl border transition-all text-left group motion-press ${
-                        item.completed 
-                          ? "bg-slate-50/45 border-slate-100/60 text-slate-400/80" 
-                          : "bg-[#FFFDF8] border-slate-200/60 text-slate-700 hover:bg-slate-50/60 hover:border-kat-primary/30"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <div className="shrink-0">
-                          {item.completed ? (
-                            <CheckCircle2 className="h-5.5 w-5.5 text-emerald-500 fill-emerald-50" />
-                          ) : (
-                            <Circle className="h-5.5 w-5.5 text-slate-300 group-hover:text-slate-400 transition-colors" />
-                          )}
-                        </div>
-                        <span className={`text-[13.5px] font-bold truncate ${item.completed ? "line-through text-slate-400" : "text-slate-800"}`}>
-                          {item.title}
-                        </span>
-                      </div>
-                    </button>
-                  ))}
-                  {incompleteChecklist.length > 5 && (
-                    <button 
-                      onClick={() => onNavigateTab("checklist")}
-                      className="w-full text-center py-2 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center justify-center gap-1"
-                    >
-                      <span>Xem thêm {incompleteChecklist.length - 5} món chưa chuẩn bị</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </button>
-                  )}
                 </div>
               )}
             </div>
@@ -870,11 +824,10 @@ export function HomeScreen({
           </section>
         </div>
 
-        {/* Right Column: Tổng quan hành trình & Lịch trình đã ghi */}
+        {/* Right Column: Tổng quan hành trình, Chuẩn bị còn thiếu & Lịch trình đã ghi */}
         <div className="space-y-6">
+          {/* Tổng quan hành trình */}
           <section className="space-y-4">
-
-
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Tổng quan hành trình</h3>
             <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 motion-card-enter motion-delay-3">
               <ul className="space-y-6">
@@ -916,7 +869,7 @@ export function HomeScreen({
                     <Receipt className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Tổng đã chi chuyến đi</p>
+                    <p className="text-[13px] font-semibold text-kat-muted">Tổng đã chi chuyển đi</p>
                     <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">{formatMoney(totalExpense)}</p>
                   </div>
                 </li>
@@ -924,10 +877,58 @@ export function HomeScreen({
             </div>
           </section>
 
+          {/* Chuẩn bị còn thiếu */}
+          <section className="space-y-4">
+            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Chuẩn bị còn thiếu</h3>
+            <div className="rounded-3xl bg-white p-5 border border-slate-100 shadow-sm motion-card-enter motion-delay-4">
+              {checklist.length === 0 ? (
+                <div className="p-4 rounded-2xl border border-slate-100/80 bg-slate-50/20 text-center">
+                  <p className="text-[13px] font-semibold text-slate-400">Chưa có món nào được lên checklist.</p>
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+                  {displayChecklist.map((item, idx) => (
+                    <button 
+                      key={item.id}
+                      onClick={() => item.id && db.checklist.update(item.id, { completed: !item.completed })}
+                      className={`w-full min-h-[46px] flex items-center justify-between p-3 px-4 rounded-2xl border transition-all text-left group motion-press ${
+                        item.completed 
+                          ? "bg-slate-50/45 border-slate-100/60 text-slate-400/80" 
+                          : "bg-[#FFFDF8] border-slate-200/60 text-slate-700 hover:bg-slate-50/60 hover:border-kat-primary/30"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="shrink-0">
+                          {item.completed ? (
+                            <CheckCircle2 className="h-5.5 w-5.5 text-emerald-500 fill-emerald-50" />
+                          ) : (
+                            <Circle className="h-5.5 w-5.5 text-slate-300 group-hover:text-slate-400 transition-colors" />
+                          )}
+                        </div>
+                        <span className={`text-[13.5px] font-bold truncate ${item.completed ? "line-through text-slate-400" : "text-slate-800"}`}>
+                          {item.title}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                  {incompleteChecklist.length > 5 && (
+                    <button 
+                      onClick={() => onNavigateTab("checklist")}
+                      className="w-full text-center py-2 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center justify-center gap-1"
+                    >
+                      <span>Xem thêm {incompleteChecklist.length - 5} món chưa chuẩn bị</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </section>
+
           {/* Lịch trình đã ghi */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Lịch trình đã ghi</h3>
-            <div className="rounded-3xl bg-white p-5 border border-slate-100 shadow-sm motion-card-enter motion-delay-4">
+            <div className="rounded-3xl bg-white p-5 border border-slate-100 shadow-sm motion-card-enter motion-delay-5">
               <p className="text-[13.5px] font-semibold text-slate-500">
                 {events.length > 0 
                   ? `Đang có ${events.length} hoạt động trong lịch trình chuyến đi.`
