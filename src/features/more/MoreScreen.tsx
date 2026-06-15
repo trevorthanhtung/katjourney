@@ -588,12 +588,30 @@ function MemberForm({
   onClose: () => void;
   onShowToast?: (msg: string) => void;
 }) {
-  const PRESETS = ["Người đồng hành", "Trưởng nhóm", "Quản lý chi phí", "Tài xế", "Phụ trách hành lý"];
+  const PRESETS = ["Trưởng nhóm", "Quản lý chi phí", "Tài xế", "Người đồng hành"];
   
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [selectedPreset, setSelectedPreset] = useState("Người đồng hành");
-  const [customRole, setCustomRole] = useState("");
+  const [selectedPresets, setSelectedPresets] = useState<string[]>(["Người đồng hành"]);
+
+  const togglePreset = (preset: string) => {
+    setDirty(true);
+    if (preset === "Người đồng hành") {
+      setSelectedPresets(["Người đồng hành"]);
+    } else {
+      let next = selectedPresets.filter(p => p !== "Người đồng hành");
+      if (next.includes(preset)) {
+        next = next.filter(p => p !== preset);
+      } else {
+        next.push(preset);
+      }
+      if (next.length === 0) {
+        next = ["Người đồng hành"];
+      }
+      setSelectedPresets(next);
+    }
+  };
+
   const [note, setNote] = useState("");
   const [gender, setGender] = useState<string>("male");
   
@@ -609,18 +627,19 @@ function MemberForm({
         setGender(editing.gender ?? "male");
         
         const currentRole = editing.role ?? "Người đồng hành";
-        if (PRESETS.includes(currentRole)) {
-          setSelectedPreset(currentRole);
-          setCustomRole("");
+        const loadedPresets = currentRole
+          .split(",")
+          .map(r => r.trim())
+          .filter(r => PRESETS.includes(r));
+        if (loadedPresets.length > 0) {
+          setSelectedPresets(loadedPresets);
         } else {
-          setSelectedPreset("Khác");
-          setCustomRole(currentRole);
+          setSelectedPresets(["Người đồng hành"]);
         }
       } else {
         setName("");
         setPhone("");
-        setSelectedPreset("Người đồng hành");
-        setCustomRole("");
+        setSelectedPresets(["Người đồng hành"]);
         setNote("");
         setGender("male");
       }
@@ -635,15 +654,13 @@ function MemberForm({
   const isPhoneInvalid = phoneClean !== "" && !/^(0[3|5|7|8|9])[0-9]{8}$/.test(phoneClean);
   const phoneError = isPhoneInvalid ? "Số điện thoại không đúng định dạng (VD: 0987654321)." : "";
   
-  const customRoleError = selectedPreset === "Khác" && !customRole.trim() ? "Vui lòng nhập vai trò khác." : "";
-  
-  const hasError = !!nameError || !!phoneError || !!customRoleError;
+  const hasError = !!nameError || !!phoneError;
 
   async function save() {
     setSubmitAttempted(true);
     if (hasError) return;
 
-    const finalRole = selectedPreset === "Khác" ? customRole.trim() : selectedPreset;
+    const finalRole = selectedPresets.join(", ");
     
     // Generate avatar if not already present or if gender changed
     let finalAvatar = editing?.avatar;
@@ -798,17 +815,14 @@ function MemberForm({
             Vai trò trong chuyến đi
           </span>
           <div className="flex flex-wrap gap-2 mb-3">
-            {[...PRESETS, "Khác"].map((preset) => (
+            {PRESETS.map((preset) => (
               <button
                 key={preset}
                 type="button"
-                onClick={() => {
-                  setSelectedPreset(preset);
-                  setDirty(true);
-                }}
+                onClick={() => togglePreset(preset)}
                 className={classNames(
                   "rounded-full px-4 py-2 text-[13.5px] font-extrabold transition-all duration-200 active:scale-95 border flex items-center gap-1.5",
-                  selectedPreset === preset
+                  selectedPresets.includes(preset)
                     ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#00BFB7]"
                     : "bg-[#FFFDF8] border-[#E8E1D8] text-slate-600 hover:bg-slate-50"
                 )}
@@ -819,19 +833,6 @@ function MemberForm({
             ))}
           </div>
 
-          {selectedPreset === "Khác" && (
-            <div className="mt-2.5 animate-fadeIn">
-              <Input
-                label="Vai trò khác *"
-                value={customRole}
-                onChange={(val) => { setCustomRole(val); setDirty(true); }}
-                placeholder="VD: Nhiếp ảnh, Hậu cần..."
-              />
-              {(dirty || submitAttempted) && customRoleError && (
-                <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{customRoleError}</p>
-              )}
-            </div>
-          )}
           <p className="mt-1.5 px-1 text-[11.5px] font-bold text-kat-muted">
             Vai trò giúp chia chi phí, chuẩn bị hành lý và ghi chú rõ ràng hơn.
           </p>
@@ -1378,23 +1379,33 @@ function MemberCardRow({
                 <UserRound className="h-4.5 w-4.5 text-[#030D2E]/60 shrink-0" />
                 <h4 className="text-[17px] font-extrabold text-[#030D2E] truncate">{member.name}</h4>
                 {(() => {
-                  const roleLower = (member.role || "").trim().toLowerCase();
-                  if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
-                    return <span title="Trưởng nhóm" className="shrink-0 ml-0.5"><Crown className="h-4.5 w-4.5 text-amber-500" /></span>;
-                  }
-                  if (roleLower === "quản lý chi phí") {
-                    return <span title="Quản lý chi phí" className="shrink-0 ml-0.5"><WalletCards className="h-4.5 w-4.5 text-emerald-500" /></span>;
-                  }
-                  if (roleLower === "tài xế") {
-                    return <span title="Tài xế" className="shrink-0 ml-0.5"><Car className="h-4.5 w-4.5 text-blue-500" /></span>;
-                  }
-                  if (roleLower === "phụ trách hành lý") {
-                    return <span title="Phụ trách hành lý" className="shrink-0 ml-0.5"><Luggage className="h-4.5 w-4.5 text-indigo-500" /></span>;
-                  }
-                  if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
-                    return <span title={member.role || "Người đồng hành"} className="shrink-0 ml-0.5"><UsersRound className="h-4.5 w-4.5 text-slate-400" /></span>;
-                  }
-                  return <span title={member.role} className="shrink-0 ml-0.5"><BadgeCheck className="h-4.5 w-4.5 text-teal-500" /></span>;
+                  const roles = (member.role || "Người đồng hành")
+                    .split(",")
+                    .map(r => r.trim().toLowerCase())
+                    .filter(Boolean);
+                  
+                  return (
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {roles.map((roleLower, i) => {
+                        if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
+                          return <span key={i} title="Trưởng nhóm" className="shrink-0"><Crown className="h-4.5 w-4.5 text-amber-500" /></span>;
+                        }
+                        if (roleLower === "quản lý chi phí") {
+                          return <span key={i} title="Quản lý chi phí" className="shrink-0"><WalletCards className="h-4.5 w-4.5 text-emerald-500" /></span>;
+                        }
+                        if (roleLower === "tài xế") {
+                          return <span key={i} title="Tài xế" className="shrink-0"><Car className="h-4.5 w-4.5 text-blue-500" /></span>;
+                        }
+                        if (roleLower === "phụ trách hành lý") {
+                          return <span key={i} title="Phụ trách hành lý" className="shrink-0"><Luggage className="h-4.5 w-4.5 text-indigo-500" /></span>;
+                        }
+                        if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
+                          return <span key={i} title="Người đồng hành" className="shrink-0"><UsersRound className="h-4.5 w-4.5 text-slate-400" /></span>;
+                        }
+                        return <span key={i} title={roleLower} className="shrink-0"><BadgeCheck className="h-4.5 w-4.5 text-teal-500" /></span>;
+                      })}
+                    </div>
+                  );
                 })()}
               </div>
             </div>
