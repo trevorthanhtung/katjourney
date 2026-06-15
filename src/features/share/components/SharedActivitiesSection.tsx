@@ -54,6 +54,7 @@ export function SharedActivitiesSection({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
   const [form, setForm] = useState({ 
     title: '', 
     date: '', 
@@ -253,49 +254,24 @@ export function SharedActivitiesSection({
                   </div>
 
                   {isRequestEdit && !isPending && (
-                    <div className="relative shrink-0">
+                    <div className="shrink-0">
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
-                          setActiveMenuId(activeMenuId === String(item.id) ? null : String(item.id));
+                          const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                          if (activeMenuId === String(item.id)) {
+                            setActiveMenuId(null);
+                            setMenuPos(null);
+                          } else {
+                            setActiveMenuId(String(item.id));
+                            setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+                          }
                         }}
                         className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-50 active:scale-90 transition-all focus:outline-none"
                         title="Tùy chọn đề xuất"
                       >
                         <MoreVertical className="h-4.5 w-4.5" />
                       </button>
-                      
-                      {activeMenuId === String(item.id) && (
-                        <>
-                          <div 
-                            className="fixed inset-0 z-35" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setActiveMenuId(null);
-                            }}
-                          />
-                          <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-xl bg-white border border-slate-200/80 shadow-floating py-1.5 animate-fadeIn">
-                            <button
-                              onClick={() => {
-                                setActiveMenuId(null);
-                                startEdit(item);
-                              }}
-                              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
-                            >
-                              Đề xuất sửa
-                            </button>
-                            <button
-                              onClick={() => {
-                                setActiveMenuId(null);
-                                handleDelete(String(item.id));
-                              }}
-                              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
-                            >
-                              Đề xuất xóa
-                            </button>
-                          </div>
-                        </>
-                      )}
                     </div>
                   )}
                 </div>
@@ -398,6 +374,43 @@ export function SharedActivitiesSection({
         >
           <Plus className="h-4.5 w-4.5" /> Đề xuất thêm
         </button>
+      )}
+
+      {/* Fixed-position dropdown — renders above everything */}
+      {activeMenuId && menuPos && (
+        <>
+          <div
+            className="fixed inset-0 z-[998]"
+            onClick={() => { setActiveMenuId(null); setMenuPos(null); }}
+          />
+          <div
+            className="fixed z-[999] w-36 rounded-xl bg-white border border-slate-200 shadow-lg py-1.5 animate-fadeIn"
+            style={{ top: menuPos.top, right: menuPos.right }}
+          >
+            <button
+              onClick={() => {
+                const id = activeMenuId;
+                setActiveMenuId(null);
+                setMenuPos(null);
+                startEdit(mergedActivities.find(a => String(a.id) === id)!);
+              }}
+              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+            >
+              Đề xuất sửa
+            </button>
+            <button
+              onClick={() => {
+                const id = activeMenuId;
+                setActiveMenuId(null);
+                setMenuPos(null);
+                handleDelete(id!);
+              }}
+              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+            >
+              Đề xuất xóa
+            </button>
+          </div>
+        </>
       )}
 
       <BottomSheet
@@ -560,3 +573,4 @@ export function SharedActivitiesSection({
     </section>
   );
 }
+
