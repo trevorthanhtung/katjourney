@@ -540,11 +540,11 @@ export default function SharedTripScreen({ token }: { token: string }) {
       )}
 
       {/* Header */}
-      <header className="bg-[#FFFDF8] border-b border-slate-100 px-4 py-3 shadow-sm">
-        <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-[#FFFDF8]/90 backdrop-blur-xl border-b border-slate-100 px-2.5 min-[360px]:px-4 pb-3 pt-3 shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
+        <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between h-9 md:h-11">
           <div className="flex items-center gap-2 select-none">
             <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[28px] w-[28px] object-contain drop-shadow-sm" />
-            <span className="text-lg font-black text-[#030D2E] tracking-tight">KAT Journey</span>
+            <span className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-[#030D2E] whitespace-nowrap hidden min-[340px]:block">KAT Journey</span>
             <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-2 py-0.5 text-[10px] font-bold text-indigo-600">
               <Share2 className="h-3 w-3" /> Chia sẻ
             </span>
