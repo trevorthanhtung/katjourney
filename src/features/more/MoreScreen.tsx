@@ -1385,53 +1385,56 @@ function MemberCardRow({
     borderAccent = "border-l-4 border-l-indigo-500";
   }
 
-  const renderRoleBadge = (role: string) => {
-    const rLower = (role || "Người đồng hành").trim().toLowerCase();
-    if (rLower.includes("trưởng nhóm") || rLower.includes("trưởng đoàn") || rLower.includes("leader")) {
-      return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200/50 shadow-sm shrink-0 select-none">
-          <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-500/10 shrink-0" />
-          Trưởng nhóm
-        </span>
-      );
-    }
-    if (rLower.includes("quản lý chi phí")) {
-      return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200/50 shadow-sm shrink-0 select-none">
-          <WalletCards className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-          Quản lý chi phí
-        </span>
-      );
-    }
-    if (rLower.includes("tài xế")) {
-      return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200/50 shadow-sm shrink-0 select-none">
-          <Car className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-          Tài xế
-        </span>
-      );
-    }
-    if (rLower.includes("dẫn đường")) {
-      return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-sky-50 text-sky-700 border border-sky-200/50 shadow-sm shrink-0 select-none">
-          <Compass className="w-3.5 h-3.5 text-sky-500 shrink-0" />
-          Dẫn đường
-        </span>
-      );
-    }
-    if (rLower.includes("phụ trách hành lý") || rLower.includes("hành lý")) {
-      return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200/50 shadow-sm shrink-0 select-none">
-          <Luggage className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-          Hành lý
-        </span>
-      );
-    }
+  const renderRoleBadge = (roleStr: string) => {
+    const roles = (roleStr || "Người đồng hành").split(",").map(r => r.trim()).filter(Boolean);
+    if (roles.length === 0) roles.push("Người đồng hành");
+
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-50 text-slate-600 border border-slate-200/60 shrink-0 select-none">
-        <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-        Bạn đồng hành
-      </span>
+      <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+        {roles.map((r, idx) => {
+          const rLower = r.toLowerCase();
+          if (rLower.includes("trưởng nhóm") || rLower.includes("trưởng đoàn") || rLower.includes("leader")) {
+            return (
+              <span key={idx} title="Trưởng nhóm" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 text-amber-700 border border-amber-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                <Crown className="w-4 h-4 text-amber-500 fill-amber-500/10" />
+              </span>
+            );
+          }
+          if (rLower.includes("quản lý chi phí")) {
+            return (
+              <span key={idx} title="Quản lý chi phí" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                <WalletCards className="w-4 h-4 text-emerald-500" />
+              </span>
+            );
+          }
+          if (rLower.includes("tài xế")) {
+            return (
+              <span key={idx} title="Tài xế" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 text-blue-700 border border-blue-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                <Car className="w-4 h-4 text-blue-500" />
+              </span>
+            );
+          }
+          if (rLower.includes("dẫn đường")) {
+            return (
+              <span key={idx} title="Dẫn đường" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 text-sky-700 border border-sky-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                <Compass className="w-4 h-4 text-sky-500" />
+              </span>
+            );
+          }
+          if (rLower.includes("phụ trách hành lý") || rLower.includes("hành lý")) {
+            return (
+              <span key={idx} title="Hành lý" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                <Luggage className="w-4 h-4 text-indigo-500" />
+              </span>
+            );
+          }
+          return (
+            <span key={idx} title="Bạn đồng hành" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 text-slate-600 border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <Users className="w-4 h-4 text-slate-400" />
+            </span>
+          );
+        })}
+      </div>
     );
   };
 
