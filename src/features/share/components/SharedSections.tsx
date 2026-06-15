@@ -2438,6 +2438,23 @@ export function SharedMembersSection({
       } as any);
     });
 
+    list.sort((a, b) => {
+      const isLeader = (m: LocalMember) => {
+        const roleLower = (m.role || "").trim().toLowerCase();
+        return (
+          roleLower === "trưởng nhóm" ||
+          roleLower === "trưởng đoàn" ||
+          roleLower === "người đại diện" ||
+          roleLower === "leader"
+        );
+      };
+      const aLeader = isLeader(a);
+      const bLeader = isLeader(b);
+      if (aLeader && !bLeader) return -1;
+      if (!aLeader && bLeader) return 1;
+      return 0;
+    });
+
     return list;
   }, [members, changeRequests]);
 
