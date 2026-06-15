@@ -1147,7 +1147,7 @@ export function SharedChecklistSection({
               : "text-slate-500 hover:text-slate-800"
           )}
         >
-          Cá nhân (Chỉ mình thấy)
+          Cá nhân
           {localPrivateItems.length > 0 && (
             <span className="flex items-center justify-center min-w-4.5 h-4.5 text-[9.5px] font-black px-1 rounded-full bg-purple-650 text-white">
               {localPrivateItems.length}

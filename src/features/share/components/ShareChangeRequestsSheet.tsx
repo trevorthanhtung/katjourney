@@ -66,11 +66,24 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
     const formatObj = (o: any) => {
       if (!o) return '';
       if (o.title) return o.title;
+      if (o.text) return o.text;
       if (o.name && o.role) return `${o.name} (${o.role})`;
       if (o.name) return o.name;
       if (o.description && o.amount) return `${o.description} (${formatMoney(o.amount)})`;
       if (o.description) return o.description;
-      return JSON.stringify(o);
+      // Xử lý field "completed" đơn lẻ (checklist)
+      if ('completed' in o && Object.keys(o).length === 1) {
+        return o.completed ? 'Hoàn thành' : 'Chưa hoàn thành';
+      }
+      // Fallback: lọc bỏ các giá trị null/undefined, hiển thị gọn
+      const entries = Object.entries(o).filter(([, v]) => v !== null && v !== undefined && v !== '');
+      if (entries.length === 0) return '';
+      if (entries.length === 1) {
+        const [k, v] = entries[0];
+        if (typeof v === 'boolean') return v ? `${k}: Có` : `${k}: Không`;
+        return String(v);
+      }
+      return entries.map(([k, v]) => `${k}: ${v}`).join(', ');
     };
 
     if (section === 'members' && action === 'update') {
