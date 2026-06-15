@@ -54,7 +54,8 @@ export async function approveChangeRequest(token: string, requestId: string): Pr
     checklist: localDb.checklist,
     journals: localDb.journals,
     backupPlans: localDb.backupPlans,
-    travelDocuments: localDb.travelDocuments
+    travelDocuments: localDb.travelDocuments,
+    members: localDb.members
   };
 
   const table = dexieTableMap[section];

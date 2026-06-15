@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, Plus, Pencil, Trash2, MoreVertical, LifeBuoy,
   ReceiptText, UserCheck, Tags, ChevronRight, Scale, Info, Check, X, Clock,
-  FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles, Route, HelpCircle
+  FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles, Route, HelpCircle, Users
 } from 'lucide-react';
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
 import { formatMoney, expenseCategories, formatDate, moodLabels } from '../../../utils/helpers';
@@ -11,7 +11,7 @@ import { showToast } from '../../../components/ui/ToastManager';
 import { uploadJournalImage } from '../../../services/storageService';
 import { getIdentity } from '../../../services/identityService';
 import { BottomSheet, Input, Select, Textarea, DatePicker, DeleteConfirmModal } from '../../../components/ui';
-import { getAvatarSvg } from '../../../utils/avatars';
+import { getAvatarSvg, getRandomAvatarId } from '../../../utils/avatars';
 
 const classNames = (...classes: any[]) => classes.filter(Boolean).join(' ');
 
@@ -773,14 +773,7 @@ export function SharedChecklistSection({
                 c.isPendingDelete ? "bg-slate-50/30 opacity-70" : ""
               )}
             >
-              <label className="flex items-start gap-3 cursor-pointer group flex-1 min-w-0">
-                <input 
-                  type="checkbox" 
-                  checked={c.completed} 
-                  onChange={() => handleToggle(c)} 
-                  disabled={!isRequestEdit || isPending} 
-                  className="w-5 h-5 rounded-md border-slate-300 text-kat-primary mt-0.5 focus:ring-kat-primary" 
-                />
+              <div className="flex items-start gap-3 flex-1 min-w-0">
                 <div className="flex flex-wrap items-baseline gap-2 min-w-0">
                   <span className={classNames(
                     "text-[14.5px] font-semibold break-words", 
@@ -819,7 +812,7 @@ export function SharedChecklistSection({
                     </span>
                   </div>
                 )}
-              </label>
+              </div>
               {isRequestEdit && !isPending && (
                 <div className="relative shrink-0 ml-2">
                   <button 
@@ -2278,3 +2271,282 @@ export function SharedDocumentsSection({
     </section>
   );
 }
+
+interface LocalMember extends Member {
+  isPendingDelete?: boolean;
+  isPendingCreate?: boolean;
+  isOwner?: boolean;
+}
+
+export function SharedMembersSection({ 
+  token,
+  mode,
+  members = [],
+  changeRequests = [],
+  guestName
+}: { 
+  token: string;
+  mode: string;
+  members?: LocalMember[];
+  changeRequests?: any[];
+  guestName?: string;
+}) {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  
+  const [form, setForm] = useState({
+    name: '',
+    role: 'Người đồng hành',
+    gender: 'male'
+  });
+  const [showValidationError, setShowValidationError] = useState(false);
+
+  const isRequestEdit = mode === 'request_edit';
+
+  const mergedMembers = React.useMemo(() => {
+    const list: LocalMember[] = members.map(item => {
+      const pendingDelete = changeRequests.some(r => r.section === 'members' && r.action === 'delete' && String(r.targetId) === String(item.id));
+      return {
+        ...item,
+        isPendingDelete: pendingDelete
+      };
+    });
+
+    const pendingCreates = changeRequests.filter(r => r.section === 'members' && r.action === 'create');
+    pendingCreates.forEach(r => {
+      list.push({
+        id: ("pending-create-" + r.id) as any,
+        ...r.after,
+        isPendingCreate: true
+      } as any);
+    });
+
+    return list;
+  }, [members, changeRequests]);
+
+  async function handleAdd() {
+    setForm({ name: '', role: 'Người đồng hành', gender: 'male' });
+    setShowValidationError(false);
+    setIsFormOpen(true);
+  }
+
+  async function handleSave() {
+    if (!form.name.trim()) {
+      setShowValidationError(true);
+      return;
+    }
+
+    const existingAvatars = mergedMembers.map(m => m.avatar).filter(Boolean) as string[];
+    const randAvatar = getRandomAvatarId(form.gender, existingAvatars);
+
+    const payload = {
+      name: form.name.trim(),
+      role: form.role.trim() || 'Người đồng hành',
+      avatar: randAvatar,
+      isOwner: false
+    };
+
+    try {
+      await submitChangeRequest(token, {
+        section: 'members',
+        action: 'create',
+        after: payload,
+        requesterName: guestName
+      });
+      setIsFormOpen(false);
+      showToast('Đã gửi đề xuất thêm thành viên. Chủ nhóm sẽ duyệt.');
+    } catch (e: any) {
+      showToast('Lỗi: ' + e.message, 'error');
+    }
+  }
+
+  async function handleDelete(id: string) {
+    setDeleteTargetId(id);
+  }
+
+  async function executeDelete(id: string) {
+    try {
+      const before = members.find(m => String(m.id) === id);
+      await submitChangeRequest(token, {
+        section: 'members',
+        action: 'delete',
+        targetId: id,
+        before: before as any,
+        requesterName: guestName
+      });
+      showToast('Đã gửi đề xuất xóa thành viên.');
+    } catch (e: any) {
+      showToast('Lỗi: ' + e.message, 'error');
+    }
+  }
+
+  return (
+    <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm space-y-4">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="flex items-center gap-2">
+          <Users className="h-5 w-5 text-blue-500" />
+          <h3 className="text-[16px] font-black text-[#030D2E]">Người đồng hành</h3>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {mergedMembers.map((member) => {
+          const isPending = member.isPendingCreate || member.isPendingDelete;
+          return (
+            <div 
+              key={member.id || member.name} 
+              className={classNames(
+                "flex items-center gap-3 border p-3 rounded-2xl relative transition-all",
+                member.isPendingCreate ? "bg-sky-50/40 border-sky-100/50" : "bg-slate-50/50 border-slate-150/40",
+                member.isPendingDelete ? "opacity-70 border-rose-100" : ""
+              )}
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden bg-slate-100 border border-slate-200/50">
+                {member.avatar ? (
+                  getAvatarSvg(member.avatar, "w-full h-full")
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-indigo-50 text-indigo-600 font-bold text-[14px]">
+                    {(member.name || "?").charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+              <div className="min-w-0 flex-1 pr-6">
+                <div className="flex flex-wrap items-baseline gap-1.5 min-w-0">
+                  <h4 className={classNames(
+                    "text-[14px] font-bold text-slate-800 truncate",
+                    member.isPendingDelete ? "line-through text-slate-400" : ""
+                  )}>
+                    {member.name}
+                  </h4>
+                  {member.isPendingCreate && (
+                    <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-1.5 py-0.5 text-[9px] font-bold text-sky-600 shrink-0 select-none">
+                      Đề xuất mới
+                    </span>
+                  )}
+                  {member.isPendingDelete && (
+                    <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-1.5 py-0.5 text-[9px] font-bold text-rose-600 shrink-0 select-none">
+                      Đề xuất xóa
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] font-bold text-slate-400 mt-0.5">{member.role || "Bạn đồng hành"}</p>
+              </div>
+
+              {isRequestEdit && !isPending && !member.isOwner && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  <button 
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      setActiveMenuId(activeMenuId === String(member.id) ? null : String(member.id));
+                    }}
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all focus:outline-none"
+                    title="Tùy chọn đề xuất"
+                  >
+                    <MoreVertical className="h-4 w-4" />
+                  </button>
+                  
+                  {activeMenuId === String(member.id) && (
+                    <>
+                      <div className="fixed inset-0 z-35" onClick={() => setActiveMenuId(null)} />
+                      <div className="absolute right-0 top-full mt-1 z-40 w-32 rounded-xl bg-white border border-slate-200 shadow-floating py-1.5 animate-fadeIn">
+                        <button
+                          onClick={() => {
+                            setActiveMenuId(null);
+                            handleDelete(String(member.id));
+                          }}
+                          className="flex w-full items-center px-4 py-2 text-[13px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+                        >
+                          Đề xuất xóa
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {isRequestEdit && (
+        <button 
+          onClick={handleAdd} 
+          className="flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-[#FFFDF8] hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
+          title="Đề xuất thêm người đồng hành"
+        >
+          <Plus className="h-4.5 w-4.5" /> Đề xuất thêm người đồng hành
+        </button>
+      )}
+
+      <BottomSheet
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        title="Đề xuất thêm người đồng hành"
+      >
+        <div className="flex flex-col gap-5 py-2">
+          <Input 
+            label="Tên người đồng hành *" 
+            value={form.name} 
+            onChange={(name) => {
+              setForm({ ...form, name });
+              setShowValidationError(false);
+            }} 
+            placeholder="VD: Nguyễn Văn A" 
+          />
+          {showValidationError && (
+            <p className="text-rose-500 text-[12.5px] font-bold -mt-3 pl-1">Vui lòng nhập tên người đồng hành.</p>
+          )}
+
+          <div className="space-y-2">
+            <span className="text-[13.5px] font-semibold text-slate-600">Giới tính (để tạo ảnh đại diện ngẫu nhiên)</span>
+            <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200/40">
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, gender: 'male' })}
+                className={classNames(
+                  "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
+                  form.gender === 'male' ? "bg-white text-[#030D2E] shadow-sm border" : "text-slate-500"
+                )}
+              >
+                Nam
+              </button>
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, gender: 'female' })}
+                className={classNames(
+                  "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
+                  form.gender === 'female' ? "bg-white text-[#030D2E] shadow-sm border" : "text-slate-500"
+                )}
+              >
+                Nữ
+              </button>
+            </div>
+          </div>
+
+          <button
+            onClick={handleSave}
+            className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm"
+          >
+            Gửi đề xuất thêm
+          </button>
+        </div>
+      </BottomSheet>
+
+      <DeleteConfirmModal
+        isOpen={deleteTargetId !== null}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={async () => {
+          if (!deleteTargetId) return;
+          await executeDelete(deleteTargetId);
+          setDeleteTargetId(null);
+        }}
+        title="Đề xuất xóa người đồng hành?"
+        description="Bạn đang gửi đề xuất xóa thành viên này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất."
+        confirmLabel="Đề xuất xóa"
+        itemName={members.find(m => String(m.id) === deleteTargetId)?.name}
+      />
+    </section>
+  );
+}
+

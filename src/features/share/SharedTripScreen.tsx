@@ -8,7 +8,7 @@ import { formatDate, classNames, getTripTiming, formatMoney } from "../../utils/
 import { getWeatherGradient } from "../../services/weatherService";
 import { EventItem, Expense, ChecklistItem, Member, JournalEntry, TravelDocument, BackupPlan } from "../../db";
 import { SharedActivitiesSection } from "./components/SharedActivitiesSection";
-import { SharedExpensesSection, SharedChecklistSection, SharedJournalsSection, SharedBackupPlansSection, SharedDocumentsSection } from "./components/SharedSections";
+import { SharedExpensesSection, SharedChecklistSection, SharedJournalsSection, SharedBackupPlansSection, SharedDocumentsSection, SharedMembersSection } from "./components/SharedSections";
 import { getIdentity, saveIdentity, UserIdentity } from "../../services/identityService";
 import { getAvatarSvg } from "../../utils/avatars";
 
@@ -43,6 +43,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [step, setStep] = useState<"pin" | "identity">("pin");
   const [isBannerVisible, setIsBannerVisible] = useState(true);
 
+  const [activeTab, setActiveTab] = useState<string>("activities");
+
   useEffect(() => {
     if (data && data.trip) {
       const saved = getIdentity(data.trip.id);
@@ -54,6 +56,25 @@ export default function SharedTripScreen({ token }: { token: string }) {
       } else {
         setCurrentUser(saved);
         setIdentityChecked(true);
+      }
+    }
+  }, [data]);
+
+  useEffect(() => {
+    // Select first available tab based on what's included in shared content
+    if (data) {
+      if (activities.length > 0 || canRequestEdit) {
+        setActiveTab("activities");
+      } else if (members.length > 0 || canRequestEdit) {
+        setActiveTab("members");
+      } else if (data.includeExpenses && (expenses.length > 0 || canRequestEdit)) {
+        setActiveTab("expenses");
+      } else if (data.includeChecklist && (checklist.length > 0 || canRequestEdit)) {
+        setActiveTab("checklist");
+      } else if (data.includeJournals && (journals.length > 0 || canRequestEdit)) {
+        setActiveTab("journals");
+      } else {
+        setActiveTab("others");
       }
     }
   }, [data]);
@@ -181,6 +202,16 @@ export default function SharedTripScreen({ token }: { token: string }) {
     canRequestEdit = false;
   }
 
+  // Navigation Tabs construction
+  const tabsList = [
+    {id: "activities", label: "Lịch trình", show: (activities.length > 0 || (data.includeBackupPlans && backupPlans.length > 0) || canRequestEdit), icon: Route },
+    {id: "members", label: "Đồng hành", show: members.length > 0 || canRequestEdit, icon: Users },
+    {id: "expenses", label: "Chi phí", show: data.includeExpenses && (expenses.length > 0 || canRequestEdit), icon: WalletCards },
+    {id: "checklist", label: "Chuẩn bị", show: data.includeChecklist && (checklist.length > 0 || canRequestEdit), icon: CheckCircle },
+    {id: "journals", label: "Nhật ký", show: data.includeJournals && (journals.length > 0 || canRequestEdit), icon: BookOpenText },
+    {id: "others", label: "Tài liệu", show: data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit), icon: FileText },
+  ].filter(t => t.show);
+
   if (showIdentityModal) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#FAF7F1] p-4 animate-fadeIn">
@@ -199,30 +230,34 @@ export default function SharedTripScreen({ token }: { token: string }) {
             </h2>
             <p className="mt-2 text-[14px] text-slate-500 font-medium leading-relaxed">
               {step === "pin"
-                ? "Chủ chuyến đi đã thiết lập mã PIN bảo mật. Vui lòng nhập mã để tiếp tục."
-                : "Chọn danh tính của bạn để tương tác, viết nhật ký và lưu lại kỷ niệm nhé."}
+                ? "Chuyến đi này được bảo vệ bằng mã PIN. Vui lòng nhập mã PIN để xem nội dung."
+                : "Chọn tên của bạn trong danh sách để chúng ta dễ dàng tương tác nhé."
+              }
             </p>
+          </div>
 
-            {step === "pin" && (
-              <div className="w-full mt-6 space-y-4">
+          <div className="mt-6">
+            {step === "pin" ? (
+              <div className="space-y-4">
                 <input
-                  type="text"
-                  maxLength={4}
+                  type="password"
+                  inputMode="numeric"
+                  placeholder="Nhập mã PIN gồm 4-6 số"
                   value={pinInput}
                   onChange={(e) => {
-                    setPinInput(e.target.value.replace(/[^0-9]/g, ''));
+                    setPinInput(e.target.value);
                     setPinError(false);
                   }}
                   className={classNames(
-                    "w-full h-14 rounded-2xl border bg-slate-50 px-4 text-center text-[24px] tracking-[0.5em] font-black focus:bg-white focus:outline-none transition-all",
+                    "w-full rounded-[16px] border px-4 py-3 text-center text-lg font-black tracking-widest outline-none transition-all",
                     pinError
-                      ? "border-rose-300 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 text-rose-600"
-                      : "border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-slate-800"
+                      ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400"
+                      : "border-slate-200 bg-slate-50 text-slate-900 focus:border-[#030D2E]"
                   )}
-                  placeholder="****"
                 />
-                {pinError && <p className="text-sm font-bold text-rose-500">Mã PIN không chính xác!</p>}
-
+                {pinError && (
+                  <p className="text-center text-xs font-bold text-rose-500">Mã PIN không chính xác. Vui lòng thử lại.</p>
+                )}
                 <button
                   onClick={() => {
                     if (pinInput === data.sharePin) {
@@ -231,58 +266,47 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       setPinError(true);
                     }
                   }}
-                  className="w-full h-12 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 active:scale-95 transition-all"
+                  className="w-full rounded-[16px] bg-[#030D2E] py-3 text-[14px] font-black text-white transition-all active:scale-[0.98] shadow-sm"
                 >
-                  Xác nhận
-                </button>
-
-                <div className="relative py-2">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200" /></div>
-                  <div className="relative flex justify-center"><span className="bg-white px-3 text-[12px] font-bold text-slate-400 uppercase tracking-wider">Hoặc</span></div>
-                </div>
-
-                <button
-                  onClick={() => {
-                    const idt: UserIdentity = { name: "Khách", isGuest: true, canEdit: false };
-                    saveIdentity(idt, trip.id);
-                    setCurrentUser(idt);
-                    setIdentityChecked(true);
-                    setShowIdentityModal(false);
-                  }}
-                  className="w-full h-12 rounded-xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 active:scale-95 transition-all"
-                >
-                  Tôi chỉ xem thôi
+                  Xác nhận mã PIN
                 </button>
               </div>
-            )}
-
-            {step === "identity" && (
-              <div className="w-full mt-6 space-y-3">
-                <div className="max-h-[300px] overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-                  {members
-                    .filter((m: Member) => m.role !== "Trưởng đoàn" && m.role !== "Trưởng nhóm" && m.role !== "Người đại diện")
-                    .map((m: Member) => (
+            ) : (
+              <div className="space-y-3">
+                <div className="max-h-[200px] overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-2xl bg-slate-50/50">
+                  {members.map((m: Member) => (
                     <button
                       key={m.id}
                       onClick={() => {
-                        const idt: UserIdentity = { id: String(m.id), name: m.name, isGuest: true, canEdit: true };
-                        saveIdentity(idt, trip.id);
-                        setCurrentUser(idt);
-                        setIdentityChecked(true);
+                        const guest = { name: m.name, isGuest: true, canEdit: true };
+                        saveIdentity(guest, trip.id);
+                        setCurrentUser(guest);
                         setShowIdentityModal(false);
+                        setIdentityChecked(true);
                       }}
-                      className="w-full flex items-center gap-3 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 transition-all text-left group"
+                      className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors"
                     >
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full overflow-hidden bg-slate-250 border border-slate-200/50 shadow-sm font-black text-slate-600">
-                        {m.avatar ? (
-                          getAvatarSvg(m.avatar, "w-full h-full")
-                        ) : (
-                          m.name.charAt(0).toUpperCase()
-                        )}
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden bg-slate-200">
+                        {m.avatar ? getAvatarSvg(m.avatar, "w-full h-full") : <Users className="h-4 w-4 text-slate-400" />}
                       </div>
-                      <span className="font-bold text-[15px]">{m.name}</span>
+                      <span className="text-[14px] font-bold text-slate-800">{m.name}</span>
                     </button>
                   ))}
+                  <button
+                    onClick={() => {
+                      const guest = { name: "Người xem", isGuest: true, canEdit: false };
+                      saveIdentity(guest, trip.id);
+                      setCurrentUser(guest);
+                      setShowIdentityModal(false);
+                      setIdentityChecked(true);
+                    }}
+                    className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors"
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-200 text-slate-400">
+                      <Globe className="h-4 w-4" />
+                    </div>
+                    <span className="text-[14px] font-bold text-slate-600">Tôi chỉ muốn xem bản tin chuyến đi</span>
+                  </button>
                 </div>
               </div>
             )}
@@ -292,89 +316,61 @@ export default function SharedTripScreen({ token }: { token: string }) {
     );
   }
 
-
-  if (!identityChecked) return null;
-
   return (
-    <div className="font-sans text-kat-text bg-[#FAF7F1] min-h-screen">
-      <header className="sticky top-0 z-40 bg-kat-bg/90 px-4 pb-3 pt-3 backdrop-blur-xl border-b border-kat-border shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
-        <div className="mx-auto flex max-w-3xl items-center justify-between h-9 md:h-11">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 select-none">
-              <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[28px] w-[28px] object-contain drop-shadow-sm" />
-              <h1 className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap hidden sm:block">KAT Journey</h1>
-            </div>
-            <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2 py-0.5 text-[9.5px] min-[360px]:text-[11px] font-bold text-violet-700 select-none whitespace-nowrap">
-              <Share2 className="h-3 w-3" />
-              Bản chia sẻ
-            </span>
-          </div>
-          <button
-            onClick={() => window.location.href = "/"}
-            className="flex items-center justify-center rounded-full bg-[#030D2E] px-3.5 py-1.5 text-[11px] min-[360px]:text-[13px] font-black text-white hover:bg-[#030D2E]/90 active:scale-95 transition-all shadow-sm whitespace-nowrap"
-          >
-            <span className="hidden sm:inline">Tạo chuyến đi của bạn</span>
-            <span className="sm:hidden">Tạo chuyến đi</span>
-          </button>
-        </div>
-      </header>
-
-      {canRequestEdit && isBannerVisible && (
-        <div className="sticky top-[53px] md:top-[61px] z-30 bg-[#030D2E] text-white px-4 py-2.5 shadow-md animate-fadeIn flex items-center justify-between">
-          <div className="flex-1 text-center">
-            <p className="text-[13.5px] font-bold">
-              Chế độ Đề xuất: Các thay đổi của bạn sẽ được gửi cho chủ chuyến đi xét duyệt.
-            </p>
+    <div className="min-h-screen bg-[#FFFDF8]">
+      {/* Banner */}
+      {isBannerVisible && canRequestEdit && (
+        <div className="sticky top-0 z-50 bg-[#0C1938] text-white py-2 px-4 text-center text-[12px] font-semibold flex justify-between items-center shadow-md select-none border-b border-white/5">
+          <div className="flex-1 text-center pr-6">
+            Chế độ Đề xuất: Các thay đổi của bạn sẽ được gửi cho chủ chuyến đi xét duyệt.
           </div>
           <button 
             onClick={() => setIsBannerVisible(false)}
-            className="p-1 hover:bg-white/10 rounded-full transition-colors ml-2 flex-shrink-0"
+            className="text-white/70 hover:text-white p-1 rounded-full transition-colors"
+            title="Đóng thông báo"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
       )}
 
-      <main className="mx-auto max-w-3xl px-4 py-6 md:py-8 space-y-6">
-        {/* Hero Section */}
+      {/* Header */}
+      <header className="sticky top-0 z-45 bg-[#FFFDF8]/90 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-2">
+          <img src="/logo.png" alt="KAT Journey" className="h-8 w-8 rounded-lg shadow-sm" />
+          <span className="text-lg font-black text-[#030D2E] tracking-tight">KAT Journey</span>
+          <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-2 py-0.5 text-[10px] font-bold text-indigo-600">
+            <Share2 className="h-3 w-3" /> Bản chia sẻ
+          </span>
+        </div>
+        <button
+          onClick={() => window.location.href = "/"}
+          className="min-h-[38px] text-[13px] font-black text-white bg-[#030D2E] hover:bg-[#030D2E]/90 px-4 rounded-xl shadow-sm transition-all active:scale-[0.97]"
+        >
+          Tạo chuyến đi của bạn
+        </button>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+        
+        {/* Hero Card */}
         <section 
-          className="relative overflow-hidden rounded-[32px] text-white shadow-[0_8px_30px_rgba(0,0,0,0.15)] border border-white/10 transition-all p-6 md:p-8 group"
+          className="relative rounded-[32px] p-6 text-white overflow-hidden shadow-xl border border-white/5"
           style={{ background: heroBg }}
         >
-          {/* Glass gloss */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/10 opacity-60 pointer-events-none rounded-[32px]" />
-          <Globe className="absolute -bottom-24 -right-12 w-[360px] h-[360px] text-white opacity-[0.04] pointer-events-none stroke-[1]" />
+          {/* Subtle World Map Watermark */}
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
           
-          <div className="relative z-10 flex flex-col md:flex-row justify-between gap-6">
-            <div className="flex flex-col items-start max-w-xl">
-              {/* Status badge */}
-              {status === "active" && (
-                <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-[11px] font-extrabold tracking-wider text-white shadow-[0_2px_8px_rgba(255,255,255,0.1)] backdrop-blur-md border border-white/20 mb-3">
-                  <span className="relative flex h-1.5 w-1.5 mr-1.5 shrink-0">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
-                  </span>
-                  Đang diễn ra
-                </span>
-              )}
-              {status === "upcoming" && (
-                <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[11px] font-extrabold tracking-wider text-white/90 backdrop-blur-md border border-white/10 mb-3">
-                  <span className="relative flex h-1.5 w-1.5 mr-1.5 shrink-0">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60"></span>
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
-                  </span>
-                  Sắp diễn ra
-                </span>
-              )}
-              {status === "past" && (
-                <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-[11px] font-extrabold tracking-wider text-white/70 backdrop-blur-md border border-white/10 mb-3">
-                  Đã kết thúc
-                </span>
-              )}
-
-              <h2 className="text-[32px] md:text-[40px] font-extrabold leading-tight tracking-tight drop-shadow-sm">{trip.name}</h2>
-              
-              <div className="mt-4 flex flex-wrap gap-2">
+          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="space-y-4">
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-md">
+                ● {status === "past" ? "Đã đi" : status === "active" ? "Đang diễn ra" : "Sắp diễn ra"}
+              </span>
+              <h2 className="text-[28px] font-black leading-tight tracking-tight drop-shadow-sm">
+                {trip.title}
+              </h2>
+              <div className="flex flex-wrap gap-2.5">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
                   <MapPin className="h-3.5 w-3.5 text-white/70" />
                   {trip.destination || "Chưa rõ điểm đến"}
@@ -435,73 +431,107 @@ export default function SharedTripScreen({ token }: { token: string }) {
           )}
         </section>
 
-        {/* Timeline */}
-        {(activities.length > 0 || canRequestEdit) && (
-          <SharedActivitiesSection 
-            token={token} 
-            mode={canRequestEdit ? 'request_edit' : 'view'} 
-            activities={activities} 
-            changeRequests={changeRequests}
-            members={members}
-            guestName={currentUser?.name || "Khách"}
-          />
-        )}
+        <section className="bg-slate-100/80 p-1.5 rounded-2xl flex gap-1 overflow-x-auto scrollbar-none border border-slate-200/50 sticky top-[57px] z-40 backdrop-blur-md">
+          {tabsList.map((tab) => {
+            const IconComponent = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={classNames(
+                  "flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-extrabold text-[13px] whitespace-nowrap transition-all duration-200",
+                  isActive 
+                    ? "bg-white text-[#030D2E] shadow-sm border border-slate-200/10" 
+                    : "text-slate-500 hover:text-slate-700"
+                )}
+              >
+                <IconComponent className={classNames("h-4 w-4", isActive ? "text-indigo-600" : "text-slate-400")} />
+                {tab.label}
+              </button>
+            );
+          })}
+        </section>
 
-        {/* Other Sections included in Share */}
-        <div className="grid grid-cols-1 gap-4">
-          {data.includeExpenses && (expenses.length > 0 || canRequestEdit) && (
-             <SharedExpensesSection 
-               token={token} 
-               mode={canRequestEdit ? 'request_edit' : 'view'} 
-               expenses={expenses} 
-               changeRequests={changeRequests}
-               members={members}
-               events={activities}
-               guestName={currentUser?.name || "Khách"}
-             />
+        {/* Dynamic Section Contents */}
+        <div className="space-y-6">
+          {activeTab === "activities" && (
+            <div className="space-y-6">
+              {(activities.length > 0 || canRequestEdit) && (
+                <SharedActivitiesSection 
+                  token={token} 
+                  mode={canRequestEdit ? 'request_edit' : 'view'} 
+                  activities={activities} 
+                  changeRequests={changeRequests}
+                  members={members}
+                  guestName={currentUser?.name || "Khách"}
+                />
+              )}
+              {data.includeBackupPlans && (backupPlans.length > 0 || canRequestEdit) && (
+                <SharedBackupPlansSection 
+                  token={token} 
+                  mode={canRequestEdit ? 'request_edit' : 'view'} 
+                  backupPlans={backupPlans} 
+                  changeRequests={changeRequests}
+                  guestName={currentUser?.name || "Khách"}
+                />
+              )}
+            </div>
           )}
 
-          {data.includeChecklist && (checklist.length > 0 || canRequestEdit) && (
-             <SharedChecklistSection 
-               token={token} 
-               mode={canRequestEdit ? 'request_edit' : 'view'} 
-               checklist={checklist} 
-               changeRequests={changeRequests}
-               members={members}
-               guestName={currentUser?.name || "Khách"}
-             />
+          {activeTab === "members" && (members.length > 0 || canRequestEdit) && (
+            <SharedMembersSection 
+              token={token}
+              mode={canRequestEdit ? 'request_edit' : 'view'}
+              members={members} 
+              changeRequests={changeRequests}
+              guestName={currentUser?.name || "Khách"}
+            />
           )}
 
-          {data.includeJournals && (journals.length > 0 || canRequestEdit) && (
-             <SharedJournalsSection 
-               tripId={trip.id}
-               token={token} 
-               mode={canRequestEdit ? 'request_edit' : 'view'} 
-               journals={journals} 
-               changeRequests={changeRequests}
-               guestName={currentUser?.name || "Khách"}
-               members={members}
-             />
+          {activeTab === "expenses" && data.includeExpenses && (expenses.length > 0 || canRequestEdit) && (
+            <SharedExpensesSection 
+              token={token} 
+              mode={canRequestEdit ? 'request_edit' : 'view'} 
+              expenses={expenses} 
+              changeRequests={changeRequests}
+              members={members}
+              events={activities}
+              guestName={currentUser?.name || "Khách"}
+            />
           )}
 
-          {data.includeBackupPlans && (backupPlans.length > 0 || canRequestEdit) && (
-             <SharedBackupPlansSection 
-               token={token} 
-               mode={canRequestEdit ? 'request_edit' : 'view'} 
-               backupPlans={backupPlans} 
-               changeRequests={changeRequests}
-               guestName={currentUser?.name || "Khách"}
-             />
+          {activeTab === "checklist" && data.includeChecklist && (checklist.length > 0 || canRequestEdit) && (
+            <SharedChecklistSection 
+              token={token} 
+              mode={canRequestEdit ? 'request_edit' : 'view'} 
+              checklist={checklist} 
+              changeRequests={changeRequests}
+              members={members}
+              guestName={currentUser?.name || "Khách"}
+            />
           )}
 
-          {data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit) && (
-             <SharedDocumentsSection 
-               token={token} 
-               mode={canRequestEdit ? 'request_edit' : 'view'} 
-               documents={travelDocuments} 
-               changeRequests={changeRequests}
-               guestName={currentUser?.name || "Khách"}
-             />
+          {activeTab === "journals" && data.includeJournals && (journals.length > 0 || canRequestEdit) && (
+            <SharedJournalsSection 
+              tripId={trip.id}
+              token={token} 
+              mode={canRequestEdit ? 'request_edit' : 'view'} 
+              journals={journals} 
+              changeRequests={changeRequests}
+              guestName={currentUser?.name || "Khách"}
+              members={members}
+            />
+          )}
+
+          {activeTab === "others" && data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit) && (
+            <SharedDocumentsSection 
+              token={token} 
+              mode={canRequestEdit ? 'request_edit' : 'view'} 
+              documents={travelDocuments} 
+              changeRequests={changeRequests}
+              guestName={currentUser?.name || "Khách"}
+            />
           )}
         </div>
 
