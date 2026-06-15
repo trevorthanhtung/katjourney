@@ -6,7 +6,7 @@ import {
   Plus, Edit3, Map, Compass, GitBranch, Check, ChevronDown
 } from "lucide-react";
 import { getViewShareData } from "../../services/cloudShareService";
-import { formatDate, classNames, getTripTiming, formatMoney, daysBetween } from "../../utils/helpers";
+import { formatDate, classNames, getTripTiming, formatMoney, daysBetween, formatDateShort } from "../../utils/helpers";
 import { EventItem, Expense, ChecklistItem, Member, JournalEntry, TravelDocument, BackupPlan } from "../../db";
 import { SharedActivitiesSection } from "./components/SharedActivitiesSection";
 import { SharedExpensesSection, SharedChecklistSection, SharedJournalsSection, SharedDocumentsSection, SharedMembersSection } from "./components/SharedSections";

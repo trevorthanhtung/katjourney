@@ -57,6 +57,15 @@ export function formatDate(value: string) {
   );
 }
 
+export function formatDateShort(value: string) {
+  if (!value) return "";
+  const parts = value.split("-");
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}`;
+  }
+  return value;
+}
+
 export function daysBetween(startDate: string, endDate: string) {
   if (!startDate || !endDate) return [];
   const start = new Date(`${startDate}T00:00:00`);

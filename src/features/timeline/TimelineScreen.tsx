@@ -23,13 +23,13 @@ import {
   CircleEllipsis,
   StickyNote,
   Type,
-  GitBranch,
   MoreVertical,
-  Check
+  ChevronDown,
+  GitBranch
 } from "lucide-react";
 import { db, EventItem, Trip, Expense } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
-import { classNames, daysBetween, formatDate, today, getTripTiming } from "../../utils/helpers";
+import { classNames, formatDate, formatMoney, getTripTiming, formatDateShort, daysBetween, today } from "../../utils/helpers";
 import { BottomSheet, FormActions, Input, Textarea, Select, TimePicker, DeleteConfirmModal } from "../../components/ui";
 import { BackupPlansSheet } from "./BackupPlansSheet";
 import { TimelineCalendarView } from "./TimelineCalendarView";
@@ -52,14 +52,7 @@ function getCategory(id?: string) {
   return ACTIVITY_CATEGORIES.find(c => c.id === id) || ACTIVITY_CATEGORIES[ACTIVITY_CATEGORIES.length - 1];
 }
 
-function formatDateShort(dateStr: string) {
-  if (!dateStr) return "";
-  const parts = dateStr.split("-");
-  if (parts.length === 3) {
-    return `${parts[2]}/${parts[1]}`;
-  }
-  return dateStr;
-}
+
 
 function ActivityCard({ 
   item, 
@@ -1157,7 +1150,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 const manualMapUrl = trip.dayRoadmaps?.[selectedRoadmapDay] || "";
                 // Fallback: lấy mapLink từ activity "Di chuyển" trong ngày này
                 const dayActivities = events.filter(e => e.date === selectedRoadmapDay);
-                const travelActivity = dayActivities.find(e => e.mapLink && (e.category === 'Di chuyển' || e.category === 'travel'));
+                const travelActivity = dayActivities.find(e => e.mapLink && (e.type === 'Di chuyển' || e.type === 'travel'));
                 const fallbackActivity = !travelActivity ? dayActivities.find(e => e.mapLink) : null;
                 const autoMapUrl = (travelActivity || fallbackActivity)?.mapLink || "";
                 const mapUrl = manualMapUrl || autoMapUrl;
