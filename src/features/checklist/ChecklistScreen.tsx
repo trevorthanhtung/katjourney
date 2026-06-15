@@ -136,6 +136,13 @@ function ChecklistItemRow({
               {item.priority === "required" ? "Bắt buộc" : "Quan trọng"}
             </span>
           )}
+
+          {/* Private Badge */}
+          {item.isPrivate && (
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-purple-50 text-purple-700 text-[10px] font-black border border-purple-100/50">
+              Cá nhân
+            </span>
+          )}
         </div>
 
         {/* Notes and Assigned To */}
@@ -221,6 +228,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
   const [priority, setPriority] = useState<"normal" | "important" | "required">("normal");
   const [note, setNote] = useState("");
   const [section, setSection] = useState<import("../../db").ChecklistSection>("Before Trip");
+  const [isPrivate, setIsPrivate] = useState(false);
   const [showValidationError, setShowValidationError] = useState(false);
 
   // Toast notification state
@@ -250,6 +258,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
     setPriority("normal");
     setNote("");
     setSection("Before Trip");
+    setIsPrivate(false);
     setShowValidationError(false);
     setIsFormOpen(true);
   }
@@ -264,6 +273,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
     setPriority(item.priority || "normal");
     setNote(item.note || "");
     setSection(item.section || "Before Trip");
+    setIsPrivate(item.isPrivate || false);
     setShowValidationError(false);
     setIsFormOpen(true);
   }
@@ -284,6 +294,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
       assignedTo: assignedTo || undefined,
       priority,
       note: note.trim() || undefined,
+      isPrivate,
       updatedAt: new Date().toISOString()
     };
 
@@ -802,6 +813,32 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="VD: Để trong balo nhỏ, nhớ sạc đầy..."
                 />
+              </div>
+
+              {/* Private Toggle Switch */}
+              <div className="flex items-center justify-between p-3.5 bg-[#FAF7F1]/40 border border-kat-border/60 rounded-[18px]">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-[12px] bg-purple-50 text-purple-600">
+                    <Luggage className="h-4.5 w-4.5" />
+                  </div>
+                  <div className="text-left">
+                    <span className="text-[13px] font-bold text-slate-800 block">Vật dụng cá nhân</span>
+                    <span className="text-[11px] text-slate-500 font-semibold block mt-0.5">Không chia sẻ với đoàn khi ghép nhóm</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsPrivate(!isPrivate)}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    isPrivate ? "bg-purple-600" : "bg-slate-200"
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      isPrivate ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
               </div>
             </div>
 

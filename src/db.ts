@@ -85,6 +85,7 @@ export interface ChecklistItem {
   assignedTo?: string;
   priority?: "normal" | "important" | "required";
   note?: string;
+  isPrivate?: boolean;
   createdAt?: string;
   updatedAt?: string;
   isDeleted?: boolean;

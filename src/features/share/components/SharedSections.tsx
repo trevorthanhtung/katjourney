@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../../../db';
 import { createPortal } from 'react-dom';
 import { 
   WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, Plus, Pencil, Trash2, MoreVertical, LifeBuoy,
@@ -855,6 +857,7 @@ export function SharedExpensesSection({
 
 
 export function SharedChecklistSection({ 
+  tripId,
   token, 
   mode, 
   checklist, 
@@ -862,6 +865,7 @@ export function SharedChecklistSection({
   members = [],
   guestName
 }: { 
+  tripId?: string | number;
   token: string; 
   mode: string; 
   checklist: ChecklistItem[]; 
@@ -874,6 +878,19 @@ export function SharedChecklistSection({
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
+  const [activeSubTab, setActiveSubTab] = useState<'shared' | 'private'>('shared');
+
+  const localPrivateItems = useLiveQuery(async () => {
+    if (!tripId) return [];
+    const targetTripId = typeof tripId === 'number' ? tripId : (isNaN(Number(tripId)) ? tripId : Number(tripId));
+    try {
+      const items = await db.checklist.where('tripId').equals(targetTripId).toArray();
+      return items.filter(c => c.isPrivate && !c.isDeleted);
+    } catch (e) {
+      console.error("Error loading local private checklist items:", e);
+      return [];
+    }
+  }, [tripId, activeSubTab]) ?? [];
 
   useEffect(() => {
     if (!activeMenuId) return;
@@ -884,6 +901,7 @@ export function SharedChecklistSection({
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [activeMenuId]);
+
   const [form, setForm] = useState({ 
     title: '',
     category: 'Giấy tờ',
@@ -896,12 +914,17 @@ export function SharedChecklistSection({
   
   const isRequestEdit = mode === 'request_edit' || mode === 'edit';
   const isDirectEdit = mode === 'edit';
+  const canModifyPrivate = activeSubTab === 'private';
+  const canAdd = isRequestEdit || canModifyPrivate;
+  const canToggle = isRequestEdit || canModifyPrivate;
 
   useEffect(() => {
     if (isFormOpen) {
       setShowValidationError(false);
       if (editingId) {
-        const item = checklist.find(c => String(c.id) === editingId);
+        const item = activeSubTab === 'private'
+          ? localPrivateItems.find(c => String(c.id) === editingId)
+          : checklist.find(c => String(c.id) === editingId);
         if (item) {
           setForm({
             title: item.title,
@@ -923,7 +946,7 @@ export function SharedChecklistSection({
         });
       }
     }
-  }, [editingId, isFormOpen, checklist]);
+  }, [editingId, isFormOpen, checklist, localPrivateItems, activeSubTab]);
 
   function startAdd() { setEditingId(null); setIsFormOpen(true); }
   function startEdit(item: ChecklistItem) { setEditingId(String(item.id)); setIsFormOpen(true); }
@@ -965,7 +988,17 @@ export function SharedChecklistSection({
     return list;
   }, [checklist, changeRequests]);
 
+  const displayedChecklist = activeSubTab === 'private' ? localPrivateItems : mergedChecklist;
+
   async function handleToggle(item: ChecklistItem) {
+    if (activeSubTab === 'private') {
+      try {
+        await db.checklist.update(Number(item.id), { completed: !item.completed });
+      } catch (e: any) {
+        showToast("Lỗi: " + e.message, "error");
+      }
+      return;
+    }
     if (!isRequestEdit) return;
     try {
       const status = isDirectEdit ? 'auto_approved' : undefined;
@@ -980,6 +1013,47 @@ export function SharedChecklistSection({
       return;
     }
     
+    if (activeSubTab === 'private') {
+      if (!tripId) {
+        showToast("Lỗi: Không xác định được chuyến đi", "error");
+        return;
+      }
+      const targetTripId = typeof tripId === 'number' ? tripId : (isNaN(Number(tripId)) ? tripId : Number(tripId));
+      try {
+        if (editingId) {
+          await db.checklist.update(Number(editingId), {
+            title: form.title.trim(),
+            category: form.category,
+            quantity: form.quantity,
+            priority: form.priority,
+            note: form.note.trim() || undefined,
+            updatedAt: new Date().toISOString()
+          });
+          showToast("Đã cập nhật chuẩn bị cá nhân!");
+        } else {
+          await db.checklist.add({
+            tripId: targetTripId as any,
+            section: 'Before Trip',
+            title: form.title.trim(),
+            completed: false,
+            isPrivate: true,
+            category: form.category,
+            quantity: form.quantity,
+            priority: form.priority,
+            note: form.note.trim() || undefined,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+          showToast("Đã thêm chuẩn bị cá nhân!");
+        }
+        setIsFormOpen(false);
+        setEditingId(null);
+      } catch (e: any) {
+        showToast("Lỗi khi lưu: " + e.message, "error");
+      }
+      return;
+    }
+
     const payload = {
       title: form.title.trim(),
       category: form.category,
@@ -1042,16 +1116,49 @@ export function SharedChecklistSection({
             </p>
           </div>
         </div>
-        {mergedChecklist.length > 0 && (
+        {displayedChecklist.length > 0 && (
           <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-100/50">
-            Đã xong {mergedChecklist.filter(c => c.completed).length}/{mergedChecklist.length}
+            Đã xong {displayedChecklist.filter(c => c.completed).length}/{displayedChecklist.length}
           </span>
         )}
       </div>
 
+      {/* Switcher Tab Slider */}
+      <div className="flex bg-slate-100/80 p-1 rounded-xl mb-4 relative z-0">
+        <button
+          type="button"
+          onClick={() => setActiveSubTab('shared')}
+          className={classNames(
+            "flex-1 py-2 text-[13px] font-bold rounded-lg transition-all duration-300 text-center cursor-pointer",
+            activeSubTab === 'shared'
+              ? "bg-white text-slate-800 shadow-sm"
+              : "text-slate-500 hover:text-slate-800"
+          )}
+        >
+          Chung (Cả đoàn)
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveSubTab('private')}
+          className={classNames(
+            "flex-1 py-2 text-[13px] font-bold rounded-lg transition-all duration-300 text-center cursor-pointer flex items-center justify-center gap-1.5",
+            activeSubTab === 'private'
+              ? "bg-white text-slate-800 shadow-sm"
+              : "text-slate-500 hover:text-slate-800"
+          )}
+        >
+          Cá nhân (Chỉ mình thấy)
+          {localPrivateItems.length > 0 && (
+            <span className="flex items-center justify-center min-w-4.5 h-4.5 text-[9.5px] font-black px-1 rounded-full bg-purple-650 text-white">
+              {localPrivateItems.length}
+            </span>
+          )}
+        </button>
+      </div>
+
       {/* Items List */}
       <div className="flex flex-col gap-2.5 mt-2">
-        {mergedChecklist.map((c) => {
+        {displayedChecklist.map((c) => {
           const isPending = c.isPendingCreate || c.isPendingUpdate || c.isPendingDelete;
           return (
             <div 
@@ -1059,7 +1166,7 @@ export function SharedChecklistSection({
               onClick={() => handleToggle(c)}
               className={classNames(
                 "flex justify-between items-center p-3.5 transition-all rounded-2xl border", 
-                isRequestEdit ? "cursor-pointer" : "cursor-default",
+                canToggle ? "cursor-pointer" : "cursor-default",
                 c.completed 
                   ? "bg-slate-50/50 border-slate-100/80 opacity-80" 
                   : "bg-white border-slate-100 hover:border-slate-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.03)]",
@@ -1069,7 +1176,7 @@ export function SharedChecklistSection({
             >
               <div className="flex items-start gap-3.5 flex-1 min-w-0">
                 {/* Interactive Checkbox */}
-                {isRequestEdit ? (
+                {canToggle ? (
                   <div className="flex-shrink-0 mt-0.5">
                     {c.completed ? (
                       <div className="w-5.5 h-5.5 rounded-lg bg-purple-600 text-white flex items-center justify-center transition-all scale-100 shadow-sm shadow-purple-200">
@@ -1171,7 +1278,7 @@ export function SharedChecklistSection({
               </div>
 
               {/* Actions Menu */}
-              {isRequestEdit && !isPending && (
+              {((activeSubTab === 'private') || (isRequestEdit && !isPending)) && (
                 <div className="shrink-0 ml-2">
                   <button 
                     onClick={(ev) => {
@@ -1186,7 +1293,7 @@ export function SharedChecklistSection({
                       }
                     }}
                     className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 active:scale-90 transition-all focus:outline-none"
-                    title="Tùy chọn đề xuất"
+                    title={activeSubTab === 'private' ? "Tùy chọn" : "Tùy chọn đề xuất"}
                   >
                     <MoreVertical className="h-4.5 w-4.5" />
                   </button>
@@ -1198,14 +1305,18 @@ export function SharedChecklistSection({
       </div>
 
       {/* Empty State */}
-      {mergedChecklist.length === 0 && (
+      {displayedChecklist.length === 0 && (
         <div className="flex flex-col items-center justify-center py-8 px-4 text-center bg-slate-50/50 rounded-2xl border border-dashed border-slate-200/60 my-2">
           <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-400 mb-3">
             <Luggage className="h-6 w-6" />
           </div>
-          <h4 className="text-[14px] font-bold text-[#030D2E]">Chưa có chuẩn bị nào</h4>
+          <h4 className="text-[14px] font-bold text-[#030D2E]">
+            {activeSubTab === 'private' ? "Chưa có chuẩn bị cá nhân" : "Chưa có chuẩn bị nào"}
+          </h4>
           <p className="text-[11.5px] text-slate-400 mt-1 font-bold max-w-[220px]">
-            Hãy thêm các vật dụng cần thiết để chuẩn bị cho chuyến đi
+            {activeSubTab === 'private' 
+              ? "Thêm đồ dùng của riêng bạn (chỉ mình bạn thấy) tại đây"
+              : "Hãy thêm các vật dụng cần thiết để chuẩn bị cho chuyến đi"}
           </p>
         </div>
       )}
@@ -1228,12 +1339,14 @@ export function SharedChecklistSection({
                 const id = activeMenuId;
                 setActiveMenuId(null);
                 setMenuPos(null);
-                const item = checklist.find(x => String(x.id) === id);
+                const item = activeSubTab === 'private' 
+                  ? localPrivateItems.find(x => String(x.id) === id)
+                  : checklist.find(x => String(x.id) === id);
                 if (item) startEdit(item);
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
             >
-              {isDirectEdit ? "Sửa" : "Đề xuất sửa"}
+              {activeSubTab === 'private' ? "Sửa" : (isDirectEdit ? "Sửa" : "Đề xuất sửa")}
             </button>
             <button
               onClick={() => {
@@ -1244,7 +1357,7 @@ export function SharedChecklistSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
             >
-              {isDirectEdit ? "Xóa" : "Đề xuất xóa"}
+              {activeSubTab === 'private' ? "Xóa" : (isDirectEdit ? "Xóa" : "Đề xuất xóa")}
             </button>
           </div>
         </>,
@@ -1252,13 +1365,14 @@ export function SharedChecklistSection({
       )}
 
       {/* Add Button */}
-      {isRequestEdit && (
+      {canAdd && (
         <button 
           onClick={startAdd} 
           className="mt-4 flex h-11 w-full items-center justify-center gap-2 text-[13.5px] font-bold text-purple-600 bg-purple-50 hover:bg-purple-100/80 active:scale-[0.99] rounded-xl transition-all shadow-sm shadow-purple-100/30"
-          title={isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm"}
+          title={activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : (isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm")}
         >
-          <Plus className="h-4 w-4 stroke-[3]" /> {isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm"}
+          <Plus className="h-4 w-4 stroke-[3]" /> 
+          {activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : (isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm")}
         </button>
       )}
 
@@ -1268,7 +1382,9 @@ export function SharedChecklistSection({
           setIsFormOpen(false);
           setEditingId(null);
         }}
-        title={isDirectEdit ? (editingId ? "Sửa chuẩn bị" : "Thêm chuẩn bị") : (editingId ? "Đề xuất sửa chuẩn bị" : "Đề xuất thêm chuẩn bị")}
+        title={activeSubTab === 'private' 
+          ? (editingId ? "Sửa chuẩn bị cá nhân" : "Thêm chuẩn bị cá nhân")
+          : (isDirectEdit ? (editingId ? "Sửa chuẩn bị" : "Thêm chuẩn bị") : (editingId ? "Đề xuất sửa chuẩn bị" : "Đề xuất thêm chuẩn bị"))}
       >
         <div className="flex flex-col gap-5 py-2">
           {/* Item Name */}
@@ -1431,7 +1547,9 @@ export function SharedChecklistSection({
             disabled={!form.title.trim()}
             className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
           >
-            Gửi đề xuất
+            {activeSubTab === 'private' 
+              ? (editingId ? "Lưu thay đổi" : "Thêm vào hành lý") 
+              : (isDirectEdit ? (editingId ? "Lưu thay đổi" : "Thêm chuẩn bị") : (editingId ? "Gửi đề xuất sửa" : "Gửi đề xuất thêm"))}
           </button>
         </div>
       </BottomSheet>
@@ -1444,10 +1562,14 @@ export function SharedChecklistSection({
           await executeDelete(deleteTargetId);
           setDeleteTargetId(null);
         }}
-        title="Đề xuất xóa mục này?"
-        description="Bạn đang gửi đề xuất xóa mục chuẩn bị này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
-        confirmLabel="Đề xuất xóa"
-        itemName={checklist.find(c => String(c.id) === deleteTargetId)?.title}
+        title={activeSubTab === 'private' ? "Xóa mục chuẩn bị cá nhân?" : "Đề xuất xóa mục này?"}
+        description={activeSubTab === 'private' ? "Hành động này sẽ xóa vĩnh viễn mục chuẩn bị cá nhân của bạn và không thể hoàn tác." : "Bạn đang gửi đề xuất xóa mục chuẩn bị này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."}
+        confirmLabel={activeSubTab === 'private' ? "Xóa" : "Đề xuất xóa"}
+        itemName={
+          activeSubTab === 'private' 
+            ? localPrivateItems.find(c => String(c.id) === deleteTargetId)?.title
+            : checklist.find(c => String(c.id) === deleteTargetId)?.title
+        }
       />
     </section>
   );

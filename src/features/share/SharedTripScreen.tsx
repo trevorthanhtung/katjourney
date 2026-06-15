@@ -951,6 +951,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
           {activeTab === "checklist" && data.includeChecklist && (checklist.length > 0 || canRequestEdit) && (
             <SharedChecklistSection 
+              tripId={trip.id}
               token={token} 
               mode={checklistMode} 
               checklist={checklist} 
