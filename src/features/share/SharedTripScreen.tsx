@@ -1144,7 +1144,6 @@ export default function SharedTripScreen({ token }: { token: string }) {
           })}
         </div>
       </BottomSheet>
-    </div>
 
       {data.includeBackupPlans && (
         <SharedBackupPlansSheet
