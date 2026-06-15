@@ -3,7 +3,7 @@ import {
   Globe, MapPin, CalendarDays, Clock, Route,
   Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link, X, MessageCircle, UserRoundCog,
   Crown, Car, Luggage, UsersRound, BadgeCheck,
-  Plus, Edit3, Map, Compass, GitBranch
+  Plus, Edit3, Map, Compass, GitBranch, Check, ChevronDown
 } from "lucide-react";
 import { getViewShareData } from "../../services/cloudShareService";
 import { formatDate, classNames, getTripTiming, formatMoney, daysBetween } from "../../utils/helpers";
@@ -89,6 +89,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [hasInitializedTab, setHasInitializedTab] = useState(false);
   const [selectedRoadmapDay, setSelectedRoadmapDay] = useState<string>("");
   const [isRoadmapFormOpen, setIsRoadmapFormOpen] = useState(false);
+  const [isRoadmapDayPickerOpen, setIsRoadmapDayPickerOpen] = useState(false);
   const [roadmapInputLink, setRoadmapInputLink] = useState("");
   const [roadmapEditDay, setRoadmapEditDay] = useState("");
 
@@ -726,22 +727,31 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       <h4 className="text-[15px] font-extrabold text-[#030D2E]">Lộ trình di chuyển</h4>
                     </div>
 
-                    {/* Day selector using Select component */}
+                    {/* Day selector custom pill */}
                     {days.length > 1 && (
-                      <div className="pt-2">
-                        <Select
-                          value={selectedRoadmapDay}
-                          onChange={(val) => setSelectedRoadmapDay(val)}
-                          options={days}
-                          labels={Object.fromEntries(
-                            days.map((d, idx) => {
-                              const dateParts = d.split('-');
-                              const shortDate = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}` : d;
-                              return [d, `Ngày ${idx + 1} (${shortDate})`];
-                            })
-                          )}
-                          placeholder="Chọn ngày"
-                        />
+                      <div className="pt-1 pb-2">
+                        <button
+                          type="button"
+                          onClick={() => setIsRoadmapDayPickerOpen(true)}
+                          className="w-full relative overflow-hidden group flex items-center justify-between p-3 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50/50 border border-emerald-100/60 transition-all hover:border-emerald-200 hover:shadow-sm active:scale-[0.98]"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-[14px] bg-white shadow-sm flex items-center justify-center text-emerald-600">
+                              <CalendarDays className="w-5 h-5" />
+                            </div>
+                            <div className="text-left">
+                              <div className="text-[10.5px] font-bold text-emerald-600/70 uppercase tracking-wide mb-0.5">
+                                Ngày đang xem
+                              </div>
+                              <div className="text-[14.5px] font-extrabold text-[#030D2E]">
+                                {selectedRoadmapDay ? `Ngày ${days.indexOf(selectedRoadmapDay) + 1} (${formatDateShort(selectedRoadmapDay)})` : "Chọn ngày"}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm transition-transform group-hover:scale-105">
+                            <ChevronDown className="w-4 h-4" />
+                          </div>
+                        </button>
                       </div>
                     )}
 
@@ -1080,6 +1090,62 @@ export default function SharedTripScreen({ token }: { token: string }) {
           />
         </div>
       </BottomSheet>
+
+      {/* Custom Roadmap Day Picker Bottom Sheet */}
+      <BottomSheet
+        isOpen={isRoadmapDayPickerOpen}
+        onClose={() => setIsRoadmapDayPickerOpen(false)}
+        title="Chọn ngày lộ trình"
+      >
+        <div className="space-y-2 pb-4 max-h-[60vh] overflow-y-auto pr-1 scrollbar-none">
+          {days.map((day, idx) => {
+            const isSelected = selectedRoadmapDay === day;
+            return (
+              <button
+                key={day}
+                type="button"
+                onClick={() => {
+                  setSelectedRoadmapDay(day);
+                  setIsRoadmapDayPickerOpen(false);
+                }}
+                className={classNames(
+                  "w-full flex items-center justify-between p-4 rounded-[16px] transition-all duration-200 active:scale-[0.98]",
+                  isSelected 
+                    ? "bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 shadow-sm" 
+                    : "bg-white hover:bg-slate-50 border border-slate-100 hover:border-slate-200"
+                )}
+              >
+                <div className="flex items-center gap-3.5">
+                  <div className={classNames(
+                    "w-9 h-9 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors",
+                    isSelected ? "bg-emerald-600 text-white shadow-sm" : "bg-slate-100 text-slate-500"
+                  )}>
+                    {idx + 1}
+                  </div>
+                  <div className="text-left">
+                    <div className={classNames(
+                      "text-[15px] font-extrabold",
+                      isSelected ? "text-emerald-900" : "text-[#030D2E]"
+                    )}>
+                      Ngày {idx + 1}
+                    </div>
+                    <div className="text-[12.5px] font-medium text-slate-500 mt-0.5">
+                      {formatDate(day)}
+                    </div>
+                  </div>
+                </div>
+                {isSelected && (
+                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <Check className="w-3.5 h-3.5 text-emerald-700 stroke-[3]" />
+                  </div>
+                )}
+              </button>
+            )
+          })}
+        </div>
+      </BottomSheet>
+    </div>
+
       {data.includeBackupPlans && (
         <SharedBackupPlansSheet
           token={token}
