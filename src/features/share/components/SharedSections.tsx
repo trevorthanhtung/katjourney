@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { 
   WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, Plus, Pencil, Trash2, MoreVertical, LifeBuoy,
   ReceiptText, UserCheck, Tags, ChevronRight, Scale, Info, Check, X, Clock,
-  FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles, Route, HelpCircle, Users, MessageCircle,
+  FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles, Route, HelpCircle, Users, MessageCircle, Globe,
   Crown, UserRound, Luggage, Car, Calculator, ChartPie, UsersRound,
   Plane, Utensils, Hotel, Ticket, ShoppingBag, Gamepad2, Compass
 } from 'lucide-react';
@@ -1776,7 +1776,7 @@ export function SharedJournalsSection({
     <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm space-y-4">
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <div className="flex items-center gap-2">
-          <BookOpenText className="h-5 w-5 text-sky-500" />
+          <Globe className="h-5 w-5 text-sky-500" />
           <h3 className="text-[16px] font-black text-[#030D2E]">Bản tin chuyến đi</h3>
         </div>
       </div>
@@ -1789,7 +1789,7 @@ export function SharedJournalsSection({
                 journalMode === "posts" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              <BookOpenText className="w-4 h-4" /> Bản tin
+              <Globe className="w-4 h-4" /> Bản tin
             </button>
             <button
               onClick={() => setJournalMode("chat")}

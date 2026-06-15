@@ -8,7 +8,7 @@ import {
   Smile, 
   Trash2,
   ArrowLeft,
-  BookOpenText,
+  Globe,
   PenLine,
   SmilePlus,
   Clock3,
@@ -372,7 +372,7 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
       {/* Small Compact Card for Empty state */}
       <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 text-center shadow-soft max-w-md mx-auto my-4 animate-fadeIn">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
-          <BookOpenText className="h-6 w-6" />
+          <Globe className="h-6 w-6" />
         </div>
         <h3 className="text-[16px] font-bold text-[#030D2E]">Chưa có bài viết nào</h3>
         <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
@@ -569,7 +569,7 @@ export function JournalSection({
                 journalMode === "posts" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              <BookOpenText className="w-4 h-4" /> Bản tin
+              <Globe className="w-4 h-4" /> Bản tin
             </button>
             <button
               onClick={() => setJournalMode("chat")}
@@ -601,12 +601,12 @@ export function JournalSection({
       <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft">
         <div className="flex items-center gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
-            <BookOpenText className="h-6 w-6" />
+            <Globe className="h-6 w-6" />
           </div>
           <div className="grid grid-cols-3 gap-4 md:gap-6 flex-1 min-w-0">
             <div>
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <BookOpenText className="h-3.5 w-3.5 text-kat-primary shrink-0" />
+                <Globe className="h-3.5 w-3.5 text-kat-primary shrink-0" />
                 Bài viết đã đăng
               </span>
               <span className="text-[15px] md:text-[17px] font-black text-[#030D2E] mt-1 block truncate">

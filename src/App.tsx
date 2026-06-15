@@ -1,5 +1,5 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { Backpack, CalendarDays, Calendar, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft, Search, Bell, BellRing, ChevronRight, Check, ListTodo, FileText, BookOpenText, Sparkles, Home, User, UserPlus, Heart, LogOut, Cloud, RefreshCw, Coffee, WifiOff, LockKeyhole, Link, MessageCircle } from "lucide-react";
+import { Backpack, CalendarDays, Calendar, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft, Search, Bell, BellRing, ChevronRight, Check, ListTodo, FileText, Globe, Sparkles, Home, User, UserPlus, Heart, LogOut, Cloud, RefreshCw, Coffee, WifiOff, LockKeyhole, Link, MessageCircle } from "lucide-react";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "./db";
@@ -492,7 +492,7 @@ function App() {
           colorClasses = "bg-rose-50 text-rose-600 border border-rose-100/50";
           break;
         case "journal":
-          Icon = BookOpenText;
+          Icon = Globe;
           colorClasses = "bg-violet-50 text-violet-600 border border-violet-100/50";
           break;
         case "wrapped":
