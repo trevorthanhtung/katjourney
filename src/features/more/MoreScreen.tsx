@@ -1378,8 +1378,20 @@ function MemberCardRow({
                 <UserRound className="h-4.5 w-4.5 text-[#030D2E]/60 shrink-0" />
                 <h4 className="text-[17px] font-extrabold text-[#030D2E] truncate">{member.name}</h4>
                 {(() => {
-                  const isLeader = member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện";
-                  return isLeader ? <Crown className="h-4.5 w-4.5 text-amber-500 shrink-0 ml-0.5" /> : null;
+                  const roleLower = (member.role || "").trim().toLowerCase();
+                  if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
+                    return <span title="Trưởng nhóm" className="shrink-0 ml-0.5"><Crown className="h-4.5 w-4.5 text-amber-500" /></span>;
+                  }
+                  if (roleLower === "quản lý chi phí") {
+                    return <span title="Quản lý chi phí" className="shrink-0 ml-0.5"><WalletCards className="h-4.5 w-4.5 text-emerald-500" /></span>;
+                  }
+                  if (roleLower === "tài xế") {
+                    return <span title="Tài xế" className="shrink-0 ml-0.5"><Car className="h-4.5 w-4.5 text-blue-500" /></span>;
+                  }
+                  if (roleLower === "phụ trách hành lý") {
+                    return <span title="Phụ trách hành lý" className="shrink-0 ml-0.5"><Luggage className="h-4.5 w-4.5 text-indigo-500" /></span>;
+                  }
+                  return <span title={member.role || "Người đồng hành"} className="shrink-0 ml-0.5"><UsersRound className="h-4.5 w-4.5 text-slate-400" /></span>;
                 })()}
               </div>
             </div>
