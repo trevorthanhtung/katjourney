@@ -78,12 +78,6 @@ interface SettingsSheetProps {
 
 type SettingsView = "menu" | "auth" | "privacy" | "about" | "donate" | "exchangeRates";
 
-const VCBIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 100 100" fill="currentColor" className={className} fillRule="evenodd" clipRule="evenodd">
-    <path d="M15 25 Q50 0 85 25 Q100 60 50 95 Q0 60 15 25 Z M30 40 Q50 30 70 40 Q75 60 50 75 Q25 60 30 40 Z" />
-  </svg>
-);
-
 const GoogleIcon = () => (
   <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -858,8 +852,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100 hover:bg-slate-100/70 transition-all text-left focus:outline-none"
             >
               <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-[#009c4d] border border-emerald-100 shadow-sm p-1.5">
-                  <VCBIcon className="w-full h-full drop-shadow-sm" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+                  <CircleDollarSign className="h-5 w-5" />
                 </div>
                 <div>
                   <h4 className="text-[15px] font-bold text-slate-800">Tỉ giá ngoại tệ</h4>
@@ -1355,7 +1349,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 overflow-hidden">
               <div className="flex items-center justify-between mb-4 px-1">
                 <div className="flex items-center gap-2 text-slate-600">
-                  <VCBIcon className="w-5 h-5 text-[#009c4d] drop-shadow-sm" />
+                  <CircleDollarSign className="w-4 h-4" />
                   <span className="text-[13px] font-bold">Vietcombank</span>
                 </div>
                 <div className="text-[12px] font-medium text-slate-400">Đơn vị: VNĐ</div>
