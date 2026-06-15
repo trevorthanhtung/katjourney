@@ -5,7 +5,8 @@ import {
   X,
   AlertCircle,
   LockKeyhole,
-  User
+  User,
+  Globe
 } from "lucide-react";
 import { signInAsGuest, signInWithGoogle } from "../services/authService";
 
@@ -19,6 +20,18 @@ const GoogleIcon = () => (
     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+  </svg>
+);
+
+const AndroidIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993.0004.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.022 3.503C15.5902 8.244 13.8533 7.851 12 7.851c-1.8533 0-3.5902.393-5.1371 1.0997l-2.022-3.503a.4158.4158 0 00-.5676-.1521.4154.4154 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396" />
+  </svg>
+);
+
+const AppleIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M16.143 2.385c.875-1.077 1.488-2.583 1.332-4.085-1.32.055-2.91.89-3.818 1.96-.807.944-1.528 2.484-1.338 3.96 1.482.115 2.946-.774 3.824-1.835zM16.598 22c1.066 0 2.222-1.324 3.195-2.738.802-1.168 1.134-2.298 1.155-2.355-.028-.01-2.214-.85-2.24-3.407-.024-2.13 1.737-3.16 1.776-3.184-1-1.464-2.56-1.66-3.125-1.685-1.335-.138-2.6.786-3.284.786-.682 0-1.722-.763-2.83-.74-1.436.02-2.766.837-3.504 2.128-1.5 2.607-.384 6.47 1.083 8.598.715 1.037 1.554 2.188 2.664 2.148 1.064-.04 1.472-.686 2.76-.686 1.284 0 1.67.686 2.782.664 1.15-.02 1.884-1.065 2.568-2.072z" />
   </svg>
 );
 
@@ -119,6 +132,18 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             <p className="text-[15px] font-semibold text-slate-500 mt-3 max-w-[280px] mx-auto leading-relaxed">
               Lên kế hoạch, chia sẻ và lưu giữ trọn vẹn từng khoảnh khắc.
             </p>
+            
+            <div className="flex items-center justify-center gap-3 mt-4 pt-1 text-slate-400">
+              <div className="flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full h-8 w-8 transition-all hover:bg-white hover:text-sky-500 hover:border-sky-100 hover:shadow-sm">
+                <Globe className="h-[18px] w-[18px]" strokeWidth={2.5} />
+              </div>
+              <div className="flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full h-8 w-8 transition-all hover:bg-white hover:text-emerald-500 hover:border-emerald-100 hover:shadow-sm">
+                <AndroidIcon className="h-4 w-4" />
+              </div>
+              <div className="flex items-center justify-center bg-slate-50 border border-slate-100 rounded-full h-8 w-8 transition-all hover:bg-white hover:text-slate-800 hover:border-slate-200 hover:shadow-sm">
+                <AppleIcon className="h-[18px] w-[18px] mb-0.5" />
+              </div>
+            </div>
           </div>
 
           {/* Error display */}
