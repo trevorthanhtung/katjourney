@@ -541,15 +541,15 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
       {/* Header */}
       <header className="sticky top-0 z-40 bg-[#FFFDF8]/90 backdrop-blur-xl border-b border-slate-100 px-2.5 min-[360px]:px-4 pb-3 pt-3 shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
-        <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between h-9 md:h-11">
-          <div className="flex items-center gap-2 select-none">
-            <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[28px] w-[28px] object-contain drop-shadow-sm" />
-            <span className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-[#030D2E] whitespace-nowrap hidden min-[340px]:block">KAT Journey</span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-2 py-0.5 text-[10px] font-bold text-indigo-600">
-              <Share2 className="h-3 w-3" /> Chia sẻ
+        <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
+          <div className="flex items-center gap-1.5 min-[360px]:gap-2 select-none shrink-0">
+            <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
+            <span className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-[#030D2E] whitespace-nowrap hidden min-[400px]:block shrink-0">KAT Journey</span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-1.5 min-[360px]:px-2 py-0.5 text-[10px] font-bold text-indigo-600 whitespace-nowrap shrink-0">
+              <Share2 className="h-3 w-3 shrink-0" /> Chia sẻ
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 min-[360px]:gap-2 shrink-0">
             {/* Switch identity button */}
             {currentUser && (
               <button
@@ -559,17 +559,17 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   setShowIdentityModal(true);
                 }}
                 title="Chọn lại người dùng"
-                className="flex items-center gap-1.5 min-h-[36px] px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[12px] font-bold text-slate-650 hover:text-slate-900 shadow-sm transition-all active:scale-[0.97]"
+                className="flex items-center justify-center gap-1.5 min-h-[34px] min-[360px]:min-h-[36px] px-2 min-[360px]:px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[12px] font-bold text-slate-650 hover:text-slate-900 shadow-sm transition-all active:scale-[0.97] shrink-0"
               >
-                <UserRoundCog className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">{currentUser.name}</span>
+                <UserRoundCog className="h-3.5 w-3.5 shrink-0" />
+                <span className="hidden sm:inline whitespace-nowrap">{currentUser.name}</span>
               </button>
             )}
             <button
               onClick={() => window.location.href = "/"}
-              className="min-h-[38px] text-[13px] font-black text-white bg-[#030D2E] hover:bg-[#030D2E]/90 px-4 rounded-xl shadow-sm transition-all active:scale-[0.97]"
+              className="flex items-center justify-center min-h-[34px] min-[360px]:min-h-[38px] text-[12px] min-[360px]:text-[13px] font-black text-white bg-[#030D2E] hover:bg-[#030D2E]/90 px-3 min-[360px]:px-4 rounded-xl shadow-sm transition-all active:scale-[0.97] whitespace-nowrap shrink-0"
             >
-              Tạo chuyến đi
+              Tạo chuyến<span className="hidden min-[360px]:inline">&nbsp;đi</span>
             </button>
           </div>
         </div>

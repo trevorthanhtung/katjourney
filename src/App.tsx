@@ -559,11 +559,11 @@ function App() {
     <div className="font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg">
       <header className="sticky top-0 z-40 bg-kat-bg/90 px-2.5 min-[360px]:px-4 pb-3 pt-3 backdrop-blur-xl border-b border-kat-border shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
         <GlobalToast />
-        <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 select-none">
-              <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[28px] w-[28px] object-contain drop-shadow-sm" />
-              <h1 className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap hidden min-[340px]:block">KAT Journey</h1>
+        <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-1.5 min-[360px]:gap-2 select-none shrink-0">
+              <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
+              <h1 className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap hidden min-[400px]:block shrink-0">KAT Journey</h1>
             </div>
             
             {/* Desktop Navigation */}
