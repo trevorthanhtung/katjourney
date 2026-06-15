@@ -2566,7 +2566,7 @@ export function SharedMembersSection({
                 <p className="text-[11px] font-bold text-slate-400 mt-0.5">{member.role || "Bạn đồng hành"}</p>
               </div>
 
-              {isRequestEdit && !isPending && !member.isOwner && (
+              {isRequestEdit && !isPending && !(member.role === "Trưởng đoàn" || member.role === "Trưởng nhóm" || member.role === "Người đại diện" || member.role?.toLowerCase() === "leader") && (
                 <div className="shrink-0">
                   <button 
                     onClick={(ev) => {
