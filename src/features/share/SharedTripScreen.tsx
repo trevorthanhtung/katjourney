@@ -567,9 +567,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
             )}
             <button
               onClick={() => window.location.href = "/"}
-              className="flex items-center justify-center min-h-[34px] min-[360px]:min-h-[38px] text-[12px] min-[360px]:text-[13px] font-black text-white bg-[#030D2E] hover:bg-[#030D2E]/90 px-3 min-[360px]:px-4 rounded-xl shadow-sm transition-all active:scale-[0.97] whitespace-nowrap shrink-0"
+              className="flex items-center justify-center min-h-[34px] min-[360px]:min-h-[38px] text-[12px] min-[360px]:text-[13px] font-black text-white bg-[#030D2E] hover:bg-[#030D2E]/90 px-4 rounded-xl shadow-sm transition-all active:scale-[0.97] whitespace-nowrap shrink-0"
             >
-              Tạo chuyến<span className="hidden min-[360px]:inline">&nbsp;đi</span>
+              Thoát
             </button>
           </div>
         </div>
