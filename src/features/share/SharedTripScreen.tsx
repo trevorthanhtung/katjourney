@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { 
   Globe, MapPin, CalendarDays, Clock, Route,
-  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link, X, MessageCircle
+  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link, X, MessageCircle, UserRoundCog
 } from "lucide-react";
 import { getViewShareData } from "../../services/cloudShareService";
 import { formatDate, classNames, getTripTiming, formatMoney, daysBetween } from "../../utils/helpers";
-import { getWeatherGradient } from "../../services/weatherService";
+import { getWeatherGradient, getWeatherIcon, getWeatherText } from "../../services/weatherService";
+import { useWeather } from "../../hooks/useWeather";
 import { EventItem, Expense, ChecklistItem, Member, JournalEntry, TravelDocument, BackupPlan } from "../../db";
 import { SharedActivitiesSection } from "./components/SharedActivitiesSection";
 import { SharedExpensesSection, SharedChecklistSection, SharedJournalsSection, SharedBackupPlansSection, SharedDocumentsSection, SharedMembersSection } from "./components/SharedSections";
@@ -49,6 +50,15 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   const [activeTab, setActiveTab] = useState<string>("activities");
   const [selectedRoadmapDay, setSelectedRoadmapDay] = useState<string>("");
+
+  // Weather
+  const weatherDest = data?.trip?.destination || data?.trip?.location;
+  const { forecast: weatherForecast, loading: weatherLoading } = useWeather(
+    weatherDest,
+    data?.trip?.latitude,
+    data?.trip?.longitude,
+    3
+  );
 
   const tripDays = data?.trip ? daysBetween(data.trip.startDate, data.trip.endDate) : [];
   const eventDays = data?.activities ? Array.from(new Set(data.activities.map((e: any) => e.date))) : [];
@@ -241,7 +251,17 @@ export default function SharedTripScreen({ token }: { token: string }) {
   if (showIdentityModal) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-[#FAF7F1] p-4 animate-fadeIn overflow-hidden z-50">
-        <div className="w-full max-w-md max-h-[90dvh] rounded-[32px] bg-white p-6 shadow-xl border border-slate-100 animate-scaleIn flex flex-col">
+        <div className="w-full max-w-md max-h-[90dvh] rounded-[32px] bg-white p-6 shadow-xl border border-slate-100 animate-scaleIn flex flex-col relative">
+          {/* Close button — only show when user already has an identity (re-selecting) */}
+          {currentUser && (
+            <button
+              onClick={() => setShowIdentityModal(false)}
+              className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors z-10"
+              title="Đóng, giữ lựa chọn cũ"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
           <div className="flex flex-col items-center text-center shrink-0">
             {/* Icon */}
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 mb-4">
@@ -367,15 +387,31 @@ export default function SharedTripScreen({ token }: { token: string }) {
           <img src="/logo.png" alt="KAT Journey" className="h-8 w-8 rounded-lg shadow-sm" />
           <span className="text-lg font-black text-[#030D2E] tracking-tight">KAT Journey</span>
           <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-2 py-0.5 text-[10px] font-bold text-indigo-600">
-            <Share2 className="h-3 w-3" /> Bản chia sẻ
+            <Share2 className="h-3 w-3" /> Chia sẻ
           </span>
         </div>
-        <button
-          onClick={() => window.location.href = "/"}
-          className="min-h-[38px] text-[13px] font-black text-white bg-[#030D2E] hover:bg-[#030D2E]/90 px-4 rounded-xl shadow-sm transition-all active:scale-[0.97]"
-        >
-          Tạo chuyến đi của bạn
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Switch identity button */}
+          {currentUser && (
+            <button
+              onClick={() => {
+                setStep("identity");
+                setShowIdentityModal(true);
+              }}
+              title="Chọn lại người dùng"
+              className="flex items-center gap-1.5 min-h-[36px] px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[12px] font-bold text-slate-600 hover:text-slate-900 shadow-sm transition-all active:scale-[0.97]"
+            >
+              <UserRoundCog className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{currentUser.name}</span>
+            </button>
+          )}
+          <button
+            onClick={() => window.location.href = "/"}
+            className="min-h-[38px] text-[13px] font-black text-white bg-[#030D2E] hover:bg-[#030D2E]/90 px-4 rounded-xl shadow-sm transition-all active:scale-[0.97]"
+          >
+            Tạo chuyến đi
+          </button>
+        </div>
       </header>
 
       {/* Main Content */}
@@ -419,13 +455,52 @@ export default function SharedTripScreen({ token }: { token: string }) {
               </div>
             </div>
             
-            <div className="flex flex-col items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md p-4 border border-white/15 shrink-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-white/60">
-                {status === "past" ? "Trạng thái" : "Hành trình"}
-              </p>
-              <p className="mt-1 text-[20px] font-black text-white drop-shadow-sm">
-                {timing.label}
-              </p>
+            <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+              {/* Timing box */}
+              <div className="flex flex-col items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md p-4 border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] w-full sm:w-auto">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-white/60">
+                  {status === "past" ? "Trạng thái" : "Hành trình"}
+                </p>
+                <p className="mt-1 text-[20px] font-black text-white drop-shadow-sm">
+                  {timing.label}
+                </p>
+              </div>
+
+              {/* Weather widget */}
+              {weatherLoading ? (
+                <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 animate-pulse">
+                  <div className="w-10 h-10 bg-white/20 rounded-xl" />
+                  <div className="flex flex-col gap-2">
+                    <div className="w-16 h-3 bg-white/20 rounded-full" />
+                    <div className="w-10 h-3 bg-white/20 rounded-full" />
+                  </div>
+                </div>
+              ) : weatherForecast ? (
+                <div className="flex items-center gap-4 bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl p-4 shadow-[0_4px_24px_rgba(255,255,255,0.05)]">
+                  <div className="flex items-center gap-2">
+                    <span className="text-4xl font-black text-white drop-shadow-sm tracking-tighter">
+                      {Math.round(weatherForecast.current?.temperature || 20)}°
+                    </span>
+                    <div className="flex flex-col ml-1">
+                      <span className="mb-[-4px] flex items-center justify-center h-8">
+                        {getWeatherIcon(weatherForecast.current?.weathercode || 0, "w-7 h-7 drop-shadow-md")}
+                      </span>
+                      <span className="text-[12px] font-bold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
+                        {getWeatherText(weatherForecast.current?.weathercode || 0)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-px h-10 bg-white/20 mx-1" />
+                  <div className="flex flex-col text-right whitespace-nowrap">
+                    <span className="text-[11px] font-bold text-white/90">
+                      Cao: {Math.round(weatherForecast.temperature_2m_max[0])}°
+                    </span>
+                    <span className="text-[11px] font-medium text-white/70">
+                      Thấp: {Math.round(weatherForecast.temperature_2m_min[0])}°
+                    </span>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
         </section>
