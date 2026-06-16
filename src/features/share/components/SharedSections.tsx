@@ -266,7 +266,8 @@ export function SharedExpensesSection({
         fetchLocationForExpense(exchangeRates);
       }
     }
-  }, [editingId, isFormOpen, members, categoryOptions, expenses, exchangeRates, fetchLocationForExpense]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingId, isFormOpen]);
 
   const filteredEvents = React.useMemo(() => {
     if (!form.date || !events) return [];
