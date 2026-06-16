@@ -843,7 +843,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           )}
         </section>
 
-        <section className="hidden sm:flex bg-slate-100/60 backdrop-blur-md p-1 rounded-2xl gap-1 overflow-x-auto scrollbar-none border border-slate-200/40 shadow-inner">
+        <section className="hidden sm:flex bg-[#030D2E]/5 p-1 rounded-full gap-1 overflow-x-auto scrollbar-none border border-slate-200/20">
           {tabsList.map((tab) => {
             const IconComponent = tab.icon;
             const isActive = activeTab === tab.id;
@@ -852,13 +852,13 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={classNames(
-                  "flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-extrabold text-[13px] whitespace-nowrap transition-all duration-200 cursor-pointer",
+                  "flex-1 flex items-center justify-center gap-1.5 px-5 py-2 rounded-full font-extrabold text-[13.5px] whitespace-nowrap transition-all duration-200 cursor-pointer",
                   isActive 
-                    ? "bg-white text-[#030D2E] shadow-[0_2px_8px_rgba(3,13,46,0.08)] scale-[1.02] border border-slate-100" 
-                    : "text-slate-500 hover:text-slate-800 hover:bg-white/40"
+                    ? "bg-white text-[#030D2E] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-[#E8E1D8]/30" 
+                    : "text-slate-500 hover:text-[#030D2E] hover:bg-white/40"
                 )}
               >
-                <HugeiconsIcon icon={IconComponent} className={classNames("h-4 w-4 transition-colors", isActive ? "text-indigo-600" : "text-slate-500")} />
+                <HugeiconsIcon icon={IconComponent} className={classNames("h-4 w-4 transition-colors", isActive ? "text-[#030D2E]" : "text-slate-500")} />
                 {tab.label}
               </button>
             );
