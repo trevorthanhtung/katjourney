@@ -9,6 +9,19 @@ export interface ExchangeRate {
 const CACHE_KEY = "kat_journey_exchange_rates";
 const CACHE_EXPIRY_MS = 4 * 60 * 60 * 1000; // 4 hours
 
+const FALLBACK_RATES: ExchangeRate[] = [
+  { currencyCode: "USD", currencyName: "USD", buy: 25000, transfer: 25400, sell: 25500 },
+  { currencyCode: "EUR", currencyName: "EUR", buy: 26500, transfer: 27000, sell: 27200 },
+  { currencyCode: "JPY", currencyName: "JPY", buy: 155, transfer: 160, sell: 165 },
+  { currencyCode: "SGD", currencyName: "SGD", buy: 18000, transfer: 18500, sell: 18800 },
+  { currencyCode: "THB", currencyName: "THB", buy: 680, transfer: 720, sell: 750 },
+  { currencyCode: "KRW", currencyName: "KRW", buy: 17, transfer: 18, sell: 19 },
+  { currencyCode: "CNY", currencyName: "CNY", buy: 3400, transfer: 3450, sell: 3500 },
+  { currencyCode: "AUD", currencyName: "AUD", buy: 16000, transfer: 16400, sell: 16600 },
+  { currencyCode: "CAD", currencyName: "CAD", buy: 17800, transfer: 18200, sell: 18400 },
+  { currencyCode: "GBP", currencyName: "GBP", buy: 31000, transfer: 31500, sell: 32000 },
+];
+
 export async function fetchExchangeRates(): Promise<ExchangeRate[]> {
   const cached = localStorage.getItem(CACHE_KEY);
   if (cached) {
@@ -74,6 +87,6 @@ export async function fetchExchangeRates(): Promise<ExchangeRate[]> {
         // ignore
       }
     }
-    return [];
+    return FALLBACK_RATES;
   }
 }

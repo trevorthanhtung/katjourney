@@ -561,7 +561,12 @@ function ExpenseForm({
                     onClick={() => setIsCurrencyDropdownOpen(false)}
                   />
                   <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 w-[80px] bg-white border border-slate-200 rounded-xl shadow-lg z-20 overflow-hidden animate-scaleUp origin-top">
-                    <div className="max-h-[220px] overflow-y-auto custom-scrollbar flex flex-col py-1">
+                    <div 
+                      className="max-h-[220px] overflow-y-auto custom-scrollbar flex flex-col py-1"
+                      onTouchStart={(e) => e.stopPropagation()}
+                      onTouchMove={(e) => e.stopPropagation()}
+                      onTouchEnd={(e) => e.stopPropagation()}
+                    >
                       <button
                         type="button"
                         onClick={() => {
