@@ -156,6 +156,10 @@ function App() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    document.body.classList.toggle("bars-hidden", !areBarsVisible);
+  }, [areBarsVisible]);
+
   // 2027 Bottom Navigation Bar animation system
   const [indicatorStyle, setIndicatorStyle] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
   const containerRef = useRef<HTMLDivElement>(null);

@@ -482,3 +482,18 @@ textarea,
     animation: none !important;
   }
 }
+
+/* Hide Mobile FABs on Scroll Down */
+@media (max-width: 767px) {
+  .fixed.right-5,
+  .fixed.bottom-\[120px\] {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-in-out !important;
+  }
+  
+  .bars-hidden .fixed.right-5,
+  .bars-hidden .fixed.bottom-\[120px\] {
+    transform: translateY(110px) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}
