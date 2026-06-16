@@ -718,46 +718,54 @@ function App() {
                 </button>
               </>
             ) : (
-              isAuthenticated && user ? (
-                <div className="relative" ref={userMenuRef}>
-                  <button
-                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full overflow-hidden border border-kat-border/60 hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
-                    title="Menu tài khoản"
-                  >
-                    {provider === "google" ? (
-                      user.photoURL ? (
-                        <img src={user.photoURL} alt="Avatar" className="h-full w-full object-cover" />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[11px] min-[360px]:text-[13px]">
-                          {user.displayName ? user.displayName.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() : "G"}
-                        </div>
-                      )
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-500">
-                        <HugeiconsIcon 
-                          icon={UserIcon} 
-                          className="h-4 w-4 min-[360px]:h-[18px] min-[360px]:w-[18px] text-slate-500" 
-                        />
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full overflow-hidden border border-kat-border/60 hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
+                  title="Menu tài khoản"
+                >
+                  {isAuthenticated && user && provider === "google" ? (
+                    user.photoURL ? (
+                      <img src={user.photoURL} alt="Avatar" className="h-full w-full object-cover" />
+                    ) : ( 
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[11px] min-[360px]:text-[13px]">
+                        {user.displayName ? user.displayName.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() : "G"}
                       </div>
-                    )}
-                  </button>
+                    )
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-500">
+                      <HugeiconsIcon 
+                        icon={UserIcon} 
+                        className="h-4 w-4 min-[360px]:h-[18px] min-[360px]:w-[18px] text-slate-500" 
+                      />
+                    </div>
+                  )}
+                </button>
 
-                  {isUserMenuOpen && (
-                    <>
-                      <div className="absolute right-0 mt-2 z-50 w-52 rounded-2xl bg-white border border-slate-200/80 shadow-floating p-1.5 animate-fadeIn">
-                        <div className="px-3.5 py-2.5 border-b border-slate-100/80">
-                          <p className="text-[13px] font-black text-[#030D2E] truncate text-left">
-                            {provider === "guest" ? "Khách" : (user.displayName || "Tài khoản ẩn danh")}
-                          </p>
-                          {provider !== "guest" && user.email && (
-                            <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
-                              {user.email}
-                            </p>
+                {isUserMenuOpen && (
+                  <>
+                    <div className="absolute right-0 mt-2 z-50 w-52 rounded-2xl bg-white border border-slate-200/80 shadow-floating p-1.5 animate-fadeIn">
+                      <div className="px-3.5 py-2.5 border-b border-slate-100/80">
+                        <p className="text-[13px] font-black text-[#030D2E] truncate text-left">
+                          {isAuthenticated && user ? (
+                            provider === "guest" ? "Khách" : (user.displayName || "Tài khoản ẩn danh")
+                          ) : (
+                            "Chưa đăng nhập"
                           )}
-                        </div>
-                        
-                        {provider === "guest" ? (
+                        </p>
+                        {isAuthenticated && user && provider !== "guest" && user.email ? (
+                          <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
+                            {user.email}
+                          </p>
+                        ) : (!isAuthenticated || !user) && (
+                          <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
+                            Đăng nhập để đồng bộ
+                          </p>
+                        )}
+                      </div>
+
+                      {isAuthenticated && user ? (
+                        provider === "guest" ? (
                           <>
                             <div className="py-1 space-y-0.5">
                               <button
@@ -835,20 +843,39 @@ function App() {
                               </button>
                             </div>
                           </>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </div>
-              ) : (
-                <button
-                  onClick={() => setIsSettingsOpen(true)}
-                  className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
-                  title="Cài đặt"
-                >
-                  <HugeiconsIcon icon={Settings01Icon} className="h-4 w-4 min-[360px]:h-[18px] min-[360px]:w-[18px]" />
-                </button>
-            )
+                        )
+                      ) : (
+                        <>
+                          <div className="py-1 space-y-0.5">
+                            <button
+                              onClick={() => {
+                                setIsUserMenuOpen(false);
+                                setSettingsInitialView("auth");
+                                setIsSettingsOpen(true);
+                              }}
+                              className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                            >
+                              <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400 shrink-0" />
+                              Đăng nhập / Đăng ký
+                            </button>
+                            <button
+                              onClick={() => {
+                                setIsUserMenuOpen(false);
+                                setSettingsInitialView("menu");
+                                setIsSettingsOpen(true);
+                              }}
+                              className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                            >
+                              <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 text-slate-400 shrink-0" />
+                              Cài đặt ứng dụng
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
           )}
         </div>
         </div>
