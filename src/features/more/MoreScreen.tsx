@@ -531,9 +531,8 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
               <HugeiconsIcon icon={CheckIcon} size={14} /> Khớp tọa độ thành công — Thời tiết đã tự động kết nối!
             </p>
           ) : (
-            <p className="mt-1.5 px-1 text-[11.5px] font-semibold text-slate-500 leading-normal flex items-start gap-1.5">
-              <HugeiconsIcon icon={SparklesIcon} size={14} className="text-amber-500 shrink-0 mt-0.5" />
-              <span>Chọn từ danh sách gợi ý khi gõ để tự động hiển thị dự báo thời tiết cho chuyến đi nhé.</span>
+            <p className="mt-1.5 px-1 text-[11.5px] font-semibold text-slate-500 leading-normal">
+              Chọn đúng điểm đến từ danh sách gợi ý để tự động cập nhật dự báo thời tiết chuẩn xác nhất. Nếu không tìm thấy địa danh cụ thể, hãy chọn một khu vực hoặc thành phố lân cận nhé.
             </p>
           )}
         </div>

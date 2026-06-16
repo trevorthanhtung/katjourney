@@ -241,23 +241,18 @@ function DayHeader({
   index, 
   isToday, 
   totalExpense = 0,
-  hasMultipleDays = false,
   mapUrl
 }: { 
   day: string; 
   index: number; 
   isToday: boolean; 
   totalExpense?: number;
-  hasMultipleDays?: boolean;
   mapUrl?: string;
 }) {
   return (
     <div 
       id={`day-section-${day}`} 
-      className={classNames(
-        "scroll-mt-[180px] sticky z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40",
-        hasMultipleDays ? "top-[121px] md:top-[129px]" : "top-[60px] md:top-[68px]"
-      )}
+      className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[60px] md:top-[68px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
     >
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#030D2E] text-white font-black text-[14px] shadow-sm">
@@ -578,9 +573,6 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
   const days = Array.from(new Set([...tripDays, ...eventDays])).filter(Boolean).sort();
   const tripIsActive = today >= trip.startDate && today <= trip.endDate;
 
-  const [filterDay, setFilterDay] = useState<string | "all">("all");
-  const [activeTab, setActiveTab] = useState<string | "all">("all");
-  const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<EventItem | null>(null);
   const [formDefaultDate, setFormDefaultDate] = useState<string>("");
@@ -597,12 +589,10 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
   const [roadmapInputLink, setRoadmapInputLink] = useState("");
 
   useEffect(() => {
-    if (filterDay !== "all") {
-      setSelectedRoadmapDay(filterDay);
-    } else if (days.length > 0 && !selectedRoadmapDay) {
+    if (days.length > 0 && !selectedRoadmapDay) {
       setSelectedRoadmapDay(days[0]);
     }
-  }, [filterDay, days, selectedRoadmapDay]);
+  }, [days, selectedRoadmapDay]);
 
   const handleSaveRoadmap = async () => {
     if (!roadmapEditDay) return;
@@ -643,10 +633,6 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
   // Default selected day calculations on mount or trip bounds change
   useEffect(() => {
     const isTodayInTrip = days.includes(today);
-    const timing = getTripTiming(trip);
-
-    setFilterDay("all");
-    setActiveTab("all");
 
     if (isTodayInTrip) {
       setTimeout(() => {
@@ -658,46 +644,10 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
     }
   }, [trip.startDate, trip.endDate]);
 
-  // Scrollspy viewport tracking
-  useEffect(() => {
-    const handleScroll = () => {
-      if (filterDay !== "all") return;
-      if (isScrollingRef.current) return;
-      
-      const daySections = days.map(day => document.getElementById(`day-section-${day}`)).filter(Boolean) as HTMLElement[];
-      let currentActiveDay = "all";
-      const scrollPosition = window.scrollY + 185; 
-      
-      for (const section of daySections) {
-        if (section.offsetTop <= scrollPosition) {
-          currentActiveDay = section.id.replace("day-section-", "");
-        }
-      }
-      
-      if (window.scrollY < 80) {
-        currentActiveDay = "all";
-      }
-      
-      setActiveTab(currentActiveDay);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [days, filterDay]);
-
-  const selectDayFilter = (day: string | "all") => {
-    setFilterDay(day);
-    setActiveTab(day);
-    
-    if (day === "all") {
-      isScrollingRef.current = true;
-      const element = document.getElementById("timeline-top");
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-      setTimeout(() => {
-        isScrollingRef.current = false;
-      }, 800);
+  const scrollToDay = (day: string) => {
+    const element = document.getElementById(`day-section-${day}`);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -705,8 +655,6 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
     setEditing(null);
     if (defaultDateVal) {
       setFormDefaultDate(defaultDateVal);
-    } else if (filterDay !== "all") {
-      setFormDefaultDate(filterDay);
     } else {
       setFormDefaultDate(tripDays.includes(today) ? today : (tripDays[0] || today));
     }
@@ -732,100 +680,15 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
   }
 
   const handleEventSaved = (date: string) => {
-    selectDayFilter(date);
-  };
-
-  const renderDayNav = () => {
-    // If the trip has only 1 day, don't show select rail
-    if (days.length <= 1) {
-      return null;
+    if (date) {
+      setTimeout(() => scrollToDay(date), 100);
     }
-
-    const hasMoreDays = days.length > 4;
-    const visibleDays = days.slice(0, 4);
-    
-    // If selected day is beyond the first 4, append it dynamically so it is visible and highlighted
-    const selectedIdx = days.indexOf(filterDay);
-    if (filterDay !== "all" && selectedIdx >= 4) {
-      visibleDays.push(filterDay);
-    }
-
-    return (
-      <div 
-        className="flex items-center gap-2 overflow-x-auto py-1 w-full select-none shrink-0 scrollbar-none"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        {/* "Tất cả" tab */}
-        <button
-          type="button"
-          onClick={() => selectDayFilter("all")}
-          className={classNames(
-            "flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer",
-            activeTab === "all"
-              ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
-              : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
-          )}
-        >
-          <span>Tất cả</span>
-          <span className={classNames(
-            "text-[10px] font-bold px-1.5 py-0.5 rounded-full",
-            activeTab === "all" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
-          )}>
-            {events.length}
-          </span>
-        </button>
-
-        {/* Day tabs */}
-        {visibleDays.map((day) => {
-          const idx = days.indexOf(day);
-          const hasEvents = events.some(e => e.date === day);
-          const isActive = activeTab === day;
-          return (
-            <button
-              key={day}
-              type="button"
-              onClick={() => selectDayFilter(day)}
-              className={classNames(
-                "flex items-center gap-2 py-1.5 px-3.5 rounded-full border shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer",
-                isActive
-                  ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
-                  : hasEvents 
-                    ? "bg-white border-slate-200 text-slate-700 hover:bg-slate-50" 
-                    : "bg-white/40 border-slate-200/60 text-slate-400 hover:bg-slate-50"
-              )}
-            >
-              <span>Ngày {idx + 1}</span>
-              {hasEvents ? (
-                <span className={classNames(
-                  "w-1.5 h-1.5 rounded-full shrink-0",
-                  isActive ? "bg-white" : "bg-[#00BFB7]"
-                )} />
-              ) : (
-                <span className="text-[10.5px] text-slate-400 font-semibold">({formatDateShort(day)})</span>
-              )}
-            </button>
-          );
-        })}
-
-        {/* "Xem thêm" pill at the end of the rail if there are more than 4 days */}
-        {hasMoreDays && (
-          <button
-            type="button"
-            onClick={() => setIsDayPickerOpen(true)}
-            className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer"
-          >
-            <HugeiconsIcon icon={Calendar01Icon} className="w-3.5 h-3.5 text-slate-600" />
-            <span>Xem thêm ({days.length - 4})</span>
-          </button>
-        )}
-      </div>
-    );
   };
 
   const undatedEvents = events.filter(e => !e.date);
 
   const renderTimeline = () => {
-    const activeDays = filterDay === "all" ? days : days.filter(d => d === filterDay);
+    const activeDays = days;
 
     return (
       <div id="timeline-top" className="space-y-8 motion-page-enter">
@@ -881,7 +744,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
 
           return (
             <div key={day} className="space-y-4">
-              <DayHeader day={day} index={index} isToday={isToday} totalExpense={totalDayExpense} hasMultipleDays={days.length > 1} mapUrl={trip.dayRoadmaps?.[day]} />
+              <DayHeader day={day} index={index} isToday={isToday} totalExpense={totalDayExpense} mapUrl={trip.dayRoadmaps?.[day]} />
               <div className="px-1">
                 {dayEvents.map((item, idx) => (
                   <ActivityCard 
@@ -907,11 +770,11 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         })}
 
         {/* Undated fallback events */}
-        {filterDay === "all" && undatedEvents.length > 0 && (
+        {undatedEvents.length > 0 && (
           <div key="undated" className="space-y-4">
             <div 
               id="day-section-undated"
-              className="scroll-mt-[180px] sticky top-[115px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[60px] md:top-[68px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-400 text-white font-black text-[14px] shadow-sm">
@@ -940,11 +803,11 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         )}
 
         {/* Backup plans for all days */}
-        {filterDay === "all" && backupPlans.filter(p => !p.activityId && !p.date).length > 0 && (
+        {backupPlans.filter(p => !p.activityId && !p.date).length > 0 && (
           <div key="backup" className="space-y-4">
             <div 
               id="day-section-backup"
-              className="scroll-mt-[180px] sticky top-[115px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[60px] md:top-[68px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 font-black text-[14px] shadow-sm">
@@ -965,7 +828,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           </div>
         )}
 
-        {filterDay === "all" && !isReadOnly && (
+        {!isReadOnly && (
           <div className="flex justify-center mt-6">
              <button
                 onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
@@ -1027,19 +890,14 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         </div>
       </div>
 
-      {/* Sticky Day Nav Block */}
-      {viewMode === "list" && days.length > 1 && (
-        <div className="sticky top-[60px] md:top-[68px] z-30 -mx-4 px-4 py-3 bg-[#FAF7F1]/95 backdrop-blur-md border-b border-slate-200/50 mb-6 shadow-sm md:mx-0 md:px-0 md:rounded-b-2xl">
-          {renderDayNav()}
-        </div>
-      )}
+
 
       {/* Global Add FAB (Mobile only) */}
       {!isReadOnly && (
         <button
           onClick={() => openNewForm()}
           className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
-          style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
+          style={{ bottom: "calc(7.2rem + env(safe-area-inset-bottom))" }}
           aria-label="Thêm lịch trình"
         >
           <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
@@ -1053,7 +911,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           {events.length === 0 && viewMode === "list" ? (
             /* Compact Empty Timeline Card */
             <div id="timeline-top">
-              <DayHeader day={trip.startDate} index={0} isToday={tripIsActive && trip.startDate === today} hasMultipleDays={days.length > 1} mapUrl={trip.dayRoadmaps?.[trip.startDate]} />
+              <DayHeader day={trip.startDate} index={0} isToday={tripIsActive && trip.startDate === today} mapUrl={trip.dayRoadmaps?.[trip.startDate]} />
               <div className="px-1 relative flex gap-4 pl-1">
                 {/* Circle marker */}
                 <div className="relative z-10 flex shrink-0">
@@ -1420,82 +1278,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         </div>
       </BottomSheet>
 
-      {/* Grid Day Picker Bottom Sheet */}
-      <BottomSheet
-        isOpen={isDayPickerOpen}
-        onClose={() => setIsDayPickerOpen(false)}
-        title="Chọn nhanh ngày lịch trình"
-      >
-        <div className="space-y-4">
-          <p className="text-[13.5px] font-semibold text-slate-500 pb-1">
-            Chọn một ngày cụ thể dưới đây để lọc xem chi tiết hoạt động hoặc chọn "Tất cả các ngày".
-          </p>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[60vh] overflow-y-auto pr-1 scrollbar-none pb-4">
-            {/* "Tất cả" button */}
-            <button
-              type="button"
-              onClick={() => {
-                selectDayFilter("all");
-                setIsDayPickerOpen(false);
-              }}
-              className={classNames(
-                "flex flex-col items-center justify-center p-3 rounded-[16px] border text-center transition-all duration-200 active:scale-95 min-h-[72px] cursor-pointer",
-                filterDay === "all"
-                  ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
-                  : "bg-[#FFFDF8] border-slate-200 text-slate-700 hover:bg-slate-50"
-              )}
-            >
-              <span className="text-[13.5px] font-extrabold">Tất cả các ngày</span>
-              <span className={classNames(
-                "text-[10px] font-bold mt-1 px-1.5 py-0.5 rounded-full",
-                filterDay === "all" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
-              )}>
-                {events.length} mục
-              </span>
-            </button>
 
-            {/* Day buttons */}
-            {days.map((day, idx) => {
-              const hasEvents = events.some(e => e.date === day);
-              const isActive = filterDay === day;
-              const count = events.filter(e => e.date === day).length;
-              return (
-                <button
-                  key={day}
-                  type="button"
-                  onClick={() => {
-                    selectDayFilter(day);
-                    setIsDayPickerOpen(false);
-                  }}
-                  className={classNames(
-                    "flex flex-col items-center justify-center p-3 rounded-[16px] border text-center transition-all duration-200 active:scale-95 min-h-[72px] cursor-pointer",
-                    isActive
-                      ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
-                      : "bg-[#FFFDF8] border-slate-200 text-slate-700 hover:bg-slate-50"
-                  )}
-                >
-                  <span className="text-[13.5px] font-extrabold">Ngày {idx + 1}</span>
-                  <span className={classNames(
-                    "text-[10.5px] font-medium mt-0.5",
-                    isActive ? "text-slate-200" : "text-slate-400"
-                  )}>
-                    {formatDateShort(day)}
-                  </span>
-                  {hasEvents && (
-                    <span className={classNames(
-                      "text-[9px] font-black mt-1 px-1.5 py-0.2 rounded-full",
-                      isActive ? "bg-white/20 text-white" : "bg-kat-primary/15 text-kat-primary"
-                    )}>
-                      {count} mục
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </BottomSheet>
     </div>
   );
 }

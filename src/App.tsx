@@ -62,36 +62,36 @@ import { signOutUser } from "./services/authService";
 import { updateShareLink } from "./services/cloudShareService";
 import { useNetworkStatus } from "./hooks/useNetworkStatus";
 
-function NavButton({ 
-  isActive, 
-  onClick, 
-  icon: Icon, 
-  label 
-}: { 
-  isActive: boolean; 
-  onClick: () => void; 
-  icon: any; 
-  label: string 
-}) {
+const NavButton = React.forwardRef<
+  HTMLButtonElement,
+  {
+    isActive: boolean;
+    onClick: () => void;
+    icon: any;
+    label: string;
+  }
+>((({ isActive, onClick, icon: Icon, label }, ref) => {
   return (
     <button
+      ref={ref}
       onClick={onClick}
       aria-label={label}
       className={classNames(
-        "relative flex items-center justify-center rounded-full transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden motion-press",
+        "relative flex items-center justify-center rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] overflow-hidden motion-press z-10",
         isActive 
-          ? "bg-white text-kat-text shadow-sm border border-slate-200/50 px-2.5 min-[360px]:px-4 sm:px-5 h-10 min-[360px]:h-[52px] gap-1.5 min-[360px]:gap-2" 
-          : "text-kat-text/60 hover:text-kat-text/80 w-10 min-[360px]:w-[52px] h-10 min-[360px]:h-[52px]"
+          ? "text-[#030D2E] px-3 min-[360px]:px-5 h-[44px] min-[360px]:h-[48px] gap-1.5 min-[360px]:gap-2 font-extrabold" 
+          : "text-[#030D2E]/50 hover:text-[#030D2E]/75 w-11 min-[360px]:w-12 h-11 min-[360px]:h-12"
       )}
     >
       <HugeiconsIcon 
         icon={Icon} 
-        className={classNames("h-[19px] w-[19px] min-[360px]:h-[22px] min-[360px]:w-[22px] shrink-0 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]", isActive ? "scale-100" : "scale-[0.94]")} 
+        className={classNames("h-[19px] w-[19px] min-[360px]:h-[22px] min-[360px]:w-[22px] shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)]", isActive ? "scale-105" : "scale-100")} 
       />
-      {isActive && <span className="text-[12px] min-[360px]:text-[14px] font-bold whitespace-nowrap">{label}</span>}
+      {isActive && <span className="text-[12px] min-[360px]:text-[13px] font-bold whitespace-nowrap">{label}</span>}
     </button>
   );
-}
+}));
+NavButton.displayName = "NavButton";
 
 function App() {
   const { t } = useTranslation();
@@ -109,6 +109,35 @@ function App() {
   const [settingsInitialView, setSettingsInitialView] = useState<"menu" | "auth" | "privacy" | "about" | "donate">("menu");
 
   const [expenseInitialAddState, setExpenseInitialAddState] = useState<{ date: string; eventId: number } | undefined>(undefined);
+
+  // 2027 Bottom Navigation Bar animation system
+  const [indicatorStyle, setIndicatorStyle] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const buttonsRef = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+
+  useEffect(() => {
+    const updateIndicator = () => {
+      const activeButton = buttonsRef.current[activeTab];
+      const container = containerRef.current;
+      if (activeButton && container) {
+        const rect = activeButton.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        setIndicatorStyle({
+          left: rect.left - containerRect.left,
+          width: rect.width
+        });
+      }
+    };
+
+    updateIndicator();
+    const timer = setTimeout(updateIndicator, 60);
+
+    window.addEventListener("resize", updateIndicator);
+    return () => {
+      window.removeEventListener("resize", updateIndicator);
+      clearTimeout(timer);
+    };
+  }, [activeTab]);
 
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [sharedLinkInput, setSharedLinkInput] = useState("");
@@ -1011,33 +1040,48 @@ function App() {
 
 
       {!isManagingTrips && tripId && (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-slate-200/50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden pb-[env(safe-area-inset-bottom)]">
-          <div className="mx-auto max-w-[520px] flex h-[68px] items-center justify-between px-2.5 min-[360px]:px-6">
+        <nav className="fixed bottom-5 left-4 right-4 z-50 mx-auto max-w-[480px] rounded-[24px] bg-[#EFECE6]/90 border border-[#E8E1D8]/80 backdrop-blur-xl shadow-[0_8px_30px_rgba(3,13,46,0.04)] md:hidden">
+          <div ref={containerRef} className="relative flex h-[56px] min-[360px]:h-[60px] items-center justify-between px-2">
+            {/* Active Indicator Slide Pill */}
+            {indicatorStyle.width > 0 && (
+              <div 
+                className="absolute top-[6px] bottom-[6px] rounded-full bg-white transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-[#E8E1D8]/45"
+                style={{
+                  left: `${indicatorStyle.left}px`,
+                  width: `${indicatorStyle.width}px`
+                }}
+              />
+            )}
             <NavButton
+              ref={(el) => { buttonsRef.current["home"] = el; }}
               isActive={activeTab === "home"}
               onClick={() => setActiveTab("home")}
               icon={Compass01Icon}
               label="Tổng quan"
             />
             <NavButton
+              ref={(el) => { buttonsRef.current["timeline"] = el; }}
               isActive={activeTab === "timeline"}
               onClick={() => setActiveTab("timeline")}
               icon={Calendar01Icon}
               label="Lịch trình"
             />
             <NavButton
+              ref={(el) => { buttonsRef.current["expenses"] = el; }}
               isActive={activeTab === "expenses"}
               onClick={() => setActiveTab("expenses")}
               icon={WalletCardsIcon}
               label="Chi phí"
             />
             <NavButton
+              ref={(el) => { buttonsRef.current["checklist"] = el; }}
               isActive={activeTab === "checklist"}
               onClick={() => setActiveTab("checklist")}
               icon={CheckmarkCircle02Icon}
               label="Chuẩn bị"
             />
             <NavButton
+              ref={(el) => { buttonsRef.current["more"] = el; }}
               isActive={activeTab === "more"}
               onClick={() => {
                 setMoreSection("overview");

@@ -31,6 +31,7 @@ import { showToast } from '../../../components/ui/ToastManager';
 import { BottomSheet, Input, Textarea, Select, DatePicker, TimePicker, DeleteConfirmModal } from '../../../components/ui';
 
 import { SharedBackupPlansSheet } from './SharedBackupPlansSheet';
+import { TimelineCalendarView } from '../../timeline/TimelineCalendarView';
 
 const ACTIVITY_CATEGORIES = [
   { id: "transport", label: "Di chuyển", icon: RouteIcon, bgColor: "bg-blue-50 text-blue-600 border-blue-100", activeBg: "bg-blue-100 border-blue-400 text-blue-700" },
@@ -190,6 +191,7 @@ export function SharedActivitiesSection({
 
   const [filterDay, setFilterDay] = React.useState<string>("all");
   const [isDayPickerOpen, setIsDayPickerOpen] = React.useState(false);
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
 
   const days = React.useMemo(() => {
     const dates = mergedActivities.map(e => e.date).filter(Boolean);
@@ -315,359 +317,388 @@ export function SharedActivitiesSection({
     }
   }
 
+  const renderActivityCard = (item: any, idx: number) => {
+    const isPending = item.isPendingCreate || item.isPendingUpdate || item.isPendingDelete;
+    const category = getCategory(item.type);
+    const CatIcon = category.icon;
+    return (
+      <div key={item.id} className="relative flex gap-4 pl-1 group">
+        <div className="absolute bottom-0 left-[19px] top-8 w-0.5 bg-slate-100 group-last:bg-transparent" />
+        <div className="relative z-10 flex shrink-0 mt-1">
+          <div className={classNames(
+            "flex h-10 w-10 items-center justify-center rounded-full ring-4 ring-white shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-100",
+            category.bgColor
+          )}>
+            <HugeiconsIcon icon={CatIcon} className="h-4.5 w-4.5" />
+          </div>
+        </div>
+        
+        <div 
+          className={classNames(
+            "flex flex-col w-full min-w-0 pt-0.5 pb-4 border-b border-slate-100/60 group-last:border-transparent transition-all rounded-2xl px-3",
+            item.isPendingCreate || item.isPendingUpdate ? "bg-sky-50/40 border border-sky-100/50 my-1 py-3" : "",
+            item.isPendingDelete ? "bg-slate-50/30 opacity-70" : ""
+          )}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-wrap items-baseline gap-2">
+              <h4 className={classNames(
+                "text-[15.5px] font-black text-[#030D2E] break-words tracking-tight",
+                item.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
+              )}>
+                {item.title}
+              </h4>
+              
+              {item.isPendingDelete && (
+                <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 shrink-0 select-none animate-fadeIn">
+                  {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? 'Đang xóa...' : 'Đề xuất xóa'}
+                </span>
+              )}
+              {item.isPendingCreate && (
+                <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none animate-fadeIn">
+                  {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
+                </span>
+              )}
+              {item.isPendingUpdate && (
+                <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 shrink-0 select-none animate-fadeIn">
+                  {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
+                </span>
+              )}
+            </div>
+
+            {isRequestEdit && !isPending && (
+              <div className="shrink-0">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                    if (activeMenuId === String(item.id)) {
+                      setActiveMenuId(null);
+                      setMenuPos(null);
+                    } else {
+                      setActiveMenuId(String(item.id));
+                      setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+                    }
+                  }}
+                  className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-50 active:scale-90 transition-all focus:outline-none"
+                  title="Tùy chọn đề xuất"
+                >
+                  <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className={classNames(
+            "mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[13px] font-medium text-slate-500",
+            item.isPendingDelete ? "opacity-60" : ""
+          )}>
+            {item.time && (
+              <span className={classNames(
+                "flex items-center gap-1 font-bold text-[#00AFA8] bg-indigo-50/50 px-2 py-0.5 rounded-lg border border-indigo-100/40",
+                item.isPendingDelete ? "line-through text-slate-400" : ""
+              )}>
+                <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5" />
+                {item.time}
+              </span>
+            )}
+            <span className={classNames("bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100/60", item.isPendingDelete ? "line-through" : "")}>{formatDate(item.date)}</span>
+            
+            <span className={classNames("text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-slate-100", category.bgColor)}>
+              {category.label}
+            </span>
+
+            {item.assignee && (
+              <span className={classNames(
+                "flex items-center gap-1 font-bold text-slate-500",
+                item.isPendingDelete ? "line-through" : ""
+              )}>
+                <span className="h-1 w-1 rounded-full bg-slate-300 mx-1"></span>
+                <HugeiconsIcon icon={UserCheck01Icon} className="h-3.5 w-3.5" />
+                {item.assignee}
+              </span>
+            )}
+          </div>
+
+          {item.location && (
+            <p className={classNames(
+              "mt-2 text-[13.5px] text-slate-600 flex items-start gap-1.5",
+              item.isPendingDelete ? "line-through opacity-60" : ""
+            )}>
+              <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 shrink-0 mt-0.5 text-slate-400" />
+              <span className="break-words font-medium">{item.location}</span>
+            </p>
+          )}
+
+          {item.notes && (
+            <div className={classNames(
+              "mt-2 rounded-xl bg-slate-50/70 p-3 border border-slate-100",
+              item.isPendingDelete ? "opacity-60" : ""
+            )}>
+              <p className={classNames("text-[13px] text-slate-600 whitespace-pre-wrap leading-relaxed", item.isPendingDelete ? "line-through" : "")}>{item.notes}</p>
+            </div>
+          )}
+
+          {/* Google Maps Embed */}
+          {(item.mapLink || item.location) && (
+            <div className={classNames(
+              "mt-3 space-y-2",
+              item.isPendingDelete ? "opacity-60 grayscale" : ""
+            )} onClick={(e) => e.stopPropagation()}>
+              {getEmbedMapUrl(item.mapLink || item.location || "", item.location) && (
+                <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm dark:border-gray-800 bg-slate-100 relative min-h-[160px]">
+                  <div className="absolute inset-0 flex items-center justify-center text-slate-400">
+                    <span className="text-[12px] font-medium animate-pulse">Đang tải bản đồ...</span>
+                  </div>
+                  <iframe
+                    title="Google Maps Embed"
+                    width="100%"
+                    height="160"
+                    className="border-0 dark:opacity-80 relative z-10"
+                    loading="lazy"
+                    allowFullScreen
+                    src={getEmbedMapUrl(item.mapLink || item.location || "", item.location)}
+                  ></iframe>
+                </div>
+              )}
+              {(() => {
+                const isRoute = item.mapLink && (item.mapLink.includes("/maps/dir/") || item.mapLink.includes("maps/dir"));
+                return (
+                  <a 
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[13px] font-bold text-emerald-600 border border-emerald-100/80 hover:bg-emerald-100 transition-colors" 
+                    href={item.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
+                    target="_blank" 
+                    rel="noreferrer"
+                  >
+                    {isRoute ? <HugeiconsIcon icon={RouteIcon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />}
+                    {isRoute ? "Xem lộ trình di chuyển " : "Mở bằng ứng dụng Google Maps "}
+                    &rarr;
+                  </a>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* Expenses & Backup plans linked */}
+          {(() => {
+            const rawLinkedExpenses = expenses.filter(exp => String(exp.eventId) === String(item.id));
+            const linkedExpenses = rawLinkedExpenses.filter((exp, index, self) => index === self.findIndex((t) => t.amount === exp.amount && t.description === exp.description));
+            const backupCount = mergedBackupPlans.filter(p => p.activityId !== undefined && String(p.activityId) === String(item.id) && !p.isDeleted).length;
+            return (
+              <>
+                {linkedExpenses.length > 0 && (
+                  <div className="mt-3 border-t border-slate-100/40 pt-2 flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    {linkedExpenses.map(exp => (
+                      <div key={exp.id} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rose-50/60 text-rose-700 text-[11px] rounded-xl border border-rose-100 shadow-[0_1px_4px_rgba(229,10,98,0.03)] font-bold">
+                        <HugeiconsIcon icon={Wallet01Icon} className="w-3 h-3 text-rose-500" />
+                        <span>{new Intl.NumberFormat('vi-VN').format(exp.amount)}đ</span>
+                        <span className="text-rose-500/80 font-medium truncate max-w-[110px]">&middot; {exp.description || exp.category}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {(backupCount > 0 || isBackupPlansRequestEdit) && (
+                  <div className="mt-2.5" onClick={(e) => e.stopPropagation()}>
+                    <button 
+                      onClick={() => { 
+                        setSelectedBackupActivity(item);
+                        setIsBackupPlansSheetOpen(true);
+                      }}
+                      className={classNames(
+                        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] font-bold border transition-colors motion-press cursor-pointer focus:outline-none",
+                        backupCount > 0 
+                          ? "bg-indigo-50/60 text-indigo-650 border-indigo-100 hover:bg-indigo-100 shadow-[0_1px_4px_rgba(79,70,229,0.03)]"
+                          : "bg-slate-50/40 text-slate-500 border border-dashed border-slate-200 hover:bg-slate-100/60 hover:text-slate-700"
+                      )}
+                    >
+                      <HugeiconsIcon icon={GitBranchIcon} className="w-3.5 h-3.5" />
+                      <span>{backupCount > 0 ? `${backupCount} phương án dự phòng` : (isBackupPlansDirectEdit ? "Thêm phương án dự phòng" : "Đề xuất phương án dự phòng")}</span>
+                    </button>
+                  </div>
+                )}
+              </>
+            );
+          })()}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       <section className="bg-white rounded-3xl border border-slate-200/50 p-5 md:p-6 shadow-[0_2px_12px_rgba(3,13,46,0.02)]">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={RouteIcon} className="w-5 h-5 text-[#00A19D]" />
           <h3 className="text-[18px] font-black text-[#030D2E] tracking-tight">Lịch trình chi tiết</h3>
         </div>
-      </div>
-
-      {days.length > 0 && (
-        <div 
-          className="flex items-center gap-2 overflow-x-auto py-1 mb-4 w-full select-none shrink-0 scrollbar-none"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          {/* "Tất cả" tab */}
-          <button
-            type="button"
-            onClick={() => setFilterDay("all")}
-            className={classNames(
-              "flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer",
-              filterDay === "all"
-                ? "bg-[#030D2E] text-white border-[#030D2E] shadow-md shadow-[#030D2E]/15"
-                : "bg-slate-50 border-slate-200/60 text-slate-650 hover:bg-slate-100/80"
-            )}
-          >
-            <span>Tất cả</span>
-            <span className={classNames(
-              "text-[10px] font-bold px-1.5 py-0.5 rounded-full",
-              filterDay === "all" ? "bg-white/20 text-white" : "bg-slate-200/60 text-slate-550"
-            )}>
-              {mergedActivities.length}
-            </span>
-          </button>
-
-          {/* Day tabs */}
-          {visibleDays.map((day) => {
-            const idx = days.indexOf(day);
-            const hasEvents = mergedActivities.some(e => e.date === day);
-            const isActive = filterDay === day;
-            return (
-              <button
-                key={day}
-                type="button"
-                onClick={() => setFilterDay(day)}
-                className={classNames(
-                  "flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer",
-                  isActive
-                    ? "bg-[#030D2E] text-white border-[#030D2E] shadow-md shadow-[#030D2E]/15"
-                    : "bg-slate-50 border-slate-200/60 text-slate-650 hover:bg-slate-100/80"
-                )}
-              >
-                <span>Ngày {idx + 1}</span>
-                {hasEvents ? (
-                  <span className={classNames(
-                    "w-1.5 h-1.5 rounded-full shrink-0",
-                    isActive ? "bg-white" : "bg-kat-primary"
-                  )} />
-                ) : (
-                  <span className="text-[10.5px] text-slate-400 font-semibold">({formatDateShort(day)})</span>
-                )}
-              </button>
-            );
-          })}
-
-          {hasMoreDays && (
-            <button
+        <div className="flex items-center justify-center sm:justify-start gap-2.5 shrink-0 select-none w-full sm:w-auto">
+          <div className="flex bg-[#E8E1D8]/40 p-1 rounded-xl">
+            <button 
               type="button"
-              onClick={() => setIsDayPickerOpen(true)}
-              className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border border-slate-200/60 bg-white text-slate-600 hover:bg-slate-50 shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer"
+              onClick={() => setViewMode("list")}
+              className={classNames(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press cursor-pointer",
+                viewMode === "list" ? "bg-white text-[#030D2E] shadow-sm animate-scaleIn" : "text-slate-500 hover:text-[#030D2E]"
+              )}
             >
-              <HugeiconsIcon icon={Calendar01Icon} className="w-3.5 h-3.5 text-slate-500" />
-              <span>Xem thêm ({days.length - 3})</span>
+              Danh sách
+            </button>
+            <button 
+              type="button"
+              onClick={() => setViewMode("calendar")}
+              className={classNames(
+                "flex items-center justify-center w-9 h-8 rounded-lg transition-all motion-press cursor-pointer",
+                viewMode === "calendar" ? "bg-white text-[#030D2E] shadow-sm animate-scaleIn" : "text-slate-500 hover:text-[#030D2E]"
+              )}
+              aria-label="Xem dạng lịch"
+            >
+              <HugeiconsIcon icon={Calendar01Icon} className="h-4.5 w-4.5" />
+            </button>
+          </div>
+
+          {isRequestEdit && (
+            <button 
+              type="button"
+              onClick={startAdd} 
+              className="hidden sm:flex items-center justify-center gap-1.5 rounded-xl bg-[#030D2E] text-white px-3.5 py-2 text-[12.5px] font-extrabold shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all h-9 motion-press cursor-pointer"
+              title={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
+            >
+              <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5" />
+              <span className="hidden min-[380px]:inline">{isDirectEdit ? "Thêm" : "Đề xuất"}</span>
             </button>
           )}
         </div>
-      )}
+      </div>
 
-      <div className="space-y-6">
-        {(()=>{
-          const groups = activeDays.map(day => ({
-             id: day,
-             index: days.indexOf(day),
-             title: `Ngày ${days.indexOf(day) + 1}`,
-             subtitle: formatDate(day),
-             icon: days.indexOf(day) + 1 as string | number,
-             activities: displayedActivities.filter(a => a.date === day)
-          })).filter(g => g.activities.length > 0 || filterDay !== "all");
+      {viewMode === "list" ? (
+        <div className="space-y-6">
+          {(() => {
+            const groups = days.map(day => ({
+               id: day,
+               index: days.indexOf(day),
+               title: `Ngày ${days.indexOf(day) + 1}`,
+               subtitle: formatDate(day),
+               icon: days.indexOf(day) + 1 as string | number,
+               activities: mergedActivities.filter(a => a.date === day)
+            }));
 
-          if (filterDay === "all") {
-             const undated = displayedActivities.filter(a => !a.date);
-             if (undated.length > 0) {
-               groups.push({
-                 id: "undated",
-                 index: -1,
-                 title: "Chưa phân ngày",
-                 subtitle: "Các hoạt động chưa có ngày",
-                 icon: "?",
-                 activities: undated
-               });
-             }
-          }
+            const undated = mergedActivities.filter(a => !a.date);
+            if (undated.length > 0) {
+              groups.push({
+                id: "undated",
+                index: -1,
+                title: "Chưa phân ngày",
+                subtitle: "Các hoạt động chưa có ngày",
+                icon: "?",
+                activities: undated
+              });
+            }
 
-          return groups.map(group => (
-            <div key={group.id} className="space-y-6 mt-6 first:mt-0 animate-fadeIn">
-              <div className="flex items-center gap-3">
-                <div className={classNames(
-                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl font-black text-[13.5px] border shadow-sm",
-                  group.id === "undated" 
-                    ? "bg-slate-400 text-white border-transparent" 
-                    : "bg-indigo-50/50 text-indigo-600 border-indigo-100/40"
-                )}>
-                  {group.icon}
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="text-[15.5px] font-black text-[#030D2E] tracking-tight">{group.title}</h4>
-                    {group.id !== "undated" && trip?.dayRoadmaps?.[group.id] && (
-                      <a
-                        href={trip.dayRoadmaps[group.id]}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100/50 text-[10px] font-extrabold tracking-wide transition-all active:scale-95 shadow-sm"
-                        title="Mở bản đồ lộ trình"
-                      >
-                        <HugeiconsIcon icon={Location01Icon} className="w-3 h-3 text-emerald-600" />
-                        <span>Bản đồ</span>
-                      </a>
-                    )}
+            return groups.map(group => (
+              <div key={group.id} className="space-y-6 mt-6 first:mt-0 animate-fadeIn">
+                <div className="flex items-center gap-3">
+                  <div className={classNames(
+                    "flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl font-black text-[13.5px] border shadow-sm",
+                    group.id === "undated" 
+                      ? "bg-slate-400 text-white border-transparent" 
+                      : "bg-[#030D2E]/5 text-[#030D2E] border-slate-100"
+                  )}>
+                    {group.icon}
                   </div>
-                  <p className="text-[11.5px] font-bold text-slate-400 mt-0.5">{group.subtitle}</p>
-                </div>
-              </div>
-              <div className="space-y-6">
-                {group.activities.map((item, idx) => {
-          const isPending = item.isPendingCreate || item.isPendingUpdate || item.isPendingDelete;
-          const category = getCategory(item.type);
-          const CatIcon = category.icon;
-          return (
-            <div key={item.id} className="relative flex gap-4 pl-1 group">
-              <div className="absolute bottom-0 left-[19px] top-8 w-0.5 bg-slate-100 group-last:bg-transparent" />
-              <div className="relative z-10 flex shrink-0 mt-1">
-                <div className={classNames(
-                  "flex h-10 w-10 items-center justify-center rounded-full ring-4 ring-white shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-100",
-                  category.bgColor
-                )}>
-                  <HugeiconsIcon icon={CatIcon} className="h-4.5 w-4.5" />
-                </div>
-              </div>
-              
-              <div 
-                className={classNames(
-                  "flex flex-col w-full min-w-0 pt-0.5 pb-4 border-b border-slate-100/60 group-last:border-transparent transition-all rounded-2xl px-3",
-                  item.isPendingCreate || item.isPendingUpdate ? "bg-sky-50/40 border border-sky-100/50 my-1 py-3" : "",
-                  item.isPendingDelete ? "bg-slate-50/30 opacity-70" : ""
-                )}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex flex-wrap items-baseline gap-2">
-                    <h4 className={classNames(
-                      "text-[15.5px] font-black text-[#030D2E] break-words tracking-tight",
-                      item.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
-                    )}>
-                      {item.title}
-                    </h4>
-                    
-                    {item.isPendingDelete && (
-                      <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 shrink-0 select-none animate-fadeIn">
-                        {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? 'Đang xóa...' : 'Đề xuất xóa'}
-                      </span>
-                    )}
-                    {item.isPendingCreate && (
-                      <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none animate-fadeIn">
-                        {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
-                      </span>
-                    )}
-                    {item.isPendingUpdate && (
-                      <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 shrink-0 select-none animate-fadeIn">
-                        {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
-                      </span>
-                    )}
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-[15.5px] font-black text-[#030D2E] tracking-tight">{group.title}</h4>
+                      {group.id !== "undated" && trip?.dayRoadmaps?.[group.id] && (
+                        <a
+                          href={trip.dayRoadmaps[group.id]}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100/50 text-[10px] font-extrabold tracking-wide transition-all active:scale-95 shadow-sm"
+                          title="Mở bản đồ lộ trình"
+                        >
+                          <HugeiconsIcon icon={Location01Icon} className="w-3 h-3 text-emerald-600" />
+                          <span>Bản đồ</span>
+                        </a>
+                      )}
+                    </div>
+                    <p className="text-[11.5px] font-bold text-slate-400 mt-0.5">{group.subtitle}</p>
                   </div>
-
-                  {isRequestEdit && !isPending && (
-                    <div className="shrink-0">
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                          if (activeMenuId === String(item.id)) {
-                            setActiveMenuId(null);
-                            setMenuPos(null);
-                          } else {
-                            setActiveMenuId(String(item.id));
-                            setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
-                          }
-                        }}
-                        className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-50 active:scale-90 transition-all focus:outline-none"
-                        title="Tùy chọn đề xuất"
-                      >
-                        <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
-                      </button>
+                </div>
+                <div className="space-y-6">
+                  {group.activities.length > 0 ? (
+                    group.activities.map((item, idx) => renderActivityCard(item, idx))
+                  ) : (
+                    <div className="relative flex gap-4 pl-1 group">
+                      <div className="absolute bottom-0 left-[19px] top-8 w-0.5 bg-slate-100 group-last:bg-transparent" />
+                      <div className="relative z-10 flex shrink-0 mt-1">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full ring-4 ring-white shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-dashed border-slate-200 text-slate-300 font-extrabold">
+                          {group.icon}
+                        </div>
+                      </div>
+                      <div className="flex-1 rounded-2xl border border-dashed border-slate-200 bg-slate-50/20 p-4 flex items-center justify-between">
+                        <span className="text-[13px] font-bold text-slate-400">Không có hoạt động nào ngày này</span>
+                        {isRequestEdit && (
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              setForm({ 
+                                title: '', 
+                                date: group.id, 
+                                time: '', 
+                                location: '', 
+                                notes: '', 
+                                mapLink: '', 
+                                type: 'other'
+                              });
+                              setIsFormOpen(true);
+                              setEditingId(null);
+                            }}
+                            className="text-[12.5px] font-extrabold text-[#00A19D] hover:underline cursor-pointer active:scale-95 transition-transform"
+                          >
+                            + Đề xuất thêm
+                          </button>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
-
-                <div className={classNames(
-                  "mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[13px] font-medium text-slate-500",
-                  item.isPendingDelete ? "opacity-60" : ""
-                )}>
-                  {item.time && (
-                    <span className={classNames(
-                      "flex items-center gap-1 font-bold text-[#00AFA8] bg-indigo-50/50 px-2 py-0.5 rounded-lg border border-indigo-100/40",
-                      item.isPendingDelete ? "line-through text-slate-400" : ""
-                    )}>
-                      <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5" />
-                      {item.time}
-                    </span>
-                  )}
-                  <span className={classNames("bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100/60", item.isPendingDelete ? "line-through" : "")}>{formatDate(item.date)}</span>
-                  
-                  <span className={classNames("text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-slate-100", category.bgColor)}>
-                    {category.label}
-                  </span>
-
-                  {item.assignee && (
-                    <span className={classNames(
-                      "flex items-center gap-1 font-bold text-slate-500",
-                      item.isPendingDelete ? "line-through" : ""
-                    )}>
-                      <span className="h-1 w-1 rounded-full bg-slate-300 mx-1"></span>
-                      <HugeiconsIcon icon={UserCheck01Icon} className="h-3.5 w-3.5" />
-                      {item.assignee}
-                    </span>
-                  )}
-                </div>
-
-                {item.location && (
-                  <p className={classNames(
-                    "mt-2 text-[13.5px] text-slate-600 flex items-start gap-1.5",
-                    item.isPendingDelete ? "line-through opacity-60" : ""
-                  )}>
-                    <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 shrink-0 mt-0.5 text-slate-400" />
-                    <span className="break-words font-medium">{item.location}</span>
-                  </p>
-                )}
-
-                {item.notes && (
-                  <div className={classNames(
-                    "mt-2 rounded-xl bg-slate-50/70 p-3 border border-slate-100",
-                    item.isPendingDelete ? "opacity-60" : ""
-                  )}>
-                    <p className={classNames("text-[13px] text-slate-600 whitespace-pre-wrap leading-relaxed", item.isPendingDelete ? "line-through" : "")}>{item.notes}</p>
-                  </div>
-                )}
-
-                {/* Google Maps Embed */}
-                {(item.mapLink || item.location) && (
-                  <div className={classNames(
-                    "mt-3 space-y-2",
-                    item.isPendingDelete ? "opacity-60 grayscale" : ""
-                  )} onClick={(e) => e.stopPropagation()}>
-                    {getEmbedMapUrl(item.mapLink || item.location || "", item.location) && (
-                      <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm dark:border-gray-800 bg-slate-100 relative min-h-[160px]">
-                        <div className="absolute inset-0 flex items-center justify-center text-slate-400">
-                          <span className="text-[12px] font-medium animate-pulse">Đang tải bản đồ...</span>
-                        </div>
-                        <iframe
-                          title="Google Maps Embed"
-                          width="100%"
-                          height="160"
-                          className="border-0 dark:opacity-80 relative z-10"
-                          loading="lazy"
-                          allowFullScreen
-                          src={getEmbedMapUrl(item.mapLink || item.location || "", item.location)}
-                        ></iframe>
-                      </div>
-                    )}
-                    {(() => {
-                      const isRoute = item.mapLink && (item.mapLink.includes("/maps/dir/") || item.mapLink.includes("maps/dir"));
-                      return (
-                        <a 
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[13px] font-bold text-emerald-600 border border-emerald-100/80 hover:bg-emerald-100 transition-colors" 
-                          href={item.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
-                          target="_blank" 
-                          rel="noreferrer"
-                        >
-                          {isRoute ? <HugeiconsIcon icon={RouteIcon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />}
-                          {isRoute ? "Xem lộ trình di chuyển " : "Mở bằng ứng dụng Google Maps "}
-                          &rarr;
-                        </a>
-                      );
-                    })()}
-                  </div>
-                )}
-
-                {/* Expenses & Backup plans linked */}
-                {(() => {
-                  const rawLinkedExpenses = expenses.filter(exp => String(exp.eventId) === String(item.id));
-                  const linkedExpenses = rawLinkedExpenses.filter((exp, index, self) => index === self.findIndex((t) => t.amount === exp.amount && t.description === exp.description));
-                  const backupCount = mergedBackupPlans.filter(p => p.activityId !== undefined && String(p.activityId) === String(item.id) && !p.isDeleted).length;
-                  return (
-                    <>
-                      {linkedExpenses.length > 0 && (
-                        <div className="mt-3 border-t border-slate-100/40 pt-2 flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                          {linkedExpenses.map(exp => (
-                            <div key={exp.id} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rose-50/60 text-rose-700 text-[11px] rounded-xl border border-rose-100 shadow-[0_1px_4px_rgba(229,10,98,0.03)] font-bold">
-                              <HugeiconsIcon icon={Wallet01Icon} className="w-3 h-3 text-rose-500" />
-                              <span>{new Intl.NumberFormat('vi-VN').format(exp.amount)}đ</span>
-                              <span className="text-rose-500/80 font-medium truncate max-w-[110px]">&middot; {exp.description || exp.category}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {(backupCount > 0 || isBackupPlansRequestEdit) && (
-                        <div className="mt-2.5" onClick={(e) => e.stopPropagation()}>
-                          <button 
-                            onClick={() => { 
-                              setSelectedBackupActivity(item);
-                              setIsBackupPlansSheetOpen(true);
-                            }}
-                            className={classNames(
-                              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] font-bold border transition-colors motion-press cursor-pointer focus:outline-none",
-                              backupCount > 0 
-                                ? "bg-indigo-50/60 text-indigo-650 border-indigo-100 hover:bg-indigo-100 shadow-[0_1px_4px_rgba(79,70,229,0.03)]"
-                                : "bg-slate-50/40 text-slate-500 border border-dashed border-slate-200 hover:bg-slate-100/60 hover:text-slate-700"
-                            )}
-                          >
-                            <HugeiconsIcon icon={GitBranchIcon} className="w-3.5 h-3.5" />
-                            <span>{backupCount > 0 ? `${backupCount} phương án dự phòng` : (isBackupPlansDirectEdit ? "Thêm phương án dự phòng" : "Đề xuất phương án dự phòng")}</span>
-                          </button>
-                        </div>
-                      )}
-                    </>
-                  );
-                })()}
               </div>
-            </div>
-          );
-        })}
-              </div>
-            </div>
-          ));
-        })()}
-      </div>
+            ));
+          })()}
+        </div>
+      ) : (
+        <TimelineCalendarView
+          events={mergedActivities}
+          trip={trip || {} as any}
+          onOpenNewForm={(date) => {
+            setForm({ 
+              title: '', 
+              date: date || tripDays[0] || '', 
+              time: '', 
+              location: '', 
+              notes: '', 
+              mapLink: '', 
+              type: 'other'
+            });
+            setIsFormOpen(true);
+            setEditingId(null);
+          }}
+          renderActivityCard={(item, idx) => renderActivityCard(item, idx)}
+        />
+      )}
 
+      {/* Global Add FAB (Mobile only) */}
       {isRequestEdit && (
-        <button 
-          onClick={startAdd} 
-          className="mt-8 flex h-12 w-full items-center justify-center gap-2 text-[14px] font-black text-[#030D2E] bg-slate-50/50 hover:bg-indigo-50/40 border-2 border-dashed border-slate-200/60 hover:border-indigo-200/70 hover:text-indigo-600 rounded-2xl transition-all duration-200 shadow-sm cursor-pointer"
+        <button
+          type="button"
+          onClick={startAdd}
+          className="sm:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
+          style={{ bottom: "calc(7.2rem + env(safe-area-inset-bottom))" }}
+          aria-label={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
           title={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
         >
-          <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" /> {isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
+          <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
         </button>
       )}
     </section>
@@ -717,6 +748,14 @@ export function SharedActivitiesSection({
           setEditingId(null);
         }}
         title={isDirectEdit ? (editingId ? "Sửa hoạt động" : "Thêm hoạt động") : (editingId ? "Đề xuất sửa hoạt động" : "Đề xuất thêm hoạt động")}
+        footer={
+          <button
+            onClick={handleSave}
+            className="w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+          >
+            {isDirectEdit ? (editingId ? "Lưu hoạt động" : "Thêm hoạt động") : "Gửi đề xuất"}
+          </button>
+        }
       >
         <div className="flex flex-col gap-5 py-2">
           {/* Item Name */}
@@ -859,13 +898,6 @@ export function SharedActivitiesSection({
             onChange={(notes) => setForm({ ...form, notes })}
             placeholder="Mô tả chi tiết hoặc lưu ý cho hoạt động này..."
           />
-
-          <button
-            onClick={handleSave}
-            className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
-          >
-            {isDirectEdit ? (editingId ? "Lưu hoạt động" : "Thêm hoạt động") : "Gửi đề xuất"}
-          </button>
         </div>
       </BottomSheet>
 

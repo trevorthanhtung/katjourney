@@ -4,7 +4,7 @@ import { db } from '../../../db';
 import { createPortal } from 'react-dom';
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Wallet01Icon, CheckmarkCircle02Icon, BookOpen01Icon, File01Icon, AlertCircleIcon, Add01Icon, PencilEdit01Icon, Delete01Icon, MoreVerticalIcon,
+  Wallet01Icon, CheckmarkCircle02Icon, BookOpen01Icon, File01Icon, AlertCircleIcon, Add01Icon, PenTool01Icon, Delete01Icon, MoreVerticalIcon,
   ReceiptTextIcon, UserCheck01Icon, Tag01Icon, ChevronRightIcon, BalanceScaleIcon, InformationCircleIcon, CheckIcon, Cancel01Icon, Clock01Icon,
   FileCheckIcon, ShirtIcon, Briefcase01Icon, PlugIcon, PillIcon, Bread01Icon, PackageIcon, BadgeCheckIcon, StickyNoteIcon, TextFontIcon, MinusSignIcon, UserIcon, Calendar01Icon, Maximize01Icon, Image01Icon, Loading01Icon, SmileIcon, NotebookIcon, SaveIcon, SparklesIcon, RouteIcon, HelpCircleIcon, UserGroupIcon, BubbleChatIcon, GlobeIcon,
   CrownIcon, Luggage01Icon, Car01Icon, CalculatorIcon, PieChartIcon,
@@ -432,6 +432,14 @@ export function SharedExpensesSection({
 
   return (
     <div className="space-y-6">
+      {/* Header Section (Adopted from Main View) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+        <div>
+          <h2 className="text-[22px] font-black text-[#030D2E] tracking-tight">Chi phí</h2>
+          <p className="text-slate-500 font-medium text-[13px] mt-1">Theo dõi chi tiêu, khoản đã trả và phân chia trong chuyến đi.</p>
+        </div>
+      </div>
+
       {/* Dashboard Section */}
       <section className="rounded-3xl border border-[#030D2E]/10 bg-white p-6 shadow-sm overflow-hidden relative">
         <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
@@ -472,6 +480,15 @@ export function SharedExpensesSection({
             <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(avgPerPerson)}</span>
           </div>
         </div>
+
+        {isRequestEdit && (
+          <button 
+            onClick={startAdd}
+            className="w-full bg-[#030D2E] text-white py-3 px-4 rounded-2xl font-bold flex items-center justify-center gap-2 mt-4 hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm relative z-10 cursor-pointer text-[14px]"
+          >
+            <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" /> {isDirectEdit ? "Thêm khoản chi" : "Đề xuất thêm"}
+          </button>
+        )}
       </section>
 
       <div className="grid gap-4 sm:grid-cols-2 animate-fadeIn" style={{ animationDelay: '100ms' }}>
@@ -678,15 +695,7 @@ export function SharedExpensesSection({
         </>,
         document.body
       )}
-      {isRequestEdit && (
-        <button 
-          onClick={startAdd} 
-          className="mt-4 flex h-12 w-full items-center justify-center gap-1.5 text-[13px] font-bold text-[#030D2E] bg-white hover:bg-slate-50 border border-dashed border-slate-200 hover:border-indigo-300 hover:text-indigo-600 rounded-2xl transition-all active:scale-[0.98] shadow-sm cursor-pointer"
-          title={isDirectEdit ? "Thêm chi phí" : "Đề xuất thêm"}
-        >
-          <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" /> {isDirectEdit ? "Thêm chi phí" : "Đề xuất thêm"}
-        </button>
-      )}
+
 
       <BottomSheet
         isOpen={isFormOpen}
@@ -695,6 +704,16 @@ export function SharedExpensesSection({
           setEditingId(null);
         }}
         title={isDirectEdit ? (editingId ? "Sửa chi phí" : "Thêm chi phí") : (editingId ? "Đề xuất sửa chi phí" : "Đề xuất thêm chi phí")}
+        headerAction={
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={isSaveDisabled || isSubmitting}
+            className="inline-flex h-9 items-center justify-center rounded-xl bg-[#030D2E] hover:bg-[#030D2E]/90 text-white px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed cursor-pointer"
+          >
+            {isSubmitting ? "Đang lưu..." : isDirectEdit ? (editingId ? "Lưu" : "Thêm") : "Đề xuất"}
+          </button>
+        }
       >
         <div className="flex flex-col gap-5 py-2">
           {/* Amount Box */}
@@ -961,14 +980,6 @@ export function SharedExpensesSection({
               </div>
             )}
           </div>
-
-          <button
-            onClick={handleSave}
-            disabled={isSaveDisabled || isSubmitting}
-            className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "Đang xử lý..." : isDirectEdit ? (editingId ? "Lưu khoản chi" : "Thêm khoản chi") : "Gửi đề xuất"}
-          </button>
         </div>
       </BottomSheet>
 
@@ -985,7 +996,7 @@ export function SharedExpensesSection({
         confirmLabel={isDirectEdit ? "Xóa" : "Đề xuất xóa"}
         itemName={expenses.find(e => String(e.id) === deleteTargetId)?.description}
       />
-    </section>
+      </section>
     </div>
   );
 }
@@ -1237,7 +1248,8 @@ export function SharedChecklistSection({
   }
 
   return (
-    <section className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all duration-300">
+    <>
+      <section className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all duration-300">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
         <div className="flex items-center gap-2.5">
@@ -1503,7 +1515,10 @@ export function SharedChecklistSection({
       {canAdd && (
         <button 
           onClick={startAdd} 
-          className="mt-4 flex h-11 w-full items-center justify-center gap-2 text-[13.5px] font-bold text-purple-600 bg-purple-50 hover:bg-purple-100/80 active:scale-[0.99] rounded-xl transition-all shadow-sm shadow-purple-100/30"
+          className={classNames(
+            "mt-4 items-center justify-center gap-2 text-[13.5px] font-bold text-purple-600 bg-purple-50 hover:bg-purple-100/80 active:scale-[0.99] rounded-xl transition-all shadow-sm shadow-purple-100/30 h-11 w-full",
+            displayedChecklist.length > 0 ? "hidden sm:flex" : "flex"
+          )}
           title={activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : (isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm")}
         >
           <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" /> 
@@ -1706,7 +1721,22 @@ export function SharedChecklistSection({
             : checklist.find(c => String(c.id) === deleteTargetId)?.title
         }
       />
-    </section>
+      </section>
+
+      {/* Mobile Floating Action Button (FAB) when checklist items exist */}
+      {canAdd && displayedChecklist.length > 0 && (
+        <button
+          type="button"
+          onClick={startAdd}
+          className="sm:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
+          style={{ bottom: "calc(7.2rem + env(safe-area-inset-bottom))" }}
+          aria-label={activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : "Đề xuất thêm"}
+          title={activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : "Đề xuất thêm"}
+        >
+          <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
+        </button>
+      )}
+    </>
   );
 }
 
@@ -1936,7 +1966,8 @@ export function SharedJournalsSection({
   }
 
   return (
-    <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm space-y-4">
+    <>
+      <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm space-y-4">
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={GlobeIcon} className="h-5 w-5 text-sky-500" />
@@ -1970,9 +2001,12 @@ export function SharedJournalsSection({
         {isRequestEdit && journalMode === "posts" && (
           <button 
             onClick={() => setIsFormOpen(true)}
-            className="flex items-center justify-center gap-1.5 px-4 py-2 bg-[#030D2E] text-white font-bold rounded-[14px] text-[13px] hover:bg-[#030D2E]/90 transition-all shadow-sm shrink-0 motion-press"
+            className={classNames(
+              "items-center justify-center gap-1.5 px-4 py-2 bg-[#030D2E] text-white font-bold rounded-[14px] text-[13px] hover:bg-[#030D2E]/90 transition-all shadow-sm shrink-0 motion-press",
+              mergedJournals.length > 0 ? "hidden sm:flex" : "flex"
+            )}
           >
-            <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4" /> Đăng bài viết
+            <HugeiconsIcon icon={PenTool01Icon} className="h-4 w-4" /> Đăng bài viết
           </button>
         )}
       </div>
@@ -2383,7 +2417,22 @@ export function SharedJournalsSection({
         }
         itemName={deleteTargetId?.title}
       />
-    </section>
+      </section>
+
+      {/* Mobile Floating Action Button (FAB) when posts exist */}
+      {isRequestEdit && journalMode === "posts" && mergedJournals.length > 0 && (
+        <button
+          type="button"
+          onClick={() => setIsFormOpen(true)}
+          className="sm:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
+          style={{ bottom: "calc(7.2rem + env(safe-area-inset-bottom))" }}
+          aria-label="Đăng bài viết"
+          title="Đăng bài viết"
+        >
+          <HugeiconsIcon icon={PenTool01Icon} className="h-6 w-6" />
+        </button>
+      )}
+    </>
   );
 }
 

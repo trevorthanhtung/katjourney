@@ -290,29 +290,29 @@ export function HomeScreen({
             ) : (
               <div
                 onClick={() => setWeatherModalOpen(true)}
-                className="flex flex-col items-stretch bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-4.5 gap-3 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 w-full text-left cursor-pointer select-none"
+                className="flex flex-col items-stretch bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-4 gap-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 w-full text-left cursor-pointer select-none"
               >
                 {/* Weather Info Block */}
-                <div className="flex items-center justify-between gap-4 w-full">
-                  <div className="flex items-center gap-2">
-                    <span className="text-4xl md:text-5xl font-black text-white drop-shadow-sm tracking-tighter">
+                <div className="flex items-center justify-between gap-2 w-full">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-3xl min-[360px]:text-4xl font-black text-white drop-shadow-sm tracking-tighter">
                       {Math.round(forecast.current?.temperature || 20)}°
                     </span>
                     <div className="flex flex-col ml-1 flex-shrink-0">
                       <span className="mb-[-4px] flex items-center justify-center h-8">
                         {getWeatherIcon(forecast.current?.weathercode || 0, "w-7 h-7 drop-shadow-md")}
                       </span>
-                      <span className="text-[12px] font-extrabold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
+                      <span className="text-[10.5px] min-[360px]:text-[11.5px] font-extrabold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
                         {getWeatherText(forecast.current?.weathercode || 0)}
                       </span>
                     </div>
                   </div>
-                  <div className="w-px h-10 bg-white/20 mx-1" />
+                  <div className="w-px h-10 bg-white/30 mx-0.5 shrink-0" />
                   <div className="flex flex-col text-right whitespace-nowrap">
-                    <span className="text-[11.5px] font-extrabold text-white/95">
+                    <span className="text-[11px] min-[360px]:text-[11.5px] font-extrabold text-white/95">
                       Cao: {Math.round(forecast.temperature_2m_max[0])}°
                     </span>
-                    <span className="text-[11.5px] font-bold text-white/70">
+                    <span className="text-[11px] min-[360px]:text-[11.5px] font-bold text-white/70">
                       Thấp: {Math.round(forecast.temperature_2m_min[0])}°
                     </span>
                   </div>
