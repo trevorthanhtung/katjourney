@@ -1185,6 +1185,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 (!data.includeChecklist || !(checklist.length > 0 || canRequestEdit))) && 
                data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit) && (
                 <SharedDocumentsSection 
+                  tripId={trip.id}
                   token={token} 
                   mode={documentsMode} 
                   documents={travelDocuments} 
