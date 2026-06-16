@@ -614,51 +614,97 @@ export default function SharedTripScreen({ token }: { token: string }) {
     <div className="min-h-screen bg-kat-bg">
       {/* Banner */}
       {(isBannerVisible && currentUser && currentUser.canEdit && (userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí") || canRequestEdit || isViewModeOnly)) && (
-        <div 
-          onClick={() => setIsViewModeOnly(prev => !prev)}
-          className={classNames(
-            "text-white py-2 px-4 text-center text-[12px] font-semibold flex justify-between items-center shadow-md select-none border-b border-white/5 cursor-pointer hover:brightness-110 active:scale-[0.995] transition-all duration-200",
-            isViewModeOnly 
-              ? "bg-[#334155]" 
-              : (userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí")) 
-                ? "bg-[#005c56]" 
-                : "bg-[#0C1938]"
-          )}
-        >
-          <div className="flex-1 flex items-center gap-2 justify-center pr-6">
-            {isViewModeOnly ? (
-              <span className="inline-flex items-center gap-1.5 flex-wrap justify-center">
-                <HugeiconsIcon icon={BookOpen01Icon} className="h-4 w-4 text-slate-350" />
-                <span>Chế độ Xem: Đang xem nội dung chuyến đi.</span>
-                <span className="inline-flex items-center gap-1 underline font-bold text-sky-200 ml-1.5">
-                  <HugeiconsIcon icon={PencilEdit01Icon} className="h-3.5 w-3.5" /> Bấm để chuyển sang Chế độ Chỉnh sửa
-                </span>
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 flex-wrap justify-center">
-                <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-emerald-300" />
-                <span>
-                  {userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí")
-                    ? `Vai trò "${currentUser?.role}": Bạn có quyền chỉnh sửa trực tiếp phần được phân công.`
-                    : "Chế độ Đề xuất: Các thay đổi của bạn sẽ được gửi cho chủ chuyến đi xét duyệt."
-                  }
-                </span>
-                <span className="inline-flex items-center gap-1 underline font-bold text-amber-200 ml-2">
-                  <HugeiconsIcon icon={BookOpen01Icon} className="h-3.5 w-3.5" /> Bấm để chuyển sang Chế độ Xem
-                </span>
-              </span>
-            )}
+        <div className={classNames(
+          "text-white py-2.5 px-4 shadow-md select-none border-b border-white/5 transition-all duration-300 ease-in-out",
+          isViewModeOnly 
+            ? "bg-gradient-to-r from-[#1e293b] via-[#334155] to-[#273549]" 
+            : (userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí")) 
+              ? "bg-gradient-to-r from-[#003830] via-[#005c56] to-[#004c43]" 
+              : "bg-gradient-to-r from-[#0a122c] via-[#0f1d4a] to-[#161330]" 
+        )}>
+          <div className="max-w-[1120px] mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+            
+            {/* Status Information (Left side) */}
+            <div className="flex items-center gap-2.5 text-[12px] font-bold text-white/90">
+              {isViewModeOnly ? (
+                <>
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-550/20 text-slate-300">
+                    <HugeiconsIcon icon={BookOpen01Icon} className="h-3 w-3" />
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="bg-white/10 px-1.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider text-slate-300 border border-white/10">
+                      Chế độ Xem
+                    </span>
+                    <span className="text-white/80 font-medium">Bạn đang xem nội dung chuyến đi ở chế độ chỉ đọc.</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 animate-pulse">
+                    <HugeiconsIcon icon={PencilEdit01Icon} className="h-3 w-3" />
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className={classNames(
+                      "px-1.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border border-white/10",
+                      (userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí"))
+                        ? "bg-[#00bfb7]/20 text-[#00bfb7]"
+                        : "bg-amber-500/20 text-amber-300"
+                    )}>
+                      {userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí")
+                        ? "Chỉnh sửa trực tiếp"
+                        : "Chế độ Đề xuất"
+                      }
+                    </span>
+                    <span className="text-white/85 font-medium">
+                      {userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí")
+                        ? `Vai trò "${currentUser?.role}": Bạn có quyền chỉnh sửa trực tiếp phần được phân công.`
+                        : "Các thay đổi của bạn sẽ được gửi cho chủ chuyến đi xét duyệt."
+                      }
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Interactive Toggle Button & Close (Right side) */}
+            <div className="flex items-center gap-3 shrink-0">
+              <button 
+                onClick={() => setIsViewModeOnly(prev => !prev)}
+                className={classNames(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10.5px] font-extrabold uppercase tracking-widest transition-all duration-300 shadow-sm border cursor-pointer hover:scale-[1.03] active:scale-[0.97]",
+                  isViewModeOnly 
+                    ? "bg-[#00BFB7] hover:bg-[#00a8a1] text-[#030D2E] border-[#00a8a1]/25 font-black"
+                    : "bg-white/10 hover:bg-white/20 text-white border-white/15"
+                )}
+              >
+                {isViewModeOnly ? (
+                  <>
+                    <HugeiconsIcon icon={PencilEdit01Icon} className="h-3.5 w-3.5" />
+                    Chỉnh sửa
+                  </>
+                ) : (
+                  <>
+                    <HugeiconsIcon icon={BookOpen01Icon} className="h-3.5 w-3.5" />
+                    Chế độ Xem
+                  </>
+                )}
+              </button>
+
+              <div className="w-px h-4 bg-white/10 hidden sm:block" />
+
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsBannerVisible(false);
+                }}
+                className="text-white/40 hover:text-white/85 p-1 rounded-full transition-colors cursor-pointer"
+                title="Đóng thông báo"
+              >
+                <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
+              </button>
+            </div>
+
           </div>
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsBannerVisible(false);
-            }}
-            className="text-white/70 hover:text-white p-1 rounded-full transition-colors cursor-pointer shrink-0"
-            title="Đóng thông báo"
-          >
-            <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
-          </button>
         </div>
       )}
 
