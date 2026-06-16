@@ -322,6 +322,8 @@ function EventForm({
     date: ""
   });
 
+  // Tránh reset form khi đang nhập mà parent component render lại
+  const editingId = editing?.id;
   useEffect(() => {
     if (isOpen) {
       setForm(
@@ -346,7 +348,8 @@ function EventForm({
             }
       );
     }
-  }, [editing, isOpen, tripDays, defaultDate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, editingId]);
 
   async function save() {
     if (!form.title.trim()) return;
