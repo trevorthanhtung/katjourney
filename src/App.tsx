@@ -647,7 +647,7 @@ function App() {
 
   return (
     <div className="font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg">
-      <header className="sticky top-0 z-40 bg-kat-bg/90 px-2.5 min-[360px]:px-4 pb-3 pt-3 backdrop-blur-xl border-b border-kat-border shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
+      <header className="sticky top-0 z-40 px-2.5 min-[360px]:px-4 pb-3 pt-3 bg-kat-bg/55 supports-[backdrop-filter]:bg-kat-bg/45 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 shadow-[0_4px_24px_rgba(3,13,46,0.06)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
         <GlobalToast />
         <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
           <div className="flex items-center gap-3 shrink-0">
