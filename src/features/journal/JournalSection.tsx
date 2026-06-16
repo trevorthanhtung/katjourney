@@ -661,12 +661,12 @@ export function JournalSection({
         <>
           {/* Journal Overview Card */}
       <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft">
-        <div className="flex items-center gap-4">
+        <div className="flex items-start sm:items-center gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
             <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
           </div>
-          <div className="grid grid-cols-3 gap-4 md:gap-6 flex-1 min-w-0">
-            <div>
+          <div className="grid grid-cols-1 divide-y divide-slate-100 sm:grid-cols-3 sm:divide-y-0 sm:divide-x sm:divide-slate-200/50 gap-3 sm:gap-0 flex-1 min-w-0 w-full">
+            <div className="pb-3 sm:pb-0 sm:pr-4 md:pr-6">
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <HugeiconsIcon icon={BookOpen01Icon} className="h-3.5 w-3.5 text-kat-primary shrink-0" />
                 Bài viết đã đăng
@@ -675,7 +675,7 @@ export function JournalSection({
                 {journalCount > 0 ? `${journalCount} bài viết` : "Chưa có bài viết nào"}
               </span>
             </div>
-            <div>
+            <div className="py-3 sm:py-0 sm:px-4 md:px-6">
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <HugeiconsIcon icon={SmilePlusIcon} className="h-3.5 w-3.5 text-amber-500 shrink-0" />
                 Cảm xúc mới nhất
@@ -684,7 +684,7 @@ export function JournalSection({
                 {lastMood || "—"}
               </span>
             </div>
-            <div>
+            <div className="pt-3 sm:pt-0 sm:pl-4 md:pl-6">
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-blue-500 shrink-0" />
                 Lần ghi gần nhất

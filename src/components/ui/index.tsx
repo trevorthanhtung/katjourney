@@ -12,6 +12,7 @@ import {
   ChevronRightIcon 
 } from "@hugeicons/core-free-icons";
 import { classNames } from "../../utils/helpers";
+import { useModalHistory } from "../../hooks/useModalHistory";
 
 export { classNames };
 
@@ -110,6 +111,15 @@ export function TimePicker({
 
   const hourRef = React.useRef<HTMLDivElement>(null);
   const minRef = React.useRef<HTMLDivElement>(null);
+
+  const hash = React.useMemo(() => {
+    const safeLabel = typeof label === 'string'
+      ? label.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "")
+      : "time";
+    return `time-${safeLabel || "picker"}`;
+  }, [label]);
+
+  useModalHistory(isOpen, () => setIsOpen(false), hash);
 
   React.useEffect(() => {
     if (isOpen) {
@@ -266,6 +276,15 @@ export function DatePicker({
   max?: string;
 }) {
   const [isOpen, setIsOpen] = React.useState(false);
+
+  const hash = React.useMemo(() => {
+    const safeLabel = typeof label === 'string'
+      ? label.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "")
+      : "date";
+    return `date-${safeLabel || "picker"}`;
+  }, [label]);
+
+  useModalHistory(isOpen, () => setIsOpen(false), hash);
   
   const [viewDate, setViewDate] = React.useState(() => {
     return value ? new Date(value) : new Date();
@@ -437,6 +456,15 @@ export function Select({
   buttonClassName?: string;
 }) {
   const [isOpen, setIsOpen] = React.useState(false);
+
+  const hash = React.useMemo(() => {
+    const safeLabel = typeof label === 'string'
+      ? label.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "")
+      : "select";
+    return `select-${safeLabel || "picker"}`;
+  }, [label]);
+
+  useModalHistory(isOpen, () => setIsOpen(false), hash);
 
   return (
     <div className="block">

@@ -326,13 +326,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   useEffect(() => {
     if (data && !hasInitializedTab) {
-      const checklist = data.checklist || [];
-      const travelDocuments = data.travelDocuments || [];
-      const isOwnerOrAdmin = currentUser?.role === "owner" || currentUser?.role === "admin";
-      const canRequestEdit = Boolean(isOwnerOrAdmin || (data.trip?.status !== 'archived' && (currentUser?.role || currentUser?.role === "member")));
-
-      const hasChecklist = Boolean(data.includeChecklist && (checklist.length > 0 || canRequestEdit));
-      const hasDocuments = Boolean(data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit));
+      const hasChecklist = Boolean(data.includeChecklist);
+      const hasDocuments = Boolean(data.includeDocuments);
 
       if (hasChecklist) {
         setChecklistSubTab("checklist");
@@ -340,29 +335,38 @@ export default function SharedTripScreen({ token }: { token: string }) {
         setChecklistSubTab("documents");
       }
 
-      // Default active tab initialization
-      const activities = data.activities || [];
-      const backupPlans = data.backupPlans || [];
-      const journals = data.journals || [];
-      const expenses = data.expenses || [];
-      const members = data.members || [];
-
-      const canReqEdit = (data.mode === 'edit' || data.mode === 'request_edit') && !data.revoked && !(currentUser?.isGuest && !currentUser?.canEdit) && data.trip?.status !== 'archived';
-
-      const initialTab = 
-        (activities.length > 0 || (data.includeBackupPlans && backupPlans.length > 0) || canReqEdit) ? "activities" :
-        (data.includeJournals && (journals.length > 0 || canReqEdit)) ? "journals" :
-        (data.includeExpenses && (expenses.length > 0 || canReqEdit)) ? "expenses" :
-        ((data.includeChecklist && (checklist.length > 0 || canReqEdit)) || (data.includeDocuments && (travelDocuments.length > 0 || canReqEdit))) ? "checklist" :
-        (members.length > 0 || canReqEdit) ? "members" : "";
-      
-      if (initialTab) {
-        setActiveTab(initialTab);
-      }
-
+      // Default active tab initialization (always default to "activities" which is always visible)
+      setActiveTab("activities");
       setHasInitializedTab(true);
     }
   }, [data, hasInitializedTab, currentUser]);
+
+  // Stats
+  const totalExpense = React.useMemo(() => {
+    if (!data) return 0;
+    const expenses = data.expenses || [];
+    const changeRequests = data.changeRequests || [];
+    const list = expenses.filter((e: any) => !e.isDeleted).map((item: any) => {
+      const pendingDelete = changeRequests.some((r: any) => r.section === 'expenses' && r.action === 'delete' && String(r.targetId) === String(item.id));
+      const updateReq = changeRequests.find((r: any) => r.section === 'expenses' && r.action === 'update' && String(r.targetId) === String(item.id));
+      
+      if (updateReq) {
+        return { ...item, ...updateReq.after };
+      }
+      if (pendingDelete) {
+        return { ...item, isPendingDelete: true };
+      }
+      return item;
+    });
+
+    const pendingCreates = changeRequests.filter((r: any) => r.section === 'expenses' && r.action === 'create' && r.status === 'pending');
+    pendingCreates.forEach((r: any) => {
+      list.push({ ...r.after } as any);
+    });
+
+    const activeExpenses = list.filter((e: any) => !e.isPendingDelete);
+    return activeExpenses.reduce((acc: number, cur: any) => acc + Number(cur.amount || 0), 0);
+  }, [data?.expenses, data?.changeRequests]);
 
   if (loading) {
     return (
@@ -451,9 +455,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const heroBg = (forecast && currentCode != null)
     ? getWeatherGradient(currentCode)
     : fallbackBg;
-  
-  // Stats
-  const totalExpense = expenses.reduce((sum: number, item: any) => sum + Number(item.amount || 0), 0);
+
   const checklistTotal = checklist.length;
   const checklistDone = checklist.filter((c: any) => c.completed).length;
   const checklistPercent = checklistTotal ? Math.round((checklistDone / checklistTotal) * 100) : 0;
@@ -530,13 +532,13 @@ export default function SharedTripScreen({ token }: { token: string }) {
     userRoleLower.includes("leader")
   ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
 
-  // Navigation Tabs construction
+  // Navigation Tabs construction (always show enabled categories even if they are empty)
   const tabsList = [
-    {id: "activities", label: "Lịch trình", show: (activities.length > 0 || (data.includeBackupPlans && backupPlans.length > 0) || canRequestEdit), icon: RouteIcon },
-    {id: "journals", label: "Bản tin", show: data.includeJournals && (journals.length > 0 || canRequestEdit), icon: GlobeIcon },
-    {id: "expenses", label: "Chi phí", show: data.includeExpenses && (expenses.length > 0 || canRequestEdit), icon: Wallet01Icon },
-    {id: "checklist", label: "Chuẩn bị", show: (data.includeChecklist && (checklist.length > 0 || canRequestEdit)) || (data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit)), icon: CheckmarkCircle02Icon },
-    {id: "members", label: "Thành viên", show: members.length > 0 || canRequestEdit, icon: UserGroupIcon },
+    {id: "activities", label: "Lịch trình", show: true, icon: RouteIcon },
+    {id: "journals", label: "Bản tin", show: Boolean(data?.includeJournals), icon: GlobeIcon },
+    {id: "expenses", label: "Chi phí", show: Boolean(data?.includeExpenses), icon: Wallet01Icon },
+    {id: "checklist", label: "Chuẩn bị", show: Boolean(data?.includeChecklist || data?.includeDocuments), icon: CheckmarkCircle02Icon },
+    {id: "members", label: "Thành viên", show: true, icon: UserGroupIcon },
   ].filter(t => t.show);
 
   if (showIdentityModal) {
@@ -578,27 +580,56 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
           <div className="mt-6 flex-1 min-h-0 flex flex-col">
             {step === "pin" ? (
-              <div className="space-y-4">
-                <input
-                  type="password"
-                  inputMode="numeric"
-                  placeholder="Nhập mã PIN gồm 4-6 số"
-                  value={pinInput}
-                  onChange={(e) => {
-                    setPinInput(e.target.value);
-                    setPinError(false);
-                  }}
-                  className={classNames(
-                    "w-full rounded-[16px] border px-4 py-3 text-center text-lg font-black tracking-widest outline-none transition-all",
-                    pinError
-                      ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400"
-                      : "border-slate-200 bg-slate-50 text-slate-900 focus:border-[#030D2E]"
-                  )}
-                />
+              <div className="space-y-5">
+                <div className="flex gap-3 justify-center py-2">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <input
+                      key={i}
+                      type="password"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={1}
+                      id={`share-pin-digit-${i}`}
+                      value={pinInput[i] || ""}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "");
+                        const arr = pinInput.split("").slice(0, 4);
+                        arr[i] = val;
+                        const newPin = arr.join("").slice(0, 4);
+                        setPinInput(newPin);
+                        setPinError(false);
+                        if (val && i < 3) {
+                          const next = document.getElementById(`share-pin-digit-${i+1}`);
+                          next?.focus();
+                        }
+                        if (newPin.length === 4) {
+                          if (newPin === data.sharePin) {
+                            setStep("identity");
+                          } else {
+                            setPinError(true);
+                          }
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Backspace" && !pinInput[i] && i > 0) {
+                          const prev = document.getElementById(`share-pin-digit-${i-1}`);
+                          prev?.focus();
+                        }
+                      }}
+                      className={classNames(
+                        "w-12 h-12 rounded-xl border-2 text-center text-[20px] font-black focus:ring-2 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                        pinError
+                          ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-200"
+                          : "border-slate-200 bg-slate-50 text-slate-900 focus:border-[#030D2E] focus:ring-[#030D2E]/20"
+                      )}
+                    />
+                  ))}
+                </div>
                 {pinError && (
                   <p className="text-center text-xs font-bold text-rose-500">Mã PIN không chính xác. Vui lòng thử lại.</p>
                 )}
                 <button
+                  disabled={pinInput.length < 4}
                   onClick={() => {
                     if (pinInput === data.sharePin) {
                       setStep("identity");
@@ -606,7 +637,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       setPinError(true);
                     }
                   }}
-                  className="w-full rounded-[16px] bg-[#030D2E] py-3 text-[14px] font-black text-white transition-all active:scale-[0.98] shadow-sm hover:bg-[#0a1a5c]"
+                  className="w-full rounded-[16px] bg-[#030D2E] py-3 text-[14px] font-black text-white transition-all active:scale-[0.98] shadow-sm hover:bg-[#0a1a5c] disabled:opacity-50 disabled:pointer-events-none"
                 >
                   Xác nhận mã PIN
                 </button>
@@ -901,57 +932,41 @@ export default function SharedTripScreen({ token }: { token: string }) {
           )}
         >
           {/* Card 1: Lịch trình */}
-          <button
-            onClick={() => setActiveTab("activities")}
-            className={classNames(
-              "rounded-3xl border p-5 text-center shadow-sm relative overflow-hidden flex flex-col items-center justify-center select-none w-full transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] cursor-pointer",
-              activeTab === "activities"
-                ? "border-emerald-500 bg-emerald-500/5 shadow-[0_8px_24px_rgba(16,185,129,0.12)]"
-                : "border-emerald-500/10 bg-white/90 hover:shadow-[0_10px_30px_rgba(16,185,129,0.08)]"
-            )}
+          <div
+            className="rounded-3xl border border-emerald-500/10 bg-white px-2 py-4 sm:p-5 text-center shadow-sm relative overflow-hidden flex flex-col items-center justify-center select-none w-full"
           >
             <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 flex items-center justify-center mb-3">
               <HugeiconsIcon icon={RouteIcon} className="h-5 w-5" />
             </div>
-            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{activities.length}</p>
+            <p className="text-[20px] sm:text-[22px] font-black text-[#030D2E] leading-none mb-1">{activities.length}</p>
             <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Lịch trình</p>
-          </button>
+          </div>
 
           {/* Card 2: Chi phí (Conditional) */}
           {data.includeExpenses && (
-            <button
-              onClick={() => setActiveTab("expenses")}
-              className={classNames(
-                "rounded-3xl border p-5 text-center shadow-sm relative overflow-hidden flex flex-col items-center justify-center select-none w-full transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] cursor-pointer",
-                activeTab === "expenses"
-                  ? "border-amber-500 bg-amber-500/5 shadow-[0_8px_24px_rgba(245,158,11,0.12)]"
-                  : "border-amber-500/10 bg-white/90 hover:shadow-[0_10px_30px_rgba(245,158,11,0.08)]"
-              )}
+            <div
+              className="rounded-3xl border border-amber-500/10 bg-white px-2 py-4 sm:p-5 text-center shadow-sm relative overflow-hidden flex flex-col items-center justify-center select-none w-full"
             >
               <div className="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-600 border border-amber-500/20 flex items-center justify-center mb-3">
                 <HugeiconsIcon icon={Wallet01Icon} className="h-5 w-5" />
               </div>
-              <p className="text-[18px] font-black text-[#030D2E] leading-none mb-1 truncate max-w-full px-1">{formatMoney(totalExpense)}</p>
+              <p className="text-[14px] min-[360px]:text-[16px] sm:text-[18px] font-black text-[#030D2E] leading-none mb-1 px-0.5 break-all">
+                {formatMoney(totalExpense)}
+              </p>
               <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Chi phí</p>
-            </button>
+            </div>
           )}
 
           {/* Card 3: Thành viên */}
-          <button
-            onClick={() => setActiveTab("members")}
-            className={classNames(
-              "rounded-3xl border p-5 text-center shadow-sm relative overflow-hidden flex flex-col items-center justify-center select-none w-full transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] cursor-pointer",
-              activeTab === "members"
-                ? "border-blue-500 bg-blue-500/5 shadow-[0_8px_24px_rgba(59,130,246,0.12)]"
-                : "border-blue-500/10 bg-white/90 hover:shadow-[0_10px_30px_rgba(59,130,246,0.08)]"
-            )}
+          <div
+            className="rounded-3xl border border-blue-500/10 bg-white px-2 py-4 sm:p-5 text-center shadow-sm relative overflow-hidden flex flex-col items-center justify-center select-none w-full"
           >
             <div className="w-11 h-11 rounded-2xl bg-blue-500/10 text-blue-600 border border-blue-500/20 flex items-center justify-center mb-3">
               <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5" />
             </div>
-            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
+            <p className="text-[20px] sm:text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
             <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Thành viên</p>
-          </button>
+          </div>
         </section>
 
         <section className="hidden sm:flex bg-[#030D2E]/5 p-1 rounded-full gap-1 overflow-x-auto scrollbar-none border border-slate-200/20">
