@@ -792,55 +792,40 @@ export default function SharedTripScreen({ token }: { token: string }) {
         </section>
 
         {/* Quick Stats Grid */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <button
-            onClick={() => setActiveTab("members")}
-            className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 hover:border-blue-200/80 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center cursor-pointer active:scale-95 focus:outline-none w-full"
-          >
-            <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
-            <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
-              <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5" />
-            </div>
-            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Thành viên</p>
-          </button>
-          <button
-            onClick={() => setActiveTab("activities")}
-            className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 hover:border-emerald-200/80 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center cursor-pointer active:scale-95 focus:outline-none w-full"
-          >
-            <div className="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
-            <div className="w-11 h-11 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+        <section
+          className={classNames(
+            "grid gap-3",
+            data.includeExpenses ? "grid-cols-3" : "grid-cols-2"
+          )}
+        >
+          {/* Card 1: Lịch trình */}
+          <div className="rounded-3xl border border-emerald-500/10 bg-white/90 backdrop-blur-md p-5 text-center shadow-[0_10px_30px_rgba(16,185,129,0.04)] relative overflow-hidden flex flex-col items-center justify-center select-none w-full">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 flex items-center justify-center mb-3">
               <HugeiconsIcon icon={RouteIcon} className="h-5 w-5" />
             </div>
             <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{activities.length}</p>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lịch trình</p>
-          </button>
+            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Lịch trình</p>
+          </div>
+
+          {/* Card 2: Chi phí (Conditional) */}
           {data.includeExpenses && (
-            <button
-              onClick={() => setActiveTab("expenses")}
-              className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 hover:border-amber-200/80 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center cursor-pointer active:scale-95 focus:outline-none w-full"
-            >
-              <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500"></div>
-              <div className="w-11 h-11 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+            <div className="rounded-3xl border border-amber-500/10 bg-white/90 backdrop-blur-md p-5 text-center shadow-[0_10px_30px_rgba(245,158,11,0.04)] relative overflow-hidden flex flex-col items-center justify-center select-none w-full">
+              <div className="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-600 border border-amber-500/20 flex items-center justify-center mb-3">
                 <HugeiconsIcon icon={Wallet01Icon} className="h-5 w-5" />
               </div>
               <p className="text-[18px] font-black text-[#030D2E] leading-none mb-1 truncate max-w-full px-1">{formatMoney(totalExpense)}</p>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chi phí</p>
-            </button>
+              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Chi phí</p>
+            </div>
           )}
-          {data.includeChecklist && (
-            <button
-              onClick={() => setActiveTab("checklist")}
-              className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 hover:border-purple-200/80 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center cursor-pointer active:scale-95 focus:outline-none w-full"
-            >
-              <div className="absolute top-0 left-0 right-0 h-1 bg-purple-500"></div>
-              <div className="w-11 h-11 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5" />
-              </div>
-              <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{checklistPercent}%</p>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chuẩn bị</p>
-            </button>
-          )}
+
+          {/* Card 3: Thành viên */}
+          <div className="rounded-3xl border border-blue-500/10 bg-white/90 backdrop-blur-md p-5 text-center shadow-[0_10px_30px_rgba(59,130,246,0.04)] relative overflow-hidden flex flex-col items-center justify-center select-none w-full">
+            <div className="w-11 h-11 rounded-2xl bg-blue-500/10 text-blue-600 border border-blue-500/20 flex items-center justify-center mb-3">
+              <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5" />
+            </div>
+            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
+            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Thành viên</p>
+          </div>
         </section>
 
         <section className="hidden sm:flex bg-[#030D2E]/5 p-1 rounded-full gap-1 overflow-x-auto scrollbar-none border border-slate-200/20">
