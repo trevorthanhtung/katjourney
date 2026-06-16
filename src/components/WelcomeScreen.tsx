@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   CompassIcon,
@@ -7,9 +7,14 @@ import {
   AlertCircleIcon,
   LockIcon,
   UserIcon,
-  GlobeIcon
+  GlobeIcon,
+  WalletCardsIcon,
+  SparklesIcon,
+  Download01Icon
 } from "@hugeicons/core-free-icons";
 import { signInAsGuest, signInWithGoogle } from "../services/authService";
+import { usePWAInstall } from "../hooks/usePWAInstall";
+import { PWAInstallInstructionsSheet } from "./PWAInstallInstructionsSheet";
 
 interface WelcomeScreenProps {
   onDismiss: () => void;
@@ -36,10 +41,112 @@ const AppleIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const onboardingSlides = [
+  {
+    icon: CompassIcon,
+    title: "Lập lịch trình thông minh",
+    desc: "Lên kế hoạch chi tiết từng ngày, ghim địa điểm và sắp xếp hành trình trực quan cùng đồng đội.",
+    accent: "from-kat-primary/10 to-teal-500/10",
+    iconColor: "text-kat-primary",
+  },
+  {
+    icon: WalletCardsIcon,
+    title: "Chia sẻ chi phí công bằng",
+    desc: "Ghi chép chi tiêu nhóm, tự động chia hóa đơn và giải quyết thanh toán tức thì.",
+    accent: "from-amber-500/10 to-orange-500/10",
+    iconColor: "text-amber-500",
+  },
+  {
+    icon: SparklesIcon,
+    title: "Lưu giữ trọn vẹn kỷ niệm",
+    desc: "Chuẩn bị đồ đạc theo checklist và viết nhật ký hành trình lưu giữ những bức ảnh ý nghĩa.",
+    accent: "from-pink-500/10 to-rose-500/10",
+    iconColor: "text-rose-500",
+  }
+];
+
 export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
   const [loading, setLoading] = useState<"google" | "guest" | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [legalModal, setLegalModal] = useState<"terms" | "privacy" | "cookie" | null>(null);
+
+  // PWA Install Assistant states
+  const { isInstallable, isStandalone, platform, triggerInstall } = usePWAInstall();
+  const [isIosGuideOpen, setIsIosGuideOpen] = useState(false);
+
+  const handleInstallPWA = async () => {
+    const showGuide = await triggerInstall();
+    if (showGuide && platform === "ios") {
+      setIsIosGuideOpen(true);
+    }
+  };
+
+  // Onboarding Carousel States
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchCurrentX, setTouchCurrentX] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const autoPlayRef = useRef<any>(null);
+
+  const startAutoPlay = () => {
+    stopAutoPlay();
+    autoPlayRef.current = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % onboardingSlides.length);
+    }, 4500);
+  };
+
+  const stopAutoPlay = () => {
+    if (autoPlayRef.current) {
+      clearInterval(autoPlayRef.current);
+    }
+  };
+
+  useEffect(() => {
+    startAutoPlay();
+    return () => stopAutoPlay();
+  }, []);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    stopAutoPlay();
+    setTouchStartX(e.touches[0].clientX);
+    setTouchCurrentX(e.touches[0].clientX);
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    setTouchCurrentX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX === null || touchCurrentX === null) return;
+    const diffX = touchStartX - touchCurrentX;
+    
+    // Swipe sensitivity threshold: 50px
+    if (diffX > 50) {
+      // Swipe Left -> Next Slide
+      setActiveSlide((prev) => (prev + 1) % onboardingSlides.length);
+    } else if (diffX < -50) {
+      // Swipe Right -> Prev Slide
+      setActiveSlide((prev) => (prev + onboardingSlides.length - 1) % onboardingSlides.length);
+    }
+
+    setTouchStartX(null);
+    setTouchCurrentX(null);
+    setIsDragging(false);
+    startAutoPlay();
+  };
+
+  const dragOffset = isDragging && touchStartX !== null && touchCurrentX !== null
+    ? touchCurrentX - touchStartX
+    : 0;
+
+  const sliderStyle = {
+    transform: isDragging
+      ? `translate3d(calc(-${activeSlide * 100}% + ${dragOffset}px), 0, 0)`
+      : `translate3d(-${activeSlide * 100}%, 0, 0)`,
+    transition: isDragging ? "none" : "transform 0.45s cubic-bezier(0.25, 1, 0.5, 1)"
+  };
 
   const handleGoogleLogin = async () => {
     setLoading("google");
@@ -122,17 +229,57 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
         {/* MIDDLE ACTIONS: Glassmorphism Card */}
         <div className="w-full max-w-[400px] mx-auto my-auto p-8 sm:p-10 bg-white/60 backdrop-blur-xl rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-white flex flex-col items-center relative z-10 animate-scaleUp">
           
-          {/* Header text with Logo */}
-          <div className="mb-10 text-center flex flex-col items-center">
-            <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-white shadow-sm border border-slate-100 mb-6 ring-4 ring-white/50">
-              <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-10 w-10 object-contain drop-shadow-sm" />
+          {/* Onboarding Carousel (2027 Premium Swipeable) */}
+          <div 
+            className="w-full overflow-hidden mb-5 relative cursor-grab active:cursor-grabbing select-none"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div 
+              className="flex w-full"
+              style={sliderStyle}
+            >
+              {onboardingSlides.map((slide, idx) => {
+                const IconComp = slide.icon;
+                return (
+                  <div key={idx} className="w-full shrink-0 flex flex-col items-center text-center px-1">
+                    {/* Floating Icon with Background Accent Glow */}
+                    <div className="relative mb-5 flex items-center justify-center">
+                      <div className={`absolute inset-0 bg-gradient-to-tr ${slide.accent} rounded-full blur-xl scale-150 opacity-70 pointer-events-none`} />
+                      <div className="relative flex items-center justify-center h-16 w-16 rounded-[20px] bg-white border border-slate-100/50 shadow-soft ring-4 ring-white/50 animate-float-slow">
+                        <HugeiconsIcon icon={IconComp} size={24} className={slide.iconColor} />
+                      </div>
+                    </div>
+
+                    <h3 className="text-[20px] font-black tracking-tight text-[#030D2E] leading-tight mb-2">
+                      {slide.title}
+                    </h3>
+                    <p className="text-[13px] font-semibold text-slate-500 leading-relaxed max-w-[280px] mx-auto">
+                      {slide.desc}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
-            <h3 className="text-[32px] font-black tracking-tight text-[#030D2E] leading-tight">
-              Bắt đầu hành trình
-            </h3>
-            <p className="text-[15px] font-semibold text-slate-500 mt-3 max-w-[280px] mx-auto leading-relaxed">
-              Lên kế hoạch, chia sẻ và lưu giữ trọn vẹn từng khoảnh khắc.
-            </p>
+          </div>
+
+          {/* Liquid Dots Indicators */}
+          <div className="flex items-center justify-center gap-1.5 mb-7 select-none">
+            {onboardingSlides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  stopAutoPlay();
+                  setActiveSlide(idx);
+                  startAutoPlay();
+                }}
+                className={`h-1.5 rounded-full bg-slate-350 liquid-dot ${
+                  activeSlide === idx ? "w-5 bg-kat-primary" : "w-1.5 hover:bg-slate-400"
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
           </div>
 
           {/* Error display */}
@@ -176,6 +323,17 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               )}
               Khám phá tư cách Khách
             </button>
+
+            {/* Install PWA (Nudge Button) */}
+            {isInstallable && !isStandalone && (
+              <button
+                onClick={handleInstallPWA}
+                className="w-full flex items-center justify-center gap-3.5 h-14 rounded-2xl border-2 border-dashed border-[#00BFB7]/40 hover:border-[#00BFB7] bg-[#00BFB7]/5 hover:bg-[#00BFB7]/10 active:scale-[0.97] transition-all font-extrabold text-[15px] text-[#00AFA8] mt-1.5 group animate-fadeIn"
+              >
+                <HugeiconsIcon icon={Download01Icon} className="w-5.5 h-5.5 text-[#00BFB7] group-hover:scale-110 transition-transform" />
+                Tải ứng dụng về màn hình chính
+              </button>
+            )}
           </div>
 
         </div>
@@ -284,6 +442,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
         </div>
       )}
 
+      <PWAInstallInstructionsSheet isOpen={isIosGuideOpen} onClose={() => setIsIosGuideOpen(false)} />
     </div>
   );
 }

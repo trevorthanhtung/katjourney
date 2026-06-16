@@ -55,6 +55,7 @@ import { useShareChangeRequests } from "./hooks/useShareChangeRequests";
 import { ShareChangeRequestsSheet } from "./features/share/components/ShareChangeRequestsSheet";
 import { SettingsSheet } from "./components/SettingsSheet";
 import { WelcomeScreen } from "./components/WelcomeScreen";
+import { SplashScreen } from "./components/SplashScreen";
 import { ChatBox } from "./features/share/components/ChatBox";
 import { useAuth } from "./hooks/useAuth";
 import { useCloudBackup } from "./hooks/useCloudBackup";
@@ -96,6 +97,8 @@ NavButton.displayName = "NavButton";
 function App() {
   const { t } = useTranslation();
   const isOnline = useNetworkStatus();
+  const [showSplash, setShowSplash] = useState(true);
+  const [isSplashFading, setIsSplashFading] = useState(false);
   const [activeTab, setActiveTab] = useState<"home" | "timeline" | "expenses" | "checklist" | "more">(() => {
     const saved = localStorage.getItem("kat_active_tab");
     return (saved as any) || "home";
@@ -278,6 +281,20 @@ function App() {
   React.useEffect(() => {
     localStorage.setItem("kat_more_section", moreSection);
   }, [moreSection]);
+
+  // Vòng đời màn hình Splash (2027 Premium Motion transition)
+  React.useEffect(() => {
+    if (!authLoading && !tripsLoading) {
+      const timer = setTimeout(() => {
+        setIsSplashFading(true);
+        const exitTimer = setTimeout(() => {
+          setShowSplash(false);
+        }, 450);
+        return () => clearTimeout(exitTimer);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [authLoading, tripsLoading]);
 
   React.useEffect(() => {
     localStorage.setItem("kat_is_viewing_archive", String(isViewingArchive));
@@ -689,17 +706,40 @@ function App() {
   }
 
   if (showWelcome && !isShareRoute) {
-    return <WelcomeScreen onDismiss={() => setShowWelcome(false)} />;
+    return (
+      <>
+        {showSplash && <SplashScreen isFading={isSplashFading} />}
+        <div 
+          className={classNames(
+            "fixed inset-0 z-[100]",
+            showSplash && "transition-all duration-500 ease-out",
+            showSplash ? (isSplashFading ? "scale-100 opacity-100" : "scale-[0.96] opacity-0") : "scale-100 opacity-100"
+          )}
+          style={{
+            transitionTimingFunction: showSplash ? "var(--motion-ease-spring-soft)" : undefined
+          }}
+        >
+          <WelcomeScreen onDismiss={() => setShowWelcome(false)} />
+        </div>
+      </>
+    );
   }
 
   return (
-    <div 
-      className="font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg"
-      style={{
-        "--sticky-header-offset": areBarsVisible ? "60px" : "0px",
-        "--sticky-header-offset-md": areBarsVisible ? "68px" : "0px",
-      } as React.CSSProperties}
-    >
+    <>
+      {showSplash && <SplashScreen isFading={isSplashFading} />}
+      <div 
+        className={classNames(
+          "font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg",
+          showSplash && "transition-all duration-500 ease-out",
+          showSplash && (isSplashFading ? "scale-100 opacity-100" : "scale-[0.96] opacity-0")
+        )}
+        style={{
+          transitionTimingFunction: showSplash ? "var(--motion-ease-spring-soft)" : undefined,
+          "--sticky-header-offset": areBarsVisible ? "60px" : "0px",
+          "--sticky-header-offset-md": areBarsVisible ? "68px" : "0px",
+        } as React.CSSProperties}
+      >
       <header className={`sticky top-0 z-40 px-2.5 min-[360px]:px-4 pb-3 pt-3 bg-white/55 supports-[backdrop-filter]:bg-white/45 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 shadow-[0_4px_24px_rgba(3,13,46,0.06)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`} style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))", paddingLeft: "max(0.625rem, env(safe-area-inset-left))", paddingRight: "max(0.625rem, env(safe-area-inset-right))" }}>
         <GlobalToast />
         <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
@@ -1387,7 +1427,8 @@ function App() {
         </div>
       </BottomSheet>
     </div>
-  );
+  </>
+);
 }
 
 export default App;

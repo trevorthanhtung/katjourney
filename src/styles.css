@@ -389,13 +389,15 @@ textarea,
   background-color: #94a3b8; /* slate-400 */
 }
 
-/* Hide scrollbars globally for scrollbar-none elements */
-.scrollbar-none::-webkit-scrollbar {
+/* Hide scrollbars globally for scrollbar-none/scrollbar-hide elements */
+.scrollbar-none::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
 }
-.scrollbar-none {
+.scrollbar-none,
+.scrollbar-hide {
   -ms-overflow-style: none !important;  /* IE and Edge */
   scrollbar-width: none !important;  /* Firefox */
   -webkit-overflow-scrolling: touch;
@@ -497,3 +499,55 @@ textarea,
     pointer-events: none !important;
   }
 }
+
+/* 2027 Premium Splash Screen Animations */
+@keyframes splash-pulse-spring {
+  0% { transform: scale(0.93); opacity: 0.85; }
+  50% { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(0.93); opacity: 0.85; }
+}
+
+@keyframes splash-glow-shift {
+  0% { transform: translate(-50%, -50%) scale(0.85) rotate(0deg); opacity: 0.3; filter: blur(36px); }
+  50% { transform: translate(-50%, -50%) scale(1.2) rotate(180deg); opacity: 0.5; filter: blur(48px); }
+  100% { transform: translate(-50%, -50%) scale(0.85) rotate(360deg); opacity: 0.3; filter: blur(36px); }
+}
+
+@keyframes splash-progress-anim {
+  0% { left: -50%; width: 35%; }
+  50% { left: 30%; width: 50%; }
+  100% { left: 115%; width: 35%; }
+}
+
+.animate-splash-logo {
+  animation: splash-pulse-spring 2.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+.animate-splash-glow {
+  animation: splash-glow-shift 5s ease-in-out infinite;
+}
+
+.animate-splash-progress {
+  animation: splash-progress-anim 1.8s cubic-bezier(0.34, 1.56, 0.64, 1.1) infinite;
+}
+
+/* 2027 Onboarding Premium Animations */
+@keyframes float-slow {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-7px) rotate(1.5deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.animate-float-slow {
+  animation: float-slow 4.5s ease-in-out infinite;
+}
+
+.liquid-dot {
+  transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.liquid-dot-active {
+  width: 1.5rem !important; /* 24px width */
+  background-color: #00BFB7 !important;
+}
+

@@ -191,7 +191,7 @@ export function TimePicker({
             <div 
               ref={hourRef}
               onScroll={handleHourScroll}
-              className="flex-1 h-full overflow-y-auto snap-y snap-mandatory scrollbar-hide py-[78px] px-2 relative z-10"
+              className="flex-1 h-full overflow-y-auto snap-y snap-mandatory scrollbar-none py-[78px] px-2 relative z-10"
             >
               {hours.map(h => (
                 <div 
@@ -216,7 +216,7 @@ export function TimePicker({
             <div 
               ref={minRef}
               onScroll={handleMinScroll}
-              className="flex-1 h-full overflow-y-auto snap-y snap-mandatory scrollbar-hide py-[78px] px-2 relative z-10"
+              className="flex-1 h-full overflow-y-auto snap-y snap-mandatory scrollbar-none py-[78px] px-2 relative z-10"
             >
               {minutes.map(m => (
                 <div 

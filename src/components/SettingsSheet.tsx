@@ -47,6 +47,8 @@ import { FactoryResetModal } from "./FactoryResetModal";
 import { useModalHistory } from "../hooks/useModalHistory";
 import { today, checklistSections, packingTripTypes } from "../utils/helpers";
 import { fetchExchangeRates, ExchangeRate } from "../services/currencyService";
+import { usePWAInstall } from "../hooks/usePWAInstall";
+import { PWAInstallInstructionsSheet } from "./PWAInstallInstructionsSheet";
 
 interface SettingsSheetProps {
   isOpen: boolean;
@@ -145,6 +147,17 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
   const [clearTempSuccess, setClearTempSuccess] = useState(false);
   const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
   const [isFactoryResetOpen, setIsFactoryResetOpen] = useState(false);
+
+  // PWA Install Assistant states
+  const { isInstallable, isStandalone, platform, triggerInstall } = usePWAInstall();
+  const [isIosGuideOpen, setIsIosGuideOpen] = useState(false);
+
+  const handleInstallPWA = async () => {
+    const showGuide = await triggerInstall();
+    if (showGuide && platform === "ios") {
+      setIsIosGuideOpen(true);
+    }
+  };
 
   // Cloud backup states
   const [isRestoreConfirmOpen, setIsRestoreConfirmOpen] = useState(false);
@@ -771,6 +784,25 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
         {view === "menu" && (
           <div className="flex flex-col gap-2">
 
+            {/* Install PWA Option (Top position) */}
+            {isInstallable && !isStandalone && (
+              <button
+                onClick={handleInstallPWA}
+                className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100 hover:bg-slate-100/70 transition-all text-left focus:outline-none mb-2"
+              >
+                <div className="flex items-center gap-3.5">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 text-teal-600 border border-teal-100">
+                    <HugeiconsIcon icon={Download01Icon} className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <h4 className="text-[15px] font-bold text-slate-800">Mang KAT Journey theo bạn</h4>
+                    <p className="text-[12px] text-slate-400 font-medium">Mở app siêu tốc từ màn hình chính, dùng mượt mà không quảng cáo</p>
+                  </div>
+                </div>
+                <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+              </button>
+            )}
+
             <button
               onClick={() => setView("privacy")}
               className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 border border-slate-100 hover:bg-slate-100/70 transition-all text-left focus:outline-none"
@@ -958,7 +990,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 </div>
               </div>
               <span className="text-xs font-black text-slate-500 bg-slate-200/70 px-3 py-1 rounded-full border border-slate-200">
-                1.0.0
+                2.0.0
               </span>
             </div>
 
@@ -1697,6 +1729,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           </div>
         </div>
       )}
+
+      <PWAInstallInstructionsSheet isOpen={isIosGuideOpen} onClose={() => setIsIosGuideOpen(false)} />
     </>
   );
 }
