@@ -252,7 +252,7 @@ function DayHeader({
   return (
     <div 
       id={`day-section-${day}`} 
-      className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[60px] md:top-[68px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+      className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
     >
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#030D2E] text-white font-black text-[14px] shadow-sm">
@@ -774,7 +774,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           <div key="undated" className="space-y-4">
             <div 
               id="day-section-undated"
-              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[60px] md:top-[68px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-400 text-white font-black text-[14px] shadow-sm">
@@ -807,7 +807,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           <div key="backup" className="space-y-4">
             <div 
               id="day-section-backup"
-              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[60px] md:top-[68px] z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 font-black text-[14px] shadow-sm">

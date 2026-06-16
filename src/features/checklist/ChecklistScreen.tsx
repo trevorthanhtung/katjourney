@@ -722,13 +722,13 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                         onClick={() => setCategory(cat)}
                         className={`flex flex-col items-center justify-center min-h-[76px] p-2 rounded-[18px] border-2 transition-all duration-200 active:scale-95 cursor-pointer ${
                           isSelected
-                            ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#00BFB7] font-black shadow-sm"
+                            ? "bg-[#030D2E]/5 border-[#030D2E] text-[#030D2E] font-black shadow-sm"
                             : "bg-white border-slate-200 text-slate-500 hover:bg-slate-50 hover:border-slate-300"
                         }`}
                       >
                         <div className={`flex items-center justify-center w-8.5 h-8.5 rounded-[12px] mb-1 transition-all ${
                           isSelected
-                            ? "bg-[#00BFB7]/20 text-[#00BFB7]"
+                            ? "bg-[#030D2E]/12 text-[#030D2E]"
                             : "bg-slate-100 text-slate-400"
                         }`}>
                            <HugeiconsIcon icon={IconComponent} className="w-4.5 h-4.5" />

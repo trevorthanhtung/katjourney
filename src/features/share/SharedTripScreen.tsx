@@ -102,6 +102,49 @@ export default function SharedTripScreen({ token }: { token: string }) {
   })();
 
   const [showIdentityModal, setShowIdentityModal] = useState(false);
+
+  const [areBarsVisible, setAreBarsVisible] = useState(true);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    const updateScrollDirection = () => {
+      if (window.innerWidth >= 768) {
+        setAreBarsVisible(true);
+        ticking = false;
+        return;
+      }
+
+      const scrollY = window.scrollY;
+      
+      if (Math.abs(scrollY - lastScrollY) < 15) {
+        ticking = false;
+        return;
+      }
+      
+      if (scrollY < 60) {
+        setAreBarsVisible(true);
+      } else if (scrollY > lastScrollY) {
+        setAreBarsVisible(false);
+      } else {
+        setAreBarsVisible(true);
+      }
+      
+      lastScrollY = scrollY > 0 ? scrollY : 0;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollDirection);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   
   // Identity Modal state
   const [pinInput, setPinInput] = useState("");
@@ -607,7 +650,13 @@ export default function SharedTripScreen({ token }: { token: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-kat-bg">
+    <div 
+      className="min-h-screen bg-kat-bg"
+      style={{
+        "--sticky-header-offset": areBarsVisible ? "60px" : "0px",
+        "--sticky-header-offset-md": areBarsVisible ? "68px" : "0px",
+      } as React.CSSProperties}
+    >
       {/* Banner */}
       {(isBannerVisible && currentUser && currentUser.canEdit && (userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí") || canRequestEdit)) && (
         <div className={classNames(
@@ -656,7 +705,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       )}
 
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-kat-bg/90 backdrop-blur-xl border-b border-kat-border px-2.5 min-[360px]:px-4 pb-3 pt-3 shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
+      <header className={`sticky top-0 z-40 bg-white/55 supports-[backdrop-filter]:bg-white/45 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 px-2.5 min-[360px]:px-4 pb-3 pt-3 shadow-[0_4px_24px_rgba(3,13,46,0.06)] transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`} style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
         <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
           <div className="flex items-center gap-1.5 min-[360px]:gap-2 select-none shrink-0">
             <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden md:block h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
@@ -1405,7 +1454,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       />
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="fixed bottom-5 left-4 right-4 z-40 flex sm:hidden bg-kat-bg/80 border border-kat-border/80 backdrop-blur-xl rounded-[24px] shadow-[0_8px_30px_rgba(3,13,46,0.04)] px-2 h-[56px] min-[360px]:h-[60px] items-center justify-around">
+      <nav className={`fixed bottom-5 left-4 right-4 z-40 flex sm:hidden bg-white/55 supports-[backdrop-filter]:bg-white/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/45 rounded-[24px] shadow-[0_10px_36px_rgba(3,13,46,0.12)] ring-1 ring-inset ring-white/30 px-2 h-[56px] min-[360px]:h-[60px] items-center justify-around transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`}>
         <div ref={containerRef} className="relative w-full h-full flex items-center justify-around">
           {/* Active Indicator Slide Pill */}
           {indicatorStyle.width > 0 && (
