@@ -1,38 +1,30 @@
 import React, { useState } from "react";
-import { 
-  Backpack, 
-  BookOpen, 
-  CalendarDays, 
-  Clock, 
-  MapPin, 
-  WalletCards, 
-  Users, 
-  Briefcase, 
-  ChevronRight, 
-  Plus, 
-  Globe, 
-  CheckSquare, 
-  Square, 
-  Compass, 
-  AlertTriangle, 
-  CheckCircle,
-  Trophy,
-  FileDown,
-  Sparkles,
-  FileText,
-  Table2,
-  GitBranch,
-  Circle,
-  CheckCircle2,
-  Receipt,
-  Link
-} from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  UserGroupIcon,
+  Briefcase01Icon,
+  ReceiptTextIcon,
+  Calendar01Icon,
+  Location01Icon,
+  Clock01Icon,
+  ChevronRightIcon,
+  BookOpen01Icon,
+  Add01Icon,
+  AlertCircleIcon,
+  Award01Icon,
+  FileDownloadIcon,
+  GitBranchIcon,
+  CircleIcon,
+  CheckmarkCircle02Icon,
+  Link02Icon,
+  CloudRainWindIcon,
+} from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
 import { ChecklistItem, EventItem, Expense, Member, Trip, db, TravelDocument } from "../../db";
 import { formatDate, formatMoney, getChecklistStats, getTripTiming, today } from "../../utils/helpers";
 import { getTripReminders } from "../../utils/reminderRules";
 import { exportTripPdf, exportTripExcel } from "../../utils/exports";
-import { CloudRainWind } from "lucide-react";
+
 import { useWeather } from "../../hooks/useWeather";
 import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather";
 import { useModalHistory } from "../../hooks/useModalHistory";
@@ -222,7 +214,7 @@ export function HomeScreen({
     
     return (
       <div 
-        className="mb-6 relative rounded-[32px] p-6 text-white overflow-hidden shadow-xl border border-white/5 group hover:shadow-2xl hover:scale-[1.002] transition-all duration-500 ease-out"
+        className="mb-6 relative rounded-[32px] p-6 text-white overflow-hidden shadow-xl border border-white/5 group hover:shadow-2xl hover:scale-[1.002] transition-all duration-500 ease-out motion-weather-bg"
         style={{ background: bgGradient }}
       >
         {/* Subtle World Map Watermark */}
@@ -238,20 +230,20 @@ export function HomeScreen({
             </h2>
             <div className="flex flex-wrap gap-2.5">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
-                <MapPin className="h-3.5 w-3.5 text-white/70" />
+                <HugeiconsIcon icon={Location01Icon} size={14} className="text-white/70" />
                 {trip.location || "Đang lên kế hoạch"}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
-                <CalendarDays className="h-3.5 w-3.5 text-white/70" />
+                <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-white/70" />
                 {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
-                <Clock className="h-3.5 w-3.5 text-white/70" />
+                <HugeiconsIcon icon={Clock01Icon} size={14} className="text-white/70" />
                 {durationText}
               </span>
               {trip.mediaLink && (
                 <a href={trip.mediaLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/20 px-3 py-1 text-[12px] font-bold backdrop-blur-md border border-sky-400/30 shadow-inner text-sky-100 hover:bg-sky-500/30 transition-colors">
-                  <Link className="h-3 w-3" />
+                  <HugeiconsIcon icon={Link02Icon} className="h-3 w-3" />
                   Kho Ảnh Gốc
                 </a>
               )}
@@ -281,7 +273,7 @@ export function HomeScreen({
                </div>
             ) : (!trip.location?.trim() && !trip.latitude) ? (
                <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-3xl p-4 border border-white/10 w-full">
-                 <MapPin className="w-6 h-6 text-white/40" />
+                 <HugeiconsIcon icon={Location01Icon} className="w-6 h-6 text-white/40" />
                  <div className="flex flex-col gap-0.5">
                    <span className="text-white/80 font-bold text-[12px]">Chưa có điểm đến</span>
                    <span className="text-white/50 text-[10px]">Thêm điểm đến để xem thời tiết</span>
@@ -289,7 +281,7 @@ export function HomeScreen({
                </div>
             ) : (!trip.latitude || !trip.longitude) ? null : weatherError || !forecast ? (
                <div className="flex items-center gap-3 bg-red-500/20 backdrop-blur-md rounded-3xl p-4 border border-red-500/30 w-full">
-                 <CloudRainWind className="w-6 h-6 text-white/60" />
+                 <HugeiconsIcon icon={CloudRainWindIcon} className="w-6 h-6 text-white/60" />
                  <div className="flex flex-col gap-1">
                    <span className="text-white font-bold text-[12px]">Không thể tải thời tiết</span>
                    <span className="text-white/70 text-[10px]">Lỗi kết nối</span>
@@ -359,7 +351,7 @@ export function HomeScreen({
             {/* Tổng kết card */}
             <div className="rounded-3xl bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] motion-card-enter motion-delay-1 flex items-start gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 border border-amber-200/40">
-                <Trophy className="h-6 w-6" />
+                <HugeiconsIcon icon={Award01Icon} className="h-6 w-6" />
               </div>
               <div className="min-w-0 flex-1">
                 <h4 className="text-base font-extrabold text-[#030D2E]">Tổng kết chuyến đi</h4>
@@ -378,7 +370,7 @@ export function HomeScreen({
             {/* Bản tin card */}
             <div className="rounded-3xl bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] motion-card-enter motion-delay-2 flex items-start gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-600 border border-violet-200/40">
-                <BookOpen className="h-6 w-6" />
+                <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
               </div>
               <div className="min-w-0 flex-1">
                 <h4 className="text-base font-extrabold text-[#030D2E]">Bản tin chuyến đi</h4>
@@ -399,7 +391,7 @@ export function HomeScreen({
             {/* Báo cáo card */}
             <div id="report-card" className="rounded-3xl bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] motion-card-enter motion-delay-3 flex items-start gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0081BE]/10 text-[#0081BE] border border-[#0081BE]/20">
-                <FileDown className="h-6 w-6" />
+                <HugeiconsIcon icon={FileDownloadIcon} className="h-6 w-6" />
               </div>
               <div className="min-w-0 flex-1">
                 <h4 className="text-base font-extrabold text-[#030D2E]">Báo cáo chuyến đi</h4>
@@ -433,7 +425,7 @@ export function HomeScreen({
             <ul className="space-y-6">
               <li className="flex items-start gap-4">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 border border-blue-100/50">
-                  <Users className="h-5 w-5" />
+                  <HugeiconsIcon icon={UserGroupIcon} size={20} />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
@@ -445,7 +437,7 @@ export function HomeScreen({
 
               <li className="flex items-start gap-4">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-100/50">
-                  <CalendarDays className="h-5 w-5" />
+                  <HugeiconsIcon icon={Calendar01Icon} size={20} />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-[13px] font-semibold text-kat-muted">Lịch trình đã ghi</p>
@@ -471,7 +463,7 @@ export function HomeScreen({
 
               <li className="flex items-start gap-4">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600 border border-rose-100/50">
-                  <Briefcase className="h-5 w-5" />
+                  <HugeiconsIcon icon={Briefcase01Icon} size={20} />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
@@ -485,7 +477,7 @@ export function HomeScreen({
 
               <li className="flex items-start gap-4">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/50">
-                  <Receipt className="h-5 w-5" />
+                  <HugeiconsIcon icon={ReceiptTextIcon} size={20} />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-[13px] font-semibold text-kat-muted">Tổng đã chi chuyến đi</p>
@@ -522,14 +514,14 @@ export function HomeScreen({
                 <div className="min-w-0 flex-1">
                   {nextEvent.time && (
                     <p className="flex items-center gap-1.5 text-[12.5px] font-bold text-[#F89B02]">
-                      <Clock className="h-3.5 w-3.5" />
+                      <HugeiconsIcon icon={Clock01Icon} size={14} />
                       {nextEvent.time}
                     </p>
                   )}
                   <h4 className="mt-1 truncate text-base font-extrabold text-kat-text">{nextEvent.title}</h4>
                   {nextEvent.location && <p className="mt-0.5 truncate text-[13.5px] text-slate-500">{nextEvent.location}</p>}
                 </div>
-                <ChevronRight className="h-5 w-5 text-slate-300" />
+                <HugeiconsIcon icon={ChevronRightIcon} size={20} className="text-slate-300" />
               </div>
             ) : (
               <div className="rounded-[24px] bg-[#FFFDF8] p-6 border border-[#E8E1D8] shadow-sm flex flex-col items-center text-center motion-card-enter motion-delay-1">
@@ -539,7 +531,7 @@ export function HomeScreen({
                       onClick={() => onNavigateTab("timeline")}
                       className="mt-4 flex items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white hover:bg-[#030D2E]/90 px-5 py-3 text-[13.5px] font-black transition-all duration-200 shadow-[0_4px_14px_rgba(3,13,46,0.18)] active:scale-95 motion-press"
                     >
-                      <Plus className="h-4 w-4" strokeWidth={2.5} />
+                      <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" strokeWidth={2.5} />
                       Thêm lịch trình
                     </button>
                 )}
@@ -560,7 +552,7 @@ export function HomeScreen({
                     >
                       <div>
                         <h4 className="text-[14px] font-extrabold text-slate-800 leading-snug flex items-start gap-2">
-                          <AlertTriangle className={`h-4.5 w-4.5 shrink-0 ${
+                          <HugeiconsIcon icon={AlertCircleIcon} className={`h-4.5 w-4.5 shrink-0 ${
                             rem.type === "danger" ? "text-rose-500" : "text-amber-500"
                           }`} />
                           <span>{rem.title}</span>
@@ -579,7 +571,7 @@ export function HomeScreen({
                           className="mt-3 pl-6.5 self-start text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center gap-1 motion-press"
                         >
                           <span>{rem.actionLabel}</span>
-                          <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                          <HugeiconsIcon icon={ChevronRightIcon} size={14} className="group-hover:translate-x-0.5 transition-transform" />
                         </button>
                       )}
                     </div>
@@ -594,7 +586,7 @@ export function HomeScreen({
                       onClick={() => onNavigateTab("checklist")}
                       className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-kat-primary text-[#030D2E] hover:brightness-105 px-4 py-2.5 text-[13px] font-black transition-all duration-200 shadow-sm motion-press"
                     >
-                      <Briefcase className="h-4 w-4" />
+                      <HugeiconsIcon icon={Briefcase01Icon} size={16} />
                       Chuẩn bị hành lý
                     </button>
                 )}
@@ -612,7 +604,7 @@ export function HomeScreen({
               <ul className="space-y-6">
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 border border-blue-100/50">
-                    <Users className="h-5 w-5" />
+                    <HugeiconsIcon icon={UserGroupIcon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
@@ -623,7 +615,7 @@ export function HomeScreen({
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600 border border-rose-100/50">
-                    <Briefcase className="h-5 w-5" />
+                    <HugeiconsIcon icon={Briefcase01Icon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
@@ -634,7 +626,7 @@ export function HomeScreen({
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-100/50">
-                    <CalendarDays className="h-5 w-5" />
+                    <HugeiconsIcon icon={Calendar01Icon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Lịch trình kế tiếp</p>
@@ -645,7 +637,7 @@ export function HomeScreen({
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/50">
-                    <Receipt className="h-5 w-5" />
+                    <HugeiconsIcon icon={ReceiptTextIcon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Dự kiến chi phí</p>
@@ -686,7 +678,7 @@ export function HomeScreen({
                     className="mt-2.5 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center gap-1.5 motion-press"
                   >
                     <span>Xem toàn bộ giấy tờ</span>
-                    <ChevronRight className="w-4 h-4" />
+                    <HugeiconsIcon icon={ChevronRightIcon} size={16} />
                   </button>
                 </div>
               ) : (
@@ -697,7 +689,7 @@ export function HomeScreen({
                         onClick={() => onNavigateMore("documents")}
                         className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200/20 px-4 py-2.5 text-[13px] font-extrabold text-slate-700 transition-all duration-200 shadow-sm motion-press"
                       >
-                        <Plus className="h-4 w-4" />
+                        <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
                         Thêm giấy tờ
                       </button>
                   )}
@@ -742,7 +734,7 @@ export function HomeScreen({
               {todayBackupPlans.length > 0 && (
                 <div className="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 flex items-start gap-3">
                   <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-                    <GitBranch className="w-5 h-5" />
+                    <HugeiconsIcon icon={GitBranchIcon} className="w-5 h-5" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-[14.5px] font-extrabold text-[#030D2E]">Phương án dự phòng hôm nay</h4>
@@ -753,7 +745,7 @@ export function HomeScreen({
                       onClick={() => onNavigateTab("timeline")}
                       className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-[12.5px] font-bold text-indigo-600 hover:bg-slate-50 transition-colors motion-press"
                     >
-                      Xem phương án <ChevronRight className="w-3.5 h-3.5" />
+                      Xem phương án <HugeiconsIcon icon={ChevronRightIcon} size={14} />
                     </button>
                   </div>
                 </div>
@@ -768,7 +760,7 @@ export function HomeScreen({
                     className="mt-2.5 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors inline-flex items-center gap-1 motion-press"
                   >
                     <span>Xem lịch trình đầy đủ</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
+                    <HugeiconsIcon icon={ChevronRightIcon} size={14} />
                   </button>
                 </div>
               ) : (
@@ -789,9 +781,9 @@ export function HomeScreen({
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                           <div className="shrink-0">
                             {item.completed ? (
-                              <CheckCircle2 className="h-5.5 w-5.5 text-emerald-500 fill-emerald-50" />
+                              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5.5 w-5.5 text-emerald-500 fill-emerald-50" />
                             ) : (
-                              <Circle className="h-5.5 w-5.5 text-slate-300 group-hover:text-slate-400 transition-colors" />
+                              <HugeiconsIcon icon={CircleIcon} className="h-5.5 w-5.5 text-slate-300 group-hover:text-slate-400 transition-colors" />
                             )}
                           </div>
                           <div className="min-w-0 flex-1">
@@ -840,7 +832,7 @@ export function HomeScreen({
                       onClick={() => onNavigateMore("documents")}
                       className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200/20 px-4 py-2.5 text-[13px] font-extrabold text-slate-700 transition-all duration-200 shadow-sm motion-press"
                     >
-                      <Plus className="h-4 w-4" />
+                      <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
                       Bổ sung giấy tờ
                     </button>
                   )}
@@ -859,7 +851,7 @@ export function HomeScreen({
               <ul className="space-y-6">
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 border border-blue-100/50">
-                    <Users className="h-5 w-5" />
+                    <HugeiconsIcon icon={UserGroupIcon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
@@ -870,7 +862,7 @@ export function HomeScreen({
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600 border border-rose-100/50">
-                    <Briefcase className="h-5 w-5" />
+                    <HugeiconsIcon icon={Briefcase01Icon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
@@ -881,7 +873,7 @@ export function HomeScreen({
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-100/50">
-                    <CalendarDays className="h-5 w-5" />
+                    <HugeiconsIcon icon={Calendar01Icon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Hoạt động tiếp theo</p>
@@ -892,7 +884,7 @@ export function HomeScreen({
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/50">
-                    <Receipt className="h-5 w-5" />
+                    <HugeiconsIcon icon={ReceiptTextIcon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[13px] font-semibold text-kat-muted">Tổng đã chi chuyển đi</p>
@@ -926,9 +918,9 @@ export function HomeScreen({
                       <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div className="shrink-0">
                           {item.completed ? (
-                            <CheckCircle2 className="h-5.5 w-5.5 text-emerald-500 fill-emerald-50" />
+                            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5.5 w-5.5 text-emerald-500 fill-emerald-50" />
                           ) : (
-                            <Circle className="h-5.5 w-5.5 text-slate-300 group-hover:text-slate-400 transition-colors" />
+                            <HugeiconsIcon icon={CircleIcon} className="h-5.5 w-5.5 text-slate-300 group-hover:text-slate-400 transition-colors" />
                           )}
                         </div>
                         <span className={`text-[13.5px] font-bold truncate ${item.completed ? "line-through text-slate-400" : "text-slate-800"}`}>
@@ -943,7 +935,7 @@ export function HomeScreen({
                       className="w-full text-center py-2 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center justify-center gap-1"
                     >
                       <span>Xem thêm {incompleteChecklist.length - 5} món chưa chuẩn bị</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
+                      <HugeiconsIcon icon={ChevronRightIcon} size={14} />
                     </button>
                   )}
                 </div>
@@ -965,7 +957,7 @@ export function HomeScreen({
                 className="mt-3.5 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center gap-1.5 motion-press"
               >
                 <span>Xem lịch trình chi tiết</span>
-                <ChevronRight className="w-4 h-4" />
+                <HugeiconsIcon icon={ChevronRightIcon} size={16} />
               </button>
             </div>
           </section>

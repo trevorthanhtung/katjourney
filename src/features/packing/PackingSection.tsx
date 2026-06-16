@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Check, Edit3, Plus, Sparkles, Trash2, Luggage } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CheckIcon, Luggage01Icon } from "@hugeicons/core-free-icons";
 import { db, PackingItem, PackingTripType } from "../../db";
 import { getChecklistStats, packingSuggestions, packingTripTypes } from "../../utils/helpers";
 import { BottomSheet, EmptyCard, FAB, FormActions, FormCard, IconButton, Input, ProgressRing, ScreenTitle, Select, DeleteConfirmModal, classNames } from "../../components/ui";
@@ -84,7 +85,7 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
         {/* Progress Card Hero */}
         <section className="flex flex-col items-center justify-center rounded-[24px] bg-kat-surface p-8 shadow-soft border border-kat-border/60">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5">
-            <Luggage className="h-6 w-6" />
+            <HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />
           </div>
           <h3 className="text-[18px] font-bold text-kat-text mb-1">Chuẩn bị hành lý</h3>
           <p className="text-[13px] font-bold text-kat-primary bg-kat-primary/10 px-4 py-1.5 rounded-full mb-3 shadow-sm">
@@ -121,7 +122,7 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
                           onClick={() => db.packingItems.update(item.id!, { completed: !item.completed })}
                           aria-label="Đánh dấu hành lý"
                         >
-                          <Check className="h-4 w-4" strokeWidth={2.5} />
+                          <HugeiconsIcon icon={CheckIcon} className="h-4 w-4" />
                         </button>
                         <div className="min-w-0 flex-1">
                           <p className={classNames("break-words text-[16px] font-medium transition-all duration-300", item.completed ? "text-slate-500 line-through" : "text-slate-800")}>{item.title}</p>
@@ -134,7 +135,7 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
               ))}
             </div>
           ) : (
-            <EmptyCard text="Chưa có món đồ nào. Nhận gợi ý để bắt đầu chuẩn bị nhé!" icon={<Luggage className="h-6 w-6" />} />
+            <EmptyCard text="Chưa có món đồ nào. Nhận gợi ý để bắt đầu chuẩn bị nhé!" icon={<HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />} />
           )}
         </section>
       </div>

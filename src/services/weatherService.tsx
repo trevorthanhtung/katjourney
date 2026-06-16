@@ -296,18 +296,18 @@ function emojiSizeFromClass(className: string): string {
 }
 
 export function getWeatherIcon(code: number, className: string = "w-5 h-5"): React.ReactNode {
-  if (code === 0)                                          return <SunIcon className={className} />;
-  else if (code === 1)                                     return <PartlyCloudyIcon className={className} />;
-  else if (code === 2)                                     return <PartlyCloudyIcon className={className} />;
-  else if (code === 3)                                     return <CloudyIcon className={className} />;
-  else if (code === 45 || code === 48)                     return <FogIcon className={className} />;
-  else if (code >= 51 && code <= 55)                       return <DrizzleIcon className={className} />;
-  else if (code === 56 || code === 57)                     return <SnowIcon className={className} />;
-  else if (code >= 61 && code <= 67)                       return <RainIcon className={className} />;
-  else if (code >= 71 && code <= 77)                       return <SnowIcon className={className} />;
-  else if (code === 80 || code === 81 || code === 82)      return <RainIcon className={className} />;
-  else if (code === 85 || code === 86)                     return <SnowIcon className={className} />;
-  else if (code >= 95 && code <= 99)                       return <ThunderstormIcon className={className} />;
+  if (code === 0)                                          return <SunIcon className={`${className} animate-weather-spin`} />;
+  else if (code === 1)                                     return <PartlyCloudyIcon className={`${className} animate-weather-sway`} />;
+  else if (code === 2)                                     return <PartlyCloudyIcon className={`${className} animate-weather-sway`} />;
+  else if (code === 3)                                     return <CloudyIcon className={`${className} animate-weather-sway`} />;
+  else if (code === 45 || code === 48)                     return <FogIcon className={`${className} animate-weather-pulse`} />;
+  else if (code >= 51 && code <= 55)                       return <DrizzleIcon className={`${className} animate-weather-pulse`} />;
+  else if (code === 56 || code === 57)                     return <SnowIcon className={`${className} animate-weather-sway`} />;
+  else if (code >= 61 && code <= 67)                       return <RainIcon className={`${className} animate-weather-pulse`} />;
+  else if (code >= 71 && code <= 77)                       return <SnowIcon className={`${className} animate-weather-sway`} />;
+  else if (code === 80 || code === 81 || code === 82)      return <RainIcon className={`${className} animate-weather-pulse`} />;
+  else if (code === 85 || code === 86)                     return <SnowIcon className={`${className} animate-weather-sway`} />;
+  else if (code >= 95 && code <= 99)                       return <ThunderstormIcon className={`${className} animate-weather-pulse`} />;
   else                                                     return <ThermometerIcon className={className} />;
 }
 

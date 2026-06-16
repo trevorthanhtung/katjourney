@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import { WeatherForecast, getWeatherIcon, getWeatherText, getWeatherGradient } from "../../services/weatherService";
 import {
   SunIcon,
@@ -257,7 +258,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
             onClick={onClose}
             className="absolute right-4 top-4 h-9 w-9 bg-black/20 hover:bg-black/35 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all active:scale-95 shadow-sm"
           >
-            <X className="w-5 h-5" />
+            <HugeiconsIcon icon={Cancel01Icon} className="w-5 h-5" />
           </button>
 
           {/* Location details */}

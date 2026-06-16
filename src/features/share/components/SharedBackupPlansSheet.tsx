@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, Plus, Pencil, Trash2, MapPin, DollarSign, AlignLeft, Route, HelpCircle, ChevronRight, Map } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Cancel01Icon,
+  Add01Icon,
+  PencilEdit01Icon,
+  Delete01Icon,
+  Location01Icon,
+  Dollar01Icon,
+  AlignLeftIcon,
+  RouteIcon,
+  HelpCircleIcon,
+  ChevronRightIcon,
+  MapsIcon
+} from "@hugeicons/core-free-icons";
 import { BackupPlan, BackupPlanType } from "../../../db";
 import { DeleteConfirmModal } from "../../../components/ui";
 import { getEmbedMapUrl } from "../../../utils/mapUtils";
@@ -270,12 +283,12 @@ export function SharedBackupPlansSheet({
                 onClick={handleOpenAdd}
                 className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-indigo-600 text-white px-3.5 text-[13px] font-extrabold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
               >
-                <Plus className="w-4 h-4" strokeWidth={2.5} />
+                <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" strokeWidth={2.5} />
                 <span>Thêm</span>
               </button>
             )}
             <button onClick={onClose} className="p-2 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors motion-press focus:outline-none">
-              <X className="h-5 w-5" />
+              <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -316,7 +329,7 @@ export function SharedBackupPlansSheet({
 
               <div>
                 <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <HelpCircle className="w-4 h-4 text-slate-400" /> Dùng khi nào?
+                  <HugeiconsIcon icon={HelpCircleIcon} className="w-4 h-4 text-slate-400" /> Dùng khi nào?
                 </label>
                 <input
                   type="text"
@@ -334,14 +347,14 @@ export function SharedBackupPlansSheet({
                   className="w-full flex items-center justify-between text-[13.5px] font-extrabold text-slate-750 hover:text-[#030D2E] focus:outline-none transition-colors"
                 >
                   <span>Thông tin bổ sung</span>
-                  <ChevronRight className={`h-4.5 w-4.5 text-slate-400 transition-transform duration-200 ${showAdditionalInfo ? "rotate-90" : ""}`} />
+                  <HugeiconsIcon icon={ChevronRightIcon} className={`h-4.5 w-4.5 text-slate-400 transition-transform duration-200 ${showAdditionalInfo ? "rotate-90" : ""}`} />
                 </button>
 
                 {showAdditionalInfo && (
                   <div className="space-y-4 mt-4 animate-fadeIn">
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                        <MapPin className="w-4 h-4 text-slate-400" /> Địa điểm
+                        <HugeiconsIcon icon={Location01Icon} className="w-4 h-4 text-slate-400" /> Địa điểm
                       </label>
                       <input
                         type="text"
@@ -377,7 +390,7 @@ export function SharedBackupPlansSheet({
 
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                        <DollarSign className="w-4 h-4 text-slate-400" /> Chi phí dự kiến
+                        <HugeiconsIcon icon={Dollar01Icon} className="w-4 h-4 text-slate-400" /> Chi phí dự kiến
                       </label>
                       <input
                         type="number"
@@ -390,7 +403,7 @@ export function SharedBackupPlansSheet({
 
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                        <AlignLeft className="w-4 h-4 text-slate-400" /> Ghi chú
+                        <HugeiconsIcon icon={AlignLeftIcon} className="w-4 h-4 text-slate-400" /> Ghi chú
                       </label>
                       <textarea
                         value={note}
@@ -422,7 +435,7 @@ export function SharedBackupPlansSheet({
           ) : plans.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
               <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mb-4">
-                <Route className="w-8 h-8" />
+                <HugeiconsIcon icon={RouteIcon} className="w-8 h-8" />
               </div>
               <h4 className="text-[16px] font-extrabold text-[#030D2E] mb-2">Chưa có phương án dự phòng</h4>
               <p className="text-[13.5px] font-semibold text-slate-500 mb-6 max-w-[260px]">
@@ -433,7 +446,7 @@ export function SharedBackupPlansSheet({
                   onClick={handleOpenAdd}
                   className="flex items-center gap-2 px-6 py-3.5 bg-indigo-600 text-white rounded-xl text-[14.5px] font-bold hover:bg-indigo-700 transition-colors motion-press"
                 >
-                  <Plus className="w-5 h-5" />
+                  <HugeiconsIcon icon={Add01Icon} className="w-5 h-5" />
                   <span>{isDirectEdit ? "Thêm phương án đầu tiên" : "Đề xuất phương án đầu tiên"}</span>
                 </button>
               )}
@@ -488,7 +501,7 @@ export function SharedBackupPlansSheet({
                           {/* Location */}
                           {plan.location && (
                             <div className={`flex items-center gap-1.5 mt-1.5 text-[13.5px] font-semibold text-slate-500 ${plan.isPendingDelete ? 'line-through' : ''}`}>
-                              <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <HugeiconsIcon icon={Location01Icon} className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span className="truncate">{plan.location}</span>
                             </div>
                           )}
@@ -496,7 +509,7 @@ export function SharedBackupPlansSheet({
                           {/* Cost */}
                           {plan.estimatedCost ? (
                             <div className="flex items-center gap-1.5 mt-1 text-[13.5px] font-semibold text-slate-500">
-                              <DollarSign className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <HugeiconsIcon icon={Dollar01Icon} className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span>{plan.estimatedCost.toLocaleString("vi-VN")} ₫</span>
                             </div>
                           ) : null}
@@ -543,7 +556,7 @@ export function SharedBackupPlansSheet({
                                     target="_blank" 
                                     rel="noopener noreferrer"
                                   >
-                                    {isRoute ? <Route className="w-3.5 h-3.5" /> : <Map className="w-3.5 h-3.5" />}
+                                    {isRoute ? <HugeiconsIcon icon={RouteIcon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />}
                                     {isRoute ? "Xem lộ trình di chuyển " : "Mở bằng ứng dụng Google Maps "}
                                     &rarr;
                                   </a>
@@ -575,7 +588,7 @@ export function SharedBackupPlansSheet({
                                 className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-slate-650 bg-slate-50 hover:bg-slate-100 hover:text-slate-800 active:scale-95 transition-all border border-slate-200/40 motion-press focus:outline-none"
                                 title="Sửa phương án"
                               >
-                                <Pencil className="w-3.5 h-3.5" />
+                                <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />
                                 <span>{isDirectEdit ? "Sửa" : "Đề xuất sửa"}</span>
                               </button>
                               <button
@@ -586,7 +599,7 @@ export function SharedBackupPlansSheet({
                                 className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all border border-rose-200/40 motion-press focus:outline-none"
                                 title="Xóa phương án"
                               >
-                                <Trash2 className="w-3.5 h-3.5" />
+                                <HugeiconsIcon icon={Delete01Icon} className="w-3.5 h-3.5" />
                                 <span>{isDirectEdit ? "Xóa" : "Đề xuất xóa"}</span>
                               </button>
                             </div>

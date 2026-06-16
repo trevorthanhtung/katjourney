@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { executeDeleteAccount } from "../utils/dataActions";
 import { TypedDeleteConfirmModal } from "./ui";
-import { AlertTriangle } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { AlertCircleIcon } from "@hugeicons/core-free-icons";
 
 interface DeleteAccountModalProps {
   isOpen: boolean;
@@ -59,7 +60,7 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
           </div>
           {errorMsg && (
             <div className="rounded-xl bg-rose-50 border border-rose-200 p-3 text-[13px] text-rose-800 font-bold leading-relaxed flex items-start gap-2 text-left animate-fadeIn">
-              <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+              <HugeiconsIcon icon={AlertCircleIcon} className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
           )}

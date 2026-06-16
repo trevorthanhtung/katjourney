@@ -1,5 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Check, Plus, Trash2, Luggage, Edit2, AlertCircle, User, X, Minus, Sparkles, FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, WalletCards, Sandwich, Package, BadgeCheck, CheckCircle2, ClipboardList, UserRoundCheck, StickyNote, Type, MoreHorizontal } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  CheckIcon,
+  Add01Icon,
+  Delete01Icon,
+  Luggage01Icon,
+  PencilEdit01Icon,
+  AlertCircleIcon,
+  UserIcon,
+  Cancel01Icon,
+  MinusSignIcon,
+  SparklesIcon,
+  FileCheckIcon,
+  TShirtIcon,
+  Plug01Icon,
+  PillIcon,
+  WalletCardsIcon,
+  Bread01Icon,
+  PackageIcon,
+  CheckmarkBadge01Icon,
+  UserCheckIcon,
+  Note01Icon,
+  TextIcon,
+  MoreHorizontalIcon
+} from "@hugeicons/core-free-icons";
 import { ChecklistItem, db } from "../../db";
 import { getChecklistStats } from "../../utils/helpers";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -17,15 +41,15 @@ const CATEGORIES = [
   "Khác"
 ];
 
-const CATEGORY_ICONS: Record<string, React.ComponentType<any>> = {
-  "Giấy tờ": FileCheck2,
-  "Quần áo": Shirt,
-  "Đồ cá nhân": Sparkles,
-  "Thiết bị điện tử": PlugZap,
-  "Thuốc & y tế": Pill,
-  "Tiền & ví": WalletCards,
-  "Đồ ăn nhẹ": Sandwich,
-  "Khác": Package
+const CATEGORY_ICONS: Record<string, any> = {
+  "Giấy tờ": FileCheckIcon,
+  "Quần áo": TShirtIcon,
+  "Đồ cá nhân": SparklesIcon,
+  "Thiết bị điện tử": Plug01Icon,
+  "Thuốc & y tế": PillIcon,
+  "Tiền & ví": WalletCardsIcon,
+  "Đồ ăn nhẹ": Bread01Icon,
+  "Khác": PackageIcon
 };
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
@@ -103,7 +127,7 @@ function ChecklistItemRow({
         }`}
         aria-label="Đánh dấu checklist"
       >
-        <Check className="h-5.5 w-5.5 text-current" strokeWidth={3.5} />
+        <HugeiconsIcon icon={CheckIcon} className="h-5.5 w-5.5 text-current" />
       </button>
 
       {/* Title and details */}
@@ -151,7 +175,7 @@ function ChecklistItemRow({
             {item.note && <p className="italic text-slate-400 line-clamp-2">"{item.note}"</p>}
             {item.assignedTo && (
               <p className="flex items-center gap-1 text-[11px] text-slate-400">
-                <User className="h-3 w-3" />
+                <HugeiconsIcon icon={UserIcon} className="h-3 w-3" />
                 Chuẩn bị: <span className="text-[#030D2E]">{item.assignedTo}</span>
               </p>
             )}
@@ -171,36 +195,36 @@ function ChecklistItemRow({
             }}
             title="Tùy chọn"
           >
-            <MoreHorizontal className="h-5 w-5" />
+            <HugeiconsIcon icon={MoreHorizontalIcon} className="h-5 w-5" />
           </button>
 
           {isMenuOpen && (
             <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsMenuOpen(false);
-                    onEdit(item);
-                  }}
-                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
-                >
-                  <Edit2 className="h-4 w-4 text-slate-500" />
-                  Sửa
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsMenuOpen(false);
-                    onDelete(item);
-                  }}
-                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Xóa
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMenuOpen(false);
+                  onEdit(item);
+                }}
+                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+              >
+                <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500" />
+                Sửa
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMenuOpen(false);
+                  onDelete(item);
+                }}
+                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+              >
+                <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
+                Xóa
+              </button>
+            </div>
           )}
         </div>
       )}
@@ -403,10 +427,10 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
         <div className="flex items-center justify-between pb-3 border-b border-[#E8E1D8]/50">
           <div className="flex items-center gap-2.5">
             {(() => {
-              const IconComponent = CATEGORY_ICONS[catName] || Package;
+              const IconComponent = CATEGORY_ICONS[catName] || PackageIcon;
               return (
                 <div className="flex items-center justify-center w-8 h-8 rounded-[10px] bg-kat-primary/10 text-kat-primary">
-                  <IconComponent className="w-4.5 h-4.5" strokeWidth={2.2} />
+                  <HugeiconsIcon icon={IconComponent} className="w-4.5 h-4.5" />
                 </div>
               );
             })()}
@@ -493,7 +517,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 onClick={openAddForm}
                 className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white px-4 text-[13.5px] font-black shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all motion-press w-full sm:w-auto shrink-0"
               >
-                <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
+                <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
                 <span>Thêm món</span>
               </button>
             </div>
@@ -506,7 +530,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
         <section className="bg-kat-surface rounded-[24px] p-4 border border-kat-border/60 shadow-soft space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
-              <Sparkles className="h-4.5 w-4.5 text-amber-500" />
+              <HugeiconsIcon icon={SparklesIcon} className="h-4.5 w-4.5 text-amber-500" />
               <h3 className="text-[14.5px] font-black text-kat-text">Gợi ý nhanh cho hành lý</h3>
             </div>
             <span className="text-[11px] font-bold text-slate-400 md:hidden">Cuộn ngang ›</span>
@@ -527,12 +551,12 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 >
                   {added ? (
                     <>
-                      <Check className="h-3.5 w-3.5 text-emerald-600 shrink-0" strokeWidth={3} />
+                      <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                       <span className="truncate">{sug.label} · Đã thêm</span>
                     </>
                   ) : (
                     <>
-                      <Plus className="h-3.5 w-3.5 opacity-70 shrink-0" strokeWidth={3} />
+                      <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5 opacity-70 shrink-0" />
                       <span className="truncate">{sug.label}</span>
                     </>
                   )}
@@ -550,7 +574,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
           {/* Header Zone */}
           <div className="flex flex-col items-center">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-3.5 ring-4 ring-kat-primary/5">
-              <Luggage className="h-5.5 w-5.5" />
+              <HugeiconsIcon icon={Luggage01Icon} className="h-5.5 w-5.5" />
             </div>
             <h3 className="text-[17px] font-bold text-kat-text">Chưa có món đồ nào trong hành lý</h3>
             <p className="mt-1 text-[13.5px] text-kat-muted max-w-xs">
@@ -562,7 +586,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
           {!isReadOnly && !allSuggestionsAdded && (
             <div className="w-full pt-5 border-t border-kat-border/50">
               <p className="text-[12px] font-bold text-kat-text/80 uppercase tracking-wider mb-3.5 flex items-center justify-center gap-1">
-                <Sparkles className="h-3.5 w-3.5 text-kat-accent-yellow" />
+                <HugeiconsIcon icon={SparklesIcon} className="h-3.5 w-3.5 text-kat-accent-yellow" />
                 Gợi ý nhanh
               </p>
               <div className="flex flex-wrap justify-center gap-2.5">
@@ -581,12 +605,12 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                     >
                       {added ? (
                         <>
-                          <Check className="h-3.5 w-3.5 text-emerald-600 animate-fadeIn" strokeWidth={3} />
+                          <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5 text-emerald-600 animate-fadeIn" />
                           <span>{sug.label} · Đã thêm</span>
                         </>
                       ) : (
                         <>
-                          <Plus className="h-3.5 w-3.5 text-kat-primary" strokeWidth={2.5} />
+                          <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                           <span>{sug.label}</span>
                         </>
                       )}
@@ -648,7 +672,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 className="flex shrink-0 h-9 w-9 items-center justify-center rounded-full bg-[#030D2E]/05 text-slate-500 hover:bg-[#030D2E]/10 transition-colors" 
                 onClick={() => setIsFormOpen(false)}
               >
-                <X className="h-4.5 w-4.5" />
+                <HugeiconsIcon icon={Cancel01Icon} className="h-4.5 w-4.5" />
               </button>
             </div>
 
@@ -658,7 +682,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               {/* Item Name */}
               <div className="space-y-1.5">
                 <label className="text-[13px] font-bold text-kat-text flex items-center gap-1.5">
-                  <Type className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-slate-500" />
                   Tên món cần mang *
                 </label>
                 <input
@@ -674,7 +698,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 />
                 {showValidationError && (
                   <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1 flex items-center gap-1 motion-error-enter">
-                    <AlertCircle className="h-3.5 w-3.5" />
+                    <HugeiconsIcon icon={AlertCircleIcon} className="h-3.5 w-3.5" />
                     <span>Vui lòng nhập tên món cần mang.</span>
                   </p>
                 )}
@@ -683,12 +707,12 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               {/* Category Segment Select (Grid of chips) */}
               <div className="space-y-2">
                 <label className="text-[13px] font-bold text-kat-text block flex items-center gap-1.5">
-                  <Package className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={PackageIcon} className="h-4 w-4 text-slate-500" />
                   Nhóm hành lý
                 </label>
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
                   {CATEGORIES.map((cat) => {
-                    const IconComponent = CATEGORY_ICONS[cat] || Package;
+                    const IconComponent = CATEGORY_ICONS[cat] || PackageIcon;
                     const isSelected = category === cat;
                     return (
                       <button
@@ -706,7 +730,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                             ? "bg-kat-primary/20 text-kat-primary"
                             : "bg-[#030D2E]/05 text-slate-500"
                         }`}>
-                           <IconComponent className="w-4.5 h-4.5" strokeWidth={2.2} />
+                           <HugeiconsIcon icon={IconComponent} className="w-4.5 h-4.5" />
                         </div>
                         <span className="text-[12px] font-bold tracking-tight">{cat}</span>
                       </button>
@@ -727,7 +751,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="flex h-8.5 w-8.5 items-center justify-center rounded-[12px] bg-white text-kat-text border border-kat-border/60 shadow-sm active:scale-95 transition-all hover:bg-slate-50"
                   >
-                    <Minus className="h-3.5 w-3.5" strokeWidth={3} />
+                    <HugeiconsIcon icon={MinusSignIcon} className="h-3.5 w-3.5" />
                   </button>
                   <span className="text-[15px] font-black text-kat-text w-8 text-center">{quantity}</span>
                   <button
@@ -735,7 +759,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                     onClick={() => setQuantity(quantity + 1)}
                     className="flex h-8.5 w-8.5 items-center justify-center rounded-[12px] bg-white text-kat-text border border-kat-border/60 shadow-sm active:scale-95 transition-all hover:bg-slate-50"
                   >
-                    <Plus className="h-3.5 w-3.5" strokeWidth={3} />
+                    <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>
@@ -745,11 +769,11 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 {members.length === 0 ? (
                   <>
                     <label className="text-[13px] font-bold text-kat-text flex items-center gap-1.5">
-                      <UserRoundCheck className="h-4 w-4 text-slate-500" />
+                      <HugeiconsIcon icon={UserCheckIcon} className="h-4 w-4 text-slate-500" />
                       Người phụ trách
                     </label>
                     <div className="rounded-[16px] bg-[#FAF7F1] border border-kat-border/60 p-3 flex items-start gap-2.5">
-                      <User className="h-4 w-4 text-kat-muted shrink-0 mt-0.5" />
+                      <HugeiconsIcon icon={UserIcon} className="h-4 w-4 text-kat-muted shrink-0 mt-0.5" />
                       <div>
                         <h4 className="text-[12.5px] font-bold text-kat-text">Chưa có người đồng hành</h4>
                         <p className="text-[11.5px] text-kat-muted mt-0.5 font-bold">Thêm người đồng hành trong Không gian chuyến đi để phân công chuẩn bị hành lý.</p>
@@ -760,7 +784,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                   <Select
                     label={
                       <span className="flex items-center gap-1.5">
-                        <UserRoundCheck className="h-4 w-4 text-slate-500" />
+                        <HugeiconsIcon icon={UserCheckIcon} className="h-4 w-4 text-slate-500" />
                         Người phụ trách
                       </span>
                     }
@@ -776,7 +800,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               {/* Priority Segments */}
               <div className="space-y-2">
                 <label className="text-[13px] font-bold text-kat-text block flex items-center gap-1.5">
-                  <BadgeCheck className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-4 w-4 text-slate-500" />
                   Mức độ cần thiết
                 </label>
                 <div className="flex p-1 bg-[#FAF7F1] border border-kat-border/50 rounded-xl">
@@ -804,7 +828,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               {/* Notes */}
               <div className="space-y-1.5">
                 <label className="text-[13px] font-bold text-kat-text flex items-center gap-1.5">
-                  <StickyNote className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={Note01Icon} className="h-4 w-4 text-slate-500" />
                   Ghi chú
                 </label>
                 <textarea
@@ -819,7 +843,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               <div className="flex items-center justify-between p-3.5 bg-[#FAF7F1]/40 border border-kat-border/60 rounded-[18px]">
                 <div className="flex items-center gap-2.5">
                   <div className="flex items-center justify-center w-8 h-8 rounded-[12px] bg-purple-50 text-purple-600">
-                    <Luggage className="h-4.5 w-4.5" />
+                    <HugeiconsIcon icon={Luggage01Icon} className="h-4.5 w-4.5" />
                   </div>
                   <div className="text-left">
                     <span className="text-[13px] font-bold text-slate-800 block">Vật dụng cá nhân</span>
@@ -857,7 +881,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 className="flex-[2] h-[50px] inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
                 disabled={!title.trim()}
               >
-                <Check className="h-4.5 w-4.5" strokeWidth={2.5} />
+                <HugeiconsIcon icon={CheckIcon} className="h-4.5 w-4.5" />
                 {editingId ? "Lưu thông tin" : "Thêm vào hành lý"}
               </button>
             </div>
@@ -873,7 +897,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
           style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
           aria-label="Thêm món chuẩn bị"
         >
-          <Plus className="h-6 w-6" strokeWidth={2.5} />
+          <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
         </button>
       )}
 
@@ -892,7 +916,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 motion-toast-enter">
           <div className="bg-[#030D2E] text-white px-5 py-3 rounded-2xl shadow-floating flex items-center gap-3 border border-[#E8E1D8]/20">
             <div className="flex h-5.5 w-5.5 items-center justify-center rounded-full bg-kat-primary/20 text-kat-primary">
-              <Check className="h-3.5 w-3.5" strokeWidth={3.5} />
+              <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" />
             </div>
             <span className="text-[14px] font-bold tracking-wide text-sand">{toast.message}</span>
           </div>

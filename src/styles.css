@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+  }
+}
+
 @layer utilities {
   .pt-safe {
     padding-top: env(safe-area-inset-top);
@@ -92,6 +98,8 @@ textarea {
   --motion-ease-soft-out: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --motion-ease-sharp: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1.1); /* Elastic spring physics */
+  --motion-ease-spring-soft: cubic-bezier(0.175, 0.885, 0.32, 1.15); /* Soft spring physics */
   
   --motion-duration-instant: 80ms;
   --motion-duration-fast: 140ms;
@@ -111,21 +119,21 @@ textarea {
 
 /* 3. Press Motion */
 .motion-press {
-  transition: transform var(--motion-duration-fast) ease-in-out;
+  transition: transform var(--motion-duration-fast) var(--motion-ease-spring);
 }
 .motion-press:active {
-  transform: scale(0.97);
+  transform: scale(0.95);
 }
 
 /* Desktop Hover Lift */
 @media (hover: hover) {
   .motion-hover-lift {
-    transition: transform var(--motion-duration-normal) var(--motion-ease-soft-out), 
+    transition: transform var(--motion-duration-normal) var(--motion-ease-spring), 
                 box-shadow var(--motion-duration-normal) var(--motion-ease-soft-out);
   }
   .motion-hover-lift:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 24px rgba(3, 13, 46, 0.06);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(3, 13, 46, 0.08);
   }
 }
 
@@ -346,4 +354,86 @@ textarea {
   -ms-overflow-style: none !important;  /* IE and Edge */
   scrollbar-width: none !important;  /* Firefox */
   -webkit-overflow-scrolling: touch;
+}
+
+/* 2027 Advanced Motion Additions */
+
+/* Weather Background Drift Animation */
+.motion-weather-bg {
+  background-size: 200% 200% !important;
+  animation: weather-bg-shift 24s ease-in-out infinite alternate !important;
+}
+
+@keyframes weather-bg-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* AI Breathing Glow Animation */
+.motion-ai-glow {
+  position: relative;
+  overflow: hidden;
+}
+.motion-ai-glow::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(0, 191, 183, 0.15), rgba(168, 85, 247, 0.15), rgba(0, 191, 183, 0.15));
+  background-size: 200% 100%;
+  animation: ai-glow-pulse 6s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  padding: 1.5px;
+}
+
+@keyframes ai-glow-pulse {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Weather Icons Micro-animations */
+.animate-weather-spin {
+  transform-origin: center !important;
+  animation: weather-spin 40s linear infinite !important;
+}
+
+.animate-weather-sway {
+  transform-origin: center bottom !important;
+  animation: weather-sway 5s ease-in-out infinite alternate !important;
+}
+
+.animate-weather-pulse {
+  animation: weather-pulse-light 3s ease-in-out infinite alternate !important;
+}
+
+@keyframes weather-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes weather-sway {
+  0% { transform: translateX(0) translateY(0) rotate(0deg); }
+  100% { transform: translateX(1.5px) translateY(-1px) rotate(1deg); }
+}
+
+@keyframes weather-pulse-light {
+  0% { filter: drop-shadow(0 0 1px rgba(255,255,255,0.1)); opacity: 0.9; }
+  100% { filter: drop-shadow(0 0 6px rgba(255,255,255,0.3)); opacity: 1; }
+}
+
+/* Reduced Motion Fallbacks */
+@media (prefers-reduced-motion: reduce) {
+  .motion-weather-bg,
+  .motion-ai-glow::after,
+  .animate-weather-spin,
+  .animate-weather-sway,
+  .animate-weather-pulse {
+    animation: none !important;
+  }
 }

@@ -7,6 +7,7 @@ import type { Auth } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
 import type { FirebaseStorage } from "firebase/storage";
 import type { AppCheck } from "firebase/app-check";
+import type { Analytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -15,6 +16,7 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Only enable if we have at least the critical config
@@ -32,6 +34,7 @@ let cachedAuth: Auth | null = null;
 let cachedDb: Firestore | null = null;
 let cachedStorage: FirebaseStorage | null = null;
 let cachedAppCheck: AppCheck | null = null;
+let cachedAnalytics: Analytics | null = null;
 
 /**
  * Khởi tạo Firebase SDK (lazy-load).
@@ -42,7 +45,14 @@ export async function initFirebase() {
   }
   
   if (cachedApp && cachedAuth && cachedDb && cachedStorage) {
-    return { app: cachedApp, auth: cachedAuth, db: cachedDb, storage: cachedStorage };
+    return { 
+      app: cachedApp, 
+      auth: cachedAuth, 
+      db: cachedDb, 
+      storage: cachedStorage, 
+      appCheck: cachedAppCheck,
+      analytics: cachedAnalytics 
+    };
   }
 
   // Lazy load Firebase modules only when called
@@ -82,7 +92,26 @@ export async function initFirebase() {
     });
   }
 
-  return { app: cachedApp, auth: cachedAuth, db: cachedDb, storage: cachedStorage, appCheck: cachedAppCheck };
+  // Khởi tạo Analytics nếu được hỗ trợ trên trình duyệt và có measurementId
+  if (firebaseConfig.measurementId) {
+    try {
+      const { getAnalytics, isSupported } = await import("firebase/analytics");
+      if (await isSupported()) {
+        cachedAnalytics = getAnalytics(cachedApp);
+      }
+    } catch (e) {
+      console.warn("Firebase Analytics initialization failed:", e);
+    }
+  }
+
+  return { 
+    app: cachedApp, 
+    auth: cachedAuth, 
+    db: cachedDb, 
+    storage: cachedStorage, 
+    appCheck: cachedAppCheck,
+    analytics: cachedAnalytics
+  };
 }
 
 /**

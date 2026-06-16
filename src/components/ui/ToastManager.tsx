@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CheckmarkCircle02Icon, CancelCircleIcon } from "@hugeicons/core-free-icons";
 
 export type ToastType = 'success' | 'error';
 
@@ -39,9 +40,9 @@ export const GlobalToast = () => {
         }`}
       >
         {toast.type === 'success' ? (
-          <CheckCircle2 className="h-5 w-5 shrink-0" />
+          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5 shrink-0" />
         ) : (
-          <XCircle className="h-5 w-5 shrink-0" />
+          <HugeiconsIcon icon={CancelCircleIcon} className="h-5 w-5 shrink-0" />
         )}
         <p className="text-[14px] font-bold leading-tight">{toast.message}</p>
       </div>
