@@ -354,7 +354,7 @@ export function TripManagerScreen({
   }
 
   return (
-    <div className={`mx-auto w-full max-w-[1120px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center px-2.5 min-[360px]:px-4 py-0 md:py-0" : "px-4 py-6 md:px-6 md:pt-4 md:pb-16"}`}>
+    <div className={`mx-auto w-full max-w-[1120px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center py-0 md:py-0" : "py-6 md:pt-4 md:pb-16"}`}>
       {trips.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-[32px] bg-[#FFFDF8] p-5 sm:p-8 md:p-12 text-center border border-[#E8E1D8] shadow-floating hover:shadow-xl hover:border-[#00BFB7]/35 transition-all duration-500 mx-auto w-full max-w-[540px] relative overflow-hidden motion-page-enter motion-hover-lift">
           {/* Ambient Background Glows */}
@@ -383,7 +383,7 @@ export function TripManagerScreen({
             <span className="text-[18px] leading-none group-hover:rotate-90 transition-transform duration-300 font-bold">+</span>
             Tạo chuyến đi đầu tiên
           </button>
-
+ 
           {archivedTripsCount > 0 && (
             <button
               onClick={onOpenArchive}
@@ -417,7 +417,7 @@ export function TripManagerScreen({
               </p>
             </div>
             
-            <div className="flex flex-row items-center gap-2 w-full md:w-auto shrink-0 relative z-10 justify-start md:justify-end">
+            <div className="flex flex-row flex-wrap items-center gap-2 w-full md:w-auto shrink-0 relative z-10 justify-start md:justify-end">
               <button
                 onClick={onOpenArchive}
                 className="group relative flex h-[46px] md:h-[50px] items-center justify-center gap-2 rounded-2xl bg-white/[0.08] hover:bg-white/[0.15] text-white px-3 sm:px-6 font-bold text-[12.5px] min-[360px]:text-[13.5px] md:text-[14px] border border-white/15 backdrop-blur-md overflow-hidden active:scale-[0.97] hover:border-white/25 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.15)] whitespace-nowrap shrink-0"
