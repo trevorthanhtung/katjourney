@@ -349,50 +349,9 @@ export function HomeScreen({
 
   // 3. Layout for completed trips
   const renderPastLayout = () => {
-    const checklistPercent = checklistStats.total > 0 
-      ? Math.round((checklistStats.completed / checklistStats.total) * 100) 
-      : 0;
-
     return (
-      <div className="space-y-6">
-        {/* Quick Stats Grid */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
-            <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
-              <Users className="h-5 w-5" />
-            </div>
-            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Thành viên</p>
-          </div>
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
-            <div className="w-11 h-11 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
-              <CalendarDays className="h-5 w-5" />
-            </div>
-            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{events.length}</p>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lịch trình</p>
-          </div>
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500"></div>
-            <div className="w-11 h-11 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
-              <Receipt className="h-5 w-5" />
-            </div>
-            <p className="text-[18px] font-black text-[#030D2E] leading-none mb-1 truncate max-w-full px-1">{formatMoney(totalExpense)}</p>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chi phí</p>
-          </div>
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-purple-500"></div>
-            <div className="w-11 h-11 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
-              <Briefcase className="h-5 w-5" />
-            </div>
-            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{checklistPercent}%</p>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chuẩn bị</p>
-          </div>
-        </section>
-
-        <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
-          {/* Left Column: Nhìn lại chuyến đi */}
+      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
+        {/* Left Column: Nhìn lại chuyến đi */}
         <section className="space-y-4">
           <h3 className="text-[17px] font-extrabold text-[#030D2E] px-1 motion-title-enter">Nhìn lại chuyến đi</h3>
           
@@ -466,8 +425,76 @@ export function HomeScreen({
           </div>
         </section>
 
-        {/* Right column removed because Quick Stats grid now handles overview */}
-        </div>
+        {/* Right Column: Tổng quan hành trình */}
+        <section className="space-y-4">
+          <h3 className="text-[17px] font-extrabold text-[#030D2E] px-1 motion-title-enter">Tổng quan hành trình</h3>
+          
+          <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 motion-card-enter motion-delay-2">
+            <ul className="space-y-6">
+              <li className="flex items-start gap-4">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 border border-blue-100/50">
+                  <Users className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1 pt-0.5">
+                  <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
+                  <div className="mt-1.5">
+                    {renderCompanions()}
+                  </div>
+                </div>
+              </li>
+
+              <li className="flex items-start gap-4">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-100/50">
+                  <CalendarDays className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1 pt-0.5">
+                  <p className="text-[13px] font-semibold text-kat-muted">Lịch trình đã ghi</p>
+                  {events.length > 0 ? (
+                    <p className="mt-0.5 text-[15px] font-extrabold text-[#030D2E]">
+                      {events.length} hoạt động đã được ghi lại
+                    </p>
+                  ) : (
+                    <div>
+                      <p className="mt-0.5 text-[14px] font-semibold text-slate-400">Chưa có lịch trình được ghi lại</p>
+                      {!isReadOnly && (
+                        <button 
+                          onClick={() => onNavigateTab("timeline")}
+                          className="mt-1.5 text-[12.5px] font-bold text-kat-primary hover:text-kat-primary-usable transition-all motion-press text-left"
+                        >
+                          Bổ sung lịch trình
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </li>
+
+              <li className="flex items-start gap-4">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600 border border-rose-100/50">
+                  <Briefcase className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1 pt-0.5">
+                  <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
+                  <p className="mt-0.5 text-[15px] font-extrabold text-[#030D2E]">
+                    {checklistStats.total > 0 
+                      ? `${checklistStats.completed} / ${checklistStats.total} món hành lý` 
+                      : "Chưa có món nào trong checklist"}
+                  </p>
+                </div>
+              </li>
+
+              <li className="flex items-start gap-4">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/50">
+                  <Receipt className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1 pt-0.5">
+                  <p className="text-[13px] font-semibold text-kat-muted">Tổng đã chi chuyến đi</p>
+                  <p className="mt-0.5 text-[15px] font-extrabold text-[#030D2E]">{formatMoney(totalExpense)}</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
       </div>
     );
   };
@@ -475,50 +502,10 @@ export function HomeScreen({
   // 4. Layout for upcoming trips
   const renderUpcomingLayout = () => {
     const reminders = getTripReminders({ trip, members, events, expenses, checklist, travelDocuments });
-    const checklistPercent = checklistStats.total > 0 
-      ? Math.round((checklistStats.completed / checklistStats.total) * 100) 
-      : 0;
 
     return (
-      <div className="space-y-6">
-        {/* Quick Stats Grid */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
-            <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
-              <Users className="h-5 w-5" />
-            </div>
-            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Thành viên</p>
-          </div>
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
-            <div className="w-11 h-11 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
-              <CalendarDays className="h-5 w-5" />
-            </div>
-            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{events.length}</p>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lịch trình</p>
-          </div>
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500"></div>
-            <div className="w-11 h-11 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
-              <Receipt className="h-5 w-5" />
-            </div>
-            <p className="text-[18px] font-black text-[#030D2E] leading-none mb-1 truncate max-w-full px-1">{formatMoney(totalExpense)}</p>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chi phí</p>
-          </div>
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-purple-500"></div>
-            <div className="w-11 h-11 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
-              <Briefcase className="h-5 w-5" />
-            </div>
-            <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{checklistPercent}%</p>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chuẩn bị</p>
-          </div>
-        </section>
-
-        <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
-          {/* Left Column: Hoạt động tiếp theo & Nhắc việc trước chuyến đi */}
+      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
+        {/* Left Column: Hoạt động tiếp theo & Nhắc việc trước chuyến đi */}
         <div className="space-y-4 md:space-y-6">
           {/* Hoạt động tiếp theo */}
           <section className="space-y-4">
@@ -616,8 +603,59 @@ export function HomeScreen({
           </section>
         </div>
 
-        {/* Right Column: Giấy tờ & đặt chỗ */}
+        {/* Right Column: Tổng quan hành trình & Giấy tờ & đặt chỗ */}
         <div className="space-y-6">
+          {/* Tổng quan hành trình */}
+          <section className="space-y-4">
+            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Tổng quan hành trình</h3>
+            <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 motion-card-enter motion-delay-3">
+              <ul className="space-y-6">
+                <li className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 border border-blue-100/50">
+                    <Users className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1 pt-0.5">
+                    <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
+                    <div className="mt-1.5">
+                      {renderCompanions()}
+                    </div>
+                  </div>
+                </li>
+                <li className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600 border border-rose-100/50">
+                    <Briefcase className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1 pt-0.5">
+                    <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
+                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">
+                      {checklistStats.total > 0 ? `${checklistStats.completed} / ${checklistStats.total} món hành lý` : "Chưa có món nào được lên checklist"}
+                    </p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-100/50">
+                    <CalendarDays className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1 pt-0.5">
+                    <p className="text-[13px] font-semibold text-kat-muted">Lịch trình kế tiếp</p>
+                    <p className="mt-0.5 truncate text-[15px] font-extrabold text-kat-text">
+                      {nextEvent ? nextEvent.title : "Chưa có hoạt động nào"}
+                    </p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/50">
+                    <Receipt className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1 pt-0.5">
+                    <p className="text-[13px] font-semibold text-kat-muted">Dự kiến chi phí</p>
+                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">{formatMoney(totalExpense)}</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+
           {/* Giấy tờ & đặt chỗ */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Giấy tờ & đặt chỗ</h3>
@@ -668,7 +706,6 @@ export function HomeScreen({
             </div>
           </section>
         </div>
-      </div>
       </div>
     );
   };
@@ -952,8 +989,6 @@ export function HomeScreen({
         onClose={() => setWeatherModalOpen(false)}
         destination={trip.location || "Điểm đến"}
         forecast={forecast}
-        currentLocationForecast={myForecast}
-        currentLocationName={myLocationName}
       />
     </>
   );
