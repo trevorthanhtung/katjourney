@@ -256,9 +256,9 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
           {/* Header Actions */}
           <button 
             onClick={onClose}
-            className="absolute right-4 top-4 h-9 w-9 bg-black/20 hover:bg-black/35 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all active:scale-95 shadow-sm"
+            className="absolute right-4 top-4 h-11 w-11 bg-black/20 hover:bg-black/35 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all active:scale-90 shadow-sm z-50 cursor-pointer"
           >
-            <HugeiconsIcon icon={Cancel01Icon} className="w-5 h-5" />
+            <HugeiconsIcon icon={Cancel01Icon} className="w-5.5 h-5.5" />
           </button>
 
           {/* Location details */}
