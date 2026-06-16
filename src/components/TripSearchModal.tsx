@@ -143,7 +143,7 @@ export function TripSearchModal({
         </div>
 
         {/* Results Area */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-6">
+        <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar">
           {!isSearching ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-50 text-slate-400 mb-3">

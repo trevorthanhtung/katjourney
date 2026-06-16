@@ -678,7 +678,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             </div>
 
             {/* Modal Scrollable Content */}
-            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 custom-scrollbar">
               
               {/* Item Name */}
               <div className="space-y-1.5">

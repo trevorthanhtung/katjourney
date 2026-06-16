@@ -764,7 +764,7 @@ export function HomeScreen({
                   </button>
                 </div>
               ) : (
-                <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+                <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1 scrollbar-none">
                   {todayEvents
                     .sort((a, b) => (a.time || "").localeCompare(b.time || ""))
                     .map((item, idx) => (
@@ -904,7 +904,7 @@ export function HomeScreen({
                   <p className="text-[13px] font-semibold text-slate-400">Chưa có món nào được lên checklist.</p>
                 </div>
               ) : (
-                <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+                <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1 scrollbar-none">
                   {displayChecklist.map((item, idx) => (
                     <button 
                       key={item.id}

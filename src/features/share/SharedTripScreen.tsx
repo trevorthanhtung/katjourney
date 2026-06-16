@@ -1162,7 +1162,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     </div>
 
                     {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length > 0 ? (
-                      <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+                      <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1 scrollbar-none">
                         {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).map((plan: BackupPlan) => (
                           <div key={plan.id} className="text-[13px] font-semibold text-[#030D2E] bg-slate-50/70 rounded-xl px-3 py-2.5 border border-slate-100/50 flex items-center justify-between gap-2">
                             <span className="truncate">{plan.title}</span>
