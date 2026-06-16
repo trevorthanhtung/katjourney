@@ -339,6 +339,27 @@ export default function SharedTripScreen({ token }: { token: string }) {
       } else if (hasDocuments) {
         setChecklistSubTab("documents");
       }
+
+      // Default active tab initialization
+      const activities = data.activities || [];
+      const backupPlans = data.backupPlans || [];
+      const journals = data.journals || [];
+      const expenses = data.expenses || [];
+      const members = data.members || [];
+
+      const canReqEdit = (data.mode === 'edit' || data.mode === 'request_edit') && !data.revoked && !(currentUser?.isGuest && !currentUser?.canEdit) && data.trip?.status !== 'archived';
+
+      const initialTab = 
+        (activities.length > 0 || (data.includeBackupPlans && backupPlans.length > 0) || canReqEdit) ? "activities" :
+        (data.includeJournals && (journals.length > 0 || canReqEdit)) ? "journals" :
+        (data.includeExpenses && (expenses.length > 0 || canReqEdit)) ? "expenses" :
+        ((data.includeChecklist && (checklist.length > 0 || canReqEdit)) || (data.includeDocuments && (travelDocuments.length > 0 || canReqEdit))) ? "checklist" :
+        (members.length > 0 || canReqEdit) ? "members" : "";
+      
+      if (initialTab) {
+        setActiveTab(initialTab);
+      }
+
       setHasInitializedTab(true);
     }
   }, [data, hasInitializedTab, currentUser]);
@@ -880,33 +901,57 @@ export default function SharedTripScreen({ token }: { token: string }) {
           )}
         >
           {/* Card 1: Lịch trình */}
-          <div className="rounded-3xl border border-emerald-500/10 bg-white/90 backdrop-blur-md p-5 text-center shadow-[0_10px_30px_rgba(16,185,129,0.04)] relative overflow-hidden flex flex-col items-center justify-center select-none w-full">
+          <button
+            onClick={() => setActiveTab("activities")}
+            className={classNames(
+              "rounded-3xl border p-5 text-center shadow-sm relative overflow-hidden flex flex-col items-center justify-center select-none w-full transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] cursor-pointer",
+              activeTab === "activities"
+                ? "border-emerald-500 bg-emerald-500/5 shadow-[0_8px_24px_rgba(16,185,129,0.12)]"
+                : "border-emerald-500/10 bg-white/90 hover:shadow-[0_10px_30px_rgba(16,185,129,0.08)]"
+            )}
+          >
             <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 flex items-center justify-center mb-3">
               <HugeiconsIcon icon={RouteIcon} className="h-5 w-5" />
             </div>
             <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{activities.length}</p>
             <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Lịch trình</p>
-          </div>
+          </button>
 
           {/* Card 2: Chi phí (Conditional) */}
           {data.includeExpenses && (
-            <div className="rounded-3xl border border-amber-500/10 bg-white/90 backdrop-blur-md p-5 text-center shadow-[0_10px_30px_rgba(245,158,11,0.04)] relative overflow-hidden flex flex-col items-center justify-center select-none w-full">
+            <button
+              onClick={() => setActiveTab("expenses")}
+              className={classNames(
+                "rounded-3xl border p-5 text-center shadow-sm relative overflow-hidden flex flex-col items-center justify-center select-none w-full transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] cursor-pointer",
+                activeTab === "expenses"
+                  ? "border-amber-500 bg-amber-500/5 shadow-[0_8px_24px_rgba(245,158,11,0.12)]"
+                  : "border-amber-500/10 bg-white/90 hover:shadow-[0_10px_30px_rgba(245,158,11,0.08)]"
+              )}
+            >
               <div className="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-600 border border-amber-500/20 flex items-center justify-center mb-3">
                 <HugeiconsIcon icon={Wallet01Icon} className="h-5 w-5" />
               </div>
               <p className="text-[18px] font-black text-[#030D2E] leading-none mb-1 truncate max-w-full px-1">{formatMoney(totalExpense)}</p>
               <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Chi phí</p>
-            </div>
+            </button>
           )}
 
           {/* Card 3: Thành viên */}
-          <div className="rounded-3xl border border-blue-500/10 bg-white/90 backdrop-blur-md p-5 text-center shadow-[0_10px_30px_rgba(59,130,246,0.04)] relative overflow-hidden flex flex-col items-center justify-center select-none w-full">
+          <button
+            onClick={() => setActiveTab("members")}
+            className={classNames(
+              "rounded-3xl border p-5 text-center shadow-sm relative overflow-hidden flex flex-col items-center justify-center select-none w-full transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] cursor-pointer",
+              activeTab === "members"
+                ? "border-blue-500 bg-blue-500/5 shadow-[0_8px_24px_rgba(59,130,246,0.12)]"
+                : "border-blue-500/10 bg-white/90 hover:shadow-[0_10px_30px_rgba(59,130,246,0.08)]"
+            )}
+          >
             <div className="w-11 h-11 rounded-2xl bg-blue-500/10 text-blue-600 border border-blue-500/20 flex items-center justify-center mb-3">
               <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5" />
             </div>
             <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
             <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Thành viên</p>
-          </div>
+          </button>
         </section>
 
         <section className="hidden sm:flex bg-[#030D2E]/5 p-1 rounded-full gap-1 overflow-x-auto scrollbar-none border border-slate-200/20">
