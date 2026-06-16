@@ -417,7 +417,7 @@ export function TripManagerScreen({
               </p>
             </div>
             
-            <div className="flex flex-row flex-wrap items-center gap-2 w-full md:w-auto shrink-0 relative z-10 justify-start md:justify-end">
+            <div className="flex flex-row flex-wrap items-center gap-2 w-full md:w-auto shrink-0 relative z-10 justify-center md:justify-end">
               <button
                 onClick={onOpenArchive}
                 className="group relative flex h-[46px] md:h-[50px] items-center justify-center gap-2 rounded-2xl bg-white/[0.08] hover:bg-white/[0.15] text-white px-3 sm:px-6 font-bold text-[12.5px] min-[360px]:text-[13.5px] md:text-[14px] border border-white/15 backdrop-blur-md overflow-hidden active:scale-[0.97] hover:border-white/25 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.15)] whitespace-nowrap shrink-0"
