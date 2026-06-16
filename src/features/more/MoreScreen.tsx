@@ -41,6 +41,7 @@ import {
   PencilEdit01Icon,
   Refresh01Icon,
   Route01Icon,
+  Search01Icon,
   Share01Icon,
   SmilePlusIcon,
   SparklesIcon,
@@ -1596,6 +1597,7 @@ export function MoreScreen({
   const [isMemberFormOpen, setIsMemberFormOpen] = useState(false);
   const [isDataSectionOpen, setIsDataSectionOpen] = useState(false);
   const [isDonateOpen, setIsDonateOpen] = useState(false);
+  const [memberSearchQuery, setMemberSearchQuery] = useState("");
 
   // Modal confirmations states
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -1671,7 +1673,14 @@ export function MoreScreen({
   const tripData = { trip, members, events, expenses, checklist, journals, packingItems, travelDocuments };
 
   const sortedMembers = React.useMemo(() => {
-    const list = [...members];
+    let list = [...members];
+    if (memberSearchQuery.trim()) {
+      const q = memberSearchQuery.toLowerCase().trim();
+      list = list.filter(m => 
+        m.name.toLowerCase().includes(q) || 
+        (m.role && m.role.toLowerCase().includes(q))
+      );
+    }
     const isLeader = (m: Member) => {
       const roleLower = (m.role || "").trim().toLowerCase();
       return (
@@ -1689,7 +1698,7 @@ export function MoreScreen({
       return 0;
     });
     return list;
-  }, [members]);
+  }, [members, memberSearchQuery]);
 
   async function handleShareTrip() {
     if (!firebaseEnabled) {
@@ -1938,8 +1947,30 @@ export function MoreScreen({
 
         {/* Member List Section */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between px-1">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
             <h3 className="text-[17px] font-extrabold text-[#030D2E]">Danh sách thành viên {members.length > 0 && `(${members.length})`}</h3>
+            {members.length > 0 && (
+              <div className="relative w-full sm:w-72">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                  <HugeiconsIcon icon={Search01Icon} className="h-4.5 w-4.5 text-slate-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Tìm kiếm thành viên hoặc vai trò..."
+                  value={memberSearchQuery}
+                  onChange={(e) => setMemberSearchQuery(e.target.value)}
+                  className="block w-full rounded-2xl border border-[#E8E1D8]/60 bg-white/70 backdrop-blur-md py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 placeholder-slate-400 focus:border-slate-350 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all shadow-sm"
+                />
+                {memberSearchQuery && (
+                  <button
+                    onClick={() => setMemberSearchQuery("")}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 active:scale-95 transition-all"
+                  >
+                    <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           
           {sortedMembers.length ? (
@@ -1958,6 +1989,17 @@ export function MoreScreen({
                   }}
                 />
               ))}
+            </div>
+          ) : members.length > 0 ? (
+            /* Search results empty state */
+            <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-8 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 mx-auto mb-4 ring-4 ring-slate-50">
+                <HugeiconsIcon icon={UserGroupIcon} className="h-6 w-6" />
+              </div>
+              <h3 className="text-[15px] font-extrabold text-[#030D2E]">Không tìm thấy kết quả</h3>
+              <p className="mt-2 text-[13.5px] font-semibold text-slate-500 leading-relaxed">
+                Không tìm thấy thành viên nào khớp với từ khóa "{memberSearchQuery}"
+              </p>
             </div>
           ) : (
             /* Empty State Layout */

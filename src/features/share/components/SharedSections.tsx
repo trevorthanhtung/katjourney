@@ -7,7 +7,7 @@ import {
   Wallet01Icon, CheckmarkCircle02Icon, BookOpen01Icon, File01Icon, AlertCircleIcon, Add01Icon, PenTool01Icon, Delete01Icon, MoreVerticalIcon,
   ReceiptTextIcon, UserCheck01Icon, Tag01Icon, ChevronRightIcon, BalanceScaleIcon, InformationCircleIcon, CheckIcon, Cancel01Icon, Clock01Icon,
   FileCheckIcon, ShirtIcon, Briefcase01Icon, PlugIcon, PillIcon, Bread01Icon, PackageIcon, BadgeCheckIcon, StickyNoteIcon, TextFontIcon, MinusSignIcon, UserIcon, Calendar01Icon, Maximize01Icon, Image01Icon, Loading01Icon, SmileIcon, NotebookIcon, SaveIcon, SparklesIcon, RouteIcon, HelpCircleIcon, UserGroupIcon, BubbleChatIcon, GlobeIcon,
-  CrownIcon, Luggage01Icon, Car01Icon, CalculatorIcon, PieChartIcon,
+  CrownIcon, Luggage01Icon, Car01Icon, CalculatorIcon, PieChartIcon, Search01Icon,
   Airplane01Icon, KitchenUtensilsIcon, HotelIcon, Ticket01Icon, ShoppingBag01Icon, Gamepad2Icon, CompassIcon, ChevronDownIcon, Location01Icon, LocationOfflineIcon
 } from "@hugeicons/core-free-icons";
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
@@ -2643,6 +2643,7 @@ export function SharedMembersSection({
     gender: 'male'
   });
   const [showValidationError, setShowValidationError] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const isRequestEdit = mode === 'request_edit';
 
@@ -2693,6 +2694,15 @@ export function SharedMembersSection({
 
     return list;
   }, [members, changeRequests]);
+
+  const filteredMembers = React.useMemo(() => {
+    if (!searchQuery.trim()) return mergedMembers;
+    const q = searchQuery.toLowerCase().trim();
+    return mergedMembers.filter(m => 
+      m.name.toLowerCase().includes(q) || 
+      (m.role && m.role.toLowerCase().includes(q))
+    );
+  }, [mergedMembers, searchQuery]);
 
   async function handleRoleChangeSubmit() {
     if (!roleChangeMemberId) return;
@@ -2797,9 +2807,34 @@ export function SharedMembersSection({
           <h3 className="text-[16px] font-black text-[#030D2E]">Thành viên</h3>
         </div>
       </div>
+
+      {/* Search Input Bar */}
+      {mergedMembers.length > 0 && (
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <HugeiconsIcon icon={Search01Icon} className="h-4.5 w-4.5 text-slate-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Tìm kiếm thành viên hoặc vai trò..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="block w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 placeholder-slate-450 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 active:scale-95 transition-all"
+            >
+              <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      )}
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {mergedMembers.map((member) => {
+      {filteredMembers.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filteredMembers.map((member) => {
           const isPending = member.isPendingCreate || member.isPendingDelete;
           const initial = member.name.trim().charAt(0).toUpperCase() || "?";
           
@@ -3009,7 +3044,17 @@ export function SharedMembersSection({
             </div>
           );
         })}
-      </div>
+        </div>
+      ) : (
+        <div className="text-center py-8">
+          <p className="text-[14px] font-semibold text-slate-450">
+            {mergedMembers.length > 0 
+              ? `Không tìm thấy thành viên nào khớp với từ khóa "${searchQuery}"`
+              : "Chưa có thành viên nào trong chuyến đi."
+            }
+          </p>
+        </div>
+      )}
 
       {/* Fixed-position dropdown — renders above everything */}
       {activeMenuId && menuPos && createPortal(
