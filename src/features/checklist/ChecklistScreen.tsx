@@ -894,7 +894,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
         <button
           onClick={openAddForm}
           className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
-          style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
+          style={{ bottom: "calc(7.2rem + env(safe-area-inset-bottom))" }}
           aria-label="Thêm món chuẩn bị"
         >
           <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />

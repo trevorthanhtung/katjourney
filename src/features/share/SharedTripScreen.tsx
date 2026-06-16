@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   GlobeIcon,
@@ -146,8 +146,42 @@ export default function SharedTripScreen({ token }: { token: string }) {
   // Chat state
   const [showChatBox, setShowChatBox] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<string>("activities");
+  const [activeTab, setActiveTab] = useState<string>("");
+  const [checklistSubTab, setChecklistSubTab] = useState<"checklist" | "documents">("checklist");
   const [hasInitializedTab, setHasInitializedTab] = useState(false);
+
+  // 2027 Bottom Navigation Bar animation system
+  const [indicatorStyle, setIndicatorStyle] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const buttonsRef = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+
+  useEffect(() => {
+    const updateIndicator = () => {
+      if (!activeTab) {
+        setIndicatorStyle({ left: 0, width: 0 });
+        return;
+      }
+      const activeButton = buttonsRef.current[activeTab];
+      const container = containerRef.current;
+      if (activeButton && container) {
+        const rect = activeButton.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        setIndicatorStyle({
+          left: rect.left - containerRect.left,
+          width: rect.width
+        });
+      }
+    };
+
+    updateIndicator();
+    const timer = setTimeout(updateIndicator, 60);
+
+    window.addEventListener("resize", updateIndicator);
+    return () => {
+      window.removeEventListener("resize", updateIndicator);
+      clearTimeout(timer);
+    };
+  }, [activeTab]);
   const [selectedRoadmapDay, setSelectedRoadmapDay] = useState<string>("");
   const [isRoadmapFormOpen, setIsRoadmapFormOpen] = useState(false);
   const [isRoadmapDayPickerOpen, setIsRoadmapDayPickerOpen] = useState(false);
@@ -243,30 +277,19 @@ export default function SharedTripScreen({ token }: { token: string }) {
   }, [data, token]);
 
   useEffect(() => {
-    // Select first available tab based on what's included in shared content, only on initial load
     if (data && !hasInitializedTab) {
-      const activities = data.activities || [];
-      const backupPlans = data.backupPlans || [];
-      const members = data.members || [];
-      const expenses = data.expenses || [];
       const checklist = data.checklist || [];
-      const journals = data.journals || [];
-      
+      const travelDocuments = data.travelDocuments || [];
       const isOwnerOrAdmin = currentUser?.role === "owner" || currentUser?.role === "admin";
       const canRequestEdit = Boolean(isOwnerOrAdmin || (data.trip?.status !== 'archived' && (currentUser?.role || currentUser?.role === "member")));
 
-      if (activities.length > 0 || (data.includeBackupPlans && backupPlans.length > 0) || canRequestEdit) {
-        setActiveTab("activities");
-      } else if (members.length > 0 || canRequestEdit) {
-        setActiveTab("members");
-      } else if (data.includeExpenses && (expenses.length > 0 || canRequestEdit)) {
-        setActiveTab("expenses");
-      } else if (data.includeChecklist && (checklist.length > 0 || canRequestEdit)) {
-        setActiveTab("checklist");
-      } else if (data.includeJournals && (journals.length > 0 || canRequestEdit)) {
-        setActiveTab("journals");
-      } else {
-        setActiveTab("others");
+      const hasChecklist = Boolean(data.includeChecklist && (checklist.length > 0 || canRequestEdit));
+      const hasDocuments = Boolean(data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit));
+
+      if (hasChecklist) {
+        setChecklistSubTab("checklist");
+      } else if (hasDocuments) {
+        setChecklistSubTab("documents");
       }
       setHasInitializedTab(true);
     }
@@ -443,8 +466,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
     {id: "activities", label: "Lịch trình", show: (activities.length > 0 || (data.includeBackupPlans && backupPlans.length > 0) || canRequestEdit), icon: RouteIcon },
     {id: "journals", label: "Bản tin", show: data.includeJournals && (journals.length > 0 || canRequestEdit), icon: GlobeIcon },
     {id: "expenses", label: "Chi phí", show: data.includeExpenses && (expenses.length > 0 || canRequestEdit), icon: Wallet01Icon },
-    {id: "checklist", label: "Chuẩn bị", show: data.includeChecklist && (checklist.length > 0 || canRequestEdit), icon: CheckmarkCircle02Icon },
-    {id: "others", label: "Tài liệu", show: data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit), icon: File01Icon },
+    {id: "checklist", label: "Chuẩn bị", show: (data.includeChecklist && (checklist.length > 0 || canRequestEdit)) || (data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit)), icon: CheckmarkCircle02Icon },
     {id: "members", label: "Thành viên", show: members.length > 0 || canRequestEdit, icon: UserGroupIcon },
   ].filter(t => t.show);
 
@@ -642,7 +664,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-[1120px] mx-auto px-2.5 min-[360px]:px-4 py-6 space-y-6">
+      <main className="max-w-[1120px] mx-auto px-2.5 min-[360px]:px-4 pt-6 pb-20 sm:pb-6 space-y-6">
         
         {/* Hero Card */}
         <section 
@@ -722,24 +744,24 @@ export default function SharedTripScreen({ token }: { token: string }) {
               ) : (
                 <div
                   onClick={() => setWeatherModalOpen(true)}
-                  className="flex flex-col items-stretch bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-4.5 gap-3 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 w-full text-left cursor-pointer select-none"
+                  className="flex flex-col items-stretch bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-4 gap-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 w-full text-left cursor-pointer select-none"
                 >
                   {/* Weather Info Block */}
-                  <div className="flex items-center justify-between gap-4 w-full">
-                    <div className="flex items-center gap-2">
-                      <span className="text-4xl md:text-5xl font-black text-white drop-shadow-sm tracking-tighter">
+                  <div className="flex items-center justify-between gap-2 w-full">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-3xl min-[360px]:text-4xl font-black text-white drop-shadow-sm tracking-tighter">
                         {Math.round(forecast.current?.temperature || 20)}°
                       </span>
                       <div className="flex flex-col ml-1 flex-shrink-0">
                         <span className="mb-[-4px] flex items-center justify-center h-8">
                           {getWeatherIcon(forecast.current?.weathercode || 0, "w-7 h-7 drop-shadow-md")}
                         </span>
-                        <span className="text-[12px] font-extrabold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
+                        <span className="text-[10.5px] min-[360px]:text-[11.5px] font-extrabold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
                           {getWeatherText(forecast.current?.weathercode || 0)}
                         </span>
                       </div>
                     </div>
-                    <div className="w-px h-10 bg-white/20 mx-1" />
+                    <div className="w-px h-10 bg-white/30 mx-0.5 shrink-0" />
                     <div className="flex flex-col text-right whitespace-nowrap">
                       <span className="text-[11.5px] font-extrabold text-white/95">
                         Cao: {Math.round(forecast.temperature_2m_max[0])}°
@@ -771,45 +793,57 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
         {/* Quick Stats Grid */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+          <button
+            onClick={() => setActiveTab("members")}
+            className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 hover:border-blue-200/80 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center cursor-pointer active:scale-95 focus:outline-none w-full"
+          >
             <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
             <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
               <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5" />
             </div>
             <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Thành viên</p>
-          </div>
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+          </button>
+          <button
+            onClick={() => setActiveTab("activities")}
+            className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 hover:border-emerald-200/80 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center cursor-pointer active:scale-95 focus:outline-none w-full"
+          >
             <div className="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
             <div className="w-11 h-11 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
               <HugeiconsIcon icon={RouteIcon} className="h-5 w-5" />
             </div>
             <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{activities.length}</p>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lịch trình</p>
-          </div>
+          </button>
           {data.includeExpenses && (
-            <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+            <button
+              onClick={() => setActiveTab("expenses")}
+              className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 hover:border-amber-200/80 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center cursor-pointer active:scale-95 focus:outline-none w-full"
+            >
               <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500"></div>
               <div className="w-11 h-11 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
                 <HugeiconsIcon icon={Wallet01Icon} className="h-5 w-5" />
               </div>
               <p className="text-[18px] font-black text-[#030D2E] leading-none mb-1 truncate max-w-full px-1">{formatMoney(totalExpense)}</p>
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chi phí</p>
-            </div>
+            </button>
           )}
           {data.includeChecklist && (
-            <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
+            <button
+              onClick={() => setActiveTab("checklist")}
+              className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 hover:border-purple-200/80 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center cursor-pointer active:scale-95 focus:outline-none w-full"
+            >
               <div className="absolute top-0 left-0 right-0 h-1 bg-purple-500"></div>
               <div className="w-11 h-11 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
                 <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5" />
               </div>
               <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{checklistPercent}%</p>
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chuẩn bị</p>
-            </div>
+            </button>
           )}
         </section>
 
-        <section className="bg-slate-100/60 backdrop-blur-md p-1 rounded-2xl flex gap-1 overflow-x-auto scrollbar-none border border-slate-200/40 shadow-inner">
+        <section className="hidden sm:flex bg-slate-100/60 backdrop-blur-md p-1 rounded-2xl gap-1 overflow-x-auto scrollbar-none border border-slate-200/40 shadow-inner">
           {tabsList.map((tab) => {
             const IconComponent = tab.icon;
             const isActive = activeTab === tab.id;
@@ -833,6 +867,15 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
         {/* Dynamic Section Contents */}
         <div className="space-y-6">
+          {!activeTab && (
+            <div className="text-center py-12 bg-white rounded-3xl border border-slate-100 shadow-[0_2px_12px_rgba(3,13,46,0.02)] p-6 max-w-md mx-auto animate-fadeIn mt-4 flex flex-col items-center justify-center">
+              <HugeiconsIcon icon={CompassIcon} className="w-12 h-12 text-slate-350 mb-3 animate-bounce" />
+              <h4 className="text-[16px] font-black text-[#030D2E]">Sẵn sàng khám phá chuyến đi!</h4>
+              <p className="text-[12.5px] text-slate-400 font-bold mt-1.5 leading-relaxed">
+                Hãy chọn một danh mục ở thanh điều hướng hoặc nhấp vào các thẻ thống kê để xem chi tiết hành trình nhé.
+              </p>
+            </div>
+          )}
           {activeTab === "activities" && (
             <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:gap-8 items-start">
               {/* Left Column: Activities & Backup Plans */}
@@ -1104,16 +1147,67 @@ export default function SharedTripScreen({ token }: { token: string }) {
             />
           )}
 
-          {activeTab === "checklist" && data.includeChecklist && (checklist.length > 0 || canRequestEdit) && (
-            <SharedChecklistSection 
-              tripId={trip.id}
-              token={token} 
-              mode={checklistMode} 
-              checklist={checklist} 
-              changeRequests={changeRequests}
-              members={members}
-              guestName={currentUser?.name || "Khách"}
-            />
+          {activeTab === "checklist" && (
+            <div className="space-y-4">
+              {/* Sub-tab switcher if both checklist and documents are shared and available */}
+              {Boolean(data.includeChecklist && (checklist.length > 0 || canRequestEdit)) && 
+               Boolean(data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit)) && (
+                <div className="flex justify-center">
+                  <div className="bg-slate-100/60 p-1 rounded-xl inline-flex gap-1 border border-slate-200/40 shadow-inner">
+                    <button
+                      onClick={() => setChecklistSubTab("checklist")}
+                      className={classNames(
+                        "px-4 py-2 rounded-lg text-[13px] font-bold transition-all duration-200 cursor-pointer",
+                        checklistSubTab === "checklist"
+                          ? "bg-white text-[#030D2E] shadow-[0_2px_6px_rgba(3,13,46,0.06)]"
+                          : "text-slate-500 hover:text-slate-800"
+                      )}
+                    >
+                      Chuẩn bị hành lý
+                    </button>
+                    <button
+                      onClick={() => setChecklistSubTab("documents")}
+                      className={classNames(
+                        "px-4 py-2 rounded-lg text-[13px] font-bold transition-all duration-200 cursor-pointer",
+                        checklistSubTab === "documents"
+                          ? "bg-white text-[#030D2E] shadow-[0_2px_6px_rgba(3,13,46,0.06)]"
+                          : "text-slate-500 hover:text-slate-800"
+                      )}
+                    >
+                      Giấy tờ du lịch
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Checklist content */}
+              {((checklistSubTab === "checklist" && data.includeChecklist && (checklist.length > 0 || canRequestEdit)) ||
+                (!data.includeDocuments || !(travelDocuments.length > 0 || canRequestEdit))) && 
+               data.includeChecklist && (checklist.length > 0 || canRequestEdit) && (
+                <SharedChecklistSection 
+                  tripId={trip.id}
+                  token={token} 
+                  mode={checklistMode} 
+                  checklist={checklist} 
+                  changeRequests={changeRequests}
+                  members={members}
+                  guestName={currentUser?.name || "Khách"}
+                />
+              )}
+
+              {/* Documents content */}
+              {((checklistSubTab === "documents" && data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit)) ||
+                (!data.includeChecklist || !(checklist.length > 0 || canRequestEdit))) && 
+               data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit) && (
+                <SharedDocumentsSection 
+                  token={token} 
+                  mode={documentsMode} 
+                  documents={travelDocuments} 
+                  changeRequests={changeRequests}
+                  guestName={currentUser?.name || "Khách"}
+                />
+              )}
+            </div>
           )}
 
           {activeTab === "journals" && data.includeJournals && (journals.length > 0 || canRequestEdit) && (
@@ -1133,16 +1227,6 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   isReadOnly={!canRequestEdit || data.trip.status === 'archived'}
                 />
               ) : undefined}
-            />
-          )}
-
-          {activeTab === "others" && data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit) && (
-            <SharedDocumentsSection 
-              token={token} 
-              mode={documentsMode} 
-              documents={travelDocuments} 
-              changeRequests={changeRequests}
-              guestName={currentUser?.name || "Khách"}
             />
           )}
         </div>
@@ -1305,6 +1389,45 @@ export default function SharedTripScreen({ token }: { token: string }) {
         currentLocationForecast={myForecast}
         currentLocationName={myLocationName}
       />
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="fixed bottom-5 left-4 right-4 z-40 flex sm:hidden bg-[#EFECE6]/90 border border-[#E8E1D8]/80 backdrop-blur-xl rounded-[24px] shadow-[0_8px_30px_rgba(3,13,46,0.04)] px-2 h-[56px] min-[360px]:h-[60px] items-center justify-around">
+        <div ref={containerRef} className="relative w-full h-full flex items-center justify-around">
+          {/* Active Indicator Slide Pill */}
+          {indicatorStyle.width > 0 && (
+            <div 
+              className="absolute top-[6px] bottom-[6px] rounded-full bg-white transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-[#E8E1D8]/45"
+              style={{
+                left: `${indicatorStyle.left}px`,
+                width: `${indicatorStyle.width}px`
+              }}
+            />
+          )}
+          {tabsList.map((tab) => {
+            const IconComponent = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                ref={(el) => { buttonsRef.current[tab.id] = el; }}
+                onClick={() => setActiveTab(tab.id)}
+                className={classNames(
+                  "relative flex items-center justify-center rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] overflow-hidden motion-press z-10",
+                  isActive 
+                    ? "text-[#030D2E] px-3 min-[360px]:px-5 h-11 min-[360px]:h-12 gap-1.5 min-[360px]:gap-2 font-extrabold" 
+                    : "text-[#030D2E]/50 hover:text-[#030D2E]/75 w-11 min-[360px]:w-12 h-11 min-[360px]:h-12"
+                )}
+              >
+                <HugeiconsIcon 
+                  icon={IconComponent} 
+                  className={classNames("h-[19px] w-[19px] min-[360px]:h-[22px] min-[360px]:w-[22px] shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)]", isActive ? "scale-105" : "scale-100")} 
+                />
+                {isActive && <span className="text-[12px] min-[360px]:text-[13px] font-bold whitespace-nowrap">{tab.label}</span>}
+              </button>
+            );
+          })}
+        </div>
+      </nav>
 
     </div>
   );

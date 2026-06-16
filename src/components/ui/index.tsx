@@ -869,10 +869,10 @@ export function FAB({ icon, label, onClick, className }: { icon: React.ReactNode
   return (
     <button
       className={classNames(
-        "fixed bottom-[100px] right-4 z-30 flex items-center justify-center rounded-full shadow-floating lg:right-[calc(max(1rem,50vw-512px+1rem))] motion-press lg:motion-hover-lift",
+        "fixed bottom-[120px] right-4 z-30 flex items-center justify-center rounded-full shadow-floating lg:right-[calc(max(1rem,50vw-512px+1rem))] motion-press lg:motion-hover-lift",
         className || "h-14 w-14 bg-sunset-600 hover:scale-105 text-white"
       )}
-      style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
+      style={{ bottom: "calc(7.2rem + env(safe-area-inset-bottom))" }}
       onClick={onClick}
       aria-label={label}
     >
