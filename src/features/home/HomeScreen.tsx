@@ -981,6 +981,8 @@ export function HomeScreen({
         onClose={() => setWeatherModalOpen(false)}
         destination={trip.location || "Điểm đến"}
         forecast={forecast}
+        currentLocationForecast={myForecast}
+        currentLocationName={myLocationName}
       />
     </>
   );
