@@ -1,6 +1,16 @@
 import React from "react";
 import { createPortal } from "react-dom";
-import { Plus, X, Check, Trash2, ChevronDown, Calendar, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { 
+  CheckIcon, 
+  Cancel01Icon, 
+  Delete01Icon, 
+  ChevronDownIcon, 
+  Calendar01Icon, 
+  Clock01Icon, 
+  ChevronLeftIcon, 
+  ChevronRightIcon 
+} from "@hugeicons/core-free-icons";
 import { classNames } from "../../utils/helpers";
 
 export { classNames };
@@ -47,7 +57,11 @@ export function Input({
         />
         {isDateOrTime && (
           <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 bg-white pl-2">
-            {type === "date" ? <Calendar className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
+            {type === "date" ? (
+              <HugeiconsIcon icon={Calendar01Icon} size={16} />
+            ) : (
+              <HugeiconsIcon icon={Clock01Icon} size={16} />
+            )}
           </div>
         )}
       </div>
@@ -160,7 +174,7 @@ export function TimePicker({
         <span className={value ? "text-[#030D2E] font-bold" : "text-slate-400"}>
           {value || placeholder}
         </span>
-        <Clock className="h-4 w-4 text-slate-400" />
+        <HugeiconsIcon icon={Clock01Icon} size={16} className="text-slate-400" />
       </button>
 
       <BottomSheet
@@ -313,7 +327,7 @@ export function DatePicker({
         <span className={value ? "text-[#030D2E] font-bold" : "text-slate-400"}>
           {displayValue || placeholder}
         </span>
-        <Calendar className="h-4 w-4 text-slate-400" />
+        <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-400" />
       </button>
 
       <BottomSheet
@@ -326,18 +340,18 @@ export function DatePicker({
           <div className="flex items-center justify-between w-full mb-6">
             <button 
               onClick={handlePrevMonth}
-              className="p-2 rounded-full hover:bg-slate-100 active:bg-slate-200 text-slate-600"
+              className="p-2 rounded-full hover:bg-slate-100 active:bg-slate-200 text-slate-600 flex items-center justify-center"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <HugeiconsIcon icon={ChevronLeftIcon} size={20} />
             </button>
             <h3 className="text-[17px] font-bold text-[#030D2E]">
               Tháng {month + 1} năm {year}
             </h3>
             <button 
               onClick={handleNextMonth}
-              className="p-2 rounded-full hover:bg-slate-100 active:bg-slate-200 text-slate-600"
+              className="p-2 rounded-full hover:bg-slate-100 active:bg-slate-200 text-slate-600 flex items-center justify-center"
             >
-              <ChevronRight className="w-5 h-5" />
+              <HugeiconsIcon icon={ChevronRightIcon} size={20} />
             </button>
           </div>
 
@@ -433,7 +447,7 @@ export function Select({
         <span className={value ? "text-[#030D2E]" : "text-slate-400"}>
           {value ? (labels?.[value] ?? value) : (placeholder ?? "Chưa chọn")}
         </span>
-        <ChevronDown className="h-4 w-4 text-slate-400" />
+        <HugeiconsIcon icon={ChevronDownIcon} size={16} className="text-slate-400" />
       </button>
 
       <BottomSheet
@@ -461,7 +475,7 @@ export function Select({
                 <span className={`text-[15px] ${isSelected ? 'font-extrabold' : 'font-semibold'}`}>
                   {displayLabel}
                 </span>
-                {isSelected && <Check className="w-5 h-5 text-kat-primary" />}
+                {isSelected && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
               </button>
             );
           })}
@@ -499,7 +513,7 @@ export function FormActions({
         onClick={onSave}
         disabled={disabled}
       >
-        <Check className="h-5 w-5" strokeWidth={2.5} />
+        <HugeiconsIcon icon={CheckIcon} size={20} />
         {saveLabel}
       </button>
     </div>
@@ -654,7 +668,7 @@ export function BottomSheet({
               title="Đóng"
               aria-label="Đóng"
             >
-              <X className="h-5 w-5" />
+              <HugeiconsIcon icon={Cancel01Icon} size={20} />
             </button>
           </div>
         </div>
@@ -769,7 +783,7 @@ export function TypedDeleteConfirmModal({
             onClick={handleConfirm}
             className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:bg-rose-200 disabled:border-rose-200 disabled:cursor-not-allowed transition-all active:scale-[0.98] disabled:active:scale-100 motion-press"
           >
-            <Trash2 className="h-5 w-5" />
+            <HugeiconsIcon icon={Delete01Icon} size={20} />
             {isSubmitting ? "Đang xóa..." : confirmLabel}
           </button>
         </div>
@@ -841,7 +855,7 @@ export function DeleteConfirmModal({
             onClick={handleConfirm}
             className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:bg-rose-200 disabled:border-rose-200 disabled:cursor-not-allowed transition-all active:scale-[0.98] disabled:active:scale-100 motion-press"
           >
-            <Trash2 className="h-5 w-5" />
+            <HugeiconsIcon icon={Delete01Icon} size={20} />
             {isSubmitting ? "Đang xóa..." : confirmLabel}
           </button>
         </div>

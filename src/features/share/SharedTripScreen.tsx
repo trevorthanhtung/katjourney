@@ -1,10 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { 
-  Globe, MapPin, CalendarDays, Clock, Route, CloudRainWind,
-  Users, MapPinned, WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, ChevronRight, Share2, SearchX, ShieldAlert, Link, X, MessageCircle, UserRoundCog,
-  Crown, Car, Luggage, UsersRound, BadgeCheck,
-  Plus, Edit3, Map, Compass, GitBranch, Check, ChevronDown
-} from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  GlobeIcon,
+  Location01Icon,
+  Calendar01Icon,
+  Clock01Icon,
+  RouteIcon,
+  CloudRainWindIcon,
+  UserGroupIcon,
+  MapsIcon,
+  Wallet01Icon,
+  CheckmarkCircle02Icon,
+  BookOpen01Icon,
+  File01Icon,
+  AlertCircleIcon,
+  ChevronRightIcon,
+  Share01Icon,
+  Search01Icon,
+  SecurityWarningIcon,
+  Link02Icon,
+  Cancel01Icon,
+  BubbleChatIcon,
+  UserSettingsIcon,
+  CrownIcon,
+  Car01Icon,
+  Luggage01Icon,
+  BadgeCheckIcon,
+  Add01Icon,
+  PencilEdit01Icon,
+  CompassIcon,
+  GitBranchIcon,
+  CheckIcon,
+  ChevronDownIcon
+} from "@hugeicons/core-free-icons";
 import { getViewShareData } from "../../services/cloudShareService";
 import { formatDate, classNames, getTripTiming, formatMoney, daysBetween, formatDateShort } from "../../utils/helpers";
 import { EventItem, Expense, ChecklistItem, Member, JournalEntry, TravelDocument, BackupPlan } from "../../db";
@@ -92,24 +120,24 @@ export default function SharedTripScreen({ token }: { token: string }) {
       <div className="flex items-center gap-1 flex-wrap justify-end">
         {roles.map((roleLower, i) => {
           if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
-            return <span key={i} title="Trưởng nhóm" className="shrink-0"><Crown className="h-3.5 w-3.5 text-amber-500" /></span>;
+            return <span key={i} title="Trưởng nhóm" className="shrink-0"><HugeiconsIcon icon={CrownIcon} className="h-3.5 w-3.5 text-amber-500" /></span>;
           }
           if (roleLower === "quản lý chi phí") {
-            return <span key={i} title="Quản lý chi phí" className="shrink-0"><WalletCards className="h-3.5 w-3.5 text-emerald-500" /></span>;
+            return <span key={i} title="Quản lý chi phí" className="shrink-0"><HugeiconsIcon icon={Wallet01Icon} className="h-3.5 w-3.5 text-emerald-500" /></span>;
           }
           if (roleLower === "tài xế") {
-            return <span key={i} title="Tài xế" className="shrink-0"><Car className="h-3.5 w-3.5 text-blue-500" /></span>;
+            return <span key={i} title="Tài xế" className="shrink-0"><HugeiconsIcon icon={Car01Icon} className="h-3.5 w-3.5 text-blue-500" /></span>;
           }
           if (roleLower === "dẫn đường") {
-            return <span key={i} title="Dẫn đường" className="shrink-0"><Compass className="h-3.5 w-3.5 text-sky-500" /></span>;
+            return <span key={i} title="Dẫn đường" className="shrink-0"><HugeiconsIcon icon={CompassIcon} className="h-3.5 w-3.5 text-sky-500" /></span>;
           }
           if (roleLower === "phụ trách hành lý") {
-            return <span key={i} title="Phụ trách hành lý" className="shrink-0"><Luggage className="h-3.5 w-3.5 text-indigo-500" /></span>;
+            return <span key={i} title="Phụ trách hành lý" className="shrink-0"><HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 text-indigo-500" /></span>;
           }
           if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
-            return <span key={i} title="Người đồng hành" className="shrink-0"><UsersRound className="h-3.5 w-3.5 text-slate-400" /></span>;
+            return <span key={i} title="Người đồng hành" className="shrink-0"><HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5 text-slate-400" /></span>;
           }
-          return <span key={i} title={roleLower} className="shrink-0"><BadgeCheck className="h-3.5 w-3.5 text-teal-500" /></span>;
+          return <span key={i} title={roleLower} className="shrink-0"><HugeiconsIcon icon={BadgeCheckIcon} className="h-3.5 w-3.5 text-teal-500" /></span>;
         })}
       </div>
     );
@@ -259,7 +287,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
         <div className="max-w-md w-full flex flex-col items-center text-center space-y-6 animate-fadeIn">
           {/* Icon Container */}
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-            <ShieldAlert className="h-10 w-10" />
+            <HugeiconsIcon icon={SecurityWarningIcon} className="h-10 w-10" />
           </div>
           
           {/* Heading */}
@@ -412,12 +440,12 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   // Navigation Tabs construction
   const tabsList = [
-    {id: "activities", label: "Lịch trình", show: (activities.length > 0 || (data.includeBackupPlans && backupPlans.length > 0) || canRequestEdit), icon: Route },
-    {id: "journals", label: "Bản tin", show: data.includeJournals && (journals.length > 0 || canRequestEdit), icon: Globe },
-    {id: "expenses", label: "Chi phí", show: data.includeExpenses && (expenses.length > 0 || canRequestEdit), icon: WalletCards },
-    {id: "checklist", label: "Chuẩn bị", show: data.includeChecklist && (checklist.length > 0 || canRequestEdit), icon: CheckCircle },
-    {id: "others", label: "Tài liệu", show: data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit), icon: FileText },
-    {id: "members", label: "Thành viên", show: members.length > 0 || canRequestEdit, icon: Users },
+    {id: "activities", label: "Lịch trình", show: (activities.length > 0 || (data.includeBackupPlans && backupPlans.length > 0) || canRequestEdit), icon: RouteIcon },
+    {id: "journals", label: "Bản tin", show: data.includeJournals && (journals.length > 0 || canRequestEdit), icon: GlobeIcon },
+    {id: "expenses", label: "Chi phí", show: data.includeExpenses && (expenses.length > 0 || canRequestEdit), icon: Wallet01Icon },
+    {id: "checklist", label: "Chuẩn bị", show: data.includeChecklist && (checklist.length > 0 || canRequestEdit), icon: CheckmarkCircle02Icon },
+    {id: "others", label: "Tài liệu", show: data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit), icon: File01Icon },
+    {id: "members", label: "Thành viên", show: members.length > 0 || canRequestEdit, icon: UserGroupIcon },
   ].filter(t => t.show);
 
   if (showIdentityModal) {
@@ -434,15 +462,15 @@ export default function SharedTripScreen({ token }: { token: string }) {
               className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors z-10"
               title="Đóng, giữ lựa chọn cũ"
             >
-              <X className="h-4 w-4" />
+              <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
             </button>
           )}
           <div className="flex flex-col items-center text-center shrink-0">
             {/* Icon */}
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 mb-4">
               {step === "pin"
-                ? <ShieldAlert className="h-8 w-8" />
-                : <Users className="h-8 w-8" />
+                ? <HugeiconsIcon icon={SecurityWarningIcon} className="h-8 w-8" />
+                : <HugeiconsIcon icon={UserGroupIcon} className="h-8 w-8" />
               }
             </div>
 
@@ -519,7 +547,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                         className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors"
                       >
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden bg-slate-200">
-                          {m.avatar ? getAvatarSvg(m.avatar, "w-full h-full") : <Users className="h-4 w-4 text-slate-400" />}
+                          {m.avatar ? getAvatarSvg(m.avatar, "w-full h-full") : <HugeiconsIcon icon={UserGroupIcon} className="h-4 w-4 text-slate-400" />}
                         </div>
                         <div className="flex items-center justify-between flex-1 pr-1">
                           <span className="text-[14px] font-bold text-slate-800">{m.name}</span>
@@ -541,7 +569,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors border border-slate-100 rounded-2xl bg-slate-50/50 shrink-0"
                 >
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-200 text-slate-400">
-                    <Globe className="h-4 w-4" />
+                    <HugeiconsIcon icon={GlobeIcon} className="h-4 w-4" />
                   </div>
                   <span className="text-[14px] font-bold text-slate-600">Tôi chỉ muốn xem bản tin chuyến đi</span>
                 </button>
@@ -572,7 +600,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             className="text-white/70 hover:text-white p-1 rounded-full transition-colors"
             title="Đóng thông báo"
           >
-            <X className="h-4 w-4" />
+            <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
           </button>
         </div>
       )}
@@ -584,7 +612,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden md:block h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
             <span className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-[#030D2E] whitespace-nowrap shrink-0">KAT Journey</span>
             <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-1.5 min-[360px]:px-2 py-0.5 text-[10px] font-bold text-indigo-600 whitespace-nowrap shrink-0">
-              <Share2 className="h-3 w-3 shrink-0" /> Chia sẻ
+              <HugeiconsIcon icon={Share01Icon} className="h-3 w-3 shrink-0" /> Chia sẻ
             </span>
           </div>
           <div className="flex items-center gap-1.5 min-[360px]:gap-2 shrink-0">
@@ -599,7 +627,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 title="Chọn lại người dùng"
                 className="flex items-center justify-center gap-1.5 min-h-[34px] min-[360px]:min-h-[36px] px-2 min-[360px]:px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[12px] font-bold text-slate-650 hover:text-slate-900 shadow-sm transition-all active:scale-[0.97] shrink-0"
               >
-                <UserRoundCog className="h-3.5 w-3.5 shrink-0" />
+                <HugeiconsIcon icon={UserSettingsIcon} className="h-3.5 w-3.5 shrink-0" />
                 <span className="hidden sm:inline whitespace-nowrap">{currentUser.name}</span>
               </button>
             )}
@@ -634,20 +662,20 @@ export default function SharedTripScreen({ token }: { token: string }) {
               </h2>
               <div className="flex flex-wrap gap-2.5">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
-                  <MapPin className="h-3.5 w-3.5 text-white/70" />
+                  <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-white/70" />
                   {trip.destination || "Chưa rõ điểm đến"}
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
-                  <CalendarDays className="h-3.5 w-3.5 text-white/70" />
+                  <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-white/70" />
                   {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
-                  <Clock className="h-3.5 w-3.5 text-white/70" />
+                  <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-white/70" />
                   {durationText}
                 </span>
                 {trip.mediaLink && (
                   <a href={trip.mediaLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/20 px-3 py-1 text-[12px] font-bold backdrop-blur-md border border-sky-400/30 shadow-inner text-sky-100 hover:bg-sky-500/30 transition-colors">
-                    <Link className="h-3 w-3" />
+                    <HugeiconsIcon icon={Link02Icon} className="h-3 w-3" />
                     Kho Ảnh Gốc
                   </a>
                 )}
@@ -677,7 +705,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                  </div>
               ) : (!trip.destination?.trim() && !trip.latitude) ? (
                  <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-3xl p-4 border border-white/10 w-full">
-                   <MapPin className="w-6 h-6 text-white/40" />
+                   <HugeiconsIcon icon={Location01Icon} className="w-6 h-6 text-white/40" />
                    <div className="flex flex-col gap-0.5">
                      <span className="text-white/80 font-bold text-[12px]">Chưa có điểm đến</span>
                      <span className="text-white/50 text-[10px]">Thêm điểm đến để xem thời tiết</span>
@@ -685,7 +713,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                  </div>
               ) : (!trip.latitude || !trip.longitude) ? null : weatherError || !forecast ? (
                  <div className="flex items-center gap-3 bg-red-500/20 backdrop-blur-md rounded-3xl p-4 border border-red-500/30 w-full">
-                   <CloudRainWind className="w-6 h-6 text-white/60" />
+                   <HugeiconsIcon icon={CloudRainWindIcon} className="w-6 h-6 text-white/60" />
                    <div className="flex flex-col gap-1">
                      <span className="text-white font-bold text-[12px]">Không thể tải thời tiết</span>
                      <span className="text-white/70 text-[10px]">Lỗi kết nối</span>
@@ -746,7 +774,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
             <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500"></div>
             <div className="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
-              <Users className="h-5 w-5" />
+              <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5" />
             </div>
             <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Thành viên</p>
@@ -754,7 +782,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
             <div className="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
             <div className="w-11 h-11 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
-              <Route className="h-5 w-5" />
+              <HugeiconsIcon icon={RouteIcon} className="h-5 w-5" />
             </div>
             <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{activities.length}</p>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lịch trình</p>
@@ -763,7 +791,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
               <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500"></div>
               <div className="w-11 h-11 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
-                <WalletCards className="h-5 w-5" />
+                <HugeiconsIcon icon={Wallet01Icon} className="h-5 w-5" />
               </div>
               <p className="text-[18px] font-black text-[#030D2E] leading-none mb-1 truncate max-w-full px-1">{formatMoney(totalExpense)}</p>
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chi phí</p>
@@ -773,7 +801,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             <div className="rounded-3xl border border-slate-100 bg-white p-5 text-center shadow-[0_2px_8px_rgba(3,13,46,0.02)] hover:shadow-[0_8px_20px_rgba(3,13,46,0.06)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col items-center justify-center">
               <div className="absolute top-0 left-0 right-0 h-1 bg-purple-500"></div>
               <div className="w-11 h-11 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
-                <CheckCircle className="h-5 w-5" />
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5" />
               </div>
               <p className="text-[22px] font-black text-[#030D2E] leading-none mb-1">{checklistPercent}%</p>
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Chuẩn bị</p>
@@ -796,7 +824,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     : "text-slate-500 hover:text-slate-800 hover:bg-white/40"
                 )}
               >
-                <IconComponent className={classNames("h-4 w-4 transition-colors", isActive ? "text-indigo-600" : "text-slate-500")} />
+                <HugeiconsIcon icon={IconComponent} className={classNames("h-4 w-4 transition-colors", isActive ? "text-indigo-600" : "text-slate-500")} />
                 {tab.label}
               </button>
             );
@@ -832,7 +860,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   <div className="rounded-3xl bg-white p-5 border border-slate-200/50 shadow-[0_2px_12px_rgba(3,13,46,0.02)] space-y-4 min-w-0 overflow-hidden">
                     <div className="flex items-center gap-2">
                       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-                        <Route className="h-4 w-4" />
+                        <HugeiconsIcon icon={RouteIcon} className="h-4 w-4" />
                       </span>
                       <h4 className="text-[15px] font-extrabold text-[#030D2E]">Lộ trình di chuyển</h4>
                     </div>
@@ -847,7 +875,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                         >
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-[14px] bg-white shadow-sm flex items-center justify-center text-emerald-600">
-                              <CalendarDays className="w-5 h-5" />
+                              <HugeiconsIcon icon={Calendar01Icon} className="w-5 h-5" />
                             </div>
                             <div className="text-left">
                               <div className="text-[10.5px] font-bold text-emerald-600/70 uppercase tracking-wide mb-0.5">
@@ -859,7 +887,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                             </div>
                           </div>
                           <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm transition-transform group-hover:scale-105">
-                            <ChevronDown className="w-4 h-4" />
+                            <HugeiconsIcon icon={ChevronDownIcon} className="w-4 h-4" />
                           </div>
                         </button>
                       </div>
@@ -896,7 +924,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                 }}
                                 className="text-[#00BFB7] hover:opacity-85 font-bold flex items-center gap-1 cursor-pointer"
                               >
-                                {mapUrl && <Edit3 className="w-3.5 h-3.5" />}
+                                {mapUrl && <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />}
                                 {mapUrl ? "Sửa" : "Thêm"}
                               </button>
                             )}
@@ -918,7 +946,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                 rel="noreferrer"
                                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
                               >
-                                <Route className="w-4 h-4" />
+                                <HugeiconsIcon icon={RouteIcon} className="w-4 h-4" />
                                 Mở lộ trình &rarr;
                               </a>
                             </div>
@@ -935,7 +963,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                   }}
                                   className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-[12px] font-bold text-slate-655 hover:text-slate-900 shadow-sm transition-all cursor-pointer"
                                 >
-                                  <Plus className="w-3.5 h-3.5" />
+                                  <HugeiconsIcon icon={Add01Icon} className="w-3.5 h-3.5" />
                                   Gắn link lộ trình
                                 </button>
                               )}
@@ -961,7 +989,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
-                          <GitBranch className="h-4 w-4" />
+                          <HugeiconsIcon icon={GitBranchIcon} className="h-4 w-4" />
                         </span>
                         <div>
                           <h4 className="text-[15px] font-extrabold text-[#030D2E]">Dự phòng chung</h4>
@@ -1005,7 +1033,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                         onClick={() => setIsGlobalBackupOpen(true)}
                         className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-indigo-200/80 text-indigo-600 font-bold text-[13px] hover:bg-indigo-50 transition-colors motion-press cursor-pointer"
                       >
-                        <Plus className="w-4 h-4" />
+                        <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
                         {backupPlansMode === 'edit' ? 'Thêm phương án' : 'Đề xuất phương án'}
                       </button>
                     )}
@@ -1016,7 +1044,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 <div className="rounded-3xl bg-white p-5 border border-slate-200/50 shadow-[0_2px_12px_rgba(3,13,46,0.02)] space-y-4">
                   <div className="flex items-center gap-2">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#030D2E]/5 text-[#030D2E]">
-                      <Route className="h-4 w-4" />
+                      <HugeiconsIcon icon={RouteIcon} className="h-4 w-4" />
                     </span>
                     <h4 className="text-[15px] font-extrabold text-[#030D2E]">Thông tin hành trình</h4>
                   </div>
@@ -1024,14 +1052,14 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   <div className="space-y-3 text-[13.5px] font-semibold text-slate-500 border-t border-slate-100 pt-3">
                     <div className="flex items-center justify-between border-b border-slate-100/40 pb-2.5">
                       <span className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-slate-400" />
+                        <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
                         Điểm đến
                       </span>
                       <span className="font-black text-[#030D2E]">{trip.destination || trip.location || "Chưa xác định"}</span>
                     </div>
                     <div className="flex items-center justify-between border-b border-slate-100/40 pb-2.5">
                       <span className="flex items-center gap-2">
-                        <CalendarDays className="h-4 w-4 text-slate-400" />
+                        <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-400" />
                         Thời gian
                       </span>
                       <span className="font-black text-[#030D2E]">
@@ -1040,7 +1068,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     </div>
                     <div className="flex items-center justify-between pb-0.5">
                       <span className="flex items-center gap-2">
-                        <Route className="h-4 w-4 text-slate-400" />
+                        <HugeiconsIcon icon={RouteIcon} className="h-4 w-4 text-slate-400" />
                         Mục lịch trình
                       </span>
                       <span className="font-black text-[#030D2E]">{activities.length} mục</span>
@@ -1137,7 +1165,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           
           {/* Instruction card */}
           <div className="flex items-start gap-3 bg-[#00BFB7]/8 border border-[#00BFB7]/20 rounded-2xl px-4 py-3">
-            <Route className="h-5 w-5 text-[#00BFB7] shrink-0 mt-0.5" />
+            <HugeiconsIcon icon={RouteIcon} className="h-5 w-5 text-[#00BFB7] shrink-0 mt-0.5" />
             <div>
               <p className="text-[13px] font-bold text-[#030D2E]">Dán link lộ trình Google Maps</p>
               <p className="text-[12px] text-slate-500 font-medium mt-0.5 leading-relaxed">
@@ -1149,7 +1177,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           {/* Input */}
           <div className="relative">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-              <Route className="h-4 w-4 text-[#00BFB7]" />
+              <HugeiconsIcon icon={RouteIcon} className="h-4 w-4 text-[#00BFB7]" />
             </div>
             <input
               type="url"
@@ -1189,7 +1217,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               rel="noreferrer"
               className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-[13.5px] font-bold text-emerald-700 hover:bg-emerald-100 transition-colors"
             >
-              <Map className="w-4 h-4" />
+              <HugeiconsIcon icon={MapsIcon} className="w-4 h-4" />
               Mở link kiểm tra &rarr;
             </a>
           )}
@@ -1247,7 +1275,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 </div>
                 {isSelected && (
                   <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
-                    <Check className="w-3.5 h-3.5 text-emerald-700 stroke-[3]" />
+                    <HugeiconsIcon icon={CheckIcon} className="w-3.5 h-3.5 text-emerald-700 stroke-[3]" />
                   </div>
                 )}
               </button>

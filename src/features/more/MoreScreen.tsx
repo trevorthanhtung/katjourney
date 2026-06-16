@@ -1,74 +1,58 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { showToast } from "../../components/ui/ToastManager";
-import { 
-  MoreVertical,
-  Backpack, 
-  BookOpen, 
-  ChevronRight, 
-  Download, 
-  Edit3, 
-  FileText, 
-  Settings, 
-  Sparkles, 
-  Table2, 
-  Trash2, 
-  RefreshCw,
-  Users, 
-  MapPin, 
-  Calendar, 
-  WalletCards, 
-  Map, 
-  Sun, 
-  Camera, 
-  Smile, 
-  X, 
-  ShieldAlert, 
-  Check, 
-  Plus, 
-  User, 
-  Edit2, 
-  AlertCircle,
-  Luggage,
-  ArrowLeft,
-  Coffee,
-  Compass,
-  FileCheck,
-  CalendarDays,
-  Clock3,
-  UsersRound,
-  Route,
-  MapPinned,
-  Trophy,
-  BookOpenText,
-  TicketCheck,
-  DatabaseBackup,
-  ArchiveRestore,
-  BadgeInfo,
-  UserPlus,
-  UserRound,
-  Crown,
-  SunMedium,
-  SmilePlus,
-  Heart,
-  Star,
-  FileDown,
-  Phone,
-  Car,
-  BadgeCheck,
-  StickyNote,
-  Share2,
-  CheckCircle2,
-  AlertTriangle,
-  Copy,
-  Lock,
-  Unlock,
-  Info,
-  Palette,
-  Languages,
-  Package,
-  MessageCircle,
-  Globe
-} from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+
+import {
+  Alert01Icon,
+  AlertCircleIcon,
+  ArrowLeft01Icon,
+  AwardIcon,
+  BookOpen01Icon,
+  Calendar01Icon,
+  Cancel01Icon,
+  Car01Icon,
+  Camera01Icon,
+  CallIcon,
+  CircleUnlock01Icon,
+  CheckIcon,
+  CheckmarkBadge01Icon,
+  CheckmarkCircle01Icon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Clock01Icon,
+  Coffee01Icon,
+  CompassIcon,
+  CopyIcon,
+  CrownIcon,
+  DatabaseBackupIcon,
+  Delete01Icon,
+  Download01Icon,
+  File01Icon,
+  FileDownloadIcon,
+  GlobeIcon,
+  InformationCircleIcon,
+  Location01Icon,
+  LockIcon,
+  Luggage01Icon,
+  MapsIcon,
+  MoreVerticalIcon,
+  Note01Icon,
+  PackageIcon,
+  PencilEdit01Icon,
+  Refresh01Icon,
+  Route01Icon,
+  Share01Icon,
+  SmilePlusIcon,
+  SparklesIcon,
+  StarIcon,
+  Sun01Icon,
+  Table01Icon,
+  Ticket01Icon,
+  UserIcon,
+  UserAdd01Icon,
+  UserGroupIcon,
+  WalletCardsIcon
+} from "@hugeicons/core-free-icons";
 
 function ShareSwitch({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) {
   return (
@@ -172,7 +156,7 @@ function LocationInput({
   return (
     <div ref={containerRef} className="relative">
       <div className="relative">
-        <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-kat-primary pointer-events-none" />
+        <HugeiconsIcon icon={Location01Icon} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-kat-primary pointer-events-none" size={16} />
         <input
           type="text"
           value={value}
@@ -192,7 +176,7 @@ function LocationInput({
             onClick={() => { onChange(""); setSuggestions([]); setIsOpen(false); }}
             className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-slate-500 hover:bg-slate-300 transition-colors"
           >
-            <X className="h-3 w-3" />
+            <HugeiconsIcon icon={Cancel01Icon} size={12} />
           </button>
         )}
       </div>
@@ -209,7 +193,7 @@ function LocationInput({
                   className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors border-b border-slate-100/60 last:border-0"
                 >
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-kat-primary/10">
-                    <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+                    <HugeiconsIcon icon={Location01Icon} size={14} className="text-kat-primary" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-[13.5px] font-bold text-slate-800 truncate">{result.name}</p>
@@ -356,12 +340,12 @@ function CalendarRangePicker({
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
           <button type="button" onClick={prevMonth}
             className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors text-slate-500">
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M15 18l-6-6 6-6"/></svg>
+            <HugeiconsIcon icon={ChevronLeftIcon} size={16} />
           </button>
           <span className="text-[14px] font-bold text-slate-800">{monthLabel}</span>
           <button type="button" onClick={nextMonth}
             className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors text-slate-500">
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M9 18l6-6-6-6"/></svg>
+            <HugeiconsIcon icon={ChevronRightIcon} size={16} />
           </button>
         </div>
 
@@ -516,7 +500,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
           <Input 
             label={
               <span className="flex items-center gap-1.5">
-                <Compass className="h-4 w-4 text-slate-500" />
+                <HugeiconsIcon icon={CompassIcon} size={16} className="text-slate-500" />
                 Tên chuyến đi
               </span>
             } 
@@ -530,7 +514,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
         </div>
         <div>
           <span className="mb-1.5 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-            <MapPin className="h-4 w-4 text-slate-500" />
+            <HugeiconsIcon icon={Location01Icon} size={16} className="text-slate-500" />
             Điểm đến
           </span>
           <LocationInput
@@ -544,11 +528,11 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
           />
           {form.latitude && form.longitude ? (
             <p className="mt-1.5 px-1 text-[11.5px] font-bold text-emerald-600 flex items-center gap-1 animate-fadeIn">
-              <Check className="h-3.5 w-3.5" /> Khớp tọa độ thành công — Thời tiết đã tự động kết nối!
+              <HugeiconsIcon icon={CheckIcon} size={14} /> Khớp tọa độ thành công — Thời tiết đã tự động kết nối!
             </p>
           ) : (
             <p className="mt-1.5 px-1 text-[11.5px] font-semibold text-slate-500 leading-normal flex items-start gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-amber-500 shrink-0 mt-0.5" />
+              <HugeiconsIcon icon={SparklesIcon} size={14} className="text-amber-500 shrink-0 mt-0.5" />
               <span>Chọn từ danh sách gợi ý khi gõ để tự động hiển thị dự báo thời tiết cho chuyến đi nhé.</span>
             </p>
           )}
@@ -557,7 +541,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
         {/* === DATE SECTION replaced with CalendarRangePicker === */}
         <div>
           <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-            <CalendarDays className="h-4 w-4 text-slate-500" />
+            <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-500" />
             Thời gian chuyến đi
           </span>
           <CalendarRangePicker
@@ -706,12 +690,12 @@ function MemberForm({
 
   const getPresetIcon = (preset: string) => {
     switch (preset) {
-      case "Người đồng hành": return <UsersRound className="h-3.5 w-3.5" />;
-      case "Trưởng nhóm": return <Crown className="h-3.5 w-3.5 text-amber-500" />;
-      case "Quản lý chi phí": return <WalletCards className="h-3.5 w-3.5 text-emerald-500" />;
-      case "Tài xế": return <Car className="h-3.5 w-3.5 text-blue-500" />;
-      case "Dẫn đường": return <Compass className="h-3.5 w-3.5 text-sky-500" />;
-      case "Phụ trách hành lý": return <Luggage className="h-3.5 w-3.5 text-indigo-500" />;
+      case "Người đồng hành": return <HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5" />;
+      case "Trưởng nhóm": return <HugeiconsIcon icon={CrownIcon} className="h-3.5 w-3.5 text-amber-500" />;
+      case "Quản lý chi phí": return <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5 text-emerald-500" />;
+      case "Tài xế": return <HugeiconsIcon icon={Car01Icon} className="h-3.5 w-3.5 text-blue-500" />;
+      case "Dẫn đường": return <HugeiconsIcon icon={CompassIcon} className="h-3.5 w-3.5 text-sky-500" />;
+      case "Phụ trách hành lý": return <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 text-indigo-500" />;
       default: return null;
     }
   };
@@ -737,9 +721,9 @@ function MemberForm({
             className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white px-6 font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#030D2E] disabled:active:scale-100 shadow-sm"
           >
             {editing ? (
-              <Check className="h-4.5 w-4.5" strokeWidth={2.5} />
+              <HugeiconsIcon icon={CheckIcon} className="h-4.5 w-4.5" />
             ) : (
-              <UserPlus className="h-4.5 w-4.5" strokeWidth={2.5} />
+              <HugeiconsIcon icon={UserAdd01Icon} className="h-4.5 w-4.5" />
             )}
             {editing ? "Lưu thông tin" : "Thêm thành viên"}
           </button>
@@ -751,7 +735,7 @@ function MemberForm({
           <Input 
             label={
               <span className="flex items-center gap-1.5">
-                <UserRound className="h-4 w-4 text-slate-500" />
+                <HugeiconsIcon icon={UserIcon} className="h-4 w-4 text-slate-500" />
                 Tên thành viên *
               </span>
             } 
@@ -766,7 +750,7 @@ function MemberForm({
 
         <div>
           <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-            <UserRound className="h-4 w-4 text-slate-500" />
+            <HugeiconsIcon icon={UserIcon} className="h-4 w-4 text-slate-500" />
             Giới tính *
           </span>
           <div className="flex gap-2">
@@ -799,7 +783,7 @@ function MemberForm({
           <Input 
             label={
               <span className="flex items-center gap-1.5">
-                <Phone className="h-4 w-4 text-slate-500" />
+                <HugeiconsIcon icon={CallIcon} className="h-4 w-4 text-slate-500" />
                 Số điện thoại
               </span>
             } 
@@ -817,7 +801,7 @@ function MemberForm({
 
         <div>
           <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-            <BadgeCheck className="h-4 w-4 text-slate-500" />
+            <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-4 w-4 text-slate-500" />
             Vai trò trong chuyến đi
           </span>
           <div className="flex flex-wrap gap-2 mb-3">
@@ -847,7 +831,7 @@ function MemberForm({
         <div className="pt-1">
           <label className="block">
             <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-              <StickyNote className="h-4 w-4 text-slate-500" />
+              <HugeiconsIcon icon={Note01Icon} className="h-4 w-4 text-slate-500" />
               Ghi chú
             </span>
             <textarea
@@ -906,7 +890,7 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
       <div className="space-y-5 flex flex-col items-center text-center pb-4">
         {/* Coffee Icon */}
         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 border border-amber-100 shadow-sm">
-          <Coffee className="h-5 w-5" />
+          <HugeiconsIcon icon={Coffee01Icon} className="h-5 w-5" />
         </div>
         
         {/* Texts */}
@@ -1023,7 +1007,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 text-slate-700 active:scale-95 transition-all shrink-0 motion-press"
             title="Quay lại"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
           </button>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -1037,7 +1021,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           disabled={isGeneratingPdf}
           className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white px-5 text-[13.5px] font-bold hover:bg-[#030D2E]/90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <FileDown className={classNames("h-4 w-4", !isGeneratingPdf && "animate-bounce")} />
+          <HugeiconsIcon icon={FileDownloadIcon} className={classNames("h-4 w-4", !isGeneratingPdf && "animate-bounce")} />
           <span>{isGeneratingPdf ? "Đang xuất..." : "Xuất PDF"}</span>
         </button>
       </div>
@@ -1046,28 +1030,28 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       <section className="relative overflow-hidden rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-8 text-kat-text shadow-soft">
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5 border border-kat-primary/20">
-            <Compass className="h-6 w-6" />
+            <HugeiconsIcon icon={CompassIcon} className="h-6 w-6" />
           </div>
           <h2 className="text-[30px] md:text-[36px] font-black leading-tight tracking-tight text-[#030D2E]">{data.trip.title}</h2>
           <div className="mt-4 flex flex-wrap justify-center gap-2.5">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-4 py-2 text-[14px] font-bold text-slate-700">
-              <MapPin className="h-4 w-4 text-kat-primary" />
+              <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-kat-primary" />
               {data.trip.location || "Chưa có địa điểm"}
             </span>
             {data.trip.tripType === "dayTrip" || data.trip.startDate === data.trip.endDate ? (
               <>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-4 py-2 text-[14px] font-bold text-slate-700">
-                  <CalendarDays className="h-4 w-4 text-[#0081BE]" />
+                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-[#0081BE]" />
                   {formatDate(data.trip.startDate)}
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-kat-primary-soft border border-kat-primary/15 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable">
-                  <Clock3 className="h-3.5 w-3.5" />
+                  <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5" />
                   Chuyến đi trong ngày
                 </span>
               </>
             ) : (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-4 py-2 text-[14px] font-bold text-slate-700">
-                <CalendarDays className="h-4 w-4 text-[#0081BE]" />
+                <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-[#0081BE]" />
                 {formatDate(data.trip.startDate)} – {formatDate(data.trip.endDate)}
               </span>
             )}
@@ -1079,7 +1063,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
-            <SunMedium className="h-6 w-6" />
+            <HugeiconsIcon icon={Sun01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.totalDays}</span>
@@ -1089,7 +1073,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
 
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#00BFB7]/10 text-[#00BFB7] border border-[#00BFB7]/20">
-            <Route className="h-6 w-6" />
+            <HugeiconsIcon icon={Route01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.activityCount}</span>
@@ -1099,7 +1083,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
 
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
-            <Luggage className="h-6 w-6" />
+            <HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.checklistPercent}%</span>
@@ -1109,7 +1093,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
 
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#00BFB7]/10 text-[#00BFB7] border border-[#00BFB7]/20">
-            <BookOpenText className="h-6 w-6" />
+            <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-[#030D2E] leading-none block">{stats.journalCount}</span>
@@ -1122,7 +1106,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       <div className="rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-8 text-kat-text shadow-soft relative overflow-hidden">
         <div className="relative z-10">
           <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
-            <WalletCards className="h-5 w-5 text-kat-primary" />
+            <HugeiconsIcon icon={WalletCardsIcon} className="h-5 w-5 text-kat-primary" />
             CHI PHÍ CHUYẾN ĐI
           </h3>
           
@@ -1174,7 +1158,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       {/* Memory / Mood Section */}
       <div className="rounded-[32px] border border-[#E8E1D8] bg-[#FFFDF8] p-8 shadow-soft text-center flex flex-col items-center justify-center">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-500 mb-4 ring-4 ring-amber-500/5">
-          <SmilePlus className="h-6 w-6" />
+          <HugeiconsIcon icon={SmilePlusIcon} className="h-6 w-6" />
         </div>
         <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-wider mb-2">DẤU ẤN CẢM XÚC</h3>
         {mood ? (
@@ -1187,7 +1171,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
               onClick={() => setSection("journal")}
               className="flex items-center justify-center gap-2 rounded-2xl bg-[#030D2E] px-5 py-2.5 text-[14px] font-extrabold text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm"
             >
-              <BookOpenText className="h-4.5 w-4.5 text-blue-500" />
+              <HugeiconsIcon icon={BookOpen01Icon} className="h-4.5 w-4.5 text-blue-500" />
               Đăng bài viết đầu tiên
             </button>
           </div>
@@ -1199,7 +1183,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         {/* First Moment */}
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
-            <Camera className="h-5 w-5 text-amber-500" />
+            <HugeiconsIcon icon={Camera01Icon} className="h-5 w-5 text-amber-500" />
             <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">DẤU ẤN ĐẦU TIÊN</h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
@@ -1210,7 +1194,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         {/* Most Eventful Day */}
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
-            <Star className="h-5 w-5 text-amber-500" />
+            <HugeiconsIcon icon={StarIcon} className="h-5 w-5 text-amber-500" />
             <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">NGÀY NỔI BẬT NHẤT</h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
@@ -1227,7 +1211,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         {/* Locations Visited */}
         <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
-            <MapPinned className="h-5 w-5 text-kat-primary" />
+            <HugeiconsIcon icon={MapsIcon} className="h-5 w-5 text-kat-primary" />
             <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">ĐIỂM ĐẾN ĐÃ GHÉ QUA</h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
@@ -1271,7 +1255,7 @@ function ActionCard({
   rightElement,
   disabled
 }: {
-  icon: React.ElementType;
+  icon: any;
   title: string;
   onClick?: () => void;
   iconBgColor?: string;
@@ -1289,7 +1273,7 @@ function ActionCard({
           iconBgColor,
           iconTextColor
         )}>
-          <Icon className="h-5.5 w-5.5" strokeWidth={2.2} />
+          <HugeiconsIcon icon={Icon} className="h-5.5 w-5.5" />
         </div>
         <span className={classNames("text-base font-medium truncate leading-tight", titleClassName)}>
           {title}
@@ -1299,7 +1283,7 @@ function ActionCard({
         {rightElement !== undefined ? (
           rightElement
         ) : (
-          (onClick || disabled) && <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+          (onClick || disabled) && <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
         )}
       </div>
     </>
@@ -1401,41 +1385,41 @@ function MemberCardRow({
           if (rLower.includes("trưởng nhóm") || rLower.includes("trưởng đoàn") || rLower.includes("leader")) {
             return (
               <span key={idx} title="Trưởng nhóm" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 text-amber-700 border border-amber-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
-                <Crown className="w-4 h-4 text-amber-500 fill-amber-500/10" />
+                <HugeiconsIcon icon={CrownIcon} className="w-4 h-4 text-amber-500" />
               </span>
             );
           }
           if (rLower.includes("quản lý chi phí")) {
             return (
               <span key={idx} title="Quản lý chi phí" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
-                <WalletCards className="w-4 h-4 text-emerald-500" />
+                <HugeiconsIcon icon={WalletCardsIcon} className="w-4 h-4 text-emerald-500" />
               </span>
             );
           }
           if (rLower.includes("tài xế")) {
             return (
               <span key={idx} title="Tài xế" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 text-blue-700 border border-blue-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
-                <Car className="w-4 h-4 text-blue-500" />
+                <HugeiconsIcon icon={Car01Icon} className="w-4 h-4 text-blue-500" />
               </span>
             );
           }
           if (rLower.includes("dẫn đường")) {
             return (
               <span key={idx} title="Dẫn đường" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 text-sky-700 border border-sky-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
-                <Compass className="w-4 h-4 text-sky-500" />
+                <HugeiconsIcon icon={CompassIcon} className="w-4 h-4 text-sky-500" />
               </span>
             );
           }
           if (rLower.includes("phụ trách hành lý") || rLower.includes("hành lý")) {
             return (
               <span key={idx} title="Hành lý" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
-                <Luggage className="w-4 h-4 text-indigo-500" />
+                <HugeiconsIcon icon={Luggage01Icon} className="w-4 h-4 text-indigo-500" />
               </span>
             );
           }
           return (
             <span key={idx} title="Bạn đồng hành" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 text-slate-600 border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
-              <Users className="w-4 h-4 text-slate-400" />
+              <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 text-slate-400" />
             </span>
           );
         })}
@@ -1495,7 +1479,7 @@ function MemberCardRow({
             }}
             title="Tùy chọn"
           >
-            <MoreVertical className="h-5 w-5" />
+            <HugeiconsIcon icon={MoreVerticalIcon} className="h-5 w-5" />
           </button>
 
           {isMenuOpen && (
@@ -1517,7 +1501,7 @@ function MemberCardRow({
                   }}
                   className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
                 >
-                  <Edit2 className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500" />
                   Sửa
                 </button>
                 <button
@@ -1529,7 +1513,7 @@ function MemberCardRow({
                   }}
                   className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
                   Xóa
                 </button>
               </div>
@@ -1548,7 +1532,7 @@ function MemberCardRow({
               ? "bg-slate-50/50 border-slate-100 text-slate-400 font-semibold" 
               : "bg-sky-50/50 border-sky-100 text-sky-700 font-bold"
           )}>
-            <Luggage className="h-3.5 w-3.5 shrink-0" />
+            <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 shrink-0" />
             {assignedTasksCount} việc
           </span>
           <span className={classNames(
@@ -1557,7 +1541,7 @@ function MemberCardRow({
               ? "bg-slate-50/50 border-slate-100 text-slate-400 font-semibold" 
               : "bg-emerald-50/50 border-emerald-100 text-emerald-700 font-bold"
           )}>
-            <WalletCards className="h-3.5 w-3.5 shrink-0" />
+            <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5 shrink-0" />
             Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
           </span>
         </div>
@@ -1891,7 +1875,7 @@ export function MoreScreen({
               className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 text-slate-700 active:scale-95 transition-all shrink-0"
               title="Quay lại"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
             </button>
             <div>
               <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-[#030D2E]">Thành viên</h2>
@@ -1903,7 +1887,7 @@ export function MoreScreen({
               className="flex h-11 sm:h-12 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] px-5 text-[14px] font-black text-white transition-all hover:bg-[#030D2E]/90 active:scale-[0.98] shadow-sm w-full sm:w-auto shrink-0"
               onClick={openNewMember}
             >
-              <UserPlus className="w-4.5 h-4.5" strokeWidth={2.5} />
+              <HugeiconsIcon icon={UserAdd01Icon} className="w-4.5 h-4.5" />
               Thêm thành viên
             </button>
           )}
@@ -1940,14 +1924,14 @@ export function MoreScreen({
               </div>
               {members.length < 2 && (
                 <div className="pt-3 border-t border-slate-100 flex items-start gap-2.5 text-[13px] font-semibold text-slate-500">
-                  <UsersRound className="h-4.5 w-4.5 text-[#00BFB7] shrink-0" />
+                  <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5 text-[#00BFB7] shrink-0" />
                   <p>Thêm thành viên để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ ràng hơn.</p>
                 </div>
               )}
             </div>
           ) : (
             <div className="flex items-start gap-2.5 py-1 text-[14px] md:text-[15px] font-semibold text-slate-500 leading-relaxed">
-              <UsersRound className="h-5 w-5 text-[#00BFB7] shrink-0 mt-0.5" />
+              <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-[#00BFB7] shrink-0 mt-0.5" />
               <span>Thêm thành viên để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ ràng hơn.</span>
             </div>
           )}
@@ -1980,7 +1964,7 @@ export function MoreScreen({
             /* Empty State Layout */
             <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
-                <UsersRound className="h-6 w-6" />
+                <HugeiconsIcon icon={UserGroupIcon} className="h-6 w-6" />
               </div>
               <h3 className="text-[16px] font-bold text-[#030D2E]">Chưa có thành viên nào</h3>
               <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
@@ -2039,14 +2023,14 @@ export function MoreScreen({
           >
             <div className="flex items-center gap-3.5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
-                <Lock className="h-5 w-5" />
+                <HugeiconsIcon icon={LockIcon} className="h-5 w-5" />
               </div>
               <div>
                 <h4 className="text-[15px] font-bold text-[#030D2E]">Quyền riêng tư</h4>
                 <p className="text-[12px] text-slate-400 font-medium">Quản lý an toàn dữ liệu và quyền cá nhân</p>
               </div>
             </div>
-            <ChevronRight className="h-5 w-5 text-slate-400" />
+            <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
           </button>
 
           {/* About */}
@@ -2056,14 +2040,14 @@ export function MoreScreen({
           >
             <div className="flex items-center gap-3.5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 border border-violet-100">
-                <Info className="h-5 w-5" />
+                <HugeiconsIcon icon={InformationCircleIcon} className="h-5 w-5" />
               </div>
               <div>
                 <h4 className="text-[15px] font-bold text-[#030D2E]">Thông tin ứng dụng</h4>
                 <p className="text-[12px] text-slate-400 font-medium">Khám phá thông tin và hành trình phát triển</p>
               </div>
             </div>
-            <ChevronRight className="h-5 w-5 text-slate-400" />
+            <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
           </button>
 
           {/* Donate */}
@@ -2073,21 +2057,21 @@ export function MoreScreen({
           >
             <div className="flex items-center gap-3.5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 border border-amber-100">
-                <Coffee className="h-5 w-5" />
+                <HugeiconsIcon icon={Coffee01Icon} className="h-5 w-5" />
               </div>
               <div>
                 <h4 className="text-[15px] font-bold text-[#030D2E]">Ủng hộ tác giả</h4>
                 <p className="text-[12px] text-slate-400 font-medium">Nếu bạn thấy app hữu ích, cảm ơn rất nhiều</p>
               </div>
             </div>
-            <ChevronRight className="h-5 w-5 text-slate-400" />
+            <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
           </button>
 
           {/* Version */}
           <div className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8]">
             <div className="flex items-center gap-3.5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-500 border border-slate-200/60">
-                <Package className="h-5 w-5" />
+                <HugeiconsIcon icon={PackageIcon} className="h-5 w-5" />
               </div>
               <div>
                 <h4 className="text-[15px] font-bold text-[#030D2E]">Phiên bản</h4>
@@ -2102,7 +2086,7 @@ export function MoreScreen({
         <div className="flex flex-col gap-2">
           <p className="text-[11px] font-bold text-rose-400 uppercase tracking-widest px-1 pb-1">Vùng nguy hiểm</p>
           <ActionCard
-            icon={Trash2}
+            icon={Delete01Icon}
             title="Khôi phục cài đặt gốc"
             onClick={() => setIsFactoryResetConfirmOpen(true)}
             iconBgColor="bg-rose-50"
@@ -2147,7 +2131,7 @@ export function MoreScreen({
 
         {/* Hero chuyến đi compact hơn */}
         <section className="relative overflow-hidden rounded-[28px] bg-[#FFFDF8] border border-[#E8E1D8] p-5 md:p-6 text-kat-text shadow-soft">
-          <Compass className="absolute -right-6 -bottom-6 w-32 h-32 text-kat-primary/[0.04] rotate-12 pointer-events-none" />
+          <HugeiconsIcon icon={CompassIcon} className="absolute -right-6 -bottom-6 w-32 h-32 text-kat-primary/[0.04] rotate-12 pointer-events-none" />
           
           <div className="relative z-10 flex flex-col gap-4">
             {/* Header info */}
@@ -2161,15 +2145,15 @@ export function MoreScreen({
             {/* Metadata tags */}
             <div className="flex flex-wrap gap-2 text-[12.5px] font-bold text-slate-600">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5">
-                <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+                <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 {trip.location || "Chưa có địa điểm"}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5">
-                <CalendarDays className="h-3.5 w-3.5 text-kat-primary" />
+                <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 {trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}`}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5">
-                <Clock3 className="h-3.5 w-3.5 text-kat-primary" />
+                <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 {tripDurationText}
               </span>
             </div>
@@ -2177,19 +2161,19 @@ export function MoreScreen({
             {/* Compact inline stats pills */}
             <div className="flex flex-wrap gap-2 pt-2.5 border-t border-slate-200/60 mt-1">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-kat-primary-soft border border-kat-primary/20 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable">
-                <UsersRound className="h-3.5 w-3.5" />
+                <HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5" />
                 {members.length} thành viên
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0081BE]/8 border border-[#0081BE]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#0081BE]">
-                <Route className="h-3.5 w-3.5" />
+                <HugeiconsIcon icon={Route01Icon} className="h-3.5 w-3.5" />
                 {events.length} lịch trình
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/8 border border-emerald-500/15 px-3 py-1.5 text-[12.5px] font-extrabold text-emerald-600">
-                <WalletCards className="h-3.5 w-3.5" />
+                <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5" />
                 {formatMoney(totalExpense)} chi phí
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F89B02]/8 border border-[#F89B02]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#F89B02]">
-                <Luggage className="h-3.5 w-3.5" />
+                <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5" />
                 Chuẩn bị {checklistPercent}%
               </span>
             </div>
@@ -2201,7 +2185,7 @@ export function MoreScreen({
           <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">Tính năng</h3>
           <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
             <ActionCard
-              icon={MapPinned}
+              icon={MapsIcon}
               title="Thông tin chuyến đi"
               onClick={() => setEditingTrip(true)}
               disabled={isReadOnly}
@@ -2209,35 +2193,35 @@ export function MoreScreen({
               iconTextColor="text-sky-600 border-sky-100"
             />
             <ActionCard
-              icon={UsersRound}
+              icon={UserGroupIcon}
               title="Thành viên"
               onClick={() => setSection("members")}
               iconBgColor="bg-amber-50"
               iconTextColor="text-amber-600 border-amber-100"
             />
             <ActionCard
-              icon={Trophy}
+              icon={AwardIcon}
               title="Tổng kết hành trình"
               onClick={() => setSection("wrapped")}
               iconBgColor="bg-indigo-50"
               iconTextColor="text-indigo-600 border-indigo-100"
             />
             <ActionCard
-              icon={Globe}
+              icon={GlobeIcon}
               title="Bản tin hành trình"
               onClick={() => setSection("journal")}
               iconBgColor="bg-emerald-50"
               iconTextColor="text-emerald-600 border-emerald-100"
             />
             <ActionCard
-              icon={TicketCheck}
+              icon={Ticket01Icon}
               title="Vé, đặt chỗ & giấy tờ"
               onClick={() => setSection("documents")}
               iconBgColor="bg-teal-50"
               iconTextColor="text-teal-600 border-teal-100"
             />
             <ActionCard
-              icon={Share2}
+              icon={Share01Icon}
               title="Chia sẻ chuyến đi"
               onClick={handleShareTrip}
               iconBgColor="bg-violet-50"
@@ -2252,13 +2236,13 @@ export function MoreScreen({
           <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
             <div className="flex flex-col gap-2 md:col-span-2">
               <ActionCard
-                icon={DatabaseBackup}
+                icon={DatabaseBackupIcon}
                 title="Dữ liệu chuyến đi"
                 onClick={() => setIsDataSectionOpen(!isDataSectionOpen)}
                 iconBgColor="bg-blue-50"
                 iconTextColor="text-blue-600 border-blue-100"
                 rightElement={
-                  <ChevronRight 
+                  <HugeiconsIcon icon={ChevronRightIcon} 
                     className={classNames(
                       "h-5 w-5 text-muted-foreground transition-transform duration-200", 
                       isDataSectionOpen ? "rotate-90" : ""
@@ -2270,7 +2254,7 @@ export function MoreScreen({
               {isDataSectionOpen && (
                 <div className="flex flex-col gap-2 pl-4 border-l border-slate-200 mt-1 animate-fadeIn">
                   <ActionCard
-                    icon={Download}
+                    icon={Download01Icon}
                     title="Sao lưu hành trình"
                     onClick={exportTrip}
                     iconBgColor="bg-sky-50"
@@ -2279,7 +2263,7 @@ export function MoreScreen({
 
 
                   <ActionCard
-                    icon={FileText}
+                    icon={File01Icon}
                     title="Xuất báo cáo PDF"
                     onClick={() => exportTripPdf(tripData)}
                     iconBgColor="bg-rose-50"
@@ -2287,7 +2271,7 @@ export function MoreScreen({
                   />
                   
                   <ActionCard
-                    icon={Table2}
+                    icon={Table01Icon}
                     title="Xuất bảng tính Excel"
                     onClick={() => { exportTripExcel(tripData).catch(console.error); }}
                     iconBgColor="bg-emerald-50"
@@ -2305,7 +2289,7 @@ export function MoreScreen({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {!isReadOnly ? (
               <ActionCard
-                icon={Lock}
+                icon={LockIcon}
                 title="Kết thúc chuyến đi"
                 onClick={() => setIsArchiveConfirmOpen(true)}
                 iconBgColor="bg-slate-100"
@@ -2315,7 +2299,7 @@ export function MoreScreen({
               />
             ) : (
               <ActionCard
-                icon={Unlock}
+                icon={CircleUnlock01Icon}
                 title="Khôi phục chuyến đi"
                 onClick={() => setIsUnarchiveConfirmOpen(true)}
                 iconBgColor="bg-emerald-50"
@@ -2325,7 +2309,7 @@ export function MoreScreen({
               />
             )}
             <ActionCard
-              icon={Trash2}
+              icon={Delete01Icon}
               title="Xóa vĩnh viễn chuyến đi"
               onClick={() => setIsDeleteConfirmOpen(true)}
               iconBgColor="bg-rose-50"
@@ -2427,7 +2411,7 @@ export function MoreScreen({
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-500">
-                      <WalletCards className="h-4.5 w-4.5" />
+                      <HugeiconsIcon icon={WalletCardsIcon} className="h-4.5 w-4.5" />
                     </span>
                     <span className="text-[14.5px] font-bold text-slate-700">Bao gồm chi phí</span>
                   </div>
@@ -2444,7 +2428,7 @@ export function MoreScreen({
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-50 text-violet-500">
-                      <BookOpenText className="h-4.5 w-4.5" />
+                      <HugeiconsIcon icon={BookOpen01Icon} className="h-4.5 w-4.5" />
                     </span>
                     <span className="text-[14.5px] font-bold text-slate-700">Bao gồm bản tin</span>
                   </div>
@@ -2461,7 +2445,7 @@ export function MoreScreen({
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-50 text-amber-500">
-                      <CheckCircle2 className="h-4.5 w-4.5" />
+                      <HugeiconsIcon icon={CheckmarkCircle01Icon} className="h-4.5 w-4.5" />
                     </span>
                     <span className="text-[14.5px] font-bold text-slate-700">Bao gồm danh sách chuẩn bị</span>
                   </div>
@@ -2478,7 +2462,7 @@ export function MoreScreen({
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-50 text-sky-500">
-                      <AlertTriangle className="h-4.5 w-4.5" />
+                      <HugeiconsIcon icon={Alert01Icon} className="h-4.5 w-4.5" />
                     </span>
                     <span className="text-[14.5px] font-bold text-slate-700">Bao gồm phương án dự phòng</span>
                   </div>
@@ -2495,7 +2479,7 @@ export function MoreScreen({
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-50 text-rose-500">
-                      <FileText className="h-4.5 w-4.5" />
+                      <HugeiconsIcon icon={File01Icon} className="h-4.5 w-4.5" />
                     </span>
                     <span className="text-[14.5px] font-bold text-slate-700">Bao gồm giấy tờ & đặt chỗ</span>
                   </div>
@@ -2507,7 +2491,7 @@ export function MoreScreen({
 
                 {shareOptions.includeDocuments && (
                   <div className="rounded-2xl bg-rose-50/70 border border-rose-100 p-4 text-[13px] text-rose-800 font-semibold flex gap-2 animate-fadeIn">
-                    <ShieldAlert className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
+                    <HugeiconsIcon icon={AlertCircleIcon} className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
                     <span>Giấy tờ có thể chứa mã đặt chỗ, vé, số điện thoại hoặc liên kết riêng tư. Chỉ bật nếu bạn thực sự tin tưởng người nhận link.</span>
                   </div>
                 )}
@@ -2521,7 +2505,7 @@ export function MoreScreen({
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-50 text-amber-500">
-                      <Lock className="h-4 w-4" />
+                      <HugeiconsIcon icon={LockIcon} className="h-4 w-4" />
                     </span>
                     <div>
                       <span className="text-[14.5px] font-bold text-slate-700">Bảo vệ bằng mã PIN</span>
@@ -2570,7 +2554,7 @@ export function MoreScreen({
                     </div>
                     {shareOptions.sharePin.length === 4 && (
                       <p className="mt-2 text-center text-[12px] text-emerald-600 font-semibold flex items-center justify-center gap-1">
-                        <Check className="h-3 w-3" /> Mã PIN đã sẵn sàng
+                        <HugeiconsIcon icon={CheckIcon} className="h-3 w-3" /> Mã PIN đã sẵn sàng
                       </p>
                     )}
                     {shareOptions.usePinProtection && shareOptions.sharePin.length < 4 && (
@@ -2603,7 +2587,7 @@ export function MoreScreen({
             <div className="space-y-5 animate-fadeIn">
               {/* Success layout */}
               <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-100/80 p-3.5">
-                <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+                <HugeiconsIcon icon={CheckmarkCircle01Icon} className="h-5 w-5 text-emerald-600 shrink-0" />
                 <span className="text-[14px] font-bold text-emerald-800">Đã tạo link chia sẻ</span>
               </div>
 
@@ -2627,9 +2611,9 @@ export function MoreScreen({
                   title="Sao chép link"
                 >
                   {copiedLink ? (
-                    <Check className="h-4 w-4 text-emerald-500" />
+                    <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 text-emerald-500" />
                   ) : (
-                    <Copy className="h-4 w-4" />
+                    <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />
                   )}
                 </button>
               </div>
@@ -2638,12 +2622,12 @@ export function MoreScreen({
               <div className="text-[12px] font-semibold flex items-center gap-2 bg-slate-50 border border-slate-150/50 rounded-xl py-2 px-3 animate-fadeIn">
                 {isAutoSyncing ? (
                   <>
-                    <RefreshCw className="h-3.5 w-3.5 animate-spin text-sky-600" />
+                    <HugeiconsIcon icon={Refresh01Icon} className="h-3.5 w-3.5 animate-spin text-sky-600" />
                     <span className="text-sky-700">Đang tự động đồng bộ các thay đổi mới nhất...</span>
                   </>
                 ) : (
                   <>
-                    <Check className="h-3.5 w-3.5 text-emerald-600" strokeWidth={3} />
+                    <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5 text-emerald-600" />
                     <span className="text-emerald-700">
                       Tự động đồng bộ khi có thay đổi. Lần cuối: {lastSyncedAt ? lastSyncedAt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Vừa xong'}
                     </span>
@@ -2666,7 +2650,7 @@ export function MoreScreen({
                   disabled={syncLoading}
                   className="flex-[2] rounded-xl bg-[#030D2E]/10 border border-[#030D2E]/20 py-3 font-bold text-[#030D2E] hover:bg-[#030D2E]/20 active:scale-95 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none flex items-center justify-center gap-1.5"
                 >
-                  <RefreshCw className={classNames("h-4 w-4", syncLoading && "animate-spin")} />
+                  <HugeiconsIcon icon={Refresh01Icon} className={classNames("h-4 w-4", syncLoading && "animate-spin")} />
                   {syncLoading ? "Đang đồng bộ..." : "Đồng bộ dữ liệu"}
                 </button>
                 <button
@@ -2718,7 +2702,7 @@ export function MoreScreen({
               }}
               className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-[#030D2E] border border-[#030D2E] px-6 font-bold text-white hover:bg-[#030D2E]/90 active:scale-98 transition-all duration-200 shadow-[0_8px_24px_-8px_rgba(3,13,46,0.4)]"
             >
-              <Lock className="h-5 w-5 opacity-80" />
+              <HugeiconsIcon icon={LockIcon} className="h-5 w-5 opacity-80" />
               Đồng ý đóng gói
             </button>
           </div>
@@ -2756,7 +2740,7 @@ export function MoreScreen({
               }}
               className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-emerald-600 border border-emerald-500 px-6 font-bold text-white hover:bg-emerald-700 active:scale-98 transition-all duration-200 shadow-[0_8px_24px_-8px_rgba(5,150,105,0.4)]"
             >
-              <Unlock className="h-5 w-5 opacity-80" />
+              <HugeiconsIcon icon={CircleUnlock01Icon} className="h-5 w-5 opacity-80" />
               Tiếp tục hành trình
             </button>
           </div>

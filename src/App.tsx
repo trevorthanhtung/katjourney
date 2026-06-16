@@ -1,6 +1,34 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { Backpack, CalendarDays, Calendar, CheckCircle, Compass, Menu, Plus, WalletCards, Settings, Plane, X, ArrowLeft, Search, Bell, BellRing, ChevronRight, Check, ListTodo, FileText, Globe, Sparkles, Home, User, UserPlus, Heart, LogOut, Cloud, RefreshCw, Coffee, WifiOff, LockKeyhole, Link, MessageCircle } from "lucide-react";
-import React, { useState } from "react";
+
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Link01Icon,
+  UserIcon,
+  Search01Icon,
+  Notification01Icon,
+  NotificationBubbleIcon,
+  Home01Icon,
+  Compass01Icon,
+  Calendar01Icon,
+  WalletCardsIcon,
+  CheckmarkCircle02Icon,
+  Menu01Icon,
+  CheckListIcon,
+  File01Icon,
+  Globe02Icon,
+  SparklesIcon,
+  ChevronRightIcon,
+  Settings01Icon,
+  Logout01Icon,
+  WifiOffIcon,
+  LockIcon,
+  Cancel01Icon,
+  CheckIcon,
+  CloudIcon,
+  RefreshIcon,
+  Airplane01Icon
+} from "@hugeicons/core-free-icons";
+import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "./db";
 
@@ -42,7 +70,7 @@ function NavButton({
 }: { 
   isActive: boolean; 
   onClick: () => void; 
-  icon: React.ElementType; 
+  icon: any; 
   label: string 
 }) {
   return (
@@ -52,11 +80,14 @@ function NavButton({
       className={classNames(
         "relative flex items-center justify-center rounded-full transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden motion-press",
         isActive 
-          ? "bg-kat-primary/10 text-kat-primary px-2.5 min-[360px]:px-4 sm:px-5 h-10 min-[360px]:h-[52px] gap-1.5 min-[360px]:gap-2" 
+          ? "bg-white text-kat-text shadow-sm border border-slate-200/50 px-2.5 min-[360px]:px-4 sm:px-5 h-10 min-[360px]:h-[52px] gap-1.5 min-[360px]:gap-2" 
           : "text-kat-text/60 hover:text-kat-text/80 w-10 min-[360px]:w-[52px] h-10 min-[360px]:h-[52px]"
       )}
     >
-      <Icon className={classNames("h-[19px] w-[19px] min-[360px]:h-[22px] min-[360px]:w-[22px] shrink-0 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]", isActive ? "scale-100" : "scale-[0.94]")} strokeWidth={isActive ? 2.5 : 2} />
+      <HugeiconsIcon 
+        icon={Icon} 
+        className={classNames("h-[19px] w-[19px] min-[360px]:h-[22px] min-[360px]:w-[22px] shrink-0 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]", isActive ? "scale-100" : "scale-[0.94]")} 
+      />
       {isActive && <span className="text-[12px] min-[360px]:text-[14px] font-bold whitespace-nowrap">{label}</span>}
     </button>
   );
@@ -462,7 +493,7 @@ function App() {
       return (
         <div className="flex flex-col items-center justify-center py-8 px-5 text-center bg-white">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 mb-2.5 border border-emerald-100">
-            <Check className="h-5 w-5" strokeWidth={3} />
+            <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" strokeWidth={3} />
           </div>
           <p className="text-[14px] font-bold text-[#030D2E]">Tuyệt vời! Không có nhắc nhở</p>
           <p className="text-[12px] text-slate-500 font-semibold mt-0.5">Hành trình của bạn đã sẵn sàng.</p>
@@ -471,36 +502,36 @@ function App() {
     }
 
     return reminders.map((rem) => {
-      let Icon = Bell;
+      let icon = Notification01Icon;
       let colorClasses = "bg-slate-50 text-slate-600 border border-slate-100/50";
       
       switch (rem.tab) {
         case "timeline":
-          Icon = Calendar;
+          icon = Calendar01Icon;
           colorClasses = "bg-blue-50 text-blue-600 border border-blue-100/50";
           break;
         case "checklist":
-          Icon = ListTodo;
+          icon = CheckListIcon;
           colorClasses = "bg-amber-50 text-amber-600 border border-amber-100/50";
           break;
         case "expenses":
-          Icon = WalletCards;
+          icon = WalletCardsIcon;
           colorClasses = "bg-emerald-50 text-emerald-600 border border-emerald-100/50";
           break;
         case "documents":
-          Icon = FileText;
+          icon = File01Icon;
           colorClasses = "bg-rose-50 text-rose-600 border border-rose-100/50";
           break;
         case "journal":
-          Icon = Globe;
+          icon = Globe02Icon;
           colorClasses = "bg-violet-50 text-violet-600 border border-violet-100/50";
           break;
         case "wrapped":
-          Icon = Sparkles;
+          icon = SparklesIcon;
           colorClasses = "bg-sky-50 text-sky-600 border border-sky-100/50";
           break;
         case "share_requests" as any:
-          Icon = BellRing;
+          icon = NotificationBubbleIcon;
           colorClasses = "bg-rose-50 text-rose-600 border border-rose-100/50";
           break;
       }
@@ -522,7 +553,7 @@ function App() {
         >
           {/* Leading Icon */}
           <div className={classNames("flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-sm", colorClasses)}>
-            <Icon className="h-5 w-5" />
+            <HugeiconsIcon icon={icon} className="h-5 w-5" />
           </div>
 
           {/* Message Content */}
@@ -533,7 +564,7 @@ function App() {
           </div>
 
           {/* Trailing Icon */}
-          <ChevronRight className="h-4.5 w-4.5 shrink-0 text-slate-400" />
+          <HugeiconsIcon icon={ChevronRightIcon} className="h-4.5 w-4.5 shrink-0 text-slate-400" />
         </button>
       );
     });
@@ -610,7 +641,7 @@ function App() {
           <div className="flex items-center gap-2 md:gap-3">
             {isAutoBackingUp && (
               <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 animate-pulse shrink-0" title="Đang tự động sao lưu...">
-                <Cloud className="w-3.5 h-3.5 animate-spin shrink-0" />
+                <HugeiconsIcon icon={CloudIcon} className="w-3.5 h-3.5 animate-spin shrink-0" />
                 <span className="text-[10px] font-black uppercase tracking-wider hidden sm:inline">Đang lưu...</span>
               </div>
             )}
@@ -620,7 +651,10 @@ function App() {
               className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
               title="Xem chuyến đi qua link chia sẻ"
             >
-              <Link className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
+              <HugeiconsIcon 
+                icon={Link01Icon} 
+                className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" 
+              />
             </button>
 
             {!isManagingTrips && tripId ? (
@@ -630,7 +664,7 @@ function App() {
                   className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
                   title="Tìm trong chuyến đi"
                 >
-                  <Search className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
+                  <HugeiconsIcon icon={Search01Icon} className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
                 </button>
 
                 <div className="relative" ref={remindersRef}>
@@ -640,9 +674,9 @@ function App() {
                     title="Việc cần chú ý"
                   >
                     {reminders.length > 0 ? (
-                      <BellRing className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5 text-amber-500 animate-pulse" />
+                      <HugeiconsIcon icon={NotificationBubbleIcon} className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5 text-amber-500 animate-pulse" />
                     ) : (
-                      <Bell className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
+                      <HugeiconsIcon icon={Notification01Icon} className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
                     )}
                   </button>
                   {reminders.length > 0 && (
@@ -680,7 +714,7 @@ function App() {
                   className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
                   title="Quay lại danh sách chuyến đi"
                 >
-                  <Home className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
+                  <HugeiconsIcon icon={Home01Icon} className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
                 </button>
               </>
             ) : (
@@ -701,7 +735,10 @@ function App() {
                       )
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-500">
-                        <User className="h-4 w-4 min-[360px]:h-[18px] min-[360px]:w-[18px] text-slate-500" />
+                        <HugeiconsIcon 
+                          icon={UserIcon} 
+                          className="h-4 w-4 min-[360px]:h-[18px] min-[360px]:w-[18px] text-slate-500" 
+                        />
                       </div>
                     )}
                   </button>
@@ -731,7 +768,7 @@ function App() {
                                 }}
                                 className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
                               >
-                                <User className="w-4 h-4 text-slate-400 shrink-0" />
+                                <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400 shrink-0" />
                                 Hồ sơ & Tài khoản
                               </button>
                               <button
@@ -742,7 +779,7 @@ function App() {
                                 }}
                                 className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
                               >
-                                <Settings className="w-4 h-4 text-slate-400 shrink-0" />
+                                <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 text-slate-400 shrink-0" />
                                 Cài đặt ứng dụng
                               </button>
                             </div>
@@ -754,7 +791,7 @@ function App() {
                                 }}
                                 className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 hover:bg-rose-50 transition-colors"
                               >
-                                <LogOut className="w-4 h-4 text-rose-500 shrink-0" />
+                                <HugeiconsIcon icon={Logout01Icon} className="w-4 h-4 text-rose-500 shrink-0" />
                                 Thoát Khách
                               </button>
                             </div>
@@ -770,7 +807,7 @@ function App() {
                                 }}
                                 className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
                               >
-                                <User className="w-4 h-4 text-slate-400 shrink-0" />
+                                <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400 shrink-0" />
                                 Hồ sơ & Tài khoản
                               </button>
                               <button
@@ -781,7 +818,7 @@ function App() {
                                 }}
                                 className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
                               >
-                                <Settings className="w-4 h-4 text-slate-400 shrink-0" />
+                                <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 text-slate-400 shrink-0" />
                                 Cài đặt ứng dụng
                               </button>
                             </div>
@@ -793,7 +830,7 @@ function App() {
                                 }}
                                 className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 hover:bg-rose-50 transition-colors"
                               >
-                                <LogOut className="w-4 h-4 text-rose-500 shrink-0" />
+                                <HugeiconsIcon icon={Logout01Icon} className="w-4 h-4 text-rose-500 shrink-0" />
                                 Đăng xuất
                               </button>
                             </div>
@@ -809,7 +846,7 @@ function App() {
                   className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
                   title="Cài đặt"
                 >
-                  <Settings className="h-4 w-4 min-[360px]:h-[18px] min-[360px]:w-[18px]" />
+                  <HugeiconsIcon icon={Settings01Icon} className="h-4 w-4 min-[360px]:h-[18px] min-[360px]:w-[18px]" />
                 </button>
             )
           )}
@@ -819,7 +856,7 @@ function App() {
 
       {!isOnline && (
         <div className="bg-amber-500 text-white px-4 py-2 flex items-center justify-center gap-2 shadow-sm animate-fadeIn z-40 relative">
-          <WifiOff className="w-4 h-4 shrink-0" />
+          <HugeiconsIcon icon={WifiOffIcon} className="w-4 h-4 shrink-0" />
           <div className="text-[13px] font-bold">
             {t("offline_warning")} <span className="hidden sm:inline font-medium"> - {t("offline_desc")}</span>
           </div>
@@ -835,7 +872,7 @@ function App() {
 
             <div className="relative flex items-center gap-2.5 z-10 min-w-0">
               <div className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0 border border-blue-50 text-blue-600">
-                <Cloud className="w-4.5 h-4.5" />
+                <HugeiconsIcon icon={CloudIcon} className="w-4.5 h-4.5" />
               </div>
               <div className="min-w-0">
                 <h3 className="text-[13.5px] font-extrabold text-slate-800 leading-tight">Đã tìm thấy bản cập nhật mới</h3>
@@ -858,12 +895,12 @@ function App() {
             >
               {syncProps.isSyncing ? (
                 <>
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5 animate-spin" />
                   Đang xử lý...
                 </>
               ) : (
                 <>
-                  <RefreshCw className="w-3.5 h-3.5" />
+                  <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5" />
                   Đồng bộ ngay
                 </>
               )}
@@ -875,7 +912,7 @@ function App() {
       {isReadOnly && !isManagingTrips && !isViewingArchive && !isCreatingTrip && (
         <div className="max-w-[1120px] mx-auto mt-4 px-4 md:px-6 animate-fadeIn">
           <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-stone-100/80 border border-stone-200/70">
-            <LockKeyhole className="w-3.5 h-3.5 text-stone-400 shrink-0" strokeWidth={2.5} />
+            <HugeiconsIcon icon={LockIcon} className="w-3.5 h-3.5 text-stone-400 shrink-0" strokeWidth={2.5} />
             <p className="text-[12.5px] text-stone-500 leading-snug">
               Chuyến đi đã kết thúc &mdash; chỉ xem, không chỉnh sửa.
             </p>
@@ -952,25 +989,25 @@ function App() {
             <NavButton
               isActive={activeTab === "home"}
               onClick={() => setActiveTab("home")}
-              icon={Compass}
+              icon={Compass01Icon}
               label="Tổng quan"
             />
             <NavButton
               isActive={activeTab === "timeline"}
               onClick={() => setActiveTab("timeline")}
-              icon={CalendarDays}
+              icon={Calendar01Icon}
               label="Lịch trình"
             />
             <NavButton
               isActive={activeTab === "expenses"}
               onClick={() => setActiveTab("expenses")}
-              icon={WalletCards}
+              icon={WalletCardsIcon}
               label="Chi phí"
             />
             <NavButton
               isActive={activeTab === "checklist"}
               onClick={() => setActiveTab("checklist")}
-              icon={CheckCircle}
+              icon={CheckmarkCircle02Icon}
               label="Chuẩn bị"
             />
             <NavButton
@@ -979,7 +1016,7 @@ function App() {
                 setMoreSection("overview");
                 setActiveTab("more");
               }}
-              icon={Menu}
+              icon={Menu01Icon}
               label="Thêm"
             />
           </div>
@@ -991,7 +1028,7 @@ function App() {
           <div className="bg-[#030D2E] text-white px-5 py-3 rounded-2xl shadow-floating flex items-center justify-between gap-4 border border-[#E8E1D8]/20">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="flex h-5.5 w-5.5 shrink-0 items-center justify-center rounded-full bg-kat-primary/20 text-kat-primary">
-                <Check className="h-3.5 w-3.5" strokeWidth={3.5} />
+                <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" strokeWidth={3.5} />
               </div>
               <span className="text-[14px] font-bold tracking-wide text-sand">Đã tạo chuyến đi thành công</span>
             </div>
@@ -1007,7 +1044,7 @@ function App() {
                 Xem chi tiết
               </button>
               <button onClick={() => setSuccessToast(null)} className="text-slate-400 hover:text-white p-1 transition-colors">
-                <X className="w-4 h-4" />
+                <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -1025,7 +1062,7 @@ function App() {
       {(syncProps.isSyncing || syncProps.isAutoSyncingUI) && (
         <div className="fixed bottom-24 md:bottom-6 right-6 z-50 animate-fadeIn pointer-events-none">
           <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/90 text-white shadow-lg backdrop-blur-sm border border-white/10 text-[12px] font-bold">
-            <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#00BFB7] shrink-0" />
+            <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5 animate-spin text-[#00BFB7] shrink-0" />
             <span>Đang đồng bộ từ Cloud...</span>
           </div>
         </div>
@@ -1117,7 +1154,7 @@ function App() {
               }}
               className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 active:scale-[0.98] transition-all duration-200 motion-press"
             >
-              <LogOut className="h-5 w-5" />
+              <HugeiconsIcon icon={Logout01Icon} className="h-5 w-5" />
               Đăng xuất
             </button>
           </div>
@@ -1177,7 +1214,7 @@ function App() {
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#00BFB7]/10 text-[#00BFB7]">
-                        <Plane className="h-5 w-5 -rotate-45" />
+                        <HugeiconsIcon icon={Airplane01Icon} className="h-5 w-5 -rotate-45" />
                       </div>
                       <div className="min-w-0 text-left">
                         <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate group-hover:text-[#00BFB7] transition-colors">
@@ -1188,7 +1225,7 @@ function App() {
                         </p>
                       </div>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-[#00BFB7] group-hover:translate-x-0.5 transition-all" />
+                    <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400 group-hover:text-[#00BFB7] group-hover:translate-x-0.5 transition-all" />
                   </div>
                 ))}
               </div>

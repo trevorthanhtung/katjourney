@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, Plus, CalendarDays, Clock } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ChevronLeftIcon, ChevronRightIcon, Add01Icon, Calendar01Icon, Clock01Icon } from "@hugeicons/core-free-icons";
 import { EventItem, Trip } from "../../db";
 import { classNames } from "../../utils/helpers";
 
@@ -70,10 +71,10 @@ export function TimelineCalendarView({
           </h3>
           <div className="flex items-center gap-2">
             <button onClick={prevMonth} className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-500 hover:bg-slate-100 transition-colors">
-              <ChevronLeft className="w-5 h-5" />
+              <HugeiconsIcon icon={ChevronLeftIcon} className="w-5 h-5" />
             </button>
             <button onClick={nextMonth} className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-500 hover:bg-slate-100 transition-colors">
-              <ChevronRight className="w-5 h-5" />
+              <HugeiconsIcon icon={ChevronRightIcon} className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -127,14 +128,14 @@ export function TimelineCalendarView({
         <div className="animate-fadeIn">
           <div className="flex items-center justify-between mb-4 px-1 border-b border-slate-100 pb-3">
             <h4 className="text-[16px] font-extrabold text-[#030D2E] flex items-center gap-2">
-              <CalendarDays className="w-5 h-5 text-[#00BFB7]" />
+              <HugeiconsIcon icon={Calendar01Icon} className="w-5 h-5 text-[#00BFB7]" />
               Lịch trình ngày {selectedDate.split('-').reverse().join('/')}
             </h4>
             <button 
               onClick={() => onOpenNewForm(selectedDate)}
               className="flex items-center gap-1 text-[13px] font-bold text-[#00BFB7] hover:brightness-95 transition-colors motion-press px-2 py-1 bg-[#00BFB7]/10 rounded-lg"
             >
-              <Plus className="w-4 h-4" />
+              <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
               Thêm
             </button>
           </div>
@@ -148,7 +149,7 @@ export function TimelineCalendarView({
               <div className="bg-[#FAF7F1] border border-[#E8E1D8] rounded-[24px] p-6 text-center shadow-sm">
                 <div className="flex justify-center mb-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm text-slate-400">
-                    <Clock className="w-5 h-5" />
+                    <HugeiconsIcon icon={Clock01Icon} className="w-5 h-5" />
                   </div>
                 </div>
                 <h5 className="text-[15px] font-bold text-[#030D2E]">Ngày này trống</h5>
@@ -159,7 +160,7 @@ export function TimelineCalendarView({
                   onClick={() => onOpenNewForm(selectedDate)}
                   className="mt-4 inline-flex items-center gap-1.5 rounded-2xl bg-white border border-slate-200 px-4 py-2.5 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all shadow-sm motion-press"
                 >
-                  <Plus className="w-4 h-4 text-kat-primary" />
+                  <HugeiconsIcon icon={Add01Icon} className="w-4 h-4 text-kat-primary" />
                   Thêm mục lịch trình
                 </button>
               </div>

@@ -1,42 +1,45 @@
 import React, { useState, useEffect } from 'react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  RouteIcon,
+  Clock01Icon,
+  Location01Icon,
+  MapsIcon,
+  Add01Icon,
+  MoreVerticalIcon,
+  TextFontIcon,
+  Calendar01Icon,
+  StickyNoteIcon,
+  KitchenUtensilsIcon,
+  Camera01Icon,
+  HotelIcon,
+  Coffee01Icon,
+  ShoppingBag01Icon,
+  CircleEllipsisIcon,
+  GitBranchIcon,
+  Wallet01Icon,
+  UserIcon,
+  UserCheck01Icon
+} from "@hugeicons/core-free-icons";
 import { createPortal } from 'react-dom';
-import { 
-  Route, 
-  Clock, 
-  MapPin, 
-  MapPinned, 
-  Plus, 
-  MoreVertical,
-  Type,
-  CalendarDays,
-  Map,
-  StickyNote,
-  Utensils,
-  Camera,
-  Hotel,
-  Coffee,
-  ShoppingBag,
-  CircleEllipsis,
-  GitBranch,
-  WalletCards
-} from 'lucide-react';
+
 import { EventItem, Member, Expense, BackupPlan, Trip } from '../../../db';
 import { classNames, formatDate, daysBetween } from '../../../utils/helpers';
 import { getEmbedMapUrl } from '../../../utils/mapUtils';
 import { submitChangeRequest } from '../../../services/sharedTripRequestService';
 import { showToast } from '../../../components/ui/ToastManager';
 import { BottomSheet, Input, Textarea, Select, DatePicker, TimePicker, DeleteConfirmModal } from '../../../components/ui';
-import { User, UserRoundCheck } from 'lucide-react';
+
 import { SharedBackupPlansSheet } from './SharedBackupPlansSheet';
 
 const ACTIVITY_CATEGORIES = [
-  { id: "transport", label: "Di chuyển", icon: Route, bgColor: "bg-blue-50 text-blue-600 border-blue-100", activeBg: "bg-blue-100 border-blue-400 text-blue-700" },
-  { id: "dining", label: "Ăn uống", icon: Utensils, bgColor: "bg-rose-50 text-rose-600 border-rose-100", activeBg: "bg-rose-100 border-rose-400 text-rose-700" },
-  { id: "sightseeing", label: "Tham quan", icon: Camera, bgColor: "bg-amber-50 text-amber-600 border-amber-100", activeBg: "bg-amber-100 border-amber-400 text-amber-700" },
-  { id: "accommodation", label: "Lưu trú", icon: Hotel, bgColor: "bg-slate-100 text-[#030D2E] border-slate-200", activeBg: "bg-[#030D2E]/10 border-[#030D2E] text-[#030D2E]" },
-  { id: "relaxation", label: "Nghỉ ngơi", icon: Coffee, bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100", activeBg: "bg-emerald-100 border-emerald-400 text-emerald-700" },
-  { id: "shopping", label: "Mua sắm", icon: ShoppingBag, bgColor: "bg-purple-50 text-purple-600 border-purple-100", activeBg: "bg-purple-100 border-purple-400 text-purple-700" },
-  { id: "other", label: "Khác", icon: CircleEllipsis, bgColor: "bg-slate-50 text-slate-600 border-slate-100", activeBg: "bg-slate-100 border-slate-400 text-slate-700" }
+  { id: "transport", label: "Di chuyển", icon: RouteIcon, bgColor: "bg-blue-50 text-blue-600 border-blue-100", activeBg: "bg-blue-100 border-blue-400 text-blue-700" },
+  { id: "dining", label: "Ăn uống", icon: KitchenUtensilsIcon, bgColor: "bg-rose-50 text-rose-600 border-rose-100", activeBg: "bg-rose-100 border-rose-400 text-rose-700" },
+  { id: "sightseeing", label: "Tham quan", icon: Camera01Icon, bgColor: "bg-amber-50 text-amber-600 border-amber-100", activeBg: "bg-amber-100 border-amber-400 text-amber-700" },
+  { id: "accommodation", label: "Lưu trú", icon: HotelIcon, bgColor: "bg-slate-100 text-[#030D2E] border-slate-200", activeBg: "bg-[#030D2E]/10 border-[#030D2E] text-[#030D2E]" },
+  { id: "relaxation", label: "Nghỉ ngơi", icon: Coffee01Icon, bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100", activeBg: "bg-emerald-100 border-emerald-400 text-emerald-700" },
+  { id: "shopping", label: "Mua sắm", icon: ShoppingBag01Icon, bgColor: "bg-purple-50 text-purple-600 border-purple-100", activeBg: "bg-purple-100 border-purple-400 text-purple-700" },
+  { id: "other", label: "Khác", icon: CircleEllipsisIcon, bgColor: "bg-slate-50 text-slate-600 border-slate-100", activeBg: "bg-slate-100 border-slate-400 text-slate-700" }
 ];
 
 function getCategory(id?: string) {
@@ -317,7 +320,7 @@ export function SharedActivitiesSection({
       <section className="bg-white rounded-3xl border border-slate-200/50 p-5 md:p-6 shadow-[0_2px_12px_rgba(3,13,46,0.02)]">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Route className="w-5 h-5 text-[#00A19D]" />
+          <HugeiconsIcon icon={RouteIcon} className="w-5 h-5 text-[#00A19D]" />
           <h3 className="text-[18px] font-black text-[#030D2E] tracking-tight">Lịch trình chi tiết</h3>
         </div>
       </div>
@@ -383,7 +386,7 @@ export function SharedActivitiesSection({
               onClick={() => setIsDayPickerOpen(true)}
               className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border border-slate-200/60 bg-white text-slate-600 hover:bg-slate-50 shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer"
             >
-              <CalendarDays className="w-3.5 h-3.5 text-slate-500" />
+              <HugeiconsIcon icon={Calendar01Icon} className="w-3.5 h-3.5 text-slate-500" />
               <span>Xem thêm ({days.length - 3})</span>
             </button>
           )}
@@ -437,7 +440,7 @@ export function SharedActivitiesSection({
                         className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100/50 text-[10px] font-extrabold tracking-wide transition-all active:scale-95 shadow-sm"
                         title="Mở bản đồ lộ trình"
                       >
-                        <MapPin className="w-3 h-3 text-emerald-600" />
+                        <HugeiconsIcon icon={Location01Icon} className="w-3 h-3 text-emerald-600" />
                         <span>Bản đồ</span>
                       </a>
                     )}
@@ -458,7 +461,7 @@ export function SharedActivitiesSection({
                   "flex h-10 w-10 items-center justify-center rounded-full ring-4 ring-white shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-100",
                   category.bgColor
                 )}>
-                  <CatIcon className="h-4.5 w-4.5" strokeWidth={2.2} />
+                  <HugeiconsIcon icon={CatIcon} className="h-4.5 w-4.5" />
                 </div>
               </div>
               
@@ -512,7 +515,7 @@ export function SharedActivitiesSection({
                         className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-50 active:scale-90 transition-all focus:outline-none"
                         title="Tùy chọn đề xuất"
                       >
-                        <MoreVertical className="h-4.5 w-4.5" />
+                        <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
                       </button>
                     </div>
                   )}
@@ -527,7 +530,7 @@ export function SharedActivitiesSection({
                       "flex items-center gap-1 font-bold text-[#00AFA8] bg-indigo-50/50 px-2 py-0.5 rounded-lg border border-indigo-100/40",
                       item.isPendingDelete ? "line-through text-slate-400" : ""
                     )}>
-                      <Clock className="h-3.5 w-3.5" />
+                      <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5" />
                       {item.time}
                     </span>
                   )}
@@ -543,7 +546,7 @@ export function SharedActivitiesSection({
                       item.isPendingDelete ? "line-through" : ""
                     )}>
                       <span className="h-1 w-1 rounded-full bg-slate-300 mx-1"></span>
-                      <UserRoundCheck className="h-3.5 w-3.5" />
+                      <HugeiconsIcon icon={UserCheck01Icon} className="h-3.5 w-3.5" />
                       {item.assignee}
                     </span>
                   )}
@@ -554,7 +557,7 @@ export function SharedActivitiesSection({
                     "mt-2 text-[13.5px] text-slate-600 flex items-start gap-1.5",
                     item.isPendingDelete ? "line-through opacity-60" : ""
                   )}>
-                    <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-slate-400" />
+                    <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 shrink-0 mt-0.5 text-slate-400" />
                     <span className="break-words font-medium">{item.location}</span>
                   </p>
                 )}
@@ -599,7 +602,7 @@ export function SharedActivitiesSection({
                           target="_blank" 
                           rel="noreferrer"
                         >
-                          {isRoute ? <Route className="w-3.5 h-3.5" /> : <Map className="w-3.5 h-3.5" />}
+                          {isRoute ? <HugeiconsIcon icon={RouteIcon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />}
                           {isRoute ? "Xem lộ trình di chuyển " : "Mở bằng ứng dụng Google Maps "}
                           &rarr;
                         </a>
@@ -619,7 +622,7 @@ export function SharedActivitiesSection({
                         <div className="mt-3 border-t border-slate-100/40 pt-2 flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
                           {linkedExpenses.map(exp => (
                             <div key={exp.id} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rose-50/60 text-rose-700 text-[11px] rounded-xl border border-rose-100 shadow-[0_1px_4px_rgba(229,10,98,0.03)] font-bold">
-                              <WalletCards className="w-3 h-3 text-rose-500" />
+                              <HugeiconsIcon icon={Wallet01Icon} className="w-3 h-3 text-rose-500" />
                               <span>{new Intl.NumberFormat('vi-VN').format(exp.amount)}đ</span>
                               <span className="text-rose-500/80 font-medium truncate max-w-[110px]">&middot; {exp.description || exp.category}</span>
                             </div>
@@ -640,7 +643,7 @@ export function SharedActivitiesSection({
                                 : "bg-slate-50/40 text-slate-500 border border-dashed border-slate-200 hover:bg-slate-100/60 hover:text-slate-700"
                             )}
                           >
-                            <GitBranch className="w-3.5 h-3.5" />
+                            <HugeiconsIcon icon={GitBranchIcon} className="w-3.5 h-3.5" />
                             <span>{backupCount > 0 ? `${backupCount} phương án dự phòng` : (isBackupPlansDirectEdit ? "Thêm phương án dự phòng" : "Đề xuất phương án dự phòng")}</span>
                           </button>
                         </div>
@@ -664,7 +667,7 @@ export function SharedActivitiesSection({
           className="mt-8 flex h-12 w-full items-center justify-center gap-2 text-[14px] font-black text-[#030D2E] bg-slate-50/50 hover:bg-indigo-50/40 border-2 border-dashed border-slate-200/60 hover:border-indigo-200/70 hover:text-indigo-600 rounded-2xl transition-all duration-200 shadow-sm cursor-pointer"
           title={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
         >
-          <Plus className="h-4.5 w-4.5" /> {isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
+          <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" /> {isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
         </button>
       )}
     </section>
@@ -720,7 +723,7 @@ export function SharedActivitiesSection({
           <Input
             label={
               <span className="flex items-center gap-1.5">
-                <Type className="h-4 w-4 text-slate-500" />
+                <HugeiconsIcon icon={TextFontIcon} className="h-4 w-4 text-slate-500" />
                 Tên mục lịch trình *
               </span>
             }
@@ -748,7 +751,7 @@ export function SharedActivitiesSection({
                         : "border-slate-200 hover:bg-slate-50 text-slate-500 bg-white"
                     )}
                   >
-                    <Icon className="h-5 w-5" strokeWidth={2.2} />
+                    <HugeiconsIcon icon={Icon} className="h-5 w-5" />
                     <span className="text-[10px] font-bold leading-none">{cat.label}</span>
                   </button>
                 );
@@ -762,7 +765,7 @@ export function SharedActivitiesSection({
                 <Select
                   label={
                     <span className="flex items-center gap-1.5">
-                      <CalendarDays className="h-4 w-4 text-slate-500" />
+                      <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
                       Chọn ngày *
                     </span>
                   }
@@ -775,7 +778,7 @@ export function SharedActivitiesSection({
                 <DatePicker
                   label={
                     <span className="flex items-center gap-1.5">
-                      <CalendarDays className="h-4 w-4 text-slate-500" />
+                      <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
                       Ngày thực hiện *
                     </span>
                   }
@@ -786,7 +789,7 @@ export function SharedActivitiesSection({
             <TimePicker
               label={
                 <span className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={Clock01Icon} className="h-4 w-4 text-slate-500" />
                   Giờ khởi hành / thời gian
                 </span>
               }
@@ -801,7 +804,7 @@ export function SharedActivitiesSection({
               label={
                 <span className="flex flex-col gap-1">
                   <span className="flex items-center gap-1.5">
-                    <MapPin className="h-4 w-4 text-slate-500" />
+                    <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-500" />
                     Địa điểm
                   </span>
                   <span className="text-xs font-normal text-slate-400">
@@ -817,7 +820,7 @@ export function SharedActivitiesSection({
               label={
                 <span className="flex flex-col gap-1">
                   <span className="flex items-center gap-1.5">
-                    <Map className="h-4 w-4 text-slate-500" />
+                    <HugeiconsIcon icon={MapsIcon} className="h-4 w-4 text-slate-500" />
                     Link bản đồ
                   </span>
                   <span className="text-xs font-normal text-slate-400">
@@ -837,7 +840,7 @@ export function SharedActivitiesSection({
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors"
                 >
-                  <Map className="w-3.5 h-3.5" />
+                  <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />
                   Mở link kiểm tra &rarr;
                 </a>
               </div>
@@ -848,7 +851,7 @@ export function SharedActivitiesSection({
           <Textarea
             label={
               <span className="flex items-center gap-1.5">
-                <StickyNote className="h-4 w-4 text-slate-500" />
+                <HugeiconsIcon icon={StickyNoteIcon} className="h-4 w-4 text-slate-500" />
                 Ghi chú thêm
               </span>
             }

@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import { 
-  Search, 
-  X, 
-  CalendarDays, 
-  WalletCards, 
-  CheckCircle, 
-  BookOpen, 
-  Users, 
-  FileText,
-  ArrowRight,
-  Clock,
-  MapPin,
-  GitBranch
-} from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Search01Icon,
+  Cancel01Icon,
+  Calendar01Icon,
+  Wallet01Icon,
+  CheckmarkCircle01Icon,
+  BookOpen01Icon,
+  UserGroupIcon,
+  File01Icon,
+  ArrowRight01Icon,
+  Clock01Icon,
+  Location01Icon,
+  GitBranchIcon
+} from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, EventItem, Expense, ChecklistItem, JournalEntry, Member, TravelDocument } from "../db";
 import { normalizeSearchText, formatDate, formatMoney } from "../utils/helpers";
@@ -116,7 +117,7 @@ export function TripSearchModal({
         
         {/* Search Input Bar */}
         <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100 bg-white">
-          <Search className="h-5.5 w-5.5 text-slate-400 shrink-0" />
+          <HugeiconsIcon icon={Search01Icon} className="h-5.5 w-5.5 text-slate-400 shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -130,7 +131,7 @@ export function TripSearchModal({
               onClick={() => setQuery("")}
               className="p-1 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors motion-press"
             >
-              <X className="h-4.5 w-4.5" />
+              <HugeiconsIcon icon={Cancel01Icon} className="h-4.5 w-4.5" />
             </button>
           )}
           <button 
@@ -146,7 +147,7 @@ export function TripSearchModal({
           {!isSearching ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-50 text-slate-400 mb-3">
-                <Search className="h-6 w-6" />
+                <HugeiconsIcon icon={Search01Icon} className="h-6 w-6" />
               </div>
               <p className="text-[14px] font-extrabold text-slate-600">Nhập từ khóa để bắt đầu tìm kiếm</p>
               <p className="text-[12.5px] font-semibold text-slate-400 max-w-[280px] mt-1">Tìm kiếm mọi ghi chép, kế hoạch, giấy tờ đã lưu trữ trong chuyến đi này.</p>
@@ -162,7 +163,7 @@ export function TripSearchModal({
               {matchedEvents.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400">
-                    <CalendarDays className="w-3.5 h-3.5" /> Lịch trình ({matchedEvents.length})
+                    <HugeiconsIcon icon={Calendar01Icon} className="w-3.5 h-3.5" /> Lịch trình ({matchedEvents.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedEvents.map(item => (
@@ -174,11 +175,11 @@ export function TripSearchModal({
                         <div className="min-w-0 flex-1 pr-3">
                           <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate">{item.title}</p>
                           <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-[12.5px] font-semibold text-slate-400">
-                            <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-slate-300" /> {formatDate(item.date)} {item.time ? `• ${item.time}` : ""}</span>
-                            {item.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3 text-slate-300" /> {item.location}</span>}
+                            <span className="flex items-center gap-1"><HugeiconsIcon icon={Clock01Icon} className="w-3 h-3 text-slate-300" /> {formatDate(item.date)} {item.time ? `• ${item.time}` : ""}</span>
+                            {item.location && <span className="flex items-center gap-1"><HugeiconsIcon icon={Location01Icon} className="w-3 h-3 text-slate-300" /> {item.location}</span>}
                           </div>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
+                        <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
                       </div>
                     ))}
                   </div>
@@ -189,7 +190,7 @@ export function TripSearchModal({
               {matchedBackupPlans.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400">
-                    <GitBranch className="w-3.5 h-3.5" /> Phương án dự phòng ({matchedBackupPlans.length})
+                    <HugeiconsIcon icon={GitBranchIcon} className="w-3.5 h-3.5" /> Phương án dự phòng ({matchedBackupPlans.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedBackupPlans.map(item => (
@@ -207,11 +208,11 @@ export function TripSearchModal({
                           <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate">{item.title}</p>
                           <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-[12.5px] font-semibold text-slate-400">
                             {item.reason && <span className="flex items-center gap-1">Khi: {item.reason}</span>}
-                            {item.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3 text-slate-300" /> {item.location}</span>}
-                            {item.date && <span className="flex items-center gap-1"><CalendarDays className="w-3 h-3 text-slate-300" /> {formatDate(item.date)}</span>}
+                            {item.location && <span className="flex items-center gap-1"><HugeiconsIcon icon={Location01Icon} className="w-3 h-3 text-slate-300" /> {item.location}</span>}
+                            {item.date && <span className="flex items-center gap-1"><HugeiconsIcon icon={Calendar01Icon} className="w-3 h-3 text-slate-300" /> {formatDate(item.date)}</span>}
                           </div>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
+                        <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
                       </div>
                     ))}
                   </div>
@@ -222,7 +223,7 @@ export function TripSearchModal({
               {matchedExpenses.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400">
-                    <WalletCards className="w-3.5 h-3.5" /> Chi phí ({matchedExpenses.length})
+                    <HugeiconsIcon icon={Wallet01Icon} className="w-3.5 h-3.5" /> Chi phí ({matchedExpenses.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedExpenses.map(item => (
@@ -241,7 +242,7 @@ export function TripSearchModal({
                           <span className="text-[14.5px] font-black text-rose-500 bg-rose-50 border border-rose-100/50 px-2.5 py-0.5 rounded-full">
                             {formatMoney(item.amount)}
                           </span>
-                          <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
+                          <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
                         </div>
                       </div>
                     ))}
@@ -253,7 +254,7 @@ export function TripSearchModal({
               {matchedChecklist.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400">
-                    <CheckCircle className="w-3.5 h-3.5" /> Chuẩn bị ({matchedChecklist.length})
+                    <HugeiconsIcon icon={CheckmarkCircle01Icon} className="w-3.5 h-3.5" /> Chuẩn bị ({matchedChecklist.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedChecklist.map(item => (
@@ -269,7 +270,7 @@ export function TripSearchModal({
                             {item.assignedTo && <span> • Người phụ trách: <span className="font-bold text-slate-600">{item.assignedTo}</span></span>}
                           </p>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
+                        <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
                       </div>
                     ))}
                   </div>
@@ -280,7 +281,7 @@ export function TripSearchModal({
               {matchedDocs.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400">
-                    <FileText className="w-3.5 h-3.5" /> Giấy tờ & Đặt chỗ ({matchedDocs.length})
+                    <HugeiconsIcon icon={File01Icon} className="w-3.5 h-3.5" /> Giấy tờ & Đặt chỗ ({matchedDocs.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedDocs.map(item => (
@@ -295,7 +296,7 @@ export function TripSearchModal({
                             {item.code ? <span>Code: <span className="font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded-md">{item.code}</span></span> : "Không có Code"}
                           </p>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
+                        <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
                       </div>
                     ))}
                   </div>
@@ -306,7 +307,7 @@ export function TripSearchModal({
               {matchedJournals.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400">
-                    <BookOpen className="w-3.5 h-3.5" /> Bản tin ({matchedJournals.length})
+                    <HugeiconsIcon icon={BookOpen01Icon} className="w-3.5 h-3.5" /> Bản tin ({matchedJournals.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedJournals.map(item => (
@@ -319,7 +320,7 @@ export function TripSearchModal({
                           <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate">{item.title || "Bản tin chuyến đi"}</p>
                           <p className="text-[12.5px] text-slate-400 font-semibold truncate mt-1">{item.content}</p>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
+                        <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
                       </div>
                     ))}
                   </div>
@@ -330,7 +331,7 @@ export function TripSearchModal({
               {matchedMembers.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400">
-                    <Users className="w-3.5 h-3.5" /> Thành viên ({matchedMembers.length})
+                    <HugeiconsIcon icon={UserGroupIcon} className="w-3.5 h-3.5" /> Thành viên ({matchedMembers.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedMembers.map(item => (
@@ -346,7 +347,7 @@ export function TripSearchModal({
                             {item.phone && <span> • SĐT: <span className="font-bold text-slate-600">{item.phone}</span></span>}
                           </p>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
+                        <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
                       </div>
                     ))}
                   </div>

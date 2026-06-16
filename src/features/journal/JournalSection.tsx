@@ -1,32 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { 
-  BookOpen, 
-  Calendar, 
-  Edit3, 
-  Plus, 
-  Smile, 
-  Trash2,
-  ArrowLeft,
-  Globe,
-  PenLine,
-  SmilePlus,
-  Clock3,
-  BookOpenText,
-  Star,
-  Camera,
-  MapPin,
-  Compass,
-  CalendarDays,
-  Type,
-  NotebookPen,
-  Save,
-  Sparkles,
-  Image as ImageIcon,
-  Loader2,
-  MessageCircle,
-  MapPinOff
-} from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+  Add01Icon,
+  SmileIcon,
+  SmilePlusIcon,
+  Delete01Icon,
+  GlobeIcon,
+  PenTool01Icon,
+  Clock01Icon,
+  BookOpen01Icon,
+  StarIcon,
+  Camera01Icon,
+  Location01Icon,
+  CompassIcon,
+  Calendar01Icon,
+  TextIcon,
+  Note01Icon,
+  FloppyDiskIcon,
+  SparklesIcon,
+  Image01Icon,
+  Loading01Icon,
+  BubbleChatIcon,
+  Cancel01Icon,
+  PencilEdit01Icon
+} from "@hugeicons/core-free-icons";
 import { db, JournalEntry, JournalMood, Member } from "../../db";
 import { getAvatarSvg } from "../../utils/avatars";
 import { formatDate, moodLabels, today } from "../../utils/helpers";
@@ -235,7 +234,7 @@ function JournalForm({
             onClick={save}
             className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white px-6 font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#030D2E] disabled:active:scale-100 shadow-sm"
           >
-            <Save className="h-4.5 w-4.5" strokeWidth={2.5} />
+            <HugeiconsIcon icon={FloppyDiskIcon} className="h-4.5 w-4.5" />
             Đăng bài viết
           </button>
         </div>
@@ -247,7 +246,7 @@ function JournalForm({
             <DatePicker 
               label={
                 <span className="flex items-center gap-1.5">
-                  <CalendarDays className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
                   Ngày ghi lại
                 </span>
               } 
@@ -260,7 +259,7 @@ function JournalForm({
           <Input 
             label={
               <span className="flex items-center gap-1.5">
-                <Type className="h-4 w-4 text-slate-500" />
+                <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-slate-500" />
                 Tiêu đề bài viết *
               </span>
             } 
@@ -274,19 +273,19 @@ function JournalForm({
           
           {isLocating ? (
             <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
-              <MapPin className="h-3.5 w-3.5" />
-              <span className="flex items-center gap-1.5 text-slate-400"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Đang lấy vị trí...</span>
+              <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5" />
+              <span className="flex items-center gap-1.5 text-slate-400"><HugeiconsIcon icon={Loading01Icon} className="h-3.5 w-3.5 animate-spin" /> Đang lấy vị trí...</span>
             </div>
           ) : form.locationName ? (
             <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
-              <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+              <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
               <span>Đang ở <span className="font-bold text-kat-primary">{form.locationName}</span></span>
               <button type="button" onClick={() => setForm({...form, locationName: "", latitude: undefined, longitude: undefined})} className="ml-1 px-1 text-slate-300 hover:text-rose-500 transition-colors font-bold text-[14px] leading-none" title="Xóa vị trí">×</button>
             </div>
           ) : (
             <div className="mt-2 flex items-center gap-1.5 px-1 animate-fadeIn">
               <button type="button" onClick={fetchLocation} className="flex items-center gap-1.5 text-[12.5px] font-bold text-slate-400 hover:text-kat-primary transition-colors focus:outline-none">
-                <MapPinOff className="h-3.5 w-3.5" />
+                <HugeiconsIcon icon={Cancel01Icon} className="h-3.5 w-3.5" />
                 <span>Nhấn để đính kèm vị trí</span>
               </button>
             </div>
@@ -296,7 +295,7 @@ function JournalForm({
         {/* Mood Chips */}
         <div>
           <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-            <SmilePlus className="h-4 w-4 text-slate-500" />
+            <HugeiconsIcon icon={SmilePlusIcon} className="h-4 w-4 text-slate-500" />
             Cảm xúc hôm nay
           </span>
           <div className="flex flex-wrap gap-2">
@@ -327,7 +326,7 @@ function JournalForm({
           <Textarea 
             label={
               <span className="flex items-center gap-1.5">
-                <NotebookPen className="h-4 w-4 text-slate-500" />
+                <HugeiconsIcon icon={Note01Icon} className="h-4 w-4 text-slate-500" />
                 Câu chuyện của bạn *
               </span>
             } 
@@ -349,7 +348,7 @@ function JournalForm({
                 onClick={() => { setForm({ ...form, imageUrl: "" }); setDirty(true); }}
                 className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 hover:bg-black/70"
               >
-                <Trash2 className="h-4 w-4" />
+                <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
               </button>
             </div>
           ) : (
@@ -368,9 +367,9 @@ function JournalForm({
                 className="w-full h-12 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 text-slate-500 font-bold text-[14px] hover:bg-slate-100 hover:text-[#00BFB7] transition-colors flex items-center justify-center gap-2"
               >
                 {uploading ? (
-                  <><Loader2 className="h-5 w-5 animate-spin" /> Đang tải ảnh...</>
+                  <><HugeiconsIcon icon={Loading01Icon} className="h-5 w-5 animate-spin" /> Đang tải ảnh...</>
                 ) : (
-                  <><ImageIcon className="h-5 w-5" /> Đính kèm hình ảnh</>
+                  <><HugeiconsIcon icon={Image01Icon} className="h-5 w-5" /> Đính kèm hình ảnh</>
                 )}
               </button>
             </div>
@@ -380,7 +379,7 @@ function JournalForm({
         {/* Quick Prompts Section inside Modal */}
         <div className="pt-1">
           <span className="mb-2 block text-[12.5px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <Sparkles className="h-4 w-4 text-slate-500" />
+            <HugeiconsIcon icon={SparklesIcon} className="h-4 w-4 text-slate-500" />
             Gợi ý viết nhanh
           </span>
           <div className="flex flex-wrap gap-1.5">
@@ -435,7 +434,7 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
       {/* Small Compact Card for Empty state */}
       <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 text-center shadow-soft max-w-md mx-auto my-4 animate-fadeIn">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
-          <BookOpenText className="h-6 w-6" />
+          <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
         </div>
         <h3 className="text-[16px] font-bold text-[#030D2E]">Chưa có bài viết nào</h3>
         <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
@@ -451,7 +450,7 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
         </div>
         <div className="flex flex-nowrap gap-3 overflow-x-auto pb-1.5 -mx-2 px-2 touch-pan-x snap-x snap-mandatory scrollbar-none md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0">
           {prompts.map((prompt, idx) => {
-            const icons = [Star, Camera, MapPin, Compass];
+            const icons = [StarIcon, Camera01Icon, Location01Icon, CompassIcon];
             const colors = ["text-amber-500", "text-rose-500", "text-emerald-500", "text-sky-500"];
             const PromptIcon = icons[idx];
             const iconColor = colors[idx];
@@ -464,7 +463,7 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
               >
                 <div className="flex items-start gap-2.5">
                   <div className={`p-1.5 rounded-lg bg-slate-50 border border-slate-100/60 ${iconColor} shrink-0 mt-0.5`}>
-                    <PromptIcon className="h-4.5 w-4.5" />
+                    <HugeiconsIcon icon={PromptIcon} className="h-4.5 w-4.5" />
                   </div>
                   <p className="text-[13.5px] font-extrabold text-slate-700 leading-snug group-hover:text-[#00BFB7] transition-colors line-clamp-2">
                     {prompt}
@@ -613,7 +612,7 @@ export function JournalSection({
               className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 text-slate-700 active:scale-95 transition-all shrink-0"
               title="Quay lại"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
             </button>
           )}
           <div>
@@ -632,7 +631,7 @@ export function JournalSection({
                 journalMode === "posts" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              <Globe className="w-4 h-4" /> Bản tin
+              <HugeiconsIcon icon={GlobeIcon} className="w-4 h-4" /> Bản tin
             </button>
             <button
               onClick={() => setJournalMode("chat")}
@@ -640,7 +639,7 @@ export function JournalSection({
                 journalMode === "chat" ? "bg-white text-[#00BFB7] shadow-sm" : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              <MessageCircle className="w-4 h-4" /> Trò chuyện
+              <HugeiconsIcon icon={BubbleChatIcon} className="w-4 h-4" /> Trò chuyện
             </button>
           </div>
         ) : (
@@ -652,7 +651,7 @@ export function JournalSection({
               onClick={openNewForm}
               className="hidden md:flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] px-5 text-[14px] font-black text-white transition-all hover:bg-[#030D2E]/90 shadow-sm shrink-0 motion-press"
             >
-              <PenLine className="w-4.5 h-4.5" strokeWidth={2.5} />
+              <HugeiconsIcon icon={PenTool01Icon} className="w-4.5 h-4.5" />
               Đăng bài viết
             </button>
         )}
@@ -664,12 +663,12 @@ export function JournalSection({
       <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft">
         <div className="flex items-center gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
-            <BookOpenText className="h-6 w-6" />
+            <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
           </div>
           <div className="grid grid-cols-3 gap-4 md:gap-6 flex-1 min-w-0">
             <div>
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <BookOpenText className="h-3.5 w-3.5 text-kat-primary shrink-0" />
+                <HugeiconsIcon icon={BookOpen01Icon} className="h-3.5 w-3.5 text-kat-primary shrink-0" />
                 Bài viết đã đăng
               </span>
               <span className="text-[15px] md:text-[17px] font-black text-[#030D2E] mt-1 block truncate">
@@ -678,7 +677,7 @@ export function JournalSection({
             </div>
             <div>
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <SmilePlus className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                <HugeiconsIcon icon={SmilePlusIcon} className="h-3.5 w-3.5 text-amber-500 shrink-0" />
                 Cảm xúc mới nhất
               </span>
               <span className="text-[15px] md:text-[17px] font-black text-[#030D2E] mt-1 block truncate">
@@ -687,7 +686,7 @@ export function JournalSection({
             </div>
             <div>
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Clock3 className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-blue-500 shrink-0" />
                 Lần ghi gần nhất
               </span>
               <span className="text-[15px] md:text-[17px] font-black text-[#030D2E] mt-1 block truncate">
@@ -709,7 +708,7 @@ export function JournalSection({
           {Object.entries(grouped).map(([date, entries]) => (
             <section key={date} className="space-y-4">
               <div className="flex items-center gap-2 px-1">
-                <Calendar className="h-4.5 w-4.5 text-slate-400" />
+                <HugeiconsIcon icon={Calendar01Icon} className="h-4.5 w-4.5 text-slate-400" />
                 <h3 className="text-[15px] font-extrabold text-[#030D2E]">{formatDate(date)}</h3>
               </div>
               
@@ -766,7 +765,7 @@ export function JournalSection({
                               </span>
                               {entry.postedAt && (
                                 <span className="text-[10px] font-semibold text-slate-400 flex items-center gap-0.5">
-                                  <Clock3 className="h-2.5 w-2.5" />
+                                  <HugeiconsIcon icon={Clock01Icon} className="h-2.5 w-2.5" />
                                   {new Date(entry.postedAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}
                                 </span>
                               )}
@@ -782,14 +781,14 @@ export function JournalSection({
                               onClick={() => openEditForm(entry)}
                               title="Sửa bài viết"
                             >
-                              <Edit3 className="h-4 w-4" />
+                              <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4" />
                             </button>
                             <button 
                               className="flex h-8 w-8 items-center justify-center rounded-full text-rose-500 hover:bg-rose-50 transition-all motion-press" 
                               onClick={() => triggerDelete(entry)}
                               title="Xóa bài viết"
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
                             </button>
                           </div>
                         )}
@@ -807,7 +806,7 @@ export function JournalSection({
                         </h4>
                         {entry.locationName && (
                           <div className="mt-1 flex items-center gap-1.5 text-[13px] font-medium text-slate-500">
-                            <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+                            <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                             <span>{entry.locationName}</span>
                           </div>
                         )}
@@ -891,7 +890,7 @@ export function JournalSection({
       {/* FAB Mobile button */}
       {!isReadOnly && journalMode === "posts" && (
         <FAB 
-          icon={<PenLine className="h-6 w-6" strokeWidth={2.5} />} 
+          icon={<HugeiconsIcon icon={PenTool01Icon} className="h-6 w-6" />} 
           label="Đăng bản tin" 
           onClick={openNewForm} 
           className="md:hidden h-14 w-14 bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] hover:scale-105 hover:bg-white/25 duration-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press"

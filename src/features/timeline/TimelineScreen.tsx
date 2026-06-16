@@ -1,32 +1,30 @@
 import React, { useEffect, useState, useRef } from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { 
-  Check, 
-  Edit3, 
-  MapPin, 
-  Plus, 
-  CalendarDays, 
-  Trash2, 
-  Plane, 
-  Utensils, 
-  Camera, 
-  BedDouble, 
-  ShoppingBag, 
-  Sparkles, 
-  Clock, 
-  Route,
-  MapPinned,
-  ChevronRight,
-  Map,
-  X,
-  Hotel,
-  Coffee,
-  CircleEllipsis,
-  StickyNote,
-  Type,
-  MoreVertical,
-  ChevronDown,
-  GitBranch
-} from "lucide-react";
+  CheckIcon, 
+  Cancel01Icon, 
+  Location01Icon, 
+  Add01Icon, 
+  Calendar01Icon, 
+  Delete01Icon, 
+  Clock01Icon, 
+  Route01Icon, 
+  MapPinned, 
+  ChevronRightIcon, 
+  MapsIcon, 
+  ChevronDownIcon, 
+  MoreVerticalIcon, 
+  PencilEdit01Icon, 
+  StickyNote01Icon, 
+  TextIcon, 
+  GitBranchIcon, 
+  Dish01Icon, 
+  Camera01Icon, 
+  HotelIcon, 
+  Coffee01Icon, 
+  ShoppingBag01Icon, 
+  MoreHorizontalCircle01Icon 
+} from "@hugeicons/core-free-icons";
 import { db, EventItem, Trip, Expense } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { classNames, formatDate, formatMoney, getTripTiming, formatDateShort, daysBetween, today } from "../../utils/helpers";
@@ -39,13 +37,13 @@ import { useModalHistory } from "../../hooks/useModalHistory";
 
 // Define categories for PWA Travel 2027
 const ACTIVITY_CATEGORIES = [
-  { id: "transport", label: "Di chuyển", icon: Route, bgColor: "bg-blue-50 text-blue-600 border-blue-100", activeBg: "bg-blue-100 border-blue-400 text-blue-700" },
-  { id: "dining", label: "Ăn uống", icon: Utensils, bgColor: "bg-rose-50 text-rose-600 border-rose-100", activeBg: "bg-rose-100 border-rose-400 text-rose-700" },
-  { id: "sightseeing", label: "Tham quan", icon: Camera, bgColor: "bg-amber-50 text-amber-600 border-amber-100", activeBg: "bg-amber-100 border-amber-400 text-amber-700" },
-  { id: "accommodation", label: "Lưu trú", icon: Hotel, bgColor: "bg-slate-100 text-[#030D2E] border-slate-200", activeBg: "bg-[#030D2E]/10 border-[#030D2E] text-[#030D2E]" },
-  { id: "relaxation", label: "Nghỉ ngơi", icon: Coffee, bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100", activeBg: "bg-emerald-100 border-emerald-400 text-emerald-700" },
-  { id: "shopping", label: "Mua sắm", icon: ShoppingBag, bgColor: "bg-purple-50 text-purple-600 border-purple-100", activeBg: "bg-purple-100 border-purple-400 text-purple-700" },
-  { id: "other", label: "Khác", icon: CircleEllipsis, bgColor: "bg-slate-50 text-slate-600 border-slate-100", activeBg: "bg-slate-100 border-slate-400 text-slate-700" }
+  { id: "transport", label: "Di chuyển", icon: Route01Icon, bgColor: "bg-blue-50 text-blue-600 border-blue-100", activeBg: "bg-blue-100 border-blue-400 text-blue-700" },
+  { id: "dining", label: "Ăn uống", icon: Dish01Icon, bgColor: "bg-rose-50 text-rose-600 border-rose-100", activeBg: "bg-rose-100 border-rose-400 text-rose-700" },
+  { id: "sightseeing", label: "Tham quan", icon: Camera01Icon, bgColor: "bg-amber-50 text-amber-600 border-amber-100", activeBg: "bg-amber-100 border-amber-400 text-amber-700" },
+  { id: "accommodation", label: "Lưu trú", icon: HotelIcon, bgColor: "bg-slate-100 text-[#030D2E] border-slate-200", activeBg: "bg-[#030D2E]/10 border-[#030D2E] text-[#030D2E]" },
+  { id: "relaxation", label: "Nghỉ ngơi", icon: Coffee01Icon, bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100", activeBg: "bg-emerald-100 border-emerald-400 text-emerald-700" },
+  { id: "shopping", label: "Mua sắm", icon: ShoppingBag01Icon, bgColor: "bg-purple-50 text-purple-600 border-purple-100", activeBg: "bg-purple-100 border-purple-400 text-purple-700" },
+  { id: "other", label: "Khác", icon: MoreHorizontalCircle01Icon, bgColor: "bg-slate-50 text-slate-600 border-slate-100", activeBg: "bg-slate-100 border-slate-400 text-slate-700" }
 ];
 
 function getCategory(id?: string) {
@@ -103,9 +101,9 @@ function ActivityCard({
           aria-label={item.completed ? "Đánh dấu chưa hoàn thành" : "Đánh dấu hoàn thành"}
         >
           {item.completed ? (
-            <Check className="h-5 w-5" strokeWidth={3} />
+            <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" />
           ) : (
-            <CatIcon className="h-5 w-5" strokeWidth={2.2} />
+            <HugeiconsIcon icon={CatIcon} className="h-5 w-5" />
           )}
         </button>
       </div>
@@ -121,7 +119,7 @@ function ActivityCard({
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
               {item.time ? (
                 <span className="flex items-center gap-1 text-[13px] font-bold text-sunset-600 bg-sunset-50 px-2.5 py-0.5 rounded-full border border-sunset-100">
-                  <Clock className="h-3 w-3 shrink-0" />
+                  <HugeiconsIcon icon={Clock01Icon} className="h-3 w-3 shrink-0" />
                   {item.time}
                 </span>
               ) : (
@@ -146,7 +144,7 @@ function ActivityCard({
             {/* Location */}
             {item.location && (
               <p className="mt-2 flex items-start gap-1 text-[14px] font-medium text-slate-600">
-                <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-slate-400" />
+                <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 shrink-0 mt-0.5 text-slate-400" />
                 <span className="truncate">{item.location}</span>
               </p>
             )}
@@ -186,7 +184,7 @@ function ActivityCard({
                       target="_blank" 
                       rel="noreferrer"
                     >
-                      {isRoute ? <Route className="w-3.5 h-3.5" /> : <Map className="w-3.5 h-3.5" />}
+                      {isRoute ? <HugeiconsIcon icon={Route01Icon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />}
                       {isRoute ? "Xem lộ trình di chuyển (Roadmap) " : "Mở bằng ứng dụng Google Maps "}
                       &rarr;
                     </a>
@@ -206,7 +204,7 @@ function ActivityCard({
                     : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-700"
                 )}
               >
-                <GitBranch className="w-3.5 h-3.5" />
+                <HugeiconsIcon icon={GitBranchIcon} className="w-3.5 h-3.5" />
                 {backupCount && backupCount > 0 ? `${backupCount} phương án dự phòng` : "Thêm phương án dự phòng"}
               </button>
             </div>
@@ -225,7 +223,7 @@ function ActivityCard({
                     onClick={(e) => { e.stopPropagation(); onAddExpense(); }}
                     className="flex items-center gap-1 px-2 py-1.5 rounded-lg border border-dashed border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-50 text-[12px] font-bold transition-colors"
                   >
-                    <Plus className="w-3.5 h-3.5" />
+                    <HugeiconsIcon icon={Add01Icon} className="w-3.5 h-3.5" />
                     Thêm chi phí
                   </button>
                 )}
@@ -276,7 +274,7 @@ function DayHeader({
                 className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100/50 text-[11px] font-extrabold tracking-wide transition-all active:scale-95 shadow-sm"
                 title="Mở bản đồ lộ trình"
               >
-                <MapPin className="w-3 h-3 text-emerald-600" />
+                <HugeiconsIcon icon={Location01Icon} className="w-3 h-3 text-emerald-600" />
                 <span>Bản đồ</span>
               </a>
             )}
@@ -399,7 +397,7 @@ function EventForm({
               title="Xóa mục lịch trình"
               className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 transition-colors hover:bg-rose-100 active:scale-[0.96] motion-press"
             >
-              <Trash2 className="h-5 w-5" />
+              <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5" />
             </button>
           )}
           
@@ -417,7 +415,7 @@ function EventForm({
             disabled={!form.title.trim()}
             className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-[#030D2E] text-white px-6 font-black shadow-sm hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed motion-press"
           >
-            <Check className="h-5 w-5" strokeWidth={2.5} />
+            <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" />
             {editing ? "Lưu thông tin" : "Thêm mục lịch trình"}
           </button>
         </div>
@@ -428,7 +426,7 @@ function EventForm({
       <Input 
         label={
           <span className="flex items-center gap-1.5">
-            <Type className="h-4 w-4 text-slate-500" />
+            <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-slate-500" />
             Tên mục lịch trình *
           </span>
         } 
@@ -456,7 +454,7 @@ function EventForm({
                     : "border-slate-200 hover:bg-slate-50 text-slate-500"
                 )}
               >
-                <Icon className="h-5 w-5" strokeWidth={2.2} />
+                <HugeiconsIcon icon={Icon} className="h-5 w-5" />
                 <span className="text-[10px] font-bold leading-none">{cat.label}</span>
               </button>
             );
@@ -471,7 +469,7 @@ function EventForm({
             <Select
               label={
                 <span className="flex items-center gap-1.5">
-                  <CalendarDays className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
                   Chọn ngày
                 </span>
               }
@@ -484,7 +482,7 @@ function EventForm({
             <Input 
               label={
                 <span className="flex items-center gap-1.5">
-                  <CalendarDays className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
                   Ngày (YYYY-MM-DD)
                 </span>
               } 
@@ -500,7 +498,7 @@ function EventForm({
         <TimePicker 
             label={
               <span className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-slate-500" />
+                <HugeiconsIcon icon={Clock01Icon} className="h-4 w-4 text-slate-500" />
                 Giờ khởi hành / thời gian
               </span>
             } 
@@ -515,7 +513,7 @@ function EventForm({
           label={
             <span className="flex flex-col gap-1">
               <span className="flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-slate-500" />
+                <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-500" />
                 Địa điểm
               </span>
               <span className="text-xs font-normal text-slate-400">
@@ -531,7 +529,7 @@ function EventForm({
           label={
             <span className="flex flex-col gap-1">
               <span className="flex items-center gap-1.5">
-                <Map className="h-4 w-4 text-slate-500" />
+                <HugeiconsIcon icon={MapsIcon} className="h-4 w-4 text-slate-500" />
                 Link bản đồ / Lộ trình (Roadmap)
               </span>
               <span className="text-xs font-normal text-slate-400">
@@ -551,7 +549,7 @@ function EventForm({
               rel="noreferrer"
               className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors"
             >
-              <Map className="w-3.5 h-3.5" />
+              <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />
               Mở link kiểm tra &rarr;
             </a>
           </div>
@@ -562,7 +560,7 @@ function EventForm({
       <Textarea 
         label={
           <span className="flex items-center gap-1.5">
-            <StickyNote className="h-4 w-4 text-slate-500" />
+            <HugeiconsIcon icon={StickyNote01Icon} className="h-4 w-4 text-slate-500" />
             Ghi chú, mã đặt chỗ
           </span>
         } 
@@ -816,7 +814,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
             onClick={() => setIsDayPickerOpen(true)}
             className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 shrink-0 text-[13px] font-extrabold transition-all duration-200 motion-press cursor-pointer"
           >
-            <CalendarDays className="w-3.5 h-3.5 text-slate-600" />
+            <HugeiconsIcon icon={Calendar01Icon} className="w-3.5 h-3.5 text-slate-600" />
             <span>Xem thêm ({days.length - 4})</span>
           </button>
         )}
@@ -869,7 +867,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                     onClick={() => openNewForm(day)}
                     className="relative z-10 text-[13px] font-bold text-[#00BFB7] hover:brightness-95 transition-colors pr-2 flex items-center gap-1 motion-press"
                   >
-                    <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
+                    <HugeiconsIcon icon={Add01Icon} className="w-3.5 h-3.5" />
                     Thêm
                   </button>
                 )}
@@ -950,7 +948,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 font-black text-[14px] shadow-sm">
-                  <GitBranch className="w-5 h-5" />
+                  <HugeiconsIcon icon={GitBranchIcon} className="w-5 h-5" />
                 </div>
                 <div>
                   <h4 className="text-[16px] font-extrabold text-[#030D2E]">Dự phòng chung</h4>
@@ -973,7 +971,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-indigo-200 text-indigo-600 font-bold text-[14px] hover:bg-indigo-50 transition-colors motion-press"
              >
-               <GitBranch className="w-4.5 h-4.5" />
+               <HugeiconsIcon icon={GitBranchIcon} className="w-4.5 h-4.5" />
                Thêm phương án dự phòng chuyến đi
              </button>
           </div>
@@ -1013,7 +1011,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               )}
               aria-label="Xem dạng lịch"
             >
-              <CalendarDays className="h-4.5 w-4.5" />
+              <HugeiconsIcon icon={Calendar01Icon} className="h-4.5 w-4.5" />
             </button>
           </div>
           
@@ -1022,7 +1020,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               onClick={() => openNewForm()}
               className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-[#030D2E] text-white px-4 py-2 text-[13.5px] font-extrabold shadow-[0_4px_14px_rgba(3,13,46,0.18)] hover:bg-[#030D2E]/90 active:scale-95 transition-all h-10 motion-press"
             >
-              <Plus className="h-4 w-4" strokeWidth={2.5} />
+              <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
               Thêm lịch trình
             </button>
           )}
@@ -1044,7 +1042,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom))" }}
           aria-label="Thêm lịch trình"
         >
-          <Plus className="h-6 w-6" strokeWidth={2.5} />
+          <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
         </button>
       )}
 
@@ -1067,7 +1065,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 {/* Compact Card */}
                 <div className="min-w-0 flex-1 rounded-[24px] bg-kat-surface p-6 border border-kat-border/60 shadow-soft animate-fadeIn flex flex-col items-center text-center">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5">
-                    <MapPinned className="h-6 w-6" />
+                    <HugeiconsIcon icon={MapPinned} className="h-6 w-6" />
                   </div>
                   <h4 className="text-[15px] font-bold text-kat-text">Chưa có mục lịch trình nào</h4>
                   <p className="mt-1 text-[13.5px] text-kat-muted font-medium max-w-sm">Thêm điểm đến, thời gian di chuyển hoặc việc cần làm để hành trình rõ ràng hơn.</p>
@@ -1110,7 +1108,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
             <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4 min-w-0 overflow-hidden">
               <div className="flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-                  <Route className="h-4 w-4" />
+                  <HugeiconsIcon icon={Route01Icon} className="h-4 w-4" />
                 </span>
                 <h4 className="text-[15px] font-extrabold text-[#030D2E]">Lộ trình di chuyển</h4>
               </div>
@@ -1125,7 +1123,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-[14px] bg-white shadow-sm flex items-center justify-center text-emerald-600">
-                        <CalendarDays className="w-5 h-5" />
+                        <HugeiconsIcon icon={Calendar01Icon} className="w-5 h-5" />
                       </div>
                       <div className="text-left">
                         <div className="text-[10.5px] font-bold text-emerald-600/70 uppercase tracking-wide mb-0.5">
@@ -1137,7 +1135,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                       </div>
                     </div>
                     <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm transition-transform group-hover:scale-105">
-                      <ChevronDown className="w-4 h-4" />
+                      <HugeiconsIcon icon={ChevronDownIcon} className="w-4 h-4" />
                     </div>
                   </button>
                 </div>
@@ -1171,7 +1169,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                           }}
                           className="text-[#00BFB7] hover:opacity-85 font-bold flex items-center gap-1 cursor-pointer"
                         >
-                          {mapUrl && <Edit3 className="w-3.5 h-3.5" />}
+                          {mapUrl && <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />}
                           {mapUrl ? "Sửa" : "Thêm"}
                         </button>
                       )}
@@ -1193,7 +1191,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                           rel="noreferrer"
                           className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer"
                         >
-                          <Route className="w-4 h-4" />
+                          <HugeiconsIcon icon={Route01Icon} className="w-4 h-4" />
                           Mở lộ trình &rarr;
                         </a>
                       </div>
@@ -1210,7 +1208,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                             }}
                             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-[12px] font-bold text-slate-600 shadow-sm transition-all cursor-pointer"
                           >
-                            <Plus className="w-3.5 h-3.5" />
+                            <HugeiconsIcon icon={Add01Icon} className="w-3.5 h-3.5" />
                             Gắn link lộ trình
                           </button>
                         )}
@@ -1228,7 +1226,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4">
             <div className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
-                <Route className="h-4 w-4" />
+                <HugeiconsIcon icon={Route01Icon} className="h-4 w-4" />
               </span>
               <h4 className="text-[15px] font-extrabold text-[#030D2E]">Thông tin hành trình</h4>
             </div>
@@ -1236,14 +1234,14 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
             <div className="space-y-3 text-[14px] font-medium text-slate-600">
               <div className="flex items-center justify-between border-b border-slate-50 pb-2">
                 <span className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-slate-400" />
+                  <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
                   Điểm đến
                 </span>
                 <span className="font-bold text-[#030D2E]">{trip.location || "Chưa xác định"}</span>
               </div>
               <div className="flex items-center justify-between border-b border-slate-50 pb-2">
                 <span className="flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4 text-slate-400" />
+                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-400" />
                   Thời gian
                 </span>
                 <span className="font-bold text-[#030D2E]">
@@ -1252,7 +1250,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               </div>
               <div className="flex items-center justify-between pb-1">
                 <span className="flex items-center gap-2">
-                  <Route className="h-4 w-4 text-slate-400" />
+                  <HugeiconsIcon icon={Route01Icon} className="h-4 w-4 text-slate-400" />
                   Mục lịch trình
                 </span>
                 <span className="font-bold text-[#030D2E]">{events.length} mục</span>
@@ -1307,7 +1305,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           
           {/* Instruction card */}
           <div className="flex items-start gap-3 bg-[#00BFB7]/8 border border-[#00BFB7]/20 rounded-2xl px-4 py-3">
-            <Route className="h-5 w-5 text-[#00BFB7] shrink-0 mt-0.5" />
+            <HugeiconsIcon icon={Route01Icon} className="h-5 w-5 text-[#00BFB7] shrink-0 mt-0.5" />
             <div>
               <p className="text-[13px] font-bold text-[#030D2E]">Dán link lộ trình Google Maps</p>
               <p className="text-[12px] text-slate-500 font-medium mt-0.5 leading-relaxed">
@@ -1319,7 +1317,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           {/* Input */}
           <div className="relative">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-              <Route className="h-4 w-4 text-[#00BFB7]" />
+              <HugeiconsIcon icon={Route01Icon} className="h-4 w-4 text-[#00BFB7]" />
             </div>
             <input
               type="url"
@@ -1355,7 +1353,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               rel="noreferrer"
               className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-[13.5px] font-bold text-emerald-700 hover:bg-emerald-100 transition-colors"
             >
-              <Map className="w-4 h-4" />
+              <HugeiconsIcon icon={MapsIcon} className="w-4 h-4" />
               Mở link kiểm tra &rarr;
             </a>
           )}
@@ -1413,7 +1411,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 </div>
                 {isSelected && (
                   <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
-                    <Check className="w-3.5 h-3.5 text-emerald-700 stroke-[3]" />
+                    <HugeiconsIcon icon={CheckIcon} className="w-3.5 h-3.5 text-emerald-700" />
                   </div>
                 )}
               </button>

@@ -101,7 +101,7 @@ export default defineConfig({
           firebase: ["firebase/app", "firebase/auth", "firebase/firestore"],
           i18n: ["i18next", "i18next-browser-languagedetector", "react-i18next"],
           documents: ["jspdf", "xlsx", "exceljs"],
-          ui: ["lucide-react"],
+          ui: ["@hugeicons/react"],
         },
       },
     },

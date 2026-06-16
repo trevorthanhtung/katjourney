@@ -97,7 +97,8 @@ export default {
         '13': '3.25rem', // 52px
       },
       fontFamily: {
-        sans: ["Inter", ...defaultTheme.fontFamily.sans]
+        sans: ["'Plus Jakarta Sans'", ...defaultTheme.fontFamily.sans],
+        display: ["'Bricolage Grotesque'", ...defaultTheme.fontFamily.sans],
       },
       boxShadow: {
         soft: "0 8px 32px rgba(3, 13, 46, 0.04)",

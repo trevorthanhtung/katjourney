@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { 
-  Compass, 
-  Loader2, 
-  X,
-  AlertCircle,
-  LockKeyhole,
-  User,
-  Globe
-} from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  CompassIcon,
+  Loading01Icon,
+  Cancel01Icon,
+  AlertCircleIcon,
+  LockIcon,
+  UserIcon,
+  GlobeIcon
+} from "@hugeicons/core-free-icons";
 import { signInAsGuest, signInWithGoogle } from "../services/authService";
 
 interface WelcomeScreenProps {
@@ -137,7 +138,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
           {/* Error display */}
           {errorMsg && (
             <div className="w-full mb-6 rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13px] text-rose-800 font-semibold leading-relaxed flex items-start gap-2.5 animate-fadeIn">
-              <AlertCircle className="w-4.5 h-4.5 text-rose-600 shrink-0 mt-0.5" />
+              <HugeiconsIcon icon={AlertCircleIcon} className="w-4.5 h-4.5 text-rose-600 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
           )}
@@ -151,7 +152,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               className="w-full flex items-center justify-center gap-3.5 h-14 rounded-2xl bg-white hover:bg-slate-50 active:scale-[0.97] transition-all font-extrabold text-[16px] text-[#030D2E] shadow-[0_4px_14px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] border border-slate-100 disabled:opacity-60 disabled:scale-100 group"
             >
               {loading === "google" ? (
-                <Loader2 className="h-5.5 w-5.5 text-[#00BFB7] animate-spin" />
+                <HugeiconsIcon icon={Loading01Icon} className="h-5.5 w-5.5 text-[#00BFB7] animate-spin" />
               ) : (
                 <div className="group-active:scale-95 transition-transform"><GoogleIcon /></div>
               )}
@@ -165,9 +166,13 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               className="w-full flex items-center justify-center gap-3 h-14 rounded-2xl border border-transparent bg-transparent hover:bg-black/5 active:scale-[0.97] transition-all font-bold text-[15px] text-slate-500 hover:text-slate-800 disabled:opacity-60 group"
             >
               {loading === "guest" ? (
-                <Loader2 className="h-5.5 w-5.5 text-slate-700 animate-spin" />
+                <HugeiconsIcon icon={Loading01Icon} className="h-5.5 w-5.5 text-slate-700 animate-spin" />
               ) : (
-                <Compass className="h-5.5 w-5.5 text-slate-400 group-hover:text-slate-600 transition-colors group-active:scale-95" />
+                <HugeiconsIcon 
+                  icon={CompassIcon} 
+                  size={22}
+                  className="text-slate-400 group-hover:text-slate-600 transition-colors group-active:scale-95" 
+                />
               )}
               Khám phá tư cách Khách
             </button>
@@ -178,7 +183,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
         {/* BOTTOM SECTION: LEGAL FOOTER */}
         <div className="w-full shrink-0 text-center pt-8 pb-2 relative z-10">
           <div className="flex items-center justify-center gap-5 text-slate-300 opacity-80 mb-5" title="Sẵn sàng trên đa nền tảng">
-            <Globe className="h-[18px] w-[18px] hover:text-sky-400 transition-colors" strokeWidth={2.5} />
+            <HugeiconsIcon icon={GlobeIcon} className="h-[18px] w-[18px] hover:text-sky-400 transition-colors" strokeWidth={2.5} />
             <AndroidIcon className="h-[18px] w-[18px] hover:text-emerald-400 transition-colors" />
             <AppleIcon className="h-[20px] w-[20px] hover:text-slate-400 transition-colors" />
           </div>
@@ -217,7 +222,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             
             <div className="flex items-center justify-between pb-4 border-b border-slate-100 shrink-0">
               <div className="flex items-center gap-2">
-                <LockKeyhole className="h-5 w-5 text-[#00BFB7]" />
+                <HugeiconsIcon icon={LockIcon} className="h-5 w-5 text-[#00BFB7]" />
                 <h4 className="text-[17px] font-black text-[#030D2E]">
                   {legalModal === "terms" && "Điều khoản Sử dụng"}
                   {legalModal === "privacy" && "Chính sách Quyền riêng tư"}
@@ -228,7 +233,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                 onClick={() => setLegalModal(null)}
                 className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200"
               >
-                <X className="w-4 h-4" />
+                <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
               </button>
             </div>
 

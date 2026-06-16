@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@hugeicons/core-free-icons";
 import { BottomSheet, classNames } from "./index";
 
 const MONTHS = [
@@ -163,18 +164,18 @@ export function DateRangePickerSheet({
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={handlePrevMonth}
-            className="p-2 rounded-full hover:bg-slate-100 transition-colors"
+            className="p-2 rounded-full hover:bg-slate-100 transition-colors flex items-center justify-center"
           >
-            <ChevronLeft className="w-5 h-5 text-slate-700" />
+            <HugeiconsIcon icon={ChevronLeftIcon} size={20} className="text-slate-700" />
           </button>
           <div className="text-[16px] font-bold text-slate-800">
             {MONTHS[month]} {year}
           </div>
           <button
             onClick={handleNextMonth}
-            className="p-2 rounded-full hover:bg-slate-100 transition-colors"
+            className="p-2 rounded-full hover:bg-slate-100 transition-colors flex items-center justify-center"
           >
-            <ChevronRight className="w-5 h-5 text-slate-700" />
+            <HugeiconsIcon icon={ChevronRightIcon} size={20} className="text-slate-700" />
           </button>
         </div>
 

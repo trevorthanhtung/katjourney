@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { 
-  ArrowLeft, 
-  Plus, 
-  Trash2, 
-  Edit3, 
-  Ticket, 
-  Hotel, 
-  CalendarCheck, 
-  Phone, 
-  Map, 
-  FileText, 
-  FileCheck, 
-  ExternalLink,
-  Link2,
-  Sparkles,
-  ChevronRight,
-  Copy,
-  Check,
-  PencilLine,
-  ImagePlus,
-  Loader2,
-  X,
-  Maximize2
-} from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+  Add01Icon,
+  Delete01Icon,
+  PencilEdit01Icon,
+  Ticket01Icon,
+  HotelIcon,
+  CalendarCheckIcon,
+  CallIcon,
+  MapsIcon,
+  File01Icon,
+  FileCheckIcon,
+  ExternalLinkIcon,
+  Link02Icon,
+  SparklesIcon,
+  ChevronRightIcon,
+  CopyIcon,
+  CheckIcon,
+  Cancel01Icon,
+  ImageAdd01Icon,
+  Loading01Icon,
+  Maximize01Icon
+} from "@hugeicons/core-free-icons";
 import { db, TravelDocument } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { BottomSheet, Input, Textarea, Select, DatePicker, DeleteConfirmModal, classNames } from "../../components/ui";
@@ -48,14 +48,14 @@ const typeLabels: Record<NonNullable<TravelDocument["type"]>, string> = {
   other: "Khác"
 };
 
-const typeIcons: Record<NonNullable<TravelDocument["type"]>, React.ElementType> = {
-  ticket: Ticket,
-  hotel: Hotel,
-  booking: CalendarCheck,
-  document: FileText,
-  contact: Phone,
-  map: Map,
-  other: FileText
+const typeIcons: Record<NonNullable<TravelDocument["type"]>, any> = {
+  ticket: Ticket01Icon,
+  hotel: HotelIcon,
+  booking: CalendarCheckIcon,
+  document: File01Icon,
+  contact: CallIcon,
+  map: MapsIcon,
+  other: File01Icon
 };
 
 const typeColors: Record<NonNullable<TravelDocument["type"]>, { bg: string; text: string; border: string }> = {
@@ -193,7 +193,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
       disabled={isSaveDisabled}
       className="inline-flex h-9 items-center justify-center rounded-xl bg-[#030D2E] text-white hover:bg-[#030D2E]/90 px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
     >
-      {isUploading ? <Loader2 className="w-4 h-4 animate-spin text-slate-400" /> : "Lưu"}
+      {isUploading ? <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin text-slate-400" /> : "Lưu"}
     </button>
   );
 
@@ -249,10 +249,10 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
             className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-[#030D2E] transition-colors focus:outline-none"
           >
             <span className="flex items-center gap-1.5">
-              <Plus className="h-4 w-4 text-slate-400" />
+              <HugeiconsIcon icon={Add01Icon} className="h-4 w-4 text-slate-400" />
               Thông tin bổ sung
             </span>
-            <ChevronRight className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
+            <HugeiconsIcon icon={ChevronRightIcon} className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
           </button>
 
           {showAdvanced && (
@@ -299,13 +299,13 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
                       }}
                       className="absolute top-2 right-2 bg-black/50 text-white p-1.5 rounded-full hover:bg-rose-500 transition-colors"
                     >
-                      <X className="w-4 h-4" />
+                      <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
                     </button>
                   </div>
                 ) : (
                   <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer text-slate-500">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <ImagePlus className="w-6 h-6 mb-2 text-slate-400" />
+                      <HugeiconsIcon icon={ImageAdd01Icon} className="w-6 h-6 mb-2 text-slate-400" />
                       <p className="text-[13px]"><span className="font-semibold text-kat-primary-usable">Nhấn để tải ảnh lên</span></p>
                     </div>
                     <input type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
@@ -389,7 +389,7 @@ function DocumentCard({
             }}
             title="Chỉnh sửa"
           >
-            <PencilLine className="h-5 w-5" />
+            <HugeiconsIcon icon={PencilEdit01Icon} className="h-5 w-5" />
           </button>
           <button 
             className="flex h-11 w-11 items-center justify-center rounded-2xl text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all shadow-sm border border-rose-100 focus:outline-none" 
@@ -399,7 +399,7 @@ function DocumentCard({
             }}
             title="Xóa"
           >
-            <Trash2 className="h-5 w-5" />
+            <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5" />
           </button>
         </div>
       )}
@@ -424,7 +424,7 @@ function DocumentCard({
           {/* Top info row */}
           <div className="flex items-start justify-between gap-4 mb-3">
             <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold border ${colors.bg} ${colors.text} ${colors.border}`}>
-              <Icon className="w-3.5 h-3.5" />
+              <HugeiconsIcon icon={Icon} className="w-3.5 h-3.5" />
               {typeLabels[doc.type || "other"].split(" / ")[0]}
             </span>
           </div>
@@ -448,9 +448,9 @@ function DocumentCard({
                 title="Sao chép mã"
               >
                 {copied ? (
-                  <Check className="h-4 w-4 text-emerald-500" />
+                  <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 text-emerald-500" />
                 ) : (
-                  <Copy className="h-4 w-4" />
+                  <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />
                 )}
               </button>
             </div>
@@ -486,7 +486,7 @@ function DocumentCard({
                   className="w-full h-auto max-h-[400px] object-contain transition-transform duration-300 group-hover:scale-[1.02]"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                  <Maximize2 className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
+                  <HugeiconsIcon icon={Maximize01Icon} className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
                 </div>
               </div>
             </div>
@@ -503,7 +503,7 @@ function DocumentCard({
               onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1.5 text-[13.5px] font-bold text-kat-primary hover:text-kat-primary-dark transition-colors"
             >
-              <Link2 className="w-3.5 h-3.5" />
+              <HugeiconsIcon icon={Link02Icon} className="w-3.5 h-3.5" />
               <span>Mở liên kết trực tuyến</span>
             </a>
           </div>
@@ -531,7 +531,7 @@ function DocumentCard({
               setPreviewImage(null); 
             }}
           >
-            <X className="w-6 h-6" />
+            <HugeiconsIcon icon={Cancel01Icon} className="w-6 h-6" />
           </button>
         </div>
       )}
@@ -598,7 +598,7 @@ export function TravelDocumentsSection({
             className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 text-slate-700 active:scale-95 transition-all shrink-0 motion-press"
             title="Quay lại"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
           </button>
           <div className="min-w-0">
             <h2 className="text-[28px] font-extrabold text-[#030D2E] leading-tight">Giấy tờ & đặt chỗ</h2>
@@ -610,7 +610,7 @@ export function TravelDocumentsSection({
             onClick={openNewForm}
             className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white px-5 text-[13.5px] font-bold hover:bg-[#030D2E]/90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center"
           >
-            <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
+            <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
             <span>Thêm giấy tờ</span>
           </button>
         )}
@@ -653,7 +653,7 @@ export function TravelDocumentsSection({
       {filteredDocs.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-[28px] bg-white border border-[#E8E1D8] p-12 text-center shadow-soft max-w-md mx-auto">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary">
-            <FileText className="h-8 w-8" />
+            <HugeiconsIcon icon={File01Icon} className="h-8 w-8" />
           </div>
           <h4 className="text-[16px] font-extrabold text-[#030D2E] mb-1">
             {selectedTypeFilter === "all" ? "Chưa có giấy tờ nào" : "Không tìm thấy mục lưu trữ"}

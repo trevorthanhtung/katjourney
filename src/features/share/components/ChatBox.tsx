@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, X, MessageSquare, Loader2, ArrowLeft } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import { SentIcon, Cancel01Icon, BubbleChatIcon, Loading01Icon, ArrowLeft01Icon } from "@hugeicons/core-free-icons";
 import { ChatMessage, subscribeToMessages, sendMessage } from '../../../services/chatService';
 import { UserIdentity } from '../../../services/identityService';
 import { classNames } from '../../../utils/helpers';
@@ -115,11 +116,11 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                 onClick={onBackClick}
                 className="p-1.5 hover:bg-white/10 rounded-full transition-colors mr-1 shrink-0 active:scale-95"
               >
-                <ArrowLeft className="w-5 h-5 text-white" />
+                <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 text-white" />
               </button>
             )}
             <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20 shadow-inner shrink-0">
-              <MessageSquare className="w-5 h-5 text-kat-primary-light animate-pulse" />
+              <HugeiconsIcon icon={BubbleChatIcon} className="w-5 h-5 text-kat-primary-light animate-pulse" />
             </div>
             <div className="min-w-0">
               <h3 className="font-bold text-[14px] sm:text-[15px] tracking-wide text-white flex items-center gap-1.5">
@@ -139,7 +140,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
               onClick={onClose}
               className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 hover:rotate-90 active:scale-90"
             >
-              <X className="w-5 h-5" />
+              <HugeiconsIcon icon={Cancel01Icon} className="w-5 h-5" />
             </button>
           )}
         </div>
@@ -148,13 +149,13 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
         <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-[#FAF7F1]/30 to-[#FAF7F1] flex flex-col gap-3 custom-scrollbar">
           {loading ? (
             <div className="flex-1 flex flex-col items-center justify-center">
-              <Loader2 className="w-8 h-8 animate-spin text-kat-primary" />
+              <HugeiconsIcon icon={Loading01Icon} className="w-8 h-8 animate-spin text-kat-primary" />
               <span className="text-xs text-kat-muted mt-2">Đang tải tin nhắn...</span>
             </div>
           ) : messages.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 select-none">
               <div className="w-16 h-16 rounded-full bg-kat-primary-soft flex items-center justify-center mb-3">
-                <MessageSquare className="w-8 h-8 text-kat-primary-usable" />
+                <HugeiconsIcon icon={BubbleChatIcon} className="w-8 h-8 text-kat-primary-usable" />
               </div>
               <h4 className="font-bold text-kat-text text-sm mb-1">Chưa có tin nhắn nào</h4>
               <p className="text-xs text-kat-muted max-w-[200px]">Hãy là người đầu tiên gửi lời chào trong nhóm trò chuyện!</p>
@@ -259,9 +260,9 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
               className="w-9 h-9 rounded-full bg-gradient-to-r from-kat-primary to-kat-primary-usable text-white flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 disabled:active:scale-100 transition-all duration-200 shrink-0 shadow-md shadow-kat-primary/10"
             >
               {sending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin" />
               ) : (
-                <Send className="w-4 h-4 ml-0.5" />
+                <HugeiconsIcon icon={SentIcon} className="w-4 h-4 ml-0.5" />
               )}
             </button>
           </form>
@@ -285,7 +286,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
           {/* Mobile View: Invitation CTA Card */}
           <div className="block sm:hidden bg-[#FFFDF8] border border-kat-border rounded-[24px] p-6 shadow-soft text-center flex flex-col items-center justify-center h-[280px]">
             <div className="w-16 h-16 rounded-full bg-kat-primary-soft flex items-center justify-center mb-4 relative">
-              <MessageSquare className="w-7 h-7 text-kat-primary animate-pulse" />
+              <HugeiconsIcon icon={BubbleChatIcon} className="w-7 h-7 text-kat-primary animate-pulse" />
               <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>

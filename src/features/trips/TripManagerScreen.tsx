@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Calendar, MapPin, Plane, Trash2, Edit3, Compass, Users, Map, WalletCards, Trophy, Sparkles, Link, ChevronRight } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Airplane01Icon, Calendar01Icon, Location01Icon, CompassIcon, UserGroupIcon, WalletCardsIcon, SparklesIcon, MapsIcon } from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Trip, db, deleteTripCascade } from "../../db";
 import { formatDate, getTripTiming } from "../../utils/helpers";
@@ -148,11 +149,11 @@ export function TripManagerScreen({
 
             <div className="flex flex-col gap-2 pb-2">
               <div className="flex items-center gap-2 text-[13.5px] font-semibold text-slate-650 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-1.5 rounded-xl w-fit">
-                <MapPin className="h-4 w-4 text-slate-400 shrink-0" />
+                <HugeiconsIcon icon={Location01Icon} size={16} className="text-slate-400 shrink-0" />
                 <span className="truncate max-w-[280px]">{trip.location || "Chưa có địa điểm"}</span>
               </div>
               <div className="flex items-center gap-2 text-[13.5px] font-semibold text-slate-650 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-1.5 rounded-xl w-fit">
-                <Calendar className="h-4 w-4 text-slate-400 shrink-0" />
+                <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-400 shrink-0" />
                 <span>{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}</span>
               </div>
             </div>
@@ -161,11 +162,11 @@ export function TripManagerScreen({
           {/* Right stats column */}
           <div className="w-full md:w-[250px] shrink-0 md:border-l md:border-[#E8E1D8]/60 md:pl-6 flex flex-col justify-center gap-2.5">
             <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-2 rounded-xl">
-              <Users className="w-4 h-4 text-slate-400 shrink-0" />
+              <HugeiconsIcon icon={UserGroupIcon} size={16} className="text-slate-400 shrink-0" />
               <span>{memberCounts[trip.id!] || 1} người đồng hành</span> 
             </div>
             <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-2 rounded-xl">
-              <WalletCards className="w-4 h-4 text-slate-400 shrink-0" />
+              <HugeiconsIcon icon={WalletCardsIcon} size={16} className="text-slate-400 shrink-0" />
               <span>{totalExpense > 0 ? `${totalExpense.toLocaleString()}đ chi phí` : "Chưa có chi phí"}</span>
             </div>
             
@@ -237,19 +238,19 @@ export function TripManagerScreen({
           {/* Glanceable Grid Info */}
           <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 text-[12px] font-bold text-slate-650 mb-1">
             <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-2 py-1.5 rounded-lg min-w-0">
-              <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+              <HugeiconsIcon icon={Location01Icon} size={14} className="text-slate-400 shrink-0" />
               <span className="truncate">{trip.location || "Chưa xác định"}</span>
             </div>
             <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-2 py-1.5 rounded-lg min-w-0">
-              <Calendar className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+              <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-slate-400 shrink-0" />
               <span className="truncate text-slate-600">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)}`}</span>
             </div>
             <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-2 py-1.5 rounded-lg min-w-0">
-              <Users className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+              <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-slate-400 shrink-0" />
               <span className="truncate">{memberCounts[trip.id!] || 1} người</span>
             </div>
             <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-2 py-1.5 rounded-lg min-w-0">
-              <WalletCards className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+              <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-slate-400 shrink-0" />
               <span className="truncate">{totalExpense > 0 ? `${totalExpense.toLocaleString()}đ` : "Chưa chi"}</span>
             </div>
           </div>
@@ -329,10 +330,14 @@ export function TripManagerScreen({
           <div className="absolute -right-10 -top-10 w-44 h-44 bg-[#00BFB7]/5 blur-[40px] rounded-full pointer-events-none" />
           <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-indigo-500/5 blur-[50px] rounded-full pointer-events-none" />
           
-          <Map className="absolute -right-12 -top-12 w-48 h-48 text-kat-primary/[0.03] rotate-12 pointer-events-none" />
+          <HugeiconsIcon icon={MapsIcon} className="absolute -right-12 -top-12 w-48 h-48 text-kat-primary/[0.03] rotate-12 pointer-events-none" />
           
-          <div className="mb-4 sm:mb-6 flex h-20 w-20 items-center justify-center rounded-[24px] bg-gradient-to-br from-[#00BFB7] via-[#00AFA8] to-[#0081BE] text-white shadow-[0_8px_24px_rgba(0,191,183,0.3)] relative z-10 border-2 border-white transform hover:rotate-12 transition-all duration-300">
-            <Plane className="h-9 w-9 text-white -rotate-45" />
+          <div className="mb-4 sm:mb-6 flex h-20 w-20 items-center justify-center rounded-[24px] bg-gradient-to-br from-[#030D2E] via-[#004E5A] to-[#00BFB7] text-white shadow-[0_8px_24px_rgba(3,13,46,0.2)] relative z-10 border-2 border-white transform hover:rotate-12 transition-all duration-300">
+            <HugeiconsIcon 
+              icon={Airplane01Icon} 
+              size={36}
+              className="text-white -rotate-45" 
+            />
           </div>
           
           <h3 className="mb-2 sm:mb-3 text-[22px] sm:text-[24px] font-black text-kat-text tracking-tight relative z-10">Chưa có chuyến đi nào</h3>
@@ -342,7 +347,7 @@ export function TripManagerScreen({
           
           <button
             onClick={onCreateNew}
-            className="group flex h-11 sm:h-13 w-full items-center justify-center gap-1.5 sm:gap-2 rounded-[18px] bg-gradient-to-r from-[#00BFB7] to-[#00AFA8] text-[#030D2E] px-4 sm:px-6 font-black text-[14px] sm:text-[15px] hover:brightness-[1.03] active:scale-[0.97] transition-all duration-300 relative z-10 shadow-[0_6px_20px_rgba(0,191,183,0.25)] hover:shadow-[0_8px_28px_rgba(0,191,183,0.4)] motion-press"
+            className="group flex h-11 sm:h-13 w-full items-center justify-center gap-1.5 sm:gap-2 rounded-[18px] bg-gradient-to-r from-[#030D2E] via-[#004E5A] to-[#00BFB7] text-white px-4 sm:px-6 font-black text-[14px] sm:text-[15px] hover:brightness-[1.05] active:scale-[0.97] transition-all duration-300 relative z-10 shadow-[0_6px_20px_rgba(3,13,46,0.2)] hover:shadow-[0_8px_28px_rgba(3,13,46,0.35)] motion-press"
           >
             <span className="text-[18px] leading-none group-hover:rotate-90 transition-transform duration-300 font-bold">+</span>
             Tạo chuyến đi đầu tiên
@@ -353,7 +358,7 @@ export function TripManagerScreen({
               onClick={onOpenArchive}
               className="mt-3.5 flex h-11 sm:h-13 w-full items-center justify-center gap-2 rounded-[18px] border-2 border-kat-primary/30 hover:border-kat-primary bg-white text-[#030D2E] px-4 sm:px-6 font-extrabold text-[14px] sm:text-[15px] active:scale-[0.97] hover:bg-slate-50 transition-all duration-300 relative z-10 motion-press"
             >
-              <Sparkles className="w-4 h-4 text-kat-primary shrink-0" />
+              <HugeiconsIcon icon={SparklesIcon} size={16} className="text-kat-primary shrink-0" />
               Xem kỷ niệm chuyến đi ({archivedTripsCount})
             </button>
           )}
@@ -366,7 +371,11 @@ export function TripManagerScreen({
             {/* Ambient Background Glows */}
             <div className="absolute top-0 right-0 w-72 h-72 bg-[#00BFB7] opacity-20 blur-[80px] rounded-full pointer-events-none" />
             <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-violet-600 opacity-20 blur-[100px] rounded-full pointer-events-none" />
-            <Compass className="absolute -right-8 -bottom-8 w-44 h-44 text-white/[0.03] rotate-12 pointer-events-none transition-all group-hover/hero:scale-110 group-hover/hero:rotate-[24deg] duration-700" />
+            <HugeiconsIcon 
+              icon={CompassIcon} 
+              size={176} 
+              className="absolute -right-8 -bottom-8 text-white/[0.03] rotate-12 pointer-events-none transition-all group-hover/hero:scale-110 group-hover/hero:rotate-[24deg] duration-700" 
+            />
             
             <div className="relative z-10">
               <h1 className="text-[32px] md:text-[36px] font-black text-white tracking-tight leading-tight">
@@ -384,7 +393,11 @@ export function TripManagerScreen({
                 className="group relative flex h-[52px] items-center justify-center gap-2.5 rounded-[16px] bg-white/[0.06] hover:bg-white/[0.12] text-white px-7 font-bold text-[14.5px] border border-white/15 backdrop-blur-xl overflow-hidden active:scale-[0.98] hover:border-white/25 transition-all duration-300 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.3)]"
               >
                 <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
-                <Sparkles className="w-4.5 h-4.5 text-[#00BFB7] group-hover:scale-110 transition-transform duration-300" />
+                <HugeiconsIcon 
+                  icon={SparklesIcon} 
+                  size={18} 
+                  className="text-[#00BFB7] group-hover:scale-110 transition-transform duration-300" 
+                />
                 <span className="tracking-wide">Kỷ niệm</span>
               </button>
               
@@ -411,7 +424,11 @@ export function TripManagerScreen({
                 >
                   {/* Decorative background */}
                   <div className="absolute right-0 top-0 bottom-0 w-1/2 md:w-1/3 bg-gradient-to-l from-kat-primary/5 to-transparent pointer-events-none" />
-                  <Compass className="absolute -right-10 -bottom-10 w-64 h-64 text-kat-primary/[0.04] rotate-12 pointer-events-none transition-all group-hover:scale-110 group-hover:rotate-[24deg] duration-700" />
+                  <HugeiconsIcon 
+                    icon={CompassIcon} 
+                    size={256} 
+                    className="absolute -right-10 -bottom-10 text-kat-primary/[0.04] rotate-12 pointer-events-none transition-all group-hover:scale-110 group-hover:rotate-[24deg] duration-700" 
+                  />
                   
                   <div className="relative z-10 md:w-2/3 pr-4">
                     <div className="flex flex-wrap gap-2 mb-4">
@@ -443,15 +460,15 @@ export function TripManagerScreen({
                     
                     <div className="flex flex-wrap gap-2.5 text-slate-700">
                       <div className="flex items-center gap-2 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-2 rounded-xl">
-                        <MapPin className="h-4.5 w-4.5 text-slate-400 shrink-0" />
+                        <HugeiconsIcon icon={Location01Icon} size={18} className="text-slate-400 shrink-0" />
                         <span className="font-extrabold text-[13.5px] text-slate-650">{featuredTrip.location || "Chưa có địa điểm"}</span>
                       </div>
                       <div className="flex items-center gap-2 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-2 rounded-xl">
-                        <Calendar className="h-4.5 w-4.5 text-slate-400 shrink-0" />
+                        <HugeiconsIcon icon={Calendar01Icon} size={18} className="text-slate-400 shrink-0" />
                         <span className="font-extrabold text-[13.5px] text-slate-650">{featuredTrip.startDate === featuredTrip.endDate ? formatDate(featuredTrip.startDate) : `${formatDate(featuredTrip.startDate)} - ${formatDate(featuredTrip.endDate)}`}</span>
                       </div>
                       <div className="flex items-center gap-2 bg-[#030D2E]/[0.03] border border-[#E8E1D8]/60 px-3.5 py-2 rounded-xl">
-                        <Users className="h-4.5 w-4.5 text-slate-400 shrink-0" />
+                        <HugeiconsIcon icon={UserGroupIcon} size={18} className="text-slate-400 shrink-0" />
                         <span className="font-extrabold text-[13.5px] text-slate-650">{memberCounts[featuredTrip.id!] || 1} người</span>
                       </div>
                     </div>

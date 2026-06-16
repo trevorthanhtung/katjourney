@@ -1,5 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Trash2, WalletCards, Scale, UsersRound, UserRound, Calculator, ChartPie, ReceiptText, Route, Utensils, Hotel, Ticket, Tags, PencilLine, Info, UserCheck, ChevronRight, ChevronDown, ShoppingBag, Gamepad2, Plane, Sparkles, CalendarDays } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Add01Icon,
+  Delete01Icon,
+  WalletCardsIcon,
+  BalanceScaleIcon,
+  UserGroupIcon,
+  UserIcon,
+  CalculatorIcon,
+  PieChartIcon,
+  ReceiptTextIcon,
+  Route01Icon,
+  Dish01Icon,
+  HotelIcon,
+  Ticket01Icon,
+  Tag01Icon,
+  TagsIcon,
+  PencilEdit01Icon,
+  InformationCircleIcon,
+  UserCheckIcon,
+  ChevronRightIcon,
+  ChevronDownIcon,
+  ShoppingBag01Icon,
+  GameController01Icon,
+  Airplane01Icon,
+  SparklesIcon,
+  Calendar01Icon,
+  PreferenceHorizontalIcon
+} from "@hugeicons/core-free-icons";
 import { db, Expense, Member, EventItem } from "../../db";
 import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories } from "../../utils/helpers";
 import { BottomSheet, FormActions, Input, ScreenTitle, Select, DatePicker, DeleteConfirmModal, classNames } from "../../components/ui";
@@ -85,7 +113,7 @@ export function SettlementCard({
     <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm mt-6 animate-fadeIn">
       <div className="flex items-center gap-2 mb-4">
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
-          <Scale className="h-4.5 w-4.5" />
+          <HugeiconsIcon icon={BalanceScaleIcon} className="h-4.5 w-4.5" />
         </span>
         <h3 className="text-[16px] font-extrabold text-[#030D2E]">Cân đối chia tiền</h3>
       </div>
@@ -96,7 +124,7 @@ export function SettlementCard({
               <div className="flex items-center justify-between w-full">
                 <div className="flex flex-col items-center flex-1">
                   <span className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-1">
-                    <UserRound className="w-4 h-4" />
+                    <HugeiconsIcon icon={UserIcon} className="w-4 h-4" />
                   </span>
                   <span className="font-bold text-[#030D2E] text-[13px] truncate max-w-[80px]">{s.from}</span>
                 </div>
@@ -110,7 +138,7 @@ export function SettlementCard({
 
                 <div className="flex flex-col items-center flex-1">
                   <span className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1 border border-emerald-100">
-                    <UserCheck className="w-4 h-4" />
+                    <HugeiconsIcon icon={UserCheckIcon} className="w-4 h-4" />
                   </span>
                   <span className="font-bold text-kat-primary text-[13px] truncate max-w-[80px]">{s.to}</span>
                 </div>
@@ -149,23 +177,23 @@ function ExpenseCard({
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case "Di chuyển":
-        return <Route className="h-3.5 w-3.5" />;
+        return <HugeiconsIcon icon={Route01Icon} className="h-3.5 w-3.5" />;
       case "Vé máy bay":
-        return <Plane className="h-3.5 w-3.5" />;
+        return <HugeiconsIcon icon={Airplane01Icon} className="h-3.5 w-3.5" />;
       case "Ăn uống":
-        return <Utensils className="h-3.5 w-3.5" />;
+        return <HugeiconsIcon icon={Dish01Icon} className="h-3.5 w-3.5" />;
       case "Lưu trú":
-        return <Hotel className="h-3.5 w-3.5" />;
+        return <HugeiconsIcon icon={HotelIcon} className="h-3.5 w-3.5" />;
       case "Vé tham quan":
-        return <Ticket className="h-3.5 w-3.5" />;
+        return <HugeiconsIcon icon={Ticket01Icon} className="h-3.5 w-3.5" />;
       case "Mua sắm":
-        return <ShoppingBag className="h-3.5 w-3.5" />;
+        return <HugeiconsIcon icon={ShoppingBag01Icon} className="h-3.5 w-3.5" />;
       case "Vui chơi & Giải trí":
-        return <Gamepad2 className="h-3.5 w-3.5" />;
+        return <HugeiconsIcon icon={GameController01Icon} className="h-3.5 w-3.5" />;
       case "Chuẩn bị hành lý":
-        return <Sparkles className="h-3.5 w-3.5" />;
+        return <HugeiconsIcon icon={SparklesIcon} className="h-3.5 w-3.5" />;
       default:
-        return <Tags className="h-3.5 w-3.5" />;
+        return <HugeiconsIcon icon={Tag01Icon} className="h-3.5 w-3.5" />;
     }
   };
 
@@ -205,7 +233,7 @@ function ExpenseCard({
             }}
             title="Chỉnh sửa"
           >
-            <PencilLine className="h-5 w-5" />
+            <HugeiconsIcon icon={PencilEdit01Icon} className="h-5 w-5" />
           </button>
           <button 
             className="flex h-11 w-11 items-center justify-center rounded-2xl text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all shadow-sm border border-rose-100 focus:outline-none" 
@@ -215,7 +243,7 @@ function ExpenseCard({
             }}
             title="Xóa"
           >
-            <Trash2 className="h-5 w-5" />
+            <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5" />
           </button>
         </div>
       )}
@@ -523,7 +551,7 @@ function ExpenseForm({
                 className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white border border-slate-200 rounded-md px-2.5 py-1 text-[#030D2E] hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
               >
                 {form.currency}
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                <HugeiconsIcon icon={ChevronDownIcon} className="w-3.5 h-3.5 text-slate-400" />
               </button>
 
               {isCurrencyDropdownOpen && (
@@ -603,7 +631,7 @@ function ExpenseForm({
         <DatePicker 
           label={
             <span className="flex items-center gap-1.5">
-              <CalendarDays className="h-4 w-4 text-slate-500" />
+              <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
               Ngày chi tiêu
             </span>
           } 
@@ -615,7 +643,7 @@ function ExpenseForm({
         <Input 
           label={
             <span className="flex items-center gap-1.5">
-              <ReceiptText className="h-4 w-4 text-slate-500" />
+              <HugeiconsIcon icon={ReceiptTextIcon} className="h-4 w-4 text-slate-500" />
               Nội dung chi tiêu
             </span>
           } 
@@ -631,7 +659,7 @@ function ExpenseForm({
               <Select
                 label={
                   <span className="flex items-center gap-1.5">
-                    <UserCheck className="h-4 w-4 text-slate-500" />
+                    <HugeiconsIcon icon={UserCheckIcon} className="h-4 w-4 text-slate-500" />
                     Người đã trả *
                   </span>
                 }
@@ -649,7 +677,7 @@ function ExpenseForm({
             </div>
           ) : (
             <div className="rounded-2xl bg-amber-50/70 border border-amber-100 p-4 text-[13px] text-amber-800 font-semibold flex gap-2">
-              <Info className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
+              <HugeiconsIcon icon={InformationCircleIcon} className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
               <span>Chuyến đi chưa có người đồng hành. Thêm người đồng hành để tính phần cần góp hoặc hoàn lại.</span>
             </div>
           )
@@ -659,7 +687,7 @@ function ExpenseForm({
               <Select
                 label={
                   <span className="flex items-center gap-1.5">
-                    <UserCheck className="h-4 w-4 text-slate-500" />
+                    <HugeiconsIcon icon={UserCheckIcon} className="h-4 w-4 text-slate-500" />
                     Khoản chi này của ai?
                   </span>
                 }
@@ -680,10 +708,10 @@ function ExpenseForm({
             className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-[#030D2E] transition-colors focus:outline-none"
           >
             <span className="flex items-center gap-1.5">
-              <Tags className="h-4 w-4 text-slate-400" />
+              <HugeiconsIcon icon={PreferenceHorizontalIcon} className="h-4 w-4 text-slate-400" />
               Chi tiết nâng cao
             </span>
-            <ChevronRight className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
+            <HugeiconsIcon icon={ChevronRightIcon} className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
           </button>
 
           {showAdvanced && (
@@ -693,7 +721,7 @@ function ExpenseForm({
                 <Select 
                   label={
                     <span className="flex items-center gap-1.5">
-                      <Tags className="h-4 w-4 text-slate-500" />
+                      <HugeiconsIcon icon={TagsIcon} className="h-4 w-4 text-slate-500" />
                       Hạng mục
                     </span>
                   } 
@@ -710,7 +738,7 @@ function ExpenseForm({
                     <Input 
                       label={
                         <span className="flex items-center gap-1.5">
-                          <Tags className="h-4 w-4 text-slate-500" />
+                          <HugeiconsIcon icon={TagsIcon} className="h-4 w-4 text-slate-500" />
                           Tên hạng mục tự nhập *
                         </span>
                       } 
@@ -731,7 +759,7 @@ function ExpenseForm({
                   <Select
                     label={
                       <span className="flex items-center gap-1.5">
-                        <Route className="h-4 w-4 text-slate-500" />
+                        <HugeiconsIcon icon={Route01Icon} className="h-4 w-4 text-slate-500" />
                         Gắn vào lịch trình (Tùy chọn)
                       </span>
                     }
@@ -754,7 +782,7 @@ function ExpenseForm({
               {/* Segmented Control for Cost Calculation */}
               <div className="space-y-2">
                 <span className="text-[13.5px] font-semibold text-slate-600 flex items-center gap-1.5">
-                  <Scale className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={BalanceScaleIcon} className="h-4 w-4 text-slate-500" />
                   Cách chia khoản chi
                 </span>
                 <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200/40">
@@ -907,7 +935,7 @@ export function ExpensesScreen({
                 onClick={openNewForm}
                 className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-[#030D2E] px-5 text-[14px] font-bold text-white shadow-sm hover:bg-[#030D2E]/90 motion-press h-[48px]"
               >
-                <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
+                <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
                 Thêm khoản chi
               </button>
             </div>
@@ -921,7 +949,7 @@ export function ExpensesScreen({
             <div className="flex-1 space-y-5">
               <div>
                 <div className="flex items-center gap-1.5 text-slate-500">
-                  <ReceiptText className="h-4.5 w-4.5" />
+                  <HugeiconsIcon icon={ReceiptTextIcon} className="h-4.5 w-4.5" />
                   <p className="text-[13px] font-bold uppercase tracking-wider">Tổng chi phí chuyến đi</p>
                 </div>
                 <p className="mt-1 break-words text-[36px] md:text-[44px] font-black leading-none tracking-tight text-[#030D2E]">{formatMoney(totalExpense)}</p>
@@ -933,14 +961,14 @@ export function ExpensesScreen({
                     <p className="text-[12px] font-bold text-slate-500 uppercase tracking-wide">Chi chung chuyến đi</p>
                     <p className="text-[18px] font-black text-[#00AFA8] mt-0.5">{formatMoney(totalSharedExpense)}</p>
                   </div>
-                  <UsersRound className="h-5 w-5 text-[#00AFA8]/60 shrink-0 mt-0.5" />
+                  <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-[#00AFA8]/60 shrink-0 mt-0.5" />
                 </div>
                 <div className="bg-[#FFFDF8] border border-[#E8E1D8] rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
                     <p className="text-[12px] font-bold text-slate-500 uppercase tracking-wide">Chi cá nhân</p>
                     <p className="text-[18px] font-black text-[#030D2E] mt-0.5">{formatMoney(totalPersonalExpense)}</p>
                   </div>
-                  <UserRound className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
+                  <HugeiconsIcon icon={UserIcon} className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
                 </div>
                 <div className="bg-[#FFFDF8] border border-[#E8E1D8] rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
@@ -951,7 +979,7 @@ export function ExpensesScreen({
                       <span className="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100 mt-1.5 inline-block">Chưa có người đồng hành</span>
                     )}
                   </div>
-                  <Calculator className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
+                  <HugeiconsIcon icon={CalculatorIcon} className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
                 </div>
               </div>
             </div>
@@ -963,7 +991,7 @@ export function ExpensesScreen({
                   onClick={openNewForm}
                   className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#030D2E] hover:bg-[#030D2E]/90 text-white px-6 py-3 text-[14px] font-bold shadow-sm motion-press h-[48px]"
                 >
-                  <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
+                  <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
                   Thêm khoản chi
                 </button>
               </div>
@@ -978,7 +1006,7 @@ export function ExpensesScreen({
               <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-5">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
-                    <ChartPie className="h-4.5 w-4.5" />
+                    <HugeiconsIcon icon={PieChartIcon} className="h-4.5 w-4.5" />
                   </span>
                   <h3 className="text-base font-extrabold text-[#030D2E]">Chi phí theo hạng mục</h3>
                 </div>
@@ -987,7 +1015,7 @@ export function ExpensesScreen({
               <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-5">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
-                    <UsersRound className="h-4.5 w-4.5" />
+                    <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5" />
                   </span>
                   <h3 className="text-base font-extrabold text-[#030D2E]">Chi phí theo người đồng hành</h3>
                 </div>
@@ -1010,7 +1038,7 @@ export function ExpensesScreen({
         <section className="space-y-4">
           <div className="flex items-center gap-2">
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#030D2E]/5 text-[#030D2E]/70">
-              <ReceiptText className="h-4.5 w-4.5" />
+              <HugeiconsIcon icon={ReceiptTextIcon} className="h-4.5 w-4.5" />
             </span>
             <h3 className="text-lg font-extrabold text-[#030D2E]">Danh sách khoản chi</h3>
           </div>
@@ -1018,7 +1046,7 @@ export function ExpensesScreen({
             {isEmpty ? (
               <div className="rounded-[24px] bg-kat-surface p-8 border border-kat-border/60 shadow-soft flex flex-col items-center text-center animate-fadeIn max-w-md mx-auto">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5">
-                  <WalletCards className="h-5.5 w-5.5" />
+                  <HugeiconsIcon icon={WalletCardsIcon} className="h-5.5 w-5.5" />
                 </div>
                 <h3 className="text-[17px] font-bold text-kat-text mb-1.5">Chưa có khoản chi nào</h3>
                 <p className="text-[13.5px] font-medium text-kat-muted mb-0 max-w-xs">

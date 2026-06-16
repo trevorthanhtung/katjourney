@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, CheckCircle, XCircle, Clock, FileText, AlertTriangle } from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 import { AppChangeRequest } from '../../../hooks/useShareChangeRequests';
 import { BottomSheet } from '../../../components/ui';
 import { approveChangeRequest, rejectChangeRequest } from '../../../services/shareApprovalService';
@@ -144,7 +145,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
       <div className="px-1 pb-6 space-y-4">
         {requests.length === 0 ? (
           <div className="text-center py-8">
-            <CheckCircle className="w-12 h-12 text-slate-200 mx-auto mb-3" />
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-12 h-12 text-slate-200 mx-auto mb-3" />
             <p className="text-[14px] font-bold text-slate-500">Chưa có yêu cầu chỉnh sửa nào.</p>
           </div>
         ) : (

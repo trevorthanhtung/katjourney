@@ -1,5 +1,14 @@
 import React from "react";
-import { ArrowLeft, Compass, Calendar, MapPin, Users, WalletCards, Sparkles } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { 
+  ArrowLeft01Icon, 
+  CompassIcon, 
+  Calendar01Icon, 
+  Location01Icon, 
+  UserGroupIcon, 
+  WalletCardsIcon, 
+  SparklesIcon 
+} from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Trip, db } from "../../db";
 import { formatDate } from "../../utils/helpers";
@@ -82,7 +91,7 @@ export function ArchiveGallery({
       >
         {/* Background decorative compass */}
         <div className="absolute -bottom-4 -right-4 opacity-10 pointer-events-none rotate-12">
-          <Compass className="w-28 h-28 text-white" />
+          <HugeiconsIcon icon={CompassIcon} size={112} className="text-white" />
         </div>
 
         {/* Top: Badge */}
@@ -95,7 +104,7 @@ export function ArchiveGallery({
           <div className="flex h-8 w-8 items-center justify-center rounded-full"
             style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)" }}
           >
-            <Sparkles className="h-4 w-4 text-white/80" />
+            <HugeiconsIcon icon={SparklesIcon} size={16} className="text-white/80" />
           </div>
         </div>
 
@@ -107,25 +116,25 @@ export function ArchiveGallery({
         {/* Info grid */}
         <div className="grid grid-cols-2 gap-y-2.5 gap-x-3 mt-auto">
           <div className="flex items-center gap-2 min-w-0">
-            <MapPin className="h-3.5 w-3.5 text-white/50 shrink-0" />
+            <HugeiconsIcon icon={Location01Icon} size={14} className="text-white/50 shrink-0" />
             <span className="text-[12.5px] font-semibold text-white/75 truncate">
               {trip.location || "Chưa xác định"}
             </span>
           </div>
           <div className="flex items-center gap-2 min-w-0">
-            <Calendar className="h-3.5 w-3.5 text-white/50 shrink-0" />
+            <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-white/50 shrink-0" />
             <span className="text-[12.5px] font-semibold text-white/75 truncate">
               {formatDate(trip.startDate)}
             </span>
           </div>
           <div className="flex items-center gap-2 min-w-0">
-            <Users className="h-3.5 w-3.5 text-white/50 shrink-0" />
+            <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-white/50 shrink-0" />
             <span className="text-[12.5px] font-semibold text-white/75 truncate">
               {memberCounts[trip.id!] || 1} người
             </span>
           </div>
           <div className="flex items-center gap-2 min-w-0">
-            <WalletCards className="h-3.5 w-3.5 text-white/50 shrink-0" />
+            <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-white/50 shrink-0" />
             <span className="text-[12.5px] font-semibold text-white/75 truncate">
               {totalExpense > 0 ? `${totalExpense.toLocaleString()}đ` : "Chưa chi"}
             </span>
@@ -148,7 +157,7 @@ export function ArchiveGallery({
           onClick={onBack}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors shadow-sm"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={20} className="text-slate-600" />
         </button>
         <div>
           <h1 className="text-[24px] font-black text-[#030D2E]">Kỷ niệm</h1>
@@ -166,7 +175,7 @@ export function ArchiveGallery({
           <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-3xl"
             style={{ background: "linear-gradient(135deg, #1A3A5C 0%, #2460A7 100%)", boxShadow: "0 8px 32px rgba(26,58,92,0.3)" }}
           >
-            <Compass className="h-10 w-10 text-white" />
+            <HugeiconsIcon icon={CompassIcon} size={40} className="text-white" />
           </div>
           <h3 className="text-[20px] font-extrabold text-[#030D2E]">Chưa có kỷ niệm nào</h3>
           <p className="mt-2 text-[14px] font-semibold text-slate-500 max-w-xs leading-relaxed">

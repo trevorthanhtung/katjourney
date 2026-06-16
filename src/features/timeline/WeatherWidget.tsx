@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { CloudRainWind } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CloudRainWindIcon } from "@hugeicons/core-free-icons";
 import { getWeatherIcon } from "../../services/weatherService";
 import { useWeather } from "../../hooks/useWeather";
 import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather";
@@ -60,7 +61,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3 }: We
     return (
       <div className="w-full mb-6 rounded-3xl bg-gradient-to-b from-sky-50/20 via-sky-50/5 to-white border border-slate-200/40 p-5 shadow-[0_4px_20px_rgba(3,13,46,0.02)] flex flex-col items-center justify-center text-center gap-2">
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 text-sky-500 mb-1 shadow-sm animate-pulse">
-          <CloudRainWind className="w-5.5 h-5.5" />
+          <HugeiconsIcon icon={CloudRainWindIcon} className="w-5.5 h-5.5" />
         </span>
         <span className="text-[14px] font-black text-[#030D2E]">Chưa có điểm đến</span>
         <span className="text-[11.5px] text-slate-500/80 font-medium max-w-[220px] leading-relaxed">Hãy thêm điểm đến cho chuyến đi để xem dự báo thời tiết tại đây.</span>
@@ -71,7 +72,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3 }: We
   if (error || (!loading && !forecast)) {
     return (
       <div className="w-full h-auto py-4 mb-6 rounded-3xl bg-rose-50 border border-rose-100 flex flex-col items-center justify-center text-rose-500 gap-1 px-4 text-center">
-        <CloudRainWind className="w-6 h-6 mb-1 opacity-50" />
+        <HugeiconsIcon icon={CloudRainWindIcon} className="w-6 h-6 mb-1 opacity-50" />
         <span className="text-[12.5px] font-bold">Địa điểm không có dữ liệu để cập nhật thời tiết</span>
       </div>
     );
@@ -98,7 +99,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3 }: We
       <div className="w-full mb-6 rounded-3xl bg-gradient-to-b from-sky-50/70 via-sky-50/20 to-white border border-sky-100/70 shadow-[0_8px_30px_rgba(107,178,255,0.08)] relative overflow-hidden">
         {/* Decorative background element */}
         <div className="absolute -right-8 -top-8 text-sky-400/[0.04] pointer-events-none">
-          <CloudRainWind className="w-48 h-48" />
+          <HugeiconsIcon icon={CloudRainWindIcon} className="w-48 h-48" />
         </div>
 
         <div className="relative z-10 flex flex-col gap-0">
@@ -108,7 +109,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3 }: We
           >
             <div className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/10 text-sky-500">
-                <CloudRainWind className="h-4 w-4" />
+                <HugeiconsIcon icon={CloudRainWindIcon} className="h-4 w-4" />
               </span>
               <h4 className="text-[15px] font-extrabold text-[#030D2E]">Dự báo thời tiết</h4>
             </div>

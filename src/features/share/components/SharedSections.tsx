@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../../db';
 import { createPortal } from 'react-dom';
-import { 
-  WalletCards, CheckCircle, BookOpenText, FileText, AlertTriangle, Plus, Pencil, Trash2, MoreVertical, LifeBuoy,
-  ReceiptText, UserCheck, Tags, ChevronRight, Scale, Info, Check, X, Clock,
-  FileCheck2, Shirt, BriefcaseBusiness, PlugZap, Pill, Sandwich, Package, BadgeCheck, UserRoundCheck, StickyNote, Type, Minus, User, CalendarDays, Maximize2, Image as ImageIcon, Loader2, SmilePlus, NotebookPen, Save, Sparkles, Route, HelpCircle, Users, MessageCircle, Globe,
-  Crown, UserRound, Luggage, Car, Calculator, ChartPie, UsersRound,
-  Plane, Utensils, Hotel, Ticket, ShoppingBag, Gamepad2, Compass, ChevronDown, MapPin, MapPinOff
-} from 'lucide-react';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Wallet01Icon, CheckmarkCircle02Icon, BookOpen01Icon, File01Icon, AlertCircleIcon, Add01Icon, PencilEdit01Icon, Delete01Icon, MoreVerticalIcon,
+  ReceiptTextIcon, UserCheck01Icon, Tag01Icon, ChevronRightIcon, BalanceScaleIcon, InformationCircleIcon, CheckIcon, Cancel01Icon, Clock01Icon,
+  FileCheckIcon, ShirtIcon, Briefcase01Icon, PlugIcon, PillIcon, Bread01Icon, PackageIcon, BadgeCheckIcon, StickyNoteIcon, TextFontIcon, MinusSignIcon, UserIcon, Calendar01Icon, Maximize01Icon, Image01Icon, Loading01Icon, SmileIcon, NotebookIcon, SaveIcon, SparklesIcon, RouteIcon, HelpCircleIcon, UserGroupIcon, BubbleChatIcon, GlobeIcon,
+  CrownIcon, Luggage01Icon, Car01Icon, CalculatorIcon, PieChartIcon,
+  Airplane01Icon, KitchenUtensilsIcon, HotelIcon, Ticket01Icon, ShoppingBag01Icon, Gamepad2Icon, CompassIcon, ChevronDownIcon, Location01Icon, LocationOfflineIcon
+} from "@hugeicons/core-free-icons";
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
 import { formatMoney, expenseCategories, formatDate, moodLabels, sumBy, getSettlementSuggestions } from '../../../utils/helpers';
 import { submitChangeRequest } from '../../../services/sharedTripRequestService';
@@ -25,14 +26,14 @@ const classNames = (...classes: any[]) => classes.filter(Boolean).join(' ');
 
 const CATEGORIES = ["Giấy tờ", "Quần áo", "Đồ cá nhân", "Thiết bị điện tử", "Thuốc & y tế", "Tiền & ví", "Đồ ăn nhẹ", "Khác"] as const;
 const CATEGORY_ICONS: Record<string, any> = {
-  "Giấy tờ": FileCheck2,
-  "Quần áo": Shirt,
-  "Đồ cá nhân": BriefcaseBusiness,
-  "Thiết bị điện tử": PlugZap,
-  "Thuốc & y tế": Pill,
-  "Tiền & ví": WalletCards,
-  "Đồ ăn nhẹ": Sandwich,
-  "Khác": Package
+  "Giấy tờ": FileCheckIcon,
+  "Quần áo": ShirtIcon,
+  "Đồ cá nhân": Briefcase01Icon,
+  "Thiết bị điện tử": PlugIcon,
+  "Thuốc & y tế": PillIcon,
+  "Tiền & ví": Wallet01Icon,
+  "Đồ ăn nhẹ": Bread01Icon,
+  "Khác": PackageIcon
 };
 
 
@@ -66,47 +67,47 @@ export function SharedExpensesSection({
     switch (category) {
       case "Di chuyển":
         return {
-          icon: Route,
+          icon: RouteIcon,
           bg: "bg-blue-50 text-blue-600 border-blue-150/50"
         };
       case "Vé máy bay":
         return {
-          icon: Plane,
+          icon: Airplane01Icon,
           bg: "bg-indigo-50 text-indigo-600 border-indigo-150/50"
         };
       case "Ăn uống":
         return {
-          icon: Utensils,
+          icon: KitchenUtensilsIcon,
           bg: "bg-rose-50 text-rose-600 border-rose-150/50"
         };
       case "Lưu trú":
         return {
-          icon: Hotel,
+          icon: HotelIcon,
           bg: "bg-slate-100 text-[#030D2E] border-slate-200"
         };
       case "Vé tham quan":
         return {
-          icon: Ticket,
+          icon: Ticket01Icon,
           bg: "bg-amber-50 text-amber-600 border-amber-150/50"
         };
       case "Mua sắm":
         return {
-          icon: ShoppingBag,
+          icon: ShoppingBag01Icon,
           bg: "bg-purple-50 text-purple-600 border-purple-150/50"
         };
       case "Vui chơi & Giải trí":
         return {
-          icon: Gamepad2,
+          icon: Gamepad2Icon,
           bg: "bg-emerald-50 text-emerald-600 border-emerald-150/50"
         };
       case "Chuẩn bị hành lý":
         return {
-          icon: Sparkles,
+          icon: SparklesIcon,
           bg: "bg-sky-50 text-sky-600 border-sky-150/50"
         };
       default:
         return {
-          icon: Tags,
+          icon: Tag01Icon,
           bg: "bg-slate-50 text-slate-500 border-slate-200/50"
         };
     }
@@ -434,11 +435,11 @@ export function SharedExpensesSection({
       {/* Dashboard Section */}
       <section className="rounded-3xl border border-[#030D2E]/10 bg-white p-6 shadow-sm overflow-hidden relative">
         <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-          <WalletCards className="w-32 h-32" />
+          <HugeiconsIcon icon={Wallet01Icon} className="w-32 h-32" />
         </div>
         <div className="relative z-10 flex items-center justify-between mb-2 border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2">
-            <ReceiptText className="w-4 h-4 text-slate-400" />
+            <HugeiconsIcon icon={ReceiptTextIcon} className="w-4 h-4 text-slate-400" />
             <span className="text-[11px] font-black uppercase tracking-widest text-slate-500">Tổng chi phí chuyến đi</span>
           </div>
         </div>
@@ -451,21 +452,21 @@ export function SharedExpensesSection({
         <div className="mt-6 grid gap-3 sm:grid-cols-3 relative z-10">
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100 hover:border-slate-200">
             <span className="text-[10px] font-black uppercase tracking-widest text-kat-primary flex items-center gap-1.5 mb-1.5">
-              <Users className="w-3.5 h-3.5" />
+              <HugeiconsIcon icon={UserGroupIcon} className="w-3.5 h-3.5" />
               Chi chung
             </span>
             <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(totalShared)}</span>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100 hover:border-slate-200">
             <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5 mb-1.5">
-              <UserRound className="w-3.5 h-3.5" />
+              <HugeiconsIcon icon={UserIcon} className="w-3.5 h-3.5" />
               Chi cá nhân
             </span>
             <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(totalPersonal)}</span>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100 hover:border-slate-200">
             <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5 mb-1.5">
-              <Calculator className="w-3.5 h-3.5" />
+              <HugeiconsIcon icon={CalculatorIcon} className="w-3.5 h-3.5" />
               Bình quân / người
             </span>
             <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(avgPerPerson)}</span>
@@ -477,7 +478,7 @@ export function SharedExpensesSection({
         <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-50 text-teal-600">
-              <ChartPie className="h-4 w-4" />
+              <HugeiconsIcon icon={PieChartIcon} className="h-4 w-4" />
             </span>
             <h3 className="text-[14px] font-extrabold text-[#030D2E]">Chi phí theo hạng mục</h3>
           </div>
@@ -487,7 +488,7 @@ export function SharedExpensesSection({
         <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
-              <UsersRound className="h-4.5 w-4.5" />
+              <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5" />
             </span>
             <h3 className="text-[14px] font-extrabold text-[#030D2E]">Chi phí theo người trả</h3>
           </div>
@@ -501,13 +502,13 @@ export function SharedExpensesSection({
       <section className="bg-white rounded-3xl border border-slate-200/60 p-5 shadow-sm mt-6 animate-fadeIn">
         <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2">
-            <ReceiptText className="h-5 w-5 text-amber-500" />
+            <HugeiconsIcon icon={ReceiptTextIcon} className="h-5 w-5 text-amber-500" />
             <h3 className="text-[16px] font-black text-[#030D2E]">Danh sách khoản chi</h3>
           </div>
         </div>
         {mergedExpenses.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10 text-center bg-slate-50/35 rounded-2xl border border-dashed border-slate-200/80 my-2">
-            <ReceiptText className="h-10 w-10 text-slate-350 mb-2.5 animate-pulse" />
+            <HugeiconsIcon icon={ReceiptTextIcon} className="h-10 w-10 text-slate-350 mb-2.5 animate-pulse" />
             <p className="text-[13px] font-bold text-slate-400">Chưa có khoản chi nào trong danh sách</p>
             <p className="text-[11.5px] text-slate-400/80 mt-1 max-w-xs px-4">Đề xuất thêm chi phí để chia đều và quyết toán sau chuyến đi.</p>
           </div>
@@ -533,7 +534,7 @@ export function SharedExpensesSection({
                       "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border transition-colors",
                       catDetails.bg
                     )}>
-                      <CatIcon className="h-5 w-5" />
+                      <HugeiconsIcon icon={CatIcon} className="h-5 w-5" />
                     </span>
 
                     {/* Info text stack */}
@@ -568,7 +569,7 @@ export function SharedExpensesSection({
                       <div className="flex items-center gap-2 mt-0.5 text-[11px] font-bold text-slate-400">
                         {e.date && (
                           <span className="flex items-center gap-1 shrink-0">
-                            <CalendarDays className="h-3.5 w-3.5 text-slate-300" />
+                            <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-slate-300" />
                             {new Date(e.date).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
                           </span>
                         )}
@@ -626,7 +627,7 @@ export function SharedExpensesSection({
                           className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-50 active:scale-90 transition-all focus:outline-none cursor-pointer"
                           title="Tùy chọn đề xuất"
                         >
-                          <MoreVertical className="h-4.5 w-4.5" />
+                          <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
                         </button>
                       </div>
                     )}
@@ -683,7 +684,7 @@ export function SharedExpensesSection({
           className="mt-4 flex h-12 w-full items-center justify-center gap-1.5 text-[13px] font-bold text-[#030D2E] bg-white hover:bg-slate-50 border border-dashed border-slate-200 hover:border-indigo-300 hover:text-indigo-600 rounded-2xl transition-all active:scale-[0.98] shadow-sm cursor-pointer"
           title={isDirectEdit ? "Thêm chi phí" : "Đề xuất thêm"}
         >
-          <Plus className="h-4 w-4" /> {isDirectEdit ? "Thêm chi phí" : "Đề xuất thêm"}
+          <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" /> {isDirectEdit ? "Thêm chi phí" : "Đề xuất thêm"}
         </button>
       )}
 
@@ -707,7 +708,7 @@ export function SharedExpensesSection({
                   className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white border border-slate-200 rounded-md px-2.5 py-1 text-[#030D2E] hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
                 >
                   {form.currency}
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                  <HugeiconsIcon icon={ChevronDownIcon} className="w-3.5 h-3.5 text-slate-400" />
                 </button>
 
                 {isCurrencyDropdownOpen && (
@@ -778,7 +779,7 @@ export function SharedExpensesSection({
             type="date"
             label={
               <span className="flex items-center gap-1.5">
-                <CalendarDays className="h-4 w-4 text-slate-500" />
+                <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
                 Ngày chi tiêu
               </span>
             } 
@@ -790,7 +791,7 @@ export function SharedExpensesSection({
           <Input 
             label={
               <span className="flex items-center gap-1.5">
-                <ReceiptText className="h-4 w-4 text-slate-500" />
+                <HugeiconsIcon icon={ReceiptTextIcon} className="h-4 w-4 text-slate-500" />
                 Nội dung chi tiêu
               </span>
             } 
@@ -806,7 +807,7 @@ export function SharedExpensesSection({
                 <Select
                   label={
                     <span className="flex items-center gap-1.5">
-                      <UserCheck className="h-4 w-4 text-slate-500" />
+                      <HugeiconsIcon icon={UserCheck01Icon} className="h-4 w-4 text-slate-500" />
                       Người đã trả *
                     </span>
                   }
@@ -822,7 +823,7 @@ export function SharedExpensesSection({
                 </div>
             ) : (
               <div className="rounded-2xl bg-[#FAF7F1] border border-kat-border/60 p-4 text-[13px] text-kat-muted font-semibold flex gap-2">
-                <Info className="h-5 w-5 shrink-0 text-slate-500 mt-0.5" />
+                <HugeiconsIcon icon={InformationCircleIcon} className="h-5 w-5 shrink-0 text-slate-500 mt-0.5" />
                 <span>Chuyến đi chưa có người đồng hành. Chọn "Cá nhân tự trả" hoặc đề xuất thêm người đồng hành.</span>
               </div>
             )
@@ -832,7 +833,7 @@ export function SharedExpensesSection({
                 <Select
                   label={
                     <span className="flex items-center gap-1.5">
-                      <UserCheck className="h-4 w-4 text-slate-500" />
+                      <HugeiconsIcon icon={UserCheck01Icon} className="h-4 w-4 text-slate-500" />
                       Khoản chi này của ai?
                     </span>
                   }
@@ -853,10 +854,10 @@ export function SharedExpensesSection({
               className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-[#030D2E] transition-colors focus:outline-none"
             >
               <span className="flex items-center gap-1.5">
-                <Tags className="h-4 w-4 text-slate-400" />
+                <HugeiconsIcon icon={Tag01Icon} className="h-4 w-4 text-slate-400" />
                 Chi tiết nâng cao
               </span>
-              <ChevronRight className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
+              <HugeiconsIcon icon={ChevronRightIcon} className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
             </button>
 
             {showAdvanced && (
@@ -866,7 +867,7 @@ export function SharedExpensesSection({
                   <Select 
                     label={
                       <span className="flex items-center gap-1.5">
-                        <Tags className="h-4 w-4 text-slate-500" />
+                        <HugeiconsIcon icon={Tag01Icon} className="h-4 w-4 text-slate-500" />
                         Hạng mục
                       </span>
                     } 
@@ -883,7 +884,7 @@ export function SharedExpensesSection({
                       <Input 
                         label={
                           <span className="flex items-center gap-1.5">
-                            <Tags className="h-4 w-4 text-slate-500" />
+                            <HugeiconsIcon icon={Tag01Icon} className="h-4 w-4 text-slate-500" />
                             Tên hạng mục tự nhập *
                           </span>
                         } 
@@ -903,7 +904,7 @@ export function SharedExpensesSection({
                     <Select
                       label={
                         <span className="flex items-center gap-1.5">
-                          <Route className="h-4 w-4 text-slate-500" />
+                          <HugeiconsIcon icon={RouteIcon} className="h-4 w-4 text-slate-500" />
                           Gắn vào lịch trình (Tùy chọn)
                         </span>
                       }
@@ -921,7 +922,7 @@ export function SharedExpensesSection({
                 {/* Segmented Control for Cost Calculation */}
                 <div className="space-y-2">
                   <span className="text-[13.5px] font-semibold text-slate-600 flex items-center gap-1.5">
-                    <Scale className="h-4 w-4 text-slate-500" />
+                    <HugeiconsIcon icon={BalanceScaleIcon} className="h-4 w-4 text-slate-500" />
                     Cách chia khoản chi
                   </span>
                   <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200/40">
@@ -1241,7 +1242,7 @@ export function SharedChecklistSection({
       <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
         <div className="flex items-center gap-2.5">
           <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-purple-50 text-purple-600">
-            <CheckCircle className="h-5 w-5" />
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5" />
           </div>
           <div>
             <h3 className="text-[16px] font-black text-[#030D2E]">Danh sách chuẩn bị</h3>
@@ -1314,7 +1315,7 @@ export function SharedChecklistSection({
                   <div className="flex-shrink-0 mt-0.5">
                     {c.completed ? (
                       <div className="w-5.5 h-5.5 rounded-lg bg-purple-600 text-white flex items-center justify-center transition-all scale-100 shadow-sm shadow-purple-200">
-                        <Check className="h-3.5 w-3.5 stroke-[3.5]" />
+                        <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" />
                       </div>
                     ) : (
                       <div className="w-5.5 h-5.5 rounded-lg border-2 border-slate-300 hover:border-purple-500 bg-white transition-all scale-100" />
@@ -1324,7 +1325,7 @@ export function SharedChecklistSection({
                   <div className="flex-shrink-0 mt-0.5">
                     {c.completed ? (
                       <div className="w-5.5 h-5.5 rounded-lg bg-slate-200 text-slate-500 flex items-center justify-center">
-                        <Check className="h-3.5 w-3.5 stroke-[3]" />
+                        <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" />
                       </div>
                     ) : (
                       <div className="w-5.5 h-5.5 rounded-lg border-2 border-slate-200 bg-slate-50" />
@@ -1371,8 +1372,8 @@ export function SharedChecklistSection({
                     {c.category && (
                       <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-400">
                         {(() => {
-                          const CatIcon = CATEGORY_ICONS[c.category] || Package;
-                          return <CatIcon className="h-3 w-3 text-slate-400" />;
+                          const CatIcon = CATEGORY_ICONS[c.category] || PackageIcon;
+                          return <HugeiconsIcon icon={CatIcon} className="h-3 w-3 text-slate-400" />;
                         })()}
                         {c.category}
                       </span>
@@ -1387,7 +1388,7 @@ export function SharedChecklistSection({
                           border: `1px solid hsl(${c.assignedTo.charCodeAt(0) * 137.5 % 360}, 70%, 90%)`
                         }}
                       >
-                        <User className="h-2.5 w-2.5" />
+                        <HugeiconsIcon icon={UserIcon} className="h-2.5 w-2.5" />
                         {c.assignedTo}
                       </span>
                     )}
@@ -1429,7 +1430,7 @@ export function SharedChecklistSection({
                     className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 active:scale-90 transition-all focus:outline-none"
                     title={activeSubTab === 'private' ? "Tùy chọn" : "Tùy chọn đề xuất"}
                   >
-                    <MoreVertical className="h-4.5 w-4.5" />
+                    <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
                   </button>
                 </div>
               )}
@@ -1442,7 +1443,7 @@ export function SharedChecklistSection({
       {displayedChecklist.length === 0 && (
         <div className="flex flex-col items-center justify-center py-8 px-4 text-center bg-slate-50/50 rounded-2xl border border-dashed border-slate-200/60 my-2">
           <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-400 mb-3">
-            <Luggage className="h-6 w-6" />
+            <HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />
           </div>
           <h4 className="text-[14px] font-bold text-[#030D2E]">
             {activeSubTab === 'private' ? "Chưa có chuẩn bị cá nhân" : "Chưa có chuẩn bị nào"}
@@ -1505,7 +1506,7 @@ export function SharedChecklistSection({
           className="mt-4 flex h-11 w-full items-center justify-center gap-2 text-[13.5px] font-bold text-purple-600 bg-purple-50 hover:bg-purple-100/80 active:scale-[0.99] rounded-xl transition-all shadow-sm shadow-purple-100/30"
           title={activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : (isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm")}
         >
-          <Plus className="h-4 w-4 stroke-[3]" /> 
+          <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" /> 
           {activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : (isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm")}
         </button>
       )}
@@ -1524,7 +1525,7 @@ export function SharedChecklistSection({
           {/* Item Name */}
           <div className="space-y-1.5">
             <label className="text-[13px] font-bold text-slate-700 flex items-center gap-1.5">
-              <Type className="h-4 w-4 text-slate-500" />
+              <HugeiconsIcon icon={TextFontIcon} className="h-4 w-4 text-slate-500" />
               Tên món cần mang *
             </label>
             <input
@@ -1548,12 +1549,12 @@ export function SharedChecklistSection({
           {/* Category Selector (Grid of chips) */}
           <div className="space-y-2">
             <label className="text-[13px] font-bold text-slate-700 block flex items-center gap-1.5">
-              <Package className="h-4 w-4 text-slate-500" />
+              <HugeiconsIcon icon={PackageIcon} className="h-4 w-4 text-slate-500" />
               Nhóm hành lý
             </label>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
               {CATEGORIES.map((cat) => {
-                const IconComponent = CATEGORY_ICONS[cat] || Package;
+                const IconComponent = CATEGORY_ICONS[cat] || PackageIcon;
                 const isSelected = form.category === cat;
                 return (
                   <button
@@ -1571,7 +1572,7 @@ export function SharedChecklistSection({
                         ? "bg-[#00BFB7]/20 text-[#00BFB7]"
                         : "bg-slate-100 text-slate-500"
                     }`}>
-                       <IconComponent className="w-4.5 h-4.5" strokeWidth={2.2} />
+                       <HugeiconsIcon icon={IconComponent} className="w-4.5 h-4.5" />
                     </div>
                     <span className="text-[12px] font-bold tracking-tight">{cat}</span>
                   </button>
@@ -1592,7 +1593,7 @@ export function SharedChecklistSection({
                 onClick={() => setForm({ ...form, quantity: Math.max(1, form.quantity - 1) })}
                 className="flex h-8.5 w-8.5 items-center justify-center rounded-[12px] bg-white text-slate-800 border border-slate-200/60 shadow-sm active:scale-95 transition-all hover:bg-slate-50"
               >
-                <Minus className="h-3.5 w-3.5" strokeWidth={3} />
+                <HugeiconsIcon icon={MinusSignIcon} className="h-3.5 w-3.5" />
               </button>
               <span className="text-[15px] font-black text-slate-800 w-8 text-center">{form.quantity}</span>
               <button
@@ -1600,7 +1601,7 @@ export function SharedChecklistSection({
                 onClick={() => setForm({ ...form, quantity: form.quantity + 1 })}
                 className="flex h-8.5 w-8.5 items-center justify-center rounded-[12px] bg-white text-slate-800 border border-slate-200/60 shadow-sm active:scale-95 transition-all hover:bg-slate-50"
               >
-                <Plus className="h-3.5 w-3.5" strokeWidth={3} />
+                <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5" strokeWidth={3} />
               </button>
             </div>
           </div>
@@ -1608,12 +1609,12 @@ export function SharedChecklistSection({
           {/* Assigned To */}
           <div className="space-y-1.5">
             <label className="text-[13px] font-bold text-slate-700 flex items-center gap-1.5">
-              <UserRoundCheck className="h-4 w-4 text-slate-500" />
+              <HugeiconsIcon icon={UserCheck01Icon} className="h-4 w-4 text-slate-500" />
               Người phụ trách
             </label>
             {members.length === 0 ? (
               <div className="rounded-[16px] bg-[#FAF7F1] border border-kat-border/60 p-3 flex items-start gap-2.5">
-                <User className="h-4 w-4 text-slate-500 shrink-0 mt-0.5" />
+                <HugeiconsIcon icon={UserIcon} className="h-4 w-4 text-slate-500 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="text-[12.5px] font-bold text-slate-800">Chưa có người đồng hành</h4>
                   <p className="text-[11.5px] text-slate-500 mt-0.5 font-bold">Người đồng hành chưa được chia sẻ để phân công hành lý.</p>
@@ -1637,7 +1638,7 @@ export function SharedChecklistSection({
           {/* Priority Segments */}
           <div className="space-y-2">
             <label className="text-[13px] font-bold text-slate-700 block flex items-center gap-1.5">
-              <BadgeCheck className="h-4 w-4 text-slate-500" />
+              <HugeiconsIcon icon={BadgeCheckIcon} className="h-4 w-4 text-slate-500" />
               Mức độ cần thiết
             </label>
             <div className="flex p-1 bg-slate-100 rounded-xl">
@@ -1665,7 +1666,7 @@ export function SharedChecklistSection({
           {/* Notes */}
           <div className="space-y-1.5">
             <label className="text-[13px] font-bold text-slate-700 flex items-center gap-1.5">
-              <StickyNote className="h-4 w-4 text-slate-500" />
+              <HugeiconsIcon icon={StickyNoteIcon} className="h-4 w-4 text-slate-500" />
               Ghi chú
             </label>
             <textarea
@@ -1938,7 +1939,7 @@ export function SharedJournalsSection({
     <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm space-y-4">
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <div className="flex items-center gap-2">
-          <Globe className="h-5 w-5 text-sky-500" />
+          <HugeiconsIcon icon={GlobeIcon} className="h-5 w-5 text-sky-500" />
           <h3 className="text-[16px] font-black text-[#030D2E]">Bản tin chuyến đi</h3>
         </div>
       </div>
@@ -1951,7 +1952,7 @@ export function SharedJournalsSection({
                 journalMode === "posts" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              <Globe className="w-4 h-4" /> Bản tin
+              <HugeiconsIcon icon={GlobeIcon} className="w-4 h-4" /> Bản tin
             </button>
             <button
               onClick={() => setJournalMode("chat")}
@@ -1959,7 +1960,7 @@ export function SharedJournalsSection({
                 journalMode === "chat" ? "bg-white text-[#00BFB7] shadow-sm" : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              <MessageCircle className="w-4 h-4" /> Trò chuyện
+              <HugeiconsIcon icon={BubbleChatIcon} className="w-4 h-4" /> Trò chuyện
             </button>
           </div>
         ) : (
@@ -1971,7 +1972,7 @@ export function SharedJournalsSection({
             onClick={() => setIsFormOpen(true)}
             className="flex items-center justify-center gap-1.5 px-4 py-2 bg-[#030D2E] text-white font-bold rounded-[14px] text-[13px] hover:bg-[#030D2E]/90 transition-all shadow-sm shrink-0 motion-press"
           >
-            <Pencil className="h-4 w-4" /> Đăng bài viết
+            <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4" /> Đăng bài viết
           </button>
         )}
       </div>
@@ -1989,7 +1990,7 @@ export function SharedJournalsSection({
             .map(([date, entries]) => (
               <section key={date} className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
-                  <CalendarDays className="h-4.5 w-4.5 text-slate-400" />
+                  <HugeiconsIcon icon={Calendar01Icon} className="h-4.5 w-4.5 text-slate-400" />
                   <h3 className="text-[15px] font-extrabold text-[#030D2E]">{formatDate(date)}</h3>
                 </div>
                 
@@ -2051,7 +2052,7 @@ export function SharedJournalsSection({
                                   </span>
                                   {j.postedAt && (
                                     <span className="text-[10px] font-semibold text-slate-400 flex items-center gap-0.5">
-                                      <Clock className="h-2.5 w-2.5" />
+                                      <HugeiconsIcon icon={Clock01Icon} className="h-2.5 w-2.5" />
                                       {new Date(j.postedAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}
                                     </span>
                                   )}
@@ -2066,7 +2067,7 @@ export function SharedJournalsSection({
                               className="flex h-8 w-8 items-center justify-center rounded-full text-rose-400 hover:text-rose-600 hover:bg-rose-50 transition-all motion-press"
                               title={isDirectEdit || j.authorName === resolvedGuestName ? "Xóa bài viết" : "Đề xuất xóa bài viết"}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
                             </button>
                           )}
                         </div>
@@ -2083,7 +2084,7 @@ export function SharedJournalsSection({
                           </h4>
                           {j.locationName && (
                             <div className="mt-1 flex items-center gap-1.5 text-[13px] font-medium text-slate-500">
-                              <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+                              <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                               <span>{j.locationName}</span>
                             </div>
                           )}
@@ -2191,7 +2192,7 @@ export function SharedJournalsSection({
               onClick={handleCreate}
               className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white px-6 font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
             >
-              <Save className="h-4.5 w-4.5" strokeWidth={2.5} />
+              <HugeiconsIcon icon={SaveIcon} className="h-4.5 w-4.5" strokeWidth={2.5} />
               Đăng bài viết
             </button>
           </div>
@@ -2203,7 +2204,7 @@ export function SharedJournalsSection({
             <Input 
               label={
                 <span className="flex items-center gap-1.5">
-                  <CalendarDays className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
                   Ngày ghi lại
                 </span>
               } 
@@ -2218,7 +2219,7 @@ export function SharedJournalsSection({
             <Input 
               label={
                 <span className="flex items-center gap-1.5">
-                  <Type className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={TextFontIcon} className="h-4 w-4 text-slate-500" />
                   Tiêu đề bài viết *
                 </span>
               } 
@@ -2232,19 +2233,19 @@ export function SharedJournalsSection({
 
             {isLocating ? (
               <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
-                <MapPin className="h-3.5 w-3.5" />
-                <span className="flex items-center gap-1.5 text-slate-400"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Đang lấy vị trí...</span>
+                <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5" />
+                <span className="flex items-center gap-1.5 text-slate-400"><HugeiconsIcon icon={Loading01Icon} className="h-3.5 w-3.5 animate-spin" /> Đang lấy vị trí...</span>
               </div>
             ) : form.locationName ? (
               <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
-                <MapPin className="h-3.5 w-3.5 text-kat-primary" />
+                <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 <span>Đang ở <span className="font-bold text-kat-primary">{form.locationName}</span></span>
                 <button type="button" onClick={() => setForm({...form, locationName: "", latitude: undefined, longitude: undefined})} className="ml-1 px-1 text-slate-300 hover:text-rose-500 transition-colors font-bold text-[14px] leading-none" title="Xóa vị trí">×</button>
               </div>
             ) : (
               <div className="mt-2 flex items-center gap-1.5 px-1 animate-fadeIn">
                 <button type="button" onClick={fetchLocation} className="flex items-center gap-1.5 text-[12.5px] font-bold text-slate-400 hover:text-kat-primary transition-colors focus:outline-none">
-                  <MapPinOff className="h-3.5 w-3.5" />
+                  <HugeiconsIcon icon={LocationOfflineIcon} className="h-3.5 w-3.5" />
                   <span>Nhấn để đính kèm vị trí</span>
                 </button>
               </div>
@@ -2254,7 +2255,7 @@ export function SharedJournalsSection({
           {/* Mood Chips */}
           <div>
             <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-              <SmilePlus className="h-4 w-4 text-slate-500" />
+              <HugeiconsIcon icon={SmileIcon} className="h-4 w-4 text-slate-500" />
               Cảm xúc hôm nay
             </span>
             <div className="flex flex-wrap gap-2">
@@ -2285,7 +2286,7 @@ export function SharedJournalsSection({
             <Textarea 
               label={
                 <span className="flex items-center gap-1.5">
-                  <NotebookPen className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={NotebookIcon} className="h-4 w-4 text-slate-500" />
                   Câu chuyện của bạn *
                 </span>
               } 
@@ -2307,7 +2308,7 @@ export function SharedJournalsSection({
                   onClick={() => { setForm({ ...form, imageUrl: "" }); setDirty(true); }}
                   className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 hover:bg-black/70"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
                 </button>
               </div>
             ) : (
@@ -2326,9 +2327,9 @@ export function SharedJournalsSection({
                   className="w-full h-12 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 text-slate-500 font-bold text-[14px] hover:bg-slate-100 hover:text-[#00BFB7] transition-colors flex items-center justify-center gap-2"
                 >
                   {uploading ? (
-                    <><Loader2 className="h-5 w-5 animate-spin" /> Đang tải ảnh...</>
+                    <><HugeiconsIcon icon={Loading01Icon} className="h-5 w-5 animate-spin" /> Đang tải ảnh...</>
                   ) : (
-                    <><ImageIcon className="h-5 w-5" /> Đính kèm hình ảnh</>
+                    <><HugeiconsIcon icon={Image01Icon} className="h-5 w-5" /> Đính kèm hình ảnh</>
                   )}
                 </button>
               </div>
@@ -2338,7 +2339,7 @@ export function SharedJournalsSection({
           {/* Quick Prompts Section inside Modal */}
           <div className="pt-1">
             <span className="mb-2 block text-[12.5px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <Sparkles className="h-4 w-4 text-slate-500" />
+              <HugeiconsIcon icon={SparklesIcon} className="h-4 w-4 text-slate-500" />
               Gợi ý viết nhanh
             </span>
             <div className="flex flex-wrap gap-1.5">
@@ -2427,7 +2428,7 @@ export function SharedDocumentsSection({
   return (
     <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm">
       <div className="flex items-center gap-2 mb-3 border-b border-slate-100 pb-3">
-        <FileText className="h-5 w-5 text-rose-500" />
+        <HugeiconsIcon icon={File01Icon} className="h-5 w-5 text-rose-500" />
         <h3 className="text-[16px] font-black text-[#030D2E]">Giấy tờ & đặt chỗ</h3>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2459,7 +2460,7 @@ export function SharedDocumentsSection({
                   className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-slate-200/60 transition-all active:scale-95 shadow-sm bg-white shrink-0"
                   title="Đề xuất xóa"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
                 </button>
               )}
             </div>
@@ -2492,7 +2493,7 @@ export function SharedDocumentsSection({
                   />
                   {!d.isPendingDelete && (
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                      <Maximize2 className="w-5 h-5 sm:w-6 sm:h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
+                      <HugeiconsIcon icon={Maximize01Icon} className="w-5 h-5 sm:w-6 sm:h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
                     </div>
                   )}
                 </div>
@@ -2523,7 +2524,7 @@ export function SharedDocumentsSection({
               setPreviewImage(null); 
             }}
           >
-            <X className="w-6 h-6" />
+            <HugeiconsIcon icon={Cancel01Icon} className="w-6 h-6" />
           </button>
         </div>
       )}
@@ -2743,7 +2744,7 @@ export function SharedMembersSection({
     <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm space-y-4">
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <div className="flex items-center gap-2">
-          <Users className="h-5 w-5 text-blue-500" />
+          <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-blue-500" />
           <h3 className="text-[16px] font-black text-[#030D2E]">Thành viên</h3>
         </div>
       </div>
@@ -2802,41 +2803,41 @@ export function SharedMembersSection({
                   if (rLower.includes("trưởng nhóm") || rLower.includes("trưởng đoàn") || rLower.includes("leader")) {
                     return (
                       <span key={idx} title="Trưởng nhóm" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 text-amber-700 border border-amber-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
-                        <Crown className="w-4 h-4 text-amber-500 fill-amber-500/10" />
+                        <HugeiconsIcon icon={CrownIcon} className="w-4 h-4 text-amber-500 fill-amber-500/10" />
                       </span>
                     );
                   }
                   if (rLower.includes("quản lý chi phí")) {
                     return (
                       <span key={idx} title="Quản lý chi phí" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
-                        <WalletCards className="w-4 h-4 text-emerald-500" />
+                        <HugeiconsIcon icon={Wallet01Icon} className="w-4 h-4 text-emerald-500" />
                       </span>
                     );
                   }
                   if (rLower.includes("tài xế")) {
                     return (
                       <span key={idx} title="Tài xế" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 text-blue-700 border border-blue-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
-                        <Car className="w-4 h-4 text-blue-500" />
+                        <HugeiconsIcon icon={Car01Icon} className="w-4 h-4 text-blue-500" />
                       </span>
                     );
                   }
                   if (rLower.includes("dẫn đường")) {
                     return (
                       <span key={idx} title="Dẫn đường" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 text-sky-700 border border-sky-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
-                        <Compass className="w-4 h-4 text-sky-500" />
+                        <HugeiconsIcon icon={CompassIcon} className="w-4 h-4 text-sky-500" />
                       </span>
                     );
                   }
                   if (rLower.includes("phụ trách hành lý") || rLower.includes("hành lý")) {
                     return (
                       <span key={idx} title="Hành lý" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
-                        <Luggage className="w-4 h-4 text-indigo-500" />
+                        <HugeiconsIcon icon={Luggage01Icon} className="w-4 h-4 text-indigo-500" />
                       </span>
                     );
                   }
                   return (
                     <span key={idx} title="Bạn đồng hành" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 text-slate-600 border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
-                      <Users className="w-4 h-4 text-slate-400" />
+                      <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 text-slate-400" />
                     </span>
                   );
                 })}
@@ -2927,7 +2928,7 @@ export function SharedMembersSection({
                       className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/80 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
                       title="Tùy chọn đề xuất"
                     >
-                      <MoreVertical className="h-5 w-5" />
+                      <HugeiconsIcon icon={MoreVerticalIcon} className="h-5 w-5" />
                     </button>
                   </div>
                 )}
@@ -2942,7 +2943,7 @@ export function SharedMembersSection({
                       ? "bg-slate-50/50 border-slate-100 text-slate-400 font-semibold" 
                       : "bg-sky-50/50 border-sky-100 text-sky-700 font-bold"
                   )}>
-                    <Luggage className="h-3.5 w-3.5 shrink-0" />
+                    <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 shrink-0" />
                     {assignedTasksCount} việc
                   </span>
                   <span className={classNames(
@@ -2951,7 +2952,7 @@ export function SharedMembersSection({
                       ? "bg-slate-50/50 border-slate-100 text-slate-400 font-semibold" 
                       : "bg-emerald-50/50 border-emerald-100 text-emerald-700 font-bold"
                   )}>
-                    <WalletCards className="h-3.5 w-3.5 shrink-0" />
+                    <HugeiconsIcon icon={Wallet01Icon} className="h-3.5 w-3.5 shrink-0" />
                     Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
                   </span>
                 </div>
@@ -3012,7 +3013,7 @@ export function SharedMembersSection({
           className="flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-[#FFFDF8] hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
           title="Đề xuất thêm thành viên"
         >
-          <Plus className="h-4.5 w-4.5" /> Đề xuất thêm thành viên
+          <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" /> Đề xuất thêm thành viên
         </button>
       )}
 
