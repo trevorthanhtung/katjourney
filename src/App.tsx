@@ -103,7 +103,10 @@ function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isRemindersOpen, setIsRemindersOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [moreSection, setMoreSection] = useState<"overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents">("overview");
+  const [moreSection, setMoreSection] = useState<"overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents">(() => {
+    const saved = localStorage.getItem("kat_more_section");
+    return (saved as any) || "overview";
+  });
   const [isAppInboxOpen, setIsAppInboxOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsInitialView, setSettingsInitialView] = useState<"menu" | "auth" | "privacy" | "about" | "donate">("menu");
@@ -216,11 +219,22 @@ function App() {
     const saved = localStorage.getItem("kat_is_managing_trips");
     return saved ? saved === "true" : true;
   });
-  const [isViewingArchive, setIsViewingArchive] = useState(false);
+  const [isViewingArchive, setIsViewingArchive] = useState<boolean>(() => {
+    const saved = localStorage.getItem("kat_is_viewing_archive");
+    return saved === "true";
+  });
 
   React.useEffect(() => {
     localStorage.setItem("kat_active_tab", activeTab);
   }, [activeTab]);
+
+  React.useEffect(() => {
+    localStorage.setItem("kat_more_section", moreSection);
+  }, [moreSection]);
+
+  React.useEffect(() => {
+    localStorage.setItem("kat_is_viewing_archive", String(isViewingArchive));
+  }, [isViewingArchive]);
 
   React.useEffect(() => {
     if (selectedTripId !== null) {
@@ -420,6 +434,21 @@ function App() {
   );
   const { pendingRequests, activeToken } = useShareChangeRequests(trip);
   const reminders = useTripReminders({ trip, checklist: checklist ?? [], travelDocuments: travelDocuments ?? [], events: events ?? [], backupPlans: backupPlans ?? [], pendingRequestsCount: pendingRequests.length });
+
+  // --- BADGING API INTEGRATION ---
+  useEffect(() => {
+    if (typeof navigator !== "undefined" && "setAppBadge" in navigator) {
+      if (reminders.length > 0) {
+        navigator.setAppBadge(reminders.length).catch((err) => {
+          console.error("[Badging API] Error setting app badge:", err);
+        });
+      } else {
+        navigator.clearAppBadge().catch((err) => {
+          console.error("[Badging API] Error clearing app badge:", err);
+        });
+      }
+    }
+  }, [reminders.length]);
 
   const sharedExpenses = (expenses ?? []).filter(e => e.splitType !== "personal");
   const totalSharedExpense = sharedExpenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
@@ -1040,7 +1069,7 @@ function App() {
 
 
       {!isManagingTrips && tripId && (
-        <nav className="fixed bottom-5 left-4 right-4 z-50 mx-auto max-w-[480px] rounded-[24px] bg-[#EFECE6]/90 border border-[#E8E1D8]/80 backdrop-blur-xl shadow-[0_8px_30px_rgba(3,13,46,0.04)] md:hidden">
+        <nav className="fixed bottom-5 left-4 right-4 z-50 mx-auto max-w-[480px] rounded-[24px] bg-kat-bg/80 border border-kat-border/80 backdrop-blur-xl shadow-[0_8px_30px_rgba(3,13,46,0.04)] md:hidden">
           <div ref={containerRef} className="relative flex h-[56px] min-[360px]:h-[60px] items-center justify-between px-2">
             {/* Active Indicator Slide Pill */}
             {indicatorStyle.width > 0 && (
@@ -1262,7 +1291,7 @@ function App() {
                     showToast("Liên kết không hợp lệ. Vui lòng thử lại!");
                   }
                 }}
-                className="inline-flex h-[50px] shrink-0 items-center justify-center rounded-[14px] bg-[#030D2E] hover:bg-[#030D2E]/90 text-white px-6 font-black active:scale-[0.98] transition-all duration-200"
+                className="inline-flex h-[50px] shrink-0 items-center justify-center rounded-[14px] bg-[#030D2E] hover:bg-[#0a1a5c] text-white px-6 font-black active:scale-[0.98] transition-all duration-200"
               >
                 Xem ngay
               </button>

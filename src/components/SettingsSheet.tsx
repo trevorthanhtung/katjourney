@@ -399,10 +399,17 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           endDate: t.endDate || t.startDate || today,
           latitude: t.latitude,
           longitude: t.longitude,
+          defaultCurrency: t.defaultCurrency,
           mediaLink: t.mediaLink,
           dayRoadmaps: t.dayRoadmaps,
           shareToken: t.shareToken,
           sharePin: t.sharePin,
+          shareIncludeExpenses: t.shareIncludeExpenses,
+          shareIncludeJournals: t.shareIncludeJournals,
+          shareIncludeChecklist: t.shareIncludeChecklist,
+          shareIncludeBackupPlans: t.shareIncludeBackupPlans,
+          shareIncludeDocuments: t.shareIncludeDocuments,
+          shareUsePinProtection: t.shareUsePinProtection,
           status: t.status === "archived" ? "archived" : "active",
           createdAt: new Date().toISOString(),
         });
@@ -415,6 +422,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           note: m.note ?? "",
           gender: m.gender,
           avatar: m.avatar,
+          isDeleted: m.isDeleted,
         }));
         const importedEvents = (parsed.events ?? []).map((e: any) => ({
           tripId: id,
@@ -427,6 +435,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           completed: Boolean(e.completed),
           assignee: e.assignee,
           type: e.type,
+          isDeleted: e.isDeleted,
         }));
         const importedExpenses = (parsed.expenses ?? []).map((ex: any) => ({
           tripId: id,
@@ -437,6 +446,10 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           splitType: ex.splitType ?? "shared",
           date: ex.date,
           eventId: ex.eventId,
+          originalAmount: ex.originalAmount !== undefined ? Number(ex.originalAmount) : undefined,
+          currency: ex.currency,
+          exchangeRate: ex.exchangeRate !== undefined ? Number(ex.exchangeRate) : undefined,
+          isDeleted: ex.isDeleted,
         }));
         const importedChecklist = (parsed.checklist ?? []).map((c: any) => ({
           tripId: id,
@@ -448,6 +461,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           assignedTo: c.assignedTo,
           priority: (["normal", "important", "required"].includes(c.priority)) ? c.priority : "normal",
           note: c.note,
+          isPrivate: c.isPrivate !== undefined ? Boolean(c.isPrivate) : undefined,
+          isDeleted: c.isDeleted,
         }));
         const importedJournals = (parsed.journals ?? []).map((j: any) => ({
           tripId: id,
@@ -459,12 +474,18 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           imageUrl: j.imageUrl,
           postedAt: j.postedAt,
           reactions: j.reactions,
+          authorId: j.authorId,
+          locationName: j.locationName,
+          latitude: j.latitude !== undefined ? Number(j.latitude) : undefined,
+          longitude: j.longitude !== undefined ? Number(j.longitude) : undefined,
+          isDeleted: j.isDeleted,
         }));
         const importedPackingItems = (parsed.packingItems ?? []).map((p: any) => ({
           tripId: id,
           tripType: packingTripTypes.includes(p.tripType) ? p.tripType : "Thành phố",
           title: p.title ?? "",
           completed: Boolean(p.completed),
+          isDeleted: p.isDeleted,
         }));
         const importedDocuments = (parsed.travelDocuments ?? []).map((d: any) => ({
           tripId: id,
@@ -474,8 +495,9 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           date: d.date ?? "",
           link: d.link ?? "",
           attachmentUrl: d.attachmentUrl,
-          isPrivate: Boolean(d.isPrivate),
+          isPrivate: d.isPrivate !== undefined ? Boolean(d.isPrivate) : undefined,
           note: d.note ?? "",
+          isDeleted: d.isDeleted,
         }));
         const importedBackupPlans = (parsed.backupPlans ?? []).map((b: any) => ({
           tripId: id,
@@ -484,10 +506,11 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           reason: b.reason ?? "",
           location: b.location ?? "",
           mapLink: b.mapLink ?? "",
-          estimatedCost: b.estimatedCost,
+          estimatedCost: b.estimatedCost !== undefined ? Number(b.estimatedCost) : undefined,
           note: b.note ?? "",
           activityId: b.activityId,
           date: b.date,
+          isDeleted: b.isDeleted,
         }));
 
         if (importedMembers.length) await db.members.bulkAdd(importedMembers);
@@ -616,12 +639,12 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 role="switch"
                 aria-checked={autoBackupEnabled}
                 onClick={() => setAutoBackupEnabled(!autoBackupEnabled)}
-                className={`relative inline-flex h-6.5 w-11.5 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-255 ease-in-out focus:outline-none ${
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
                   autoBackupEnabled ? "bg-[#030D2E]" : "bg-slate-200"
                 }`}
               >
                 <span
-                  className={`pointer-events-none inline-block h-5.5 w-5.5 rounded-full bg-white shadow-md transform transition-transform duration-250 ease-in-out ${
+                  className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md transform transition-transform duration-200 ease-in-out ${
                     autoBackupEnabled ? "translate-x-5" : "translate-x-0"
                   }`}
                 />
@@ -634,7 +657,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           <button
             onClick={handleSync}
             disabled={!user || isSyncing}
-            className="w-full flex items-center justify-center gap-2.5 h-13 rounded-[20px] bg-[#030D2E] text-white hover:bg-[#030D2E]/95 active:scale-[0.97] transition-all font-black text-[15px] shadow-[0_4px_14px_rgba(3,13,46,0.25)] hover:shadow-[0_6px_20px_rgba(3,13,46,0.4)] disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none shrink-0 motion-press"
+            className="w-full flex items-center justify-center gap-2.5 h-13 rounded-[20px] bg-kat-primary text-white hover:bg-kat-primary-usable active:scale-[0.97] transition-all font-black text-[15px] shadow-[0_4px_14px_rgba(0,191,183,0.25)] hover:shadow-[0_6px_20px_rgba(0,191,183,0.4)] disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none shrink-0 motion-press"
           >
             {isSyncing ? (
               <>

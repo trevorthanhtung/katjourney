@@ -425,7 +425,8 @@ export function Select({
   onChange,
   options,
   placeholder,
-  labels
+  labels,
+  buttonClassName
 }: {
   label?: React.ReactNode;
   value: string;
@@ -433,6 +434,7 @@ export function Select({
   options: string[];
   placeholder?: string;
   labels?: Record<string, string>;
+  buttonClassName?: string;
 }) {
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -442,7 +444,7 @@ export function Select({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7]"
+        className={buttonClassName ?? "mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7]"}
       >
         <span className={value ? "text-[#030D2E]" : "text-slate-400"}>
           {value ? (labels?.[value] ?? value) : (placeholder ?? "Chưa chọn")}
@@ -645,7 +647,7 @@ export function BottomSheet({
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center p-0 sm:p-6">
+    <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center p-0 sm:p-6">
       {/* Backdrop */}
       <div className="absolute inset-0 motion-modal-overlay bg-slate-900/35 backdrop-blur-sm" onClick={onClose} />
       

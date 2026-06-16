@@ -10,7 +10,7 @@ import {
   SparklesIcon 
 } from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
-import { Trip, db } from "../../db";
+import { Trip, db, Expense } from "../../db";
 import { formatDate } from "../../utils/helpers";
 
 // A palette of premium gradients for cards
@@ -22,6 +22,109 @@ const CARD_GRADIENTS = [
   "linear-gradient(135deg, #1A3A5C 0%, #0F4C81 55%, #1565C0 100%)",
   "linear-gradient(135deg, #5C2A1A 0%, #7A3A20 55%, #963F1E 100%)",
 ];
+
+function getTripDurationText(trip: Trip) {
+  const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
+  if (isDayTrip) return "Đi trong ngày";
+  try {
+    const start = new Date(trip.startDate);
+    const end = new Date(trip.endDate);
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return "Dài ngày";
+    const diffDays = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const diffNights = diffDays > 1 ? diffDays - 1 : 0;
+    return `${diffDays} ngày ${diffNights} đêm`;
+  } catch {
+    return "Dài ngày";
+  }
+}
+
+interface TripCardProps {
+  trip: Trip;
+  index: number;
+  allExpenses: Expense[];
+  memberCounts: Record<number, number>;
+  onOpenTrip: (id: number) => void;
+}
+
+function TripCard({ 
+  trip, 
+  index,
+  allExpenses,
+  memberCounts,
+  onOpenTrip
+}: TripCardProps) {
+  const tripExpenses = allExpenses.filter(e => e.tripId === trip.id);
+  const totalExpense = tripExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
+
+  return (
+    <div
+      onClick={() => onOpenTrip(trip.id!)}
+      className="group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[28px] p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl motion-card-enter h-full min-h-[200px]"
+      style={{
+        background: gradient,
+        boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
+      }}
+    >
+      {/* Background decorative compass */}
+      <div className="absolute -bottom-4 -right-4 opacity-10 pointer-events-none rotate-12">
+        <HugeiconsIcon icon={CompassIcon} size={112} className="text-white" />
+      </div>
+
+      {/* Top: Badge */}
+      <div className="flex items-center justify-between mb-4">
+        <span className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold tracking-wide"
+          style={{ background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.9)", border: "1px solid rgba(255,255,255,0.2)" }}
+        >
+          {getTripDurationText(trip)}
+        </span>
+        <div className="flex h-8 w-8 items-center justify-center rounded-full"
+          style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)" }}
+        >
+          <HugeiconsIcon icon={SparklesIcon} size={16} className="text-white/80" />
+        </div>
+      </div>
+
+      {/* Trip title */}
+      <h4 className="text-[20px] font-extrabold text-white leading-tight mb-5 line-clamp-2 tracking-tight">
+        {trip.title}
+      </h4>
+
+      {/* Info grid */}
+      <div className="grid grid-cols-2 gap-y-2.5 gap-x-3 mt-auto">
+        <div className="flex items-center gap-2 min-w-0">
+          <HugeiconsIcon icon={Location01Icon} size={14} className="text-white/50 shrink-0" />
+          <span className="text-[12.5px] font-semibold text-white/75 truncate">
+            {trip.location || "Chưa xác định"}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 min-w-0">
+          <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-white/50 shrink-0" />
+          <span className="text-[12.5px] font-semibold text-white/75 truncate">
+            {formatDate(trip.startDate)}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 min-w-0">
+          <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-white/50 shrink-0" />
+          <span className="text-[12.5px] font-semibold text-white/75 truncate">
+            {memberCounts[trip.id!] || 1} người
+          </span>
+        </div>
+        <div className="flex items-center gap-2 min-w-0">
+          <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-white/50 shrink-0" />
+          <span className="text-[12.5px] font-semibold text-white/75 truncate">
+            {totalExpense > 0 ? `${totalExpense.toLocaleString()}đ` : "Chưa chi"}
+          </span>
+        </div>
+      </div>
+
+      {/* Hover shimmer overlay */}
+      <div className="absolute inset-0 rounded-[28px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+        style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 100%)" }}
+      />
+    </div>
+  );
+}
 
 export function ArchiveGallery({
   onBack,
@@ -60,94 +163,7 @@ export function ArchiveGallery({
 
   const years = Object.keys(tripsByYear).sort((a, b) => b.localeCompare(a));
 
-  function getTripDurationText(trip: Trip) {
-    const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
-    if (isDayTrip) return "Đi trong ngày";
-    try {
-      const start = new Date(trip.startDate);
-      const end = new Date(trip.endDate);
-      if (isNaN(start.getTime()) || isNaN(end.getTime())) return "Dài ngày";
-      const diffDays = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-      const diffNights = diffDays > 1 ? diffDays - 1 : 0;
-      return `${diffDays} ngày ${diffNights} đêm`;
-    } catch {
-      return "Dài ngày";
-    }
-  }
-
-  function TripCard({ trip, index }: { trip: Trip; index: number }) {
-    const tripExpenses = allExpenses.filter(e => e.tripId === trip.id);
-    const totalExpense = tripExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
-    const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
-
-    return (
-      <div
-        onClick={() => onOpenTrip(trip.id!)}
-        className="group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[28px] p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl motion-card-enter h-full min-h-[200px]"
-        style={{
-          background: gradient,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
-        }}
-      >
-        {/* Background decorative compass */}
-        <div className="absolute -bottom-4 -right-4 opacity-10 pointer-events-none rotate-12">
-          <HugeiconsIcon icon={CompassIcon} size={112} className="text-white" />
-        </div>
-
-        {/* Top: Badge */}
-        <div className="flex items-center justify-between mb-4">
-          <span className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold tracking-wide"
-            style={{ background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.9)", border: "1px solid rgba(255,255,255,0.2)" }}
-          >
-            {getTripDurationText(trip)}
-          </span>
-          <div className="flex h-8 w-8 items-center justify-center rounded-full"
-            style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)" }}
-          >
-            <HugeiconsIcon icon={SparklesIcon} size={16} className="text-white/80" />
-          </div>
-        </div>
-
-        {/* Trip title */}
-        <h4 className="text-[20px] font-extrabold text-white leading-tight mb-5 line-clamp-2 tracking-tight">
-          {trip.title}
-        </h4>
-
-        {/* Info grid */}
-        <div className="grid grid-cols-2 gap-y-2.5 gap-x-3 mt-auto">
-          <div className="flex items-center gap-2 min-w-0">
-            <HugeiconsIcon icon={Location01Icon} size={14} className="text-white/50 shrink-0" />
-            <span className="text-[12.5px] font-semibold text-white/75 truncate">
-              {trip.location || "Chưa xác định"}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 min-w-0">
-            <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-white/50 shrink-0" />
-            <span className="text-[12.5px] font-semibold text-white/75 truncate">
-              {formatDate(trip.startDate)}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 min-w-0">
-            <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-white/50 shrink-0" />
-            <span className="text-[12.5px] font-semibold text-white/75 truncate">
-              {memberCounts[trip.id!] || 1} người
-            </span>
-          </div>
-          <div className="flex items-center gap-2 min-w-0">
-            <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-white/50 shrink-0" />
-            <span className="text-[12.5px] font-semibold text-white/75 truncate">
-              {totalExpense > 0 ? `${totalExpense.toLocaleString()}đ` : "Chưa chi"}
-            </span>
-          </div>
-        </div>
-
-        {/* Hover shimmer overlay */}
-        <div className="absolute inset-0 rounded-[28px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-          style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 100%)" }}
-        />
-      </div>
-    );
-  }
+  // getTripDurationText and TripCard have been moved to the top level (outside ArchiveGallery) to prevent React unmounting/re-rendering animation bugs.
 
   return (
     <div className="mx-auto w-full max-w-[1120px] px-4 py-6 md:px-6 md:pt-4 md:pb-16">
@@ -155,7 +171,7 @@ export function ArchiveGallery({
       <div className="mb-8 flex items-center gap-4">
         <button
           onClick={onBack}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors shadow-sm"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-slate-200 text-slate-650 hover:bg-slate-50 transition-colors shadow-sm"
         >
           <HugeiconsIcon icon={ArrowLeft01Icon} size={20} className="text-slate-600" />
         </button>
@@ -195,7 +211,14 @@ export function ArchiveGallery({
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
                 {tripsByYear[year].map((trip, i) => (
-                  <TripCard key={trip.id} trip={trip} index={i} />
+                  <TripCard 
+                    key={trip.id} 
+                    trip={trip} 
+                    index={i} 
+                    allExpenses={allExpenses} 
+                    memberCounts={memberCounts} 
+                    onOpenTrip={onOpenTrip} 
+                  />
                 ))}
               </div>
             </div>

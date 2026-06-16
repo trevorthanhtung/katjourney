@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   CheckIcon,
@@ -648,7 +649,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
 
 
       {/* Responsive Modal Form (Centered on Desktop, Bottom Sheet on Mobile) */}
-      {isFormOpen && (
+      {isFormOpen && createPortal(
         <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center p-0 md:p-6">
           {/* Backdrop */}
           <div 
@@ -719,16 +720,16 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                         key={cat}
                         type="button"
                         onClick={() => setCategory(cat)}
-                        className={`flex flex-col items-center justify-center min-h-[76px] p-2 rounded-[18px] border transition-all duration-200 active:scale-95 cursor-pointer ${
+                        className={`flex flex-col items-center justify-center min-h-[76px] p-2 rounded-[18px] border-2 transition-all duration-200 active:scale-95 cursor-pointer ${
                           isSelected
-                            ? "bg-kat-primary/10 border-kat-primary/35 text-kat-text"
-                            : "bg-kat-surface border-kat-border text-kat-text/70 hover:bg-[#FAF7F1] hover:border-kat-border/80"
+                            ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#00BFB7] font-black shadow-sm"
+                            : "bg-white border-slate-200 text-slate-500 hover:bg-slate-50 hover:border-slate-300"
                         }`}
                       >
                         <div className={`flex items-center justify-center w-8.5 h-8.5 rounded-[12px] mb-1 transition-all ${
                           isSelected
-                            ? "bg-kat-primary/20 text-kat-primary"
-                            : "bg-[#030D2E]/05 text-slate-500"
+                            ? "bg-[#00BFB7]/20 text-[#00BFB7]"
+                            : "bg-slate-100 text-slate-400"
                         }`}>
                            <HugeiconsIcon icon={IconComponent} className="w-4.5 h-4.5" />
                         </div>
@@ -790,9 +791,14 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                     }
                     value={assignedTo}
                     onChange={setAssignedTo}
-                    options={members.map((m) => m.name)}
+                    options={[
+                      "",
+                      ...(assignedTo && !members.some((m) => m.name === assignedTo) ? [assignedTo] : []),
+                      ...members.map((m) => m.name)
+                    ]}
                     labels={members.reduce((acc, m) => ({ ...acc, [m.name]: `${m.name} (${m.role || "Người đồng hành"})` }), {} as Record<string, string>)}
                     placeholder="Chọn người đồng hành"
+                    buttonClassName="w-full flex items-center justify-between rounded-[12px] border border-kat-border bg-[#FAF7F1]/60 px-3.5 h-11 text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white focus:ring-2 focus:ring-kat-primary"
                   />
                 )}
               </div>
@@ -878,7 +884,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               <button
                 type="button"
                 onClick={saveItem}
-                className="flex-[2] h-[50px] inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
+                className="flex-[2] h-[50px] inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#030D2E] disabled:active:scale-100 disabled:opacity-100 shadow-sm"
                 disabled={!title.trim()}
               >
                 <HugeiconsIcon icon={CheckIcon} className="h-4.5 w-4.5" />
@@ -886,7 +892,8 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Floating Action Button (Mobile only) */}

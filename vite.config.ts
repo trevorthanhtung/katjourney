@@ -60,6 +60,7 @@ export default defineConfig({
         theme_color: "#FAF7F1",
         background_color: "#FAF7F1",
         display: "standalone",
+        orientation: "portrait",
         start_url: "/",
         icons: [
           {
