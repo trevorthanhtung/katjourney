@@ -724,54 +724,61 @@ export function SharedExpensesSection({
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)}
+                  onClick={() => setIsCurrencyDropdownOpen(true)}
                   className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white border border-slate-200 rounded-md px-2.5 py-1 text-[#030D2E] hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
                 >
                   {form.currency}
                   <HugeiconsIcon icon={ChevronDownIcon} className="w-3.5 h-3.5 text-slate-400" />
                 </button>
 
-                {isCurrencyDropdownOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setIsCurrencyDropdownOpen(false)}
-                    />
-                    <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 w-[80px] bg-white border border-slate-200 rounded-xl shadow-lg z-20 overflow-hidden animate-scaleUp origin-top">
-                      <div className="max-h-[220px] overflow-y-auto custom-scrollbar flex flex-col py-1">
+                <BottomSheet
+                  isOpen={isCurrencyDropdownOpen}
+                  onClose={() => setIsCurrencyDropdownOpen(false)}
+                  title="Chọn ngoại tệ"
+                >
+                  <div className="space-y-1 max-h-[60vh] overflow-y-auto scrollbar-none pb-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForm({ ...form, currency: "VND", exchangeRate: 1 });
+                        setIsCurrencyDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
+                        form.currency === "VND"
+                          ? "bg-[#00BFB7]/10 text-kat-primary"
+                          : "hover:bg-slate-50 text-[#030D2E]"
+                      }`}
+                    >
+                      <span className={`text-[15px] ${form.currency === "VND" ? 'font-extrabold' : 'font-semibold'}`}>
+                        VND (Việt Nam Đồng)
+                      </span>
+                      {form.currency === "VND" && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
+                    </button>
+                    {exchangeRates.map((r) => {
+                      const isSelected = form.currency === r.currencyCode;
+                      return (
                         <button
+                          key={r.currencyCode}
                           type="button"
                           onClick={() => {
-                            setForm({ ...form, currency: "VND", exchangeRate: 1 });
+                            setForm({ ...form, currency: r.currencyCode, exchangeRate: r.transfer });
                             setIsCurrencyDropdownOpen(false);
                           }}
-                          className={classNames(
-                            "px-3 py-2 text-[13px] font-bold text-center transition-colors hover:bg-slate-50",
-                            form.currency === "VND" ? "text-kat-primary bg-kat-primary/5" : "text-slate-600"
-                          )}
+                          className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
+                            isSelected
+                              ? "bg-[#00BFB7]/10 text-kat-primary"
+                              : "hover:bg-slate-50 text-[#030D2E]"
+                          }`}
                         >
-                          VND
+                          <span className={`text-[15px] ${isSelected ? 'font-extrabold' : 'font-semibold'}`}>
+                            {r.currencyCode} {r.currencyName ? `(${r.currencyName})` : ""}
+                          </span>
+                          {isSelected && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
                         </button>
-                        {exchangeRates.map((r) => (
-                          <button
-                            key={r.currencyCode}
-                            type="button"
-                            onClick={() => {
-                              setForm({ ...form, currency: r.currencyCode, exchangeRate: r.transfer });
-                              setIsCurrencyDropdownOpen(false);
-                            }}
-                            className={classNames(
-                              "px-3 py-2 text-[13px] font-bold text-center transition-colors hover:bg-slate-50",
-                              form.currency === r.currencyCode ? "text-kat-primary bg-kat-primary/5" : "text-slate-600"
-                            )}
-                          >
-                            {r.currencyCode}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
+                      );
+                    })}
+                  </div>
+                </BottomSheet>
               </div>
             </div>
             <div className="flex items-center justify-center">
