@@ -647,7 +647,11 @@ function App() {
 
   return (
     <div className="font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg">
+<<<<<<< HEAD
       <header className="sticky top-0 z-40 px-2.5 min-[360px]:px-4 pb-3 pt-3 bg-kat-bg/55 supports-[backdrop-filter]:bg-kat-bg/45 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 shadow-[0_4px_24px_rgba(3,13,46,0.06)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
+=======
+      <header className="sticky top-0 z-40 px-2.5 min-[360px]:px-4 pb-3 pt-3 bg-kat-bg/55 supports-[backdrop-filter]:bg-kat-bg/45 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 shadow-[0_4px_24px_rgba(3,13,46,0.06)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))", paddingLeft: "max(0.625rem, env(safe-area-inset-left))", paddingRight: "max(0.625rem, env(safe-area-inset-right))" }}>
+>>>>>>> 7fae64033f85010f84e77ce387636215f51a8253
         <GlobalToast />
         <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
           <div className="flex items-center gap-3 shrink-0">
@@ -1069,7 +1073,11 @@ function App() {
 
 
       {!isManagingTrips && tripId && (
+<<<<<<< HEAD
         <nav className="fixed left-4 right-4 z-50 mx-auto max-w-[480px] rounded-[26px] bg-kat-bg/55 supports-[backdrop-filter]:bg-kat-bg/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/45 shadow-[0_10px_36px_rgba(3,13,46,0.12)] ring-1 ring-inset ring-white/30 before:pointer-events-none before:absolute before:inset-x-5 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/80 before:to-transparent md:hidden" style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom))" }}>
+=======
+        <nav className="fixed left-4 right-4 z-50 mx-auto max-w-[480px] rounded-[26px] bg-kat-bg/55 supports-[backdrop-filter]:bg-kat-bg/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/45 shadow-[0_10px_36px_rgba(3,13,46,0.12)] ring-1 ring-inset ring-white/30 before:pointer-events-none before:absolute before:inset-x-5 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/80 before:to-transparent md:hidden" style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom))", marginLeft: "env(safe-area-inset-left)", marginRight: "env(safe-area-inset-right)" }}>
+>>>>>>> 7fae64033f85010f84e77ce387636215f51a8253
           <div ref={containerRef} className="relative flex h-[56px] min-[360px]:h-[60px] items-center justify-between px-2">
             {/* Active Indicator Slide Pill */}
             {indicatorStyle.width > 0 && (

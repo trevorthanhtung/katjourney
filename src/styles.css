@@ -72,11 +72,39 @@
 
 *::-webkit-scrollbar {
   display: none !important;
+<<<<<<< HEAD
+=======
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Explicitly target the root viewport scrollbar on iOS Safari / standalone PWA */
+html, body {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+  overflow-x: hidden;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+html {
+  /* Use dynamic viewport height so iOS PWA does not produce a phantom scroll
+     caused by 100vh including the (hidden) browser chrome. */
+  height: 100%;
+>>>>>>> 7fae64033f85010f84e77ce387636215f51a8253
 }
 
 body {
   min-width: 320px;
   min-height: 100vh;
+<<<<<<< HEAD
+=======
+  min-height: 100dvh;
+>>>>>>> 7fae64033f85010f84e77ce387636215f51a8253
   margin: 0;
   background-color: #FAF7F1;
   -webkit-user-select: none;
