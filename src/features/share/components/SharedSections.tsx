@@ -802,8 +802,7 @@ export function SharedExpensesSection({
           </div>
 
           {/* Date */}
-          <Input 
-            type="date"
+          <DatePicker 
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
@@ -2241,14 +2240,13 @@ export function SharedJournalsSection({
         <div className="space-y-4 md:space-y-5">
           {/* Date Field */}
           <div>
-            <Input 
+            <DatePicker 
               label={
                 <span className="flex items-center gap-1.5">
                   <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
                   Ngày ghi lại
                 </span>
               } 
-              type="date" 
               value={form.date} 
               onChange={(date) => { setForm({ ...form, date }); setDirty(true); }} 
             />
