@@ -381,6 +381,7 @@ function ExpenseForm({
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
 
+  const editingId = editing?.id;
   useEffect(() => {
     if (isOpen) {
       setErrors({});
@@ -417,7 +418,8 @@ function ExpenseForm({
         });
       }
     }
-  }, [editing, isOpen, members, categoryOptions]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, editingId]);
 
   // Auto-detect currency when creating a new expense
   useEffect(() => {
