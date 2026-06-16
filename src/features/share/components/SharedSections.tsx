@@ -1536,15 +1536,15 @@ export function SharedChecklistSection({
           ? (editingId ? "Sửa chuẩn bị cá nhân" : "Thêm chuẩn bị cá nhân")
           : (isDirectEdit ? (editingId ? "Sửa chuẩn bị" : "Thêm chuẩn bị") : (editingId ? "Đề xuất sửa chuẩn bị" : "Đề xuất thêm chuẩn bị"))}
       >
-        <div className="flex flex-col gap-5 py-2">
+        <div className="flex flex-col gap-3.5 py-1">
           {/* Item Name */}
-          <div className="space-y-1.5">
-            <label className="text-[13px] font-bold text-slate-700 flex items-center gap-1.5">
-              <HugeiconsIcon icon={TextFontIcon} className="h-4 w-4 text-slate-500" />
+          <div className="space-y-1">
+            <label className="text-[12.5px] font-bold text-slate-700 flex items-center gap-1.5">
+              <HugeiconsIcon icon={TextFontIcon} className="h-3.5 w-3.5 text-slate-500" />
               Tên món cần mang *
             </label>
             <input
-              className={`w-full rounded-[14px] border bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] placeholder-slate-400 ${
+              className={`w-full rounded-[12px] border bg-slate-50 px-3.5 h-11 text-[14px] font-semibold text-slate-800 outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] placeholder-slate-400 ${
                 showValidationError ? "border-red-500 ring-2 ring-red-500" : "border-slate-200 focus:border-[#00BFB7]"
               }`}
               value={form.title}
@@ -1555,16 +1555,16 @@ export function SharedChecklistSection({
               placeholder="VD: Sạc dự phòng"
             />
             {showValidationError && (
-              <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1 flex items-center gap-1">
+              <p className="text-rose-500 text-[11.5px] font-bold mt-1 pl-1 flex items-center gap-1">
                 <span>Vui lòng nhập tên món cần mang.</span>
               </p>
             )}
           </div>
 
-          {/* Category Selector (Grid of chips) */}
+          {/* Category Segment Select (Grid of chips) */}
           <div className="space-y-2">
-            <label className="text-[13px] font-bold text-slate-700 block flex items-center gap-1.5">
-              <HugeiconsIcon icon={PackageIcon} className="h-4 w-4 text-slate-500" />
+            <label className="text-[12.5px] font-bold text-slate-700 block flex items-center gap-1.5">
+              <HugeiconsIcon icon={PackageIcon} className="h-3.5 w-3.5 text-slate-500" />
               Nhóm hành lý
             </label>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
@@ -1576,16 +1576,16 @@ export function SharedChecklistSection({
                     key={cat}
                     type="button"
                     onClick={() => setForm({ ...form, category: cat })}
-                    className={`flex flex-col items-center justify-center min-h-[76px] p-2 rounded-[18px] border transition-all duration-200 active:scale-95 cursor-pointer ${
+                    className={`flex flex-col items-center justify-center min-h-[76px] p-2 rounded-[18px] border-2 transition-all duration-200 active:scale-95 cursor-pointer ${
                       isSelected
-                        ? "bg-[#00BFB7]/10 border-[#00BFB7]/35 text-slate-800"
+                        ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#00BFB7] font-black shadow-sm"
                         : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
                     }`}
                   >
                     <div className={`flex items-center justify-center w-8.5 h-8.5 rounded-[12px] mb-1 transition-all ${
                       isSelected
                         ? "bg-[#00BFB7]/20 text-[#00BFB7]"
-                        : "bg-slate-100 text-slate-500"
+                        : "bg-slate-100 text-slate-400"
                     }`}>
                        <HugeiconsIcon icon={IconComponent} className="w-4.5 h-4.5" />
                     </div>
@@ -1596,43 +1596,68 @@ export function SharedChecklistSection({
             </div>
           </div>
 
-          {/* Quantity Counter */}
-          <div className="flex items-center justify-between py-2 border-y border-slate-100">
-            <div>
-              <label className="text-[13px] font-bold text-slate-700">Số lượng</label>
-              <p className="text-[11.5px] text-slate-500 font-bold">Số lượng cần mang theo</p>
+          {/* Quantity & Priority in side-by-side grid */}
+          <div className="grid grid-cols-2 gap-3.5">
+            {/* Quantity Counter */}
+            <div className="flex flex-col gap-1">
+              <label className="text-[12.5px] font-bold text-slate-700">Số lượng</label>
+              <div className="flex items-center justify-between bg-slate-50 rounded-[12px] p-1 border border-slate-200/60 h-11">
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, quantity: Math.max(1, form.quantity - 1) })}
+                  className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-white text-slate-800 border border-slate-200/60 shadow-sm active:scale-95 transition-all hover:bg-slate-50"
+                >
+                  <HugeiconsIcon icon={MinusSignIcon} className="h-3 w-3" />
+                </button>
+                <span className="text-[14px] font-black text-slate-800 w-8 text-center">{form.quantity}</span>
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, quantity: form.quantity + 1 })}
+                  className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-white text-slate-800 border border-slate-200/60 shadow-sm active:scale-95 transition-all hover:bg-slate-50"
+                >
+                  <HugeiconsIcon icon={Add01Icon} className="h-3 w-3" strokeWidth={3} />
+                </button>
+              </div>
             </div>
-            <div className="flex items-center gap-3.5 bg-slate-50 rounded-[16px] p-1 border border-slate-200/60">
-              <button
-                type="button"
-                onClick={() => setForm({ ...form, quantity: Math.max(1, form.quantity - 1) })}
-                className="flex h-8.5 w-8.5 items-center justify-center rounded-[12px] bg-white text-slate-800 border border-slate-200/60 shadow-sm active:scale-95 transition-all hover:bg-slate-50"
-              >
-                <HugeiconsIcon icon={MinusSignIcon} className="h-3.5 w-3.5" />
-              </button>
-              <span className="text-[15px] font-black text-slate-800 w-8 text-center">{form.quantity}</span>
-              <button
-                type="button"
-                onClick={() => setForm({ ...form, quantity: form.quantity + 1 })}
-                className="flex h-8.5 w-8.5 items-center justify-center rounded-[12px] bg-white text-slate-800 border border-slate-200/60 shadow-sm active:scale-95 transition-all hover:bg-slate-50"
-              >
-                <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5" strokeWidth={3} />
-              </button>
+
+            {/* Priority Segments */}
+            <div className="flex flex-col gap-1">
+              <label className="text-[12.5px] font-bold text-slate-700">Mức độ cần thiết</label>
+              <div className="flex p-0.5 bg-slate-100 rounded-[12px] h-11 items-center">
+                {(["normal", "important", "required"] as const).map((prio) => {
+                  const isSelected = form.priority === prio;
+                  const labels = { normal: "Thường", important: "Quan trọng", required: "Bắt buộc" };
+                  return (
+                    <button
+                      key={prio}
+                      type="button"
+                      onClick={() => setForm({ ...form, priority: prio })}
+                      className={`flex-1 py-1 rounded-[8px] text-[11.5px] font-bold transition-all h-full flex items-center justify-center ${
+                        isSelected
+                          ? "bg-white text-slate-800 shadow-sm border border-slate-200/30"
+                          : "text-slate-500 hover:text-slate-800"
+                      }`}
+                    >
+                      {labels[prio]}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
           {/* Assigned To */}
-          <div className="space-y-1.5">
-            <label className="text-[13px] font-bold text-slate-700 flex items-center gap-1.5">
-              <HugeiconsIcon icon={UserCheck01Icon} className="h-4 w-4 text-slate-500" />
+          <div className="space-y-1">
+            <label className="text-[12.5px] font-bold text-slate-700 flex items-center gap-1.5">
+              <HugeiconsIcon icon={UserCheck01Icon} className="h-3.5 w-3.5 text-slate-500" />
               Người phụ trách
             </label>
             {members.length === 0 ? (
-              <div className="rounded-[16px] bg-[#FAF7F1] border border-kat-border/60 p-3 flex items-start gap-2.5">
-                <HugeiconsIcon icon={UserIcon} className="h-4 w-4 text-slate-500 shrink-0 mt-0.5" />
+              <div className="rounded-[12px] bg-[#FAF7F1] border border-kat-border/60 p-2.5 flex items-start gap-2.5">
+                <HugeiconsIcon icon={UserIcon} className="h-3.5 w-3.5 text-slate-500 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-[12.5px] font-bold text-slate-800">Chưa có người đồng hành</h4>
-                  <p className="text-[11.5px] text-slate-500 mt-0.5 font-bold">Người đồng hành chưa được chia sẻ để phân công hành lý.</p>
+                  <h4 className="text-[12px] font-bold text-slate-800">Chưa có người đồng hành</h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5 font-bold">Người đồng hành chưa được chia sẻ để phân công hành lý.</p>
                 </div>
               </div>
             ) : (
@@ -1646,46 +1671,19 @@ export function SharedChecklistSection({
                   ...members.map(m => m.name)
                 ]}
                 placeholder="Chọn người đồng hành"
+                buttonClassName="w-full flex items-center justify-between rounded-[12px] border-0 bg-slate-50 px-3.5 h-11 text-[14px] font-semibold text-[#030D2E] outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7]"
               />
             )}
           </div>
 
-          {/* Priority Segments */}
-          <div className="space-y-2">
-            <label className="text-[13px] font-bold text-slate-700 block flex items-center gap-1.5">
-              <HugeiconsIcon icon={BadgeCheckIcon} className="h-4 w-4 text-slate-500" />
-              Mức độ cần thiết
-            </label>
-            <div className="flex p-1 bg-slate-100 rounded-xl">
-              {(["normal", "important", "required"] as const).map((prio) => {
-                const isSelected = form.priority === prio;
-                const labels = { normal: "Thường", important: "Quan trọng", required: "Bắt buộc" };
-                return (
-                  <button
-                    key={prio}
-                    type="button"
-                    onClick={() => setForm({ ...form, priority: prio })}
-                    className={`flex-1 py-1.5 rounded-lg text-[12.5px] font-bold transition-all ${
-                      isSelected
-                        ? "bg-white text-slate-800 shadow-sm border border-slate-200/30"
-                        : "text-slate-500 hover:text-slate-800"
-                    }`}
-                  >
-                    {labels[prio]}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Notes */}
-          <div className="space-y-1.5">
-            <label className="text-[13px] font-bold text-slate-700 flex items-center gap-1.5">
-              <HugeiconsIcon icon={StickyNoteIcon} className="h-4 w-4 text-slate-500" />
+          <div className="space-y-1">
+            <label className="text-[12.5px] font-bold text-slate-700 flex items-center gap-1.5">
+              <HugeiconsIcon icon={StickyNoteIcon} className="h-3.5 w-3.5 text-slate-500" />
               Ghi chú
             </label>
             <textarea
-              className="w-full h-[72px] rounded-[14px] border-0 bg-slate-50 px-4 py-3 text-[14px] font-semibold text-slate-800 outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] resize-none placeholder-slate-400"
+              className="w-full h-14 rounded-[12px] border-0 bg-slate-50 px-3.5 py-2.5 text-[13.5px] font-semibold text-slate-800 outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] resize-none placeholder-slate-400"
               value={form.note}
               onChange={(e) => setForm({ ...form, note: e.target.value })}
               placeholder="VD: Để trong balo nhỏ, nhớ sạc đầy..."
@@ -1695,7 +1693,7 @@ export function SharedChecklistSection({
           <button
             onClick={handleSave}
             disabled={!form.title.trim()}
-            className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
+            className="mt-1 w-full h-11 rounded-[12px] bg-[#030D2E] font-black text-[14px] text-white hover:bg-[#0a1a5c] active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {activeSubTab === 'private' 
               ? (editingId ? "Lưu thay đổi" : "Thêm vào hành lý") 

@@ -576,10 +576,14 @@ export async function exportTripExcel(data: TripData) {
     r.getCell(4).numFmt = MONEY_FORMAT;
   } else {
     allExpenses.forEach((e, i) => {
+      let description = e.description || e.category || "—";
+      if (e.originalAmount && e.currency && e.currency !== "VND") {
+        description += ` (${new Intl.NumberFormat('en-US').format(e.originalAmount)} ${e.currency})`;
+      }
       const r = ws3.addRow([
         i + 1,
         e.date ? formatDate(e.date) : "—",
-        e.description || e.category || "—",
+        description,
         Number(e.amount || 0),
         e.splitType === "personal" ? "Chi cá nhân" : "Chi chung",
         e.payer || "—",

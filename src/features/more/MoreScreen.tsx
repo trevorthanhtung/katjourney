@@ -2639,24 +2639,49 @@ export function MoreScreen({
                   readOnly
                   value={activeShareLink.url}
                   onClick={(e) => (e.target as HTMLInputElement).select()}
-                  className="flex-1 bg-transparent border-none outline-none text-slate-600 text-[13.5px] font-medium pr-10 truncate cursor-text"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(activeShareLink.url);
-                    setCopiedLink(true);
-                    setTimeout(() => setCopiedLink(false), 2000);
-                  }}
-                  className="absolute right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-slate-800 transition-all shadow-sm active:scale-95"
-                  title="Sao chép link"
-                >
-                  {copiedLink ? (
-                    <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 text-emerald-500" />
-                  ) : (
-                    <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />
+                  className={classNames(
+                    "flex-1 bg-transparent border-none outline-none text-slate-600 text-[13.5px] font-medium truncate cursor-text",
+                    typeof navigator !== "undefined" && "share" in navigator ? "pr-20" : "pr-10"
                   )}
-                </button>
+                />
+                <div className="absolute right-2 flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(activeShareLink.url);
+                      setCopiedLink(true);
+                      setTimeout(() => setCopiedLink(false), 2000);
+                    }}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-slate-800 transition-all shadow-sm active:scale-95"
+                    title="Sao chép link"
+                  >
+                    {copiedLink ? (
+                      <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 text-emerald-500" />
+                    ) : (
+                      <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />
+                    )}
+                  </button>
+                  {typeof navigator !== "undefined" && "share" in navigator && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          await navigator.share({
+                            title: "KAT Journey",
+                            text: `Tham gia chuyến đi "${trip?.title || ''}" cùng tôi trên KAT Journey!`,
+                            url: activeShareLink.url
+                          });
+                        } catch (err) {
+                          console.log("Share failed or cancelled", err);
+                        }
+                      }}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#030D2E] border border-[#030D2E] text-white hover:bg-[#030D2E]/90 transition-all shadow-sm active:scale-95"
+                      title="Chia sẻ qua hệ thống"
+                    >
+                      <HugeiconsIcon icon={Share01Icon} className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Status display */}

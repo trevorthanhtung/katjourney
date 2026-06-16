@@ -330,7 +330,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           {/* CTA Button */}
           <button
             onClick={() => window.location.href = "/"}
-            className="inline-flex min-h-[44px] w-fit items-center justify-center rounded-xl bg-[#030D2E] text-white px-6 py-2.5 font-bold shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all focus:outline-none"
+            className="inline-flex min-h-[44px] w-fit items-center justify-center rounded-xl bg-[#030D2E] text-white px-6 py-2.5 font-bold shadow-sm hover:bg-[#0a1a5c] active:scale-95 transition-all focus:outline-none"
           >
             Quay lại trang chủ
           </button>
@@ -538,7 +538,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       setPinError(true);
                     }
                   }}
-                  className="w-full rounded-[16px] bg-[#030D2E] py-3 text-[14px] font-black text-white transition-all active:scale-[0.98] shadow-sm"
+                  className="w-full rounded-[16px] bg-[#030D2E] py-3 text-[14px] font-black text-white transition-all active:scale-[0.98] shadow-sm hover:bg-[#0a1a5c]"
                 >
                   Xác nhận mã PIN
                 </button>
@@ -656,7 +656,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       )}
 
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#FFFDF8]/90 backdrop-blur-xl border-b border-slate-100 px-2.5 min-[360px]:px-4 pb-3 pt-3 shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
+      <header className="sticky top-0 z-40 bg-kat-bg/90 backdrop-blur-xl border-b border-kat-border px-2.5 min-[360px]:px-4 pb-3 pt-3 shadow-sm" style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
         <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
           <div className="flex items-center gap-1.5 min-[360px]:gap-2 select-none shrink-0">
             <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden md:block h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
@@ -683,7 +683,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             )}
             <button
               onClick={() => window.location.href = "/"}
-              className="flex items-center justify-center min-h-[34px] min-[360px]:min-h-[38px] text-[12px] min-[360px]:text-[13px] font-black text-white bg-[#030D2E] hover:bg-[#030D2E]/90 px-4 rounded-xl shadow-sm transition-all active:scale-[0.97] whitespace-nowrap shrink-0"
+              className="flex items-center justify-center min-h-[34px] min-[360px]:min-h-[38px] text-[12px] min-[360px]:text-[13px] font-black text-white bg-[#030D2E] hover:bg-[#0a1a5c] px-4 rounded-xl shadow-sm transition-all active:scale-[0.97] whitespace-nowrap shrink-0"
             >
               Thoát
             </button>
@@ -1405,7 +1405,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       />
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="fixed bottom-5 left-4 right-4 z-40 flex sm:hidden bg-[#EFECE6]/90 border border-[#E8E1D8]/80 backdrop-blur-xl rounded-[24px] shadow-[0_8px_30px_rgba(3,13,46,0.04)] px-2 h-[56px] min-[360px]:h-[60px] items-center justify-around">
+      <nav className="fixed bottom-5 left-4 right-4 z-40 flex sm:hidden bg-kat-bg/80 border border-kat-border/80 backdrop-blur-xl rounded-[24px] shadow-[0_8px_30px_rgba(3,13,46,0.04)] px-2 h-[56px] min-[360px]:h-[60px] items-center justify-around">
         <div ref={containerRef} className="relative w-full h-full flex items-center justify-around">
           {/* Active Indicator Slide Pill */}
           {indicatorStyle.width > 0 && (

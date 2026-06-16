@@ -79,6 +79,12 @@ body {
   min-height: 100vh;
   margin: 0;
   background-color: #FAF7F1;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  overscroll-behavior-y: contain;
 }
 
 button,
@@ -86,6 +92,17 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+input,
+textarea,
+[contenteditable="true"],
+.select-text,
+.selectable {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 .safe-bottom {
