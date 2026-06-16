@@ -3402,16 +3402,14 @@ export function SharedMembersSection({
 
                   {/* Member details */}
                   <div className="min-w-0 flex-1 space-y-1.5">
-                    <div className="flex items-center flex-wrap gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <h4 className={classNames(
-                          "text-[16.5px] font-extrabold text-[#030D2E] truncate leading-tight",
-                          member.isPendingDelete ? "line-through text-slate-400" : ""
-                        )}>
-                          {member.name}
-                        </h4>
-                        {renderRoleBadge(member.role || "Người đồng hành")}
-                      </div>
+                    <div className="flex items-center flex-wrap gap-x-2 gap-y-1 min-w-0">
+                      <h4 className={classNames(
+                        "text-[16.5px] font-extrabold text-[#030D2E] truncate leading-tight min-w-0",
+                        member.isPendingDelete ? "line-through text-slate-400" : ""
+                      )}>
+                        {member.name}
+                      </h4>
+                      {renderRoleBadge(member.role || "Người đồng hành")}
                       {member.isPendingCreate && (
                         <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none animate-pulse">
                           Đề xuất mới

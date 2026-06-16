@@ -1449,11 +1449,9 @@ function MemberCardRow({
 
           {/* Member details */}
           <div className="min-w-0 flex-1 space-y-1.5">
-            <div className="flex items-center flex-wrap gap-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <h4 className="text-[16.5px] font-extrabold text-[#030D2E] truncate leading-tight">{member.name}</h4>
-                {renderRoleBadge(member.role || "Người đồng hành")}
-              </div>
+            <div className="flex items-center flex-wrap gap-x-2 gap-y-1 min-w-0">
+              <h4 className="text-[16.5px] font-extrabold text-[#030D2E] truncate leading-tight min-w-0">{member.name}</h4>
+              {renderRoleBadge(member.role || "Người đồng hành")}
             </div>
             {member.phone && (
               <p className="text-[13.5px] font-semibold text-slate-500">
