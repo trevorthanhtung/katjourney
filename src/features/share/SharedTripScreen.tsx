@@ -145,6 +145,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle("bars-hidden", !areBarsVisible);
+  }, [areBarsVisible]);
   
   // Identity Modal state
   const [pinInput, setPinInput] = useState("");
