@@ -175,20 +175,49 @@ function App() {
       if (activeButton && container) {
         const rect = activeButton.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
-        setIndicatorStyle({
-          left: rect.left - containerRect.left,
-          width: rect.width
-        });
+        if (rect.width > 0) {
+          setIndicatorStyle({
+            left: rect.left - containerRect.left,
+            width: rect.width
+          });
+        }
       }
     };
 
     updateIndicator();
-    const timer = setTimeout(updateIndicator, 60);
+
+    // Setup ResizeObserver to track size changes of container and active/inactive buttons
+    let resizeObserver: ResizeObserver | null = null;
+    if (containerRef.current && typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(() => {
+        updateIndicator();
+      });
+      resizeObserver.observe(containerRef.current);
+      Object.values(buttonsRef.current).forEach((btn) => {
+        if (btn) resizeObserver?.observe(btn);
+      });
+    }
+
+    // Multi-stage timers to ensure correct layout calculations
+    const timers = [
+      setTimeout(updateIndicator, 30),
+      setTimeout(updateIndicator, 100),
+      setTimeout(updateIndicator, 300),
+      setTimeout(updateIndicator, 600)
+    ];
 
     window.addEventListener("resize", updateIndicator);
+    window.addEventListener("focus", updateIndicator);
+    document.addEventListener("visibilitychange", updateIndicator);
+
     return () => {
       window.removeEventListener("resize", updateIndicator);
-      clearTimeout(timer);
+      window.removeEventListener("focus", updateIndicator);
+      document.removeEventListener("visibilitychange", updateIndicator);
+      timers.forEach(clearTimeout);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
     };
   }, [activeTab]);
 
