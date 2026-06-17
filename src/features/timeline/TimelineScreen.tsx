@@ -926,7 +926,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 {/* Compact Card */}
                 <div className="min-w-0 flex-1 rounded-[24px] bg-kat-surface p-6 border border-kat-border/60 shadow-soft animate-fadeIn flex flex-col items-center text-center">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5">
-                    <HugeiconsIcon icon={MapPinned} className="h-6 w-6" />
+                    <HugeiconsIcon icon={Location01Icon} className="h-6 w-6" />
                   </div>
                   <h4 className="text-[15px] font-bold text-kat-text">Chưa có mục lịch trình nào</h4>
                   <p className="mt-1 text-[13.5px] text-kat-muted font-medium max-w-sm">Thêm điểm đến, thời gian di chuyển hoặc việc cần làm để hành trình rõ ràng hơn.</p>

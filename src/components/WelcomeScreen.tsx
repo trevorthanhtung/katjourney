@@ -7,7 +7,7 @@ import {
   AlertCircleIcon,
   LockIcon,
   UserIcon,
-  GlobeIcon,
+  LaptopIcon,
   WalletCardsIcon,
   SparklesIcon,
   Download01Icon
@@ -299,7 +299,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               className="w-full flex items-center justify-center gap-3.5 h-14 rounded-2xl bg-white hover:bg-slate-50 active:scale-[0.97] transition-all font-extrabold text-[16px] text-[#030D2E] shadow-[0_4px_14px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] border border-slate-100 disabled:opacity-60 disabled:scale-100 group"
             >
               {loading === "google" ? (
-                <HugeiconsIcon icon={Loading01Icon} className="h-5.5 w-5.5 text-[#00BFB7] animate-spin" />
+                <HugeiconsIcon icon={Loading01Icon} className="h-5.5 w-5.5 text-kat-primary animate-spin" />
               ) : (
                 <div className="group-active:scale-95 transition-transform"><GoogleIcon /></div>
               )}
@@ -324,16 +324,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               Khám phá tư cách Khách
             </button>
 
-            {/* Install PWA (Nudge Button) */}
-            {isInstallable && !isStandalone && (
-              <button
-                onClick={handleInstallPWA}
-                className="w-full flex items-center justify-center gap-3.5 h-14 rounded-2xl border-2 border-dashed border-[#00BFB7]/40 hover:border-[#00BFB7] bg-[#00BFB7]/5 hover:bg-[#00BFB7]/10 active:scale-[0.97] transition-all font-extrabold text-[15px] text-[#00AFA8] mt-1.5 group animate-fadeIn"
-              >
-                <HugeiconsIcon icon={Download01Icon} className="w-5.5 h-5.5 text-[#00BFB7] group-hover:scale-110 transition-transform" />
-                Tải ứng dụng về màn hình chính
-              </button>
-            )}
+            {/* Install PWA button removed per user request */}
           </div>
 
         </div>
@@ -341,7 +332,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
         {/* BOTTOM SECTION: LEGAL FOOTER */}
         <div className="w-full shrink-0 text-center pt-8 pb-2 relative z-10">
           <div className="flex items-center justify-center gap-5 text-slate-300 opacity-80 mb-5" title="Sẵn sàng trên đa nền tảng">
-            <HugeiconsIcon icon={GlobeIcon} className="h-[18px] w-[18px] hover:text-sky-400 transition-colors" strokeWidth={2.5} />
+            <HugeiconsIcon icon={LaptopIcon} className="h-[18px] w-[18px] hover:text-sky-400 transition-colors" strokeWidth={2.5} />
             <AndroidIcon className="h-[18px] w-[18px] hover:text-emerald-400 transition-colors" />
             <AppleIcon className="h-[20px] w-[20px] hover:text-slate-400 transition-colors" />
           </div>
@@ -349,21 +340,21 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             Bằng việc tiếp tục, bạn đồng ý với{" "}
             <button 
               onClick={() => setLegalModal("terms")}
-              className="text-[#00BFB7] hover:underline font-semibold focus:outline-none"
+              className="text-kat-primary hover:underline font-semibold focus:outline-none"
             >
               Điều khoản Sử dụng
             </button>
             ,{" "}
             <button 
               onClick={() => setLegalModal("privacy")}
-              className="text-[#00BFB7] hover:underline font-semibold focus:outline-none"
+              className="text-kat-primary hover:underline font-semibold focus:outline-none"
             >
               Chính sách Quyền riêng tư
             </button>{" "}
             và{" "}
             <button 
               onClick={() => setLegalModal("cookie")}
-              className="text-[#00BFB7] hover:underline font-semibold focus:outline-none"
+              className="text-kat-primary hover:underline font-semibold focus:outline-none"
             >
               Chính sách Cookie
             </button>{" "}
@@ -380,8 +371,8 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             
             <div className="flex items-center justify-between pb-4 border-b border-slate-100 shrink-0">
               <div className="flex items-center gap-2">
-                <HugeiconsIcon icon={LockIcon} className="h-5 w-5 text-[#00BFB7]" />
-                <h4 className="text-[17px] font-black text-[#030D2E]">
+                <HugeiconsIcon icon={LockIcon} className="h-5 w-5 text-kat-primary" />
+                <h4 className="text-[17px] font-black text-kat-text">
                   {legalModal === "terms" && "Điều khoản Sử dụng"}
                   {legalModal === "privacy" && "Chính sách Quyền riêng tư"}
                   {legalModal === "cookie" && "Chính sách Cookie"}
@@ -432,7 +423,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               <button
                 type="button"
                 onClick={() => setLegalModal(null)}
-                className="w-full inline-flex min-h-[44px] items-center justify-center rounded-[12px] bg-[#00BFB7] text-[#030D2E] px-6 font-bold hover:brightness-105 active:scale-[0.98] transition-all"
+                className="w-full inline-flex min-h-[44px] items-center justify-center rounded-[12px] bg-kat-primary text-white px-6 font-bold hover:brightness-105 active:scale-[0.98] transition-all shadow-sm"
               >
                 Đồng ý và Đóng
               </button>

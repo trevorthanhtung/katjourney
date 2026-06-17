@@ -682,15 +682,15 @@ export function BottomSheet({
   return createPortal(
     <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center p-0 sm:p-6">
       {/* Backdrop */}
-      <div className="absolute inset-0 motion-modal-overlay bg-slate-900/35 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 motion-modal-overlay bg-slate-900/35 backdrop-blur-sm touch-none" onClick={onClose} />
       
       {/* Sheet / Dialog */}
       <div className="relative z-10 flex w-full flex-col max-h-[90vh] sm:max-h-[min(720px,calc(100vh-48px))] motion-sheet-dialog sm:motion-modal-dialog rounded-t-[32px] sm:rounded-[24px] bg-white pb-safe shadow-floating sm:mx-auto sm:w-full sm:max-w-[600px] overflow-hidden">
         {/* Drag handle (mobile only) */}
-        <div className="flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 sm:hidden" />
+        <div className="flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 sm:hidden touch-none" />
         
         {/* Header */}
-        <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-5 sm:px-6 py-3.5 sm:py-4 gap-3">
+        <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-5 sm:px-6 py-3.5 sm:py-4 gap-3 touch-none">
           <div className="pr-2 min-w-0 flex-1">
             <h3 className="text-[20px] sm:text-[22px] font-bold text-slate-900 leading-snug truncate">{title}</h3>
             {subtitle && <div className="mt-1 text-[13.5px] text-slate-500 leading-relaxed">{subtitle}</div>}
@@ -709,13 +709,13 @@ export function BottomSheet({
         </div>
         
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-4 sm:py-5 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto overscroll-contain px-5 sm:px-6 py-4 sm:py-5 scrollbar-hide">
           {children}
         </div>
  
         {/* Footer */}
         {footer && (
-          <div className="flex-none border-t border-slate-100 bg-[#FFFDF8] px-5 sm:px-6 py-3.5 sm:py-4">
+          <div className="flex-none border-t border-slate-100 bg-[#FFFDF8] px-5 sm:px-6 py-3.5 sm:py-4 touch-none">
             {footer}
           </div>
         )}

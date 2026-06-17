@@ -27,7 +27,10 @@ export function useModalHistory(isOpen: boolean, onClose: () => void, modalHash:
       
       // Push history state if not already on the target hash
       if (window.location.hash !== targetHash) {
+        console.log(`[ModalHistory:${modalHash}] pushing hash. current:`, window.location.hash);
         window.history.pushState({ isModal: true, modalHash }, "", targetHash);
+      } else {
+        console.log(`[ModalHistory:${modalHash}] hash already correct:`, window.location.hash);
       }
 
       const handlePopState = () => {
@@ -43,7 +46,9 @@ export function useModalHistory(isOpen: boolean, onClose: () => void, modalHash:
       return () => {
         window.removeEventListener("popstate", handlePopState);
         // If closed manually by clicking close button/outside, pop the hash
+        console.log(`[ModalHistory:${modalHash}] cleanup. isNavigating:${isNavigatingRef.current} hash:${window.location.hash} target:${targetHash}`);
         if (!isNavigatingRef.current && window.location.hash === targetHash) {
+          console.log(`[ModalHistory:${modalHash}] calling history.back()`);
           window.history.back();
         }
         isNavigatingRef.current = false;

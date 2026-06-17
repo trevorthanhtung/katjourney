@@ -211,7 +211,10 @@ function App() {
 
   React.useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (isRemindersOpen && remindersRef.current && !remindersRef.current.contains(event.target as Node)) {
+      // Chỉ tự động đóng Popover nhắc nhở trên Desktop. 
+      // Trên Mobile (khi dùng BottomSheet), BottomSheet sẽ tự bắt sự kiện bấm ra ngoài thông qua Backdrop overlay.
+      // Nếu không, sự kiện mousedown sẽ làm BottomSheet unmount trước khi click kịp xảy ra!
+      if (isRemindersOpen && isDesktop && remindersRef.current && !remindersRef.current.contains(event.target as Node)) {
         setIsRemindersOpen(false);
       }
       if (isUserMenuOpen && userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
@@ -690,15 +693,33 @@ function App() {
       return (
         <button
           key={rem.id}
-          className="flex w-full items-center gap-3.5 bg-white p-4 text-left hover:bg-slate-50 transition-colors focus:outline-none"
+          className="flex w-full items-center gap-3.5 bg-white p-4 text-left hover:bg-slate-50 active:bg-slate-100 transition-colors focus:outline-none"
           onClick={() => {
-            setIsRemindersOpen(false);
+            const handleNavigation = (action: () => void) => {
+              if (!isDesktop && window.location.hash === "#reminders-modal") {
+                // Xóa hash modal đồng bộ mà không trigger popstate.
+                // Điều này ngăn useModalHistory gọi history.back() khi unmount,
+                // tránh xung đột state React với lịch sử trình duyệt.
+                window.history.replaceState(
+                  lastHistoryStateRef.current || window.history.state, 
+                  "", 
+                  window.location.pathname + window.location.search
+                );
+              }
+              setIsRemindersOpen(false);
+              
+              // Chờ xíu để modal kịp animate/unmount trước khi đổi view
+              setTimeout(() => {
+                action();
+              }, 10);
+            };
+
             if (rem.tab === "share_requests" as any) {
-              setIsAppInboxOpen(true);
+              handleNavigation(() => setIsAppInboxOpen(true));
             } else if (rem.tab === "documents" || rem.tab === "journal" || rem.tab === "wrapped") {
-              navigateToMore(rem.tab);
+              handleNavigation(() => navigateToMore(rem.tab));
             } else {
-              setActiveTab(rem.tab);
+              handleNavigation(() => setActiveTab(rem.tab));
             }
           }}
         >
@@ -1314,11 +1335,11 @@ function App() {
         </BottomSheet>
       )}
 
-      {activeToken && tripId && (
+      {tripId && (
         <ShareChangeRequestsSheet
           isOpen={isAppInboxOpen}
           onClose={() => setIsAppInboxOpen(false)}
-          token={activeToken}
+          token={activeToken ?? ''}
           requests={pendingRequests}
           members={members ?? []}
         />

@@ -568,8 +568,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
     return (
       <div className="border-t border-[#E8E1D8]/60 pt-5 mt-4 space-y-4 text-left animate-fadeIn">
         <div className="flex items-center gap-3 mb-1 px-1">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#030D2E] to-[#1E293B] text-white shadow-sm shrink-0">
-            <HugeiconsIcon icon={CloudIcon} className={`w-5.5 h-5.5 ${(isSyncing || isAutoBackingUp) ? "animate-spin" : ""}`} />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50/70 text-indigo-600 border border-indigo-100/40 shrink-0">
+            <HugeiconsIcon icon={CloudIcon} className={`w-5 h-5 ${(isSyncing || isAutoBackingUp) ? "animate-spin" : ""}`} />
           </div>
           <div>
             <h4 className="text-[15.5px] font-black text-[#030D2E]">Đồng bộ dữ liệu</h4>
@@ -653,7 +653,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 aria-checked={autoBackupEnabled}
                 onClick={() => setAutoBackupEnabled(!autoBackupEnabled)}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  autoBackupEnabled ? "bg-[#030D2E]" : "bg-slate-200"
+                  autoBackupEnabled ? "bg-kat-primary" : "bg-slate-200"
                 }`}
               >
                 <span
@@ -863,7 +863,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       }
                     }}
                     className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      isNotificationActive ? "bg-[#030D2E]" : "bg-slate-200"
+                      isNotificationActive ? "bg-kat-primary" : "bg-slate-200"
                     } ${!isNotificationSupported ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     <span
@@ -899,7 +899,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                     showToast(nextState ? "Đã bật tự động truy cập GPS." : "Đã tắt tự động truy cập GPS.", "success");
                   }}
                   className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    gpsEnabled ? "bg-[#030D2E]" : "bg-slate-200"
+                    gpsEnabled ? "bg-kat-primary" : "bg-slate-200"
                   }`}
                 >
                   <span
@@ -1301,8 +1301,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
         {view === "privacy" && (
           <div className="space-y-4 py-2">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600 border border-blue-100 mb-2">
-              <HugeiconsIcon icon={Shield01Icon} className="h-6 w-6" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-kat-primary-soft text-kat-primary border border-kat-primary/20 mb-2">
+              <HugeiconsIcon icon={LockIcon} className="h-6 w-6" />
             </div>
 
             <h3 className="text-[18px] font-black text-[#030D2E]">Cam kết bảo mật dữ liệu</h3>
