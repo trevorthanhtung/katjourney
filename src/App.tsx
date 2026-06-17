@@ -717,9 +717,11 @@ function App() {
             if (rem.tab === "share_requests" as any) {
               handleNavigation(() => setIsAppInboxOpen(true));
             } else if (rem.tab === "documents" || rem.tab === "journal" || rem.tab === "wrapped") {
-              handleNavigation(() => navigateToMore(rem.tab));
+              const targetTab = rem.tab;
+              handleNavigation(() => navigateToMore(targetTab));
             } else {
-              handleNavigation(() => setActiveTab(rem.tab));
+              const targetTab = rem.tab;
+              handleNavigation(() => setActiveTab(targetTab));
             }
           }}
         >
