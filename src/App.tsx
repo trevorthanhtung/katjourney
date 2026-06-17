@@ -168,59 +168,6 @@ function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<{ [key: string]: HTMLButtonElement | null }>({});
 
-  useEffect(() => {
-    const updateIndicator = () => {
-      const activeButton = buttonsRef.current[activeTab];
-      const container = containerRef.current;
-      if (activeButton && container) {
-        const rect = activeButton.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        if (rect.width > 0) {
-          setIndicatorStyle({
-            left: rect.left - containerRect.left,
-            width: rect.width
-          });
-        }
-      }
-    };
-
-    updateIndicator();
-
-    // Setup ResizeObserver to track size changes of container and active/inactive buttons
-    let resizeObserver: ResizeObserver | null = null;
-    if (containerRef.current && typeof ResizeObserver !== "undefined") {
-      resizeObserver = new ResizeObserver(() => {
-        updateIndicator();
-      });
-      resizeObserver.observe(containerRef.current);
-      Object.values(buttonsRef.current).forEach((btn) => {
-        if (btn) resizeObserver?.observe(btn);
-      });
-    }
-
-    // Multi-stage timers to ensure correct layout calculations
-    const timers = [
-      setTimeout(updateIndicator, 30),
-      setTimeout(updateIndicator, 100),
-      setTimeout(updateIndicator, 300),
-      setTimeout(updateIndicator, 600)
-    ];
-
-    window.addEventListener("resize", updateIndicator);
-    window.addEventListener("focus", updateIndicator);
-    document.addEventListener("visibilitychange", updateIndicator);
-
-    return () => {
-      window.removeEventListener("resize", updateIndicator);
-      window.removeEventListener("focus", updateIndicator);
-      document.removeEventListener("visibilitychange", updateIndicator);
-      timers.forEach(clearTimeout);
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
-    };
-  }, [activeTab]);
-
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [sharedLinkInput, setSharedLinkInput] = useState("");
   const [recentSharedTrips, setRecentSharedTrips] = useState<{ token: string; title: string; date: string; timestamp: number }[]>([]);
@@ -498,6 +445,59 @@ function App() {
   }, [showToast]);
   
   const tripId = isCreatingTrip || isManagingTrips || isViewingArchive ? null : (selectedTripId ?? trips[0]?.id ?? null);
+
+  useEffect(() => {
+    const updateIndicator = () => {
+      const activeButton = buttonsRef.current[activeTab];
+      const container = containerRef.current;
+      if (activeButton && container) {
+        const rect = activeButton.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        if (rect.width > 0) {
+          setIndicatorStyle({
+            left: rect.left - containerRect.left,
+            width: rect.width
+          });
+        }
+      }
+    };
+
+    updateIndicator();
+
+    // Setup ResizeObserver to track size changes of container and active/inactive buttons
+    let resizeObserver: ResizeObserver | null = null;
+    if (containerRef.current && typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(() => {
+        updateIndicator();
+      });
+      resizeObserver.observe(containerRef.current);
+      Object.values(buttonsRef.current).forEach((btn) => {
+        if (btn) resizeObserver?.observe(btn);
+      });
+    }
+
+    // Multi-stage timers to ensure correct layout calculations
+    const timers = [
+      setTimeout(updateIndicator, 30),
+      setTimeout(updateIndicator, 100),
+      setTimeout(updateIndicator, 300),
+      setTimeout(updateIndicator, 600)
+    ];
+
+    window.addEventListener("resize", updateIndicator);
+    window.addEventListener("focus", updateIndicator);
+    document.addEventListener("visibilitychange", updateIndicator);
+
+    return () => {
+      window.removeEventListener("resize", updateIndicator);
+      window.removeEventListener("focus", updateIndicator);
+      document.removeEventListener("visibilitychange", updateIndicator);
+      timers.forEach(clearTimeout);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    };
+  }, [activeTab, isManagingTrips, tripId, tripsLoading]);
   const trip = useLiveQuery(async () => {
     if (!tripId) return undefined;
     const t = await db.trips.get(tripId);
