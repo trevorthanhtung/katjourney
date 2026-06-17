@@ -239,19 +239,10 @@ function App() {
   const tripsRaw = useLiveQuery(async () => (await db.trips.toArray()).filter(t => !t.isDeleted && t.status !== 'archived'));
   const tripsLoading = tripsRaw === undefined;
   const trips = tripsRaw ?? [];
-  const [selectedTripId, setSelectedTripId] = useState<number | null>(() => {
-    const saved = localStorage.getItem("kat_selected_trip_id");
-    return saved ? Number(saved) : null;
-  });
+  const [selectedTripId, setSelectedTripId] = useState<number | null>(null);
   const [isCreatingTrip, setIsCreatingTrip] = useState(false);
-  const [isManagingTrips, setIsManagingTrips] = useState<boolean>(() => {
-    const saved = localStorage.getItem("kat_is_managing_trips");
-    return saved ? saved === "true" : true;
-  });
-  const [isViewingArchive, setIsViewingArchive] = useState<boolean>(() => {
-    const saved = localStorage.getItem("kat_is_viewing_archive");
-    return saved === "true";
-  });
+  const [isManagingTrips, setIsManagingTrips] = useState<boolean>(true);
+  const [isViewingArchive, setIsViewingArchive] = useState<boolean>(false);
 
   React.useEffect(() => {
     localStorage.setItem("kat_active_tab", activeTab);
