@@ -1,4 +1,4 @@
-import { useLiveQuery } from "dexie-react-hooks";
+﻿import { useLiveQuery } from "dexie-react-hooks";
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -62,6 +62,7 @@ import { useCloudBackup } from "./hooks/useCloudBackup";
 import { signOutUser } from "./services/authService";
 import { updateShareLink } from "./services/cloudShareService";
 import { useNetworkStatus } from "./hooks/useNetworkStatus";
+import { useScrollBarVisibility } from "./hooks/useScrollBarVisibility";
 
 const NavButton = React.forwardRef<
   HTMLButtonElement,
@@ -115,52 +116,7 @@ function App() {
 
   const [expenseInitialAddState, setExpenseInitialAddState] = useState<{ date: string; eventId: number } | undefined>(undefined);
 
-  const [areBarsVisible, setAreBarsVisible] = useState(true);
-
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let ticking = false;
-
-    const updateScrollDirection = () => {
-      if (window.innerWidth >= 768) {
-        setAreBarsVisible(true);
-        ticking = false;
-        return;
-      }
-
-      const scrollY = window.scrollY;
-      
-      if (Math.abs(scrollY - lastScrollY) < 15) {
-        ticking = false;
-        return;
-      }
-      
-      if (scrollY < 60) {
-        setAreBarsVisible(true);
-      } else if (scrollY > lastScrollY) {
-        setAreBarsVisible(false);
-      } else {
-        setAreBarsVisible(true);
-      }
-      
-      lastScrollY = scrollY > 0 ? scrollY : 0;
-      ticking = false;
-    };
-
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateScrollDirection);
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    document.body.classList.toggle("bars-hidden", !areBarsVisible);
-  }, [areBarsVisible]);
+  const areBarsVisible = useScrollBarVisibility(768);
 
   // 2027 Bottom Navigation Bar animation system
   const [indicatorStyle, setIndicatorStyle] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
@@ -238,10 +194,21 @@ function App() {
   const tripsRaw = useLiveQuery(async () => (await db.trips.toArray()).filter(t => !t.isDeleted && t.status !== 'archived'));
   const tripsLoading = tripsRaw === undefined;
   const trips = tripsRaw ?? [];
-  const [selectedTripId, setSelectedTripId] = useState<number | null>(null);
+  const [selectedTripId, setSelectedTripId] = useState<number | null>(() => {
+    const saved = localStorage.getItem("kat_selected_trip_id");
+    return saved ? Number(saved) : null;
+  });
   const [isCreatingTrip, setIsCreatingTrip] = useState(false);
-  const [isManagingTrips, setIsManagingTrips] = useState<boolean>(true);
-  const [isViewingArchive, setIsViewingArchive] = useState<boolean>(false);
+  const [isManagingTrips, setIsManagingTrips] = useState<boolean>(() => {
+    const savedTripId = localStorage.getItem("kat_selected_trip_id");
+    const savedManaging = localStorage.getItem("kat_is_managing_trips");
+    // If we have a saved trip and were not managing trips, restore to trip view
+    if (savedTripId && savedManaging === "false") return false;
+    return true;
+  });
+  const [isViewingArchive, setIsViewingArchive] = useState<boolean>(() => {
+    return localStorage.getItem("kat_is_viewing_archive") === "true";
+  });
 
   React.useEffect(() => {
     localStorage.setItem("kat_active_tab", activeTab);
@@ -438,6 +405,17 @@ function App() {
   }, [showToast]);
   
   const tripId = isCreatingTrip || isManagingTrips || isViewingArchive ? null : (selectedTripId ?? trips[0]?.id ?? null);
+
+  // If trips have loaded and selectedTripId no longer exists (deleted), fall back to manager
+  React.useEffect(() => {
+    if (!tripsLoading && !isManagingTrips && !isViewingArchive && selectedTripId !== null) {
+      const exists = trips.some(t => t.id === selectedTripId);
+      if (!exists) {
+        setSelectedTripId(null);
+        setIsManagingTrips(true);
+      }
+    }
+  }, [tripsLoading, trips, selectedTripId, isManagingTrips, isViewingArchive]);
 
   useEffect(() => {
     const updateIndicator = () => {
@@ -737,7 +715,7 @@ function App() {
   if (isShareRoute && shareToken) {
     return (
       <React.Suspense fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[#FFFDF8]">
+        <div className="flex min-h-screen items-center justify-center bg-white">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/30 border-t-kat-primary"></div>
         </div>
       }>
@@ -885,7 +863,7 @@ function App() {
                       
                       <div className="absolute right-0 mt-2.5 z-50 w-[360px] rounded-2xl bg-white border border-slate-200/80 shadow-floating overflow-hidden animate-fadeIn">
                         {/* Popover Header */}
-                        <div className="px-5 py-4 border-b border-slate-150/60 bg-[#FFFDF8]">
+                        <div className="px-5 py-4 border-b border-slate-150/60 bg-white">
                           <h4 className="text-[14.5px] font-bold text-[#030D2E] leading-snug">Việc cần chú ý</h4>
                           <p className="text-[11.5px] text-slate-500 font-semibold mt-0.5 leading-normal">Các nhắc nhở quan trọng</p>
                         </div>
@@ -1206,12 +1184,12 @@ function App() {
 
 
       {!isManagingTrips && tripId && (
-        <nav className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] bg-white/55 supports-[backdrop-filter]:bg-white/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/45 shadow-[0_10px_36px_rgba(3,13,46,0.12)] ring-1 ring-inset ring-white/30 before:pointer-events-none before:absolute before:inset-x-5 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/80 before:to-transparent sm:max-w-[560px] md:max-w-[640px] lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom))" }}>
+        <nav className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] bg-white/55 supports-[backdrop-filter]:bg-white/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/45 shadow-[0_10px_36px_rgba(3,13,46,0.12)] ring-1 ring-inset ring-white/30 before:pointer-events-none before:absolute before:inset-x-5 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/80 before:to-transparent sm:max-w-[560px] md:max-w-[640px] lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}>
           <div ref={containerRef} className="relative flex h-[56px] min-[360px]:h-[60px] items-center justify-between px-2">
             {/* Active Indicator Slide Pill */}
             {indicatorStyle.width > 0 && (
               <div 
-                className="absolute top-[6px] bottom-[6px] rounded-full bg-white transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-[#E8E1D8]/45"
+                className="absolute top-[6px] bottom-[6px] rounded-full bg-white transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45"
                 style={{
                   left: `${indicatorStyle.left}px`,
                   width: `${indicatorStyle.width}px`
@@ -1262,7 +1240,7 @@ function App() {
 
       {successToast && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-[420px] motion-toast-enter">
-          <div className="bg-[#030D2E] text-white px-5 py-3 rounded-2xl shadow-floating flex items-center justify-between gap-4 border border-[#E8E1D8]/20">
+          <div className="bg-[#030D2E] text-white px-5 py-3 rounded-2xl shadow-floating flex items-center justify-between gap-4 border border-slate-200/20">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="flex h-5.5 w-5.5 shrink-0 items-center justify-center rounded-full bg-kat-primary/20 text-kat-primary">
                 <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" strokeWidth={3.5} />
@@ -1370,7 +1348,7 @@ function App() {
         title="Đăng xuất tài khoản?"
       >
         <div className="space-y-5">
-          <div className="rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8] p-4 text-[13.5px] text-slate-650 font-normal leading-relaxed text-left">
+          <div className="rounded-2xl bg-white border border-slate-200 p-4 text-[13.5px] text-slate-650 font-normal leading-relaxed text-left">
             Bạn sắp đăng xuất khỏi thiết bị này. Đừng lo, toàn bộ dữ liệu đã sao lưu trên <strong className="font-semibold text-slate-800">Cloud</strong> vẫn được giữ <strong className="font-semibold text-slate-800">an toàn</strong>.
           </div>
 
@@ -1449,7 +1427,7 @@ function App() {
                     onClick={() => {
                       window.location.href = "/share/" + trip.token;
                     }}
-                    className="group flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-[#FFFDF8] hover:bg-slate-50 hover:border-[#00BFB7]/20 cursor-pointer active:scale-[0.99] transition-all duration-200"
+                    className="group flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-white hover:bg-slate-50 hover:border-[#00BFB7]/20 cursor-pointer active:scale-[0.99] transition-all duration-200"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#00BFB7]/10 text-[#00BFB7]">
