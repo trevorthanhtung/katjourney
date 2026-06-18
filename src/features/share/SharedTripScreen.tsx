@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+﻿import React, { useEffect, useState, useRef } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   GlobeIcon,
@@ -110,7 +110,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
     let ticking = false;
 
     const updateScrollDirection = () => {
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 1024) {
         setAreBarsVisible(true);
         ticking = false;
         return;
@@ -370,7 +370,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#FFFDF8] flex-col gap-4">
+      <div className="flex min-h-screen items-center justify-center bg-white flex-col gap-4">
         <div className="h-10 w-10 animate-spin rounded-full border-4 border-kat-primary/30 border-t-kat-primary"></div>
         <p className="text-slate-500 font-bold animate-pulse">Đang tải hành trình...</p>
       </div>
@@ -379,7 +379,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   if (error || !data) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#FFFDF8] p-6">
+      <div className="flex min-h-screen items-center justify-center bg-white p-6">
         <div className="max-w-md w-full flex flex-col items-center text-center space-y-6 animate-fadeIn">
           {/* Icon Container */}
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
@@ -543,7 +543,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   if (showIdentityModal) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[#FAF7F1] p-4 animate-fadeIn overflow-hidden z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-slate-50 p-4 animate-fadeIn overflow-hidden z-50">
         <div className="w-full max-w-md max-h-[90dvh] rounded-[32px] bg-white p-6 shadow-xl border border-slate-100 animate-scaleIn flex flex-col relative">
           {/* Close button — only show when user already has an identity (re-selecting) */}
           {currentUser && (
@@ -797,7 +797,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-[1120px] mx-auto px-2.5 min-[360px]:px-4 pt-6 pb-20 sm:pb-6 space-y-6">
+      <main className="max-w-[1120px] mx-auto px-2.5 min-[360px]:px-4 pt-6 pb-20 lg:pb-6 space-y-6">
         
         {/* Hero Card */}
         <section 
@@ -839,9 +839,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
             
             <div className="flex flex-col items-center md:items-end gap-3 shrink-0 w-full sm:w-[290px] md:w-[290px] justify-center md:justify-end">
               {/* Timing box */}
-              <div className="relative overflow-hidden flex flex-col items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md px-6 py-4 border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_8px_16px_rgba(0,0,0,0.1)] w-full text-center shrink-0 min-h-[72px]">
-                <div className="absolute -right-4 -top-4 w-12 h-12 bg-white/10 rounded-full blur-md"></div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
+              <div className="flex flex-col items-center justify-center rounded-2xl bg-white/10 px-6 py-4 border border-white/20 w-full text-center shrink-0 min-h-[72px]">
+                <p className="text-[11px] font-semibold text-white/60">
                   {status === "past" ? "Trạng thái" : "Hành trình"}
                 </p>
                 <p className="mt-1.5 text-[22px] font-black text-white drop-shadow-sm tracking-tight leading-none">
@@ -939,7 +938,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               <HugeiconsIcon icon={RouteIcon} className="h-5 w-5" />
             </div>
             <p className="text-[20px] sm:text-[22px] font-black text-[#030D2E] leading-none mb-1">{activities.length}</p>
-            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Lịch trình</p>
+            <p className="text-[11px] font-semibold text-slate-400 mt-1">Lịch trình</p>
           </div>
 
           {/* Card 2: Chi phí (Conditional) */}
@@ -953,7 +952,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               <p className="text-[14px] min-[360px]:text-[16px] sm:text-[18px] font-black text-[#030D2E] leading-none mb-1 px-0.5 break-all">
                 {formatMoney(totalExpense)}
               </p>
-              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Chi phí</p>
+              <p className="text-[11px] font-semibold text-slate-400 mt-1">Chi phí</p>
             </div>
           )}
 
@@ -965,11 +964,11 @@ export default function SharedTripScreen({ token }: { token: string }) {
               <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5" />
             </div>
             <p className="text-[20px] sm:text-[22px] font-black text-[#030D2E] leading-none mb-1">{members.length}</p>
-            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mt-1">Thành viên</p>
+            <p className="text-[11px] font-semibold text-slate-400 mt-1">Thành viên</p>
           </div>
         </section>
 
-        <section className="hidden sm:flex bg-[#030D2E]/5 p-1 rounded-full gap-1 overflow-x-auto scrollbar-none border border-slate-200/20">
+        <section className="hidden lg:flex bg-[#030D2E]/5 p-1 rounded-full gap-1 overflow-x-auto scrollbar-none border border-slate-200/20">
           {tabsList.map((tab) => {
             const IconComponent = tab.icon;
             const isActive = activeTab === tab.id;
@@ -980,7 +979,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 className={classNames(
                   "flex-1 flex items-center justify-center gap-1.5 px-5 py-2 rounded-full font-extrabold text-[13.5px] whitespace-nowrap transition-all duration-200 cursor-pointer",
                   isActive 
-                    ? "bg-white text-[#030D2E] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-[#E8E1D8]/30" 
+                    ? "bg-white text-[#030D2E] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/30" 
                     : "text-slate-500 hover:text-[#030D2E] hover:bg-white/40"
                 )}
               >
@@ -1149,7 +1148,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   destination={trip.destination || trip.location} 
                   latitude={trip.latitude} 
                   longitude={trip.longitude} 
-                  days={tripDays.length || 3} 
+                  days={tripDays.length || 3}
+                  startDate={trip.startDate}
                 />
 
                 {/* 3. Shared General Backup Plans Widget */}
@@ -1416,7 +1416,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 }
               }}
               placeholder="https://www.google.com/maps/dir/..."
-              className="w-full pl-11 pr-4 py-4 bg-white border-2 border-[#E8E1D8] rounded-2xl text-[14px] font-semibold text-[#030D2E] placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-[#00BFB7] focus:ring-2 focus:ring-[#00BFB7]/15 transition-all duration-200"
+              className="w-full pl-11 pr-4 py-4 bg-white border-2 border-slate-200 rounded-2xl text-[14px] font-semibold text-[#030D2E] placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-[#00BFB7] focus:ring-2 focus:ring-[#00BFB7]/15 transition-all duration-200"
             />
           </div>
 
@@ -1518,12 +1518,12 @@ export default function SharedTripScreen({ token }: { token: string }) {
       />
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className={`fixed bottom-5 left-4 right-4 z-40 flex sm:hidden bg-white/55 supports-[backdrop-filter]:bg-white/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/45 rounded-[24px] shadow-[0_10px_36px_rgba(3,13,46,0.12)] ring-1 ring-inset ring-white/30 px-2 h-[56px] min-[360px]:h-[60px] items-center justify-around transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`}>
-        <div ref={containerRef} className="relative w-full h-full flex items-center justify-around">
+      <nav className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] sm:max-w-[560px] md:max-w-[640px] -translate-x-1/2 rounded-[26px] bg-white/55 supports-[backdrop-filter]:bg-white/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/45 shadow-[0_10px_36px_rgba(3,13,46,0.12)] ring-1 ring-inset ring-white/30 before:pointer-events-none before:absolute before:inset-x-5 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/80 before:to-transparent lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom))" }}>
+        <div ref={containerRef} className="relative flex h-[56px] min-[360px]:h-[60px] items-center justify-between px-2">
           {/* Active Indicator Slide Pill */}
           {indicatorStyle.width > 0 && (
             <div 
-              className="absolute top-[6px] bottom-[6px] rounded-full bg-white transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-[#E8E1D8]/45"
+              className="absolute top-[6px] bottom-[6px] rounded-full bg-white transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45"
               style={{
                 left: `${indicatorStyle.left}px`,
                 width: `${indicatorStyle.width}px`

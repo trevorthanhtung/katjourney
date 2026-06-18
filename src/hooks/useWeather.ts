@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getWeatherForecast, WeatherForecast, geocodeDestination } from "../services/weatherService";
 
-export function useWeather(destination?: string, latitude?: number, longitude?: number, days: number = 3) {
+export function useWeather(destination?: string, latitude?: number, longitude?: number, days: number = 3, startDate?: string) {
   const [loading, setLoading] = useState(false); // Default to false to avoid initial flashing if not fetching
   const [error, setError] = useState(false);
   const [forecast, setForecast] = useState<WeatherForecast | null>(null);
@@ -43,7 +43,7 @@ export function useWeather(destination?: string, latitude?: number, longitude?: 
           return;
         }
 
-        const data = await getWeatherForecast(lat, lon, days);
+        const data = await getWeatherForecast(lat, lon, days, startDate);
         if (!isMounted) return; // Ignore if unmounted
         
         if (!data) {
@@ -68,7 +68,7 @@ export function useWeather(destination?: string, latitude?: number, longitude?: 
     return () => {
       isMounted = false;
     };
-  }, [destination, latitude, longitude, days]);
+  }, [destination, latitude, longitude, days, startDate]);
 
   return { loading, error, forecast };
 }

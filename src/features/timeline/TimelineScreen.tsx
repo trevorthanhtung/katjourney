@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+﻿import React, { useEffect, useState, useRef } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { 
   CheckIcon, 
@@ -185,7 +185,7 @@ function ActivityCard({
                       rel="noreferrer"
                     >
                       {isRoute ? <HugeiconsIcon icon={Route01Icon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />}
-                      {isRoute ? "Xem lộ trình di chuyển (Roadmap) " : "Mở bằng ứng dụng Google Maps "}
+                      {isRoute ? "Xem lộ trình di chuyển " : "Mở bằng ứng dụng Google Maps "}
                       &rarr;
                     </a>
                   );
@@ -252,7 +252,7 @@ function DayHeader({
   return (
     <div 
       id={`day-section-${day}`} 
-      className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+      className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
     >
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#030D2E] text-white font-black text-[14px] shadow-sm">
@@ -528,10 +528,10 @@ function EventForm({
             <span className="flex flex-col gap-1">
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={MapsIcon} className="h-4 w-4 text-slate-500" />
-                Link bản đồ / Lộ trình (Roadmap)
+                Link bản đồ Google Maps
               </span>
               <span className="text-xs font-normal text-slate-400">
-                Gắn link địa điểm hoặc link lộ trình di chuyển (maps/dir/...) của Google Maps.
+                Dán link địa điểm từ Google Maps. Dùng để hiển thị vị trí chính xác nếu tên địa điểm không tự tìm được.
               </span>
             </span>
           } 
@@ -777,7 +777,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           <div key="undated" className="space-y-4">
             <div 
               id="day-section-undated"
-              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-400 text-white font-black text-[14px] shadow-sm">
@@ -810,7 +810,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           <div key="backup" className="space-y-4">
             <div 
               id="day-section-backup"
-              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-[#FAF7F1]/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 font-black text-[14px] shadow-sm">
@@ -900,7 +900,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         <button
           onClick={() => openNewForm()}
           className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
-          style={{ bottom: "calc(7.2rem + env(safe-area-inset-bottom))" }}
+          style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
           aria-label="Thêm lịch trình"
         >
           <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
@@ -1081,7 +1081,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
             </div>
           )}
 
-          <WeatherWidget destination={trip.location} latitude={trip.latitude} longitude={trip.longitude} days={tripDays.length} />
+          <WeatherWidget destination={trip.location} latitude={trip.latitude} longitude={trip.longitude} days={tripDays.length} startDate={trip.startDate} />
 
           {/* Mini Trip Context Card */}
           <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4">
@@ -1202,7 +1202,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 }
               }}
               placeholder="https://www.google.com/maps/dir/..."
-              className="w-full pl-11 pr-4 py-4 bg-white border-2 border-[#E8E1D8] rounded-2xl text-[14px] font-semibold text-[#030D2E] placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-[#00BFB7] focus:ring-2 focus:ring-[#00BFB7]/15 transition-all duration-200"
+              className="w-full pl-11 pr-4 py-4 bg-white border-2 border-slate-200 rounded-2xl text-[14px] font-semibold text-[#030D2E] placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-[#00BFB7] focus:ring-2 focus:ring-[#00BFB7]/15 transition-all duration-200"
             />
           </div>
 

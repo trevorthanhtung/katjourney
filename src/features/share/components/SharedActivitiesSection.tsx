@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   RouteIcon,
@@ -561,7 +561,7 @@ export function SharedActivitiesSection({
             <button 
               type="button"
               onClick={startAdd} 
-              className="hidden sm:flex items-center justify-center gap-1.5 rounded-xl bg-[#030D2E] text-white px-3.5 py-2 text-[12.5px] font-extrabold shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all h-9 motion-press cursor-pointer"
+              className="hidden lg:flex items-center justify-center gap-1.5 rounded-xl bg-[#030D2E] text-white px-3.5 py-2 text-[12.5px] font-extrabold shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all h-9 motion-press cursor-pointer"
               title={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
             >
               <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5" />
@@ -693,8 +693,8 @@ export function SharedActivitiesSection({
         <button
           type="button"
           onClick={startAdd}
-          className="sm:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
-          style={{ bottom: "calc(7.2rem + env(safe-area-inset-bottom))" }}
+          className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
+          style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
           aria-label={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
           title={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
         >
@@ -860,10 +860,10 @@ export function SharedActivitiesSection({
                 <span className="flex flex-col gap-1">
                   <span className="flex items-center gap-1.5">
                     <HugeiconsIcon icon={MapsIcon} className="h-4 w-4 text-slate-500" />
-                    Link bản đồ
+                    Link bản đồ Google Maps
                   </span>
                   <span className="text-xs font-normal text-slate-400">
-                    Gắn link địa điểm hoặc link lộ trình di chuyển (maps/dir/...) của Google Maps.
+                    Dán link địa điểm từ Google Maps. Dùng để hiển thị vị trí chính xác nếu tên địa điểm không tự tìm được.
                   </span>
                 </span>
               }
@@ -952,7 +952,7 @@ export function SharedActivitiesSection({
                 "flex flex-col items-center justify-center p-3 rounded-[16px] border text-center transition-all duration-200 active:scale-95 min-h-[72px] cursor-pointer",
                 filterDay === "all"
                   ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
-                  : "bg-[#FFFDF8] border-slate-200 text-slate-700 hover:bg-slate-50"
+                  : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
               )}
             >
               <span className="text-[13.5px] font-extrabold">Tất cả các ngày</span>
@@ -979,7 +979,7 @@ export function SharedActivitiesSection({
                     "flex flex-col items-center justify-center p-3 rounded-[16px] border text-center transition-all duration-200 active:scale-95 min-h-[72px] cursor-pointer",
                     isActive
                       ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
-                      : "bg-[#FFFDF8] border-slate-200 text-slate-700 hover:bg-slate-50"
+                      : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
                   )}
                 >
                   <span className="text-[13.5px] font-extrabold">Ngày {idx + 1}</span>

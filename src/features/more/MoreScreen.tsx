@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+﻿import React, { useEffect, useState, useRef, useCallback } from "react";
 import { showToast } from "../../components/ui/ToastManager";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -355,14 +355,14 @@ function CalendarRangePicker({
         {/* Day headers */}
         <div className="grid grid-cols-7 border-b border-slate-100">
           {DAYS_OF_WEEK.map(d => (
-            <div key={d} className="py-2 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wide">{d}</div>
+            <div key={d} className="py-1.5 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wide">{d}</div>
           ))}
         </div>
 
         {/* Day cells */}
-        <div className="grid grid-cols-7 p-1">
+        <div className="grid grid-cols-7 px-1 pb-1">
           {cells.map((day, idx) => {
-            if (!day) return <div key={`e-${idx}`} className="h-10" />;
+            if (!day) return <div key={`e-${idx}`} className="h-8" />;
             const iso = toISO(viewYear, viewMonth, day);
             const isStart = iso === startDate;
             const isEnd = tripType !== "dayTrip" && iso === effectiveEnd;
@@ -377,14 +377,14 @@ function CalendarRangePicker({
             return (
               <div
                 key={iso}
-                className="relative h-10 flex items-center justify-center"
+                className="relative h-8 flex items-center justify-center"
                 onMouseEnter={() => tripType === "multiDay" && pickingEnd && setHoverDate(iso)}
                 onMouseLeave={() => tripType === "multiDay" && pickingEnd && setHoverDate(null)}
               >
                 {/* Range bar background */}
                 {(inRange || isStartCap || isEndCap) && !isSingleDay && (
                   <div className={classNames(
-                    "absolute inset-y-1 bg-kat-primary/15",
+                    "absolute inset-y-0.5 bg-kat-primary/15",
                     isStartCap ? "left-1/2 right-0" : isEndCap ? "left-0 right-1/2" : "left-0 right-0"
                   )} />
                 )}
@@ -393,7 +393,7 @@ function CalendarRangePicker({
                   type="button"
                   onClick={() => handleDayClick(iso)}
                   className={classNames(
-                    "relative z-10 h-9 w-9 flex items-center justify-center rounded-full text-[13.5px] font-semibold transition-all",
+                    "relative z-10 h-7 w-7 flex items-center justify-center rounded-full text-[13px] font-semibold transition-all active:scale-95",
                     (isStart || isEnd) && !isSingleDay
                       ? "bg-kat-primary text-white font-bold shadow-sm"
                       : isSingleDay
@@ -401,7 +401,7 @@ function CalendarRangePicker({
                       : inRange
                       ? "text-kat-primary font-semibold hover:bg-kat-primary/10"
                       : isToday
-                      ? "text-kat-primary font-bold ring-1.5 ring-kat-primary hover:bg-kat-primary/10"
+                      ? "text-kat-primary font-bold ring-1 ring-kat-primary/50 hover:bg-kat-primary/10"
                       : "text-slate-700 hover:bg-slate-100"
                   )}
                 >
@@ -504,7 +504,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
           <Input 
             label={
               <span className="flex items-center gap-1.5">
-                <HugeiconsIcon icon={CompassIcon} size={16} className="text-slate-500" />
+                <HugeiconsIcon icon={PencilEdit01Icon} size={16} className="text-slate-500" />
                 Tên chuyến đi
               </span>
             } 
@@ -531,11 +531,11 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
             }}
           />
           {form.latitude && form.longitude ? (
-            <p className="mt-1.5 px-1 text-[11.5px] font-bold text-emerald-600 flex items-center gap-1 animate-fadeIn">
+            <p className="mt-2.5 px-1 text-[11.5px] font-bold text-emerald-600 flex items-center gap-1 animate-fadeIn">
               <HugeiconsIcon icon={CheckIcon} size={14} /> Khớp tọa độ thành công — Thời tiết đã tự động kết nối!
             </p>
           ) : (
-            <p className="mt-1.5 px-1 text-[11.5px] font-semibold text-slate-500 leading-normal">
+            <p className="mt-2.5 px-1 text-[11.5px] font-semibold text-slate-400 leading-relaxed">
               Chọn đúng điểm đến từ danh sách gợi ý để tự động cập nhật dự báo thời tiết chuẩn xác nhất. Nếu không tìm thấy địa danh cụ thể, hãy chọn một khu vực hoặc thành phố lân cận nhé.
             </p>
           )}
@@ -773,7 +773,7 @@ function MemberForm({
                   "flex-1 rounded-2xl py-3 text-[14px] font-black transition-all duration-200 active:scale-95 border text-center justify-center flex items-center",
                   gender === g.value
                     ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#00BFB7] shadow-sm"
-                    : "bg-[#FFFDF8] border-[#E8E1D8] text-slate-600 hover:bg-slate-50"
+                    : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                 )}
               >
                 {g.label}
@@ -817,7 +817,7 @@ function MemberForm({
                   "rounded-full px-4 py-2 text-[13.5px] font-extrabold transition-all duration-200 active:scale-95 border flex items-center gap-1.5",
                   selectedPresets.includes(preset)
                     ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#00BFB7]"
-                    : "bg-[#FFFDF8] border-[#E8E1D8] text-slate-600 hover:bg-slate-50"
+                    : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                 )}
               >
                 {getPresetIcon(preset)}
@@ -908,7 +908,7 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
         </div>
 
         {/* QR Code Card */}
-        <div className="w-[85%] max-w-[280px] p-4 bg-[#FFFDF8] border border-[#E8E1D8] rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
+        <div className="w-[85%] max-w-[280px] p-4 bg-white border border-slate-200 rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
           <img 
             src="/donates.png" 
             alt="Donate QR Code" 
@@ -935,7 +935,7 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
         <button
           type="button"
           onClick={onClose}
-          className="w-full inline-flex min-h-[48px] items-center justify-center rounded-[16px] bg-[#FFFDF8] border border-[#E8E1D8] text-[#030D2E] px-6 font-bold hover:bg-slate-50 active:scale-[0.98] transition-all duration-200"
+          className="w-full inline-flex min-h-[48px] items-center justify-center rounded-[16px] bg-white border border-slate-200 text-[#030D2E] px-6 font-bold hover:bg-slate-50 active:scale-[0.98] transition-all duration-200"
         >
           Đóng
         </button>
@@ -1031,20 +1031,20 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       </div>
       
       {/* Hero Recap Card */}
-      <section className="relative overflow-hidden rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-8 text-kat-text shadow-soft">
+      <section className="relative overflow-hidden rounded-[32px] bg-white border border-slate-200 p-8 text-kat-text shadow-soft">
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5 border border-kat-primary/20">
             <HugeiconsIcon icon={CompassIcon} className="h-6 w-6" />
           </div>
           <h2 className="text-[30px] md:text-[36px] font-black leading-tight tracking-tight text-[#030D2E]">{data.trip.title}</h2>
           <div className="mt-4 flex flex-wrap justify-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-4 py-2 text-[14px] font-bold text-slate-700">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-4 py-2 text-[14px] font-bold text-slate-700">
               <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-kat-primary" />
               {data.trip.location || "Chưa có địa điểm"}
             </span>
             {data.trip.tripType === "dayTrip" || data.trip.startDate === data.trip.endDate ? (
               <>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-4 py-2 text-[14px] font-bold text-slate-700">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-4 py-2 text-[14px] font-bold text-slate-700">
                   <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-[#0081BE]" />
                   {formatDate(data.trip.startDate)}
                 </span>
@@ -1054,7 +1054,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
                 </span>
               </>
             ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-4 py-2 text-[14px] font-bold text-slate-700">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-4 py-2 text-[14px] font-bold text-slate-700">
                 <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-[#0081BE]" />
                 {formatDate(data.trip.startDate)} – {formatDate(data.trip.endDate)}
               </span>
@@ -1065,7 +1065,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+        <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
             <HugeiconsIcon icon={Sun01Icon} className="h-6 w-6" />
           </div>
@@ -1075,7 +1075,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+        <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#00BFB7]/10 text-[#00BFB7] border border-[#00BFB7]/20">
             <HugeiconsIcon icon={Route01Icon} className="h-6 w-6" />
           </div>
@@ -1085,7 +1085,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+        <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
             <HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />
           </div>
@@ -1095,7 +1095,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+        <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#00BFB7]/10 text-[#00BFB7] border border-[#00BFB7]/20">
             <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
           </div>
@@ -1107,7 +1107,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       </div>
 
       {/* Finance Recap */}
-      <div className="rounded-[32px] bg-[#FFFDF8] border border-[#E8E1D8] p-8 text-kat-text shadow-soft relative overflow-hidden">
+      <div className="rounded-[32px] bg-white border border-slate-200 p-8 text-kat-text shadow-soft relative overflow-hidden">
         <div className="relative z-10">
           <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
             <HugeiconsIcon icon={WalletCardsIcon} className="h-5 w-5 text-kat-primary" />
@@ -1121,7 +1121,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
                 <p className="mt-1 text-[36px] font-black text-[#030D2E] leading-none">{formatMoney(stats.totalExpense)}</p>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-[#E8E1D8]/60 pt-6 max-w-md">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200/60 pt-6 max-w-md">
                 <div>
                   <p className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">Chi chung chuyến đi</p>
                   <p className="mt-1 text-[18px] font-black text-kat-primary-usable">{formatMoney(sharedTotal)}</p>
@@ -1133,15 +1133,15 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
               </div>
               
               {data.members.length === 0 ? (
-                <div className="border-t border-[#E8E1D8]/60 pt-6">
-                  <div className="rounded-2xl border border-[#E8E1D8] bg-[#FAF7F1]/50 px-4 py-3.5 text-[13.5px] text-slate-500 font-semibold leading-relaxed">
+                <div className="border-t border-slate-200/60 pt-6">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3.5 text-[13.5px] text-slate-500 font-semibold leading-relaxed">
                     Chưa có người đồng hành để gợi ý cân đối chia tiền.
                   </div>
                 </div>
               ) : (
                 <>
                   {stats.topPayer && (
-                    <div className="border-t border-[#E8E1D8]/60 pt-6">
+                    <div className="border-t border-slate-200/60 pt-6">
                       <p className="text-[14px] font-semibold text-slate-500">Nhà tài trợ chính</p>
                       <p className="mt-1 text-[14.5px] font-medium leading-relaxed text-slate-600">
                         <span className="font-extrabold text-[#030D2E]">{stats.topPayer.name}</span> là người chi nhiều nhất với <span className="font-extrabold text-kat-primary-usable">{formatMoney(stats.topPayer.amount)}</span>.
@@ -1152,7 +1152,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
               )}
             </div>
           ) : (
-            <div className="text-center py-6 border border-[#E8E1D8]/60 rounded-2xl bg-[#FAF7F1]/40">
+            <div className="text-center py-6 border border-slate-200/60 rounded-2xl bg-slate-50/40">
               <p className="text-[14.5px] font-semibold text-slate-500">Chưa có dữ liệu chi phí cho chuyến đi này.</p>
             </div>
           )}
@@ -1160,7 +1160,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       </div>
 
       {/* Memory / Mood Section */}
-      <div className="rounded-[32px] border border-[#E8E1D8] bg-[#FFFDF8] p-8 shadow-soft text-center flex flex-col items-center justify-center">
+      <div className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-soft text-center flex flex-col items-center justify-center">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-500 mb-4 ring-4 ring-amber-500/5">
           <HugeiconsIcon icon={SmilePlusIcon} className="h-6 w-6" />
         </div>
@@ -1185,10 +1185,10 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       {/* Storytelling Blocks */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* First Moment */}
-        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between">
+        <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <HugeiconsIcon icon={Camera01Icon} className="h-5 w-5 text-amber-500" />
-            <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">DẤU ẤN ĐẦU TIÊN</h4>
+            <h4 className="text-[13px] font-bold text-slate-500">Dấu ấn đầu tiên</h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
             {firstMomentText || "Chưa có dấu ấn đầu tiên. Hãy thêm mục lịch trình hoặc đăng bài viết để lưu lại khoảnh khắc mở đầu."}
@@ -1196,10 +1196,10 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         </div>
 
         {/* Most Eventful Day */}
-        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between">
+        <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <HugeiconsIcon icon={StarIcon} className="h-5 w-5 text-amber-500" />
-            <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">NGÀY NỔI BẬT NHẤT</h4>
+            <h4 className="text-[13px] font-bold text-slate-500">Ngày nổi bật nhất</h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
             {maxEventsDate ? (
@@ -1213,10 +1213,10 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         </div>
 
         {/* Locations Visited */}
-        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 shadow-soft flex flex-col justify-between">
+        <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <HugeiconsIcon icon={MapsIcon} className="h-5 w-5 text-kat-primary" />
-            <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest">ĐIỂM ĐẾN ĐÃ GHÉ QUA</h4>
+            <h4 className="text-[13px] font-bold text-slate-500">Điểm đến đã ghé qua</h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
             {uniqueLocations.length > 0 ? uniqueLocations.join(", ") : "Chưa có điểm đến cụ thể nào trong lịch trình."}
@@ -1302,8 +1302,8 @@ function ActionCard({
         className={classNames(
           "group flex w-full items-center justify-between px-4 py-3 rounded-2xl min-h-[56px] text-left transition-all focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/50",
           disabled 
-            ? "bg-[#FAF7F1] border border-[#E8E1D8]/50 opacity-60 cursor-not-allowed" 
-            : "bg-[#FFFDF8] border border-[#E8E1D8] hover:bg-slate-50/60 motion-press md:motion-hover-lift",
+            ? "bg-slate-50 border border-slate-200/50 opacity-60 cursor-not-allowed" 
+            : "bg-white border border-slate-200 hover:bg-slate-50/60 motion-press md:motion-hover-lift",
           className
         )}
       >
@@ -1315,7 +1315,7 @@ function ActionCard({
   return (
     <div
       className={classNames(
-        "flex w-full items-center justify-between bg-[#FFFDF8] border border-[#E8E1D8] px-4 py-3 rounded-2xl min-h-[56px]",
+        "flex w-full items-center justify-between bg-white border border-slate-200 px-4 py-3 rounded-2xl min-h-[56px]",
         className
       )}
     >
@@ -1904,7 +1904,7 @@ export function MoreScreen({
         </div>
 
         {/* Overview Card */}
-        <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft">
+        <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-soft">
           {members.length ? (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -1961,7 +1961,7 @@ export function MoreScreen({
                   placeholder="Tìm kiếm thành viên hoặc vai trò..."
                   value={memberSearchQuery}
                   onChange={(e) => setMemberSearchQuery(e.target.value)}
-                  className="block w-full rounded-2xl border border-[#E8E1D8]/60 bg-white/70 backdrop-blur-md py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 placeholder-slate-400 focus:border-slate-350 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all shadow-sm"
+                  className="block w-full rounded-2xl border border-slate-200/60 bg-white/70 backdrop-blur-md py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 placeholder-slate-400 focus:border-slate-350 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all shadow-sm"
                 />
                 {memberSearchQuery && (
                   <button
@@ -1994,7 +1994,7 @@ export function MoreScreen({
             </div>
           ) : members.length > 0 ? (
             /* Search results empty state */
-            <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-8 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
+            <div className="rounded-[24px] border border-slate-200 bg-white p-8 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 mx-auto mb-4 ring-4 ring-slate-50">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-6 w-6" />
               </div>
@@ -2005,7 +2005,7 @@ export function MoreScreen({
             </div>
           ) : (
             /* Empty State Layout */
-            <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
+            <div className="rounded-[24px] border border-slate-200 bg-white p-6 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-6 w-6" />
               </div>
@@ -2062,7 +2062,7 @@ export function MoreScreen({
           {/* Privacy */}
           <button
             onClick={() => onOpenSettings?.("privacy")}
-            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8] hover:bg-slate-50/60 transition-all text-left focus:outline-none"
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50/60 transition-all text-left focus:outline-none"
           >
             <div className="flex items-center gap-3.5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
@@ -2079,7 +2079,7 @@ export function MoreScreen({
           {/* About */}
           <button
             onClick={() => onOpenSettings?.("about")}
-            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8] hover:bg-slate-50/60 transition-all text-left focus:outline-none"
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50/60 transition-all text-left focus:outline-none"
           >
             <div className="flex items-center gap-3.5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 border border-violet-100">
@@ -2096,7 +2096,7 @@ export function MoreScreen({
           {/* Donate */}
           <button
             onClick={() => onOpenSettings?.("donate")}
-            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8] hover:bg-slate-50/60 transition-all text-left focus:outline-none"
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50/60 transition-all text-left focus:outline-none"
           >
             <div className="flex items-center gap-3.5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 border border-amber-100">
@@ -2111,7 +2111,7 @@ export function MoreScreen({
           </button>
 
           {/* Version */}
-          <div className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8E1D8]">
+          <div className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white border border-slate-200">
             <div className="flex items-center gap-3.5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-500 border border-slate-200/60">
                 <HugeiconsIcon icon={PackageIcon} className="h-5 w-5" />
@@ -2173,7 +2173,7 @@ export function MoreScreen({
         </div>
 
         {/* Hero chuyến đi compact hơn */}
-        <section className="relative overflow-hidden rounded-[28px] bg-[#FFFDF8] border border-[#E8E1D8] p-5 md:p-6 text-kat-text shadow-soft">
+        <section className="relative overflow-hidden rounded-[28px] bg-white border border-slate-200 p-5 md:p-6 text-kat-text shadow-soft">
           <HugeiconsIcon icon={CompassIcon} className="absolute -right-6 -bottom-6 w-32 h-32 text-kat-primary/[0.04] rotate-12 pointer-events-none" />
           
           <div className="relative z-10 flex flex-col gap-4">
@@ -2187,15 +2187,15 @@ export function MoreScreen({
             
             {/* Metadata tags */}
             <div className="flex flex-wrap gap-2 text-[12.5px] font-bold text-slate-600">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-3 py-1.5">
                 <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 {trip.location || "Chưa có địa điểm"}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-3 py-1.5">
                 <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 {trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}`}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-3 py-1.5">
                 <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 {tripDurationText}
               </span>
@@ -2751,8 +2751,7 @@ export function MoreScreen({
         title="Đóng gói kỷ niệm?"
       >
         <div className="space-y-5">
-          <div className="rounded-[20px] bg-slate-50 border border-slate-200/60 p-5 text-[14px] text-slate-600 font-medium leading-relaxed relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-1 h-full bg-[#030D2E] rounded-l-[20px]" />
+          <div className="rounded-[20px] bg-slate-100 border border-slate-200 p-5 text-[14px] text-slate-700 font-medium leading-relaxed">
             Hành trình này sẽ được đóng gói và đưa vào góc <b className="text-[#030D2E]">Kỷ niệm</b>. 
             Mọi dữ liệu sẽ được chuyển sang chế độ <b className="text-[#030D2E]">chỉ xem</b> để lưu giữ nguyên vẹn những khoảnh khắc của bạn.
           </div>
@@ -2790,8 +2789,7 @@ export function MoreScreen({
         title="Mở khóa chuyến đi?"
       >
         <div className="space-y-5">
-          <div className="rounded-[20px] bg-emerald-50/80 border border-emerald-100 p-5 text-[14px] text-emerald-800 font-medium leading-relaxed relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 rounded-l-[20px]" />
+          <div className="rounded-[20px] bg-emerald-50 border border-emerald-200 p-5 text-[14px] text-emerald-800 font-medium leading-relaxed">
             Chuyến đi sẽ được <b className="text-emerald-700">mở khóa trở lại</b>. Bạn có thể tiếp tục lên lịch trình, đăng bài viết bản tin và quản lý chi phí như bình thường.
           </div>
 

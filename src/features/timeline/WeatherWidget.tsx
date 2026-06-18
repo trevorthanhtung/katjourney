@@ -11,6 +11,7 @@ interface WeatherWidgetProps {
   latitude?: number;
   longitude?: number;
   days?: number;
+  startDate?: string;
 }
 
 // Helper to determine packing tip from temp difference and weather codes
@@ -42,8 +43,11 @@ function getPackingTip(
   return null;
 }
 
-export function WeatherWidget({ destination, latitude, longitude, days = 3 }: WeatherWidgetProps) {
-  const { loading, error, forecast } = useWeather(destination, latitude, longitude, days);
+export function WeatherWidget({ destination, latitude, longitude, days = 3, startDate }: WeatherWidgetProps) {
+  const today = new Date().toISOString().split("T")[0];
+  const isFuture = startDate && startDate > today;
+
+  const { loading, error, forecast } = useWeather(destination, latitude, longitude, days, startDate);
   const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
 
@@ -70,10 +74,21 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3 }: We
   }
 
   if (error || (!loading && !forecast)) {
+    const today = new Date().toISOString().split("T")[0];
+    const daysUntil = startDate && startDate > today
+      ? Math.ceil((new Date(startDate + "T00:00:00").getTime() - new Date(today + "T00:00:00").getTime()) / (1000 * 60 * 60 * 24))
+      : 0;
+
     return (
-      <div className="w-full h-auto py-4 mb-6 rounded-3xl bg-rose-50 border border-rose-100 flex flex-col items-center justify-center text-rose-500 gap-1 px-4 text-center">
-        <HugeiconsIcon icon={CloudRainWindIcon} className="w-6 h-6 mb-1 opacity-50" />
-        <span className="text-[12.5px] font-bold">Địa điểm không có dữ liệu để cập nhật thời tiết</span>
+      <div className="w-full h-auto py-5 mb-6 rounded-3xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center gap-1.5 px-4 text-center">
+        <HugeiconsIcon icon={CloudRainWindIcon} className="w-6 h-6 mb-0.5 text-slate-300" />
+        {daysUntil > 0 ? (
+          <span className="text-[12.5px] font-bold text-slate-400">
+            Dự báo chưa có sẵn — còn {daysUntil} ngày nữa mới đến chuyến đi. Open-Meteo chỉ cung cấp tối đa 16 ngày tới.
+          </span>
+        ) : (
+          <span className="text-[12.5px] font-bold text-slate-400">Địa điểm không có dữ liệu để cập nhật thời tiết</span>
+        )}
       </div>
     );
   }
@@ -136,9 +151,9 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3 }: We
               const leftPercent = tempRange === 0 ? 0 : ((minTemp - absMin) / tempRange) * 100;
               const widthPercent = tempRange === 0 ? 100 : ((maxTemp - minTemp) / tempRange) * 100;
               
-              // Current temperature dot position for "today" (idx === 0)
+              // Current temperature dot position for "today" (idx === 0, non-future only)
               let currentTempDotPercent: number | null = null;
-              if (idx === 0 && currentTemp != null) {
+              if (idx === 0 && !isFuture && currentTemp != null) {
                 const clampedTemp = Math.max(minTemp, Math.min(maxTemp, currentTemp));
                 const rangeForDay = maxTemp - minTemp;
                 if (rangeForDay === 0) {
@@ -155,7 +170,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3 }: We
                   className="flex items-center justify-between py-3 last:pb-0 first:pt-0 group text-left w-full hover:bg-sky-50/30 transition-colors rounded-xl px-1 -mx-1"
                 >
                   <span className="w-16 text-[13.5px] font-bold text-slate-600 group-hover:text-sky-600 transition-colors shrink-0">
-                    {idx === 0 ? "Hôm nay" : dayStr}
+                    {idx === 0 && !isFuture ? "Hôm nay" : dayStr}
                   </span>
                   
                   <div className="w-8 flex items-center justify-center shrink-0">

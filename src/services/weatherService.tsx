@@ -121,8 +121,26 @@ export async function geocodeDestination(destination: string): Promise<Geocoding
 const weatherCache = new Map<string, { timestamp: number, data: WeatherForecast | null }>();
 const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes
 
-export async function getWeatherForecast(lat: number, lon: number, days: number = 3): Promise<WeatherForecast | null> {
-  const fetchDays = Math.max(3, days); // Always fetch at least 3 days to maximize cache sharing
+export async function getWeatherForecast(lat: number, lon: number, days: number = 3, startDate?: string): Promise<WeatherForecast | null> {
+  const today = new Date().toISOString().split("T")[0];
+
+  // Open-Meteo free tier: max 16 days with forecast_days param
+  const MAX_FORECAST_DAYS = 16;
+
+  // Calculate how many days from today we need to fetch to cover startDate + days
+  let fetchDays = Math.max(3, days);
+  let daysUntilTrip = 0;
+  if (startDate && startDate > today) {
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const startMs = new Date(startDate + "T00:00:00").getTime();
+    const todayMs = new Date(today + "T00:00:00").getTime();
+    daysUntilTrip = Math.ceil((startMs - todayMs) / msPerDay);
+    fetchDays = daysUntilTrip + Math.max(days, 1);
+  }
+
+  // If the trip start is beyond what the API can provide, return null
+  if (fetchDays > MAX_FORECAST_DAYS || daysUntilTrip >= MAX_FORECAST_DAYS) return null;
+
   const cacheKey = `${lat},${lon},${fetchDays}`;
   const cached = weatherCache.get(cacheKey);
   
@@ -155,8 +173,8 @@ export async function getWeatherForecast(lat: number, lon: number, days: number 
              const stored = localStorage.getItem(`weather_${cacheKey}`);
              if (stored) {
                const parsed = JSON.parse(stored);
-               if (parsed.data?.current) {
-                 return applyDaysLimit(parsed.data, days, fetchDays);
+               if (parsed.data) {
+                 return applyDaysLimit(parsed.data, days, fetchDays, daysUntilTrip);
                }
              }
           } catch(e) {}
@@ -247,8 +265,8 @@ export async function getWeatherForecast(lat: number, lon: number, days: number 
            const stored = localStorage.getItem(`weather_${cacheKey}`);
            if (stored) {
              const parsed = JSON.parse(stored);
-             if (parsed.data?.current) {
-               return applyDaysLimit(parsed.data, days, fetchDays);
+             if (parsed.data) {
+               return applyDaysLimit(parsed.data, days, fetchDays, daysUntilTrip);
              }
            }
         } catch(e) {}
@@ -260,18 +278,26 @@ export async function getWeatherForecast(lat: number, lon: number, days: number 
     return null;
   }
 
-  return applyDaysLimit(dataToReturn, days, fetchDays);
+  return applyDaysLimit(dataToReturn, days, fetchDays, daysUntilTrip);
 }
 
-function applyDaysLimit(dataToReturn: WeatherForecast | null, days: number, fetchDays: number) {
-  if (dataToReturn && days < fetchDays) {
+function applyDaysLimit(dataToReturn: WeatherForecast | null, days: number, fetchDays: number, startOffset: number = 0) {
+  if (!dataToReturn) return dataToReturn;
+
+  // startOffset = days from today until trip start
+  // We slice from startOffset to startOffset+days
+  const from = startOffset;
+  const to = from + days;
+
+  if (from > 0 || to < fetchDays) {
     return {
-      current: dataToReturn.current,
-      time: dataToReturn.time.slice(0, days),
-      weathercode: dataToReturn.weathercode.slice(0, days),
-      temperature_2m_max: dataToReturn.temperature_2m_max.slice(0, days),
-      temperature_2m_min: dataToReturn.temperature_2m_min.slice(0, days),
-      uv_index_max: dataToReturn.uv_index_max?.slice(0, days),
+      // Don't expose current weather when displaying future days
+      current: from === 0 ? dataToReturn.current : undefined,
+      time: dataToReturn.time.slice(from, to),
+      weathercode: dataToReturn.weathercode.slice(from, to),
+      temperature_2m_max: dataToReturn.temperature_2m_max.slice(from, to),
+      temperature_2m_min: dataToReturn.temperature_2m_min.slice(from, to),
+      uv_index_max: dataToReturn.uv_index_max?.slice(from, to),
       hourly: dataToReturn.hourly,
     };
   }
