@@ -42,10 +42,11 @@ import { useModalHistory } from "./hooks/useModalHistory";
 
 // Screens
 import { HomeScreen } from "./features/home/HomeScreen";
-import { TimelineScreen } from "./features/timeline/TimelineScreen";
-import { ExpensesScreen } from "./features/expenses/ExpensesScreen";
-import { ChecklistScreen } from "./features/checklist/ChecklistScreen";
-import { MoreScreen, TripForm } from "./features/more/MoreScreen";
+const TimelineScreen = React.lazy(() => import("./features/timeline/TimelineScreen").then(m => ({ default: m.TimelineScreen })));
+const ExpensesScreen = React.lazy(() => import("./features/expenses/ExpensesScreen").then(m => ({ default: m.ExpensesScreen })));
+const ChecklistScreen = React.lazy(() => import("./features/checklist/ChecklistScreen").then(m => ({ default: m.ChecklistScreen })));
+const MoreScreen = React.lazy(() => import("./features/more/MoreScreen").then(m => ({ default: m.MoreScreen })));
+const TripForm = React.lazy(() => import("./features/more/MoreScreen").then(m => ({ default: m.TripForm })));
 import { TripManagerScreen } from "./features/trips/TripManagerScreen";
 import { ArchiveGallery } from "./features/archive/ArchiveGallery";
 
@@ -1187,10 +1188,12 @@ function App() {
           ) : trip && tripId ? (
             <div key={activeTab} className="motion-page-enter">
               {activeTab === "home" && <HomeScreen trip={trip} members={members ?? []} events={events ?? []} expenses={expenses ?? []} checklist={checklist ?? []} travelDocuments={travelDocuments ?? []} totalExpense={totalExpense} perPerson={perPerson} onNavigateTab={setActiveTab} onNavigateMore={navigateToMore} onOpenInbox={() => setIsAppInboxOpen(true)} isReadOnly={isReadOnly} />}
-              {activeTab === "timeline" && <TimelineScreen trip={trip} events={events ?? []} expenses={expenses ?? []} onAddExpense={(date, eventId) => { setExpenseInitialAddState({ date, eventId }); setActiveTab("expenses"); }} isReadOnly={isReadOnly} />}
-              {activeTab === "expenses" && <ExpensesScreen expenses={expenses ?? []} members={members ?? []} totalExpense={totalExpense} perPerson={perPerson} tripId={tripId} events={events ?? []} initialAddState={expenseInitialAddState} onClearInitialAddState={() => setExpenseInitialAddState(undefined)} isReadOnly={isReadOnly} />}
-              {activeTab === "checklist" && <ChecklistScreen checklist={checklist ?? []} tripId={tripId} isReadOnly={isReadOnly} />}
-              {activeTab === "more" && <MoreScreen trip={trip} members={members ?? []} events={events ?? []} expenses={expenses ?? []} checklist={checklist ?? []} journals={journals ?? []} packingItems={packingItems ?? []} travelDocuments={travelDocuments ?? []} onTripDeleted={() => { setSelectedTripId(null); setIsManagingTrips(true); showToast("Đã xóa chuyến đi khỏi danh sách."); }} onTripSelected={setSelectedTripId} onShowToast={showToast} section={moreSection} setSection={setMoreSection} onOpenInbox={() => setIsAppInboxOpen(true)} isReadOnly={isReadOnly} onOpenSettings={(view) => { setSettingsInitialView(view ?? "menu"); setIsSettingsOpen(true); }} isAutoSyncing={isAutoSyncing} lastSyncedAt={lastSyncedAt} />}
+              <React.Suspense fallback={<div className="flex items-center justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div></div>}>
+                {activeTab === "timeline" && <TimelineScreen trip={trip} events={events ?? []} expenses={expenses ?? []} onAddExpense={(date, eventId) => { setExpenseInitialAddState({ date, eventId }); setActiveTab("expenses"); }} isReadOnly={isReadOnly} />}
+                {activeTab === "expenses" && <ExpensesScreen expenses={expenses ?? []} members={members ?? []} totalExpense={totalExpense} perPerson={perPerson} tripId={tripId} events={events ?? []} initialAddState={expenseInitialAddState} onClearInitialAddState={() => setExpenseInitialAddState(undefined)} isReadOnly={isReadOnly} />}
+                {activeTab === "checklist" && <ChecklistScreen checklist={checklist ?? []} tripId={tripId} isReadOnly={isReadOnly} />}
+                {activeTab === "more" && <MoreScreen trip={trip} members={members ?? []} events={events ?? []} expenses={expenses ?? []} checklist={checklist ?? []} journals={journals ?? []} packingItems={packingItems ?? []} travelDocuments={travelDocuments ?? []} onTripDeleted={() => { setSelectedTripId(null); setIsManagingTrips(true); showToast("Đã xóa chuyến đi khỏi danh sách."); }} onTripSelected={setSelectedTripId} onShowToast={showToast} section={moreSection} setSection={setMoreSection} onOpenInbox={() => setIsAppInboxOpen(true)} isReadOnly={isReadOnly} onOpenSettings={(view) => { setSettingsInitialView(view ?? "menu"); setIsSettingsOpen(true); }} isAutoSyncing={isAutoSyncing} lastSyncedAt={lastSyncedAt} />}
+              </React.Suspense>
             </div>
           ) : (
             <div className="flex items-center justify-center py-20">
@@ -1337,15 +1340,17 @@ function App() {
       )}
 
       {isCreatingTrip && (
-        <TripForm
-          isOpen={isCreatingTrip}
-          onClose={() => setIsCreatingTrip(false)}
-          onSaved={(id) => {
-            setIsCreatingTrip(false);
-            setSuccessToast(id);
-            setTimeout(() => setSuccessToast(null), 4000);
-          }}
-        />
+        <React.Suspense fallback={null}>
+          <TripForm
+            isOpen={isCreatingTrip}
+            onClose={() => setIsCreatingTrip(false)}
+            onSaved={(id) => {
+              setIsCreatingTrip(false);
+              setSuccessToast(id);
+              setTimeout(() => setSuccessToast(null), 4000);
+            }}
+          />
+        </React.Suspense>
       )}
 
       <SettingsSheet

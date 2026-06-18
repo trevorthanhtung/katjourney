@@ -100,7 +100,8 @@ export default defineConfig({
         manualChunks: {
           react: ["react", "react-dom"],
           firebase: ["firebase/app", "firebase/auth", "firebase/firestore"],
-          documents: ["jspdf", "xlsx", "exceljs"],
+          pdf: ["jspdf"],
+          excel: ["exceljs"],
           ui: ["@hugeicons/react"],
         },
       },

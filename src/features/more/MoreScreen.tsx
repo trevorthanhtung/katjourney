@@ -96,7 +96,6 @@ import {
   getTripTiming
 } from "../../utils/helpers";
 import { normalizeVietnameseDisplayText } from "../../utils/helpers";
-import { exportTripExcel, exportTripPdf } from "../../utils/exports";
 import { BottomSheet, FormActions, Input, ScreenTitle, TypedDeleteConfirmModal, classNames } from "../../components/ui";
 import { JournalSection } from "../journal/JournalSection";
 import { TravelDocumentsSection } from "./TravelDocumentsSection";
@@ -993,6 +992,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
     setIsGeneratingPdf(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 300));
+      const { exportTripPdf } = await import("../../utils/exportPdf");
       await exportTripPdf(data);
     } catch (error) {
       console.error(error);
@@ -2308,7 +2308,10 @@ export function MoreScreen({
                   <ActionCard
                     icon={File01Icon}
                     title="Xuất báo cáo PDF"
-                    onClick={() => exportTripPdf(tripData)}
+                    onClick={async () => {
+                      const { exportTripPdf } = await import("../../utils/exportPdf");
+                      exportTripPdf(tripData);
+                    }}
                     iconBgColor="bg-rose-50"
                     iconTextColor="text-rose-600 border-rose-100"
                   />
@@ -2316,7 +2319,10 @@ export function MoreScreen({
                   <ActionCard
                     icon={Table01Icon}
                     title="Xuất bảng tính Excel"
-                    onClick={() => { exportTripExcel(tripData).catch(console.error); }}
+                    onClick={async () => {
+                      const { exportTripExcel } = await import("../../utils/exportExcel");
+                      exportTripExcel(tripData).catch(console.error);
+                    }}
                     iconBgColor="bg-emerald-50"
                     iconTextColor="text-emerald-600 border-emerald-100"
                   />

@@ -23,7 +23,6 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { ChecklistItem, EventItem, Expense, Member, Trip, db, TravelDocument } from "../../db";
 import { formatDate, formatMoney, getChecklistStats, getTripTiming, today } from "../../utils/helpers";
 import { getTripReminders } from "../../utils/reminderRules";
-import { exportTripPdf, exportTripExcel } from "../../utils/exports";
 
 import { useWeather } from "../../hooks/useWeather";
 import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather";
@@ -400,13 +399,19 @@ export function HomeScreen({
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2.5">
                   <button
-                    onClick={() => exportTripPdf(tripData)}
+                    onClick={async () => {
+                      const { exportTripPdf } = await import("../../utils/exportPdf");
+                      exportTripPdf(tripData);
+                    }}
                     className="flex-1 min-w-[100px] h-10 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-[#030D2E] font-bold text-[13px] transition-all motion-press"
                   >
                     <span>Xuất PDF</span>
                   </button>
                   <button
-                    onClick={() => { exportTripExcel(tripData).catch(console.error); }}
+                    onClick={async () => {
+                      const { exportTripExcel } = await import("../../utils/exportExcel");
+                      exportTripExcel(tripData).catch(console.error);
+                    }}
                     className="flex-1 min-w-[100px] h-10 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-[#030D2E] font-bold text-[13px] transition-all motion-press"
                   >
                     <span>Xuất Excel</span>
