@@ -76,7 +76,7 @@ const NavButton = React.forwardRef<
     <button
       ref={ref}
       onClick={onClick}
-      aria-label={label}
+      aria-label={`Đi tới ${label}`}
       className={classNames(
         "relative flex items-center justify-center rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] overflow-hidden motion-press z-10",
         isActive 

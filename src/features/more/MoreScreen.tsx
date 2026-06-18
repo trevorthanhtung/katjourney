@@ -95,6 +95,7 @@ import {
   getChecklistStats,
   getTripTiming
 } from "../../utils/helpers";
+import { normalizeVietnameseDisplayText } from "../../utils/helpers";
 import { exportTripExcel, exportTripPdf } from "../../utils/exports";
 import { BottomSheet, FormActions, Input, ScreenTitle, TypedDeleteConfirmModal, classNames } from "../../components/ui";
 import { JournalSection } from "../journal/JournalSection";
@@ -136,7 +137,7 @@ function LocationInput({
   }
 
   function handleSelect(result: GeocodingResult) {
-    const display = [result.name, result.admin1, result.country].filter(Boolean).join(", ");
+    const display = normalizeVietnameseDisplayText([result.name, result.admin1, result.country].filter(Boolean).join(", "));
     onChange(display);
     onSelectResult(result);
     setSuggestions([]);
@@ -185,7 +186,8 @@ function LocationInput({
       {isOpen && suggestions.length > 0 && (
         <ul className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-floating animate-fadeIn">
           {suggestions.map((result, idx) => {
-            const sub = [result.admin1, result.country].filter(Boolean).join(", ");
+            const name = normalizeVietnameseDisplayText(result.name);
+            const sub = normalizeVietnameseDisplayText([result.admin1, result.country].filter(Boolean).join(", "));
             return (
               <li key={idx}>
                 <button
@@ -198,7 +200,7 @@ function LocationInput({
                     <HugeiconsIcon icon={Location01Icon} size={14} className="text-kat-primary" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13.5px] font-bold text-slate-800 truncate">{result.name}</p>
+                    <p className="text-[13.5px] font-bold text-slate-800 truncate">{name}</p>
                     {sub && <p className="text-[11.5px] text-slate-400 font-medium truncate">{sub}</p>}
                   </div>
                 </button>
@@ -492,6 +494,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
         <FormActions 
           onSave={save} 
           saveLabel={trip ? "Lưu thông tin" : "Tạo chuyến đi"} 
+          saveAriaLabel={trip ? "Xác nhận lưu thông tin chuyến đi" : "Xác nhận tạo chuyến đi"}
           disabled={hasError}
           onCancel={onClose}
         />
@@ -523,7 +526,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
             value={form.location}
             onChange={(location) => setForm((f) => ({ ...f, location, latitude: undefined, longitude: undefined, defaultCurrency: undefined }))}
             onSelectResult={(result) => {
-              const display = [result.name, result.admin1, result.country].filter(Boolean).join(", ");
+              const display = normalizeVietnameseDisplayText([result.name, result.admin1, result.country].filter(Boolean).join(", "));
               const currency = result.country_code ? getCurrencyForCountry(result.country_code) : undefined;
               setForm((f) => ({ ...f, location: display, latitude: result.latitude, longitude: result.longitude, defaultCurrency: currency || undefined }));
             }}

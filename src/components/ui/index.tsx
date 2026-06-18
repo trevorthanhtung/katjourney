@@ -518,11 +518,13 @@ export function Select({
 export function FormActions({
   onSave,
   saveLabel,
+  saveAriaLabel,
   onCancel,
   disabled
 }: {
   onSave: () => void;
   saveLabel: string;
+  saveAriaLabel?: string;
   onCancel?: () => void;
   disabled?: boolean;
 }) {
@@ -542,6 +544,7 @@ export function FormActions({
         type="button"
         onClick={onSave}
         disabled={disabled}
+        aria-label={saveAriaLabel ?? saveLabel}
       >
         <HugeiconsIcon icon={CheckIcon} size={20} />
         {saveLabel}

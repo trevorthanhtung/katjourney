@@ -24,6 +24,12 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
   const [visibleTimes, setVisibleTimes] = useState<Record<string, boolean>>({});
   const [isMobileModalOpen, setIsMobileModalOpen] = useState(false);
 
+  const renderSenderAvatar = (senderName: string) => (
+    <div className="w-full h-full">
+      {getAvatarSvg(senderName)}
+    </div>
+  );
+
   const toggleTime = (msgId: string) => {
     setVisibleTimes(prev => ({
       ...prev,
@@ -193,9 +199,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                           ? "overflow-hidden bg-[#E8E1D8]/40 border border-kat-border/60 shadow-sm transition-transform duration-200 hover:scale-110" 
                           : ""
                       )}>
-                        {showAvatar && msg.senderAvatar ? (
-                          <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: msg.senderAvatar }} />
-                        ) : null}
+                        {showAvatar ? renderSenderAvatar(msg.senderName) : null}
                       </div>
                     )}
                     

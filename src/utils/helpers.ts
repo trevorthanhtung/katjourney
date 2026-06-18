@@ -259,6 +259,10 @@ export function safeFileName(value: string, fallback = "kat-trip") {
     .toLowerCase() || fallback;
 }
 
+export function normalizeVietnameseDisplayText(value: string) {
+  return value.replace(/Ð/g, "Đ").replace(/ð/g, "đ");
+}
+
 export function downloadBlob(blob: Blob, fileName: string) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
