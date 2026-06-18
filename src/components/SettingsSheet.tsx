@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import i18n from "../i18n";
-import { useTheme, type Theme } from "../hooks/useTheme";
 import { useNotification } from "../hooks/useNotification";
 import { showToast } from "./ui/ToastManager";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -77,38 +74,6 @@ const GoogleIcon = () => (
     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
   </svg>
 );
-
-
-// ─── Segmented Control (reusable) ────────────────────────────────────────────
-function SegmentedControl<T extends string>({
-  options,
-  value,
-  onChange,
-}: {
-  options: { value: T; label: string }[];
-  value: T;
-  onChange: (v: T) => void;
-}) {
-  return (
-    <div className="flex flex-wrap gap-1">
-      {options.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          onClick={() => onChange(opt.value)}
-          className={[
-            "px-3 py-1.5 rounded-full text-[12.5px] font-bold transition-all active:scale-95 whitespace-nowrap border",
-            value === opt.value
-              ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
-              : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100",
-          ].join(" ")}
-        >
-          {opt.label}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 
 export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripSelected }: SettingsSheetProps) {

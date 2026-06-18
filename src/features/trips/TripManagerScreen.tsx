@@ -62,7 +62,7 @@ function TripCard({
     return (
       <div 
         onClick={() => onOpenTrip(trip.id!)}
-        className={`group relative cursor-pointer overflow-hidden rounded-[32px] bg-gradient-to-b from-white to-[#FCFAF2] border border-[#E8E1D8] border-l-4 ${statusColor} p-6 md:p-8 shadow-soft hover:shadow-md hover:border-slate-350/80 hover:-translate-y-1 active:scale-[0.99] transition-all duration-300 w-full flex flex-col md:flex-row gap-6 justify-between items-stretch md:min-w-[560px] md:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+        className={`group relative cursor-pointer overflow-hidden rounded-[32px] bg-gradient-to-b from-white to-[#FCFAF2] border border-[#E8E1D8] border-l-4 ${statusColor} p-6 lg:p-8 shadow-soft hover:shadow-md hover:border-slate-350/80 hover:-translate-y-1 active:scale-[0.99] transition-all duration-300 w-full flex flex-col lg:flex-row gap-6 justify-between items-stretch lg:min-w-[560px] lg:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
       >
         {/* Left info column */}
         <div className="flex-1 flex flex-col justify-between pr-4">
@@ -99,7 +99,7 @@ function TripCard({
               </span>
             </div>
 
-            <h4 className="text-[22px] md:text-[25px] font-extrabold text-kat-text leading-tight mb-4 tracking-tight">
+            <h4 className="text-[22px] lg:text-[25px] font-extrabold text-kat-text leading-tight mb-4 tracking-tight">
               {trip.title}
             </h4>
           </div>
@@ -117,7 +117,7 @@ function TripCard({
         </div>
 
         {/* Right stats column */}
-        <div className="w-full md:w-[250px] shrink-0 md:border-l md:border-[#E8E1D8]/45 md:pl-6 flex flex-col justify-center gap-2.5">
+        <div className="w-full lg:w-[250px] shrink-0 lg:border-l lg:border-[#E8E1D8]/45 lg:pl-6 flex flex-col justify-center gap-2.5">
           <div className="flex items-center gap-2 text-[12px] font-extrabold text-[#3D4B5E] bg-[#030D2E]/[0.02] border border-[#E8E1D8]/45 px-3.5 py-2 rounded-[12px]">
             <HugeiconsIcon icon={UserGroupIcon} size={15} className="text-slate-400 shrink-0" />
             <span>{memberCounts[trip.id!] || 1} người đồng hành</span> 
@@ -270,7 +270,7 @@ function TripList({
         className={
           isSingle 
             ? "flex flex-col items-start" 
-            : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch"
+            : "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch"
         }
       >
         {items.map((trip, idx) => (
@@ -398,7 +398,7 @@ export function TripManagerScreen({
       ) : (
         <>
           {/* Hero Header */}
-          <div className="group/hero mb-10 md:mb-12 rounded-[32px] bg-gradient-to-br from-[#030D2E] via-[#012633] to-[#004E5A] py-6 px-5 sm:px-6 md:py-8 md:px-10 flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-8 shadow-[0_12px_40px_-12px_rgba(3,13,46,0.3)] relative overflow-hidden motion-page-enter">
+          <div className="group/hero mb-10 md:mb-12 rounded-[32px] bg-gradient-to-br from-[#030D2E] via-[#012633] to-[#004E5A] py-6 px-5 sm:px-6 md:py-8 md:px-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8 shadow-[0_12px_40px_-12px_rgba(3,13,46,0.3)] relative overflow-hidden motion-page-enter">
             {/* Ambient Background Glows */}
             <div className="absolute top-0 right-0 w-72 h-72 bg-[#00BFB7] opacity-20 blur-[80px] rounded-full pointer-events-none" />
             <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-violet-600 opacity-20 blur-[100px] rounded-full pointer-events-none" />
@@ -417,7 +417,7 @@ export function TripManagerScreen({
               </p>
             </div>
             
-            <div className="flex flex-row flex-wrap items-center gap-2 w-full md:w-auto shrink-0 relative z-10 justify-center md:justify-end">
+            <div className="flex flex-row flex-wrap items-center gap-2 w-full lg:w-auto shrink-0 relative z-10 justify-center lg:justify-end">
               <button
                 onClick={onOpenArchive}
                 className="group relative flex h-[46px] md:h-[50px] items-center justify-center gap-2 rounded-2xl bg-white/[0.08] hover:bg-white/[0.15] text-white px-3 sm:px-6 font-bold text-[12.5px] min-[360px]:text-[13.5px] md:text-[14px] border border-white/15 backdrop-blur-md overflow-hidden active:scale-[0.97] hover:border-white/25 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.15)] whitespace-nowrap shrink-0"
@@ -445,6 +445,9 @@ export function TripManagerScreen({
           {featuredTrip && (() => {
             const featuredStatus = getTripTiming(featuredTrip);
             const featuredBorderColor = featuredStatus.status === "active" ? "border-l-[#00BFB7]" : "border-l-[#F89B02]";
+            const featuredTotalExpense = allExpenses
+              .filter((expense) => expense.tripId === featuredTrip.id)
+              .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
             return (
               <section className="mb-12 md:mb-14">
                 <h3 className="mb-4 px-1 text-[20px] font-extrabold text-kat-text motion-title-enter">Chuyến tiếp theo</h3>
@@ -453,22 +456,22 @@ export function TripManagerScreen({
                   onClick={() => onOpenTrip(featuredTrip.id!)}
                 >
                   {/* Decorative background */}
-                  <div className="absolute right-0 top-0 bottom-0 w-1/2 md:w-1/3 bg-gradient-to-l from-kat-primary/5 to-transparent pointer-events-none" />
+                  <div className="absolute right-0 top-0 bottom-0 w-1/2 lg:w-1/3 bg-gradient-to-l from-kat-primary/5 to-transparent pointer-events-none" />
                   
                   {/* Watermark Compass Icon - Mobile */}
                   <HugeiconsIcon 
                     icon={CompassIcon} 
                     size={160} 
-                    className="block md:hidden absolute -right-6 -bottom-6 text-kat-primary opacity-[0.05] rotate-12 pointer-events-none transition-all group-hover:scale-110 group-hover:rotate-[20deg] duration-700" 
+                    className="block lg:hidden absolute -right-6 -bottom-6 text-kat-primary opacity-[0.05] rotate-12 pointer-events-none transition-all group-hover:scale-110 group-hover:rotate-[20deg] duration-700" 
                   />
                   {/* Watermark Compass Icon - Desktop */}
                   <HugeiconsIcon 
                     icon={CompassIcon} 
                     size={240} 
-                    className="hidden md:block absolute -right-8 -bottom-8 text-kat-primary opacity-[0.05] rotate-12 pointer-events-none transition-all group-hover:scale-110 group-hover:rotate-[24deg] duration-700" 
+                    className="hidden lg:block absolute -right-8 -bottom-8 text-kat-primary opacity-[0.05] rotate-12 pointer-events-none transition-all group-hover:scale-110 group-hover:rotate-[24deg] duration-700" 
                   />
                   
-                  <div className="relative z-10 md:w-2/3 pr-4">
+                  <div className="relative z-10 lg:w-2/3 pr-4">
                     <div className="flex flex-wrap gap-2 mb-4">
                       {featuredStatus.status === "active" ? (
                         <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-3 py-1 text-[11px] font-bold text-emerald-700 uppercase tracking-wider shadow-sm">
@@ -508,6 +511,10 @@ export function TripManagerScreen({
                       <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-3 py-1.5 rounded-[12px] max-w-full">
                         <HugeiconsIcon icon={UserGroupIcon} size={16} className="text-slate-400 shrink-0" />
                         <span className="font-extrabold text-[13px] text-slate-600 truncate">{memberCounts[featuredTrip.id!] || 1} người</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-3 py-1.5 rounded-[12px] max-w-full">
+                        <HugeiconsIcon icon={WalletCardsIcon} size={16} className="text-slate-400 shrink-0" />
+                        <span className="font-extrabold text-[13px] text-slate-600 truncate">{featuredTotalExpense > 0 ? `${featuredTotalExpense.toLocaleString()}đ` : "Chưa chi"}</span>
                       </div>
                     </div>
                   </div>

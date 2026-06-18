@@ -29,7 +29,6 @@ import {
   Airplane01Icon
 } from "@hugeicons/core-free-icons";
 import React, { useEffect, useState, useRef } from "react";
-import { useTranslation } from "react-i18next";
 import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "./db";
 
 // Components & Helpers
@@ -95,7 +94,6 @@ const NavButton = React.forwardRef<
 NavButton.displayName = "NavButton";
 
 function App() {
-  const { t } = useTranslation();
   const isOnline = useNetworkStatus();
   const [showSplash, setShowSplash] = useState(true);
   const [isSplashFading, setIsSplashFading] = useState(false);
@@ -105,7 +103,7 @@ function App() {
   });
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isRemindersOpen, setIsRemindersOpen] = useState(false);
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [moreSection, setMoreSection] = useState<"overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents">(() => {
     const saved = localStorage.getItem("kat_more_section");
     return (saved as any) || "overview";
@@ -788,13 +786,13 @@ function App() {
         <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
           <div className="flex items-center gap-3 shrink-0">
             <div className="flex items-center gap-1.5 min-[360px]:gap-2 select-none shrink-0">
-              <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden md:block h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
+              <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden lg:block h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
               <h1 className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap shrink-0">KAT Journey</h1>
             </div>
             
             {/* Desktop Navigation */}
             {!isManagingTrips && tripId && (
-              <div className="hidden md:flex ml-6 gap-2 bg-kat-text/5 p-1 rounded-full">
+              <div className="hidden lg:flex ml-6 gap-2 bg-kat-text/5 p-1 rounded-full">
                 <button 
                   onClick={() => setActiveTab("home")}
                   className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "home" ? "bg-white text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5")}
@@ -1079,7 +1077,7 @@ function App() {
         <div className="bg-amber-500 text-white px-4 py-2 flex items-center justify-center gap-2 shadow-sm animate-fadeIn z-40 relative">
           <HugeiconsIcon icon={WifiOffIcon} className="w-4 h-4 shrink-0" />
           <div className="text-[13px] font-bold">
-            {t("offline_warning")} <span className="hidden sm:inline font-medium"> - {t("offline_desc")}</span>
+            Bạn đang offline <span className="hidden sm:inline font-medium"> - Một số tính năng cần kết nối mạng</span>
           </div>
         </div>
       )}
@@ -1205,7 +1203,7 @@ function App() {
 
 
       {!isManagingTrips && tripId && (
-        <nav className={`fixed left-4 right-4 z-50 mx-auto max-w-[480px] rounded-[26px] bg-white/55 supports-[backdrop-filter]:bg-white/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/45 shadow-[0_10px_36px_rgba(3,13,46,0.12)] ring-1 ring-inset ring-white/30 before:pointer-events-none before:absolute before:inset-x-5 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/80 before:to-transparent md:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom))", marginLeft: "env(safe-area-inset-left)", marginRight: "env(safe-area-inset-right)" }}>
+        <nav className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] bg-white/55 supports-[backdrop-filter]:bg-white/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/45 shadow-[0_10px_36px_rgba(3,13,46,0.12)] ring-1 ring-inset ring-white/30 before:pointer-events-none before:absolute before:inset-x-5 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/80 before:to-transparent sm:max-w-[560px] md:max-w-[640px] lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom))" }}>
           <div ref={containerRef} className="relative flex h-[56px] min-[360px]:h-[60px] items-center justify-between px-2">
             {/* Active Indicator Slide Pill */}
             {indicatorStyle.width > 0 && (

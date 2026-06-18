@@ -532,7 +532,7 @@ export function SharedBackupPlansSheet({
                           {(plan.mapLink || plan.location) && (
                             <div className="mt-3 space-y-2" onClick={(e) => e.stopPropagation()}>
                               {getEmbedMapUrl(plan.mapLink || plan.location || "", plan.location) && (
-                                <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm dark:border-gray-800 bg-slate-100 relative min-h-[140px]">
+                                <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm bg-slate-100 relative min-h-[140px]">
                                   <div className="absolute inset-0 flex items-center justify-center text-slate-400">
                                     <span className="text-[12px] font-medium animate-pulse">Đang tải bản đồ...</span>
                                   </div>
@@ -540,7 +540,7 @@ export function SharedBackupPlansSheet({
                                     title="Google Maps Embed"
                                     width="100%"
                                     height="140"
-                                    className="border-0 dark:opacity-80 relative z-10"
+                                    className="border-0 relative z-10"
                                     loading="lazy"
                                     allowFullScreen
                                     src={getEmbedMapUrl(plan.mapLink || plan.location || "", plan.location)}
