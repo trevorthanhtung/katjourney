@@ -648,6 +648,8 @@ export function ProgressRing({ value, size = 120, strokeWidth = 10, children }: 
   );
 }
 
+let _bottomSheetOpenCount = 0;
+
 export function BottomSheet({ 
   isOpen, 
   onClose, 
@@ -667,15 +669,18 @@ export function BottomSheet({
 }) {
   React.useEffect(() => {
     if (isOpen) {
-      const originalBodyOverflow = document.body.style.overflow;
-      const originalHtmlOverflow = document.documentElement.style.overflow;
-      
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
+      _bottomSheetOpenCount++;
+      if (_bottomSheetOpenCount === 1) {
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
+      }
       
       return () => {
-        document.body.style.overflow = originalBodyOverflow;
-        document.documentElement.style.overflow = originalHtmlOverflow;
+        _bottomSheetOpenCount = Math.max(0, _bottomSheetOpenCount - 1);
+        if (_bottomSheetOpenCount === 0) {
+          document.body.style.overflow = "";
+          document.documentElement.style.overflow = "";
+        }
       };
     }
   }, [isOpen]);

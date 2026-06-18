@@ -202,11 +202,10 @@ function TripCard({
             <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-slate-400 shrink-0" />
             <span className="truncate text-slate-600">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)}`}</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-[#030D2E]/[0.04]">
+          <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-[#030D2E]/[0.04] col-span-1 min-[360px]:col-span-2">
             <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-slate-400 shrink-0" />
             <span className="truncate">{memberCounts[trip.id!] || 1} người</span>
-          </div>
-          <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-[#030D2E]/[0.04]">
+            <span className="text-slate-300 mx-0.5">·</span>
             <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-slate-400 shrink-0" />
             <span className="truncate">{totalExpense > 0 ? `${totalExpense.toLocaleString()}đ` : "Chưa chi"}</span>
           </div>
@@ -511,8 +510,7 @@ export function TripManagerScreen({
                       <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-3 py-1.5 rounded-[12px] max-w-full">
                         <HugeiconsIcon icon={UserGroupIcon} size={16} className="text-slate-400 shrink-0" />
                         <span className="font-extrabold text-[13px] text-slate-600 truncate">{memberCounts[featuredTrip.id!] || 1} người</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-3 py-1.5 rounded-[12px] max-w-full">
+                        <span className="text-slate-300 mx-0.5">·</span>
                         <HugeiconsIcon icon={WalletCardsIcon} size={16} className="text-slate-400 shrink-0" />
                         <span className="font-extrabold text-[13px] text-slate-600 truncate">{featuredTotalExpense > 0 ? `${featuredTotalExpense.toLocaleString()}đ` : "Chưa chi"}</span>
                       </div>
