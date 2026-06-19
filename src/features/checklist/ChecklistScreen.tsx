@@ -125,8 +125,8 @@ function ChecklistItemRow({
         disabled={isReadOnly}
         className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-all duration-200 motion-press ${
           item.completed
-            ? "bg-[#00BFB7]/20 text-[#00BFB7] border-transparent shadow-sm"
-            : "bg-slate-50 border border-slate-200/80 text-transparent hover:text-[#00BFB7] hover:border-[#00BFB7]/50 hover:bg-slate-100"
+            ? "bg-kat-teal/20 text-kat-teal border-transparent shadow-sm"
+            : "bg-slate-50 border border-slate-200/80 text-transparent hover:text-kat-teal hover:border-[#00BFB7]/50 hover:bg-slate-100"
         }`}
         aria-label="Đánh dấu checklist"
       >
@@ -179,7 +179,7 @@ function ChecklistItemRow({
             {item.assignedTo && (
               <p className="flex items-center gap-1 text-[11px] text-slate-400">
                 <HugeiconsIcon icon={UserIcon} className="h-3 w-3" />
-                Chuẩn bị: <span className="text-[#030D2E]">{item.assignedTo}</span>
+                Chuẩn bị: <span className="text-kat-dark">{item.assignedTo}</span>
               </p>
             )}
           </div>
@@ -191,7 +191,7 @@ function ChecklistItemRow({
         <div className="relative shrink-0 self-center" ref={menuRef}>
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-kat-teal/40"
             onClick={(e) => {
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
@@ -441,7 +441,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             })()}
             <h3 className="text-[16.5px] font-black text-kat-text">{catName}</h3>
           </div>
-          <span className="text-[11.5px] font-black text-slate-500 px-2.5 py-0.5 rounded-full bg-[#030D2E]/05">
+          <span className="text-[11.5px] font-black text-slate-500 px-2.5 py-0.5 rounded-full bg-kat-dark/05">
             {catDone} / {catTotal} món
           </span>
         </div>
@@ -491,7 +491,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                   cy={36}
                 />
                 <circle
-                  className="text-[#00BFB7] transition-all duration-1000 ease-out"
+                  className="text-kat-teal transition-all duration-1000 ease-out"
                   strokeWidth={7}
                   strokeDasharray={182.21}
                   strokeDashoffset={182.21 - (stats.percent / 100) * 182.21}
@@ -520,7 +520,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             <div className="hidden md:block">
               <button 
                 onClick={openAddForm}
-                className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white px-4 text-[13.5px] font-black shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all motion-press w-full sm:w-auto shrink-0"
+                className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark text-white px-4 text-[13.5px] font-black shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-95 transition-all motion-press w-full sm:w-auto shrink-0"
               >
                 <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
                 <span>Thêm món</span>
@@ -674,7 +674,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 </h3>
               </div>
               <button 
-                className="flex shrink-0 h-9 w-9 items-center justify-center rounded-full bg-[#030D2E]/05 text-slate-500 hover:bg-[#030D2E]/10 transition-colors" 
+                className="flex shrink-0 h-9 w-9 items-center justify-center rounded-full bg-kat-dark/05 text-slate-500 hover:bg-kat-dark/10 transition-colors" 
                 onClick={() => setIsFormOpen(false)}
               >
                 <HugeiconsIcon icon={Cancel01Icon} className="h-4.5 w-4.5" />
@@ -726,13 +726,13 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                         onClick={() => setCategory(cat)}
                         className={`flex flex-col items-center justify-center min-h-[76px] p-2 rounded-[18px] border-2 transition-all duration-200 active:scale-95 cursor-pointer ${
                           isSelected
-                            ? "bg-[#030D2E]/5 border-[#030D2E] text-[#030D2E] font-black shadow-sm"
+                            ? "bg-kat-dark/5 border-kat-dark text-kat-dark font-black shadow-sm"
                             : "bg-white border-slate-200 text-slate-500 hover:bg-slate-50 hover:border-slate-300"
                         }`}
                       >
                         <div className={`flex items-center justify-center w-8.5 h-8.5 rounded-[12px] mb-1 transition-all ${
                           isSelected
-                            ? "bg-[#030D2E]/12 text-[#030D2E]"
+                            ? "bg-kat-dark/12 text-kat-dark"
                             : "bg-slate-100 text-slate-400"
                         }`}>
                            <HugeiconsIcon icon={IconComponent} className="w-4.5 h-4.5" />
@@ -888,7 +888,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               <button
                 type="button"
                 onClick={saveItem}
-                className="flex-[2] h-[50px] inline-flex items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#030D2E] disabled:active:scale-100 disabled:opacity-100 shadow-sm"
+                className="flex-[2] h-[50px] inline-flex items-center justify-center gap-2 rounded-[16px] bg-kat-dark text-white font-black hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-kat-dark disabled:active:scale-100 disabled:opacity-100 shadow-sm"
                 disabled={!title.trim()}
               >
                 <HugeiconsIcon icon={CheckIcon} className="h-4.5 w-4.5" />
@@ -904,7 +904,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
       {!isReadOnly && (
         <button
           onClick={openAddForm}
-          className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
+          className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-kat-dark shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
           style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
           aria-label="Thêm món chuẩn bị"
         >
@@ -925,7 +925,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
       {/* Toast Notification popup */}
       {toast && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 motion-toast-enter">
-          <div className="bg-[#030D2E] text-white px-5 py-3 rounded-2xl shadow-floating flex items-center gap-3 border border-slate-200/20">
+          <div className="bg-kat-dark text-white px-5 py-3 rounded-2xl shadow-floating flex items-center gap-3 border border-slate-200/20">
             <div className="flex h-5.5 w-5.5 items-center justify-center rounded-full bg-kat-primary/20 text-kat-primary">
               <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" />
             </div>

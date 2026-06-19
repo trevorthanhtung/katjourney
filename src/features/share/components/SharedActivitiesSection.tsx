@@ -37,7 +37,7 @@ const ACTIVITY_CATEGORIES = [
   { id: "transport", label: "Di chuyển", icon: RouteIcon, bgColor: "bg-blue-50 text-blue-600 border-blue-100", activeBg: "bg-blue-100 border-blue-400 text-blue-700" },
   { id: "dining", label: "Ăn uống", icon: KitchenUtensilsIcon, bgColor: "bg-rose-50 text-rose-600 border-rose-100", activeBg: "bg-rose-100 border-rose-400 text-rose-700" },
   { id: "sightseeing", label: "Tham quan", icon: Camera01Icon, bgColor: "bg-amber-50 text-amber-600 border-amber-100", activeBg: "bg-amber-100 border-amber-400 text-amber-700" },
-  { id: "accommodation", label: "Lưu trú", icon: HotelIcon, bgColor: "bg-slate-100 text-[#030D2E] border-slate-200", activeBg: "bg-[#030D2E]/10 border-[#030D2E] text-[#030D2E]" },
+  { id: "accommodation", label: "Lưu trú", icon: HotelIcon, bgColor: "bg-slate-100 text-kat-dark border-slate-200", activeBg: "bg-kat-dark/10 border-kat-dark text-kat-dark" },
   { id: "relaxation", label: "Nghỉ ngơi", icon: Coffee01Icon, bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100", activeBg: "bg-emerald-100 border-emerald-400 text-emerald-700" },
   { id: "shopping", label: "Mua sắm", icon: ShoppingBag01Icon, bgColor: "bg-purple-50 text-purple-600 border-purple-100", activeBg: "bg-purple-100 border-purple-400 text-purple-700" },
   { id: "other", label: "Khác", icon: CircleEllipsisIcon, bgColor: "bg-slate-50 text-slate-600 border-slate-100", activeBg: "bg-slate-100 border-slate-400 text-slate-700" }
@@ -343,7 +343,7 @@ export function SharedActivitiesSection({
           <div className="flex items-start justify-between gap-3">
             <div className="flex flex-wrap items-baseline gap-2">
               <h4 className={classNames(
-                "text-[15.5px] font-black text-[#030D2E] break-words tracking-tight",
+                "text-[15.5px] font-black text-kat-dark break-words tracking-tight",
                 item.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
               )}>
                 {item.title}
@@ -530,7 +530,7 @@ export function SharedActivitiesSection({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={RouteIcon} className="w-5 h-5 text-[#00A19D]" />
-          <h3 className="text-[18px] font-black text-[#030D2E] tracking-tight">Lịch trình chi tiết</h3>
+          <h3 className="text-[18px] font-black text-kat-dark tracking-tight">Lịch trình chi tiết</h3>
         </div>
         <div className="flex items-center justify-center sm:justify-start gap-2.5 shrink-0 select-none w-full sm:w-auto">
           <div className="flex bg-[#E8E1D8]/40 p-1 rounded-xl">
@@ -539,7 +539,7 @@ export function SharedActivitiesSection({
               onClick={() => setViewMode("list")}
               className={classNames(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press cursor-pointer",
-                viewMode === "list" ? "bg-white text-[#030D2E] shadow-sm animate-scaleIn" : "text-slate-500 hover:text-[#030D2E]"
+                viewMode === "list" ? "bg-white text-kat-dark shadow-sm animate-scaleIn" : "text-slate-500 hover:text-kat-dark"
               )}
             >
               Danh sách
@@ -549,7 +549,7 @@ export function SharedActivitiesSection({
               onClick={() => setViewMode("calendar")}
               className={classNames(
                 "flex items-center justify-center w-9 h-8 rounded-lg transition-all motion-press cursor-pointer",
-                viewMode === "calendar" ? "bg-white text-[#030D2E] shadow-sm animate-scaleIn" : "text-slate-500 hover:text-[#030D2E]"
+                viewMode === "calendar" ? "bg-white text-kat-dark shadow-sm animate-scaleIn" : "text-slate-500 hover:text-kat-dark"
               )}
               aria-label="Xem dạng lịch"
             >
@@ -561,7 +561,7 @@ export function SharedActivitiesSection({
             <button 
               type="button"
               onClick={startAdd} 
-              className="hidden lg:flex items-center justify-center gap-1.5 rounded-xl bg-[#030D2E] text-white px-3.5 py-2 text-[12.5px] font-extrabold shadow-sm hover:bg-[#030D2E]/90 active:scale-95 transition-all h-9 motion-press cursor-pointer"
+              className="hidden lg:flex items-center justify-center gap-1.5 rounded-xl bg-kat-dark text-white px-3.5 py-2 text-[12.5px] font-extrabold shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-95 transition-all h-9 motion-press cursor-pointer"
               title={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
             >
               <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5" />
@@ -602,13 +602,13 @@ export function SharedActivitiesSection({
                     "flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl font-black text-[13.5px] border shadow-sm",
                     group.id === "undated" 
                       ? "bg-slate-400 text-white border-transparent" 
-                      : "bg-[#030D2E]/5 text-[#030D2E] border-slate-100"
+                      : "bg-kat-dark/5 text-kat-dark border-slate-100"
                   )}>
                     {group.icon}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="text-[15.5px] font-black text-[#030D2E] tracking-tight">{group.title}</h4>
+                      <h4 className="text-[15.5px] font-black text-kat-dark tracking-tight">{group.title}</h4>
                       {group.id !== "undated" && trip?.dayRoadmaps?.[group.id] && (
                         <a
                           href={trip.dayRoadmaps[group.id]}
@@ -693,7 +693,7 @@ export function SharedActivitiesSection({
         <button
           type="button"
           onClick={startAdd}
-          className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
+          className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-kat-dark shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
           style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
           aria-label={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
           title={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
@@ -751,7 +751,7 @@ export function SharedActivitiesSection({
         footer={
           <button
             onClick={handleSave}
-            className="w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full h-[50px] rounded-[16px] bg-kat-dark font-black text-white hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
           >
             {isDirectEdit ? (editingId ? "Lưu hoạt động" : "Thêm hoạt động") : "Gửi đề xuất"}
           </button>
@@ -951,7 +951,7 @@ export function SharedActivitiesSection({
               className={classNames(
                 "flex flex-col items-center justify-center p-3 rounded-[16px] border text-center transition-all duration-200 active:scale-95 min-h-[72px] cursor-pointer",
                 filterDay === "all"
-                  ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
+                  ? "bg-kat-dark text-white border-kat-dark shadow-sm"
                   : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
               )}
             >
@@ -978,7 +978,7 @@ export function SharedActivitiesSection({
                   className={classNames(
                     "flex flex-col items-center justify-center p-3 rounded-[16px] border text-center transition-all duration-200 active:scale-95 min-h-[72px] cursor-pointer",
                     isActive
-                      ? "bg-[#030D2E] text-white border-[#030D2E] shadow-sm"
+                      ? "bg-kat-dark text-white border-kat-dark shadow-sm"
                       : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
                   )}
                 >

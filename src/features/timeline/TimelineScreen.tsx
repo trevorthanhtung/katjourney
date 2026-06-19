@@ -40,7 +40,7 @@ const ACTIVITY_CATEGORIES = [
   { id: "transport", label: "Di chuyển", icon: Route01Icon, bgColor: "bg-blue-50 text-blue-600 border-blue-100", activeBg: "bg-blue-100 border-blue-400 text-blue-700" },
   { id: "dining", label: "Ăn uống", icon: Dish01Icon, bgColor: "bg-rose-50 text-rose-600 border-rose-100", activeBg: "bg-rose-100 border-rose-400 text-rose-700" },
   { id: "sightseeing", label: "Tham quan", icon: Camera01Icon, bgColor: "bg-amber-50 text-amber-600 border-amber-100", activeBg: "bg-amber-100 border-amber-400 text-amber-700" },
-  { id: "accommodation", label: "Lưu trú", icon: HotelIcon, bgColor: "bg-slate-100 text-[#030D2E] border-slate-200", activeBg: "bg-[#030D2E]/10 border-[#030D2E] text-[#030D2E]" },
+  { id: "accommodation", label: "Lưu trú", icon: HotelIcon, bgColor: "bg-slate-100 text-kat-dark border-slate-200", activeBg: "bg-kat-dark/10 border-kat-dark text-kat-dark" },
   { id: "relaxation", label: "Nghỉ ngơi", icon: Coffee01Icon, bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100", activeBg: "bg-emerald-100 border-emerald-400 text-emerald-700" },
   { id: "shopping", label: "Mua sắm", icon: ShoppingBag01Icon, bgColor: "bg-purple-50 text-purple-600 border-purple-100", activeBg: "bg-purple-100 border-purple-400 text-purple-700" },
   { id: "other", label: "Khác", icon: MoreHorizontalCircle01Icon, bgColor: "bg-slate-50 text-slate-600 border-slate-100", activeBg: "bg-slate-100 border-slate-400 text-slate-700" }
@@ -135,7 +135,7 @@ const ActivityCard = React.memo(function ActivityCard({
 
             {/* Title */}
             <h3 className={classNames(
-              "text-[17px] font-extrabold text-[#030D2E] leading-tight", 
+              "text-[17px] font-extrabold text-kat-dark leading-tight", 
               item.completed && "text-slate-400 line-through decoration-slate-300"
             )}>
               {item.title}
@@ -255,12 +255,12 @@ function DayHeader({
       className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
     >
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#030D2E] text-white font-black text-[14px] shadow-sm">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-dark text-white font-black text-[14px] shadow-sm">
           {index + 1}
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <h4 className="text-[16px] font-extrabold text-[#030D2E]">Ngày {index + 1}</h4>
+            <h4 className="text-[16px] font-extrabold text-kat-dark">Ngày {index + 1}</h4>
             {mapUrl && (
               <a
                 href={mapUrl}
@@ -411,7 +411,7 @@ function EventForm({
             type="button"
             onClick={save}
             disabled={!form.title.trim()}
-            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-[#030D2E] text-white px-6 font-black shadow-sm hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed motion-press"
+            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark text-white px-6 font-black shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed motion-press"
           >
             <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" />
             {editing ? "Lưu thông tin" : "Thêm mục lịch trình"}
@@ -717,7 +717,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                     {index + 1}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-extrabold text-[#030D2E]">Ngày {index + 1}</span>
+                    <span className="text-sm font-extrabold text-kat-dark">Ngày {index + 1}</span>
                     <span className="text-xs font-semibold text-slate-400">({formatDateShort(day)})</span>
                     {isToday && (
                       <span className="rounded-full bg-sunset-50 px-2 py-0.5 text-[9.5px] font-black uppercase tracking-widest text-sunset-600 border border-sunset-100">
@@ -731,7 +731,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   <button 
                     type="button"
                     onClick={() => openNewForm(day)}
-                    className="relative z-10 text-[13px] font-bold text-[#00BFB7] hover:brightness-95 transition-colors pr-2 flex items-center gap-1 motion-press"
+                    className="relative z-10 text-[13px] font-bold text-kat-teal hover:brightness-95 transition-colors pr-2 flex items-center gap-1 motion-press"
                   >
                     <HugeiconsIcon icon={Add01Icon} className="w-3.5 h-3.5" />
                     Thêm
@@ -784,7 +784,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   ?
                 </div>
                 <div>
-                  <h4 className="text-[16px] font-extrabold text-[#030D2E]">Chưa phân ngày</h4>
+                  <h4 className="text-[16px] font-extrabold text-kat-dark">Chưa phân ngày</h4>
                   <p className="text-[13px] font-semibold text-slate-500">Các mục lịch trình chưa xếp ngày cụ thể</p>
                 </div>
               </div>
@@ -817,7 +817,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   <HugeiconsIcon icon={GitBranchIcon} className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-[16px] font-extrabold text-[#030D2E]">Dự phòng chung</h4>
+                  <h4 className="text-[16px] font-extrabold text-kat-dark">Dự phòng chung</h4>
                   <p className="text-[13px] font-semibold text-slate-500">Các phương án áp dụng cho toàn bộ chuyến đi</p>
                 </div>
               </div>
@@ -852,7 +852,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
       {/* Title Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-[32px] font-black tracking-tight text-[#030D2E]">Lịch trình</h2>
+          <h2 className="text-[32px] font-black tracking-tight text-kat-dark">Lịch trình</h2>
           <p className="mt-1 text-[15px] font-bold text-slate-500">
             Sắp xếp từng điểm dừng để hành trình rõ ràng và trọn vẹn hơn.
           </p>
@@ -864,7 +864,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               onClick={() => setViewMode("list")}
               className={classNames(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press",
-                viewMode === "list" ? "bg-white text-[#030D2E] shadow-sm" : "text-slate-500 hover:text-[#030D2E]"
+                viewMode === "list" ? "bg-white text-kat-dark shadow-sm" : "text-slate-500 hover:text-kat-dark"
               )}
             >
               Danh sách
@@ -873,7 +873,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               onClick={() => setViewMode("calendar")}
               className={classNames(
                 "flex items-center justify-center w-9 h-8 rounded-lg transition-all motion-press",
-                viewMode === "calendar" ? "bg-white text-[#030D2E] shadow-sm" : "text-slate-500 hover:text-[#030D2E]"
+                viewMode === "calendar" ? "bg-white text-kat-dark shadow-sm" : "text-slate-500 hover:text-kat-dark"
               )}
               aria-label="Xem dạng lịch"
             >
@@ -884,7 +884,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           {!isReadOnly && (
             <button 
               onClick={() => openNewForm()}
-              className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-[#030D2E] text-white px-4 py-2 text-[13.5px] font-extrabold shadow-[0_4px_14px_rgba(3,13,46,0.18)] hover:bg-[#030D2E]/90 active:scale-95 transition-all h-10 motion-press"
+              className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-kat-dark text-white px-4 py-2 text-[13.5px] font-extrabold shadow-[0_4px_14px_rgba(3,13,46,0.18)] hover:bg-kat-dark bg-opacity-90 active:scale-95 transition-all h-10 motion-press"
             >
               <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
               Thêm lịch trình
@@ -899,7 +899,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
       {!isReadOnly && (
         <button
           onClick={() => openNewForm()}
-          className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
+          className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-kat-dark shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
           style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
           aria-label="Thêm lịch trình"
         >
@@ -971,7 +971,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
                   <HugeiconsIcon icon={Route01Icon} className="h-4 w-4" />
                 </span>
-                <h4 className="text-[15px] font-extrabold text-[#030D2E]">Lộ trình di chuyển</h4>
+                <h4 className="text-[15px] font-extrabold text-kat-dark">Lộ trình di chuyển</h4>
               </div>
 
               {/* Day selector custom pill */}
@@ -990,7 +990,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                         <div className="text-[10.5px] font-bold text-emerald-600/70 uppercase tracking-wide mb-0.5">
                           Ngày đang xem
                         </div>
-                        <div className="text-[14.5px] font-extrabold text-[#030D2E]">
+                        <div className="text-[14.5px] font-extrabold text-kat-dark">
                           {selectedRoadmapDay ? `Ngày ${days.indexOf(selectedRoadmapDay) + 1} (${formatDateShort(selectedRoadmapDay)})` : "Chọn ngày"}
                         </div>
                       </div>
@@ -1028,7 +1028,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                             setRoadmapEditDay(selectedRoadmapDay);
                             setIsRoadmapFormOpen(true);
                           }}
-                          className="text-[#00BFB7] hover:opacity-85 font-bold flex items-center gap-1 cursor-pointer"
+                          className="text-kat-teal hover:opacity-85 font-bold flex items-center gap-1 cursor-pointer"
                         >
                           {mapUrl && <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />}
                           {mapUrl ? "Sửa" : "Thêm"}
@@ -1089,7 +1089,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
                 <HugeiconsIcon icon={Route01Icon} className="h-4 w-4" />
               </span>
-              <h4 className="text-[15px] font-extrabold text-[#030D2E]">Thông tin hành trình</h4>
+              <h4 className="text-[15px] font-extrabold text-kat-dark">Thông tin hành trình</h4>
             </div>
             
             <div className="space-y-3 text-[14px] font-medium text-slate-600">
@@ -1098,14 +1098,14 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
                   Điểm đến
                 </span>
-                <span className="font-bold text-[#030D2E]">{trip.location || "Chưa xác định"}</span>
+                <span className="font-bold text-kat-dark">{trip.location || "Chưa xác định"}</span>
               </div>
               <div className="flex items-center justify-between border-b border-slate-50 pb-2">
                 <span className="flex items-center gap-2">
                   <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-400" />
                   Thời gian
                 </span>
-                <span className="font-bold text-[#030D2E]">
+                <span className="font-bold text-kat-dark">
                   {trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
                 </span>
               </div>
@@ -1114,7 +1114,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   <HugeiconsIcon icon={Route01Icon} className="h-4 w-4 text-slate-400" />
                   Mục lịch trình
                 </span>
-                <span className="font-bold text-[#030D2E]">{events.length} mục</span>
+                <span className="font-bold text-kat-dark">{events.length} mục</span>
               </div>
             </div>
           </div>
@@ -1165,10 +1165,10 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         <div className="space-y-5 pb-4">
           
           {/* Instruction card */}
-          <div className="flex items-start gap-3 bg-[#00BFB7]/8 border border-[#00BFB7]/20 rounded-2xl px-4 py-3">
-            <HugeiconsIcon icon={Route01Icon} className="h-5 w-5 text-[#00BFB7] shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 bg-kat-primary-soft border border-kat-teal border-opacity-20 rounded-2xl px-4 py-3">
+            <HugeiconsIcon icon={Route01Icon} className="h-5 w-5 text-kat-teal shrink-0 mt-0.5" />
             <div>
-              <p className="text-[13px] font-bold text-[#030D2E]">Dán link lộ trình Google Maps</p>
+              <p className="text-[13px] font-bold text-kat-dark">Dán link lộ trình Google Maps</p>
               <p className="text-[12px] text-slate-500 font-medium mt-0.5 leading-relaxed">
                 Vào Google Maps → chọn điểm đầu/cuối → nhấn <strong>Đường đi</strong> → sao chép link trên thanh địa chỉ.
               </p>
@@ -1178,7 +1178,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           {/* Input */}
           <div className="relative">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-              <HugeiconsIcon icon={Route01Icon} className="h-4 w-4 text-[#00BFB7]" />
+              <HugeiconsIcon icon={Route01Icon} className="h-4 w-4 text-kat-teal" />
             </div>
             <input
               type="url"
@@ -1202,7 +1202,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 }
               }}
               placeholder="https://www.google.com/maps/dir/..."
-              className="w-full pl-11 pr-4 py-4 bg-white border-2 border-slate-200 rounded-2xl text-[14px] font-semibold text-[#030D2E] placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-[#00BFB7] focus:ring-2 focus:ring-[#00BFB7]/15 transition-all duration-200"
+              className="w-full pl-11 pr-4 py-4 bg-white border-2 border-slate-200 rounded-2xl text-[14px] font-semibold text-kat-dark placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 transition-all duration-200"
             />
           </div>
 
@@ -1261,7 +1261,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   <div className="text-left">
                     <div className={classNames(
                       "text-[15px] font-extrabold",
-                      isSelected ? "text-emerald-900" : "text-[#030D2E]"
+                      isSelected ? "text-emerald-900" : "text-kat-dark"
                     )}>
                       Ngày {idx + 1}
                     </div>

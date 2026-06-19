@@ -192,7 +192,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
       type="button"
       onClick={save}
       disabled={isSaveDisabled}
-      className="inline-flex h-9 items-center justify-center rounded-xl bg-[#030D2E] text-white hover:bg-[#030D2E]/90 px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
+      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark text-white hover:bg-kat-dark bg-opacity-90 px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
     >
       {isUploading ? <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin text-slate-400" /> : "Lưu"}
     </button>
@@ -247,7 +247,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-[#030D2E] transition-colors focus:outline-none"
+            className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-kat-dark transition-colors focus:outline-none"
           >
             <span className="flex items-center gap-1.5">
               <HugeiconsIcon icon={Add01Icon} className="h-4 w-4 text-slate-400" />
@@ -282,7 +282,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
               
               {/* Image Upload Area */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-[#030D2E]">Ảnh đính kèm (Vé/CCCD/...)</label>
+                <label className="block text-sm font-semibold text-kat-dark">Ảnh đính kèm (Vé/CCCD/...)</label>
                 {(previewUrl || form.attachmentUrl) ? (
                   <div className="relative w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
                     <img 
@@ -419,7 +419,7 @@ function DocumentCard({
         </div>
 
         {/* Title */}
-        <h4 className="text-lg font-semibold text-[#030D2E] leading-tight mb-2.5">{doc.title}</h4>
+        <h4 className="text-lg font-semibold text-kat-dark leading-tight mb-2.5">{doc.title}</h4>
         
         {/* Code Container */}
         {doc.code && (
@@ -429,11 +429,11 @@ function DocumentCard({
           >
             <div className="min-w-0 flex-1">
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã xác nhận / Code</p>
-              <p className="text-[14px] font-extrabold text-[#030D2E] truncate mt-0.5">{doc.code}</p>
+              <p className="text-[14px] font-extrabold text-kat-dark truncate mt-0.5">{doc.code}</p>
             </div>
             <button
               type="button"
-              className="ml-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-slate-200/60 text-slate-500 hover:text-[#030D2E] transition-all shadow-sm shrink-0"
+              className="ml-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-slate-200/60 text-slate-500 hover:text-kat-dark transition-all shadow-sm shrink-0"
               title="Sao chép mã"
             >
               {copied ? (
@@ -585,14 +585,14 @@ export function TravelDocumentsSection({
             <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
           </button>
           <div className="min-w-0">
-            <h2 className="text-[28px] font-extrabold text-[#030D2E] leading-tight">Giấy tờ & đặt chỗ</h2>
+            <h2 className="text-[28px] font-extrabold text-kat-dark leading-tight">Giấy tờ & đặt chỗ</h2>
             <p className="text-[14px] font-medium text-slate-500 mt-0.5">Lưu vé, mã đặt chỗ và thông tin quan trọng để tra cứu nhanh khi cần.</p>
           </div>
         </div>
         {!isReadOnly && (
           <button
             onClick={openNewForm}
-            className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white px-5 text-[13.5px] font-bold hover:bg-[#030D2E]/90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center"
+            className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark text-white px-5 text-[13.5px] font-bold hover:bg-kat-dark bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center"
           >
             <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
             <span>Thêm giấy tờ</span>
@@ -607,7 +607,7 @@ export function TravelDocumentsSection({
             onClick={() => setSelectedTypeFilter("all")}
             className={`px-4 py-2 rounded-full text-[13px] font-extrabold border transition-all motion-press ${
               selectedTypeFilter === "all"
-                ? "bg-[#030D2E] border-[#030D2E] text-white"
+                ? "bg-kat-dark border-kat-dark text-white"
                 : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
             }`}
           >
@@ -622,7 +622,7 @@ export function TravelDocumentsSection({
                 onClick={() => setSelectedTypeFilter(opt.value)}
                 className={`px-4 py-2 rounded-full text-[13px] font-extrabold border transition-all motion-press ${
                   selectedTypeFilter === opt.value
-                    ? "bg-[#030D2E] border-[#030D2E] text-white"
+                    ? "bg-kat-dark border-kat-dark text-white"
                     : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                 }`}
               >
@@ -639,7 +639,7 @@ export function TravelDocumentsSection({
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary">
             <HugeiconsIcon icon={File01Icon} className="h-8 w-8" />
           </div>
-          <h4 className="text-[16px] font-extrabold text-[#030D2E] mb-1">
+          <h4 className="text-[16px] font-extrabold text-kat-dark mb-1">
             {selectedTypeFilter === "all" ? "Chưa có giấy tờ nào" : "Không tìm thấy mục lưu trữ"}
           </h4>
           <p className="text-[13.5px] font-semibold text-slate-400 mb-0 max-w-[280px]">

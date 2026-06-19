@@ -312,7 +312,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
             const diffColor = diff >= 4 ? "text-amber-600" : diff <= -4 ? "text-sky-600" : "text-slate-500";
             return (
               <div className="space-y-2.5">
-                <h4 className="text-[13.5px] font-extrabold text-[#030D2E] text-left px-0.5">So sánh với nơi bạn đang ở</h4>
+                <h4 className="text-[13.5px] font-extrabold text-kat-dark text-left px-0.5">So sánh với nơi bạn đang ở</h4>
                 <div className="bg-white/60 border border-slate-200/50 rounded-2xl p-4 shadow-inner">
                   <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
                     {/* Current location column */}
@@ -321,7 +321,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
                       <div className="flex items-center justify-center h-8">
                         {getWeatherIcon(myCode, "w-7 h-7 drop-shadow-sm")}
                       </div>
-                      <span className="text-3xl font-black text-[#030D2E] tracking-tighter leading-none">{myTemp}°</span>
+                      <span className="text-3xl font-black text-kat-dark tracking-tighter leading-none">{myTemp}°</span>
                       <div className="flex flex-col items-center gap-1.5 mt-0.5">
                         {myHumidity !== null && (
                           <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-500">
@@ -351,7 +351,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
                       <div className="flex items-center justify-center h-8">
                         {getWeatherIcon(currentCode, "w-7 h-7 drop-shadow-sm")}
                       </div>
-                      <span className="text-3xl font-black text-[#030D2E] tracking-tighter leading-none">{currentTemp}°</span>
+                      <span className="text-3xl font-black text-kat-dark tracking-tighter leading-none">{currentTemp}°</span>
                       <div className="flex flex-col items-center gap-1.5 mt-0.5">
                         <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-400">
                           <HumidityIcon className="w-3.5 h-3.5" />
@@ -372,7 +372,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
           {/* Hourly 24-Hour Forecast */}
           {forecast.hourly && (
             <div className="space-y-2.5">
-              <h4 className="text-[13.5px] font-extrabold text-[#030D2E] text-left px-0.5">Dự báo 24 giờ tới</h4>
+              <h4 className="text-[13.5px] font-extrabold text-kat-dark text-left px-0.5">Dự báo 24 giờ tới</h4>
               
               <div className="flex overflow-x-auto gap-3.5 pb-2 pt-1 px-0.5 custom-scrollbar">
                 {forecast.hourly.time?.map((timeStr, idx) => {
@@ -395,7 +395,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
                       </div>
                       
                       <div className="flex flex-col items-center">
-                        <span className="text-[14px] font-extrabold text-[#030D2E]">{temp}°</span>
+                        <span className="text-[14px] font-extrabold text-kat-dark">{temp}°</span>
                         {precip > 15 && (
                           <span className="text-[9px] font-extrabold text-blue-500 mt-0.5 leading-none">
                             {precip}%
@@ -411,7 +411,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
 
           {/* Weather Parameters Grid */}
           <div className="space-y-2.5">
-            <h4 className="text-[13.5px] font-extrabold text-[#030D2E] text-left px-0.5">Chỉ số thời tiết chi tiết</h4>
+            <h4 className="text-[13.5px] font-extrabold text-kat-dark text-left px-0.5">Chỉ số thời tiết chi tiết</h4>
             
             <div className="grid grid-cols-2 gap-3.5">
               {/* Feel Temp Card */}
@@ -421,7 +421,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
                   <ThermometerIcon className="w-5 h-5 text-rose-500" />
                 </div>
                 <div className="flex items-baseline gap-1 mt-auto">
-                  <span className="text-2xl font-black text-[#030D2E]">{apparentTemp}°</span>
+                  <span className="text-2xl font-black text-kat-dark">{apparentTemp}°</span>
                   <span className="text-[10px] font-bold text-slate-500">
                     {apparentTemp === currentTemp ? "Bằng nhiệt độ thực" : apparentTemp > currentTemp ? "Nóng hơn thực tế" : "Mát hơn thực tế"}
                   </span>
@@ -435,7 +435,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
                   <HumidityIcon className="w-5 h-5 text-sky-500" />
                 </div>
                 <div className="flex flex-col mt-auto">
-                  <span className="text-2xl font-black text-[#030D2E]">{humidity}%</span>
+                  <span className="text-2xl font-black text-kat-dark">{humidity}%</span>
                   <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mt-1 relative">
                     <div 
                       className="absolute left-0 h-full bg-sky-500 rounded-full"
@@ -452,7 +452,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
                   <WindIcon className="w-5 h-5 text-slate-400" />
                 </div>
                 <div className="flex items-baseline gap-1 mt-auto">
-                  <span className="text-2xl font-black text-[#030D2E]">{windspeed}</span>
+                  <span className="text-2xl font-black text-kat-dark">{windspeed}</span>
                   <span className="text-[11px] font-bold text-slate-500">km/h</span>
                 </div>
               </div>
@@ -465,7 +465,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
                 </div>
                 <div className="flex flex-col mt-auto">
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl font-black text-[#030D2E]">{uvIndex}</span>
+                    <span className="text-2xl font-black text-kat-dark">{uvIndex}</span>
                     <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-md border ${uvRating.color}`}>
                       {uvRating.text}
                     </span>

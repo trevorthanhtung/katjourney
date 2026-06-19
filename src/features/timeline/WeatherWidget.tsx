@@ -67,7 +67,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 text-sky-500 mb-1 shadow-sm animate-pulse">
           <HugeiconsIcon icon={CloudRainWindIcon} className="w-5.5 h-5.5" />
         </span>
-        <span className="text-[14px] font-black text-[#030D2E]">Chưa có điểm đến</span>
+        <span className="text-[14px] font-black text-kat-dark">Chưa có điểm đến</span>
         <span className="text-[11.5px] text-slate-500/80 font-medium max-w-[220px] leading-relaxed">Hãy thêm điểm đến cho chuyến đi để xem dự báo thời tiết tại đây.</span>
       </div>
     );
@@ -126,7 +126,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/10 text-sky-500">
                 <HugeiconsIcon icon={CloudRainWindIcon} className="h-4 w-4" />
               </span>
-              <h4 className="text-[15px] font-extrabold text-[#030D2E]">Dự báo thời tiết</h4>
+              <h4 className="text-[15px] font-extrabold text-kat-dark">Dự báo thời tiết</h4>
             </div>
             <span className="text-[10.5px] font-bold text-sky-600 bg-sky-500/10 px-2.5 py-1 rounded-lg uppercase tracking-wider">
               {days} ngày
@@ -196,7 +196,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
                       )}
                     </div>
                     
-                    <span className="font-black text-[#030D2E] text-[13px] w-6 text-right">{maxTemp}°</span>
+                    <span className="font-black text-kat-dark text-[13px] w-6 text-right">{maxTemp}°</span>
                   </div>
                 </button>
               );

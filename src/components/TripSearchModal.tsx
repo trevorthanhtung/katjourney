@@ -173,7 +173,7 @@ export function TripSearchModal({
                         className="group flex items-center justify-between p-3 rounded-2xl border border-slate-100 bg-white hover:border-kat-primary/30 hover:bg-slate-50/35 cursor-pointer transition-all motion-press"
                       >
                         <div className="min-w-0 flex-1 pr-3">
-                          <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate">{item.title}</p>
+                          <p className="text-[14.5px] font-extrabold text-kat-dark truncate">{item.title}</p>
                           <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-[12.5px] font-semibold text-slate-400">
                             <span className="flex items-center gap-1"><HugeiconsIcon icon={Clock01Icon} className="w-3 h-3 text-slate-300" /> {formatDate(item.date)} {item.time ? `• ${item.time}` : ""}</span>
                             {item.location && <span className="flex items-center gap-1"><HugeiconsIcon icon={Location01Icon} className="w-3 h-3 text-slate-300" /> {item.location}</span>}
@@ -205,7 +205,7 @@ export function TripSearchModal({
                                {item.type === "food" ? "Ăn uống" : item.type === "place" ? "Địa điểm thay thế" : item.type === "transport" ? "Di chuyển" : item.type === "hotel" ? "Lưu trú" : item.type === "indoor" ? "Trong nhà" : item.type === "weather" ? "Thời tiết xấu" : "Khác"}
                              </span>
                           </div>
-                          <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate">{item.title}</p>
+                          <p className="text-[14.5px] font-extrabold text-kat-dark truncate">{item.title}</p>
                           <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-[12.5px] font-semibold text-slate-400">
                             {item.reason && <span className="flex items-center gap-1">Khi: {item.reason}</span>}
                             {item.location && <span className="flex items-center gap-1"><HugeiconsIcon icon={Location01Icon} className="w-3 h-3 text-slate-300" /> {item.location}</span>}
@@ -233,7 +233,7 @@ export function TripSearchModal({
                         className="group flex items-center justify-between p-3 rounded-2xl border border-slate-100 bg-white hover:border-kat-primary/30 hover:bg-slate-50/35 cursor-pointer transition-all motion-press"
                       >
                         <div className="min-w-0 flex-1 pr-3">
-                          <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate">{item.description || "Chi tiêu"}</p>
+                          <p className="text-[14.5px] font-extrabold text-kat-dark truncate">{item.description || "Chi tiêu"}</p>
                           <p className="text-[12.5px] font-semibold text-slate-400 mt-1">
                             Người chi: <span className="font-bold text-slate-600">{item.payer}</span> • Phân loại: <span className="font-bold text-slate-600">{item.category}</span>
                           </p>
@@ -264,7 +264,7 @@ export function TripSearchModal({
                         className="group flex items-center justify-between p-3 rounded-2xl border border-slate-100 bg-white hover:border-kat-primary/30 hover:bg-slate-50/35 cursor-pointer transition-all motion-press"
                       >
                         <div className="min-w-0 flex-1 pr-3">
-                          <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate">{item.title}</p>
+                          <p className="text-[14.5px] font-extrabold text-kat-dark truncate">{item.title}</p>
                           <p className="text-[12.5px] font-semibold text-slate-400 mt-1">
                             Trạng thái: <span className={item.completed ? "text-emerald-500 font-bold" : "text-amber-500 font-bold"}>{item.completed ? "Đã chuẩn bị" : "Chưa chuẩn bị"}</span>
                             {item.assignedTo && <span> • Người phụ trách: <span className="font-bold text-slate-600">{item.assignedTo}</span></span>}
@@ -291,7 +291,7 @@ export function TripSearchModal({
                         className="group flex items-center justify-between p-3 rounded-2xl border border-slate-100 bg-white hover:border-kat-primary/30 hover:bg-slate-50/35 cursor-pointer transition-all motion-press"
                       >
                         <div className="min-w-0 flex-1 pr-3">
-                          <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate">{item.title}</p>
+                          <p className="text-[14.5px] font-extrabold text-kat-dark truncate">{item.title}</p>
                           <p className="text-[12.5px] font-semibold text-slate-400 mt-1">
                             {item.code ? <span>Code: <span className="font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded-md">{item.code}</span></span> : "Không có Code"}
                           </p>
@@ -317,7 +317,7 @@ export function TripSearchModal({
                         className="group flex items-center justify-between p-3 rounded-2xl border border-slate-100 bg-white hover:border-kat-primary/30 hover:bg-slate-50/35 cursor-pointer transition-all motion-press"
                       >
                         <div className="min-w-0 flex-1 pr-3">
-                          <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate">{item.title || "Bản tin chuyến đi"}</p>
+                          <p className="text-[14.5px] font-extrabold text-kat-dark truncate">{item.title || "Bản tin chuyến đi"}</p>
                           <p className="text-[12.5px] text-slate-400 font-semibold truncate mt-1">{item.content}</p>
                         </div>
                         <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 text-slate-300 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
@@ -341,7 +341,7 @@ export function TripSearchModal({
                         className="group flex items-center justify-between p-3 rounded-2xl border border-slate-100 bg-white hover:border-kat-primary/30 hover:bg-slate-50/35 cursor-pointer transition-all motion-press"
                       >
                         <div className="min-w-0 flex-1 pr-3">
-                          <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate">{item.name}</p>
+                          <p className="text-[14.5px] font-extrabold text-kat-dark truncate">{item.name}</p>
                           <p className="text-[12.5px] font-semibold text-slate-500 mt-1">
                             Vai trò: <span className="font-bold text-slate-600">{item.role || "Bạn đồng hành"}</span>
                             {item.phone && <span> • SĐT: <span className="font-bold text-slate-600">{item.phone}</span></span>}

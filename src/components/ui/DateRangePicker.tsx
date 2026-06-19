@@ -152,7 +152,7 @@ export function DateRangePickerSheet({
             type="button"
             disabled={!startDate || (mode === "range" && !endDate)}
             onClick={handleSave}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-[#00BFB7] text-[#030D2E] px-6 font-black hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-kat-teal text-kat-dark px-6 font-black hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Lưu
           </button>
@@ -209,23 +209,23 @@ export function DateRangePickerSheet({
             let roundedClass = "rounded-full";
 
             if (isSelectedSingle) {
-              bgClass = "bg-[#00BFB7]";
+              bgClass = "bg-kat-teal";
               textClass = "text-white";
             } else if (mode === "range") {
               if (isStart && isEnd) {
-                bgClass = "bg-[#00BFB7]";
+                bgClass = "bg-kat-teal";
                 textClass = "text-white";
               } else if (isStart) {
-                bgClass = "bg-[#00BFB7]";
+                bgClass = "bg-kat-teal";
                 textClass = "text-white";
                 roundedClass = "rounded-l-full";
               } else if (isEnd) {
-                bgClass = "bg-[#00BFB7]";
+                bgClass = "bg-kat-teal";
                 textClass = "text-white";
                 roundedClass = "rounded-r-full";
               } else if (isMiddle) {
-                bgClass = "bg-[#00BFB7]/20";
-                textClass = "text-[#00BFB7]";
+                bgClass = "bg-kat-teal/20";
+                textClass = "text-kat-teal";
                 roundedClass = "rounded-none";
               }
             }
@@ -234,7 +234,7 @@ export function DateRangePickerSheet({
             const todayStr = formatDate(new Date());
             const isToday = dateStr === todayStr;
             if (isToday && !isStart && !isEnd && !isMiddle) {
-              textClass = "text-[#00BFB7] font-black";
+              textClass = "text-kat-teal font-black";
             }
 
             return (
@@ -256,14 +256,14 @@ export function DateRangePickerSheet({
                 {/* Background spanning logic for range */}
                 {mode === "range" && (isStart || isEnd) && startDate && endDate && startDate !== endDate && (
                   <div className={classNames(
-                    "absolute inset-0 bg-[#00BFB7]/20",
+                    "absolute inset-0 bg-kat-teal/20",
                     isStart ? "left-1/2 right-0" : "left-0 right-1/2"
                   )} />
                 )}
                 
                 {mode === "range" && startDate && !endDate && hoverDate && hoverDate > startDate && (
                    <div className={classNames(
-                    "absolute inset-0 bg-[#00BFB7]/20",
+                    "absolute inset-0 bg-kat-teal/20",
                     isStart ? "left-1/2 right-0" : isMiddle ? "" : (day === hoverDate ? "left-0 right-1/2" : "hidden")
                   )} />
                 )}

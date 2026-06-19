@@ -246,7 +246,7 @@ export function SharedMembersSection({
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-blue-500" />
-          <h3 className="text-[16px] font-black text-[#030D2E]">Thành viên</h3>
+          <h3 className="text-[16px] font-black text-kat-dark">Thành viên</h3>
         </div>
       </div>
 
@@ -397,7 +397,7 @@ export function SharedMembersSection({
                   <div className="min-w-0 flex-1 space-y-1.5">
                     <div className="flex items-center flex-wrap gap-x-2 gap-y-1 min-w-0">
                       <h4 className={classNames(
-                        "text-[16.5px] font-extrabold text-[#030D2E] truncate leading-tight min-w-0",
+                        "text-[16.5px] font-extrabold text-kat-dark truncate leading-tight min-w-0",
                         member.isPendingDelete ? "line-through text-slate-400" : ""
                       )}>
                         {member.name}
@@ -421,7 +421,7 @@ export function SharedMembersSection({
                     </div>
                     {member.phone && (
                       <p className="text-[13.5px] font-semibold text-slate-500">
-                        SĐT: <span className="text-[#030D2E]">{member.phone}</span>
+                        SĐT: <span className="text-kat-dark">{member.phone}</span>
                       </p>
                     )}
                     {member.note && (
@@ -449,7 +449,7 @@ export function SharedMembersSection({
                           setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
                         }
                       }}
-                      className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/80 transition-colors focus:outline-none focus:ring-2 focus:ring-[#00BFB7]/40"
+                      className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/80 transition-colors focus:outline-none focus:ring-2 focus:ring-kat-teal/40"
                       title="Tùy chọn đề xuất"
                     >
                       <HugeiconsIcon icon={MoreVerticalIcon} className="h-5 w-5" />
@@ -544,7 +544,7 @@ export function SharedMembersSection({
       {isRequestEdit && (
         <button 
           onClick={handleAdd} 
-          className="flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-[#030D2E]/80 bg-white hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
+          className="flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-kat-dark/80 bg-white hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
           title="Đề xuất thêm thành viên"
         >
           <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" /> Đề xuất thêm thành viên
@@ -578,7 +578,7 @@ export function SharedMembersSection({
                 onClick={() => setForm({ ...form, gender: 'male' })}
                 className={classNames(
                   "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
-                  form.gender === 'male' ? "bg-white text-[#030D2E] shadow-sm border" : "text-slate-500"
+                  form.gender === 'male' ? "bg-white text-kat-dark shadow-sm border" : "text-slate-500"
                 )}
               >
                 Nam
@@ -588,7 +588,7 @@ export function SharedMembersSection({
                 onClick={() => setForm({ ...form, gender: 'female' })}
                 className={classNames(
                   "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
-                  form.gender === 'female' ? "bg-white text-[#030D2E] shadow-sm border" : "text-slate-500"
+                  form.gender === 'female' ? "bg-white text-kat-dark shadow-sm border" : "text-slate-500"
                 )}
               >
                 Nữ
@@ -598,7 +598,7 @@ export function SharedMembersSection({
 
           <button
             onClick={handleSave}
-            className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm"
+            className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-dark font-black text-white hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all shadow-sm"
           >
             Gửi đề xuất thêm
           </button>
@@ -627,7 +627,7 @@ export function SharedMembersSection({
         <div className="flex flex-col gap-5 py-2">
           <div className="space-y-1">
             <p className="text-[13.5px] font-bold text-slate-500">
-              Thành viên: <span className="font-extrabold text-[#030D2E]">{members.find(m => String(m.id) === roleChangeMemberId)?.name}</span>
+              Thành viên: <span className="font-extrabold text-kat-dark">{members.find(m => String(m.id) === roleChangeMemberId)?.name}</span>
             </p>
           </div>
 
@@ -664,7 +664,7 @@ export function SharedMembersSection({
 
           <button
             onClick={handleRoleChangeSubmit}
-            className="mt-2 w-full h-[50px] rounded-[16px] bg-[#030D2E] font-black text-white hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm"
+            className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-dark font-black text-white hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all shadow-sm"
           >
             Gửi đề xuất đổi vai trò
           </button>

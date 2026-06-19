@@ -20,7 +20,7 @@ export function PWAInstallInstructionsSheet({ isOpen, onClose }: PWAInstallInstr
         {/* Header */}
         <div className="flex items-center justify-between pb-4.5 border-b border-slate-100/80 shrink-0">
           <div className="flex flex-col text-left">
-            <h4 className="text-[17px] font-black text-[#030D2E] leading-snug">
+            <h4 className="text-[17px] font-black text-kat-dark leading-snug">
               Cài đặt KAT Journey trên iPhone
             </h4>
             <p className="text-[11px] text-slate-400 font-semibold mt-0.5">
@@ -45,7 +45,7 @@ export function PWAInstallInstructionsSheet({ isOpen, onClose }: PWAInstallInstr
               1
             </div>
             <div className="space-y-1">
-              <p className="text-[14px] font-black text-[#030D2E]">
+              <p className="text-[14px] font-black text-kat-dark">
                 Nhấn vào nút Chia sẻ (Share)
               </p>
               <p className="text-[12.5px] font-semibold text-slate-500 leading-relaxed">
@@ -66,7 +66,7 @@ export function PWAInstallInstructionsSheet({ isOpen, onClose }: PWAInstallInstr
               2
             </div>
             <div className="space-y-1">
-              <p className="text-[14px] font-black text-[#030D2E]">
+              <p className="text-[14px] font-black text-kat-dark">
                 Chọn "Thêm vào MH chính" (Add to Home Screen)
               </p>
               <p className="text-[12.5px] font-semibold text-slate-500 leading-relaxed">
@@ -87,11 +87,11 @@ export function PWAInstallInstructionsSheet({ isOpen, onClose }: PWAInstallInstr
               3
             </div>
             <div className="space-y-1">
-              <p className="text-[14px] font-black text-[#030D2E]">
+              <p className="text-[14px] font-black text-kat-dark">
                 Xác nhận thêm
               </p>
               <p className="text-[12.5px] font-semibold text-slate-500 leading-relaxed">
-                Nhấn nút <strong className="font-extrabold text-[#030D2E]">"Thêm" (Add)</strong> ở góc trên bên phải màn hình để hoàn tất.
+                Nhấn nút <strong className="font-extrabold text-kat-dark">"Thêm" (Add)</strong> ở góc trên bên phải màn hình để hoàn tất.
               </p>
             </div>
           </div>
@@ -102,7 +102,7 @@ export function PWAInstallInstructionsSheet({ isOpen, onClose }: PWAInstallInstr
         <div className="pt-4 border-t border-slate-100 shrink-0">
           <button
             onClick={onClose}
-            className="w-full inline-flex min-h-[46px] items-center justify-center rounded-xl bg-[#00BFB7] text-[#030D2E] px-6 font-extrabold hover:brightness-105 active:scale-[0.98] transition-all"
+            className="w-full inline-flex min-h-[46px] items-center justify-center rounded-xl bg-kat-teal text-kat-dark px-6 font-extrabold hover:brightness-105 active:scale-[0.98] transition-all"
           >
             Tôi đã hiểu
           </button>

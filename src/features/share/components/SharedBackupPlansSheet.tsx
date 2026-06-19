@@ -267,7 +267,7 @@ export function SharedBackupPlansSheet({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white sticky top-0 z-10 gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="text-[18px] font-extrabold text-[#030D2E] truncate">Phương án dự phòng</h3>
+            <h3 className="text-[18px] font-extrabold text-kat-dark truncate">Phương án dự phòng</h3>
             <p className="text-[13px] font-semibold text-slate-500 truncate">
               {activityTitle ? `Cho hoạt động: ${activityTitle}` : "Kế hoạch B cho những tình huống phát sinh"}
             </p>
@@ -299,7 +299,7 @@ export function SharedBackupPlansSheet({
                   value={title}
                   onChange={e => setTitle(e.target.value)}
                   placeholder="VD: Quán ăn gần khách sạn, điểm tham quan trong nhà..."
-                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-bold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:font-semibold placeholder:text-slate-400"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-bold text-kat-dark focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:font-semibold placeholder:text-slate-400"
                 />
               </div>
 
@@ -331,7 +331,7 @@ export function SharedBackupPlansSheet({
                   value={reason}
                   onChange={e => setReason(e.target.value)}
                   placeholder="VD: Khi trời mưa, quán đóng cửa, quá đông..."
-                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                 />
               </div>
 
@@ -339,7 +339,7 @@ export function SharedBackupPlansSheet({
                 <button
                   type="button"
                   onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
-                  className="w-full flex items-center justify-between text-[13.5px] font-extrabold text-slate-750 hover:text-[#030D2E] focus:outline-none transition-colors"
+                  className="w-full flex items-center justify-between text-[13.5px] font-extrabold text-slate-750 hover:text-kat-dark focus:outline-none transition-colors"
                 >
                   <span>Thông tin bổ sung</span>
                   <HugeiconsIcon icon={ChevronRightIcon} className={`h-4.5 w-4.5 text-slate-400 transition-transform duration-200 ${showAdditionalInfo ? "rotate-90" : ""}`} />
@@ -356,7 +356,7 @@ export function SharedBackupPlansSheet({
                         value={location}
                         onChange={e => setLocation(e.target.value)}
                         placeholder="VD: Quán B gần khách sạn"
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
 
@@ -379,7 +379,7 @@ export function SharedBackupPlansSheet({
                         value={mapLink}
                         onChange={e => setMapLink(e.target.value)}
                         placeholder="VD: https://www.google.com/maps/dir/..."
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
 
@@ -392,7 +392,7 @@ export function SharedBackupPlansSheet({
                         value={estimatedCost}
                         onChange={e => setEstimatedCost(e.target.value)}
                         placeholder="VD: 200000"
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
 
@@ -405,7 +405,7 @@ export function SharedBackupPlansSheet({
                         onChange={e => setNote(e.target.value)}
                         placeholder="VD: Gọi trước khi đến, nên đi taxi..."
                         rows={3}
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400 resize-none"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400 resize-none"
                       />
                     </div>
                   </div>
@@ -432,7 +432,7 @@ export function SharedBackupPlansSheet({
               <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 mb-4">
                 <HugeiconsIcon icon={RouteIcon} className="w-8 h-8" />
               </div>
-              <h4 className="text-[16px] font-extrabold text-[#030D2E] mb-2">Chưa có phương án dự phòng</h4>
+              <h4 className="text-[16px] font-extrabold text-kat-dark mb-2">Chưa có phương án dự phòng</h4>
               <p className="text-[13.5px] font-semibold text-slate-500 mb-6 max-w-[260px]">
                 Thêm một lựa chọn thay thế để chuyến đi linh hoạt hơn khi có thay đổi.
               </p>
@@ -489,7 +489,7 @@ export function SharedBackupPlansSheet({
                           </div>
 
                           {/* Title */}
-                          <h4 className={`text-[15.5px] font-extrabold text-[#030D2E] leading-snug ${plan.isPendingDelete ? 'line-through text-slate-400' : ''}`}>
+                          <h4 className={`text-[15.5px] font-extrabold text-kat-dark leading-snug ${plan.isPendingDelete ? 'line-through text-slate-400' : ''}`}>
                             {plan.title}
                           </h4>
 

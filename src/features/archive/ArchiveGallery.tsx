@@ -177,7 +177,7 @@ export function ArchiveGallery({
           <HugeiconsIcon icon={ArrowLeft01Icon} size={20} className="text-slate-600" />
         </button>
         <div>
-          <h1 className="text-[24px] font-black text-[#030D2E]">Kỷ niệm</h1>
+          <h1 className="text-[24px] font-black text-kat-dark">Kỷ niệm</h1>
           <p className="text-[13.5px] font-semibold text-slate-500">
             {archivedTrips.length > 0
               ? `${archivedTrips.length} chuyến đi đã lưu giữ`
@@ -194,7 +194,7 @@ export function ArchiveGallery({
           >
             <HugeiconsIcon icon={CompassIcon} size={40} className="text-white" />
           </div>
-          <h3 className="text-[20px] font-extrabold text-[#030D2E]">Chưa có kỷ niệm nào</h3>
+          <h3 className="text-[20px] font-extrabold text-kat-dark">Chưa có kỷ niệm nào</h3>
           <p className="mt-2 text-[14px] font-semibold text-slate-500 max-w-xs leading-relaxed">
             Những chuyến đi đã kết thúc sẽ xuất hiện ở đây để bạn ôn lại.
           </p>
@@ -204,7 +204,7 @@ export function ArchiveGallery({
           {years.map(year => (
             <div key={year} className="space-y-5">
               <div className="flex items-center gap-3">
-                <h2 className="text-[19px] font-black text-[#030D2E] tracking-tight">{year}</h2>
+                <h2 className="text-[19px] font-black text-kat-dark tracking-tight">{year}</h2>
                 <div className="h-px flex-1 bg-slate-200" />
                 <span className="text-[11px] font-extrabold text-slate-500 bg-slate-100/75 border border-slate-200/50 px-3 py-1 rounded-full">
                   {tripsByYear[year].length} chuyến đi

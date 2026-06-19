@@ -35,7 +35,7 @@ import { getAvatarSvg } from "../../utils/avatars";
 function QuickAction({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
   return (
     <button
-      className="flex flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white p-5 shadow-sm border border-slate-100 transition-all duration-300 ease-in-out motion-press md:motion-hover-lift hover:border-kat-primary/30 hover:shadow-[0_8px_20px_rgba(0,191,183,0.06)] active:scale-[0.97] w-full"
+      className="flex flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white p-5 shadow-sm border border-slate-100 transition-[transform,box-shadow,border-color] duration-200 ease-out motion-press md:motion-hover-lift hover:border-kat-primary/30 hover:shadow-[0_8px_20px_rgba(0,191,183,0.06)] active:scale-[0.97] w-full"
       onClick={onClick}
     >
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary transition-transform duration-300 group-hover:scale-110">
@@ -406,7 +406,7 @@ export function HomeScreen({
       <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
         {/* Left Column: Nhìn lại chuyến đi */}
         <section className="space-y-4">
-          <h3 className="text-[17px] font-extrabold text-[#030D2E] px-1 motion-title-enter">Nhìn lại chuyến đi</h3>
+          <h3 className="text-[17px] font-extrabold text-kat-dark px-1 motion-title-enter">Nhìn lại chuyến đi</h3>
           
           <div className="space-y-3">
             {/* Tổng kết card — hero card, full width, accent bg */}
@@ -435,7 +435,7 @@ export function HomeScreen({
                 <HugeiconsIcon icon={BookOpen01Icon} className="h-5.5 w-5.5" />
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-[14px] font-extrabold text-[#030D2E]">Bản tin chuyến đi</h4>
+                <h4 className="text-[14px] font-extrabold text-kat-dark">Bản tin chuyến đi</h4>
                 <p className="text-[12.5px] text-slate-400 font-medium mt-0.5">
                   {journals.length > 0 ? `${journals.length} bài viết` : "Chưa có bài nào"}
                 </p>
@@ -451,7 +451,7 @@ export function HomeScreen({
             </div>
 
             {/* Báo cáo card — action-focused, two buttons prominent */}
-            <div className="rounded-3xl bg-[#030D2E] p-5 motion-card-enter motion-delay-3">
+            <div className="rounded-3xl bg-kat-dark p-5 motion-card-enter motion-delay-3">
               <div className="flex items-center gap-3 mb-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white/80">
                   <HugeiconsIcon icon={FileDownloadIcon} className="h-4.5 w-4.5" />
@@ -484,7 +484,7 @@ export function HomeScreen({
 
         {/* Right Column: Tổng quan hành trình */}
         <section className="space-y-4">
-          <h3 className="text-[17px] font-extrabold text-[#030D2E] px-1 motion-title-enter">Tổng quan hành trình</h3>
+          <h3 className="text-[17px] font-extrabold text-kat-dark px-1 motion-title-enter">Tổng quan hành trình</h3>
           
           <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-100 motion-card-enter motion-delay-2">
             <ul className="space-y-6">
@@ -507,7 +507,7 @@ export function HomeScreen({
                 <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-[13px] font-semibold text-kat-muted">Lịch trình đã ghi</p>
                   {events.length > 0 ? (
-                    <p className="mt-0.5 text-[15px] font-extrabold text-[#030D2E]">
+                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-dark">
                       {events.length} hoạt động đã được ghi lại
                     </p>
                   ) : (
@@ -532,7 +532,7 @@ export function HomeScreen({
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
-                  <p className="mt-0.5 text-[15px] font-extrabold text-[#030D2E]">
+                  <p className="mt-0.5 text-[15px] font-extrabold text-kat-dark">
                     {checklistStats.total > 0 
                       ? `${checklistStats.completed} / ${checklistStats.total} món hành lý` 
                       : "Chưa có món nào trong checklist"}
@@ -546,7 +546,7 @@ export function HomeScreen({
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
                   <p className="text-[13px] font-semibold text-kat-muted">Tổng đã chi chuyến đi</p>
-                  <p className="mt-0.5 text-[15px] font-extrabold text-[#030D2E]">{formatMoney(totalExpense)}</p>
+                  <p className="mt-0.5 text-[15px] font-extrabold text-kat-dark">{formatMoney(totalExpense)}</p>
                 </div>
               </li>
             </ul>
@@ -569,7 +569,7 @@ export function HomeScreen({
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Hoạt động tiếp theo</h3>
             {nextEvent ? (
               <div 
-                className="flex items-center gap-4 rounded-3xl bg-white p-5 shadow-sm border border-slate-100 transition-all hover:shadow-md cursor-pointer group motion-card-enter motion-delay-1 motion-press" 
+                className="flex items-center gap-4 rounded-3xl bg-white p-5 shadow-sm border border-slate-100 transition-[box-shadow,transform,border-color] duration-200 hover:shadow-md cursor-pointer group motion-card-enter motion-delay-1 motion-press active:scale-[0.97]" 
                 onClick={() => onNavigateTab("timeline")}
               >
                 <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary transition-colors group-hover:bg-kat-primary/20">
@@ -578,7 +578,7 @@ export function HomeScreen({
                 </div>
                 <div className="min-w-0 flex-1">
                   {nextEvent.time && (
-                    <p className="flex items-center gap-1.5 text-[12.5px] font-bold text-[#F89B02]">
+                    <p className="flex items-center gap-1.5 text-[12.5px] font-bold text-kat-yellow">
                       <HugeiconsIcon icon={Clock01Icon} size={14} />
                       {nextEvent.time}
                     </p>
@@ -594,7 +594,7 @@ export function HomeScreen({
                 {!isReadOnly && (
                     <button 
                       onClick={() => onNavigateTab("timeline")}
-                      className="mt-4 flex items-center justify-center gap-1.5 rounded-2xl bg-[#030D2E] text-white hover:bg-[#030D2E]/90 px-5 py-3 text-[13.5px] font-black transition-all duration-200 shadow-[0_4px_14px_rgba(3,13,46,0.18)] active:scale-95 motion-press"
+                      className="mt-4 flex items-center justify-center gap-1.5 rounded-2xl bg-kat-dark text-white hover:bg-kat-dark/90 px-5 py-3 text-[13.5px] font-black transition-[transform,background-color] duration-150 shadow-[0_4px_14px_rgba(3,13,46,0.18)] active:scale-[0.97] motion-press"
                     >
                       <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" strokeWidth={2.5} />
                       Thêm lịch trình
@@ -649,7 +649,7 @@ export function HomeScreen({
                 {!isReadOnly && (
                     <button 
                       onClick={() => onNavigateTab("checklist")}
-                      className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-kat-primary text-[#030D2E] hover:brightness-105 px-4 py-2.5 text-[13px] font-black transition-all duration-200 shadow-sm motion-press"
+                      className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-kat-primary text-kat-dark hover:brightness-105 px-4 py-2.5 text-[13px] font-black transition-[transform,filter] duration-150 shadow-sm active:scale-[0.97] motion-press"
                     >
                       <HugeiconsIcon icon={Briefcase01Icon} size={16} />
                       Chuẩn bị hành lý
@@ -802,7 +802,7 @@ export function HomeScreen({
                     <HugeiconsIcon icon={GitBranchIcon} className="w-5 h-5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-[14.5px] font-extrabold text-[#030D2E]">Phương án dự phòng hôm nay</h4>
+                    <h4 className="text-[14.5px] font-extrabold text-kat-dark">Phương án dự phòng hôm nay</h4>
                     <p className="text-[13px] font-semibold text-slate-500 mt-0.5">
                       Bạn có {todayBackupPlans.length} phương án dự phòng cho hôm nay.
                     </p>

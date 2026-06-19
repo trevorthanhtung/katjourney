@@ -160,7 +160,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
             <div className="flex items-center gap-2 mt-1 pl-2 border-l-2 border-slate-200">
               <span className="text-slate-400 line-through">{oldRole}</span>
               <span className="text-slate-400">→</span>
-              <span className="text-[#00BFB7] font-bold">{newRole}</span>
+              <span className="text-kat-teal font-bold">{newRole}</span>
             </div>
           </div>
         </div>

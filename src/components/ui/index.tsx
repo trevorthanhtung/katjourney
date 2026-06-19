@@ -49,7 +49,7 @@ export function Input({
       <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
       <div className="relative mt-1.5">
         <input
-          className={`w-full rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] placeholder-slate-400 ${
+          className={`w-full rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal placeholder-slate-400 ${
             isDateOrTime ? "[&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer bg-white" : ""
           }`}
           type={type}
@@ -87,7 +87,7 @@ export function Textarea({
     <label className="block">
       <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
       <textarea
-        className="mt-1.5 min-h-[120px] w-full rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] placeholder-slate-400"
+        className="mt-1.5 min-h-[120px] w-full rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal placeholder-slate-400"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
@@ -181,9 +181,9 @@ export function TimePicker({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7]"
+        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal"
       >
-        <span className={value ? "text-[#030D2E] font-bold" : "text-slate-400"}>
+        <span className={value ? "text-kat-dark font-bold" : "text-slate-400"}>
           {value || placeholder}
         </span>
         <HugeiconsIcon icon={Clock01Icon} size={16} className="text-slate-400" />
@@ -215,14 +215,14 @@ export function TimePicker({
                     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                   }}
                   data-hour={h}
-                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempHour === h ? 'font-black text-[#00BFB7] scale-110' : 'font-medium text-slate-400 hover:text-slate-600'}`}
+                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempHour === h ? 'font-black text-kat-teal scale-110' : 'font-medium text-slate-400 hover:text-slate-600'}`}
                 >
                   {h}
                 </div>
               ))}
             </div>
 
-            <div className="flex items-center justify-center text-xl font-black text-[#030D2E] relative z-10 pb-1">:</div>
+            <div className="flex items-center justify-center text-xl font-black text-kat-dark relative z-10 pb-1">:</div>
 
             {/* Minutes column */}
             <div 
@@ -240,7 +240,7 @@ export function TimePicker({
                     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                   }}
                   data-min={m}
-                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempMinute === m ? 'font-black text-[#00BFB7] scale-110' : 'font-medium text-slate-400 hover:text-slate-600'}`}
+                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempMinute === m ? 'font-black text-kat-teal scale-110' : 'font-medium text-slate-400 hover:text-slate-600'}`}
                 >
                   {m}
                 </div>
@@ -251,7 +251,7 @@ export function TimePicker({
           <div className="w-full mt-6">
             <button
               onClick={handleSave}
-              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-[#030D2E] text-white px-6 font-black shadow-sm hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all motion-press"
+              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-kat-dark text-white px-6 font-black shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all motion-press"
             >
               Lưu thời gian
             </button>
@@ -343,9 +343,9 @@ export function DatePicker({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7]"
+        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal"
       >
-        <span className={value ? "text-[#030D2E] font-bold" : "text-slate-400"}>
+        <span className={value ? "text-kat-dark font-bold" : "text-slate-400"}>
           {displayValue || placeholder}
         </span>
         <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-400" />
@@ -365,7 +365,7 @@ export function DatePicker({
             >
               <HugeiconsIcon icon={ChevronLeftIcon} size={20} />
             </button>
-            <h3 className="text-[17px] font-bold text-[#030D2E]">
+            <h3 className="text-[17px] font-bold text-kat-dark">
               Tháng {month + 1} năm {year}
             </h3>
             <button 
@@ -408,9 +408,9 @@ export function DatePicker({
                   <button
                     onClick={() => handleSelectDay(d)}
                     className={`w-9 h-9 rounded-full flex items-center justify-center text-[15px] font-medium transition-all duration-200
-                      ${isSelected ? 'bg-[#00BFB7] text-white font-bold shadow-md scale-110' : 
-                        isToday ? 'bg-slate-100 text-[#00BFB7] font-bold border border-[#00BFB7]/20' : 
-                        'text-[#030D2E] hover:bg-slate-100'}
+                      ${isSelected ? 'bg-kat-teal text-white font-bold shadow-md scale-110' : 
+                        isToday ? 'bg-slate-100 text-kat-teal font-bold border border-kat-teal border-opacity-20' : 
+                        'text-kat-dark hover:bg-slate-100'}
                     `}
                   >
                     {d}
@@ -429,7 +429,7 @@ export function DatePicker({
                 onChange(adjustedDate.toISOString().split('T')[0]);
                 setIsOpen(false);
               }}
-              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-slate-100 text-[#030D2E] px-6 font-bold hover:bg-slate-200 active:scale-[0.98] transition-all motion-press"
+              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-slate-100 text-kat-dark px-6 font-bold hover:bg-slate-200 active:scale-[0.98] transition-all motion-press"
             >
               Chọn hôm nay
             </button>
@@ -474,9 +474,9 @@ export function Select({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={buttonClassName ?? "mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7]"}
+        className={buttonClassName ?? "mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal"}
       >
-        <span className={value ? "text-[#030D2E]" : "text-slate-400"}>
+        <span className={value ? "text-kat-dark" : "text-slate-400"}>
           {value ? (labels?.[value] ?? value) : (placeholder ?? "Chưa chọn")}
         </span>
         <HugeiconsIcon icon={ChevronDownIcon} size={16} className="text-slate-400" />
@@ -500,8 +500,8 @@ export function Select({
                 }}
                 className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
                   isSelected 
-                    ? "bg-[#00BFB7]/10 text-kat-primary" 
-                    : "hover:bg-slate-50 text-[#030D2E]"
+                    ? "bg-kat-primary-soft text-kat-primary" 
+                    : "hover:bg-slate-50 text-kat-dark"
                 }`}
               >
                 <span className={`text-[15px] ${isSelected ? 'font-extrabold' : 'font-semibold'}`}>
@@ -542,7 +542,7 @@ export function FormActions({
         </button>
       )}
       <button
-        className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-[#030D2E] text-white px-6 font-black shadow-sm hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed motion-press"
+        className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark text-white px-6 font-black shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed motion-press"
         type="button"
         onClick={onSave}
         disabled={disabled}
@@ -779,7 +779,7 @@ export function TypedDeleteConfirmModal({
         {itemName && (
           <div className="rounded-2xl border border-slate-200/70 bg-slate-50 px-4 py-3">
             <p className="text-[12px] font-black uppercase tracking-wide text-slate-400">Mục sẽ xóa</p>
-            <p className="mt-1 break-words text-[15px] font-extrabold text-[#030D2E]">{itemName}</p>
+            <p className="mt-1 break-words text-[15px] font-extrabold text-kat-dark">{itemName}</p>
           </div>
         )}
 
@@ -796,7 +796,7 @@ export function TypedDeleteConfirmModal({
             autoCorrect="off"
             autoComplete="off"
             spellCheck={false}
-            className="w-full rounded-[14px] border border-slate-200/60 bg-slate-50 px-4 h-[50px] text-[15px] font-bold text-[#030D2E] outline-none transition-all focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder:text-slate-400"
+            className="w-full rounded-[14px] border border-slate-200/60 bg-slate-50 px-4 h-[50px] text-[15px] font-bold text-kat-dark outline-none transition-all focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder:text-slate-400"
           />
         </label>
 
@@ -868,7 +868,7 @@ export function DeleteConfirmModal({
         {itemName && (
           <div className="rounded-2xl border border-slate-200/70 bg-slate-50 px-4 py-3">
             <p className="text-[12px] font-black uppercase tracking-wide text-slate-400">Mục sẽ xóa</p>
-            <p className="mt-1 break-words text-[15px] font-extrabold text-[#030D2E]">{itemName}</p>
+            <p className="mt-1 break-words text-[15px] font-extrabold text-kat-dark">{itemName}</p>
           </div>
         )}
 

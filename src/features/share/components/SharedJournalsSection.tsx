@@ -267,7 +267,7 @@ export function SharedJournalsSection({
       <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={GlobeIcon} className="h-5 w-5 text-sky-500" />
-          <h3 className="text-[16px] font-black text-[#030D2E]">Bản tin chuyến đi</h3>
+          <h3 className="text-[16px] font-black text-kat-dark">Bản tin chuyến đi</h3>
         </div>
       </div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
@@ -284,7 +284,7 @@ export function SharedJournalsSection({
             <button
               onClick={() => setJournalMode("chat")}
               className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 ${
-                journalMode === "chat" ? "bg-white text-[#00BFB7] shadow-sm" : "text-slate-500 hover:text-slate-700"
+                journalMode === "chat" ? "bg-white text-kat-teal shadow-sm" : "text-slate-500 hover:text-slate-700"
               }`}
             >
               <HugeiconsIcon icon={BubbleChatIcon} className="w-4 h-4" /> Trò chuyện
@@ -298,7 +298,7 @@ export function SharedJournalsSection({
           <button 
             onClick={() => setIsFormOpen(true)}
             className={classNames(
-              "items-center justify-center gap-1.5 px-4 py-2 bg-[#030D2E] text-white font-bold rounded-[14px] text-[13px] hover:bg-[#030D2E]/90 transition-all shadow-sm shrink-0 motion-press",
+              "items-center justify-center gap-1.5 px-4 py-2 bg-kat-dark text-white font-bold rounded-[14px] text-[13px] hover:bg-kat-dark bg-opacity-90 transition-all shadow-sm shrink-0 motion-press",
               mergedJournals.length > 0 ? "hidden lg:flex" : "flex"
             )}
           >
@@ -321,7 +321,7 @@ export function SharedJournalsSection({
               <section key={date} className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                   <HugeiconsIcon icon={Calendar01Icon} className="h-4.5 w-4.5 text-slate-400" />
-                  <h3 className="text-[15px] font-extrabold text-[#030D2E]">{formatDate(date)}</h3>
+                  <h3 className="text-[15px] font-extrabold text-kat-dark">{formatDate(date)}</h3>
                 </div>
                 
                 <div className="columns-1 md:columns-2 gap-4">
@@ -409,7 +409,7 @@ export function SharedJournalsSection({
                         )}
 
                         <div className="p-4 pt-3">
-                          <h4 className="text-[17px] font-black text-[#030D2E] leading-snug break-words">
+                          <h4 className="text-[17px] font-black text-kat-dark leading-snug break-words">
                             {j.title || "Bản tin chuyến đi"}
                           </h4>
                           {j.locationName && (
@@ -520,7 +520,7 @@ export function SharedJournalsSection({
               type="button"
               disabled={hasError}
               onClick={handleCreate}
-              className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-[#030D2E] text-white px-6 font-black hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
+              className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-kat-dark text-white px-6 font-black hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
             >
               <HugeiconsIcon icon={SaveIcon} className="h-4.5 w-4.5" strokeWidth={2.5} />
               Đăng bài viết
@@ -598,7 +598,7 @@ export function SharedJournalsSection({
                     onClick={() => { setForm({ ...form, mood: opt.value as any }); setDirty(true); }}
                     className={`flex items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-bold border transition-all duration-200 active:scale-95 ${
                       isActive
-                        ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#030D2E]"
+                        ? "bg-kat-primary-soft border-[#00BFB7] text-kat-dark"
                         : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                     }`}
                   >
@@ -653,7 +653,7 @@ export function SharedJournalsSection({
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
-                  className="w-full h-12 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 text-slate-500 font-bold text-[14px] hover:bg-slate-100 hover:text-[#00BFB7] transition-colors flex items-center justify-center gap-2"
+                  className="w-full h-12 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 text-slate-500 font-bold text-[14px] hover:bg-slate-100 hover:text-kat-teal transition-colors flex items-center justify-center gap-2"
                 >
                   {uploading ? (
                     <><HugeiconsIcon icon={Loading01Icon} className="h-5 w-5 animate-spin" /> Đang tải ảnh...</>
@@ -719,7 +719,7 @@ export function SharedJournalsSection({
         <button
           type="button"
           onClick={() => setIsFormOpen(true)}
-          className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
+          className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-kat-dark shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
           style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
           aria-label="Đăng bài viết"
           title="Đăng bài viết"

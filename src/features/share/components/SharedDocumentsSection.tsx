@@ -231,7 +231,7 @@ export function SharedDocumentsSection({
       type="button"
       onClick={save}
       disabled={isSaveDisabled}
-      className="inline-flex h-9 items-center justify-center rounded-xl bg-[#030D2E] text-white hover:bg-[#030D2E]/90 px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
+      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark text-white hover:bg-kat-dark bg-opacity-90 px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
     >
       {isUploading ? <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin text-slate-400" /> : "Lưu"}
     </button>
@@ -242,11 +242,11 @@ export function SharedDocumentsSection({
       {/* Header */}
       <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
         <HugeiconsIcon icon={File01Icon} className="h-5 w-5 text-rose-500" />
-        <h3 className="text-[16px] font-black text-[#030D2E]">Giấy tờ & đặt chỗ</h3>
+        <h3 className="text-[16px] font-black text-kat-dark">Giấy tờ & đặt chỗ</h3>
       </div>
 
       {/* Sub Tabs */}
-      <div className="flex bg-[#030D2E]/5 p-1 rounded-xl gap-1">
+      <div className="flex bg-kat-dark/5 p-1 rounded-xl gap-1">
         <button
           type="button"
           onClick={() => setActiveSubTab('shared')}
@@ -405,7 +405,7 @@ export function SharedDocumentsSection({
           <div className="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-rose-450 mb-3">
             <HugeiconsIcon icon={File01Icon} className="h-6 w-6" />
           </div>
-          <h4 className="text-[14px] font-bold text-[#030D2E]">
+          <h4 className="text-[14px] font-bold text-kat-dark">
             {activeSubTab === 'private' ? "Chưa có giấy tờ cá nhân" : "Chưa có giấy tờ nào"}
           </h4>
           <p className="text-[11.5px] text-slate-400 mt-1 font-bold max-w-[240px]">
@@ -476,7 +476,7 @@ export function SharedDocumentsSection({
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-[#030D2E] transition-colors focus:outline-none"
+              className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-kat-dark transition-colors focus:outline-none"
             >
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={Add01Icon} className="h-4 w-4 text-slate-400" />
@@ -511,7 +511,7 @@ export function SharedDocumentsSection({
                 
                 {/* Image Upload Area */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-[#030D2E]">Ảnh đính kèm</label>
+                  <label className="block text-sm font-semibold text-kat-dark">Ảnh đính kèm</label>
                   {(previewUrl || form.attachmentUrl) ? (
                     <div className="relative w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
                       <img 

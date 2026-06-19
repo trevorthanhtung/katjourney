@@ -292,7 +292,7 @@ export function SharedChecklistSection({
             <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-[16px] font-black text-[#030D2E]">Danh sách chuẩn bị</h3>
+            <h3 className="text-[16px] font-black text-kat-dark">Danh sách chuẩn bị</h3>
             <p className="text-[11px] text-slate-400 font-bold mt-0.5">
               Chuẩn bị hành lý và đồ dùng trước chuyến đi
             </p>
@@ -385,7 +385,7 @@ export function SharedChecklistSection({
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={classNames(
                       "text-[14px] font-bold break-words leading-tight", 
-                      c.completed ? 'text-slate-400 line-through font-medium' : 'text-[#030D2E]',
+                      c.completed ? 'text-slate-400 line-through font-medium' : 'text-kat-dark',
                       c.isPendingDelete ? 'line-through text-slate-400 opacity-60 font-medium' : ''
                     )}>
                       {c.title}
@@ -492,7 +492,7 @@ export function SharedChecklistSection({
           <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-400 mb-3">
             <HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />
           </div>
-          <h4 className="text-[14px] font-bold text-[#030D2E]">
+          <h4 className="text-[14px] font-bold text-kat-dark">
             {activeSubTab === 'private' ? "Chưa có chuẩn bị cá nhân" : "Chưa có chuẩn bị nào"}
           </h4>
           <p className="text-[11.5px] text-slate-400 mt-1 font-bold max-w-[220px]">
@@ -579,8 +579,8 @@ export function SharedChecklistSection({
               Tên món cần mang *
             </label>
             <input
-              className={`w-full rounded-[12px] border bg-slate-50 px-3.5 h-11 text-[14px] font-semibold text-slate-800 outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] placeholder-slate-400 ${
-                showValidationError ? "border-red-500 ring-2 ring-red-500" : "border-slate-200 focus:border-[#00BFB7]"
+              className={`w-full rounded-[12px] border bg-slate-50 px-3.5 h-11 text-[14px] font-semibold text-slate-800 outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal placeholder-slate-400 ${
+                showValidationError ? "border-red-500 ring-2 ring-red-500" : "border-slate-200 focus:border-kat-teal"
               }`}
               value={form.title}
               onChange={(e) => {
@@ -613,13 +613,13 @@ export function SharedChecklistSection({
                     onClick={() => setForm({ ...form, category: cat })}
                     className={`flex flex-col items-center justify-center min-h-[76px] p-2 rounded-[18px] border-2 transition-all duration-200 active:scale-95 cursor-pointer ${
                       isSelected
-                        ? "bg-[#030D2E]/5 border-[#030D2E] text-[#030D2E] font-black shadow-sm"
+                        ? "bg-kat-dark/5 border-kat-dark text-kat-dark font-black shadow-sm"
                         : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
                     }`}
                   >
                     <div className={`flex items-center justify-center w-8.5 h-8.5 rounded-[12px] mb-1 transition-all ${
                       isSelected
-                        ? "bg-[#030D2E]/12 text-[#030D2E]"
+                        ? "bg-kat-dark/12 text-kat-dark"
                         : "bg-slate-100 text-slate-400"
                     }`}>
                        <HugeiconsIcon icon={IconComponent} className="w-4.5 h-4.5" />
@@ -706,7 +706,7 @@ export function SharedChecklistSection({
                   ...members.map(m => m.name)
                 ]}
                 placeholder="Chọn người đồng hành"
-                buttonClassName="w-full flex items-center justify-between rounded-[12px] border-0 bg-slate-50 px-3.5 h-11 text-[14px] font-semibold text-[#030D2E] outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7]"
+                buttonClassName="w-full flex items-center justify-between rounded-[12px] border-0 bg-slate-50 px-3.5 h-11 text-[14px] font-semibold text-kat-dark outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal"
               />
             )}
           </div>
@@ -718,7 +718,7 @@ export function SharedChecklistSection({
               Ghi chú
             </label>
             <textarea
-              className="w-full h-14 rounded-[12px] border-0 bg-slate-50 px-3.5 py-2.5 text-[13.5px] font-semibold text-slate-800 outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-[#00BFB7] resize-none placeholder-slate-400"
+              className="w-full h-14 rounded-[12px] border-0 bg-slate-50 px-3.5 py-2.5 text-[13.5px] font-semibold text-slate-800 outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal resize-none placeholder-slate-400"
               value={form.note}
               onChange={(e) => setForm({ ...form, note: e.target.value })}
               placeholder="VD: Để trong balo nhỏ, nhớ sạc đầy..."
@@ -728,7 +728,7 @@ export function SharedChecklistSection({
           <button
             onClick={handleSave}
             disabled={!form.title.trim()}
-            className="mt-1 w-full h-11 rounded-[12px] bg-[#030D2E] font-black text-[14px] text-white hover:bg-[#0a1a5c] active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-1 w-full h-11 rounded-[12px] bg-kat-dark font-black text-[14px] text-white hover:bg-[#0a1a5c] active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {activeSubTab === 'private' 
               ? (editingId ? "Lưu thay đổi" : "Thêm vào hành lý") 
@@ -761,7 +761,7 @@ export function SharedChecklistSection({
         <button
           type="button"
           onClick={startAdd}
-          className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
+          className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-kat-dark shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
           style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
           aria-label={activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : "Đề xuất thêm"}
           title={activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : "Đề xuất thêm"}

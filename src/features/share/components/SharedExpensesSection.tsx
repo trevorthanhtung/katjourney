@@ -83,7 +83,7 @@ export function SharedExpensesSection({
       case "Lưu trú":
         return {
           icon: HotelIcon,
-          bg: "bg-slate-100 text-[#030D2E] border-slate-200"
+          bg: "bg-slate-100 text-kat-dark border-slate-200"
         };
       case "Vé tham quan":
         return {
@@ -436,13 +436,13 @@ export function SharedExpensesSection({
       {/* Header Section (Adopted from Main View) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
         <div>
-          <h2 className="text-[22px] font-black text-[#030D2E] tracking-tight">Chi phí</h2>
+          <h2 className="text-[22px] font-black text-kat-dark tracking-tight">Chi phí</h2>
           <p className="text-slate-500 font-medium text-[13px] mt-1">Theo dõi chi tiêu, khoản đã trả và phân chia trong chuyến đi.</p>
         </div>
       </div>
 
       {/* Dashboard Section */}
-      <section className="rounded-3xl border border-[#030D2E]/10 bg-white p-6 shadow-sm overflow-hidden relative">
+      <section className="rounded-3xl border border-kat-dark/10 bg-white p-6 shadow-sm overflow-hidden relative">
         <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
           <HugeiconsIcon icon={Wallet01Icon} className="w-32 h-32" />
         </div>
@@ -453,7 +453,7 @@ export function SharedExpensesSection({
           </div>
         </div>
         <div className="relative z-10 mt-1">
-          <span className="text-4xl sm:text-5xl font-black tracking-tight text-[#030D2E] drop-shadow-sm">
+          <span className="text-4xl sm:text-5xl font-black tracking-tight text-kat-dark drop-shadow-sm">
             {formatMoney(totalExpense)}
           </span>
         </div>
@@ -464,28 +464,28 @@ export function SharedExpensesSection({
               <HugeiconsIcon icon={UserGroupIcon} className="w-3.5 h-3.5" />
               Chi chung
             </span>
-            <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(totalShared)}</span>
+            <span className="text-[17px] font-black text-kat-dark">{formatMoney(totalShared)}</span>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100 hover:border-slate-200">
             <span className="text-[12px] font-semibold text-slate-500 flex items-center gap-1.5 mb-1.5">
               <HugeiconsIcon icon={UserIcon} className="w-3.5 h-3.5" />
               Chi cá nhân
             </span>
-            <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(totalPersonal)}</span>
+            <span className="text-[17px] font-black text-kat-dark">{formatMoney(totalPersonal)}</span>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100 hover:border-slate-200">
             <span className="text-[12px] font-semibold text-slate-500 flex items-center gap-1.5 mb-1.5">
               <HugeiconsIcon icon={CalculatorIcon} className="w-3.5 h-3.5" />
               Bình quân / người
             </span>
-            <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(avgPerPerson)}</span>
+            <span className="text-[17px] font-black text-kat-dark">{formatMoney(avgPerPerson)}</span>
           </div>
         </div>
 
         {isRequestEdit && (
           <button 
             onClick={startAdd}
-            className="w-full bg-[#030D2E] text-white py-3 px-4 rounded-2xl font-bold flex items-center justify-center gap-2 mt-4 hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm relative z-10 cursor-pointer text-[14px]"
+            className="w-full bg-kat-dark text-white py-3 px-4 rounded-2xl font-bold flex items-center justify-center gap-2 mt-4 hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all shadow-sm relative z-10 cursor-pointer text-[14px]"
           >
             <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" /> {isDirectEdit ? "Thêm khoản chi" : "Đề xuất thêm"}
           </button>
@@ -498,7 +498,7 @@ export function SharedExpensesSection({
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-50 text-teal-600">
               <HugeiconsIcon icon={PieChartIcon} className="h-4 w-4" />
             </span>
-            <h3 className="text-[14px] font-extrabold text-[#030D2E]">Chi phí theo hạng mục</h3>
+            <h3 className="text-[14px] font-extrabold text-kat-dark">Chi phí theo hạng mục</h3>
           </div>
           <BreakdownSection items={categoryBreakdown} total={totalExpense} emptyText="Chưa có khoản chi nào để phân tích." />
         </section>
@@ -508,7 +508,7 @@ export function SharedExpensesSection({
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
               <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5" />
             </span>
-            <h3 className="text-[14px] font-extrabold text-[#030D2E]">Chi phí theo người trả</h3>
+            <h3 className="text-[14px] font-extrabold text-kat-dark">Chi phí theo người trả</h3>
           </div>
           <BreakdownSection items={payerBreakdown} total={totalExpense} emptyText="Chưa có khoản chi nào để phân tích." />
         </section>
@@ -521,7 +521,7 @@ export function SharedExpensesSection({
         <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2">
             <HugeiconsIcon icon={ReceiptTextIcon} className="h-5 w-5 text-amber-500" />
-            <h3 className="text-[16px] font-black text-[#030D2E]">Danh sách khoản chi</h3>
+            <h3 className="text-[16px] font-black text-kat-dark">Danh sách khoản chi</h3>
           </div>
         </div>
         {mergedExpenses.length === 0 ? (
@@ -559,7 +559,7 @@ export function SharedExpensesSection({
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className={classNames(
-                          "text-[14px] font-bold text-[#030D2E] break-words line-clamp-1",
+                          "text-[14px] font-bold text-kat-dark break-words line-clamp-1",
                           e.isPendingDelete ? "line-through text-slate-400/60" : ""
                         )}>
                           {e.description || e.category}
@@ -623,7 +623,7 @@ export function SharedExpensesSection({
                   {/* Amount and edit menu */}
                   <div className="flex items-center gap-1.5 pl-3">
                     <span className={classNames(
-                      "text-[15px] font-black text-[#030D2E] whitespace-nowrap",
+                      "text-[15px] font-black text-kat-dark whitespace-nowrap",
                       e.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
                     )}>
                       {formatMoney(e.amount)}
@@ -710,7 +710,7 @@ export function SharedExpensesSection({
             type="button"
             onClick={handleSave}
             disabled={isSaveDisabled || isSubmitting}
-            className="inline-flex h-9 items-center justify-center rounded-xl bg-[#030D2E] hover:bg-[#030D2E]/90 text-white px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed cursor-pointer"
+            className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark hover:bg-kat-dark bg-opacity-90 text-white px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed cursor-pointer"
           >
             {isSubmitting ? "Đang lưu..." : isDirectEdit ? (editingId ? "Lưu" : "Thêm") : "Đề xuất"}
           </button>
@@ -725,7 +725,7 @@ export function SharedExpensesSection({
                 <button
                   type="button"
                   onClick={() => setIsCurrencyDropdownOpen(true)}
-                  className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white border border-slate-200 rounded-md px-2.5 py-1 text-[#030D2E] hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
+                  className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white border border-slate-200 rounded-md px-2.5 py-1 text-kat-dark hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
                 >
                   {form.currency}
                   <HugeiconsIcon icon={ChevronDownIcon} className="w-3.5 h-3.5 text-slate-400" />
@@ -745,8 +745,8 @@ export function SharedExpensesSection({
                       }}
                       className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
                         form.currency === "VND"
-                          ? "bg-[#00BFB7]/10 text-kat-primary"
-                          : "hover:bg-slate-50 text-[#030D2E]"
+                          ? "bg-kat-primary-soft text-kat-primary"
+                          : "hover:bg-slate-50 text-kat-dark"
                       }`}
                     >
                       <span className={`text-[15px] ${form.currency === "VND" ? 'font-extrabold' : 'font-semibold'}`}>
@@ -766,8 +766,8 @@ export function SharedExpensesSection({
                           }}
                           className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
                             isSelected
-                              ? "bg-[#00BFB7]/10 text-kat-primary"
-                              : "hover:bg-slate-50 text-[#030D2E]"
+                              ? "bg-kat-primary-soft text-kat-primary"
+                              : "hover:bg-slate-50 text-kat-dark"
                           }`}
                         >
                           <span className={`text-[15px] ${isSelected ? 'font-extrabold' : 'font-semibold'}`}>
@@ -793,7 +793,7 @@ export function SharedExpensesSection({
                   setForm({ ...form, amount: rawValue });
                   setErrors({ ...errors, amount: "" });
                 }}
-                className="w-full text-center text-3xl font-black text-[#030D2E] bg-transparent border-none outline-none placeholder-slate-300 focus:ring-0"
+                className="w-full text-center text-3xl font-black text-kat-dark bg-transparent border-none outline-none placeholder-slate-300 focus:ring-0"
               />
             </div>
             {errors.amount && (
@@ -877,7 +877,7 @@ export function SharedExpensesSection({
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-[#030D2E] transition-colors focus:outline-none"
+              className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-kat-dark transition-colors focus:outline-none"
             >
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={Tag01Icon} className="h-4 w-4 text-slate-400" />
@@ -961,7 +961,7 @@ export function SharedExpensesSection({
                       className={classNames(
                         "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
                         form.splitType === "shared"
-                          ? "bg-white text-[#030D2E] shadow-sm border border-slate-200/10"
+                          ? "bg-white text-kat-dark shadow-sm border border-slate-200/10"
                           : "text-slate-500 hover:text-slate-700"
                       )}
                     >
@@ -976,7 +976,7 @@ export function SharedExpensesSection({
                       className={classNames(
                         "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
                         form.splitType === "personal"
-                          ? "bg-white text-[#030D2E] shadow-sm border border-slate-200/10"
+                          ? "bg-white text-kat-dark shadow-sm border border-slate-200/10"
                           : "text-slate-500 hover:text-slate-700"
                       )}
                     >

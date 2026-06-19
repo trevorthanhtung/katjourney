@@ -66,7 +66,7 @@ export function TimelineCalendarView({
       {/* Calendar Card */}
       <div className="bg-white rounded-[28px] p-5 md:p-6 shadow-soft border border-slate-100">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[18px] font-black text-[#030D2E] capitalize">
+          <h3 className="text-[18px] font-black text-kat-dark capitalize">
             Tháng {month + 1}, {year}
           </h3>
           <div className="flex items-center gap-2">
@@ -105,16 +105,16 @@ export function TimelineCalendarView({
                 className={classNames(
                   "relative h-10 md:h-12 w-full flex flex-col items-center justify-center rounded-[14px] transition-all duration-200 cursor-pointer motion-press",
                   isSelected 
-                    ? "bg-[#030D2E] text-white shadow-md border border-[#030D2E]/20" 
+                    ? "bg-kat-dark text-white shadow-md border border-kat-dark/20" 
                     : "hover:bg-slate-50 border border-transparent",
-                  !isSelected && isTripDay ? "bg-[#00BFB7]/10 text-kat-text font-extrabold" : (!isSelected && "text-slate-600 font-semibold")
+                  !isSelected && isTripDay ? "bg-kat-primary-soft text-kat-text font-extrabold" : (!isSelected && "text-slate-600 font-semibold")
                 )}
               >
                 <span className={classNames("text-[14px] md:text-[15px]")}>{day}</span>
                 {hasEvents && (
                   <div className={classNames(
                     "absolute bottom-[5px] w-[5px] h-[5px] rounded-full",
-                    isSelected ? "bg-[#00BFB7]" : "bg-[#00BFB7]"
+                    isSelected ? "bg-kat-teal" : "bg-kat-teal"
                   )} />
                 )}
               </button>
@@ -127,13 +127,13 @@ export function TimelineCalendarView({
       {selectedDate && (
         <div className="animate-fadeIn">
           <div className="flex items-center justify-between mb-4 px-1 border-b border-slate-100 pb-3">
-            <h4 className="text-[16px] font-extrabold text-[#030D2E] flex items-center gap-2">
-              <HugeiconsIcon icon={Calendar01Icon} className="w-5 h-5 text-[#00BFB7]" />
+            <h4 className="text-[16px] font-extrabold text-kat-dark flex items-center gap-2">
+              <HugeiconsIcon icon={Calendar01Icon} className="w-5 h-5 text-kat-teal" />
               Lịch trình ngày {selectedDate.split('-').reverse().join('/')}
             </h4>
             <button 
               onClick={() => onOpenNewForm(selectedDate)}
-              className="flex items-center gap-1 text-[13px] font-bold text-[#00BFB7] hover:brightness-95 transition-colors motion-press px-2 py-1 bg-[#00BFB7]/10 rounded-lg"
+              className="flex items-center gap-1 text-[13px] font-bold text-kat-teal hover:brightness-95 transition-colors motion-press px-2 py-1 bg-kat-primary-soft rounded-lg"
             >
               <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
               Thêm
@@ -152,7 +152,7 @@ export function TimelineCalendarView({
                     <HugeiconsIcon icon={Clock01Icon} className="w-5 h-5" />
                   </div>
                 </div>
-                <h5 className="text-[15px] font-bold text-[#030D2E]">Ngày này trống</h5>
+                <h5 className="text-[15px] font-bold text-kat-dark">Ngày này trống</h5>
                 <p className="mt-1 text-[13.5px] font-medium text-slate-500 max-w-sm mx-auto">
                   Không có sự kiện nào trong ngày này. Hãy thêm điểm dừng để lấp đầy hành trình.
                 </p>

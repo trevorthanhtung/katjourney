@@ -31,7 +31,7 @@ const typeLabels: Record<BackupPlanType, string> = {
 
 const typeColors: Record<BackupPlanType, string> = {
   food: "text-amber-700 bg-amber-50 border-amber-200",
-  place: "text-[#00BFB7] bg-[#00BFB7]/10 border-[#00BFB7]/30",
+  place: "text-kat-teal bg-kat-primary-soft border-[#00BFB7]/30",
   transport: "text-blue-700 bg-blue-50 border-blue-200",
   hotel: "text-violet-700 bg-violet-50 border-violet-200",
   indoor: "text-emerald-700 bg-emerald-50 border-emerald-200",
@@ -165,14 +165,14 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white sticky top-0 z-10 gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="text-[18px] font-extrabold text-[#030D2E] truncate">Phương án dự phòng</h3>
+            <h3 className="text-[18px] font-extrabold text-kat-dark truncate">Phương án dự phòng</h3>
             <p className="text-[13px] font-semibold text-slate-500 truncate">Kế hoạch B cho những tình huống phát sinh</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {!isFormOpen && plans.length > 0 && (
               <button
                 onClick={handleOpenAdd}
-                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-[#00BFB7] text-[#030D2E] px-3.5 text-[13px] font-extrabold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
+                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-kat-teal text-kat-dark px-3.5 text-[13px] font-extrabold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
                 <span>Thêm</span>
@@ -195,7 +195,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                   value={title}
                   onChange={e => setTitle(e.target.value)}
                   placeholder="VD: Quán ăn gần khách sạn, điểm tham quan trong nhà..."
-                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-bold text-[#030D2E] focus:outline-none focus:border-[#00BFB7] focus:ring-1 focus:ring-[#00BFB7]/30 transition-all placeholder:font-semibold placeholder:text-slate-400"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-bold text-kat-dark focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-kat-teal/30 transition-all placeholder:font-semibold placeholder:text-slate-400"
                 />
               </div>
 
@@ -227,7 +227,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                   value={reason}
                   onChange={e => setReason(e.target.value)}
                   placeholder="VD: Khi trời mưa, quán đóng cửa, quá đông..."
-                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-[#00BFB7] focus:ring-1 focus:ring-[#00BFB7]/30 transition-all placeholder:text-slate-400"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-kat-teal/30 transition-all placeholder:text-slate-400"
                 />
               </div>
 
@@ -235,7 +235,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                 <button
                   type="button"
                   onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
-                  className="w-full flex items-center justify-between text-[13.5px] font-extrabold text-slate-750 hover:text-[#030D2E] focus:outline-none transition-colors"
+                  className="w-full flex items-center justify-between text-[13.5px] font-extrabold text-slate-750 hover:text-kat-dark focus:outline-none transition-colors"
                 >
                   <span>Thông tin bổ sung</span>
                   <HugeiconsIcon icon={ChevronRightIcon} className={`h-4.5 w-4.5 text-slate-400 transition-transform duration-200 ${showAdditionalInfo ? "rotate-90" : ""}`} />
@@ -252,7 +252,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                         value={location}
                         onChange={e => setLocation(e.target.value)}
                         placeholder="VD: Quán B gần khách sạn"
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-[#00BFB7] focus:ring-1 focus:ring-[#00BFB7]/30 transition-all placeholder:text-slate-400"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-kat-teal/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
 
@@ -275,7 +275,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                         value={mapLink}
                         onChange={e => setMapLink(e.target.value)}
                         placeholder="VD: https://www.google.com/maps/dir/..."
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-[#00BFB7] focus:ring-1 focus:ring-[#00BFB7]/30 transition-all placeholder:text-slate-400"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-kat-teal/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
 
@@ -288,7 +288,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                         value={estimatedCost}
                         onChange={e => setEstimatedCost(e.target.value)}
                         placeholder="VD: 200000"
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-[#00BFB7] focus:ring-1 focus:ring-[#00BFB7]/30 transition-all placeholder:text-slate-400"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-kat-teal/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
 
@@ -301,7 +301,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                         onChange={e => setNote(e.target.value)}
                         placeholder="VD: Gọi trước khi đến, nên đi taxi..."
                         rows={3}
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-[#00BFB7] focus:ring-1 focus:ring-[#00BFB7]/30 transition-all placeholder:text-slate-400 resize-none"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-kat-teal/30 transition-all placeholder:text-slate-400 resize-none"
                       />
                     </div>
                   </div>
@@ -317,7 +317,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                 </button>
                 <button
                   onClick={handleSave}
-                  className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-[#030D2E] bg-[#00BFB7] hover:brightness-105 transition-all motion-press focus:outline-none"
+                  className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-kat-dark bg-kat-teal hover:brightness-105 transition-all motion-press focus:outline-none"
                 >
                   Lưu phương án
                 </button>
@@ -325,16 +325,16 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
             </div>
           ) : plans.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="w-16 h-16 rounded-full bg-[#00BFB7]/15 flex items-center justify-center text-[#00BFB7] mb-4">
+              <div className="w-16 h-16 rounded-full bg-kat-teal bg-opacity-15 flex items-center justify-center text-kat-teal mb-4">
                 <HugeiconsIcon icon={Route01Icon} className="w-8 h-8" />
               </div>
-              <h4 className="text-[16px] font-extrabold text-[#030D2E] mb-2">Chưa có phương án dự phòng</h4>
+              <h4 className="text-[16px] font-extrabold text-kat-dark mb-2">Chưa có phương án dự phòng</h4>
               <p className="text-[13.5px] font-semibold text-slate-500 mb-6 max-w-[260px]">
                 Thêm một lựa chọn thay thế để chuyến đi linh hoạt hơn khi có thay đổi.
               </p>
               <button
                 onClick={handleOpenAdd}
-                className="flex items-center gap-2 px-6 py-3.5 bg-[#00BFB7] text-[#030D2E] rounded-xl text-[14.5px] font-bold hover:brightness-105 transition-all motion-press"
+                className="flex items-center gap-2 px-6 py-3.5 bg-kat-teal text-kat-dark rounded-xl text-[14.5px] font-bold hover:brightness-105 transition-all motion-press"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-5 h-5" />
                 Thêm phương án đầu tiên
@@ -356,7 +356,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                         </div>
 
                         {/* Title */}
-                        <h4 className="text-[15.5px] font-extrabold text-[#030D2E] leading-snug">{plan.title}</h4>
+                        <h4 className="text-[15.5px] font-extrabold text-kat-dark leading-snug">{plan.title}</h4>
 
                         {/* Location */}
                         {plan.location && (
@@ -434,7 +434,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                               href={plan.mapLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 text-[12.5px] font-black text-[#00BFB7] hover:text-[#00a89f] transition-colors hover:underline truncate"
+                              className="inline-flex items-center gap-1.5 text-[12.5px] font-black text-kat-teal hover:text-[#00a89f] transition-colors hover:underline truncate"
                             >
                               Xem bản đồ
                             </a>

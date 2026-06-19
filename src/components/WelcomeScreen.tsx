@@ -246,7 +246,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                       </div>
                     </div>
 
-                    <h3 className="text-[18px] font-black tracking-tight text-[#030D2E] leading-tight mb-1.5">
+                    <h3 className="text-[18px] font-black tracking-tight text-kat-dark leading-tight mb-1.5">
                       {slide.title}
                     </h3>
                     <p className="text-[12.5px] font-semibold text-slate-500 leading-relaxed max-w-[280px] mx-auto">
@@ -290,7 +290,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             <button
               onClick={handleGoogleLogin}
               disabled={loading !== null}
-              className="w-full flex items-center justify-center gap-3.5 h-14 rounded-2xl bg-white hover:bg-slate-50 active:scale-[0.97] transition-all font-extrabold text-[16px] text-[#030D2E] shadow-[0_4px_14px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] border border-slate-100 disabled:opacity-60 disabled:scale-100 group"
+              className="w-full flex items-center justify-center gap-3.5 h-14 rounded-2xl bg-white hover:bg-slate-50 active:scale-[0.97] transition-all font-extrabold text-[16px] text-kat-dark shadow-[0_4px_14px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] border border-slate-100 disabled:opacity-60 disabled:scale-100 group"
             >
               {loading === "google" ? (
                 <HugeiconsIcon icon={Loading01Icon} className="h-5.5 w-5.5 text-kat-primary animate-spin" />
@@ -384,31 +384,31 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             <div className="flex-1 overflow-y-auto py-4 pr-1 text-[13.5px] font-medium leading-relaxed text-slate-500 custom-scrollbar select-text space-y-3.5">
               {legalModal === "terms" && (
                 <>
-                  <p className="font-bold text-[#030D2E]">1. Cùng tạo nên những hành trình tuyệt vời</p>
+                  <p className="font-bold text-kat-dark">1. Cùng tạo nên những hành trình tuyệt vời</p>
                   <p>Chào mừng bạn đến với KAT Journey! Bằng việc trải nghiệm ứng dụng, chúng ta đồng ý tôn trọng các nguyên tắc chung để xây dựng một cộng đồng du lịch văn minh. Nếu có điểm nào chưa phù hợp, bạn luôn có quyền ngưng sử dụng dịch vụ bất cứ lúc nào.</p>
-                  <p className="font-bold text-[#030D2E]">2. Không gian kỷ niệm của riêng bạn</p>
+                  <p className="font-bold text-kat-dark">2. Không gian kỷ niệm của riêng bạn</p>
                   <p>Tài khoản là nơi cất giữ những chuyến đi mang đậm dấu ấn cá nhân. Hãy giúp chúng tôi bảo vệ nó bằng cách giữ an toàn thông tin đăng nhập (tài khoản Google). Chúng tôi luôn khuyến khích bạn bảo mật thiết bị cá nhân thật tốt để tránh rò rỉ dữ liệu.</p>
-                  <p className="font-bold text-[#030D2E]">3. Lưu trữ an toàn, đi muôn nơi</p>
+                  <p className="font-bold text-kat-dark">3. Lưu trữ an toàn, đi muôn nơi</p>
                   <p>KAT Journey ưu tiên lưu dữ liệu trực tiếp trên máy của bạn để bạn có thể xem lịch trình ngay cả khi lên rừng hay xuống biển (không có mạng). Lưu ý nhỏ: Đừng vội xóa dữ liệu duyệt web (clear cache) khi chưa đồng bộ lên đám mây, để tránh làm rơi rớt những kế hoạch đang dở dang nhé!</p>
                 </>
               )}
 
               {legalModal === "privacy" && (
                 <>
-                  <p className="font-bold text-[#030D2E]">1. Chúng tôi cần biết gì về bạn? Rất ít!</p>
+                  <p className="font-bold text-kat-dark">1. Chúng tôi cần biết gì về bạn? Rất ít!</p>
                   <p>KAT Journey chỉ thu thập một vài thông tin cơ bản (Họ tên, Email, Ảnh đại diện) từ tài khoản Google của bạn để làm "hộ chiếu" định danh. Việc này giúp bạn lưu trữ và đồng bộ hóa các chuyến đi xuyên suốt trên nhiều thiết bị.</p>
-                  <p className="font-bold text-[#030D2E]">2. Kỷ niệm của bạn, an toàn là trên hết</p>
+                  <p className="font-bold text-kat-dark">2. Kỷ niệm của bạn, an toàn là trên hết</p>
                   <p>Mọi kế hoạch, chi tiêu và hành lý đều "ngủ yên" trên thiết bị của bạn. Chỉ khi bạn chủ động mời bạn bè qua tính năng "Chia sẻ chuyến đi", dữ liệu mới được mã hóa cẩn thận và đưa lên hệ thống máy chủ đám mây với độ bảo mật cao nhất.</p>
-                  <p className="font-bold text-[#030D2E]">3. Quyền kiểm soát hoàn toàn trong tay bạn</p>
+                  <p className="font-bold text-kat-dark">3. Quyền kiểm soát hoàn toàn trong tay bạn</p>
                   <p>Bạn là "cơ trưởng" của tài khoản này. Bạn có toàn quyền tạo mới, chỉnh sửa, xóa bỏ vĩnh viễn các chuyến đi, hoặc thu hồi link chia sẻ bất kỳ lúc nào chỉ với một lần chạm.</p>
                 </>
               )}
 
               {legalModal === "cookie" && (
                 <>
-                  <p className="font-bold text-[#030D2E]">1. Cookie giúp hành trình mượt mà hơn</p>
+                  <p className="font-bold text-kat-dark">1. Cookie giúp hành trình mượt mà hơn</p>
                   <p>KAT Journey sử dụng một ít "bánh quy" (Cookies và Local Storage) để ghi nhớ bạn là ai, chuyến đi nào đang xem dở, và giữ cho bạn luôn trong trạng thái sẵn sàng lên đường mà không cần đăng nhập lại nhiều lần.</p>
-                  <p className="font-bold text-[#030D2E]">2. Nói "Không" với quảng cáo theo dõi</p>
+                  <p className="font-bold text-kat-dark">2. Nói "Không" với quảng cáo theo dõi</p>
                   <p>Trải nghiệm lên kế hoạch du lịch của bạn không nên bị làm phiền. Chúng tôi cam kết chỉ sử dụng các Cookie kỹ thuật thiết yếu để ứng dụng hoạt động chính xác. KAT Journey tuyệt đối KHÔNG bám đuôi hay bán dữ liệu của bạn cho bất kỳ bên thứ ba nào.</p>
                 </>
               )}
