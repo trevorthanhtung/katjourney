@@ -761,7 +761,7 @@ function App() {
           "--sticky-header-offset-md": areBarsVisible ? "68px" : "0px",
         } as React.CSSProperties}
       >
-      <header className={`sticky top-0 z-40 px-2.5 min-[360px]:px-4 pb-3 pt-3 bg-white/55 supports-[backdrop-filter]:bg-white/45 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 shadow-[0_4px_24px_rgba(3,13,46,0.06)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`} style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))", paddingLeft: "max(0.625rem, env(safe-area-inset-left))", paddingRight: "max(0.625rem, env(safe-area-inset-right))" }}>
+      <header className={`sticky top-0 z-40 px-2.5 min-[360px]:px-4 pb-3 pt-3 glass-panel-header shadow-[0_4px_24px_rgba(3,13,46,0.05)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`} style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))", paddingLeft: "max(0.625rem, env(safe-area-inset-left))", paddingRight: "max(0.625rem, env(safe-area-inset-right))" }}>
         <GlobalToast />
         <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
           <div className="flex items-center gap-3 shrink-0">
@@ -1185,7 +1185,7 @@ function App() {
 
 
       {!isManagingTrips && tripId && (
-        <nav className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] bg-white/55 supports-[backdrop-filter]:bg-white/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/45 shadow-[0_10px_36px_rgba(3,13,46,0.12)] ring-1 ring-inset ring-white/30 before:pointer-events-none before:absolute before:inset-x-5 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/80 before:to-transparent sm:max-w-[560px] md:max-w-[640px] lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}>
+        <nav className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}>
           <div ref={containerRef} className="relative flex h-[56px] min-[360px]:h-[60px] items-center justify-between px-2">
             {/* Active Indicator Slide Pill */}
             {indicatorStyle.width > 0 && (

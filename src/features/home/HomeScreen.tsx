@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   UserGroupIcon,
@@ -35,10 +35,10 @@ import { getAvatarSvg } from "../../utils/avatars";
 function QuickAction({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
   return (
     <button
-      className="flex flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white p-5 shadow-sm border border-slate-100 transition-all duration-200 ease-in-out motion-press md:motion-hover-lift hover:border-kat-primary/30 w-full"
+      className="flex flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white p-5 shadow-sm border border-slate-100 transition-all duration-300 ease-in-out motion-press md:motion-hover-lift hover:border-kat-primary/30 hover:shadow-[0_8px_20px_rgba(0,191,183,0.06)] active:scale-[0.97] w-full"
       onClick={onClick}
     >
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary transition-transform duration-300 group-hover:scale-110">
         {icon}
       </div>
       <span className="text-[14px] font-bold text-slate-700">{label}</span>
@@ -205,6 +205,24 @@ export function HomeScreen({
         {/* Subtle World Map Watermark */}
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
         
+        {/* Dynamic Weather Backdrops */}
+        {forecast && currentCode != null && (
+          <>
+            {(currentCode === 0 || currentCode === 1) && (
+              <div className="weather-sunny-glow" />
+            )}
+            {(currentCode === 2 || currentCode === 3 || currentCode === 45 || currentCode === 48) && (
+              <div className="weather-cloudy-drift" />
+            )}
+            {/* If it's rain/drizzle/snow */}
+            {((currentCode >= 51 && currentCode <= 67) || (currentCode >= 80 && currentCode <= 82) || currentCode >= 95) && (
+              <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-25">
+                <div className="absolute inset-0 bg-[linear-gradient(170deg,transparent_40%,rgba(255,255,255,0.15)_45%,rgba(255,255,255,0.15)_50%,transparent_55%)] bg-[size:40px_120px] animate-weather-sway" />
+              </div>
+            )}
+          </>
+        )}
+        
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-5">
           <div className="space-y-3 min-w-0 flex-1">
             <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-md">
@@ -236,14 +254,73 @@ export function HomeScreen({
           </div>
 
           <div className="flex flex-row sm:flex-col items-stretch sm:items-end gap-3 shrink-0 w-full sm:w-[220px] md:w-[250px]">
-            {/* Timing box */}
-            <div className="flex flex-col items-center justify-center rounded-2xl bg-white/10 px-4 py-3 border border-white/20 flex-1 sm:flex-none sm:w-full text-center shrink-0 min-h-[64px]">
-              <p className="text-[10px] font-semibold text-white/60">
+            {/* Timing box with Progress Bar */}
+            <div className="flex flex-col items-stretch justify-center rounded-2xl bg-white/10 px-4 py-3 border border-white/20 flex-1 sm:flex-none sm:w-full text-center shrink-0 min-h-[64px]">
+              <p className="text-[10px] font-semibold text-white/60 text-center">
                 {status === "past" ? "Trạng thái" : "Hành trình"}
               </p>
-              <p className="mt-1 text-[18px] sm:text-[20px] font-black text-white drop-shadow-sm tracking-tight leading-none">
+              <p className="mt-1 text-[17px] sm:text-[19px] font-black text-white drop-shadow-sm tracking-tight leading-none text-center">
                 {timing.label}
               </p>
+              {status === "active" && (() => {
+                let progressPercent = 0;
+                try {
+                  const start = new Date(trip.startDate).getTime();
+                  const end = new Date(trip.endDate).getTime();
+                  const now = new Date().getTime();
+                  if (end > start) {
+                    progressPercent = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
+                  }
+                } catch (e) {
+                  console.error(e);
+                }
+                return (
+                  <div className="mt-2.5 w-full space-y-1 text-left z-10">
+                    <div className="flex items-center justify-between text-[8px] font-bold text-white/70">
+                      <span>Khởi hành</span>
+                      <span>Đang đi</span>
+                      <span>Kết thúc</span>
+                    </div>
+                    <div className="relative h-1.5 w-full rounded-full bg-white/15 overflow-hidden border border-white/10">
+                      <div 
+                        className="absolute top-0 bottom-0 left-0 rounded-full bg-gradient-to-r from-teal-300 to-emerald-300 shadow-[0_0_6px_rgba(110,231,183,0.4)] transition-all duration-500"
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                      <div 
+                        className="absolute top-1/2 -translate-y-1/2 airplane-flight transition-all duration-500"
+                        style={{ left: `calc(${progressPercent}% - 6px)` }}
+                      >
+                        <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 fill-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)] -rotate-45">
+                          <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <p className="text-[8.5px] text-right text-white/50 font-semibold leading-none">
+                      Đã hoàn thành {Math.round(progressPercent)}%
+                    </p>
+                  </div>
+                );
+              })()}
+              {status === "upcoming" && (() => {
+                let diffDays = 0;
+                try {
+                  const start = new Date(trip.startDate).getTime();
+                  const now = new Date().getTime();
+                  diffDays = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
+                } catch {}
+                const maxCountdown = 30; // Scale relative to 30 days
+                const progressPercent = Math.max(10, Math.min(100, (1 - (diffDays / maxCountdown)) * 100));
+                return (
+                  <div className="mt-2 w-full space-y-1 text-left z-10">
+                    <div className="relative h-1 w-full rounded-full bg-white/15 overflow-hidden">
+                      <div 
+                        className="h-full rounded-full bg-amber-400/80 transition-all duration-500" 
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Weather Widget */}

@@ -312,6 +312,33 @@ export function useCloudBackup() {
     };
   }, [user, autoBackupEnabled, lastBackupAt, isBackingUp, isRestoring, isSyncLoading, isAutoBackingUp, fetchBackupInfo]);
 
+  // Trigger synchronization immediately when regaining internet connection
+  useEffect(() => {
+    const handleOnline = async () => {
+      console.log("[AutoSync] Device back online! Initiating sync check...");
+      if (user && autoBackupEnabled) {
+        if ((window as any).showToastGlobal) {
+          (window as any).showToastGlobal("Đã kết nối mạng trở lại. Đang đồng bộ...");
+        }
+        try {
+          const syncResult = await syncData();
+          if (syncResult === "uploaded") {
+            if ((window as any).showToastGlobal) {
+              (window as any).showToastGlobal("Đã tự động sao lưu dữ liệu mới lên Cloud.");
+            }
+          }
+        } catch (err) {
+          console.error("[AutoSync] Online sync failed:", err);
+        }
+      }
+    };
+
+    window.addEventListener("online", handleOnline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+    };
+  }, [user, autoBackupEnabled, syncData]);
+
   const isSyncing = isBackingUp || isRestoring || isSyncLoading || isAutoSyncingUI;
 
   return {

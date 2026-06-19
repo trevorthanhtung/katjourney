@@ -560,3 +560,83 @@ textarea,
   background-color: #00BFB7 !important;
 }
 
+/* --- 2027 Premium UI/UX Additions --- */
+.shadow-floating-premium {
+  box-shadow: 0 16px 40px -8px rgba(3, 13, 46, 0.08), 0 0 1px rgba(3, 13, 46, 0.04);
+}
+
+.glass-panel-header {
+  background: rgba(250, 247, 241, 0.75) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(232, 225, 216, 0.6) !important;
+}
+
+.glass-panel-nav {
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 12px 40px rgba(3, 13, 46, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Timeline Progress Line Dash-Array Animation */
+.timeline-progress-line {
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.45) 50%, transparent 50%);
+  background-size: 8px 1px;
+  animation: progress-dash 12s linear infinite;
+}
+
+@keyframes progress-dash {
+  to {
+    background-position: -120px 0;
+  }
+}
+
+.airplane-flight {
+  animation: airplane-bounce 3s ease-in-out infinite alternate;
+}
+
+@keyframes airplane-bounce {
+  0% { transform: translateY(0px) rotate(0deg); }
+  100% { transform: translateY(-3px) rotate(1deg); }
+}
+
+/* Dynamic Sun Ray Pulsation */
+.weather-sunny-glow {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(248, 155, 2, 0.25) 0%, rgba(248, 155, 2, 0) 70%);
+  animation: sun-pulsate 8s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes sun-pulsate {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.25); opacity: 1; filter: blur(4px); }
+}
+
+/* Cloud Drift Effect */
+.weather-cloudy-drift {
+  position: absolute;
+  top: 10px;
+  left: -100px;
+  width: 200px;
+  height: 60px;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08) 0%, transparent 80%);
+  animation: cloud-drift-soft 35s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes cloud-drift-soft {
+  0% { left: -100px; }
+  100% { left: 100%; }
+}
+
+

@@ -1,0 +1,16 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "auth": {
+    "providers": {
+      "anonymous": true,
+      "googleSignIn": {
+        "authorizedRedirectUris": [
+          "http://localhost",
+          "https://katjourney.vercel.app"
+        ]
+      }
+    }
+  }
+}
