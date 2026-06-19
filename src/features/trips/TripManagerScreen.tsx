@@ -62,7 +62,7 @@ function TripCard({
     return (
       <div 
         onClick={() => onOpenTrip(trip.id!)}
-        className={`group relative cursor-pointer overflow-hidden rounded-[32px] bg-gradient-to-b from-white to-[#FCFAF2] border border-slate-200 border-l-4 ${statusColor} p-6 lg:p-8 shadow-soft hover:shadow-md hover:border-slate-350/80 hover:-translate-y-1 active:scale-[0.99] transition-all duration-300 w-full flex flex-col lg:flex-row gap-6 justify-between items-stretch lg:min-w-[560px] lg:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+        className={`group relative cursor-pointer overflow-hidden rounded-[32px] bg-white border border-slate-200 border-l-4 ${statusColor} p-6 lg:p-8 shadow-soft hover:shadow-md hover:border-slate-350/80 hover:-translate-y-1 active:scale-[0.99] transition-all duration-300 w-full flex flex-col lg:flex-row gap-6 justify-between items-stretch lg:min-w-[560px] lg:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
       >
         {/* Left info column */}
         <div className="flex-1 flex flex-col justify-between pr-4">
@@ -153,7 +153,7 @@ function TripCard({
   return (
     <div 
       onClick={() => onOpenTrip(trip.id!)}
-      className={`group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-b from-white to-[#FCFAF2] p-5 shadow-soft border border-slate-200 border-l-4 ${statusColor} hover:border-slate-350/80 hover:-translate-y-1 hover:shadow-md transition-all duration-300 w-full max-w-[420px] mx-auto md:mx-0 h-full motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+      className={`group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[24px] bg-white p-5 shadow-soft border border-slate-200 border-l-4 ${statusColor} hover:border-slate-350/80 hover:-translate-y-1 hover:shadow-md transition-all duration-300 w-full max-w-[420px] mx-auto md:mx-0 h-full motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
     >
       <div>
         <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -508,11 +508,9 @@ export function TripManagerScreen({
               <section className="mb-12 md:mb-14">
                 <h3 className="mb-4 px-1 text-[20px] font-extrabold text-kat-text motion-title-enter">Chuyến tiếp theo</h3>
                 <div 
-                  className={`group relative overflow-hidden rounded-[32px] bg-gradient-to-b from-white to-[#FCFAF2] border border-slate-200 border-l-4 ${featuredBorderColor} p-6 sm:p-8 lg:p-10 shadow-soft cursor-pointer hover:shadow-md hover:border-slate-350/80 hover:-translate-y-1 transition-all duration-300 min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2`}
+                  className={`group relative overflow-hidden rounded-[32px] bg-white border border-slate-200 border-l-4 ${featuredBorderColor} p-6 sm:p-8 lg:p-10 shadow-soft cursor-pointer hover:shadow-md hover:border-slate-350/80 hover:-translate-y-1 transition-all duration-300 min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2`}
                   onClick={() => onOpenTrip(featuredTrip.id!)}
                 >
-                  {/* Decorative background */}
-                  <div className="absolute right-0 top-0 bottom-0 w-1/2 lg:w-1/3 bg-gradient-to-l from-kat-primary/5 to-transparent pointer-events-none" />
                   
                   {/* Watermark Compass Icon - Mobile */}
                   <HugeiconsIcon 
