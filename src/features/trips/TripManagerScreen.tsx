@@ -1,6 +1,6 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Airplane01Icon, Calendar01Icon, Location01Icon, CompassIcon, UserGroupIcon, WalletCardsIcon, SparklesIcon, MapsIcon } from "@hugeicons/core-free-icons";
+import { Airplane01Icon, Calendar01Icon, Location01Icon, CompassIcon, UserGroupIcon, WalletCardsIcon, SparklesIcon, MapsIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Trip, db, deleteTripCascade, Expense, ChecklistItem } from "../../db";
 import { formatDate, getTripTiming } from "../../utils/helpers";
@@ -355,40 +355,97 @@ export function TripManagerScreen({
   return (
     <div className={`mx-auto w-full max-w-[1120px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center py-0 md:py-0" : "py-6 md:pt-4 md:pb-16"}`}>
       {trips.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[32px] bg-white p-5 sm:p-8 md:p-12 text-center border border-slate-200 shadow-floating hover:shadow-xl hover:border-[#00BFB7]/35 transition-all duration-500 mx-auto w-full max-w-[540px] relative overflow-hidden motion-page-enter motion-hover-lift">
+        <div className="flex flex-col items-center justify-center rounded-[32px] bg-white p-6 sm:p-10 md:p-14 text-center border border-slate-200 shadow-[0_20px_50px_rgba(0,191,183,0.06)] hover:shadow-[0_20px_50px_rgba(0,191,183,0.12)] hover:border-[#00BFB7]/40 transition-all duration-500 mx-auto w-full max-w-[580px] relative overflow-hidden motion-page-enter motion-hover-lift">
           {/* Ambient Background Glows */}
-          <div className="absolute -right-10 -top-10 w-44 h-44 bg-kat-teal/5 blur-[40px] rounded-full pointer-events-none" />
-          <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-indigo-500/5 blur-[50px] rounded-full pointer-events-none" />
+          <div className="absolute -right-16 -top-16 w-64 h-64 bg-[#00BFB7]/10 blur-[80px] rounded-full pointer-events-none animate-pulse duration-[8000ms]" />
+          <div className="absolute -left-20 -bottom-20 w-72 h-72 bg-[#030D2E]/5 blur-[90px] rounded-full pointer-events-none animate-pulse duration-[6000ms]" />
           
-          <HugeiconsIcon icon={MapsIcon} className="absolute -right-12 -top-12 w-48 h-48 text-kat-primary/[0.03] rotate-12 pointer-events-none" />
+          {/* Subtle Dot Grid Background */}
+          <div 
+            className="absolute inset-0 pointer-events-none select-none z-0" 
+            style={{
+              backgroundImage: "radial-gradient(#00BFB7 1px, transparent 1px)",
+              backgroundSize: "16px 16px",
+              opacity: 0.05
+            }}
+          />
           
-          <div className="mb-4 sm:mb-6 flex h-20 w-20 items-center justify-center rounded-[24px] bg-gradient-to-br from-[#030D2E] via-[#004E5A] to-[#00BFB7] text-white shadow-[0_8px_24px_rgba(3,13,46,0.2)] relative z-10 border-2 border-white transform hover:rotate-12 transition-all duration-300">
-            <HugeiconsIcon 
-              icon={Airplane01Icon} 
-              size={36}
-              className="text-white -rotate-45" 
-            />
+          {/* Watermark Map Icon */}
+          <div 
+            className="absolute -right-12 -top-12 w-48 h-48 pointer-events-none select-none rotate-12"
+            style={{ opacity: 0.04, color: "#00BFB7" }}
+          >
+            <HugeiconsIcon icon={MapsIcon} className="w-full h-full" />
           </div>
           
-          <h3 className="mb-2 sm:mb-3 text-[22px] sm:text-[24px] font-black text-kat-text tracking-tight relative z-10">Chưa có chuyến đi nào</h3>
-          <p className="mb-5 sm:mb-8 text-[13.5px] sm:text-[14.5px] font-semibold text-slate-500 leading-relaxed max-w-[340px] relative z-10">
-            Tạo chuyến đi đầu tiên để bắt đầu lên lịch trình, quản lý chi phí và chuẩn bị hành lý.
+          {/* Branded Label tag */}
+          <div className="mb-5 inline-flex items-center gap-1.5 rounded-full bg-[#00BFB7]/10 px-3.5 py-1 text-[11px] font-black uppercase tracking-wider text-[#00AFA8] border border-[#00BFB7]/25 relative z-10">
+            <HugeiconsIcon icon={SparklesIcon} size={11} className="animate-spin duration-[4000ms]" />
+            Kat Journey
+          </div>
+          
+          {/* Pulsing Glowing Airplane Card */}
+          <div className="mb-6 relative flex items-center justify-center relative z-10">
+            <div className="absolute w-32 h-32 rounded-full bg-[#00BFB7]/5 animate-ping duration-[4000ms] pointer-events-none" />
+            <div className="absolute w-24 h-24 rounded-full bg-[#00BFB7]/10 border border-[#00BFB7]/20 pointer-events-none animate-pulse duration-[3000ms]" />
+            
+            <div className="relative flex h-20 w-20 items-center justify-center rounded-[24px] bg-gradient-to-br from-[#030D2E] via-[#004E5A] to-[#00BFB7] text-white shadow-[0_12px_32px_rgba(0,191,183,0.25)] border-2 border-white transform hover:rotate-[360deg] transition-transform duration-1000">
+              <HugeiconsIcon 
+                icon={Airplane01Icon} 
+                size={38}
+                className="text-white -rotate-45" 
+              />
+            </div>
+          </div>
+          
+          <h3 className="mb-2.5 text-[24px] sm:text-[28px] font-black text-kat-text tracking-tight relative z-10 leading-tight">
+            Chưa có chuyến đi nào
+          </h3>
+          <p className="mb-6 text-[14px] sm:text-[15.5px] font-semibold text-slate-500 leading-relaxed max-w-[380px] relative z-10">
+            Hãy lên kế hoạch chi tiết, sắp xếp hành lý và quản lý chi tiêu thông minh cho chuyến đi tiếp theo của bạn.
           </p>
+          
+          {/* Feature Showcase Grid */}
+          <div className="grid grid-cols-3 gap-3 w-full max-w-[460px] mb-8 relative z-10">
+            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#FAF7F1]/50 border border-[#E8E1D8]/60 hover:bg-[#FAF7F1]/90 hover:border-[#0081BE]/30 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
+              <div className="h-9 w-9 rounded-xl bg-[#0081BE]/8 text-[#0081BE] flex items-center justify-center mb-2 shadow-sm border border-[#0081BE]/10 group-hover/item:scale-110 transition-transform duration-300">
+                <HugeiconsIcon icon={Calendar01Icon} size={18} />
+              </div>
+              <span className="text-[11.5px] font-black text-[#030D2E] tracking-tight">Lịch trình</span>
+              <span className="text-[9.5px] text-slate-400 font-semibold mt-0.5">Chi tiết từng ngày</span>
+            </div>
+
+            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#FAF7F1]/50 border border-[#E8E1D8]/60 hover:bg-[#FAF7F1]/90 hover:border-[#F89B02]/30 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
+              <div className="h-9 w-9 rounded-xl bg-[#F89B02]/8 text-[#F89B02] flex items-center justify-center mb-2 shadow-sm border border-[#F89B02]/10 group-hover/item:scale-110 transition-transform duration-300">
+                <HugeiconsIcon icon={WalletCardsIcon} size={18} />
+              </div>
+              <span className="text-[11.5px] font-black text-[#030D2E] tracking-tight">Chi phí</span>
+              <span className="text-[9.5px] text-slate-400 font-semibold mt-0.5">Chia hóa đơn</span>
+            </div>
+
+            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#FAF7F1]/50 border border-[#E8E1D8]/60 hover:bg-[#FAF7F1]/90 hover:border-[#00BFB7]/30 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
+              <div className="h-9 w-9 rounded-xl bg-[#00BFB7]/8 text-[#00BFB7] flex items-center justify-center mb-2 shadow-sm border border-[#00BFB7]/10 group-hover/item:scale-110 transition-transform duration-300">
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} size={18} />
+              </div>
+              <span className="text-[11.5px] font-black text-[#030D2E] tracking-tight">Chuẩn bị</span>
+              <span className="text-[9.5px] text-slate-400 font-semibold mt-0.5">Hành lý & đồ đạc</span>
+            </div>
+          </div>
           
           <button
             onClick={onCreateNew}
-            className="group flex h-11 sm:h-13 w-full items-center justify-center gap-1.5 sm:gap-2 rounded-[18px] bg-gradient-to-r from-[#030D2E] via-[#004E5A] to-[#00BFB7] text-white px-4 sm:px-6 font-black text-[14px] sm:text-[15px] hover:brightness-[1.05] active:scale-[0.97] transition-all duration-300 relative z-10 shadow-[0_6px_20px_rgba(3,13,46,0.2)] hover:shadow-[0_8px_28px_rgba(3,13,46,0.35)] motion-press"
+            className="group flex h-12 sm:h-14 w-full items-center justify-center gap-2 rounded-[20px] bg-gradient-to-r from-[#030D2E] via-[#004E5A] to-[#00BFB7] text-white px-6 font-black text-[14.5px] sm:text-[15.5px] hover:brightness-[1.08] active:scale-[0.98] transition-all duration-300 relative z-10 shadow-[0_8px_30px_rgba(0,191,183,0.2)] hover:shadow-[0_12px_36px_rgba(0,191,183,0.35)] motion-press"
           >
-            <span className="text-[18px] leading-none group-hover:rotate-90 transition-transform duration-300 font-bold">+</span>
+            <span className="text-[20px] leading-none group-hover:rotate-90 transition-transform duration-300 font-bold">+</span>
             Tạo chuyến đi đầu tiên
           </button>
  
           {archivedTripsCount > 0 && (
             <button
               onClick={onOpenArchive}
-              className="mt-3.5 flex h-11 sm:h-13 w-full items-center justify-center gap-2 rounded-[18px] border-2 border-kat-primary/30 hover:border-kat-primary bg-white text-kat-dark px-4 sm:px-6 font-extrabold text-[14px] sm:text-[15px] active:scale-[0.97] hover:bg-slate-50 transition-all duration-300 relative z-10 motion-press"
+              className="mt-3.5 flex h-12 sm:h-14 w-full items-center justify-center gap-2 rounded-[20px] border-2 border-[#00BFB7]/25 hover:border-[#00BFB7] bg-white text-[#030D2E] px-6 font-extrabold text-[14px] sm:text-[15px] active:scale-[0.98] hover:bg-slate-50/80 transition-all duration-300 relative z-10 shadow-[0_4px_12px_rgba(3,13,46,0.02)] hover:shadow-[0_6px_16px_rgba(0,191,183,0.08)] motion-press"
             >
-              <HugeiconsIcon icon={SparklesIcon} size={16} className="text-kat-primary shrink-0" />
+              <HugeiconsIcon icon={SparklesIcon} size={16} className="text-[#00BFB7] shrink-0" />
               Xem kỷ niệm chuyến đi ({archivedTripsCount})
             </button>
           )}

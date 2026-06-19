@@ -309,17 +309,17 @@ function CalendarRangePicker({
       <div className="grid grid-cols-2 gap-2 mb-4">
         <button type="button" onClick={() => { onChangeTripType("dayTrip"); setPickingEnd(false); }}
           className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px]",
-            tripType === "dayTrip" ? "bg-kat-primary/10 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100")}
+            tripType === "dayTrip" ? "bg-[#00BFB7]/10 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100")}
         >
           <span className={classNames("text-[14px] font-bold", tripType === "dayTrip" ? "text-kat-primary" : "text-slate-700")}>Đi trong ngày</span>
-          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "dayTrip" ? "text-kat-primary/80" : "text-slate-400")}>Đi và về cùng ngày</span>
+          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "dayTrip" ? "text-[#00BFB7]/80" : "text-slate-400")}>Đi và về cùng ngày</span>
         </button>
         <button type="button" onClick={() => { onChangeTripType("multiDay"); setPickingEnd(false); }}
           className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px]",
-            tripType === "multiDay" ? "bg-kat-primary/10 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100")}
+            tripType === "multiDay" ? "bg-[#00BFB7]/10 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100")}
         >
           <span className={classNames("text-[14px] font-bold", tripType === "multiDay" ? "text-kat-primary" : "text-slate-700")}>Nhiều ngày</span>
-          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "multiDay" ? "text-kat-primary/80" : "text-slate-400")}>Có ngày đi và về</span>
+          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "multiDay" ? "text-[#00BFB7]/80" : "text-slate-400")}>Có ngày đi và về</span>
         </button>
       </div>
 
@@ -384,7 +384,7 @@ function CalendarRangePicker({
                 {/* Range bar background */}
                 {(inRange || isStartCap || isEndCap) && !isSingleDay && (
                   <div className={classNames(
-                    "absolute inset-y-0.5 bg-kat-primary/15",
+                    "absolute inset-y-0.5 bg-[#00BFB7]/15",
                     isStartCap ? "left-1/2 right-0" : isEndCap ? "left-0 right-1/2" : "left-0 right-0"
                   )} />
                 )}
@@ -399,9 +399,9 @@ function CalendarRangePicker({
                       : isSingleDay
                       ? "bg-kat-primary text-white font-bold shadow-sm"
                       : inRange
-                      ? "text-kat-primary font-semibold hover:bg-kat-primary/10"
+                      ? "text-kat-primary font-semibold hover:bg-[#00BFB7]/10"
                       : isToday
-                      ? "text-kat-primary font-bold ring-1 ring-kat-primary/50 hover:bg-kat-primary/10"
+                      ? "text-kat-primary font-bold ring-1 ring-[#00BFB7]/50 hover:bg-[#00BFB7]/10"
                       : "text-slate-700 hover:bg-slate-100"
                   )}
                 >

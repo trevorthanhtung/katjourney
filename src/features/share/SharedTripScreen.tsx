@@ -745,13 +745,13 @@ export default function SharedTripScreen({ token }: { token: string }) {
         
         {/* Hero Card */}
         <section 
-          className="relative rounded-[32px] p-6 text-white overflow-hidden shadow-xl border border-white/5"
+          className="relative rounded-[32px] p-6 text-white overflow-hidden shadow-xl border border-white/5 group hover:shadow-2xl hover:scale-[1.002] transition-all duration-500 ease-out motion-weather-bg"
           style={{ background: heroBg }}
         >
           {/* Subtle World Map Watermark */}
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
           
-          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="space-y-4">
               <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-md">
                 ● {status === "past" ? "Đã đi" : status === "active" ? "Đang diễn ra" : "Sắp diễn ra"}
@@ -760,67 +760,126 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 {trip.title}
               </h2>
               <div className="flex flex-wrap gap-2.5">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
-                  <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-white/70" />
-                  {trip.destination || "Chưa rõ điểm đến"}
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90 max-w-full">
+                  <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-white/70 shrink-0" />
+                  <span className="truncate">{trip.destination || "Chưa rõ điểm đến"}</span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
-                  <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-white/70" />
-                  {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90 max-w-full">
+                  <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-white/70 shrink-0" />
+                  <span className="truncate">{isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}</span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
-                  <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-white/70" />
-                  {durationText}
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90 max-w-full">
+                  <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-white/70 shrink-0" />
+                  <span className="truncate">{durationText}</span>
                 </span>
                 {trip.mediaLink && (
-                  <a href={trip.mediaLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/20 px-3 py-1 text-[12px] font-bold backdrop-blur-md border border-sky-400/30 shadow-inner text-sky-100 hover:bg-sky-500/30 transition-colors">
-                    <HugeiconsIcon icon={Link02Icon} className="h-3 w-3" />
-                    Kho Ảnh Gốc
+                  <a href={trip.mediaLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/20 px-3 py-1 text-[12px] font-bold backdrop-blur-md border border-sky-400/30 shadow-inner text-sky-100 hover:bg-sky-500/30 transition-colors max-w-full">
+                    <HugeiconsIcon icon={Link02Icon} className="h-3 w-3 shrink-0" />
+                    <span className="truncate">Kho Ảnh Gốc</span>
                   </a>
                 )}
               </div>
             </div>
             
-            <div className="flex flex-col items-center md:items-end gap-3 shrink-0 w-full sm:w-[290px] md:w-[290px] justify-center md:justify-end">
-              {/* Timing box */}
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white/10 px-6 py-4 border border-white/20 w-full text-center shrink-0 min-h-[72px]">
-                <p className="text-[11px] font-semibold text-white/60">
+            <div className="flex flex-col sm:flex-row lg:flex-col items-stretch gap-3 shrink-0 w-full lg:w-[250px]">
+              {/* Timing box with Progress Bar */}
+              <div className="flex flex-col items-stretch justify-center rounded-2xl bg-white/10 px-4 py-3 border border-white/20 flex-1 lg:flex-none lg:w-full text-center shrink-0 min-h-[64px]">
+                <p className="text-[10px] font-semibold text-white/60 text-center">
                   {status === "past" ? "Trạng thái" : "Hành trình"}
                 </p>
-                <p className="mt-1.5 text-[22px] font-black text-white drop-shadow-sm tracking-tight leading-none">
+                <p className="mt-1 text-[17px] sm:text-[19px] font-black text-white drop-shadow-sm tracking-tight leading-none text-center">
                   {timing.label}
                 </p>
+                {status === "active" && (() => {
+                  let progressPercent = 0;
+                  try {
+                    const start = new Date(trip.startDate).getTime();
+                    const end = new Date(trip.endDate).getTime();
+                    const now = new Date().getTime();
+                    if (end > start) {
+                      progressPercent = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
+                    }
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  return (
+                    <div className="mt-2.5 w-full space-y-1 text-left z-10">
+                      <div className="flex items-center justify-between text-[8px] font-bold text-white/70">
+                        <span>Khởi hành</span>
+                        <span>Đang đi</span>
+                        <span>Kết thúc</span>
+                      </div>
+                      <div className="relative h-1.5 w-full rounded-full bg-white/15 overflow-hidden border border-white/10">
+                        <div 
+                          className="absolute top-0 bottom-0 left-0 rounded-full bg-gradient-to-r from-teal-300 to-emerald-300 shadow-[0_0_6px_rgba(110,231,183,0.4)] transition-all duration-500"
+                          style={{ width: `${progressPercent}%` }}
+                        />
+                        <div 
+                          className="absolute top-1/2 -translate-y-1/2 airplane-flight transition-all duration-500"
+                          style={{ left: `calc(${progressPercent}% - 6px)` }}
+                        >
+                          <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 fill-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)] -rotate-45">
+                            <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
+                          </svg>
+                        </div>
+                      </div>
+                      <p className="text-[8.5px] text-right text-white/50 font-semibold leading-none">
+                        Đã hoàn thành {Math.round(progressPercent)}%
+                      </p>
+                    </div>
+                  );
+                })()}
+                {status === "upcoming" && (() => {
+                  let diffDays = 0;
+                  try {
+                    const start = new Date(trip.startDate).getTime();
+                    const now = new Date().getTime();
+                    diffDays = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
+                  } catch {}
+                  const maxCountdown = 30; // Scale relative to 30 days
+                  const progressPercent = Math.max(10, Math.min(100, (1 - (diffDays / maxCountdown)) * 100));
+                  return (
+                    <div className="mt-2 w-full space-y-1 text-left z-10">
+                      <div className="relative h-1 w-full rounded-full bg-white/15 overflow-hidden">
+                        <div 
+                          className="h-full rounded-full bg-amber-400/80 transition-all duration-500" 
+                          style={{ width: `${progressPercent}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Weather Widget */}
               {weatherLoading ? (
-                 <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-3xl p-4 border border-white/20 animate-pulse w-full">
-                   <div className="w-10 h-10 bg-white/20 rounded-xl"></div>
+                 <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-3xl p-3 border border-white/20 animate-pulse flex-1 lg:flex-none lg:w-full">
+                   <div className="w-9 h-9 bg-white/20 rounded-xl shrink-0"></div>
                    <div className="flex flex-col gap-2">
-                     <div className="w-16 h-3 bg-white/20 rounded-full"></div>
+                     <div className="w-14 h-3 bg-white/20 rounded-full"></div>
                      <div className="w-10 h-3 bg-white/20 rounded-full"></div>
                    </div>
                  </div>
               ) : (!trip.destination?.trim() && !trip.latitude) ? (
-                 <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-3xl p-4 border border-white/10 w-full">
-                   <HugeiconsIcon icon={Location01Icon} className="w-6 h-6 text-white/40" />
-                   <div className="flex flex-col gap-0.5">
-                     <span className="text-white/80 font-bold text-[12px]">Chưa có điểm đến</span>
+                 <div className="flex items-center gap-2.5 bg-white/5 backdrop-blur-md rounded-3xl p-3 border border-white/10 flex-1 lg:flex-none lg:w-full">
+                   <HugeiconsIcon icon={Location01Icon} className="w-5 h-5 text-white/40 shrink-0" />
+                   <div className="flex flex-col gap-0.5 min-w-0">
+                     <span className="text-white/80 font-bold text-[11px]">Chưa có điểm đến</span>
                      <span className="text-white/50 text-[10px]">Thêm điểm đến để xem thời tiết</span>
                    </div>
                  </div>
               ) : (!trip.latitude || !trip.longitude) ? null : weatherError || !forecast ? (
-                 <div className="flex items-center gap-3 bg-red-500/20 backdrop-blur-md rounded-3xl p-4 border border-red-500/30 w-full">
-                   <HugeiconsIcon icon={CloudRainWindIcon} className="w-6 h-6 text-white/60" />
+                 <div className="flex items-center gap-2.5 bg-red-500/20 backdrop-blur-md rounded-3xl p-3 border border-red-500/30 flex-1 lg:flex-none lg:w-full">
+                   <HugeiconsIcon icon={CloudRainWindIcon} className="w-5 h-5 text-white/60 shrink-0" />
                    <div className="flex flex-col gap-1">
-                     <span className="text-white font-bold text-[12px]">Không thể tải thời tiết</span>
+                     <span className="text-white font-bold text-[11px]">Không thể tải thời tiết</span>
                      <span className="text-white/70 text-[10px]">Lỗi kết nối</span>
                    </div>
                  </div>
               ) : (
                 <div
                   onClick={() => setWeatherModalOpen(true)}
-                  className="flex flex-col items-stretch bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-4 gap-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 w-full text-left cursor-pointer select-none"
+                  className="flex flex-col items-stretch justify-center bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-3 gap-2 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
                 >
                   {/* Weather Info Block */}
                   <div className="flex items-center justify-between gap-2 w-full">
@@ -839,10 +898,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     </div>
                     <div className="w-px h-10 bg-white/30 mx-0.5 shrink-0" />
                     <div className="flex flex-col text-right whitespace-nowrap">
-                      <span className="text-[11.5px] font-extrabold text-white/95">
+                      <span className="text-[11px] min-[360px]:text-[11.5px] font-extrabold text-white/95">
                         Cao: {Math.round(forecast.temperature_2m_max[0])}°
                       </span>
-                      <span className="text-[11.5px] font-bold text-white/70">
+                      <span className="text-[11px] min-[360px]:text-[11.5px] font-bold text-white/70">
                         Thấp: {Math.round(forecast.temperature_2m_min[0])}°
                       </span>
                     </div>
@@ -893,9 +952,20 @@ export default function SharedTripScreen({ token }: { token: string }) {
               <div className="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-600 border border-amber-500/20 flex items-center justify-center mb-3">
                 <HugeiconsIcon icon={Wallet01Icon} className="h-5 w-5" />
               </div>
-              <p className="text-[14px] min-[390px]:text-[16px] sm:text-[18px] font-black text-kat-dark leading-none mb-1 px-0.5 break-all">
-                {formatMoney(totalExpense)}
-              </p>
+              {(() => {
+                const formatted = formatMoney(totalExpense);
+                let sizeClass = "text-[14px] min-[390px]:text-[16px] sm:text-[18px]";
+                if (formatted.length >= 13) {
+                  sizeClass = "text-[10px] min-[360px]:text-[11.5px] min-[390px]:text-[13.5px] sm:text-[18px]";
+                } else if (formatted.length >= 10) {
+                  sizeClass = "text-[11.5px] min-[360px]:text-[13px] min-[390px]:text-[15px] sm:text-[18px]";
+                }
+                return (
+                  <p className={`${sizeClass} font-black text-kat-dark leading-none mb-1 px-0.5 whitespace-nowrap truncate w-full`} title={formatted}>
+                    {formatted}
+                  </p>
+                );
+              })()}
               <p className="text-[11px] font-semibold text-slate-400 mt-1">Chi phí</p>
             </div>
           )}
@@ -1462,12 +1532,12 @@ export default function SharedTripScreen({ token }: { token: string }) {
       />
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] sm:max-w-[560px] md:max-w-[640px] -translate-x-1/2 rounded-[26px] bg-white/55 supports-[backdrop-filter]:bg-white/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/45 shadow-[0_10px_36px_rgba(3,13,46,0.12)] ring-1 ring-inset ring-white/30 before:pointer-events-none before:absolute before:inset-x-5 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/80 before:to-transparent lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom))" }}>
+      <nav className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}>
         <div ref={containerRef} className="relative flex h-[56px] min-[390px]:h-[60px] items-center justify-between px-2">
           {/* Active Indicator Slide Pill */}
           {indicatorStyle.width > 0 && (
             <div 
-              className="absolute top-[6px] bottom-[6px] rounded-full bg-white transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45"
+              className="absolute top-[6px] bottom-[6px] rounded-full bg-white transition-[left,width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45"
               style={{
                 left: `${indicatorStyle.left}px`,
                 width: `${indicatorStyle.width}px`
@@ -1483,17 +1553,21 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 ref={(el) => { buttonsRef.current[tab.id] = el; }}
                 onClick={() => setActiveTab(tab.id)}
                 className={classNames(
-                  "relative flex items-center justify-center rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] overflow-hidden motion-press z-10",
+                  "relative flex items-center justify-center rounded-full transition-[color,background-color,width,padding,gap,transform] duration-200 ease-out overflow-hidden motion-press z-10",
                   isActive 
-                    ? "text-kat-dark px-3 min-[390px]:px-5 h-11 min-[390px]:h-12 gap-1.5 min-[390px]:gap-2 font-extrabold" 
-                    : "text-kat-dark/50 hover:text-kat-dark/75 w-11 min-[390px]:w-12 h-11 min-[390px]:h-12"
+                    ? "text-kat-dark px-2.5 min-[340px]:px-3 min-[390px]:px-5 h-[40px] min-[340px]:h-[44px] min-[390px]:h-[48px] gap-1 min-[340px]:gap-1.5 min-[390px]:gap-2 font-extrabold" 
+                    : "text-kat-dark opacity-50 hover:opacity-75 w-10 min-[340px]:w-11 min-[390px]:w-12 h-10 min-[340px]:h-11 min-[390px]:h-12"
                 )}
               >
                 <HugeiconsIcon 
                   icon={IconComponent} 
-                  className={classNames("h-[19px] w-[19px] min-[390px]:h-[22px] min-[390px]:w-[22px] shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)]", isActive ? "scale-105" : "scale-100")} 
+                  className={classNames(
+                    "shrink-0 transition-transform duration-200 ease-out", 
+                    isActive ? "scale-105" : "scale-100",
+                    "h-[18px] w-[18px] min-[340px]:h-[19px] min-[340px]:w-[19px] min-[390px]:h-[22px] min-[390px]:w-[22px]"
+                  )} 
                 />
-                {isActive && <span className="text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap">{tab.label}</span>}
+                {isActive && <span className="text-[10px] min-[340px]:text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap">{tab.label}</span>}
               </button>
             );
           })}

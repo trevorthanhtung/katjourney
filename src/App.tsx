@@ -8,7 +8,7 @@ import {
   Notification01Icon,
   NotificationBubbleIcon,
   Home01Icon,
-  Compass01Icon,
+  CompassIcon,
   Calendar01Icon,
   WalletCardsIcon,
   CheckmarkCircle02Icon,
@@ -82,15 +82,19 @@ const NavButton = React.forwardRef<
       className={classNames(
         "relative flex items-center justify-center rounded-full transition-[color,background-color,width,padding,gap,transform] duration-200 ease-out overflow-hidden motion-press z-10",
         isActive 
-          ? "text-kat-dark px-3 min-[390px]:px-5 h-[44px] min-[390px]:h-[48px] gap-1.5 min-[390px]:gap-2 font-extrabold" 
-          : "text-kat-dark opacity-50 hover:opacity-75 w-11 min-[390px]:w-12 h-11 min-[390px]:h-12"
+          ? "text-kat-dark px-2.5 min-[340px]:px-3 min-[390px]:px-5 h-[40px] min-[340px]:h-[44px] min-[390px]:h-[48px] gap-1 min-[340px]:gap-1.5 min-[390px]:gap-2 font-extrabold" 
+          : "text-kat-dark opacity-50 hover:opacity-75 w-10 min-[340px]:w-11 min-[390px]:w-12 h-10 min-[340px]:h-11 min-[390px]:h-12"
       )}
     >
       <HugeiconsIcon 
         icon={Icon} 
-        className={classNames("h-[19px] w-[19px] min-[390px]:h-[22px] min-[390px]:w-[22px] shrink-0 transition-transform duration-200 ease-out", isActive ? "scale-105" : "scale-100")} 
+        className={classNames(
+          "shrink-0 transition-transform duration-200 ease-out", 
+          isActive ? "scale-105" : "scale-100",
+          "h-[18px] w-[18px] min-[340px]:h-[19px] min-[340px]:w-[19px] min-[390px]:h-[22px] min-[390px]:w-[22px]"
+        )} 
       />
-      {isActive && <span className="text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap">{label}</span>}
+      {isActive && <span className="text-[10px] min-[340px]:text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap">{label}</span>}
     </button>
   );
 }));
@@ -1183,7 +1187,7 @@ function App() {
               ref={(el) => { buttonsRef.current["home"] = el; }}
               isActive={activeTab === "home"}
               onClick={() => setActiveTab("home")}
-              icon={Compass01Icon}
+              icon={CompassIcon}
               label="Tổng quan"
             />
             <NavButton

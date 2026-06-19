@@ -95,7 +95,7 @@ export function HomeScreen({
     events[0];
 
   const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
-  let durationText = "Chuyến đi trong ngày";
+  let durationText = "Trong ngày";
   if (!isDayTrip) {
     try {
       const start = new Date(trip.startDate);
@@ -223,7 +223,7 @@ export function HomeScreen({
           </>
         )}
         
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-5">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-5">
           <div className="space-y-3 min-w-0 flex-1">
             <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-md">
               ● {status === "past" ? "Đã kết thúc" : status === "active" ? "Đang diễn ra" : "Sắp diễn ra"}
@@ -253,9 +253,9 @@ export function HomeScreen({
             </div>
           </div>
 
-          <div className="flex flex-row sm:flex-col items-stretch sm:items-end gap-3 shrink-0 w-full sm:w-[220px] md:w-[250px]">
+          <div className="flex flex-col sm:flex-row lg:flex-col items-stretch gap-3 shrink-0 w-full lg:w-[250px]">
             {/* Timing box with Progress Bar */}
-            <div className="flex flex-col items-stretch justify-center rounded-2xl bg-white/10 px-4 py-3 border border-white/20 flex-1 sm:flex-none sm:w-full text-center shrink-0 min-h-[64px]">
+            <div className="flex flex-col items-stretch justify-center rounded-2xl bg-white/10 px-4 py-3 border border-white/20 flex-1 lg:flex-none lg:w-full text-center shrink-0 min-h-[64px]">
               <p className="text-[10px] font-semibold text-white/60 text-center">
                 {status === "past" ? "Trạng thái" : "Hành trình"}
               </p>
@@ -325,7 +325,7 @@ export function HomeScreen({
 
             {/* Weather Widget */}
             {weatherLoading ? (
-               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-3xl p-3 border border-white/20 animate-pulse flex-1 sm:flex-none sm:w-full">
+               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-3xl p-3 border border-white/20 animate-pulse flex-1 lg:flex-none lg:w-full">
                  <div className="w-9 h-9 bg-white/20 rounded-xl shrink-0"></div>
                  <div className="flex flex-col gap-2">
                    <div className="w-14 h-3 bg-white/20 rounded-full"></div>
@@ -333,7 +333,7 @@ export function HomeScreen({
                  </div>
                </div>
             ) : (!trip.location?.trim() && !trip.latitude) ? (
-               <div className="flex items-center gap-2.5 bg-white/5 backdrop-blur-md rounded-3xl p-3 border border-white/10 flex-1 sm:flex-none sm:w-full">
+               <div className="flex items-center gap-2.5 bg-white/5 backdrop-blur-md rounded-3xl p-3 border border-white/10 flex-1 lg:flex-none lg:w-full">
                  <HugeiconsIcon icon={Location01Icon} className="w-5 h-5 text-white/40 shrink-0" />
                  <div className="flex flex-col gap-0.5 min-w-0">
                    <span className="text-white/80 font-bold text-[11px]">Chưa có điểm đến</span>
@@ -341,7 +341,7 @@ export function HomeScreen({
                  </div>
                </div>
             ) : (!trip.latitude || !trip.longitude) ? null : weatherError || !forecast ? (
-               <div className="flex items-center gap-2.5 bg-red-500/20 backdrop-blur-md rounded-3xl p-3 border border-red-500/30 flex-1 sm:flex-none sm:w-full">
+               <div className="flex items-center gap-2.5 bg-red-500/20 backdrop-blur-md rounded-3xl p-3 border border-red-500/30 flex-1 lg:flex-none lg:w-full">
                  <HugeiconsIcon icon={CloudRainWindIcon} className="w-5 h-5 text-white/60 shrink-0" />
                  <div className="flex flex-col gap-1">
                    <span className="text-white font-bold text-[11px]">Không thể tải thời tiết</span>
@@ -351,7 +351,7 @@ export function HomeScreen({
             ) : (
               <div
                 onClick={() => setWeatherModalOpen(true)}
-                className="flex flex-col items-stretch bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-3 gap-2 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 sm:flex-none sm:w-full text-left cursor-pointer select-none"
+                className="flex flex-col items-stretch justify-center bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-3 gap-2 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
               >
                 {/* Weather Info Block */}
                 <div className="flex items-center justify-between gap-2 w-full">
@@ -403,7 +403,7 @@ export function HomeScreen({
   // 3. Layout for completed trips
   const renderPastLayout = () => {
     return (
-      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
+      <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-start space-y-4 lg:space-y-0">
         {/* Left Column: Nhìn lại chuyến đi */}
         <section className="space-y-4">
           <h3 className="text-[17px] font-extrabold text-kat-dark px-1 motion-title-enter">Nhìn lại chuyến đi</h3>
@@ -561,9 +561,9 @@ export function HomeScreen({
     const reminders = getTripReminders({ trip, members, events, expenses, checklist, travelDocuments });
 
     return (
-      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
+      <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-start space-y-4 lg:space-y-0">
         {/* Left Column: Hoạt động tiếp theo & Nhắc việc trước chuyến đi */}
-        <div className="space-y-4 md:space-y-6">
+        <div className="space-y-4 lg:space-y-6">
           {/* Hoạt động tiếp theo */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Hoạt động tiếp theo</h3>
@@ -788,9 +788,9 @@ export function HomeScreen({
     const todayBackupPlans = backupPlans.filter(p => p.date === today || (p.activityId && todayEvents.some(e => e.id === p.activityId)));
 
     return (
-      <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-8 md:items-start space-y-4 md:space-y-0">
+      <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-start space-y-4 lg:space-y-0">
         {/* Left Column: Hôm nay focus & Giấy tờ quan trọng */}
-        <div className="space-y-4 md:space-y-6">
+        <div className="space-y-4 lg:space-y-6">
           {/* Lịch trình hôm nay */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Lịch trình hôm nay</h3>

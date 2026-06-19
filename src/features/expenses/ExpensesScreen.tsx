@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Add01Icon,
@@ -997,7 +997,7 @@ export function ExpensesScreen({
         {!isEmpty && (
           <>
             {/* Breakdown Grid */}
-            <section className="grid gap-6 md:grid-cols-2">
+            <section className="grid gap-6 lg:grid-cols-2">
               <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-5">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
@@ -1037,7 +1037,7 @@ export function ExpensesScreen({
             </span>
             <h3 className="text-lg font-extrabold text-kat-dark">Danh sách khoản chi</h3>
           </div>
-          <div className={isEmpty ? "" : "grid gap-4 md:grid-cols-2"}>
+          <div className={isEmpty ? "" : "grid gap-4 lg:grid-cols-2"}>
             {isEmpty ? (
               <div className="rounded-[24px] bg-kat-surface p-8 border border-kat-border/60 shadow-soft flex flex-col items-center text-center animate-fadeIn max-w-md mx-auto">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5">

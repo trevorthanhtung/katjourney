@@ -628,7 +628,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
         </div>
       ) : (
         /* Checklist grouped by Categories (Grid on desktop, List on mobile) */
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
           {/* Column 1 */}
           <div className="space-y-6">
             {activeCategories

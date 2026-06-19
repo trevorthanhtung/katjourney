@@ -147,9 +147,9 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
               const maxTemp = Math.round(forecast.temperature_2m_max[idx]);
               const minTemp = Math.round(forecast.temperature_2m_min[idx]);
               
-              // Calculate bar position and width relative to absolute min/max
-              const leftPercent = tempRange === 0 ? 0 : ((minTemp - absMin) / tempRange) * 100;
-              const widthPercent = tempRange === 0 ? 100 : ((maxTemp - minTemp) / tempRange) * 100;
+              // We render the bar locally (always 100% width) for each day to avoid confusing blank/gray spaces on short forecasts
+              const leftPercent = 0;
+              const widthPercent = 100;
               
               // Current temperature dot position for "today" (idx === 0, non-future only)
               let currentTempDotPercent: number | null = null;
@@ -157,9 +157,9 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
                 const clampedTemp = Math.max(minTemp, Math.min(maxTemp, currentTemp));
                 const rangeForDay = maxTemp - minTemp;
                 if (rangeForDay === 0) {
-                  currentTempDotPercent = leftPercent;
+                  currentTempDotPercent = 50; // Center if no range
                 } else {
-                  currentTempDotPercent = leftPercent + ((clampedTemp - minTemp) / rangeForDay) * widthPercent;
+                  currentTempDotPercent = ((clampedTemp - minTemp) / rangeForDay) * 100;
                 }
               }
               
@@ -178,10 +178,10 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
                   </div>
                   
                   <div className="flex items-center gap-3 flex-1 justify-end">
-                    <span className="font-semibold text-slate-400 text-[12.5px] w-6 text-right">{minTemp}°</span>
+                    <span className="font-semibold text-slate-400 text-[12.5px] w-8 text-right shrink-0">{minTemp}°</span>
                     
                     {/* iOS Style Temperature Bar with current temp dot */}
-                    <div className="h-1.5 w-16 sm:w-20 bg-slate-100 rounded-full overflow-visible relative">
+                    <div className="h-1.5 w-16 sm:w-20 bg-slate-100 rounded-full overflow-visible relative shrink-0">
                       <div 
                         className="absolute h-full bg-gradient-to-r from-sky-400 via-emerald-400 to-amber-400 rounded-full opacity-90 shadow-sm" 
                         style={{ left: `${leftPercent}%`, width: `${widthPercent}%` }}
@@ -196,7 +196,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
                       )}
                     </div>
                     
-                    <span className="font-black text-kat-dark text-[13px] w-6 text-right">{maxTemp}°</span>
+                    <span className="font-black text-kat-dark text-[13px] w-8 text-right shrink-0">{maxTemp}°</span>
                   </div>
                 </button>
               );

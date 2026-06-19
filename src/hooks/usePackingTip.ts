@@ -26,7 +26,22 @@ export function usePackingTip(
   forecast: WeatherForecast | null | undefined,
   myForecast: WeatherForecast | null | undefined
 ): PackingTip | null {
-  if (!forecast || !myForecast) return null;
+  if (!forecast) return null;
+
+  const destCode =
+    forecast.current?.weathercode ?? forecast.weathercode?.[0] ?? 0;
+
+  // Rain tip should show regardless of myForecast or myCode
+  if (isRainy(destCode)) {
+    return {
+      emoji: "🌧️",
+      message: `Điểm đến đang có mưa, đừng quên bỏ ô vào vali!`,
+      color: "bg-sky-500/15 border-sky-400/30 text-white",
+    };
+  }
+
+  // If myForecast is not available, we can't compare temperature differences
+  if (!myForecast) return null;
 
   const destTemp =
     forecast.current?.temperature ??
@@ -39,19 +54,8 @@ export function usePackingTip(
       (myForecast.temperature_2m_min?.[0] ?? 0)) /
       2;
 
-  const destCode =
-    forecast.current?.weathercode ?? forecast.weathercode?.[0] ?? 0;
-  const myCode =
-    myForecast.current?.weathercode ?? myForecast.weathercode?.[0] ?? 0;
-
   const diff = destTemp - myTemp;
 
-  if (isRainy(destCode) && !isRainy(myCode))
-    return {
-      emoji: "🌧️",
-      message: `Điểm đến đang có mưa, đừng quên bỏ ô vào vali!`,
-      color: "bg-sky-500/15 border-sky-400/30 text-white",
-    };
   if (diff <= -7)
     return {
       emoji: "🧥",
