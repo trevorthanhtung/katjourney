@@ -2174,7 +2174,12 @@ export function MoreScreen({
 
         {/* Hero chuyến đi compact hơn */}
         <section className="relative overflow-hidden rounded-[28px] bg-white border border-slate-200 p-5 md:p-6 text-kat-text shadow-soft">
-          <HugeiconsIcon icon={CompassIcon} className="absolute -right-6 -bottom-6 w-32 h-32 text-kat-primary opacity-[0.04] rotate-12 pointer-events-none" />
+          <div 
+            className="absolute -right-6 -bottom-6 w-32 h-32 rotate-12 pointer-events-none z-0 flex items-center justify-center text-kat-primary"
+            style={{ opacity: 0.04, color: "var(--kat-primary)" }}
+          >
+            <HugeiconsIcon icon={CompassIcon} size={128} />
+          </div>
           
           <div className="relative z-10 flex flex-col gap-4">
             {/* Header info */}
