@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNotification } from "../hooks/useNotification";
 import { showToast } from "./ui/ToastManager";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -1077,7 +1077,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   </div>
 
                   <div className="space-y-2 max-w-sm">
-                    <h3 className="text-[20px] font-black text-kat-dark">Chào mừng đến với KAT Journey</h3>
+                    <h3 className="text-[20px] font-black text-kat-dark text-balance">Chào mừng đến với KAT Journey</h3>
                     <p className="text-[13.5px] font-semibold leading-relaxed text-slate-500">
                       Khách có thể sử dụng ứng dụng bình thường trên thiết bị hiện tại. Đăng nhập Google sẽ hỗ trợ đồng bộ dữ liệu trong các phiên bản tương lai.
                     </p>
@@ -1266,7 +1266,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               <HugeiconsIcon icon={LockIcon} className="h-6 w-6" />
             </div>
 
-            <h3 className="text-[18px] font-black text-kat-dark">Cam kết bảo mật dữ liệu</h3>
+            <h3 className="text-[18px] font-black text-kat-dark text-balance">Cam kết bảo mật dữ liệu</h3>
 
             <div className="space-y-3.5 text-[14px] font-semibold text-slate-600 leading-relaxed">
               <p>

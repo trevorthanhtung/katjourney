@@ -1172,7 +1172,7 @@ function App() {
             {/* Active Indicator Slide Pill */}
             {indicatorStyle.width > 0 && (
               <div 
-                className="absolute top-[6px] bottom-[6px] rounded-full bg-white transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45"
+                className="absolute top-[6px] bottom-[6px] rounded-full bg-white transition-[left,width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45"
                 style={{
                   left: `${indicatorStyle.left}px`,
                   width: `${indicatorStyle.width}px`

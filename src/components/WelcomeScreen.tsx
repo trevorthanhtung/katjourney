@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   CompassIcon,
@@ -206,7 +206,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
 
         {/* Cinematic Content Text */}
         <div className="absolute bottom-12 left-12 pr-12 z-10 space-y-3">
-          <h2 className="text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-none mb-2">
+          <h2 className="text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-none mb-2 text-balance">
             Khám phá thế giới.<br />Lưu giữ khoảnh khắc.
           </h2>
           <p className="text-lg text-gray-300 font-semibold leading-relaxed max-w-lg">
@@ -246,7 +246,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                       </div>
                     </div>
 
-                    <h3 className="text-[18px] font-black tracking-tight text-kat-dark leading-tight mb-1.5">
+                    <h3 className="text-[18px] font-black tracking-tight text-kat-dark leading-tight mb-1.5 text-balance">
                       {slide.title}
                     </h3>
                     <p className="text-[12.5px] font-semibold text-slate-500 leading-relaxed max-w-[280px] mx-auto">
