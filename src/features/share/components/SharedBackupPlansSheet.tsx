@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -18,6 +18,8 @@ import { BackupPlan, BackupPlanType } from "../../../db";
 import { DeleteConfirmModal } from "../../../components/ui";
 import { getEmbedMapUrl } from "../../../utils/mapUtils";
 import { useModalHistory } from "../../../hooks/useModalHistory";
+import { useBodyScrollLock } from "../../../hooks/useBodyScrollLock";
+
 import { submitChangeRequest } from "../../../services/sharedTripRequestService";
 import { showToast } from "../../../components/ui/ToastManager";
 
@@ -68,6 +70,7 @@ export function SharedBackupPlansSheet({
   mode,
   guestName
 }: SharedBackupPlansSheetProps) {
+  useBodyScrollLock(isOpen);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<BackupPlan | null>(null);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -252,18 +255,7 @@ export function SharedBackupPlansSheet({
     setPlanToDelete(null);
   }
 
-  React.useEffect(() => {
-    if (isOpen) {
-      const originalBodyOverflow = document.body.style.overflow;
-      const originalHtmlOverflow = document.documentElement.style.overflow;
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = originalBodyOverflow;
-        document.documentElement.style.overflow = originalHtmlOverflow;
-      };
-    }
-  }, [isOpen]);
+
 
   if (!isOpen) return null;
 

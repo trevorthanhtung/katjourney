@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { 
@@ -13,6 +13,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import { classNames } from "../../utils/helpers";
 import { useModalHistory } from "../../hooks/useModalHistory";
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
+
 
 export { classNames };
 
@@ -648,8 +650,6 @@ export function ProgressRing({ value, size = 120, strokeWidth = 10, children }: 
   );
 }
 
-let _bottomSheetOpenCount = 0;
-
 export function BottomSheet({ 
   isOpen, 
   onClose, 
@@ -667,23 +667,7 @@ export function BottomSheet({
   footer?: React.ReactNode;
   headerAction?: React.ReactNode;
 }) {
-  React.useEffect(() => {
-    if (isOpen) {
-      _bottomSheetOpenCount++;
-      if (_bottomSheetOpenCount === 1) {
-        document.body.style.overflow = "hidden";
-        document.documentElement.style.overflow = "hidden";
-      }
-      
-      return () => {
-        _bottomSheetOpenCount = Math.max(0, _bottomSheetOpenCount - 1);
-        if (_bottomSheetOpenCount === 0) {
-          document.body.style.overflow = "";
-          document.documentElement.style.overflow = "";
-        }
-      };
-    }
-  }, [isOpen]);
+  useBodyScrollLock(isOpen);
 
   if (!isOpen) return null;
 

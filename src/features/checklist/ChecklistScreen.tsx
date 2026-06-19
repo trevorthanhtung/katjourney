@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -30,6 +30,8 @@ import { getChecklistStats } from "../../utils/helpers";
 import { useLiveQuery } from "dexie-react-hooks";
 import { DeleteConfirmModal, Select } from "../../components/ui";
 import { useModalHistory } from "../../hooks/useModalHistory";
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
+
 
 const CATEGORIES = [
   "Giấy tờ",
@@ -238,6 +240,8 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [itemToDelete, setItemToDelete] = useState<ChecklistItem | null>(null);
+
+  useBodyScrollLock(isFormOpen);
 
   useModalHistory(isFormOpen, () => {
     setIsFormOpen(false);

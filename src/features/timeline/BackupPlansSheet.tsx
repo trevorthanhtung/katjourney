@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Cancel01Icon, Add01Icon, PencilEdit01Icon, Delete01Icon, Location01Icon, DollarSignIcon, AlignLeftIcon, Route01Icon, HelpCircleIcon, ChevronRightIcon, MapsIcon } from "@hugeicons/core-free-icons";
@@ -7,6 +7,8 @@ import { db, BackupPlan, BackupPlanType } from "../../db";
 import { DeleteConfirmModal } from "../../components/ui";
 import { getEmbedMapUrl } from "../../utils/mapUtils";
 import { useModalHistory } from "../../hooks/useModalHistory";
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
+
 
 interface BackupPlansSheetProps {
   tripId: number;
@@ -38,6 +40,7 @@ const typeColors: Record<BackupPlanType, string> = {
 };
 
 export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, onShowToast }: BackupPlansSheetProps) {
+  useBodyScrollLock(isOpen);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<BackupPlan | null>(null);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -150,18 +153,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
     setPlanToDelete(null);
   }
 
-  React.useEffect(() => {
-    if (isOpen) {
-      const originalBodyOverflow = document.body.style.overflow;
-      const originalHtmlOverflow = document.documentElement.style.overflow;
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = originalBodyOverflow;
-        document.documentElement.style.overflow = originalHtmlOverflow;
-      };
-    }
-  }, [isOpen]);
+
 
   if (!isOpen) return null;
 

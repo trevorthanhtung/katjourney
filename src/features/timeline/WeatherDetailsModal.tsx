@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import { WeatherForecast, getWeatherIcon, getWeatherText, getWeatherGradient } from "../../services/weatherService";
@@ -13,6 +13,8 @@ import {
   HumidityIcon,
   WindIcon
 } from "../../components/WeatherIcons";
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
+
 
 interface WeatherDetailsModalProps {
   isOpen: boolean;
@@ -24,6 +26,7 @@ interface WeatherDetailsModalProps {
 }
 
 export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, currentLocationForecast, currentLocationName }: WeatherDetailsModalProps) {
+  useBodyScrollLock(isOpen);
   const [shouldRender, setShouldRender] = useState(isOpen);
   const [animate, setAnimate] = useState(false);
   const [errorState, setErrorState] = useState<string | null>(null);
