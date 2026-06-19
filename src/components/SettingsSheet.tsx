@@ -1316,7 +1316,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               <p className="text-[13px] font-semibold text-slate-400">
                 thực hiện bởi{" "}
                 <a
-                  href="https://www.youtube.com/@kat.thanhtungg"
+                  href="https://tranthanhtung-trevor.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:underline text-slate-500 font-bold"

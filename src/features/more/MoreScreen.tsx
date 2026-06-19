@@ -2143,7 +2143,7 @@ export function MoreScreen({
           <p className="text-[13.5px] font-bold text-slate-400">
             thực hiện bởi{" "}
             <a
-              href="https://www.youtube.com/@kat.thanhtungg"
+              href="https://tranthanhtung-trevor.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:underline text-slate-500"
@@ -2379,7 +2379,7 @@ export function MoreScreen({
           <p className="text-[13.5px] font-bold text-slate-400">
             thực hiện bởi{" "}
             <a
-              href="https://www.youtube.com/@kat.thanhtungg"
+              href="https://tranthanhtung-trevor.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:underline text-slate-500"
