@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Search01Icon,
@@ -122,7 +122,7 @@ export function TripSearchModal({
             ref={inputRef}
             type="text"
             className="flex-1 text-[16px] font-bold text-slate-800 placeholder-slate-400 outline-none border-none bg-transparent"
-            placeholder="Tìm lịch trình, chi tiêu, hành lý, bản tin..."
+            placeholder="Tìm kiếm trong chuyến đi..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />

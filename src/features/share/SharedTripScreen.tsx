@@ -705,16 +705,16 @@ export default function SharedTripScreen({ token }: { token: string }) {
       )}
 
       {/* Header */}
-      <header className={`sticky top-0 z-40 bg-white/55 supports-[backdrop-filter]:bg-white/45 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 px-2.5 min-[360px]:px-4 pb-3 pt-3 shadow-[0_4px_24px_rgba(3,13,46,0.06)] transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`} style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
-        <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
-          <div className="flex items-center gap-1.5 min-[360px]:gap-2 select-none shrink-0">
-            <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden md:block h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
-            <span className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-kat-dark whitespace-nowrap shrink-0">KAT Journey</span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-1.5 min-[360px]:px-2 py-0.5 text-[10px] font-bold text-indigo-600 whitespace-nowrap shrink-0">
+      <header className={`sticky top-0 z-40 bg-white/55 supports-[backdrop-filter]:bg-white/45 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 px-2.5 min-[390px]:px-4 pb-3 pt-3 shadow-[0_4px_24px_rgba(3,13,46,0.06)] transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`} style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
+        <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
+          <div className="flex items-center gap-1.5 min-[390px]:gap-2 select-none shrink-0">
+            <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden md:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
+            <span className="text-[17px] min-[390px]:text-[20px] font-extrabold tracking-tight text-kat-dark whitespace-nowrap shrink-0">KAT Journey</span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-1.5 min-[390px]:px-2 py-0.5 text-[10px] font-bold text-indigo-600 whitespace-nowrap shrink-0">
               <HugeiconsIcon icon={Share01Icon} className="h-3 w-3 shrink-0" /> Chia sẻ
             </span>
           </div>
-          <div className="flex items-center gap-1.5 min-[360px]:gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 min-[390px]:gap-2 shrink-0">
             {/* Switch identity button */}
             {currentUser && (
               <button
@@ -724,7 +724,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   setShowIdentityModal(true);
                 }}
                 title="Chọn lại người dùng"
-                className="flex items-center justify-center gap-1.5 min-h-[34px] min-[360px]:min-h-[36px] px-2 min-[360px]:px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[12px] font-bold text-slate-650 hover:text-slate-900 shadow-sm transition-all active:scale-[0.97] shrink-0"
+                className="flex items-center justify-center gap-1.5 min-h-[34px] min-[390px]:min-h-[36px] px-2 min-[390px]:px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[12px] font-bold text-slate-650 hover:text-slate-900 shadow-sm transition-all active:scale-[0.97] shrink-0"
               >
                 <HugeiconsIcon icon={UserSettingsIcon} className="h-3.5 w-3.5 shrink-0" />
                 <span className="hidden sm:inline whitespace-nowrap">{currentUser.name}</span>
@@ -732,7 +732,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             )}
             <button
               onClick={() => window.location.href = "/"}
-              className="flex items-center justify-center min-h-[34px] min-[360px]:min-h-[38px] text-[12px] min-[360px]:text-[13px] font-black text-white bg-kat-dark hover:bg-[#0a1a5c] px-4 rounded-xl shadow-sm transition-all active:scale-[0.97] whitespace-nowrap shrink-0"
+              className="flex items-center justify-center min-h-[34px] min-[390px]:min-h-[38px] text-[12px] min-[390px]:text-[13px] font-black text-white bg-kat-dark hover:bg-[#0a1a5c] px-4 rounded-xl shadow-sm transition-all active:scale-[0.97] whitespace-nowrap shrink-0"
             >
               Thoát
             </button>
@@ -741,7 +741,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-[1120px] mx-auto px-2.5 min-[360px]:px-4 pt-6 pb-20 lg:pb-6 space-y-6">
+      <main className="max-w-[1120px] mx-auto px-2.5 min-[390px]:px-4 pt-6 pb-20 lg:pb-6 space-y-6">
         
         {/* Hero Card */}
         <section 
@@ -825,14 +825,14 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   {/* Weather Info Block */}
                   <div className="flex items-center justify-between gap-2 w-full">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-3xl min-[360px]:text-4xl font-black text-white drop-shadow-sm tracking-tighter">
+                      <span className="text-3xl min-[390px]:text-4xl font-black text-white drop-shadow-sm tracking-tighter">
                         {Math.round(forecast.current?.temperature || 20)}°
                       </span>
                       <div className="flex flex-col ml-1 flex-shrink-0">
                         <span className="mb-[-4px] flex items-center justify-center h-8">
                           {getWeatherIcon(forecast.current?.weathercode || 0, "w-7 h-7 drop-shadow-md")}
                         </span>
-                        <span className="text-[10.5px] min-[360px]:text-[11.5px] font-extrabold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
+                        <span className="text-[10.5px] min-[390px]:text-[11.5px] font-extrabold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
                           {getWeatherText(forecast.current?.weathercode || 0)}
                         </span>
                       </div>
@@ -893,7 +893,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               <div className="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-600 border border-amber-500/20 flex items-center justify-center mb-3">
                 <HugeiconsIcon icon={Wallet01Icon} className="h-5 w-5" />
               </div>
-              <p className="text-[14px] min-[360px]:text-[16px] sm:text-[18px] font-black text-kat-dark leading-none mb-1 px-0.5 break-all">
+              <p className="text-[14px] min-[390px]:text-[16px] sm:text-[18px] font-black text-kat-dark leading-none mb-1 px-0.5 break-all">
                 {formatMoney(totalExpense)}
               </p>
               <p className="text-[11px] font-semibold text-slate-400 mt-1">Chi phí</p>
@@ -1463,7 +1463,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
       {/* Mobile Bottom Navigation Bar */}
       <nav className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] sm:max-w-[560px] md:max-w-[640px] -translate-x-1/2 rounded-[26px] bg-white/55 supports-[backdrop-filter]:bg-white/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/45 shadow-[0_10px_36px_rgba(3,13,46,0.12)] ring-1 ring-inset ring-white/30 before:pointer-events-none before:absolute before:inset-x-5 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/80 before:to-transparent lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom))" }}>
-        <div ref={containerRef} className="relative flex h-[56px] min-[360px]:h-[60px] items-center justify-between px-2">
+        <div ref={containerRef} className="relative flex h-[56px] min-[390px]:h-[60px] items-center justify-between px-2">
           {/* Active Indicator Slide Pill */}
           {indicatorStyle.width > 0 && (
             <div 
@@ -1485,15 +1485,15 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 className={classNames(
                   "relative flex items-center justify-center rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)] overflow-hidden motion-press z-10",
                   isActive 
-                    ? "text-kat-dark px-3 min-[360px]:px-5 h-11 min-[360px]:h-12 gap-1.5 min-[360px]:gap-2 font-extrabold" 
-                    : "text-kat-dark/50 hover:text-kat-dark/75 w-11 min-[360px]:w-12 h-11 min-[360px]:h-12"
+                    ? "text-kat-dark px-3 min-[390px]:px-5 h-11 min-[390px]:h-12 gap-1.5 min-[390px]:gap-2 font-extrabold" 
+                    : "text-kat-dark/50 hover:text-kat-dark/75 w-11 min-[390px]:w-12 h-11 min-[390px]:h-12"
                 )}
               >
                 <HugeiconsIcon 
                   icon={IconComponent} 
-                  className={classNames("h-[19px] w-[19px] min-[360px]:h-[22px] min-[360px]:w-[22px] shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)]", isActive ? "scale-105" : "scale-100")} 
+                  className={classNames("h-[19px] w-[19px] min-[390px]:h-[22px] min-[390px]:w-[22px] shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1.1)]", isActive ? "scale-105" : "scale-100")} 
                 />
-                {isActive && <span className="text-[12px] min-[360px]:text-[13px] font-bold whitespace-nowrap">{tab.label}</span>}
+                {isActive && <span className="text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap">{tab.label}</span>}
               </button>
             );
           })}
@@ -1503,3 +1503,4 @@ export default function SharedTripScreen({ token }: { token: string }) {
     </div>
   );
 }
+

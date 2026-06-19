@@ -82,15 +82,15 @@ const NavButton = React.forwardRef<
       className={classNames(
         "relative flex items-center justify-center rounded-full transition-[color,background-color,width,padding,gap,transform] duration-200 ease-out overflow-hidden motion-press z-10",
         isActive 
-          ? "text-kat-dark px-3 min-[360px]:px-5 h-[44px] min-[360px]:h-[48px] gap-1.5 min-[360px]:gap-2 font-extrabold" 
-          : "text-kat-dark opacity-50 hover:opacity-75 w-11 min-[360px]:w-12 h-11 min-[360px]:h-12"
+          ? "text-kat-dark px-3 min-[390px]:px-5 h-[44px] min-[390px]:h-[48px] gap-1.5 min-[390px]:gap-2 font-extrabold" 
+          : "text-kat-dark opacity-50 hover:opacity-75 w-11 min-[390px]:w-12 h-11 min-[390px]:h-12"
       )}
     >
       <HugeiconsIcon 
         icon={Icon} 
-        className={classNames("h-[19px] w-[19px] min-[360px]:h-[22px] min-[360px]:w-[22px] shrink-0 transition-transform duration-200 ease-out", isActive ? "scale-105" : "scale-100")} 
+        className={classNames("h-[19px] w-[19px] min-[390px]:h-[22px] min-[390px]:w-[22px] shrink-0 transition-transform duration-200 ease-out", isActive ? "scale-105" : "scale-100")} 
       />
-      {isActive && <span className="text-[12px] min-[360px]:text-[13px] font-bold whitespace-nowrap">{label}</span>}
+      {isActive && <span className="text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap">{label}</span>}
     </button>
   );
 }));
@@ -738,13 +738,13 @@ function App() {
           "--sticky-header-offset-md": areBarsVisible ? "68px" : "0px",
         } as React.CSSProperties}
       >
-      <header className={`sticky top-0 z-40 px-2.5 min-[360px]:px-4 pb-3 pt-3 glass-panel-header shadow-[0_4px_24px_rgba(3,13,46,0.05)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`} style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))", paddingLeft: "max(0.625rem, env(safe-area-inset-left))", paddingRight: "max(0.625rem, env(safe-area-inset-right))" }}>
+      <header className={`sticky top-0 z-40 px-2.5 min-[390px]:px-4 pb-3 pt-3 glass-panel-header shadow-[0_4px_24px_rgba(3,13,46,0.05)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`} style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))", paddingLeft: "max(0.625rem, env(safe-area-inset-left))", paddingRight: "max(0.625rem, env(safe-area-inset-right))" }}>
         <GlobalToast />
-        <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[360px]:gap-2">
+        <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
           <div className="flex items-center gap-3 shrink-0">
-            <div className="flex items-center gap-1.5 min-[360px]:gap-2 select-none shrink-0">
-              <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden lg:block h-[26px] w-[26px] min-[360px]:h-[28px] min-[360px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
-              <h1 className="text-[17px] min-[360px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap shrink-0">KAT Journey</h1>
+            <div className="flex items-center gap-1.5 min-[390px]:gap-2 select-none shrink-0">
+              <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden lg:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
+              <h1 className="text-[17px] min-[390px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap shrink-0">KAT Journey</h1>
             </div>
             
             {/* Desktop Navigation */}
@@ -797,13 +797,13 @@ function App() {
 
             <button
               onClick={() => setIsImportModalOpen(true)}
-              className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
+              className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
               title="Xem chuyến đi qua link chia sẻ"
               aria-label="Xem chuyến đi qua link chia sẻ"
             >
               <HugeiconsIcon 
                 icon={Link01Icon} 
-                className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" 
+                className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5" 
               />
             </button>
 
@@ -811,28 +811,28 @@ function App() {
               <>
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
+                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
                   title="Tìm trong chuyến đi"
                   aria-label="Tìm kiếm trong chuyến đi"
                 >
-                  <HugeiconsIcon icon={Search01Icon} className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
+                  <HugeiconsIcon icon={Search01Icon} className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5" />
                 </button>
 
                 <div className="relative" ref={remindersRef}>
                   <button
                     onClick={() => setIsRemindersOpen(!isRemindersOpen)}
-                    className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
+                    className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
                     title="Việc cần chú ý"
                     aria-label="Xem việc cần chú ý"
                   >
                     {reminders.length > 0 ? (
-                      <HugeiconsIcon icon={NotificationBubbleIcon} className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5 text-amber-500 animate-pulse" />
+                      <HugeiconsIcon icon={NotificationBubbleIcon} className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5 text-amber-500 animate-pulse" />
                     ) : (
-                      <HugeiconsIcon icon={Notification01Icon} className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
+                      <HugeiconsIcon icon={Notification01Icon} className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5" />
                     )}
                   </button>
                   {reminders.length > 0 && (
-                    <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 min-[360px]:h-4 min-[360px]:w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] min-[360px]:text-[10px] font-black text-white ring-2 ring-white pointer-events-none">
+                    <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 min-[390px]:h-4 min-[390px]:w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] min-[390px]:text-[10px] font-black text-white ring-2 ring-white pointer-events-none">
                       {reminders.length}
                     </span>
                   )}
@@ -863,18 +863,18 @@ function App() {
                     setIsManagingTrips(true);
                     setIsViewingArchive(false);
                   }}
-                  className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
+                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
                   title="Quay lại danh sách chuyến đi"
                   aria-label="Quay lại danh sách chuyến đi"
                 >
-                  <HugeiconsIcon icon={Home01Icon} className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
+                  <HugeiconsIcon icon={Home01Icon} className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5" />
                 </button>
               </>
             ) : (
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full overflow-hidden border border-kat-border/60 hover:ring-2 hover:ring-kat-teal/40 active:scale-[0.97] transition-[transform,box-shadow] duration-150 shadow-sm focus:outline-none shrink-0"
+                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full overflow-hidden border border-kat-border/60 hover:ring-2 hover:ring-kat-teal/40 active:scale-[0.97] transition-[transform,box-shadow] duration-150 shadow-sm focus:outline-none shrink-0"
                   title="Menu tài khoản"
                   aria-label="Menu tài khoản"
                 >
@@ -882,7 +882,7 @@ function App() {
                     user.photoURL ? (
                       <img src={user.photoURL} alt="Avatar" className="h-full w-full object-cover" />
                     ) : ( 
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[11px] min-[360px]:text-[13px]">
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[11px] min-[390px]:text-[13px]">
                         {user.displayName ? user.displayName.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() : "G"}
                       </div>
                     )
@@ -890,7 +890,7 @@ function App() {
                     <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-500">
                       <HugeiconsIcon 
                         icon={UserIcon} 
-                        className="h-4 w-4 min-[360px]:h-[18px] min-[360px]:w-[18px] text-slate-500" 
+                        className="h-4 w-4 min-[390px]:h-[18px] min-[390px]:w-[18px] text-slate-500" 
                       />
                     </div>
                   )}
@@ -1168,7 +1168,7 @@ function App() {
 
       {!isManagingTrips && tripId && (
         <nav className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}>
-          <div ref={containerRef} className="relative flex h-[56px] min-[360px]:h-[60px] items-center justify-between px-2">
+          <div ref={containerRef} className="relative flex h-[56px] min-[390px]:h-[60px] items-center justify-between px-2">
             {/* Active Indicator Slide Pill */}
             {indicatorStyle.width > 0 && (
               <div 
