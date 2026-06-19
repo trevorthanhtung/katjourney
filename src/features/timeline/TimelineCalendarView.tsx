@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ChevronLeftIcon, ChevronRightIcon, Add01Icon, Calendar01Icon, Clock01Icon } from "@hugeicons/core-free-icons";
 import { EventItem, Trip } from "../../db";
@@ -70,10 +70,10 @@ export function TimelineCalendarView({
             Tháng {month + 1}, {year}
           </h3>
           <div className="flex items-center gap-2">
-            <button onClick={prevMonth} className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-500 hover:bg-slate-100 transition-colors">
+            <button onClick={prevMonth} aria-label="Tháng trước" className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-500 hover:bg-slate-100 transition-colors">
               <HugeiconsIcon icon={ChevronLeftIcon} className="w-5 h-5" />
             </button>
-            <button onClick={nextMonth} className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-500 hover:bg-slate-100 transition-colors">
+            <button onClick={nextMonth} aria-label="Tháng sau" className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-500 hover:bg-slate-100 transition-colors">
               <HugeiconsIcon icon={ChevronRightIcon} className="w-5 h-5" />
             </button>
           </div>

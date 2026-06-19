@@ -171,6 +171,7 @@ export function ArchiveGallery({
       <div className="mb-8 flex items-center gap-4">
         <button
           onClick={onBack}
+          aria-label="Quay lại"
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-slate-200 text-slate-650 hover:bg-slate-50 transition-colors shadow-sm"
         >
           <HugeiconsIcon icon={ArrowLeft01Icon} size={20} className="text-slate-600" />

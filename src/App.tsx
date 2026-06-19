@@ -55,6 +55,7 @@ import { useShareChangeRequests } from "./hooks/useShareChangeRequests";
 import { ShareChangeRequestsSheet } from "./features/share/components/ShareChangeRequestsSheet";
 import { SettingsSheet } from "./components/SettingsSheet";
 import { WelcomeScreen } from "./components/WelcomeScreen";
+import { ImportTripSheet } from "./components/ImportTripSheet";
 import { SplashScreen } from "./components/SplashScreen";
 import { ChatBox } from "./features/share/components/ChatBox";
 import { useAuth } from "./hooks/useAuth";
@@ -99,10 +100,17 @@ function App() {
   const isOnline = useNetworkStatus();
   const [showSplash, setShowSplash] = useState(true);
   const [isSplashFading, setIsSplashFading] = useState(false);
-  const [activeTab, setActiveTab] = useState<"home" | "timeline" | "expenses" | "checklist" | "more">(() => {
+  const [activeTab, setActiveTabInternal] = useState<"home" | "timeline" | "expenses" | "checklist" | "more">(() => {
     const saved = localStorage.getItem("kat_active_tab");
     return (saved as any) || "home";
   });
+  const [, startTransition] = React.useTransition();
+  const setActiveTab = React.useCallback((tab: "home" | "timeline" | "expenses" | "checklist" | "more") => {
+    startTransition(() => {
+      setActiveTabInternal(tab);
+    });
+  }, []);
+
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isRemindersOpen, setIsRemindersOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -124,33 +132,6 @@ function App() {
   const buttonsRef = useRef<{ [key: string]: HTMLButtonElement | null }>({});
 
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [sharedLinkInput, setSharedLinkInput] = useState("");
-  const [recentSharedTrips, setRecentSharedTrips] = useState<{ token: string; title: string; date: string; timestamp: number }[]>([]);
-
-  React.useEffect(() => {
-    if (isImportModalOpen) {
-      const saved = localStorage.getItem("kat_recent_shared_trips");
-      if (saved) {
-        try {
-          setRecentSharedTrips(JSON.parse(saved));
-        } catch (e) {
-          console.error(e);
-        }
-      }
-    }
-  }, [isImportModalOpen]);
-
-  const parseToken = (input: string) => {
-    const trimmed = input.trim();
-    if (!trimmed) return "";
-    if (trimmed.includes("/share/")) {
-      const parts = trimmed.split("/share/");
-      if (parts.length > 1) {
-        return parts[1].split("/")[0].split("?")[0];
-      }
-    }
-    return trimmed;
-  };
 
   const [showWelcome, setShowWelcome] = useState(() => {
     return localStorage.getItem("kat_journey_welcome_viewed") !== "true";
@@ -250,10 +231,6 @@ function App() {
   }, [isManagingTrips]);
 
   // Synchronize global modals with browser back button
-  useModalHistory(isImportModalOpen, () => {
-    setIsImportModalOpen(false);
-    setSharedLinkInput("");
-  }, "import-modal");
 
   useModalHistory(isSearchOpen, () => setIsSearchOpen(false), "search-modal");
   useModalHistory(isRemindersOpen && !isDesktop, () => setIsRemindersOpen(false), "reminders-modal");
@@ -812,9 +789,9 @@ function App() {
           
           <div className="flex items-center gap-2 md:gap-3">
             {isAutoBackingUp && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 animate-pulse shrink-0" title="Đang tự động sao lưu...">
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 animate-pulse shrink-0" title="Đang tự động sao lưu…">
                 <HugeiconsIcon icon={CloudIcon} className="w-3.5 h-3.5 animate-spin shrink-0" />
-                <span className="text-[10px] font-black uppercase tracking-wider hidden sm:inline">Đang lưu...</span>
+                <span className="text-[10px] font-black uppercase tracking-wider hidden sm:inline">Đang lưu…</span>
               </div>
             )}
 
@@ -822,6 +799,7 @@ function App() {
               onClick={() => setIsImportModalOpen(true)}
               className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
               title="Xem chuyến đi qua link chia sẻ"
+              aria-label="Xem chuyến đi qua link chia sẻ"
             >
               <HugeiconsIcon 
                 icon={Link01Icon} 
@@ -835,6 +813,7 @@ function App() {
                   onClick={() => setIsSearchOpen(true)}
                   className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
                   title="Tìm trong chuyến đi"
+                  aria-label="Tìm kiếm trong chuyến đi"
                 >
                   <HugeiconsIcon icon={Search01Icon} className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
                 </button>
@@ -844,6 +823,7 @@ function App() {
                     onClick={() => setIsRemindersOpen(!isRemindersOpen)}
                     className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
                     title="Việc cần chú ý"
+                    aria-label="Xem việc cần chú ý"
                   >
                     {reminders.length > 0 ? (
                       <HugeiconsIcon icon={NotificationBubbleIcon} className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5 text-amber-500 animate-pulse" />
@@ -885,6 +865,7 @@ function App() {
                   }}
                   className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
                   title="Quay lại danh sách chuyến đi"
+                  aria-label="Quay lại danh sách chuyến đi"
                 >
                   <HugeiconsIcon icon={Home01Icon} className="h-4 w-4 min-[360px]:h-4.5 min-[360px]:w-4.5" />
                 </button>
@@ -895,6 +876,7 @@ function App() {
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex h-8 w-8 min-[360px]:h-9 min-[360px]:w-9 items-center justify-center rounded-full overflow-hidden border border-kat-border/60 hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-95 transition-all shadow-sm focus:outline-none shrink-0"
                   title="Menu tài khoản"
+                  aria-label="Menu tài khoản"
                 >
                   {isAuthenticated && user && provider === "google" ? (
                     user.photoURL ? (
@@ -1095,7 +1077,7 @@ function App() {
               {syncProps.isSyncing ? (
                 <>
                   <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5 animate-spin" />
-                  Đang xử lý...
+                  Đang xử lý…
                 </>
               ) : (
                 <>
@@ -1279,7 +1261,7 @@ function App() {
         <div className="fixed bottom-24 md:bottom-6 right-6 z-50 animate-fadeIn pointer-events-none">
           <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/90 text-white shadow-lg backdrop-blur-sm border border-white/10 text-[12px] font-bold">
             <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5 animate-spin text-[#00BFB7] shrink-0" />
-            <span>Đang đồng bộ từ Cloud...</span>
+            <span>Đang đồng bộ từ Cloud…</span>
           </div>
         </div>
       )}
@@ -1379,78 +1361,11 @@ function App() {
         </div>
       </BottomSheet>
 
-      <BottomSheet
+      <ImportTripSheet
         isOpen={isImportModalOpen}
-        onClose={() => {
-          setIsImportModalOpen(false);
-          setSharedLinkInput("");
-        }}
-        title="Xem chuyến đi được chia sẻ"
-      >
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-605 block">
-              Nhập liên kết chia sẻ chuyến đi
-            </label>
-            <div className="flex gap-2.5">
-              <input
-                type="text"
-                value={sharedLinkInput}
-                onChange={(e) => setSharedLinkInput(e.target.value)}
-                placeholder="Dán link chuyến đi được chia sẻ..."
-                className="w-full rounded-[14px] border border-slate-200 bg-slate-50 px-4 h-[50px] text-[15px] font-bold text-[#030D2E] outline-none transition-all focus:bg-white focus:ring-2 focus:ring-[#00BFB7] focus:border-transparent placeholder:text-slate-400"
-              />
-              <button
-                onClick={() => {
-                  const token = parseToken(sharedLinkInput);
-                  if (token) {
-                    window.location.href = "/share/" + token;
-                  } else {
-                    showToast("Liên kết không hợp lệ. Vui lòng thử lại!");
-                  }
-                }}
-                className="inline-flex h-[50px] shrink-0 items-center justify-center rounded-[14px] bg-[#030D2E] hover:bg-[#0a1a5c] text-white px-6 font-black active:scale-[0.98] transition-all duration-200"
-              >
-                Xem ngay
-              </button>
-            </div>
-          </div>
-
-          {recentSharedTrips.length > 0 && (
-            <div className="space-y-3 pt-2">
-              <h4 className="text-[12px] font-black uppercase tracking-wider text-slate-400">
-                Lịch sử xem gần đây
-              </h4>
-              <div className="space-y-2">
-                {recentSharedTrips.map((trip) => (
-                  <div
-                    key={trip.token}
-                    onClick={() => {
-                      window.location.href = "/share/" + trip.token;
-                    }}
-                    className="group flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-white hover:bg-slate-50 hover:border-[#00BFB7]/20 cursor-pointer active:scale-[0.99] transition-all duration-200"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#00BFB7]/10 text-[#00BFB7]">
-                        <HugeiconsIcon icon={Airplane01Icon} className="h-5 w-5 -rotate-45" />
-                      </div>
-                      <div className="min-w-0 text-left">
-                        <p className="text-[14.5px] font-extrabold text-[#030D2E] truncate group-hover:text-[#00BFB7] transition-colors">
-                          {trip.title}
-                        </p>
-                        <p className="text-[12px] font-semibold text-slate-400 mt-0.5">
-                          Khởi hành: {trip.date}
-                        </p>
-                      </div>
-                    </div>
-                    <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400 group-hover:text-[#00BFB7] group-hover:translate-x-0.5 transition-all" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </BottomSheet>
+        onClose={() => setIsImportModalOpen(false)}
+        showToast={showToast}
+      />
     </div>
   </>
 );

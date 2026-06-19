@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   GlobeIcon,
@@ -532,6 +532,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       pattern="[0-9]*"
                       maxLength={1}
                       id={`share-pin-digit-${i}`}
+                      autoComplete="one-time-code"
+                      spellCheck={false}
                       value={pinInput[i] || ""}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, "");

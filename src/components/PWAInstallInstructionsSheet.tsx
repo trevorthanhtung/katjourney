@@ -29,6 +29,7 @@ export function PWAInstallInstructionsSheet({ isOpen, onClose }: PWAInstallInstr
           </div>
           <button 
             onClick={onClose}
+            aria-label="Đóng hướng dẫn"
             className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
           >
             <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
@@ -50,7 +51,7 @@ export function PWAInstallInstructionsSheet({ isOpen, onClose }: PWAInstallInstr
               <p className="text-[12.5px] font-semibold text-slate-500 leading-relaxed">
                 Tìm biểu tượng hình vuông có mũi tên chỉ lên{" "}
                 <span className="inline-flex items-center justify-center bg-slate-100 rounded-md p-1 px-1.5 align-middle mx-0.5 border border-slate-200/50">
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-blue-600">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-blue-600" aria-hidden="true">
                     <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M12 2v14M12 2L8 6m4-4l4 4" />
                   </svg>
                 </span>{" "}
