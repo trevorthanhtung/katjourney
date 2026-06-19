@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Airplane01Icon, Calendar01Icon, Location01Icon, CompassIcon, UserGroupIcon, WalletCardsIcon, SparklesIcon, MapsIcon } from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -62,7 +62,7 @@ function TripCard({
     return (
       <div 
         onClick={() => onOpenTrip(trip.id!)}
-        className={`group relative cursor-pointer overflow-hidden rounded-[32px] bg-gradient-to-b from-white to-[#FCFAF2] border border-[#E8E1D8] border-l-4 ${statusColor} p-6 lg:p-8 shadow-soft hover:shadow-md hover:border-slate-350/80 hover:-translate-y-1 active:scale-[0.99] transition-all duration-300 w-full flex flex-col lg:flex-row gap-6 justify-between items-stretch lg:min-w-[560px] lg:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+        className={`group relative cursor-pointer overflow-hidden rounded-[32px] bg-gradient-to-b from-white to-[#FCFAF2] border border-slate-200 border-l-4 ${statusColor} p-6 lg:p-8 shadow-soft hover:shadow-md hover:border-slate-350/80 hover:-translate-y-1 active:scale-[0.99] transition-all duration-300 w-full flex flex-col lg:flex-row gap-6 justify-between items-stretch lg:min-w-[560px] lg:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
       >
         {/* Left info column */}
         <div className="flex-1 flex flex-col justify-between pr-4">
@@ -105,11 +105,11 @@ function TripCard({
           </div>
 
           <div className="flex flex-col gap-2 pb-2">
-            <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#3D4B5E] bg-[#030D2E]/[0.02] border border-[#E8E1D8]/45 px-3 py-1.5 rounded-[12px] w-fit max-w-full">
+            <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#3D4B5E] bg-[#030D2E]/[0.02] border border-slate-200/45 px-3 py-1.5 rounded-[12px] w-fit max-w-full">
               <HugeiconsIcon icon={Location01Icon} size={15} className="text-slate-400 shrink-0" />
               <span className="truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">{trip.location || "Chưa có địa điểm"}</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#3D4B5E] bg-[#030D2E]/[0.02] border border-[#E8E1D8]/45 px-3 py-1.5 rounded-[12px] w-fit max-w-full">
+            <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#3D4B5E] bg-[#030D2E]/[0.02] border border-slate-200/45 px-3 py-1.5 rounded-[12px] w-fit max-w-full">
               <HugeiconsIcon icon={Calendar01Icon} size={15} className="text-slate-400 shrink-0" />
               <span className="truncate">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}</span>
             </div>
@@ -117,12 +117,12 @@ function TripCard({
         </div>
 
         {/* Right stats column */}
-        <div className="w-full lg:w-[250px] shrink-0 lg:border-l lg:border-[#E8E1D8]/45 lg:pl-6 flex flex-col justify-center gap-2.5">
-          <div className="flex items-center gap-2 text-[12px] font-extrabold text-[#3D4B5E] bg-[#030D2E]/[0.02] border border-[#E8E1D8]/45 px-3.5 py-2 rounded-[12px]">
+        <div className="w-full lg:w-[250px] shrink-0 lg:border-l lg:border-slate-200/45 lg:pl-6 flex flex-col justify-center gap-2.5">
+          <div className="flex items-center gap-2 text-[12px] font-extrabold text-[#3D4B5E] bg-[#030D2E]/[0.02] border border-slate-200/45 px-3.5 py-2 rounded-[12px]">
             <HugeiconsIcon icon={UserGroupIcon} size={15} className="text-slate-400 shrink-0" />
             <span>{memberCounts[trip.id!] || 1} người đồng hành</span> 
           </div>
-          <div className="flex items-center gap-2 text-[12px] font-extrabold text-[#3D4B5E] bg-[#030D2E]/[0.02] border border-[#E8E1D8]/45 px-3.5 py-2 rounded-[12px]">
+          <div className="flex items-center gap-2 text-[12px] font-extrabold text-[#3D4B5E] bg-[#030D2E]/[0.02] border border-slate-200/45 px-3.5 py-2 rounded-[12px]">
             <HugeiconsIcon icon={WalletCardsIcon} size={15} className="text-slate-400 shrink-0" />
             <span>{totalExpense > 0 ? `${totalExpense.toLocaleString()}đ chi phí` : "Chưa có chi phí"}</span>
           </div>
@@ -153,7 +153,7 @@ function TripCard({
   return (
     <div 
       onClick={() => onOpenTrip(trip.id!)}
-      className={`group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-b from-white to-[#FCFAF2] p-5 shadow-soft border border-[#E8E1D8] border-l-4 ${statusColor} hover:border-slate-350/80 hover:-translate-y-1 hover:shadow-md transition-all duration-300 w-full max-w-[420px] mx-auto md:mx-0 h-full motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+      className={`group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-b from-white to-[#FCFAF2] p-5 shadow-soft border border-slate-200 border-l-4 ${statusColor} hover:border-slate-350/80 hover:-translate-y-1 hover:shadow-md transition-all duration-300 w-full max-w-[420px] mx-auto md:mx-0 h-full motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
     >
       <div>
         <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -194,15 +194,15 @@ function TripCard({
 
         {/* Glanceable Grid Info */}
         <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 text-[12px] font-bold text-[#3D4B5E] mb-1">
-          <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-[#030D2E]/[0.04]">
+          <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-slate-200/40 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-[#030D2E]/[0.04]">
             <HugeiconsIcon icon={Location01Icon} size={14} className="text-slate-400 shrink-0" />
             <span className="truncate">{trip.location || "Chưa xác định"}</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-[#030D2E]/[0.04]">
+          <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-slate-200/40 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-[#030D2E]/[0.04]">
             <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-slate-400 shrink-0" />
             <span className="truncate text-slate-600">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)}`}</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-[#030D2E]/[0.04] col-span-1 min-[360px]:col-span-2">
+          <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-slate-200/40 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-[#030D2E]/[0.04] col-span-1 min-[360px]:col-span-2">
             <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-slate-400 shrink-0" />
             <span className="truncate">{memberCounts[trip.id!] || 1} người</span>
             <span className="text-slate-300 mx-0.5">·</span>
@@ -214,7 +214,7 @@ function TripCard({
 
       {/* Checklist Status Border Block */}
       {tripChecklist.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-[#E8E1D8]/45 flex">
+        <div className="mt-3 pt-3 border-t border-slate-200/45 flex">
           {checklistRemaining > 0 ? (
             <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-rose-700 bg-rose-50/40 border border-rose-100/60 px-2.5 py-1 rounded-[8px]">
               <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse"></span>
@@ -355,7 +355,7 @@ export function TripManagerScreen({
   return (
     <div className={`mx-auto w-full max-w-[1120px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center py-0 md:py-0" : "py-6 md:pt-4 md:pb-16"}`}>
       {trips.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[32px] bg-[#FFFDF8] p-5 sm:p-8 md:p-12 text-center border border-[#E8E1D8] shadow-floating hover:shadow-xl hover:border-[#00BFB7]/35 transition-all duration-500 mx-auto w-full max-w-[540px] relative overflow-hidden motion-page-enter motion-hover-lift">
+        <div className="flex flex-col items-center justify-center rounded-[32px] bg-white p-5 sm:p-8 md:p-12 text-center border border-slate-200 shadow-floating hover:shadow-xl hover:border-[#00BFB7]/35 transition-all duration-500 mx-auto w-full max-w-[540px] relative overflow-hidden motion-page-enter motion-hover-lift">
           {/* Ambient Background Glows */}
           <div className="absolute -right-10 -top-10 w-44 h-44 bg-[#00BFB7]/5 blur-[40px] rounded-full pointer-events-none" />
           <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-indigo-500/5 blur-[50px] rounded-full pointer-events-none" />
@@ -451,7 +451,7 @@ export function TripManagerScreen({
               <section className="mb-12 md:mb-14">
                 <h3 className="mb-4 px-1 text-[20px] font-extrabold text-kat-text motion-title-enter">Chuyến tiếp theo</h3>
                 <div 
-                  className={`group relative overflow-hidden rounded-[32px] bg-gradient-to-b from-white to-[#FCFAF2] border border-[#E8E1D8] border-l-4 ${featuredBorderColor} p-6 sm:p-8 lg:p-10 shadow-soft cursor-pointer hover:shadow-md hover:border-slate-350/80 hover:-translate-y-1 transition-all duration-300 min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2`}
+                  className={`group relative overflow-hidden rounded-[32px] bg-gradient-to-b from-white to-[#FCFAF2] border border-slate-200 border-l-4 ${featuredBorderColor} p-6 sm:p-8 lg:p-10 shadow-soft cursor-pointer hover:shadow-md hover:border-slate-350/80 hover:-translate-y-1 transition-all duration-300 min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2`}
                   onClick={() => onOpenTrip(featuredTrip.id!)}
                 >
                   {/* Decorative background */}
@@ -499,15 +499,15 @@ export function TripManagerScreen({
                     </h4>
                     
                     <div className="flex flex-wrap gap-2 text-slate-700">
-                      <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-3 py-1.5 rounded-[12px] max-w-full">
+                      <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-slate-200/40 px-3 py-1.5 rounded-[12px] max-w-full">
                         <HugeiconsIcon icon={Location01Icon} size={16} className="text-slate-400 shrink-0" />
                         <span className="font-extrabold text-[13px] text-slate-600 truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">{featuredTrip.location || "Chưa có địa điểm"}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-3 py-1.5 rounded-[12px] max-w-full">
+                      <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-slate-200/40 px-3 py-1.5 rounded-[12px] max-w-full">
                         <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-400 shrink-0" />
                         <span className="font-extrabold text-[13px] text-slate-600 truncate">{featuredTrip.startDate === featuredTrip.endDate ? formatDate(featuredTrip.startDate) : `${formatDate(featuredTrip.startDate)} - ${formatDate(featuredTrip.endDate)}`}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-[#E8E1D8]/40 px-3 py-1.5 rounded-[12px] max-w-full">
+                      <div className="flex items-center gap-1.5 bg-[#030D2E]/[0.02] border border-slate-200/40 px-3 py-1.5 rounded-[12px] max-w-full">
                         <HugeiconsIcon icon={UserGroupIcon} size={16} className="text-slate-400 shrink-0" />
                         <span className="font-extrabold text-[13px] text-slate-600 truncate">{memberCounts[featuredTrip.id!] || 1} người</span>
                         <span className="text-slate-300 mx-0.5">·</span>

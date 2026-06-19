@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import { WeatherForecast, getWeatherIcon, getWeatherText, getWeatherGradient } from "../../services/weatherService";
@@ -178,7 +178,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
 
       {/* Modal Box */}
       <div 
-        className={`w-full md:max-w-lg bg-[#FAF7F1] md:rounded-[32px] rounded-t-[36px] shadow-[0_-10px_40px_rgba(3,13,46,0.12)] md:shadow-[0_20px_60px_rgba(3,13,46,0.18)] relative overflow-hidden transition-all duration-300 max-h-[92vh] md:max-h-[85vh] flex flex-col z-10 border border-slate-100/50 ${
+        className={`w-full md:max-w-lg bg-slate-50 md:rounded-[32px] rounded-t-[36px] shadow-[0_-10px_40px_rgba(3,13,46,0.12)] md:shadow-[0_20px_60px_rgba(3,13,46,0.18)] relative overflow-hidden transition-all duration-300 max-h-[92vh] md:max-h-[85vh] flex flex-col z-10 border border-slate-100/50 ${
           animate ? "translate-y-0 opacity-100" : "translate-y-full md:translate-y-10 opacity-0"
         }`}
       >

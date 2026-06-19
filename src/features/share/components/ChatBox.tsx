@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { HugeiconsIcon } from "@hugeicons/react";
 import { SentIcon, Cancel01Icon, BubbleChatIcon, Loading01Icon, ArrowLeft01Icon } from "@hugeicons/core-free-icons";
 import { ChatMessage, subscribeToMessages, sendMessage } from '../../../services/chatService';
@@ -288,7 +288,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
         {/* Responsive Layout wrapper */}
         <div className="w-full">
           {/* Mobile View: Invitation CTA Card */}
-          <div className="block sm:hidden bg-[#FFFDF8] border border-kat-border rounded-[24px] p-6 shadow-soft text-center flex flex-col items-center justify-center h-[280px]">
+          <div className="block sm:hidden bg-white border border-kat-border rounded-[24px] p-6 shadow-soft text-center flex flex-col items-center justify-center h-[280px]">
             <div className="w-16 h-16 rounded-full bg-kat-primary-soft flex items-center justify-center mb-4 relative">
               <HugeiconsIcon icon={BubbleChatIcon} className="w-7 h-7 text-kat-primary animate-pulse" />
               <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -254,10 +254,13 @@ export function SharedBackupPlansSheet({
 
   React.useEffect(() => {
     if (isOpen) {
-      const originalOverflow = document.body.style.overflow;
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
       return () => {
-        document.body.style.overflow = originalOverflow;
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
       };
     }
   }, [isOpen]);
@@ -268,9 +271,9 @@ export function SharedBackupPlansSheet({
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm motion-modal-overlay" onClick={onClose} />
 
-      <div className="relative z-10 w-full sm:max-w-lg bg-[#FFFDF8] rounded-t-3xl sm:rounded-3xl shadow-floating overflow-hidden flex flex-col max-h-[90vh] motion-modal-dialog">
+      <div className="relative z-10 w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-floating overflow-hidden flex flex-col max-h-[90vh] motion-modal-dialog">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E1D8] bg-white sticky top-0 z-10 gap-3">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white sticky top-0 z-10 gap-3">
           <div className="min-w-0 flex-1">
             <h3 className="text-[18px] font-extrabold text-[#030D2E] truncate">Phương án dự phòng</h3>
             <p className="text-[13px] font-semibold text-slate-500 truncate">
@@ -304,7 +307,7 @@ export function SharedBackupPlansSheet({
                   value={title}
                   onChange={e => setTitle(e.target.value)}
                   placeholder="VD: Quán ăn gần khách sạn, điểm tham quan trong nhà..."
-                  className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-bold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:font-semibold placeholder:text-slate-400"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-bold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:font-semibold placeholder:text-slate-400"
                 />
               </div>
 
@@ -336,11 +339,11 @@ export function SharedBackupPlansSheet({
                   value={reason}
                   onChange={e => setReason(e.target.value)}
                   placeholder="VD: Khi trời mưa, quán đóng cửa, quá đông..."
-                  className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                 />
               </div>
 
-              <div className="border-t border-[#E8E1D8] pt-4 mt-2">
+              <div className="border-t border-slate-200 pt-4 mt-2">
                 <button
                   type="button"
                   onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
@@ -361,7 +364,7 @@ export function SharedBackupPlansSheet({
                         value={location}
                         onChange={e => setLocation(e.target.value)}
                         placeholder="VD: Quán B gần khách sạn"
-                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
 
@@ -384,7 +387,7 @@ export function SharedBackupPlansSheet({
                         value={mapLink}
                         onChange={e => setMapLink(e.target.value)}
                         placeholder="VD: https://www.google.com/maps/dir/..."
-                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
 
@@ -397,7 +400,7 @@ export function SharedBackupPlansSheet({
                         value={estimatedCost}
                         onChange={e => setEstimatedCost(e.target.value)}
                         placeholder="VD: 200000"
-                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400"
                       />
                     </div>
 
@@ -410,7 +413,7 @@ export function SharedBackupPlansSheet({
                         onChange={e => setNote(e.target.value)}
                         placeholder="VD: Gọi trước khi đến, nên đi taxi..."
                         rows={3}
-                        className="w-full px-4 py-3 bg-white border border-[#E8E1D8] rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400 resize-none"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-[14.5px] font-semibold text-[#030D2E] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all placeholder:text-slate-400 resize-none"
                       />
                     </div>
                   </div>
@@ -464,7 +467,7 @@ export function SharedBackupPlansSheet({
                       } ${
                         plan.isPendingDelete ? "border-rose-100 bg-slate-50/50 opacity-70" : ""
                       } ${
-                        !isPending ? "border-[#E8E1D8] hover:border-indigo-200" : ""
+                        !isPending ? "border-slate-200 hover:border-indigo-200" : ""
                       }`}
                     >
                       <div className="flex flex-col justify-between h-full">

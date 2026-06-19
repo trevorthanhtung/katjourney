@@ -1,4 +1,4 @@
-﻿import { useLiveQuery } from "dexie-react-hooks";
+import { useLiveQuery } from "dexie-react-hooks";
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -192,7 +192,8 @@ function App() {
   }, [isAuthenticated, authLoading]);
 
   const tripsRaw = useLiveQuery(async () => (await db.trips.toArray()).filter(t => !t.isDeleted && t.status !== 'archived'));
-  const tripsLoading = tripsRaw === undefined;
+  const allTripsRaw = useLiveQuery(async () => (await db.trips.toArray()).filter(t => !t.isDeleted));
+  const tripsLoading = tripsRaw === undefined || allTripsRaw === undefined;
   const trips = tripsRaw ?? [];
   const [selectedTripId, setSelectedTripId] = useState<number | null>(() => {
     const saved = localStorage.getItem("kat_selected_trip_id");
@@ -409,13 +410,13 @@ function App() {
   // If trips have loaded and selectedTripId no longer exists (deleted), fall back to manager
   React.useEffect(() => {
     if (!tripsLoading && !isManagingTrips && !isViewingArchive && selectedTripId !== null) {
-      const exists = trips.some(t => t.id === selectedTripId);
+      const exists = (allTripsRaw ?? []).some(t => t.id === selectedTripId);
       if (!exists) {
         setSelectedTripId(null);
         setIsManagingTrips(true);
       }
     }
-  }, [tripsLoading, trips, selectedTripId, isManagingTrips, isViewingArchive]);
+  }, [tripsLoading, allTripsRaw, selectedTripId, isManagingTrips, isViewingArchive]);
 
   useEffect(() => {
     const updateIndicator = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useNotification } from "../hooks/useNotification";
 import { showToast } from "./ui/ToastManager";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -531,7 +531,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
       : null;
 
     return (
-      <div className="border-t border-[#E8E1D8]/60 pt-5 mt-4 space-y-4 text-left animate-fadeIn">
+      <div className="border-t border-slate-200/60 pt-5 mt-4 space-y-4 text-left animate-fadeIn">
         <div className="flex items-center gap-3 mb-1 px-1">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50/70 text-indigo-600 border border-indigo-100/40 shrink-0">
             <HugeiconsIcon icon={CloudIcon} className={`w-5 h-5 ${(isSyncing || isAutoBackingUp) ? "animate-spin" : ""}`} />
@@ -543,30 +543,27 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
         </div>
 
         {hasCloudVersion && (
-          <div className="rounded-[22px] bg-amber-50/60 border border-amber-200/40 p-4.5 text-[13.5px] text-amber-900 font-bold leading-relaxed flex items-start gap-3.5 animate-fadeIn shadow-soft relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-1 h-full bg-amber-500" />
-            <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-amber-100 text-amber-750 shrink-0 mt-0.5">
-              <HugeiconsIcon icon={AlertCircleIcon} className="w-4.5 h-4.5" />
+          <div className="rounded-[22px] bg-amber-50 border border-amber-200/60 p-4 text-[13.5px] text-amber-900 font-bold leading-relaxed flex items-start gap-3 animate-fadeIn">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 text-amber-700 shrink-0 mt-0.5">
+              <HugeiconsIcon icon={AlertCircleIcon} className="w-4 h-4" />
             </div>
             <span className="pt-0.5 flex-1">Có phiên bản mới hơn trên Cloud. Vui lòng bấm Đồng bộ để tải về.</span>
           </div>
         )}
 
         {syncError && (
-          <div className="rounded-[22px] bg-rose-50/60 border border-rose-200/40 p-4.5 text-[13.5px] text-rose-900 font-bold leading-relaxed flex items-start gap-3.5 animate-fadeIn shadow-soft relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-1 h-full bg-rose-500" />
-            <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-rose-100 text-rose-700 shrink-0 mt-0.5">
-              <HugeiconsIcon icon={AlertCircleIcon} className="w-4.5 h-4.5" />
+          <div className="rounded-[22px] bg-rose-50 border border-rose-200/60 p-4 text-[13.5px] text-rose-900 font-bold leading-relaxed flex items-start gap-3 animate-fadeIn">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-100 text-rose-700 shrink-0 mt-0.5">
+              <HugeiconsIcon icon={AlertCircleIcon} className="w-4 h-4" />
             </div>
             <span className="pt-0.5 flex-1">{syncError}</span>
           </div>
         )}
 
         {syncSuccess && (
-          <div className="rounded-[22px] bg-emerald-50/60 border border-emerald-200/40 p-4.5 text-[13.5px] text-[#0F766E] font-bold leading-relaxed flex items-start gap-3.5 animate-fadeIn shadow-soft relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
-            <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-emerald-100 text-[#0F766E] shrink-0 mt-0.5">
-              <HugeiconsIcon icon={CheckIcon} className="w-4.5 h-4.5" strokeWidth={3.5} />
+          <div className="rounded-[22px] bg-emerald-50 border border-emerald-200/60 p-4 text-[13.5px] text-emerald-900 font-bold leading-relaxed flex items-start gap-3 animate-fadeIn">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 shrink-0 mt-0.5">
+              <HugeiconsIcon icon={CheckIcon} className="w-4 h-4" strokeWidth={3.5} />
             </div>
             <span className="pt-0.5 flex-1">{syncSuccess}</span>
           </div>
@@ -579,28 +576,28 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
         ) : (
           <>
             {/* 2. Status Card (Thông tin tĩnh) */}
-            <div className="bg-[#FFFDF8] border border-[#E8E1D8] rounded-[22px] p-4.5 flex justify-between items-center text-[13.5px] font-bold text-slate-500 min-h-[60px] shadow-soft">
+            <div className="bg-white border border-slate-200 rounded-[22px] p-4.5 flex justify-between items-center text-[13.5px] font-bold text-slate-500 min-h-[60px] shadow-soft">
               <span className="text-slate-550 font-bold">Lần đồng bộ cuối</span>
               {lastBackupAt && backupTimeStr && backupDateStr ? (
                 <div className="flex gap-2 items-center">
-                  <div className="inline-flex items-center gap-1.5 font-black text-[#030D2E] bg-slate-50 border border-[#E8E1D8] px-3.5 py-1.5 rounded-full text-[13px]">
+                  <div className="inline-flex items-center gap-1.5 font-black text-[#030D2E] bg-slate-50 border border-slate-200 px-3.5 py-1.5 rounded-full text-[13px]">
                     <HugeiconsIcon icon={Clock01Icon} className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     <span>{backupTimeStr}</span>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 font-black text-[#030D2E] bg-slate-50 border border-[#E8E1D8] px-3.5 py-1.5 rounded-full text-[13px]">
+                  <div className="inline-flex items-center gap-1.5 font-black text-[#030D2E] bg-slate-50 border border-slate-200 px-3.5 py-1.5 rounded-full text-[13px]">
                     <HugeiconsIcon icon={Calendar01Icon} className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     <span>{backupDateStr}</span>
                   </div>
                 </div>
               ) : (
-                <span className="font-black text-slate-450 bg-slate-50 border border-[#E8E1D8] px-4 py-1.5 rounded-full text-[13px]">
+                <span className="font-black text-slate-450 bg-slate-50 border border-slate-200 px-4 py-1.5 rounded-full text-[13px]">
                   Chưa từng đồng bộ
                 </span>
               )}
             </div>
 
             {/* 3. Action Card (Thiết lập) */}
-            <div className="flex items-center justify-between p-4.5 rounded-[22px] border border-[#E8E1D8] bg-[#FFFDF8] min-h-[76px] shadow-soft">
+            <div className="flex items-center justify-between p-4.5 rounded-[22px] border border-slate-200 bg-white min-h-[76px] shadow-soft">
               <div className="flex items-center gap-3.5">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50/70 text-indigo-600 border border-indigo-100/40 shrink-0">
                   <HugeiconsIcon icon={CloudIcon} className="w-5 h-5" />
@@ -1119,7 +1116,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             ) : (
               <div className="space-y-6">
                 {/* Unified User Info Card with Edit Display Name support */}
-                <div className="flex items-center gap-4.5 p-5 rounded-[24px] bg-gradient-to-br from-[#FFFDF8] to-[#FAF7F1]/80 border border-[#E8E1D8] shadow-soft hover:shadow-md transition-all duration-350">
+                <div className="flex items-center gap-4.5 p-5 rounded-[24px] bg-gradient-to-br from-[#FFFDF8] to-[#FAF7F1]/80 border border-slate-200 shadow-soft hover:shadow-md transition-all duration-350">
                   {provider === "google" ? (
                     user.photoURL ? (
                       <img 
@@ -1148,7 +1145,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                         type="text"
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
-                        className="flex-1 h-10 px-3 text-[14.5px] font-bold text-[#030D2E] rounded-xl border border-[#E8E1D8] bg-white focus:outline-none focus:border-[#00BFB7] focus:ring-1 focus:ring-[#00BFB7]/40 min-w-0"
+                        className="flex-1 h-10 px-3 text-[14.5px] font-bold text-[#030D2E] rounded-xl border border-slate-200 bg-white focus:outline-none focus:border-[#00BFB7] focus:ring-1 focus:ring-[#00BFB7]/40 min-w-0"
                         placeholder="Tên hiển thị..."
                         autoFocus
                         onKeyDown={(e) => {
@@ -1220,10 +1217,9 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 {provider === "guest" && (
                   <>
                     {/* Upsell Message Box */}
-                    <div className="p-4.5 rounded-[22px] bg-gradient-to-br from-[#00BFB7]/5 to-[#00BFB7]/2 bg-white border border-[#00BFB7]/20 text-left flex items-start gap-3.5 shadow-soft relative overflow-hidden">
-                      <div className="absolute top-0 left-0 w-1 h-full bg-[#00BFB7]" />
-                      <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-[#00BFB7]/10 text-[#00BFB7] shrink-0 mt-0.5">
-                        <HugeiconsIcon icon={InformationCircleIcon} className="w-4.5 h-4.5" />
+                    <div className="p-4 rounded-[22px] bg-[#00BFB7]/8 border border-[#00BFB7]/25 text-left flex items-start gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#00BFB7]/15 text-[#00BFB7] shrink-0 mt-0.5">
+                        <HugeiconsIcon icon={InformationCircleIcon} className="w-4 h-4" />
                       </div>
                       <p className="text-[13px] font-semibold leading-relaxed text-slate-600">
                         Toàn bộ lịch trình và chi phí đang được lưu tạm trên thiết bị này. Hãy liên kết tài khoản để sao lưu <strong className="font-extrabold text-[#030D2E]">an toàn</strong> lên đám mây và mở khóa tính năng <strong className="font-extrabold text-[#030D2E]">chia sẻ chuyến đi</strong>.
@@ -1235,7 +1231,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       <button
                         onClick={handleGoogleSignIn}
                         disabled={actionLoading !== null}
-                        className="w-full flex items-center justify-center gap-3 h-13 rounded-[20px] border border-[#E8E1D8] bg-white hover:bg-slate-50 active:scale-[0.98] transition-all font-bold text-[14.5px] text-[#030D2E] shadow-sm hover:shadow-md disabled:opacity-60 relative overflow-hidden"
+                        className="w-full flex items-center justify-center gap-3 h-13 rounded-[20px] border border-slate-200 bg-white hover:bg-slate-50 active:scale-[0.98] transition-all font-bold text-[14.5px] text-[#030D2E] shadow-sm hover:shadow-md disabled:opacity-60 relative overflow-hidden"
                       >
                         {actionLoading === "google" ? (
                           <HugeiconsIcon icon={Loading01Icon} className="h-5 w-5 text-[#00BFB7] animate-spin" />
@@ -1248,7 +1244,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       <button
                         onClick={handleBackupAllData}
                         disabled={actionLoading !== null}
-                        className="w-full flex items-center justify-center gap-2.5 h-11.5 rounded-[16px] border border-[#E8E1D8]/60 bg-slate-50/50 text-slate-650 hover:bg-slate-50 hover:text-[#030D2E] active:scale-[0.98] transition-all font-bold text-[13px] disabled:opacity-60 shadow-sm"
+                        className="w-full flex items-center justify-center gap-2.5 h-11.5 rounded-[16px] border border-slate-200/60 bg-slate-50/50 text-slate-650 hover:bg-slate-50 hover:text-[#030D2E] active:scale-[0.98] transition-all font-bold text-[13px] disabled:opacity-60 shadow-sm"
                       >
                         <HugeiconsIcon icon={Download01Icon} className="h-4.5 w-4.5 text-slate-500 shrink-0" />
                         Sao lưu dữ liệu thủ công (.katjourney)
@@ -1307,7 +1303,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               Hơn cả một công cụ lên kế hoạch, KAT Journey là người bạn đồng hành giúp bạn kiểm soát chi tiêu, sắp xếp lịch trình và gói ghém trọn vẹn mọi khoảnh khắc đáng nhớ.
             </p>
 
-            <div className="w-full max-w-lg rounded-[24px] border border-[#E8E1D8]/60 bg-[#FFFDF8] p-5 text-left shadow-soft">
+            <div className="w-full max-w-lg rounded-[24px] border border-slate-200/60 bg-white p-5 text-left shadow-soft">
               <h4 className="text-[13.5px] font-black text-[#030D2E]">Công nghệ & giấy phép</h4>
               <p className="mt-2 text-[12.5px] font-semibold leading-relaxed text-slate-500">
                 KAT Journey được xây dựng bằng React, Vite, Dexie và Firebase. Hệ thống chỉ sử dụng Firebase để đồng bộ và chia sẻ khi bạn chủ động đăng nhập.
@@ -1357,7 +1353,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               </p>
             </div>
 
-            <div className="w-[85%] max-w-[280px] p-4 bg-[#FFFDF8] border border-[#E8E1D8] rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
+            <div className="w-[85%] max-w-[280px] p-4 bg-white border border-slate-200 rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
               <img 
                 src="/donates.png" 
                 alt="Donate QR Code" 
@@ -1450,9 +1446,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
       title="Khôi phục dữ liệu từ Cloud?"
     >
       <div className="space-y-5 text-left">
-        <div className="rounded-2xl bg-amber-50/60 border border-amber-100 p-4 text-[13px] text-amber-900 font-bold leading-relaxed flex items-start gap-3 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-1 h-full bg-amber-500" />
-          <HugeiconsIcon icon={AlertCircleIcon} className="w-5 h-5 text-amber-650 shrink-0 mt-0.5" />
+        <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 text-[13px] text-amber-900 font-bold leading-relaxed flex items-start gap-3">
+          <HugeiconsIcon icon={AlertCircleIcon} className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <span>Dữ liệu trên thiết bị này có thể bị thay đổi. Vui lòng cân nhắc chọn phương thức khôi phục phù hợp bên dưới.</span>
         </div>
 
@@ -1461,7 +1456,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           <label className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-200 cursor-pointer select-none shadow-sm hover:shadow-md ${
             restoreMode === "merge"
               ? "border-indigo-600 bg-indigo-50/30 ring-1 ring-indigo-500/20"
-              : "border-slate-200 bg-[#FFFDF8] hover:bg-slate-50/50"
+              : "border-slate-200 bg-white hover:bg-slate-50/50"
           }`}>
             <input
               type="radio"
@@ -1503,7 +1498,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           <label className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-200 cursor-pointer select-none shadow-sm hover:shadow-md ${
             restoreMode === "replace"
               ? "border-rose-600 bg-rose-50/30 ring-1 ring-rose-500/20"
-              : "border-slate-200 bg-[#FFFDF8] hover:bg-slate-50/50"
+              : "border-slate-200 bg-white hover:bg-slate-50/50"
           }`}>
             <input
               type="radio"
@@ -1622,7 +1617,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
       {/* ── Import Preview Modal ── */}
       {isImportPreviewOpen && importPreview && (
         <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white w-full max-w-md rounded-[28px] border border-[#E8E1D8] shadow-2xl overflow-hidden animate-scaleUp">
+          <div className="bg-white w-full max-w-md rounded-[28px] border border-slate-200 shadow-2xl overflow-hidden animate-scaleUp">
             {/* Header */}
             <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100">
               <div className="flex items-center gap-3">

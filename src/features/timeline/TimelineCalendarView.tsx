@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ChevronLeftIcon, ChevronRightIcon, Add01Icon, Calendar01Icon, Clock01Icon } from "@hugeicons/core-free-icons";
 import { EventItem, Trip } from "../../db";
@@ -146,7 +146,7 @@ export function TimelineCalendarView({
                 {selectedEvents.map((item, idx) => renderActivityCard(item, idx))}
               </div>
             ) : (
-              <div className="bg-[#FAF7F1] border border-[#E8E1D8] rounded-[24px] p-6 text-center shadow-sm">
+              <div className="bg-slate-50 border border-slate-200 rounded-[24px] p-6 text-center shadow-sm">
                 <div className="flex justify-center mb-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm text-slate-400">
                     <HugeiconsIcon icon={Clock01Icon} className="w-5 h-5" />

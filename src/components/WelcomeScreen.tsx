@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   CompassIcon,
@@ -181,10 +181,10 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] grid grid-cols-1 md:grid-cols-2 w-full bg-kat-bg overflow-hidden font-sans select-none">
+    <div className="fixed inset-0 z-[100] grid grid-cols-1 lg:grid-cols-2 w-full bg-kat-bg overflow-hidden font-sans select-none">
       
       {/* 1. LEFT SIDE - Hero Image (Desktop only) */}
-      <div className="hidden md:flex relative w-full h-full overflow-hidden select-text">
+      <div className="hidden lg:flex relative w-full h-full overflow-hidden select-text">
         {/* Background Landscape Image */}
         <img 
           src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop" 
@@ -216,22 +216,17 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
       </div>
 
       {/* 2. RIGHT SIDE - Zero-Friction Auth Form (Mobile-first) */}
-      <div className="flex flex-col justify-between items-center relative w-full h-full overflow-y-auto px-6 py-8 pb-safe md:px-12 md:py-14 custom-scrollbar bg-gradient-to-br from-[#E6F9F8] via-[#FFFDF8] to-[#FFF0F5]">
+      <div className="flex flex-col justify-between items-center relative w-full h-full px-6 py-6 pb-safe lg:px-12 lg:py-10 bg-white overflow-hidden">
         
-        {/* Noise overlay for spatial texture */}
-        <div 
-          className="absolute inset-0 z-0 opacity-[0.25] mix-blend-overlay pointer-events-none" 
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
-        />
+        <div className="hidden lg:block h-2 w-full shrink-0 relative z-10" />
 
-        <div className="hidden md:block h-2 w-full shrink-0 relative z-10" />
-
-        {/* MIDDLE ACTIONS: Glassmorphism Card */}
-        <div className="w-full max-w-[400px] mx-auto my-auto p-8 sm:p-10 bg-white/60 backdrop-blur-xl rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-white flex flex-col items-center relative z-10 animate-scaleUp">
+        {/* MIDDLE ACTIONS: Auth Card */}
+        <div className="w-full max-w-[400px] mx-auto flex-1 flex flex-col justify-center">
+        <div className="w-full p-6 sm:p-8 bg-white rounded-[32px] shadow-[0_2px_24px_rgba(3,13,46,0.07)] border border-slate-200 flex flex-col items-center relative z-10 animate-scaleUp">
           
           {/* Onboarding Carousel (2027 Premium Swipeable) */}
           <div 
-            className="w-full overflow-hidden mb-5 relative cursor-grab active:cursor-grabbing select-none"
+            className="w-full overflow-x-hidden overflow-y-visible mb-4 relative cursor-grab active:cursor-grabbing select-none pt-2"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -244,18 +239,17 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                 const IconComp = slide.icon;
                 return (
                   <div key={idx} className="w-full shrink-0 flex flex-col items-center text-center px-1">
-                    {/* Floating Icon with Background Accent Glow */}
-                    <div className="relative mb-5 flex items-center justify-center">
-                      <div className={`absolute inset-0 bg-gradient-to-tr ${slide.accent} rounded-full blur-xl scale-150 opacity-70 pointer-events-none`} />
-                      <div className="relative flex items-center justify-center h-16 w-16 rounded-[20px] bg-white border border-slate-100/50 shadow-soft ring-4 ring-white/50 animate-float-slow">
-                        <HugeiconsIcon icon={IconComp} size={24} className={slide.iconColor} />
+                    {/* Icon */}
+                    <div className="relative mb-3 flex items-center justify-center">
+                      <div className="flex items-center justify-center h-14 w-14 rounded-[18px] bg-slate-50 border border-slate-200 shadow-sm animate-float-slow">
+                        <HugeiconsIcon icon={IconComp} size={22} className={slide.iconColor} />
                       </div>
                     </div>
 
-                    <h3 className="text-[20px] font-black tracking-tight text-[#030D2E] leading-tight mb-2">
+                    <h3 className="text-[18px] font-black tracking-tight text-[#030D2E] leading-tight mb-1.5">
                       {slide.title}
                     </h3>
-                    <p className="text-[13px] font-semibold text-slate-500 leading-relaxed max-w-[280px] mx-auto">
+                    <p className="text-[12.5px] font-semibold text-slate-500 leading-relaxed max-w-[280px] mx-auto">
                       {slide.desc}
                     </p>
                   </div>
@@ -265,7 +259,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
           </div>
 
           {/* Liquid Dots Indicators */}
-          <div className="flex items-center justify-center gap-1.5 mb-7 select-none">
+          <div className="flex items-center justify-center gap-1.5 mb-5 select-none">
             {onboardingSlides.map((_, idx) => (
               <button
                 key={idx}
@@ -284,14 +278,14 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
 
           {/* Error display */}
           {errorMsg && (
-            <div className="w-full mb-6 rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13px] text-rose-800 font-semibold leading-relaxed flex items-start gap-2.5 animate-fadeIn">
-              <HugeiconsIcon icon={AlertCircleIcon} className="w-4.5 h-4.5 text-rose-600 shrink-0 mt-0.5" />
+            <div className="w-full mb-4 rounded-2xl bg-rose-50 border border-rose-100 p-3.5 text-[13px] text-rose-800 font-semibold leading-relaxed flex items-start gap-2.5 animate-fadeIn">
+              <HugeiconsIcon icon={AlertCircleIcon} className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
           )}
 
-          {/* Action Button Stack, height h-14, gap-4 */}
-          <div className="flex flex-col gap-3.5 w-full">
+          {/* Action Button Stack */}
+          <div className="flex flex-col gap-3 w-full">
             {/* Google Login (Primary) */}
             <button
               onClick={handleGoogleLogin}
@@ -328,15 +322,16 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
           </div>
 
         </div>
+        </div>{/* end flex-1 wrapper */}
 
         {/* BOTTOM SECTION: LEGAL FOOTER */}
-        <div className="w-full shrink-0 text-center pt-8 pb-2 relative z-10">
-          <div className="flex items-center justify-center gap-5 text-slate-300 opacity-80 mb-5" title="Sẵn sàng trên đa nền tảng">
-            <HugeiconsIcon icon={LaptopIcon} className="h-[18px] w-[18px] hover:text-sky-400 transition-colors" strokeWidth={2.5} />
-            <AndroidIcon className="h-[18px] w-[18px] hover:text-emerald-400 transition-colors" />
-            <AppleIcon className="h-[20px] w-[20px] hover:text-slate-400 transition-colors" />
+        <div className="w-full shrink-0 text-center pt-4 pb-1 relative z-10">
+          <div className="flex items-center justify-center gap-4 text-slate-300 opacity-80 mb-3" title="Sẵn sàng trên đa nền tảng">
+            <HugeiconsIcon icon={LaptopIcon} className="h-[16px] w-[16px] hover:text-sky-400 transition-colors" strokeWidth={2.5} />
+            <AndroidIcon className="h-[16px] w-[16px] hover:text-emerald-400 transition-colors" />
+            <AppleIcon className="h-[18px] w-[18px] hover:text-slate-400 transition-colors" />
           </div>
-          <p className="text-[12.5px] leading-relaxed text-slate-500 font-medium max-w-xs mx-auto">
+          <p className="text-[11.5px] leading-relaxed text-slate-400 font-medium max-w-xs mx-auto">
             Bằng việc tiếp tục, bạn đồng ý với{" "}
             <button 
               onClick={() => setLegalModal("terms")}
@@ -367,7 +362,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
       {/* 3. LEGAL MODAL SHEETS */}
       {legalModal && (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white w-full max-w-[500px] rounded-[28px] border border-[#E8E1D8] p-6 shadow-floating max-h-[85vh] flex flex-col animate-scaleUp">
+          <div className="bg-white w-full max-w-[500px] rounded-[28px] border border-slate-200 p-6 shadow-floating max-h-[85vh] flex flex-col animate-scaleUp">
             
             <div className="flex items-center justify-between pb-4 border-b border-slate-100 shrink-0">
               <div className="flex items-center gap-2">

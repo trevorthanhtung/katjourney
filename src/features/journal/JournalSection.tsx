@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -24,7 +24,8 @@ import {
   Loading01Icon,
   BubbleChatIcon,
   Cancel01Icon,
-  PencilEdit01Icon
+  PencilEdit01Icon,
+  MoreHorizontalIcon
 } from "@hugeicons/core-free-icons";
 import { db, JournalEntry, JournalMood, Member } from "../../db";
 import { getAvatarSvg } from "../../utils/avatars";
@@ -310,7 +311,7 @@ function JournalForm({
                   className={`flex items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-bold border transition-all duration-200 active:scale-95 ${
                     isActive
                       ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#030D2E]"
-                      : "bg-[#FFFDF8] border-[#E8E1D8] text-slate-600 hover:bg-slate-50"
+                      : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                   }`}
                 >
                   <span className={`h-2.5 w-2.5 rounded-full ${colorDot}`} />
@@ -388,7 +389,7 @@ function JournalForm({
                 key={prompt}
                 type="button"
                 onClick={() => handlePromptClick(prompt)}
-                className="rounded-lg bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5 text-[12.5px] font-bold text-slate-600 hover:bg-[#00BFB7]/10 hover:text-[#00BFB7] hover:border-[#00BFB7]/30 transition-all active:scale-95"
+                className="rounded-lg bg-slate-50 border border-slate-200 px-3 py-1.5 text-[12.5px] font-bold text-slate-600 hover:bg-[#00BFB7]/10 hover:text-[#00BFB7] hover:border-[#00BFB7]/30 transition-all active:scale-95"
               >
                 + {prompt}
               </button>
@@ -397,6 +398,66 @@ function JournalForm({
         </div>
       </div>
     </BottomSheet>
+  );
+}
+
+function JournalEntryMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    if (isMenuOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMenuOpen]);
+
+  return (
+    <div className="relative shrink-0" ref={menuRef}>
+      <button
+        type="button"
+        className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none"
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsMenuOpen(!isMenuOpen);
+        }}
+        title="Tùy chọn"
+      >
+        <HugeiconsIcon icon={MoreHorizontalIcon} className="h-5 w-5" />
+      </button>
+
+      {isMenuOpen && (
+        <div className="absolute right-0 top-full mt-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMenuOpen(false);
+              onEdit();
+            }}
+            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+          >
+            <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500" />
+            Sửa
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMenuOpen(false);
+              onDelete();
+            }}
+            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+          >
+            <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
+            Xóa
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -432,7 +493,7 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
   return (
     <div className="space-y-6">
       {/* Small Compact Card for Empty state */}
-      <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-6 text-center shadow-soft max-w-md mx-auto my-4 animate-fadeIn">
+      <div className="rounded-[24px] border border-slate-200 bg-white p-6 text-center shadow-soft max-w-md mx-auto my-4 animate-fadeIn">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
           <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
         </div>
@@ -459,7 +520,7 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
               <button 
                 key={prompt}
                 onClick={() => onPromptClick(prompt)} 
-                className="text-left bg-[#FFFDF8] p-4 rounded-[20px] border border-[#E8E1D8] shadow-sm hover:shadow-md transition-all group active:scale-[0.99] flex flex-col justify-between min-h-[112px] w-[260px] md:w-full shrink-0 md:shrink-0 snap-center"
+                className="text-left bg-white p-4 rounded-[20px] border border-slate-200 shadow-sm hover:shadow-md transition-all group active:scale-[0.99] flex flex-col justify-between min-h-[112px] w-[260px] md:w-full shrink-0 md:shrink-0 snap-center"
               >
                 <div className="flex items-start gap-2.5">
                   <div className={`p-1.5 rounded-lg bg-slate-50 border border-slate-100/60 ${iconColor} shrink-0 mt-0.5`}>
@@ -660,7 +721,7 @@ export function JournalSection({
       {journalMode === "posts" ? (
         <>
           {/* Journal Overview Card */}
-      <div className="rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft">
+      <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-soft">
         <div className="flex items-start sm:items-center gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
             <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
@@ -718,7 +779,7 @@ export function JournalSection({
                   return (
                     <article 
                       key={entry.id} 
-                    className={`break-inside-avoid mb-4 group rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] shadow-soft hover:shadow-md transition-all flex flex-col motion-card-enter overflow-hidden motion-delay-${Math.min(idx + 1, 5)}`}
+                    className={`break-inside-avoid mb-4 group rounded-[24px] border border-slate-200 bg-white shadow-soft hover:shadow-md transition-all flex flex-col motion-card-enter overflow-hidden motion-delay-${Math.min(idx + 1, 5)}`}
                     >
                       <div className="flex items-center justify-between gap-4 p-4 pb-3">
                         <div className="flex items-center gap-2.5">
@@ -773,24 +834,12 @@ export function JournalSection({
                           </div>
                         </div>
                         
-                        {/* Edit / Delete Buttons */}
+                        {/* ... menu */}
                         {!isReadOnly && (
-                          <div className="flex gap-1.5">
-                            <button 
-                              className="flex h-8 w-8 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 transition-all motion-press" 
-                              onClick={() => openEditForm(entry)}
-                              title="Sửa bài viết"
-                            >
-                              <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4" />
-                            </button>
-                            <button 
-                              className="flex h-8 w-8 items-center justify-center rounded-full text-rose-500 hover:bg-rose-50 transition-all motion-press" 
-                              onClick={() => triggerDelete(entry)}
-                              title="Xóa bài viết"
-                            >
-                              <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
-                            </button>
-                          </div>
+                          <JournalEntryMenu
+                            onEdit={() => openEditForm(entry)}
+                            onDelete={() => triggerDelete(entry)}
+                          />
                         )}
                       </div>
 

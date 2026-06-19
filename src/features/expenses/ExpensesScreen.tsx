@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useRef, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Add01Icon,
@@ -27,7 +27,8 @@ import {
   Airplane01Icon,
   SparklesIcon,
   Calendar01Icon,
-  PreferenceHorizontalIcon
+  PreferenceHorizontalIcon,
+  MoreHorizontalIcon
 } from "@hugeicons/core-free-icons";
 import { db, Expense, Member, EventItem } from "../../db";
 import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories } from "../../utils/helpers";
@@ -121,7 +122,7 @@ export function SettlementCard({
       {settlements.length ? (
         <div className="grid gap-3 sm:grid-cols-2">
           {settlements.map((s, idx) => (
-            <div key={idx} className="flex flex-col justify-center bg-white border border-[#E8E1D8] shadow-sm rounded-2xl p-4 gap-2">
+            <div key={idx} className="flex flex-col justify-center bg-white border border-slate-200 shadow-sm rounded-2xl p-4 gap-2">
               <div className="flex items-center justify-between w-full">
                 <div className="flex flex-col items-center flex-1">
                   <span className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-1">
@@ -148,7 +149,7 @@ export function SettlementCard({
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center p-6 text-center border border-dashed border-slate-200 rounded-2xl bg-[#FAF7F1]/30">
+        <div className="flex flex-col items-center justify-center p-6 text-center border border-dashed border-slate-200 rounded-2xl bg-slate-50/30">
           <p className="text-[14px] font-semibold text-slate-500">{emptyText}</p>
         </div>
       )}
@@ -156,24 +157,32 @@ export function SettlementCard({
   );
 }
 
-function ExpenseCard({ 
+const ExpenseCard = React.memo(function ExpenseCard({ 
   item, 
   onEdit, 
   onDelete,
   idx = 0,
-  isSwiped,
-  onSwipe,
   isReadOnly
 }: { 
   item: Expense; 
   onEdit: () => void; 
   onDelete: () => void;
   idx?: number;
-  isSwiped: boolean;
-  onSwipe: (swiped: boolean) => void;
   isReadOnly?: boolean;
 }) {
   const isPersonal = item.splitType === "personal";
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    if (isMenuOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMenuOpen]);
   
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -198,122 +207,102 @@ function ExpenseCard({
     }
   };
 
-  const touchStartX = React.useRef(0);
-  const touchEndX = React.useRef(0);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (isReadOnly) return;
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (isReadOnly) return;
-    const diff = touchStartX.current - touchEndX.current;
-    if (diff > 40) {
-      onSwipe(true);
-    } else if (diff < -40) {
-      onSwipe(false);
-    }
-  };
-  
   return (
-    <div className={`relative h-full overflow-hidden rounded-3xl motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}>
-      {/* Background Action Buttons */}
-      {!isReadOnly && (
-        <div className="absolute inset-y-0 right-0 z-0 flex items-center justify-end gap-2 pr-4 pl-12 bg-slate-50/60 rounded-3xl border border-slate-100">
-          <button 
-            className="flex h-11 w-11 items-center justify-center rounded-2xl text-slate-600 bg-white hover:bg-slate-50 active:scale-95 transition-all shadow-sm border border-slate-200/50 focus:outline-none" 
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit();
-            }}
-            title="Chỉnh sửa"
-          >
-            <HugeiconsIcon icon={PencilEdit01Icon} className="h-5 w-5" />
-          </button>
-          <button 
-            className="flex h-11 w-11 items-center justify-center rounded-2xl text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all shadow-sm border border-rose-100 focus:outline-none" 
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}
-            title="Xóa"
-          >
-            <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5" />
-          </button>
-        </div>
-      )}
+    <article className={`motion-card-enter motion-delay-${Math.min(idx + 1, 5)} flex items-center justify-between gap-4 rounded-3xl bg-white p-5 border border-slate-200 shadow-sm transition-all duration-200 hover:shadow-md`}>
+      <div className="min-w-0 flex-1">
+        {/* Description */}
+        <h4 className="text-base font-semibold text-[#030D2E] truncate">
+          {item.description || "Khoản chi không tên"}
+        </h4>
 
-      {/* Main Card Content Overlay */}
-      <article 
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onClick={(e) => {
-          if (isReadOnly) return;
-          e.stopPropagation();
-          onSwipe(!isSwiped);
-        }}
-        className={classNames(
-          "relative z-10 flex items-center justify-between gap-4 h-full rounded-3xl bg-[#FFFDF8] p-5 border border-[#E8E1D8] transition-all duration-200 hover:shadow-md cursor-pointer select-none",
-          isSwiped ? "-translate-x-28 border-slate-300" : "translate-x-0"
-        )}
-      >
-        <div className="min-w-0 flex-1">
-          {/* Description */}
-          <h4 className="text-base font-semibold text-[#030D2E] truncate">
-            {item.description || "Khoản chi không tên"}
-          </h4>
+        {/* Category & Badge */}
+        <div className="flex items-center flex-wrap gap-2 text-xs text-slate-500 mt-1.5">
+          <span className="inline-flex items-center gap-1 font-medium bg-slate-100/80 px-2 py-0.5 rounded-md border border-slate-200/20">
+            {getCategoryIcon(item.category)}
+            {item.category}
+          </span>
+          
+          <span className={classNames(
+            "inline-flex items-center rounded-md px-2 py-0.5 font-bold border",
+            isPersonal 
+              ? "bg-slate-50 text-slate-500 border-slate-200/80" 
+              : "bg-emerald-50 text-emerald-700 border-emerald-100"
+          )}>
+            {isPersonal ? "Chi cá nhân" : "Chi chung"}
+          </span>
 
-          {/* Category & Badge */}
-          <div className="flex items-center flex-wrap gap-2 text-xs text-slate-500 mt-1.5">
-            <span className="inline-flex items-center gap-1 font-medium bg-slate-100/80 px-2 py-0.5 rounded-md border border-slate-200/20">
-              {getCategoryIcon(item.category)}
-              {item.category}
+          <span className="font-medium">
+            • {isPersonal ? (item.payer ? `Của: ${item.payer}` : "Cá nhân") : `Trả: ${item.payer || "Chưa chọn"}`}
+          </span>
+          
+          {item.date && (
+            <span className="font-medium px-2 py-0.5 bg-slate-50 border border-slate-200/60 rounded-md">
+              {new Date(item.date).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
             </span>
-            
-            <span className={classNames(
-              "inline-flex items-center rounded-md px-2 py-0.5 font-bold border",
-              isPersonal 
-                ? "bg-slate-50 text-slate-500 border-slate-200/80" 
-                : "bg-emerald-50 text-emerald-700 border-emerald-100"
-            )}>
-              {isPersonal ? "Chi cá nhân" : "Chi chung"}
-            </span>
-
-            {/* Paid by / Owned by info */}
-            <span className="font-medium">
-              • {isPersonal ? (item.payer ? `Của: ${item.payer}` : "Cá nhân") : `Trả: ${item.payer || "Chưa chọn"}`}
-            </span>
-            
-            {item.date && (
-              <span className="font-medium px-2 py-0.5 bg-slate-50 border border-slate-200/60 rounded-md">
-                {new Date(item.date).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Amount */}
-        <div className="shrink-0 pl-2 text-right">
-          <p className="font-bold text-[#030D2E] text-lg">
-            {formatMoney(item.amount)}
-          </p>
-          {item.originalAmount && item.currency && item.currency !== "VND" && (
-            <p className="text-[12px] font-medium text-slate-500 mt-0.5">
-              {new Intl.NumberFormat('en-US').format(item.originalAmount)} {item.currency}
-            </p>
           )}
         </div>
-      </article>
-    </div>
+      </div>
+
+      {/* Amount */}
+      <div className="shrink-0 pl-2 text-right">
+        <p className="font-bold text-[#030D2E] text-lg">
+          {formatMoney(item.amount)}
+        </p>
+        {item.originalAmount && item.currency && item.currency !== "VND" && (
+          <p className="text-[12px] font-medium text-slate-500 mt-0.5">
+            {new Intl.NumberFormat('en-US').format(item.originalAmount)} {item.currency}
+          </p>
+        )}
+      </div>
+
+      {/* ... menu */}
+      {!isReadOnly && (
+        <div className="relative shrink-0 self-center" ref={menuRef}>
+          <button
+            type="button"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMenuOpen(!isMenuOpen);
+            }}
+            title="Tùy chọn"
+          >
+            <HugeiconsIcon icon={MoreHorizontalIcon} className="h-5 w-5" />
+          </button>
+
+          {isMenuOpen && (
+            <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMenuOpen(false);
+                  onEdit();
+                }}
+                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+              >
+                <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500" />
+                Sửa
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMenuOpen(false);
+                  onDelete();
+                }}
+                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+              >
+                <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
+                Xóa
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </article>
   );
-}
+});
 
 function ExpenseForm({ 
   tripId, 
@@ -860,7 +849,6 @@ export function ExpensesScreen({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
-  const [swipedExpenseId, setSwipedExpenseId] = useState<number | null>(null);
 
   useModalHistory(isFormOpen, () => {
     setIsFormOpen(false);
@@ -927,10 +915,7 @@ export function ExpensesScreen({
   const isEmpty = expenses.length === 0;
 
   return (
-    <div 
-      className="mx-auto max-w-[1120px] px-1 md:px-0"
-      onClick={() => setSwipedExpenseId(null)}
-    >
+    <div className="mx-auto max-w-[1120px] px-1 md:px-0">
       <div className="space-y-6 md:space-y-8 pb-0 md:pb-8">
         
         {/* Title row */}
@@ -953,7 +938,7 @@ export function ExpensesScreen({
         </div>
         
         {/* Total Expense Hero */}
-        <section className="relative overflow-hidden rounded-[32px] bg-[#FFFDF8] border-t-4 border-t-[#030D2E] border-x border-b border-[#E8E1D8] p-6 md:p-8 text-[#030D2E] shadow-soft">
+        <section className="relative overflow-hidden rounded-[32px] bg-white border-t-4 border-t-[#030D2E] border-x border-b border-slate-200 p-6 md:p-8 text-[#030D2E] shadow-soft">
           
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="flex-1 space-y-5">
@@ -966,21 +951,21 @@ export function ExpensesScreen({
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
-                <div className="bg-[#FFFDF8] border border-[#E8E1D8] rounded-2xl p-4 shadow-sm flex items-start justify-between">
+                <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
                     <p className="text-[12px] font-bold text-slate-500 uppercase tracking-wide">Chi chung chuyến đi</p>
                     <p className="text-[18px] font-black text-[#00AFA8] mt-0.5">{formatMoney(totalSharedExpense)}</p>
                   </div>
                   <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-[#00AFA8]/60 shrink-0 mt-0.5" />
                 </div>
-                <div className="bg-[#FFFDF8] border border-[#E8E1D8] rounded-2xl p-4 shadow-sm flex items-start justify-between">
+                <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
                     <p className="text-[12px] font-bold text-slate-500 uppercase tracking-wide">Chi cá nhân</p>
                     <p className="text-[18px] font-black text-[#030D2E] mt-0.5">{formatMoney(totalPersonalExpense)}</p>
                   </div>
                   <HugeiconsIcon icon={UserIcon} className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
                 </div>
-                <div className="bg-[#FFFDF8] border border-[#E8E1D8] rounded-2xl p-4 shadow-sm flex items-start justify-between">
+                <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
                     <p className="text-[12px] font-bold text-slate-500 uppercase tracking-wide">Bình quân / người</p>
                     {members.length > 0 ? (
@@ -1074,17 +1059,9 @@ export function ExpensesScreen({
                 <ExpenseCard
                   key={item.id}
                   item={item}
-                  onEdit={() => {
-                    setSwipedExpenseId(null);
-                    openEditForm(item);
-                  }}
-                  onDelete={() => {
-                    setSwipedExpenseId(null);
-                    setExpenseToDelete(item);
-                  }}
+                  onEdit={() => openEditForm(item)}
+                  onDelete={() => setExpenseToDelete(item)}
                   idx={idx}
-                  isSwiped={swipedExpenseId === item.id}
-                  onSwipe={(swiped) => setSwipedExpenseId(swiped ? item.id! : null)}
                   isReadOnly={isReadOnly}
                 />
               ))

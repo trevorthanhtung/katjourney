@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useRef, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
@@ -21,7 +21,8 @@ import {
   Cancel01Icon,
   ImageAdd01Icon,
   Loading01Icon,
-  Maximize01Icon
+  Maximize01Icon,
+  MoreHorizontalIcon
 } from "@hugeicons/core-free-icons";
 import { db, TravelDocument } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -325,16 +326,12 @@ function DocumentCard({
   onEdit, 
   onDelete, 
   idx = 0,
-  isSwiped, 
-  onSwipe,
   isReadOnly
 }: { 
   doc: TravelDocument; 
   onEdit: () => void; 
   onDelete: () => void; 
   idx?: number;
-  isSwiped: boolean; 
-  onSwipe: (swiped: boolean) => void;
   isReadOnly?: boolean;
 }) {
   const colors = typeColors[doc.type || "other"];
@@ -343,6 +340,18 @@ function DocumentCard({
 
   const [copied, setCopied] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    if (isMenuOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMenuOpen]);
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -352,163 +361,142 @@ function DocumentCard({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const touchStartX = React.useRef(0);
-  const touchEndX = React.useRef(0);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (isReadOnly) return;
-    touchStartX.current = e.touches[0].clientX;
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (isReadOnly) return;
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (isReadOnly) return;
-    const diff = touchStartX.current - touchEndX.current;
-    if (diff > 40) {
-      onSwipe(true);
-    } else if (diff < -40) {
-      onSwipe(false);
-    }
-  };
-
   return (
-    <div className={`relative overflow-hidden rounded-3xl motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}>
-      {/* Background Action Buttons */}
-      {!isReadOnly && (
-        <div className="absolute inset-y-0 right-0 z-0 flex items-center justify-end gap-2 pr-4 pl-12 bg-slate-50/60 rounded-3xl border border-slate-100">
-          <button 
-            className="flex h-11 w-11 items-center justify-center rounded-2xl text-slate-600 bg-white hover:bg-slate-50 active:scale-95 transition-all shadow-sm border border-slate-200/50 focus:outline-none" 
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit();
-            }}
-            title="Chỉnh sửa"
-          >
-            <HugeiconsIcon icon={PencilEdit01Icon} className="h-5 w-5" />
-          </button>
-          <button 
-            className="flex h-11 w-11 items-center justify-center rounded-2xl text-rose-600 bg-rose-50 hover:bg-rose-100 active:scale-95 transition-all shadow-sm border border-rose-100 focus:outline-none" 
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}
-            title="Xóa"
-          >
-            <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5" />
-          </button>
-        </div>
-      )}
+    <article className={`motion-card-enter motion-delay-${Math.min(idx + 1, 5)} flex flex-col justify-between rounded-3xl bg-white p-5 border border-slate-200 transition-all duration-200 hover:shadow-md`}>
+      <div>
+        {/* Top info row */}
+        <div className="flex items-start justify-between gap-4 mb-3">
+          <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold border ${colors.bg} ${colors.text} ${colors.border}`}>
+            <HugeiconsIcon icon={Icon} className="w-3.5 h-3.5" />
+            {typeLabels[doc.type || "other"].split(" / ")[0]}
+          </span>
 
-      {/* Main Card Content Overlay */}
-      <article 
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onClick={(e) => {
-          if (!isReadOnly) {
-            e.stopPropagation();
-            onSwipe(!isSwiped);
-          }
-        }}
-        className={classNames(
-          "relative z-10 flex flex-col justify-between rounded-3xl bg-[#FFFDF8] p-5 border border-[#E8E1D8] transition-all duration-200 hover:shadow-md cursor-pointer select-none",
-          !isReadOnly && isSwiped ? "-translate-x-28 border-slate-300" : "translate-x-0"
-        )}
-      >
-        <div>
-          {/* Top info row */}
-          <div className="flex items-start justify-between gap-4 mb-3">
-            <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold border ${colors.bg} ${colors.text} ${colors.border}`}>
-              <HugeiconsIcon icon={Icon} className="w-3.5 h-3.5" />
-              {typeLabels[doc.type || "other"].split(" / ")[0]}
-            </span>
-          </div>
-
-          {/* Title */}
-          <h4 className="text-lg font-semibold text-[#030D2E] leading-tight mb-2.5">{doc.title}</h4>
-          
-          {/* Code Container */}
-          {doc.code && (
-            <div 
-              onClick={handleCopy}
-              className="group/code flex items-center justify-between bg-slate-50 hover:bg-slate-100/80 border border-slate-200/50 rounded-xl p-3 mt-2.5 transition-all active:scale-[0.99] cursor-pointer"
-            >
-              <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã xác nhận / Code</p>
-                <p className="text-[14px] font-extrabold text-[#030D2E] truncate mt-0.5">{doc.code}</p>
-              </div>
+          {/* ... menu */}
+          {!isReadOnly && (
+            <div className="relative shrink-0" ref={menuRef}>
               <button
                 type="button"
-                className="ml-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-slate-200/60 text-slate-500 hover:text-[#030D2E] transition-all shadow-sm shrink-0"
-                title="Sao chép mã"
-              >
-                {copied ? (
-                  <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 text-emerald-500" />
-                ) : (
-                  <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />
-                )}
-              </button>
-            </div>
-          )}
-
-          {/* Date & Note */}
-          {formattedDate && (
-            <p className="text-[13px] font-semibold text-slate-500 mt-3.5">
-              Ngày liên quan: <span className="font-extrabold text-slate-700">{formattedDate}</span>
-            </p>
-          )}
-
-          {doc.note && (
-            <p className="text-[13px] text-slate-500 font-medium whitespace-pre-line bg-slate-50/50 p-3 rounded-xl border border-slate-100 mt-2.5">
-              {doc.note}
-            </p>
-          )}
-
-          {doc.attachmentUrl && (
-            <div className="mt-4">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Ảnh đính kèm</p>
-              <div 
-                className="relative w-full rounded-xl overflow-hidden border border-slate-200 cursor-pointer group bg-[#F8F9FA] flex justify-center items-center"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setPreviewImage(doc.attachmentUrl || null);
+                  setIsMenuOpen(!isMenuOpen);
                 }}
+                title="Tùy chọn"
               >
-                <img 
-                  src={doc.attachmentUrl} 
-                  alt={doc.title}
-                  loading="lazy"
-                  className="w-full h-auto max-h-[400px] object-contain transition-transform duration-300 group-hover:scale-[1.02]"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                  <HugeiconsIcon icon={Maximize01Icon} className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
+                <HugeiconsIcon icon={MoreHorizontalIcon} className="h-5 w-5" />
+              </button>
+
+              {isMenuOpen && (
+                <div className="absolute right-0 top-full mt-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsMenuOpen(false);
+                      onEdit();
+                    }}
+                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+                  >
+                    <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500" />
+                    Sửa
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsMenuOpen(false);
+                      onDelete();
+                    }}
+                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+                  >
+                    <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
+                    Xóa
+                  </button>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </div>
 
-        {/* Bottom link row */}
-        {doc.link && (
-          <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center">
-            <a
-              href={doc.link.startsWith("http") ? doc.link : `https://${doc.link}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center gap-1.5 text-[13.5px] font-bold text-kat-primary hover:text-kat-primary-dark transition-colors"
+        {/* Title */}
+        <h4 className="text-lg font-semibold text-[#030D2E] leading-tight mb-2.5">{doc.title}</h4>
+        
+        {/* Code Container */}
+        {doc.code && (
+          <div 
+            onClick={handleCopy}
+            className="group/code flex items-center justify-between bg-slate-50 hover:bg-slate-100/80 border border-slate-200/50 rounded-xl p-3 mt-2.5 transition-all active:scale-[0.99] cursor-pointer"
+          >
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã xác nhận / Code</p>
+              <p className="text-[14px] font-extrabold text-[#030D2E] truncate mt-0.5">{doc.code}</p>
+            </div>
+            <button
+              type="button"
+              className="ml-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-slate-200/60 text-slate-500 hover:text-[#030D2E] transition-all shadow-sm shrink-0"
+              title="Sao chép mã"
             >
-              <HugeiconsIcon icon={Link02Icon} className="w-3.5 h-3.5" />
-              <span>Mở liên kết trực tuyến</span>
-            </a>
+              {copied ? (
+                <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 text-emerald-500" />
+              ) : (
+                <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />
+              )}
+            </button>
           </div>
         )}
-      </article>
+
+        {/* Date & Note */}
+        {formattedDate && (
+          <p className="text-[13px] font-semibold text-slate-500 mt-3.5">
+            Ngày liên quan: <span className="font-extrabold text-slate-700">{formattedDate}</span>
+          </p>
+        )}
+
+        {doc.note && (
+          <p className="text-[13px] text-slate-500 font-medium whitespace-pre-line bg-slate-50/50 p-3 rounded-xl border border-slate-100 mt-2.5">
+            {doc.note}
+          </p>
+        )}
+
+        {doc.attachmentUrl && (
+          <div className="mt-4">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Ảnh đính kèm</p>
+            <div 
+              className="relative w-full rounded-xl overflow-hidden border border-slate-200 cursor-pointer group bg-[#F8F9FA] flex justify-center items-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                setPreviewImage(doc.attachmentUrl || null);
+              }}
+            >
+              <img 
+                src={doc.attachmentUrl} 
+                alt={doc.title}
+                loading="lazy"
+                className="w-full h-auto max-h-[400px] object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                <HugeiconsIcon icon={Maximize01Icon} className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom link row */}
+      {doc.link && (
+        <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center">
+          <a
+            href={doc.link.startsWith("http") ? doc.link : `https://${doc.link}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1.5 text-[13.5px] font-bold text-kat-primary hover:text-kat-primary-dark transition-colors"
+          >
+            <HugeiconsIcon icon={Link02Icon} className="w-3.5 h-3.5" />
+            <span>Mở liên kết trực tuyến</span>
+          </a>
+        </div>
+      )}
 
       {/* Lightbox */}
       {previewImage && (
@@ -535,7 +523,7 @@ function DocumentCard({
           </button>
         </div>
       )}
-    </div>
+    </article>
   );
 }
 
@@ -555,7 +543,6 @@ export function TravelDocumentsSection({
   const [formOpen, setFormOpen] = useState(false);
   const [editingDoc, setEditingDoc] = useState<TravelDocument | null>(null);
   const [docToDelete, setDocToDelete] = useState<TravelDocument | null>(null);
-  const [swipedDocId, setSwipedDocId] = useState<number | null>(null);
 
   useModalHistory(formOpen, () => {
     setFormOpen(false);
@@ -586,10 +573,7 @@ export function TravelDocumentsSection({
   }
 
   return (
-    <div 
-      className="space-y-6 animate-fadeIn pb-24"
-      onClick={() => setSwipedDocId(null)}
-    >
+    <div className="space-y-6 animate-fadeIn pb-24">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <div className="flex items-center gap-3 min-w-0">
@@ -651,7 +635,7 @@ export function TravelDocumentsSection({
 
       {/* Documents List */}
       {filteredDocs.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[28px] bg-white border border-[#E8E1D8] p-12 text-center shadow-soft max-w-md mx-auto">
+        <div className="flex flex-col items-center justify-center rounded-[28px] bg-white border border-slate-200 p-12 text-center shadow-soft max-w-md mx-auto">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary">
             <HugeiconsIcon icon={File01Icon} className="h-8 w-8" />
           </div>
@@ -670,17 +654,9 @@ export function TravelDocumentsSection({
             <DocumentCard
               key={doc.id}
               doc={doc}
-              onEdit={() => {
-                setSwipedDocId(null);
-                openEditForm(doc);
-              }}
-              onDelete={() => {
-                setSwipedDocId(null);
-                setDocToDelete(doc);
-              }}
+              onEdit={() => openEditForm(doc)}
+              onDelete={() => setDocToDelete(doc)}
               idx={idx}
-              isSwiped={swipedDocId === doc.id}
-              onSwipe={(swiped) => setSwipedDocId(swiped ? doc.id! : null)}
             />
           ))}
         </div>

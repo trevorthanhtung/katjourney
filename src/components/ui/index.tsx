@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { 
@@ -723,7 +723,7 @@ export function BottomSheet({
  
         {/* Footer */}
         {footer && (
-          <div className="flex-none border-t border-slate-100 bg-[#FFFDF8] px-5 sm:px-6 py-3.5 sm:py-4 touch-none">
+          <div className="flex-none border-t border-slate-100 bg-white px-5 sm:px-6 py-3.5 sm:py-4 touch-none">
             {footer}
           </div>
         )}
@@ -808,6 +808,10 @@ export function TypedDeleteConfirmModal({
             value={typedText}
             onChange={(event) => setTypedText(event.target.value)}
             placeholder={inputPlaceholder ?? `Gõ ${confirmationText} để xác nhận`}
+            autoCapitalize="none"
+            autoCorrect="off"
+            autoComplete="off"
+            spellCheck={false}
             className="w-full rounded-[14px] border border-slate-200/60 bg-slate-50 px-4 h-[50px] text-[15px] font-bold text-[#030D2E] outline-none transition-all focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder:text-slate-400"
           />
         </label>
@@ -915,7 +919,7 @@ export function FAB({ icon, label, onClick, className }: { icon: React.ReactNode
         "fixed bottom-[120px] right-4 z-30 flex items-center justify-center rounded-full shadow-floating lg:right-[calc(max(1rem,50vw-512px+1rem))] motion-press lg:motion-hover-lift",
         className || "h-14 w-14 bg-sunset-600 hover:scale-105 text-white"
       )}
-      style={{ bottom: "calc(7.2rem + env(safe-area-inset-bottom))" }}
+      style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
       onClick={onClick}
       aria-label={label}
     >

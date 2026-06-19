@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   UserGroupIcon,
@@ -26,6 +26,7 @@ import { getTripReminders } from "../../utils/reminderRules";
 
 import { useWeather } from "../../hooks/useWeather";
 import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather";
+import { usePackingTip } from "../../hooks/usePackingTip";
 import { useModalHistory } from "../../hooks/useModalHistory";
 import { getWeatherIcon, getWeatherGradient, getWeatherText } from "../../services/weatherService";
 import { WeatherDetailsModal } from "../timeline/WeatherDetailsModal";
@@ -83,22 +84,7 @@ export function HomeScreen({
   useModalHistory(weatherModalOpen, () => setWeatherModalOpen(false), "weather-modal");
 
   // Packing tip based on GPS vs destination temp
-  const packingTip = (() => {
-    if (!forecast || !myForecast) return null;
-    const destTemp = forecast.current?.temperature ?? ((forecast.temperature_2m_max?.[0] ?? 0) + (forecast.temperature_2m_min?.[0] ?? 0)) / 2;
-    const myTemp = myForecast.current?.temperature ?? ((myForecast.temperature_2m_max?.[0] ?? 0) + (myForecast.temperature_2m_min?.[0] ?? 0)) / 2;
-    const destCode = forecast.current?.weathercode ?? forecast.weathercode?.[0] ?? 0;
-    const myCode = myForecast.current?.weathercode ?? myForecast.weathercode?.[0] ?? 0;
-    const diff = destTemp - myTemp;
-    const isDestRainy = (destCode >= 51 && destCode <= 67) || (destCode >= 80 && destCode <= 82) || (destCode >= 95 && destCode <= 99);
-    const isMyRainy = (myCode >= 51 && myCode <= 67) || (myCode >= 80 && myCode <= 82) || (myCode >= 95 && myCode <= 99);
-    if (isDestRainy && !isMyRainy) return { emoji: "🌧️", message: `Điểm đến đang có mưa, đừng quên bỏ ô vào vali!`, color: "bg-sky-500/15 border-sky-400/30 text-white" };
-    if (diff <= -7) return { emoji: "🧥", message: `Lạnh hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Nhớ mang áo ấm!`, color: "bg-white/15 border-white/25 text-white" };
-    if (diff <= -4) return { emoji: "🧣", message: `Mát hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Mang áo khoác mỏng nhé.`, color: "bg-white/15 border-white/25 text-white" };
-    if (diff >= 7) return { emoji: "☀️", message: `Nóng hơn nơi bạn ${Math.round(diff)}°C. Chuẩn bị kem chống nắng!`, color: "bg-amber-500/15 border-amber-400/30 text-white" };
-    if (diff >= 4) return { emoji: "🕶️", message: `Ấm hơn nơi bạn ${Math.round(diff)}°C. Đừng quên kính mát.`, color: "bg-orange-500/15 border-orange-400/30 text-white" };
-    return null;
-  })();
+  const packingTip = usePackingTip(forecast, myForecast);
 
   if (!trip) return null;
   const timing = getTripTiming(trip);
@@ -219,25 +205,25 @@ export function HomeScreen({
         {/* Subtle World Map Watermark */}
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
         
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="space-y-4">
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-5">
+          <div className="space-y-3 min-w-0 flex-1">
             <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-md">
               ● {status === "past" ? "Đã kết thúc" : status === "active" ? "Đang diễn ra" : "Sắp diễn ra"}
             </span>
-            <h2 className="text-[28px] font-black leading-tight tracking-tight drop-shadow-sm">
+            <h2 className="text-[24px] sm:text-[26px] font-black leading-tight tracking-tight drop-shadow-sm">
               {trip.title}
             </h2>
-            <div className="flex flex-wrap gap-2.5">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
-                <HugeiconsIcon icon={Location01Icon} size={14} className="text-white/70" />
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[12px] font-medium border border-white/10 text-white/90">
+                <HugeiconsIcon icon={Location01Icon} size={13} className="text-white/70" />
                 {trip.location || "Đang lên kế hoạch"}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
-                <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-white/70" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[12px] font-medium border border-white/10 text-white/90">
+                <HugeiconsIcon icon={Calendar01Icon} size={13} className="text-white/70" />
                 {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90">
-                <HugeiconsIcon icon={Clock01Icon} size={14} className="text-white/70" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[12px] font-medium border border-white/10 text-white/90">
+                <HugeiconsIcon icon={Clock01Icon} size={13} className="text-white/70" />
                 {durationText}
               </span>
               {trip.mediaLink && (
@@ -249,47 +235,46 @@ export function HomeScreen({
             </div>
           </div>
 
-          <div className="flex flex-col items-center md:items-end gap-3 shrink-0 w-full sm:w-[290px] md:w-[290px] justify-center md:justify-end">
+          <div className="flex flex-row sm:flex-col items-stretch sm:items-end gap-3 shrink-0 w-full sm:w-[220px] md:w-[250px]">
             {/* Timing box */}
-            <div className="relative overflow-hidden flex flex-col items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md px-6 py-4 border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_8px_16px_rgba(0,0,0,0.1)] w-full text-center shrink-0 min-h-[72px]">
-              <div className="absolute -right-4 -top-4 w-12 h-12 bg-white/10 rounded-full blur-md"></div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
+            <div className="flex flex-col items-center justify-center rounded-2xl bg-white/10 px-4 py-3 border border-white/20 flex-1 sm:flex-none sm:w-full text-center shrink-0 min-h-[64px]">
+              <p className="text-[10px] font-semibold text-white/60">
                 {status === "past" ? "Trạng thái" : "Hành trình"}
               </p>
-              <p className="mt-1.5 text-[22px] font-black text-white drop-shadow-sm tracking-tight leading-none">
+              <p className="mt-1 text-[18px] sm:text-[20px] font-black text-white drop-shadow-sm tracking-tight leading-none">
                 {timing.label}
               </p>
             </div>
 
             {/* Weather Widget */}
             {weatherLoading ? (
-               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-3xl p-4 border border-white/20 animate-pulse w-full">
-                 <div className="w-10 h-10 bg-white/20 rounded-xl"></div>
+               <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-3xl p-3 border border-white/20 animate-pulse flex-1 sm:flex-none sm:w-full">
+                 <div className="w-9 h-9 bg-white/20 rounded-xl shrink-0"></div>
                  <div className="flex flex-col gap-2">
-                   <div className="w-16 h-3 bg-white/20 rounded-full"></div>
+                   <div className="w-14 h-3 bg-white/20 rounded-full"></div>
                    <div className="w-10 h-3 bg-white/20 rounded-full"></div>
                  </div>
                </div>
             ) : (!trip.location?.trim() && !trip.latitude) ? (
-               <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-3xl p-4 border border-white/10 w-full">
-                 <HugeiconsIcon icon={Location01Icon} className="w-6 h-6 text-white/40" />
-                 <div className="flex flex-col gap-0.5">
-                   <span className="text-white/80 font-bold text-[12px]">Chưa có điểm đến</span>
+               <div className="flex items-center gap-2.5 bg-white/5 backdrop-blur-md rounded-3xl p-3 border border-white/10 flex-1 sm:flex-none sm:w-full">
+                 <HugeiconsIcon icon={Location01Icon} className="w-5 h-5 text-white/40 shrink-0" />
+                 <div className="flex flex-col gap-0.5 min-w-0">
+                   <span className="text-white/80 font-bold text-[11px]">Chưa có điểm đến</span>
                    <span className="text-white/50 text-[10px]">Thêm điểm đến để xem thời tiết</span>
                  </div>
                </div>
             ) : (!trip.latitude || !trip.longitude) ? null : weatherError || !forecast ? (
-               <div className="flex items-center gap-3 bg-red-500/20 backdrop-blur-md rounded-3xl p-4 border border-red-500/30 w-full">
-                 <HugeiconsIcon icon={CloudRainWindIcon} className="w-6 h-6 text-white/60" />
+               <div className="flex items-center gap-2.5 bg-red-500/20 backdrop-blur-md rounded-3xl p-3 border border-red-500/30 flex-1 sm:flex-none sm:w-full">
+                 <HugeiconsIcon icon={CloudRainWindIcon} className="w-5 h-5 text-white/60 shrink-0" />
                  <div className="flex flex-col gap-1">
-                   <span className="text-white font-bold text-[12px]">Không thể tải thời tiết</span>
+                   <span className="text-white font-bold text-[11px]">Không thể tải thời tiết</span>
                    <span className="text-white/70 text-[10px]">Lỗi kết nối</span>
                  </div>
                </div>
             ) : (
               <div
                 onClick={() => setWeatherModalOpen(true)}
-                className="flex flex-col items-stretch bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-4 gap-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 w-full text-left cursor-pointer select-none"
+                className="flex flex-col items-stretch bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-3 gap-2 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 sm:flex-none sm:w-full text-left cursor-pointer select-none"
               >
                 {/* Weather Info Block */}
                 <div className="flex items-center justify-between gap-2 w-full">
@@ -346,77 +331,75 @@ export function HomeScreen({
         <section className="space-y-4">
           <h3 className="text-[17px] font-extrabold text-[#030D2E] px-1 motion-title-enter">Nhìn lại chuyến đi</h3>
           
-          <div className="space-y-4">
-            {/* Tổng kết card */}
-            <div className="rounded-3xl bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] motion-card-enter motion-delay-1 flex items-start gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 border border-amber-200/40">
-                <HugeiconsIcon icon={Award01Icon} className="h-6 w-6" />
+          <div className="space-y-3">
+            {/* Tổng kết card — hero card, full width, accent bg */}
+            <div className="rounded-3xl bg-amber-500 p-5 motion-card-enter motion-delay-1 overflow-hidden relative">
+              <div className="absolute right-0 bottom-0 opacity-10">
+                <HugeiconsIcon icon={Award01Icon} className="h-28 w-28 -mr-4 -mb-4" />
               </div>
-              <div className="min-w-0 flex-1">
-                <h4 className="text-base font-extrabold text-[#030D2E]">Tổng kết chuyến đi</h4>
-                <p className="text-[13px] font-semibold text-slate-500 mt-1 leading-relaxed">
+              <div className="relative z-10">
+                <p className="text-[11px] font-bold text-amber-100/80 uppercase tracking-wider mb-1">Kỷ niệm</p>
+                <h4 className="text-[17px] font-black text-white leading-snug">Tổng kết chuyến đi</h4>
+                <p className="text-[12.5px] font-medium text-amber-100/90 mt-1.5 leading-relaxed">
                   Xem lại chi phí, hoạt động và những dấu ấn đáng nhớ.
                 </p>
                 <button
                   onClick={() => onNavigateMore("wrapped")}
-                  className="mt-3.5 flex items-center justify-center rounded-xl bg-amber-500 hover:bg-amber-500/90 px-4 py-2 text-[12.5px] font-extrabold text-white transition-all duration-200 motion-press shadow-sm"
+                  className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-white/20 hover:bg-white/30 px-4 py-2 text-[13px] font-extrabold text-white transition-all motion-press"
                 >
-                  <span>Xem tổng kết</span>
+                  Xem tổng kết →
                 </button>
               </div>
             </div>
 
-            {/* Bản tin card */}
-            <div className="rounded-3xl bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] motion-card-enter motion-delay-2 flex items-start gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-600 border border-violet-200/40">
-                <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
+            {/* Bản tin card — compact horizontal */}
+            <div className="rounded-3xl bg-white border border-slate-100 p-4 motion-card-enter motion-delay-2 flex items-center gap-4 shadow-sm">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-600">
+                <HugeiconsIcon icon={BookOpen01Icon} className="h-5.5 w-5.5" />
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-base font-extrabold text-[#030D2E]">Bản tin chuyến đi</h4>
-                <p className="text-[13px] font-semibold text-slate-500 mt-1 leading-relaxed">
-                  {journals.length > 0 ? `${journals.length} bài viết bản tin đã được chia sẻ.` : "Chưa có bài viết bản tin nào được chia sẻ."}
+                <h4 className="text-[14px] font-extrabold text-[#030D2E]">Bản tin chuyến đi</h4>
+                <p className="text-[12.5px] text-slate-400 font-medium mt-0.5">
+                  {journals.length > 0 ? `${journals.length} bài viết` : "Chưa có bài nào"}
                 </p>
-                {!isReadOnly && (
-                    <button
-                      onClick={() => onNavigateMore("journal")}
-                      className="mt-3.5 flex items-center justify-center rounded-xl bg-violet-600 hover:bg-violet-600/90 text-white px-4 py-2 text-[12.5px] font-black transition-all duration-200 motion-press shadow-sm"
-                    >
-                      <span>Đăng bản tin</span>
-                    </button>
-                )}
               </div>
+              {!isReadOnly && (
+                <button
+                  onClick={() => onNavigateMore("journal")}
+                  className="shrink-0 flex items-center justify-center rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-600 px-3.5 py-2 text-[12.5px] font-bold transition-all motion-press border border-violet-100"
+                >
+                  Đăng
+                </button>
+              )}
             </div>
 
-            {/* Báo cáo card */}
-            <div id="report-card" className="rounded-3xl bg-[#FFFDF8] p-5 shadow-sm border border-[#E8E1D8] motion-card-enter motion-delay-3 flex items-start gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0081BE]/10 text-[#0081BE] border border-[#0081BE]/20">
-                <HugeiconsIcon icon={FileDownloadIcon} className="h-6 w-6" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h4 className="text-base font-extrabold text-[#030D2E]">Báo cáo chuyến đi</h4>
-                <p className="text-[13px] font-semibold text-slate-500 mt-1 leading-relaxed">
-                  Tải xuống báo cáo tổng hợp lịch trình, chi phí và chuẩn bị hành lý.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2.5">
-                  <button
-                    onClick={async () => {
-                      const { exportTripPdf } = await import("../../utils/exportPdf");
-                      exportTripPdf(tripData);
-                    }}
-                    className="flex-1 min-w-[100px] h-10 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-[#030D2E] font-bold text-[13px] transition-all motion-press"
-                  >
-                    <span>Xuất PDF</span>
-                  </button>
-                  <button
-                    onClick={async () => {
-                      const { exportTripExcel } = await import("../../utils/exportExcel");
-                      exportTripExcel(tripData).catch(console.error);
-                    }}
-                    className="flex-1 min-w-[100px] h-10 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-[#030D2E] font-bold text-[13px] transition-all motion-press"
-                  >
-                    <span>Xuất Excel</span>
-                  </button>
+            {/* Báo cáo card — action-focused, two buttons prominent */}
+            <div className="rounded-3xl bg-[#030D2E] p-5 motion-card-enter motion-delay-3">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white/80">
+                  <HugeiconsIcon icon={FileDownloadIcon} className="h-4.5 w-4.5" />
                 </div>
+                <h4 className="text-[14px] font-extrabold text-white">Xuất báo cáo</h4>
+              </div>
+              <div className="flex gap-2.5">
+                <button
+                  onClick={async () => {
+                    const { exportTripPdf } = await import("../../utils/exportPdf");
+                    exportTripPdf(tripData);
+                  }}
+                  className="flex-1 h-10 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-[13px] transition-all motion-press border border-white/10"
+                >
+                  PDF
+                </button>
+                <button
+                  onClick={async () => {
+                    const { exportTripExcel } = await import("../../utils/exportExcel");
+                    exportTripExcel(tripData).catch(console.error);
+                  }}
+                  className="flex-1 h-10 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-[13px] transition-all motion-press border border-white/10"
+                >
+                  Excel
+                </button>
               </div>
             </div>
           </div>
@@ -529,7 +512,7 @@ export function HomeScreen({
                 <HugeiconsIcon icon={ChevronRightIcon} size={20} className="text-slate-300" />
               </div>
             ) : (
-              <div className="rounded-[24px] bg-[#FFFDF8] p-6 border border-[#E8E1D8] shadow-sm flex flex-col items-center text-center motion-card-enter motion-delay-1">
+              <div className="rounded-[24px] bg-white p-6 border border-slate-200 shadow-sm flex flex-col items-center text-center motion-card-enter motion-delay-1">
                 <p className="text-[13.5px] font-semibold text-slate-500">Chưa có hoạt động nào được lên lịch trình.</p>
                 {!isReadOnly && (
                     <button 
@@ -584,7 +567,7 @@ export function HomeScreen({
                 </div>
               </div>
             ) : (
-              <div className="rounded-[24px] bg-[#FFFDF8] p-6 border border-[#E8E1D8] shadow-sm flex flex-col items-center text-center motion-card-enter motion-delay-2">
+              <div className="rounded-[24px] bg-white p-6 border border-slate-200 shadow-sm flex flex-col items-center text-center motion-card-enter motion-delay-2">
                 <p className="text-[13.5px] font-semibold text-slate-500">Mọi thứ đã sẵn sàng cho chuyến đi sắp tới!</p>
                 {!isReadOnly && (
                     <button 
@@ -780,7 +763,7 @@ export function HomeScreen({
                         className={`w-full min-h-[46px] flex items-center justify-between p-3 px-4 rounded-2xl border transition-all text-left group motion-press ${
                           item.completed 
                             ? "bg-slate-50/45 border-slate-100/60 text-slate-400/80" 
-                            : "bg-[#FFFDF8] border-slate-200/60 text-slate-700 hover:bg-slate-50/60 hover:border-kat-primary/30"
+                            : "bg-white border-slate-200/60 text-slate-700 hover:bg-slate-50/60 hover:border-kat-primary/30"
                         }`}
                       >
                         <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -917,7 +900,7 @@ export function HomeScreen({
                       className={`w-full min-h-[46px] flex items-center justify-between p-3 px-4 rounded-2xl border transition-all text-left group motion-press ${
                         item.completed 
                           ? "bg-slate-50/45 border-slate-100/60 text-slate-400/80" 
-                          : "bg-[#FFFDF8] border-slate-200/60 text-slate-700 hover:bg-slate-50/60 hover:border-kat-primary/30"
+                          : "bg-white border-slate-200/60 text-slate-700 hover:bg-slate-50/60 hover:border-kat-primary/30"
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0 flex-1">

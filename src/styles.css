@@ -54,7 +54,7 @@
   --kat-pink: #E50A62;
   --kat-blue: #0081BE;
 
-  --mobile-bottom-nav-height: 92px;
+  --mobile-bottom-nav-height: 76px;
   --mobile-page-bottom-gap: 24px;
 
   color: #030D2E;
@@ -65,7 +65,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* *, *::before, *::after {
+/* Hide all scrollbars globally — iOS Safari PWA requires wildcard + explicit html/body */
+*,
+*::before,
+*::after {
   -ms-overflow-style: none !important;
   scrollbar-width: none !important;
 }
@@ -74,22 +77,28 @@
   display: none !important;
   width: 0 !important;
   height: 0 !important;
-} */
+}
 
-/* Explicitly target the root viewport scrollbar on iOS Safari / standalone PWA */
 html {
+  /* overflow-y must be scroll (not auto) on iOS Safari PWA to avoid phantom scrollbar */
+  overflow-x: clip;
+  overflow-y: scroll;
   -ms-overflow-style: none !important;
   scrollbar-width: none !important;
-  overflow-x: clip;
-  overflow-y: auto;
+}
+
+html::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 body {
+  overflow-x: clip;
   -ms-overflow-style: none !important;
   scrollbar-width: none !important;
-  overflow-x: clip;
 }
-html::-webkit-scrollbar,
+
 body::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;

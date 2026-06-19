@@ -1,0 +1,1010 @@
+﻿import React, { useState, useEffect, useRef } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../../../db';
+import { createPortal } from 'react-dom';
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Wallet01Icon, CheckmarkCircle02Icon, BookOpen01Icon, File01Icon, AlertCircleIcon, Add01Icon, PenTool01Icon, Delete01Icon, MoreVerticalIcon,
+  ReceiptTextIcon, UserCheck01Icon, Tag01Icon, ChevronRightIcon, BalanceScaleIcon, InformationCircleIcon, CheckIcon, Cancel01Icon, Clock01Icon,
+  FileCheckIcon, ShirtIcon, Briefcase01Icon, PlugIcon, PillIcon, Bread01Icon, PackageIcon, BadgeCheckIcon, StickyNoteIcon, TextFontIcon, MinusSignIcon, UserIcon, Calendar01Icon, Maximize01Icon, Image01Icon, Loading01Icon, SmileIcon, NotebookIcon, SaveIcon, SparklesIcon, RouteIcon, HelpCircleIcon, UserGroupIcon, BubbleChatIcon, GlobeIcon,
+  CrownIcon, Luggage01Icon, Car01Icon, CalculatorIcon, PieChartIcon, Search01Icon,
+  Airplane01Icon, KitchenUtensilsIcon, HotelIcon, Ticket01Icon, ShoppingBag01Icon, Gamepad2Icon, CompassIcon, ChevronDownIcon, Location01Icon, LocationOfflineIcon
+} from "@hugeicons/core-free-icons";
+import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
+import { formatMoney, expenseCategories, formatDate, moodLabels, sumBy, getSettlementSuggestions } from '../../../utils/helpers';
+import { submitChangeRequest } from '../../../services/sharedTripRequestService';
+import { showToast } from '../../../components/ui/ToastManager';
+import { uploadJournalImage, uploadDocumentImage } from '../../../services/storageService';
+import { getIdentity } from '../../../services/identityService';
+import { getCurrentPosition, reverseGeocode, getCurrencyForCountry } from '../../../services/locationService';
+import { BottomSheet, Input, Select, Textarea, DatePicker, DeleteConfirmModal } from '../../../components/ui';
+import { getAvatarSvg, getRandomAvatarId } from '../../../utils/avatars';
+import { BreakdownSection, CategoryBar, SettlementCard } from '../../expenses/ExpensesScreen';
+import { fetchExchangeRates, ExchangeRate } from '../../../services/currencyService';
+
+const classNames = (...classes: any[]) => classes.filter(Boolean).join(' ');
+
+const CATEGORIES = ["Giấy tờ", "Quần áo", "Đồ cá nhân", "Thiết bị điện tử", "Thuốc & y tế", "Tiền & ví", "Đồ ăn nhẹ", "Khác"] as const;
+const CATEGORY_ICONS: Record<string, any> = {
+  "Giấy tờ": FileCheckIcon,
+  "Quần áo": ShirtIcon,
+  "Đồ cá nhân": Briefcase01Icon,
+  "Thiết bị điện tử": PlugIcon,
+  "Thuốc & y tế": PillIcon,
+  "Tiền & ví": Wallet01Icon,
+  "Đồ ăn nhẹ": Bread01Icon,
+  "Khác": PackageIcon
+};
+
+
+export function SharedExpensesSection({ 
+  trip,
+  token, 
+  mode, 
+  expenses, 
+  changeRequests = [],
+  members = [],
+  events = [],
+  guestName
+}: { 
+  trip?: any;
+  token: string; 
+  mode: string; 
+  expenses: Expense[]; 
+  changeRequests?: any[];
+  members?: Member[];
+  events?: EventItem[];
+  guestName?: string;
+}) {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
+
+  const getCategoryDetails = (category: string) => {
+    switch (category) {
+      case "Di chuyển":
+        return {
+          icon: RouteIcon,
+          bg: "bg-blue-50 text-blue-600 border-blue-150/50"
+        };
+      case "Vé máy bay":
+        return {
+          icon: Airplane01Icon,
+          bg: "bg-indigo-50 text-indigo-600 border-indigo-150/50"
+        };
+      case "Ăn uống":
+        return {
+          icon: KitchenUtensilsIcon,
+          bg: "bg-rose-50 text-rose-600 border-rose-150/50"
+        };
+      case "Lưu trú":
+        return {
+          icon: HotelIcon,
+          bg: "bg-slate-100 text-[#030D2E] border-slate-200"
+        };
+      case "Vé tham quan":
+        return {
+          icon: Ticket01Icon,
+          bg: "bg-amber-50 text-amber-600 border-amber-150/50"
+        };
+      case "Mua sắm":
+        return {
+          icon: ShoppingBag01Icon,
+          bg: "bg-purple-50 text-purple-600 border-purple-150/50"
+        };
+      case "Vui chơi & Giải trí":
+        return {
+          icon: Gamepad2Icon,
+          bg: "bg-emerald-50 text-emerald-600 border-emerald-150/50"
+        };
+      case "Chuẩn bị hành lý":
+        return {
+          icon: SparklesIcon,
+          bg: "bg-sky-50 text-sky-600 border-sky-150/50"
+        };
+      default:
+        return {
+          icon: Tag01Icon,
+          bg: "bg-slate-50 text-slate-500 border-slate-200/50"
+        };
+    }
+  };
+
+  useEffect(() => {
+    if (!activeMenuId) return;
+    const handleScroll = () => {
+      setActiveMenuId(null);
+      setMenuPos(null);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [activeMenuId]);
+
+  const categoryOptions = React.useMemo(() => {
+    const defaultCats = expenseCategories.filter(c => c !== "Khác");
+    const uniqueUsedCats = Array.from(new Set(expenses.map(e => e.category)))
+      .filter(c => !defaultCats.includes(c) && c !== "Khác" && c !== "Khác...");
+    return [...defaultCats, ...uniqueUsedCats, "Khác..."];
+  }, [expenses]);
+
+  const [form, setForm] = useState<{ 
+    description: string; 
+    amount: string; 
+    payer: string; 
+    category: string; 
+    customCategory: string; 
+    splitType: "shared" | "personal";
+    date: string;
+    eventId: string;
+    currency: string;
+    exchangeRate: number;
+  }>({ 
+    description: "", 
+    amount: "", 
+    payer: "", 
+    category: categoryOptions[0] || "Di chuyển", 
+    customCategory: "", 
+    splitType: "shared",
+    date: new Date().toISOString().split('T')[0],
+    eventId: "",
+    currency: "VND",
+    exchangeRate: 1
+  });
+
+  const [errors, setErrors] = useState<{ 
+    amount?: string; 
+    payer?: string; 
+    customCategory?: string; 
+  }>({});
+
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
+  const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    fetchExchangeRates().then(setExchangeRates);
+  }, []);
+
+  const isRequestEdit = mode === 'request_edit' || mode === 'edit';
+  const isDirectEdit = mode === 'edit';
+
+  const fetchLocationForExpense = React.useCallback(async (rates: ExchangeRate[]) => {
+    // 1. Try explicit defaultCurrency
+    if (trip?.defaultCurrency && trip.defaultCurrency !== "VND") {
+      const matchedRate = rates.find(r => r.currencyCode === trip.defaultCurrency);
+      if (matchedRate) {
+        setForm(prev => ({ ...prev, currency: trip.defaultCurrency!, exchangeRate: matchedRate.transfer }));
+        return; // Skip GPS if defaultCurrency is available
+      }
+    }
+    
+    // 2. Fallback to parsing destination name (if trip was shared before defaultCurrency was added)
+    if (trip?.destination) {
+      const destStr = String(trip.destination).toLowerCase();
+      let guessedCurrency = null;
+      if (destStr.includes("nhật bản") || destStr.includes("japan") || destStr.includes("tokyo")) guessedCurrency = "JPY";
+      else if (destStr.includes("hàn quốc") || destStr.includes("korea") || destStr.includes("seoul")) guessedCurrency = "KRW";
+      else if (destStr.includes("thái lan") || destStr.includes("thailand") || destStr.includes("bangkok")) guessedCurrency = "THB";
+      else if (destStr.includes("singapore")) guessedCurrency = "SGD";
+      else if (destStr.includes("trung quốc") || destStr.includes("china")) guessedCurrency = "CNY";
+      else if (destStr.includes("đài loan") || destStr.includes("taiwan")) guessedCurrency = "TWD";
+      else if (destStr.includes("mỹ") || destStr.includes("usa") || destStr.includes("hoa kỳ")) guessedCurrency = "USD";
+      else if (destStr.includes("anh") || destStr.includes("uk") || destStr.includes("london")) guessedCurrency = "GBP";
+      else if (destStr.includes("châu âu") || destStr.includes("pháp") || destStr.includes("đức") || destStr.includes("ý")) guessedCurrency = "EUR";
+
+      if (guessedCurrency) {
+        const matchedRate = rates.find(r => r.currencyCode === guessedCurrency);
+        if (matchedRate) {
+          setForm(prev => ({ ...prev, currency: guessedCurrency, exchangeRate: matchedRate.transfer }));
+          return;
+        }
+      }
+    }
+    
+    // 3. Fallback to GPS
+    try {
+      const pos = await getCurrentPosition();
+      const geo = await reverseGeocode(pos.latitude, pos.longitude);
+      const suggestedCurrency = getCurrencyForCountry(geo.countryCode);
+      
+      setForm(prev => {
+        let newForm = { ...prev };
+        if (suggestedCurrency && suggestedCurrency !== "VND") {
+          const matchedRate = rates.find(r => r.currencyCode === suggestedCurrency);
+          if (matchedRate) {
+            newForm.currency = suggestedCurrency;
+            newForm.exchangeRate = matchedRate.transfer;
+          }
+        }
+        return newForm;
+      });
+    } catch (err: any) {
+      // Silently ignore GPS fetch errors as it's just for currency suggestion
+    }
+  }, [trip]);
+
+  useEffect(() => {
+    if (isFormOpen) {
+      setErrors({});
+      setShowAdvanced(false);
+      if (editingId) {
+        const item = expenses.find(e => String(e.id) === editingId);
+        if (item) {
+          const isCustom = !categoryOptions.includes(item.category) || item.category === "Khác...";
+          setForm({
+            description: item.description,
+            amount: String(item.amount),
+            payer: item.payer || "",
+            category: isCustom ? "Khác..." : item.category,
+            customCategory: isCustom && item.category !== "Khác..." ? item.category : "",
+            splitType: item.splitType ?? "shared",
+            date: item.date ? new Date(item.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            eventId: item.eventId ? String(item.eventId) : "",
+            currency: item.currency || "VND",
+            exchangeRate: item.exchangeRate || 1
+          });
+          if (item.splitType === "personal" || isCustom || item.category !== categoryOptions[0] || item.eventId) {
+            setShowAdvanced(true);
+          }
+        }
+      } else {
+        setForm({ 
+          description: "", 
+          amount: "", 
+          payer: members[0]?.name ?? "", 
+          category: categoryOptions[0] || "Di chuyển", 
+          customCategory: "", 
+          splitType: "shared",
+          date: new Date().toISOString().split('T')[0],
+          eventId: "",
+          currency: "VND",
+          exchangeRate: 1
+        });
+        fetchLocationForExpense(exchangeRates);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingId, isFormOpen]);
+
+  const filteredEvents = React.useMemo(() => {
+    if (!form.date || !events) return [];
+    return events.filter(e => e.date === form.date && !e.isDeleted);
+  }, [events, form.date]);
+
+  // Merge pending change requests into expenses list for visual diffs
+  const mergedExpenses = React.useMemo(() => {
+    const list = expenses.filter((e: any) => !e.isDeleted).map(item => {
+      const pendingDelete = changeRequests.some(r => r.section === 'expenses' && r.action === 'delete' && String(r.targetId) === String(item.id));
+      const updateReq = changeRequests.find(r => r.section === 'expenses' && r.action === 'update' && String(r.targetId) === String(item.id));
+      
+      if (updateReq) {
+        return {
+          ...item,
+          ...updateReq.after,
+          isPendingUpdate: true,
+          changeRequestId: updateReq.id
+        };
+      }
+      if (pendingDelete) {
+        return {
+          ...item,
+          isPendingDelete: true,
+          changeRequestId: changeRequests.find(r => r.section === 'expenses' && r.action === 'delete' && String(r.targetId) === String(item.id))?.id
+        };
+      }
+      return item;
+    });
+
+    const pendingCreates = changeRequests.filter(r => r.section === 'expenses' && r.action === 'create' && r.status === 'pending');
+    pendingCreates.forEach(r => {
+      list.push({
+        id: "pending-create-" + r.id,
+        ...r.after,
+        isPendingCreate: true,
+        changeRequestId: r.id
+      } as any);
+    });
+
+    return list;
+  }, [expenses, changeRequests]);
+
+  function startAdd() { setEditingId(null); setIsFormOpen(true); }
+  function startEdit(item: Expense) { setEditingId(String(item.id)); setIsFormOpen(true); }
+
+  async function handleSave() {
+    const newErrors: typeof errors = {};
+    const amountVal = Number(form.amount);
+    
+    if (!form.amount.trim() || Number.isNaN(amountVal) || amountVal <= 0) {
+      newErrors.amount = "Vui lòng nhập số tiền lớn hơn 0.";
+    }
+
+    const vndAmount = form.currency === "VND" ? amountVal : Math.round(amountVal * form.exchangeRate);
+
+    let finalCategory = form.category;
+    if (form.category === "Khác...") {
+      const trimmedCustom = form.customCategory.trim();
+      if (!trimmedCustom) {
+        newErrors.customCategory = "Vui lòng nhập tên danh mục.";
+      } else {
+        finalCategory = trimmedCustom.slice(0, 30);
+      }
+    }
+
+    if (form.splitType === "shared" && members.length > 0 && !form.payer) {
+      newErrors.payer = "Vui lòng chọn người trả.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    const payload = { 
+      description: form.description.trim() || ("" + finalCategory), 
+      amount: vndAmount, 
+      payer: form.splitType === "personal" ? (form.payer || "") : form.payer, 
+      category: finalCategory, 
+      splitType: form.splitType,
+      date: new Date(form.date).toISOString(),
+      eventId: form.eventId ? Number(form.eventId) : undefined,
+      currency: form.currency,
+      exchangeRate: form.exchangeRate,
+      originalAmount: form.currency !== "VND" ? amountVal : undefined
+    };
+
+    try {
+      setIsSubmitting(true);
+      const status = isDirectEdit ? 'auto_approved' : undefined;
+      const successMessage = isDirectEdit ? 'Đã cập nhật trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.';
+      if (!editingId) {
+        await submitChangeRequest(token, { section: 'expenses', action: 'create', after: payload, status, requesterName: guestName });
+        setIsFormOpen(false);
+        showToast(successMessage);
+      } else {
+        const before = expenses.find(e => String(e.id) === editingId);
+        await submitChangeRequest(token, { section: 'expenses', action: 'update', targetId: editingId, before: before as any, after: payload, status, requesterName: guestName });
+        setEditingId(null);
+        setIsFormOpen(false);
+        showToast(successMessage);
+      }
+    } catch (e: any) { 
+      showToast((isDirectEdit ? 'Lỗi cập nhật: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); 
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleDelete(id: string) {
+    setDeleteTargetId(id);
+  }
+
+  async function executeDelete(id: string) {
+    try {
+      const before = expenses.find(e => String(e.id) === id);
+      await submitChangeRequest(token, { 
+        section: 'expenses', 
+        action: 'delete', 
+        targetId: id, 
+        before: before as any, 
+        status: isDirectEdit ? 'auto_approved' : undefined,
+        requesterName: guestName 
+      });
+      showToast(isDirectEdit ? 'Đã xóa trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+    } catch (e: any) { showToast((isDirectEdit ? 'Lỗi xóa: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); }
+  }
+
+  const activeExpenses = mergedExpenses.filter(e => !e.isPendingDelete);
+  
+  const totalExpense = activeExpenses.reduce((acc, cur) => acc + cur.amount, 0);
+  const sharedExpensesList = activeExpenses.filter((e) => e.splitType === "shared");
+  const personalExpensesList = activeExpenses.filter((e) => e.splitType === "personal");
+
+  const totalShared = sharedExpensesList.reduce((acc, cur) => acc + cur.amount, 0);
+  const totalPersonal = personalExpensesList.reduce((acc, cur) => acc + cur.amount, 0);
+
+  const activeMembers = members.length > 0 ? members.length : 1;
+  const avgPerPerson = Math.round(totalShared / activeMembers);
+
+  const categoryBreakdown = React.useMemo(() => {
+    const acc: Record<string, number> = {};
+    activeExpenses.forEach((e) => {
+      acc[e.category] = (acc[e.category] || 0) + e.amount;
+    });
+    return acc;
+  }, [activeExpenses]);
+
+  const payerBreakdown = React.useMemo(() => {
+    const acc: Record<string, number> = {};
+    activeExpenses.forEach((e) => {
+      if (e.payer) acc[e.payer] = (acc[e.payer] || 0) + e.amount;
+    });
+    return acc;
+  }, [activeExpenses]);
+
+  const settlements = React.useMemo(() => {
+    return getSettlementSuggestions(members, sharedExpensesList);
+  }, [sharedExpensesList, members]);
+
+  const isSaveDisabled = !form.amount.trim() || (form.splitType === "shared" && members.length > 0 && !form.payer);
+
+  return (
+    <div className="space-y-6">
+      {/* Header Section (Adopted from Main View) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+        <div>
+          <h2 className="text-[22px] font-black text-[#030D2E] tracking-tight">Chi phí</h2>
+          <p className="text-slate-500 font-medium text-[13px] mt-1">Theo dõi chi tiêu, khoản đã trả và phân chia trong chuyến đi.</p>
+        </div>
+      </div>
+
+      {/* Dashboard Section */}
+      <section className="rounded-3xl border border-[#030D2E]/10 bg-white p-6 shadow-sm overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+          <HugeiconsIcon icon={Wallet01Icon} className="w-32 h-32" />
+        </div>
+        <div className="relative z-10 flex items-center justify-between mb-2 border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2">
+            <HugeiconsIcon icon={ReceiptTextIcon} className="w-4 h-4 text-slate-400" />
+            <span className="text-[13px] font-semibold text-slate-500">Tổng chi phí chuyến đi</span>
+          </div>
+        </div>
+        <div className="relative z-10 mt-1">
+          <span className="text-4xl sm:text-5xl font-black tracking-tight text-[#030D2E] drop-shadow-sm">
+            {formatMoney(totalExpense)}
+          </span>
+        </div>
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-3 relative z-10">
+          <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100 hover:border-slate-200">
+            <span className="text-[12px] font-semibold text-kat-primary flex items-center gap-1.5 mb-1.5">
+              <HugeiconsIcon icon={UserGroupIcon} className="w-3.5 h-3.5" />
+              Chi chung
+            </span>
+            <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(totalShared)}</span>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100 hover:border-slate-200">
+            <span className="text-[12px] font-semibold text-slate-500 flex items-center gap-1.5 mb-1.5">
+              <HugeiconsIcon icon={UserIcon} className="w-3.5 h-3.5" />
+              Chi cá nhân
+            </span>
+            <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(totalPersonal)}</span>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:bg-slate-100 hover:border-slate-200">
+            <span className="text-[12px] font-semibold text-slate-500 flex items-center gap-1.5 mb-1.5">
+              <HugeiconsIcon icon={CalculatorIcon} className="w-3.5 h-3.5" />
+              Bình quân / người
+            </span>
+            <span className="text-[17px] font-black text-[#030D2E]">{formatMoney(avgPerPerson)}</span>
+          </div>
+        </div>
+
+        {isRequestEdit && (
+          <button 
+            onClick={startAdd}
+            className="w-full bg-[#030D2E] text-white py-3 px-4 rounded-2xl font-bold flex items-center justify-center gap-2 mt-4 hover:bg-[#030D2E]/90 active:scale-[0.98] transition-all shadow-sm relative z-10 cursor-pointer text-[14px]"
+          >
+            <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" /> {isDirectEdit ? "Thêm khoản chi" : "Đề xuất thêm"}
+          </button>
+        )}
+      </section>
+
+      <div className="grid gap-4 sm:grid-cols-2 animate-fadeIn" style={{ animationDelay: '100ms' }}>
+        <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-50 text-teal-600">
+              <HugeiconsIcon icon={PieChartIcon} className="h-4 w-4" />
+            </span>
+            <h3 className="text-[14px] font-extrabold text-[#030D2E]">Chi phí theo hạng mục</h3>
+          </div>
+          <BreakdownSection items={categoryBreakdown} total={totalExpense} emptyText="Chưa có khoản chi nào để phân tích." />
+        </section>
+
+        <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+              <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5" />
+            </span>
+            <h3 className="text-[14px] font-extrabold text-[#030D2E]">Chi phí theo người trả</h3>
+          </div>
+          <BreakdownSection items={payerBreakdown} total={totalExpense} emptyText="Chưa có khoản chi nào để phân tích." />
+        </section>
+      </div>
+
+      <SettlementCard members={members} expenses={activeExpenses} settlements={settlements} />
+
+      {/* Expenses List */}
+      <section className="bg-white rounded-3xl border border-slate-200/60 p-5 shadow-sm mt-6 animate-fadeIn">
+        <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2">
+            <HugeiconsIcon icon={ReceiptTextIcon} className="h-5 w-5 text-amber-500" />
+            <h3 className="text-[16px] font-black text-[#030D2E]">Danh sách khoản chi</h3>
+          </div>
+        </div>
+        {mergedExpenses.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-10 text-center bg-slate-50/35 rounded-2xl border border-dashed border-slate-200/80 my-2">
+            <HugeiconsIcon icon={ReceiptTextIcon} className="h-10 w-10 text-slate-350 mb-2.5 animate-pulse" />
+            <p className="text-[13px] font-bold text-slate-400">Chưa có khoản chi nào trong danh sách</p>
+            <p className="text-[11.5px] text-slate-400/80 mt-1 max-w-xs px-4">Đề xuất thêm chi phí để chia đều và quyết toán sau chuyến đi.</p>
+          </div>
+        ) : (
+          <div className="space-y-2.5 mt-3">
+            {mergedExpenses.map((e, idx) => {
+              const isPending = e.isPendingCreate || e.isPendingUpdate || e.isPendingDelete;
+              const catDetails = getCategoryDetails(e.category);
+              const CatIcon = catDetails.icon;
+              
+              return (
+                <div 
+                  key={e.id} 
+                  className={classNames(
+                    "flex justify-between items-center p-3.5 bg-white border border-slate-100 hover:border-slate-200 hover:shadow-[0_2px_8px_rgba(3,13,46,0.03)] rounded-2xl transition-all duration-200 hover:-translate-y-0.5", 
+                    e.isPendingCreate || e.isPendingUpdate ? "bg-sky-50/30 border-sky-100/50" : "",
+                    e.isPendingDelete ? "bg-slate-50/30 opacity-70" : ""
+                  )}
+                >
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    {/* Icon container */}
+                    <span className={classNames(
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border transition-colors",
+                      catDetails.bg
+                    )}>
+                      <HugeiconsIcon icon={CatIcon} className="h-5 w-5" />
+                    </span>
+
+                    {/* Info text stack */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={classNames(
+                          "text-[14px] font-bold text-[#030D2E] break-words line-clamp-1",
+                          e.isPendingDelete ? "line-through text-slate-400/60" : ""
+                        )}>
+                          {e.description || e.category}
+                        </span>
+
+                        {/* Pending Request Badges */}
+                        {e.isPendingDelete && (
+                          <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-1.5 py-0.5 text-[9.5px] font-bold text-rose-600 shrink-0 select-none animate-fadeIn">
+                            {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang xóa...' : 'Đề xuất xóa'}
+                          </span>
+                        )}
+                        {e.isPendingCreate && (
+                          <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-1.5 py-0.5 text-[9.5px] font-bold text-sky-600 shrink-0 select-none animate-fadeIn">
+                            {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
+                          </span>
+                        )}
+                        {e.isPendingUpdate && (
+                          <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-1.5 py-0.5 text-[9.5px] font-bold text-amber-600 shrink-0 select-none animate-fadeIn">
+                            {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Subtitle Details Line */}
+                      <div className="flex items-center gap-2 mt-0.5 text-[11px] font-bold text-slate-400">
+                        {e.date && (
+                          <span className="flex items-center gap-1 shrink-0">
+                            <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-slate-300" />
+                            {new Date(e.date).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                          </span>
+                        )}
+
+                        {/* Payer info */}
+                        {e.payer && (
+                          <>
+                            <span className="text-slate-300">•</span>
+                            <span className="truncate max-w-[80px] sm:max-w-[120px]">
+                              Trả bởi: <span className="text-slate-500 font-extrabold">{e.payer}</span>
+                            </span>
+                          </>
+                        )}
+
+                        {/* Split type badge */}
+                        {e.splitType && (
+                          <>
+                            <span className="text-slate-300">•</span>
+                            <span className={classNames(
+                              "px-1.5 py-0.2 rounded-md text-[9.5px] font-extrabold border shrink-0",
+                              e.splitType === "shared" 
+                                ? "bg-indigo-50/50 border-indigo-100/60 text-indigo-600"
+                                : "bg-slate-50 border-slate-100 text-slate-500"
+                            )}>
+                              {e.splitType === "shared" ? "Chi chung" : "Cá nhân"}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Amount and edit menu */}
+                  <div className="flex items-center gap-1.5 pl-3">
+                    <span className={classNames(
+                      "text-[15px] font-black text-[#030D2E] whitespace-nowrap",
+                      e.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
+                    )}>
+                      {formatMoney(e.amount)}
+                    </span>
+                    {isRequestEdit && !isPending && (
+                      <div className="shrink-0">
+                        <button 
+                          onClick={(ev) => {
+                            ev.stopPropagation();
+                            const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
+                            if (activeMenuId === String(e.id)) {
+                              setActiveMenuId(null);
+                              setMenuPos(null);
+                            } else {
+                              setActiveMenuId(String(e.id));
+                              setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+                            }
+                          }}
+                          className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-50 active:scale-90 transition-all focus:outline-none cursor-pointer"
+                          title="Tùy chọn đề xuất"
+                        >
+                          <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+      {activeMenuId && menuPos && createPortal(
+        <>
+          <div 
+            className="fixed inset-0 z-[998]" 
+            onClick={() => {
+              setActiveMenuId(null);
+              setMenuPos(null);
+            }}
+          />
+          <div 
+            className="fixed z-[999] w-36 rounded-xl bg-white border border-slate-200 shadow-lg py-1.5 animate-fadeIn"
+            style={{ top: menuPos.top, right: menuPos.right }}
+          >
+            <button
+              onClick={() => {
+                const id = activeMenuId;
+                setActiveMenuId(null);
+                setMenuPos(null);
+                const item = expenses.find(x => String(x.id) === id);
+                if (item) startEdit(item);
+              }}
+              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+            >
+              {isDirectEdit ? "Sửa chi phí" : "Đề xuất sửa"}
+            </button>
+            <button
+              onClick={() => {
+                const id = activeMenuId;
+                setActiveMenuId(null);
+                setMenuPos(null);
+                handleDelete(id);
+              }}
+              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+            >
+              {isDirectEdit ? "Xóa chi phí" : "Đề xuất xóa"}
+            </button>
+          </div>
+        </>,
+        document.body
+      )}
+
+
+      <BottomSheet
+        isOpen={isFormOpen}
+        onClose={() => {
+          setIsFormOpen(false);
+          setEditingId(null);
+        }}
+        title={isDirectEdit ? (editingId ? "Sửa chi phí" : "Thêm chi phí") : (editingId ? "Đề xuất sửa chi phí" : "Đề xuất thêm chi phí")}
+        headerAction={
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={isSaveDisabled || isSubmitting}
+            className="inline-flex h-9 items-center justify-center rounded-xl bg-[#030D2E] hover:bg-[#030D2E]/90 text-white px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed cursor-pointer"
+          >
+            {isSubmitting ? "Đang lưu..." : isDirectEdit ? (editingId ? "Lưu" : "Thêm") : "Đề xuất"}
+          </button>
+        }
+      >
+        <div className="flex flex-col gap-5 py-2">
+          {/* Amount Box */}
+          <div className="relative flex flex-col items-center justify-center py-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[12px] font-bold uppercase tracking-wider text-slate-400">Số tiền</span>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsCurrencyDropdownOpen(true)}
+                  className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white border border-slate-200 rounded-md px-2.5 py-1 text-[#030D2E] hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
+                >
+                  {form.currency}
+                  <HugeiconsIcon icon={ChevronDownIcon} className="w-3.5 h-3.5 text-slate-400" />
+                </button>
+
+                <BottomSheet
+                  isOpen={isCurrencyDropdownOpen}
+                  onClose={() => setIsCurrencyDropdownOpen(false)}
+                  title="Chọn ngoại tệ"
+                >
+                  <div className="space-y-1 max-h-[60vh] overflow-y-auto scrollbar-none pb-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForm({ ...form, currency: "VND", exchangeRate: 1 });
+                        setIsCurrencyDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
+                        form.currency === "VND"
+                          ? "bg-[#00BFB7]/10 text-kat-primary"
+                          : "hover:bg-slate-50 text-[#030D2E]"
+                      }`}
+                    >
+                      <span className={`text-[15px] ${form.currency === "VND" ? 'font-extrabold' : 'font-semibold'}`}>
+                        VND (Việt Nam Đồng)
+                      </span>
+                      {form.currency === "VND" && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
+                    </button>
+                    {exchangeRates.map((r) => {
+                      const isSelected = form.currency === r.currencyCode;
+                      return (
+                        <button
+                          key={r.currencyCode}
+                          type="button"
+                          onClick={() => {
+                            setForm({ ...form, currency: r.currencyCode, exchangeRate: r.transfer });
+                            setIsCurrencyDropdownOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
+                            isSelected
+                              ? "bg-[#00BFB7]/10 text-kat-primary"
+                              : "hover:bg-slate-50 text-[#030D2E]"
+                          }`}
+                        >
+                          <span className={`text-[15px] ${isSelected ? 'font-extrabold' : 'font-semibold'}`}>
+                            {r.currencyCode} {r.currencyName ? `(${r.currencyName})` : ""}
+                          </span>
+                          {isSelected && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </BottomSheet>
+              </div>
+            </div>
+            <div className="flex items-center justify-center">
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="0"
+                value={form.amount ? new Intl.NumberFormat('en-US').format(Number(form.amount)) : ""}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\D/g, "");
+                  setForm({ ...form, amount: rawValue });
+                  setErrors({ ...errors, amount: "" });
+                }}
+                className="w-full text-center text-3xl font-black text-[#030D2E] bg-transparent border-none outline-none placeholder-slate-300 focus:ring-0"
+              />
+            </div>
+            {errors.amount && (
+              <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 text-center">{errors.amount}</p>
+            )}
+          </div>
+
+          {/* Date */}
+          <DatePicker 
+            label={
+              <span className="flex items-center gap-1.5">
+                <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
+                Ngày chi tiêu
+              </span>
+            } 
+            value={form.date} 
+            onChange={(date) => setForm({ ...form, date })} 
+          />
+
+          {/* Description */}
+          <Input 
+            label={
+              <span className="flex items-center gap-1.5">
+                <HugeiconsIcon icon={ReceiptTextIcon} className="h-4 w-4 text-slate-500" />
+                Nội dung chi tiêu
+              </span>
+            } 
+            value={form.description} 
+            onChange={(description) => setForm({ ...form, description })} 
+            placeholder="VD: Taxi, ăn trưa, vé tham quan..." 
+          />
+
+          {/* Payer Select */}
+          {form.splitType === "shared" ? (
+            members.length > 0 ? (
+              <div>
+                <Select
+                  label={
+                    <span className="flex items-center gap-1.5">
+                      <HugeiconsIcon icon={UserCheck01Icon} className="h-4 w-4 text-slate-500" />
+                      Người đã trả *
+                    </span>
+                  }
+                  value={form.payer}
+                  onChange={(payer) => {
+                    setForm({ ...form, payer });
+                    if (errors.payer) setErrors({ ...errors, payer: undefined });
+                  }}
+                  options={["", ...(members || []).map(m => m.name)]}
+                  placeholder="Chọn người trả"
+                  />
+                  {errors.payer && <p className="mt-1 text-[12px] font-bold text-rose-500 pl-1">{errors.payer}</p>}
+                </div>
+            ) : (
+              <div className="rounded-2xl bg-slate-50 border border-kat-border/60 p-4 text-[13px] text-kat-muted font-semibold flex gap-2">
+                <HugeiconsIcon icon={InformationCircleIcon} className="h-5 w-5 shrink-0 text-slate-500 mt-0.5" />
+                <span>Chuyến đi chưa có người đồng hành. Chọn "Cá nhân tự trả" hoặc đề xuất thêm người đồng hành.</span>
+              </div>
+            )
+          ) : (
+            members.length > 0 && (
+              <div>
+                <Select
+                  label={
+                    <span className="flex items-center gap-1.5">
+                      <HugeiconsIcon icon={UserCheck01Icon} className="h-4 w-4 text-slate-500" />
+                      Khoản chi này của ai?
+                    </span>
+                  }
+                  value={form.payer}
+                  onChange={(payer) => setForm({ ...form, payer })}
+                  options={["", ...members.map((member) => member.name)]}
+                  placeholder="Chọn người đồng hành (không bắt buộc)"
+                />
+              </div>
+            )
+          )}
+
+          {/* Advanced Accordion */}
+          <div className="pt-2 border-t border-slate-100/80">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-[#030D2E] transition-colors focus:outline-none"
+            >
+              <span className="flex items-center gap-1.5">
+                <HugeiconsIcon icon={Tag01Icon} className="h-4 w-4 text-slate-400" />
+                Chi tiết nâng cao
+              </span>
+              <HugeiconsIcon icon={ChevronRightIcon} className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
+            </button>
+
+            {showAdvanced && (
+              <div className="mt-3 space-y-4 animate-fadeIn">
+                {/* Category */}
+                <div className="grid grid-cols-1 gap-4">
+                  <Select 
+                    label={
+                      <span className="flex items-center gap-1.5">
+                        <HugeiconsIcon icon={Tag01Icon} className="h-4 w-4 text-slate-500" />
+                        Hạng mục
+                      </span>
+                    } 
+                    value={form.category} 
+                    onChange={(category) => {
+                      setForm({ ...form, category, customCategory: "" });
+                      setErrors({ ...errors, customCategory: "" });
+                    }} 
+                    options={categoryOptions} 
+                  />
+                  
+                  {form.category === "Khác..." && (
+                    <div className="animate-fadeIn">
+                      <Input 
+                        label={
+                          <span className="flex items-center gap-1.5">
+                            <HugeiconsIcon icon={Tag01Icon} className="h-4 w-4 text-slate-500" />
+                            Tên hạng mục tự nhập *
+                          </span>
+                        } 
+                        value={form.customCategory} 
+                        onChange={(customCategory) => {
+                          setForm({ ...form, customCategory: customCategory.slice(0, 30) });
+                          setErrors({ ...errors, customCategory: "" });
+                        }} 
+                        placeholder="VD: Quà lưu niệm, Thuê xe máy" 
+                      />
+                      {errors.customCategory && (
+                        <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1">{errors.customCategory}</p>
+                      )}
+                    </div>
+                  )}
+                  {filteredEvents.length > 0 && (
+                    <Select
+                      label={
+                        <span className="flex items-center gap-1.5">
+                          <HugeiconsIcon icon={RouteIcon} className="h-4 w-4 text-slate-500" />
+                          Gắn vào lịch trình (Tùy chọn)
+                        </span>
+                      }
+                      value={form.eventId}
+                      onChange={(eventId) => setForm({ ...form, eventId })}
+                      options={["", ...filteredEvents.map(e => String(e.id))]}
+                      labels={{
+                        "": "Không gắn (Chi phí chung)",
+                        ...Object.fromEntries(filteredEvents.map(e => [String(e.id), e.title]))
+                      }}
+                    />
+                  )}
+                </div>
+
+                {/* Segmented Control for Cost Calculation */}
+                <div className="space-y-2">
+                  <span className="text-[13.5px] font-semibold text-slate-600 flex items-center gap-1.5">
+                    <HugeiconsIcon icon={BalanceScaleIcon} className="h-4 w-4 text-slate-500" />
+                    Cách chia khoản chi
+                  </span>
+                  <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200/40">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForm({ ...form, splitType: "shared", payer: members[0]?.name ?? "" });
+                        setErrors({ ...errors, payer: "" });
+                      }}
+                      className={classNames(
+                        "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
+                        form.splitType === "shared"
+                          ? "bg-white text-[#030D2E] shadow-sm border border-slate-200/10"
+                          : "text-slate-500 hover:text-slate-700"
+                      )}
+                    >
+                      Chi chung nhóm
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForm({ ...form, splitType: "personal", payer: "" });
+                        setErrors({ ...errors, payer: "" });
+                      }}
+                      className={classNames(
+                        "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
+                        form.splitType === "personal"
+                          ? "bg-white text-[#030D2E] shadow-sm border border-slate-200/10"
+                          : "text-slate-500 hover:text-slate-700"
+                      )}
+                    >
+                      Cá nhân tự trả
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </BottomSheet>
+
+      <DeleteConfirmModal
+        isOpen={deleteTargetId !== null}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={async () => {
+          if (!deleteTargetId) return;
+          await executeDelete(deleteTargetId);
+          setDeleteTargetId(null);
+        }}
+        title={isDirectEdit ? "Xóa khoản chi?" : "Đề xuất xóa khoản chi?"}
+        description={isDirectEdit ? "Bạn có chắc chắn muốn xóa khoản chi này? Hành động này không thể hoàn tác." : "Bạn đang gửi đề xuất xóa khoản chi này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."}
+        confirmLabel={isDirectEdit ? "Xóa" : "Đề xuất xóa"}
+        itemName={expenses.find(e => String(e.id) === deleteTargetId)?.description}
+      />
+      </section>
+    </div>
+  );
+}
+

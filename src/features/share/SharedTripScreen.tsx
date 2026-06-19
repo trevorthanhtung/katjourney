@@ -44,6 +44,8 @@ import { ChatBox } from "./components/ChatBox";
 import { WeatherWidget } from "../timeline/WeatherWidget";
 import { useWeather } from "../../hooks/useWeather";
 import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather";
+import { useScrollBarVisibility } from "../../hooks/useScrollBarVisibility";
+import { usePackingTip } from "../../hooks/usePackingTip";
 import { getWeatherIcon, getWeatherText, getWeatherGradient } from "../../services/weatherService";
 import { WeatherDetailsModal } from "../timeline/WeatherDetailsModal";
 import { BottomSheet, FormActions, Select } from "../../components/ui";
@@ -84,71 +86,11 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
 
   // Packing tip based on GPS vs destination temp
-  const packingTip = (() => {
-    if (!forecast || !myForecast) return null;
-    const destTemp = forecast.current?.temperature ?? ((forecast.temperature_2m_max?.[0] ?? 0) + (forecast.temperature_2m_min?.[0] ?? 0)) / 2;
-    const myTemp = myForecast.current?.temperature ?? ((myForecast.temperature_2m_max?.[0] ?? 0) + (myForecast.temperature_2m_min?.[0] ?? 0)) / 2;
-    const destCode = forecast.current?.weathercode ?? forecast.weathercode?.[0] ?? 0;
-    const myCode = myForecast.current?.weathercode ?? myForecast.weathercode?.[0] ?? 0;
-    const diff = destTemp - myTemp;
-    const isDestRainy = (destCode >= 51 && destCode <= 67) || (destCode >= 80 && destCode <= 82) || (destCode >= 95 && destCode <= 99);
-    const isMyRainy = (myCode >= 51 && myCode <= 67) || (myCode >= 80 && myCode <= 82) || (myCode >= 95 && myCode <= 99);
-    if (isDestRainy && !isMyRainy) return { emoji: "🌧️", message: `Điểm đến đang có mưa, đừng quên bỏ ô vào vali!`, color: "bg-sky-500/15 border-sky-400/30 text-white" };
-    if (diff <= -7) return { emoji: "🧥", message: `Lạnh hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Nhớ mang áo ấm!`, color: "bg-white/15 border-white/25 text-white" };
-    if (diff <= -4) return { emoji: "🧣", message: `Mát hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Mang áo khoác mỏng nhé.`, color: "bg-white/15 border-white/25 text-white" };
-    if (diff >= 7) return { emoji: "☀️", message: `Nóng hơn nơi bạn ${Math.round(diff)}°C. Chuẩn bị kem chống nắng!`, color: "bg-amber-500/15 border-amber-400/30 text-white" };
-    if (diff >= 4) return { emoji: "🕶️", message: `Ấm hơn nơi bạn ${Math.round(diff)}°C. Đừng quên kính mát.`, color: "bg-orange-500/15 border-orange-400/30 text-white" };
-    return null;
-  })();
+  const packingTip = usePackingTip(forecast, myForecast);
 
   const [showIdentityModal, setShowIdentityModal] = useState(false);
 
-  const [areBarsVisible, setAreBarsVisible] = useState(true);
-
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let ticking = false;
-
-    const updateScrollDirection = () => {
-      if (window.innerWidth >= 1024) {
-        setAreBarsVisible(true);
-        ticking = false;
-        return;
-      }
-
-      const scrollY = window.scrollY;
-      
-      if (Math.abs(scrollY - lastScrollY) < 15) {
-        ticking = false;
-        return;
-      }
-      
-      if (scrollY < 60) {
-        setAreBarsVisible(true);
-      } else if (scrollY > lastScrollY) {
-        setAreBarsVisible(false);
-      } else {
-        setAreBarsVisible(true);
-      }
-      
-      lastScrollY = scrollY > 0 ? scrollY : 0;
-      ticking = false;
-    };
-
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateScrollDirection);
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    document.body.classList.toggle("bars-hidden", !areBarsVisible);
-  }, [areBarsVisible]);
+  const areBarsVisible = useScrollBarVisibility(1024);
   
   // Identity Modal state
   const [pinInput, setPinInput] = useState("");

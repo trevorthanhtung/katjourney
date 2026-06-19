@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -425,7 +425,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
         )}`}
       >
         {/* Category Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8E1D8]/50">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200/50">
           <div className="flex items-center gap-2.5">
             {(() => {
               const IconComponent = CATEGORY_ICONS[catName] || PackageIcon;
@@ -663,7 +663,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             <div className="flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 md:hidden" />
             
             {/* Modal Header */}
-            <div className="flex shrink-0 items-center justify-between border-b border-[#E8E1D8]/60 px-6 py-4">
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-200/60 px-6 py-4">
               <div>
                 <h3 className="text-[19px] md:text-[20px] font-black text-kat-text">
                   {editingId ? "Sửa món hành lý" : "Thêm món hành lý"}
@@ -687,7 +687,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                   Tên món cần mang *
                 </label>
                 <input
-                  className={`w-full rounded-[14px] border bg-[#FAF7F1]/60 px-4 h-[46px] text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white focus:ring-2 focus:ring-kat-primary ${
+                  className={`w-full rounded-[14px] border bg-slate-50/60 px-4 h-[46px] text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white focus:ring-2 focus:ring-kat-primary ${
                     showValidationError ? "border-red-500 ring-1 ring-red-500 focus:ring-red-500 motion-error-shake" : "border-kat-border focus:border-kat-primary"
                   }`}
                   value={title}
@@ -741,12 +741,12 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               </div>
 
               {/* Quantity Counter */}
-              <div className="flex items-center justify-between py-2 border-y border-[#E8E1D8]/60">
+              <div className="flex items-center justify-between py-2 border-y border-slate-200/60">
                 <div>
                   <label className="text-[13px] font-bold text-kat-text">Số lượng</label>
                   <p className="text-[11.5px] text-kat-muted font-bold">Số lượng cần mang theo</p>
                 </div>
-                <div className="flex items-center gap-3.5 bg-[#FAF7F1] rounded-[16px] p-1 border border-kat-border/60">
+                <div className="flex items-center gap-3.5 bg-slate-50 rounded-[16px] p-1 border border-kat-border/60">
                   <button
                     type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -773,7 +773,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                       <HugeiconsIcon icon={UserCheckIcon} className="h-4 w-4 text-slate-500" />
                       Người phụ trách
                     </label>
-                    <div className="rounded-[16px] bg-[#FAF7F1] border border-kat-border/60 p-3 flex items-start gap-2.5">
+                    <div className="rounded-[16px] bg-slate-50 border border-kat-border/60 p-3 flex items-start gap-2.5">
                       <HugeiconsIcon icon={UserIcon} className="h-4 w-4 text-kat-muted shrink-0 mt-0.5" />
                       <div>
                         <h4 className="text-[12.5px] font-bold text-kat-text">Chưa có người đồng hành</h4>
@@ -798,7 +798,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                     ]}
                     labels={members.reduce((acc, m) => ({ ...acc, [m.name]: `${m.name} (${m.role || "Người đồng hành"})` }), {} as Record<string, string>)}
                     placeholder="Chọn người đồng hành"
-                    buttonClassName="w-full flex items-center justify-between rounded-[12px] border border-kat-border bg-[#FAF7F1]/60 px-3.5 h-11 text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white focus:ring-2 focus:ring-kat-primary"
+                    buttonClassName="w-full flex items-center justify-between rounded-[12px] border border-kat-border bg-slate-50/60 px-3.5 h-11 text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white focus:ring-2 focus:ring-kat-primary"
                   />
                 )}
               </div>
@@ -809,7 +809,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                   <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-4 w-4 text-slate-500" />
                   Mức độ cần thiết
                 </label>
-                <div className="flex p-1 bg-[#FAF7F1] border border-kat-border/50 rounded-xl">
+                <div className="flex p-1 bg-slate-50 border border-kat-border/50 rounded-xl">
                   {(["normal", "important", "required"] as const).map((prio) => {
                     const isSelected = priority === prio;
                     const labels = { normal: "Thường", important: "Quan trọng", required: "Bắt buộc" };
@@ -838,7 +838,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                   Ghi chú
                 </label>
                 <textarea
-                  className="w-full h-[72px] rounded-[14px] border border-kat-border bg-[#FAF7F1]/60 px-4 py-3 text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white focus:ring-2 focus:ring-kat-primary resize-none"
+                  className="w-full h-[72px] rounded-[14px] border border-kat-border bg-slate-50/60 px-4 py-3 text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white focus:ring-2 focus:ring-kat-primary resize-none"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="VD: Để trong balo nhỏ, nhớ sạc đầy..."
@@ -846,7 +846,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               </div>
 
               {/* Private Toggle Switch */}
-              <div className="flex items-center justify-between p-3.5 bg-[#FAF7F1]/40 border border-kat-border/60 rounded-[18px]">
+              <div className="flex items-center justify-between p-3.5 bg-slate-50/40 border border-kat-border/60 rounded-[18px]">
                 <div className="flex items-center gap-2.5">
                   <div className="flex items-center justify-center w-8 h-8 rounded-[12px] bg-purple-50 text-purple-600">
                     <HugeiconsIcon icon={Luggage01Icon} className="h-4.5 w-4.5" />
@@ -873,7 +873,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             </div>
 
             {/* Modal Actions */}
-            <div className="shrink-0 border-t border-slate-100 px-6 py-4 bg-[#FFFDF8] sticky bottom-0 flex gap-3">
+            <div className="shrink-0 border-t border-slate-100 px-6 py-4 bg-white sticky bottom-0 flex gap-3">
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
@@ -901,7 +901,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
         <button
           onClick={openAddForm}
           className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-[#030D2E] shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
-          style={{ bottom: "calc(7.2rem + env(safe-area-inset-bottom))" }}
+          style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
           aria-label="Thêm món chuẩn bị"
         >
           <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
@@ -921,7 +921,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
       {/* Toast Notification popup */}
       {toast && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 motion-toast-enter">
-          <div className="bg-[#030D2E] text-white px-5 py-3 rounded-2xl shadow-floating flex items-center gap-3 border border-[#E8E1D8]/20">
+          <div className="bg-[#030D2E] text-white px-5 py-3 rounded-2xl shadow-floating flex items-center gap-3 border border-slate-200/20">
             <div className="flex h-5.5 w-5.5 items-center justify-center rounded-full bg-kat-primary/20 text-kat-primary">
               <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" />
             </div>

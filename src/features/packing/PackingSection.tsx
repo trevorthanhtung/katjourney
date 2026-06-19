@@ -1,10 +1,87 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { CheckIcon, Luggage01Icon } from "@hugeicons/core-free-icons";
+import { CheckIcon, Delete01Icon, Luggage01Icon, MoreHorizontalIcon, PencilEdit01Icon } from "@hugeicons/core-free-icons";
 import { db, PackingItem, PackingTripType } from "../../db";
 import { getChecklistStats, packingSuggestions, packingTripTypes } from "../../utils/helpers";
 import { BottomSheet, EmptyCard, FAB, FormActions, FormCard, IconButton, Input, ProgressRing, ScreenTitle, Select, DeleteConfirmModal, classNames } from "../../components/ui";
 import { useModalHistory } from "../../hooks/useModalHistory";
+
+function PackingItemRow({ item, onEdit, onDelete }: { item: PackingItem; onEdit: () => void; onDelete: () => void }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    if (isMenuOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMenuOpen]);
+
+  return (
+    <div className={classNames("flex items-center gap-3 rounded-[20px] bg-white p-3.5 shadow-sm border transition-all hover:shadow-md", item.completed ? "opacity-60 border-slate-100 bg-slate-50/50" : "border-slate-100")}>
+      <button
+        className={classNames(
+          "flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-300",
+          item.completed ? "bg-emerald-500 text-white shadow-sm" : "bg-slate-100 text-slate-300 ring-1 ring-inset ring-slate-200 hover:bg-slate-200"
+        )}
+        onClick={() => db.packingItems.update(item.id!, { completed: !item.completed })}
+        aria-label="Đánh dấu hành lý"
+      >
+        <HugeiconsIcon icon={CheckIcon} className="h-4 w-4" />
+      </button>
+      <div className="min-w-0 flex-1">
+        <p className={classNames("break-words text-[15px] font-medium transition-all duration-300", item.completed ? "text-slate-500 line-through" : "text-slate-800")}>{item.title}</p>
+      </div>
+
+      {/* ... menu */}
+      <div className="relative shrink-0" ref={menuRef}>
+        <button
+          type="button"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsMenuOpen(!isMenuOpen);
+          }}
+          title="Tùy chọn"
+        >
+          <HugeiconsIcon icon={MoreHorizontalIcon} className="h-4.5 w-4.5" />
+        </button>
+
+        {isMenuOpen && (
+          <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMenuOpen(false);
+                onEdit();
+              }}
+              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+            >
+              <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500" />
+              Sửa
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMenuOpen(false);
+                onDelete();
+              }}
+              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+            >
+              <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
+              Xóa
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function PackingSection({ tripId, packingItems }: { tripId: number; packingItems: PackingItem[] }) {
   const [tripType, setTripType] = useState<PackingTripType>("Biển");
@@ -111,24 +188,14 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
                     <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                     {type}
                   </h3>
-                  <div className="grid gap-3 md:grid-cols-2">
+                    <div className="grid gap-3 md:grid-cols-2">
                     {items.sort((a, b) => a.title.localeCompare(b.title)).map((item) => (
-                      <div key={item.id} className={classNames("flex items-center gap-4 rounded-[20px] bg-white p-4 shadow-sm border transition-all hover:shadow-md", item.completed ? "opacity-60 border-slate-100 bg-slate-50/50" : "border-slate-100")}>
-                        <button
-                          className={classNames(
-                            "flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-300",
-                            item.completed ? "bg-emerald-500 text-white shadow-sm" : "bg-slate-100 text-slate-300 ring-1 ring-inset ring-slate-200 hover:bg-slate-200"
-                          )}
-                          onClick={() => db.packingItems.update(item.id!, { completed: !item.completed })}
-                          aria-label="Đánh dấu hành lý"
-                        >
-                          <HugeiconsIcon icon={CheckIcon} className="h-4 w-4" />
-                        </button>
-                        <div className="min-w-0 flex-1">
-                          <p className={classNames("break-words text-[16px] font-medium transition-all duration-300", item.completed ? "text-slate-500 line-through" : "text-slate-800")}>{item.title}</p>
-                        </div>
-
-                      </div>
+                      <PackingItemRow
+                        key={item.id}
+                        item={item}
+                        onEdit={() => startEdit(item)}
+                        onDelete={() => deleteItem(item)}
+                      />
                     ))}
                   </div>
                 </div>

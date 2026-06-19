@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Search01Icon,
@@ -113,7 +113,7 @@ export function TripSearchModal({
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md motion-modal-overlay" onClick={onClose} />
 
       {/* Search Container */}
-      <div className="relative z-10 flex flex-col w-full max-w-2xl max-h-[80vh] bg-[#FFFDF8] border border-[#E8E1D8] shadow-floating rounded-3xl overflow-hidden motion-modal-dialog">
+      <div className="relative z-10 flex flex-col w-full max-w-2xl max-h-[80vh] bg-white border border-slate-200 shadow-floating rounded-3xl overflow-hidden motion-modal-dialog">
         
         {/* Search Input Bar */}
         <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100 bg-white">

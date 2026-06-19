@@ -25,6 +25,10 @@ export default {
           yellow: "#FCA311",
           pink: "#FF6B6B",
           blue: "#00B4D8",
+          // Brand dark — dùng thay cho hardcode #030D2E
+          dark: "#030D2E",
+          // Teal accent — dùng thay cho hardcode #00BFB7
+          teal: "#00BFB7",
         },
         sand: "#F8F9FA",
         emerald: {

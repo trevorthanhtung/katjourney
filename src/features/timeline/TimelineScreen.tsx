@@ -52,7 +52,7 @@ function getCategory(id?: string) {
 
 
 
-function ActivityCard({ 
+const ActivityCard = React.memo(function ActivityCard({ 
   item, 
   onEdit, 
   isToday, 
@@ -234,7 +234,7 @@ function ActivityCard({
       </div>
     </article>
   );
-}
+});
 
 function DayHeader({ 
   day, 
