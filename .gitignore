@@ -6,3 +6,6 @@ vite.config.d.ts
 .DS_Store
 .env.local
 public/firebase-messaging-sw.js
+test-results/
+playwright-report/
+blob-report/
