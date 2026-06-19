@@ -37,11 +37,11 @@
 }
 
 :root {
-  --kat-bg: #FAF7F1;
-  --kat-surface: #FFFDF8;
+  --kat-bg: #F8FAFC;
+  --kat-surface: #FFFFFF;
   --kat-text: #030D2E;
   --kat-muted: #64748B;
-  --kat-border: #E8E1D8;
+  --kat-border: #E2E8F0;
 
   --kat-primary: #00BFB7;
   --kat-primary-usable: #00AFA8;
@@ -58,7 +58,7 @@
   --mobile-page-bottom-gap: 24px;
 
   color: #030D2E;
-  background: #FAF7F1;
+  background: #F8FAFC;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -116,7 +116,7 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0;
-  background-color: #FAF7F1;
+  background-color: #F8FAFC;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;

@@ -208,7 +208,7 @@ const newBottomSheet = \`<BottomSheet
                     className={\`flex items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-bold border transition-all duration-200 active:scale-95 \${
                       isActive
                         ? "bg-[#00BFB7]/10 border-[#00BFB7] text-[#030D2E]"
-                        : "bg-[#FFFDF8] border-[#E8E1D8] text-slate-600 hover:bg-slate-50"
+                        : "bg-white border-[#E2E8F0] text-slate-600 hover:bg-slate-50"
                     }\`}
                   >
                     <span className={\`h-2.5 w-2.5 rounded-full \${colorDot}\`} />
@@ -286,7 +286,7 @@ const newBottomSheet = \`<BottomSheet
                   key={prompt}
                   type="button"
                   onClick={() => handlePromptClick(prompt)}
-                  className="rounded-lg bg-[#FAF7F1] border border-[#E8E1D8] px-3 py-1.5 text-[12.5px] font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                  className="rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] px-3 py-1.5 text-[12.5px] font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-700 transition-colors"
                 >
                   + {prompt}
                 </button>

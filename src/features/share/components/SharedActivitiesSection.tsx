@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   RouteIcon,
@@ -533,7 +533,7 @@ export function SharedActivitiesSection({
           <h3 className="text-[18px] font-black text-kat-dark tracking-tight">Lịch trình chi tiết</h3>
         </div>
         <div className="flex items-center justify-center sm:justify-start gap-2.5 shrink-0 select-none w-full sm:w-auto">
-          <div className="flex bg-[#E8E1D8]/40 p-1 rounded-xl">
+          <div className="flex bg-[#E2E8F0]/40 p-1 rounded-xl">
             <button 
               type="button"
               onClick={() => setViewMode("list")}
@@ -763,17 +763,17 @@ export function SharedActivitiesSection({
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={TextFontIcon} className="h-4 w-4 text-slate-500" />
-                Tên mục lịch trình *
+                Tiêu đề *
               </span>
             }
             value={form.title}
             onChange={val => setForm({ ...form, title: val })}
-            placeholder="VD: Ăn trưa tại quán địa phương"
+            placeholder="VD: Ăn trưa tại quán ngon..."
           />
 
           {/* Category Selector Grid */}
           <div className="space-y-2">
-            <span className="text-sm font-semibold text-slate-600">Loại lịch trình</span>
+            <span className="text-sm font-semibold text-slate-600">Loại hoạt động</span>
             <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
               {ACTIVITY_CATEGORIES.map(cat => {
                 const Icon = cat.icon;
@@ -829,7 +829,7 @@ export function SharedActivitiesSection({
               label={
                 <span className="flex items-center gap-1.5">
                   <HugeiconsIcon icon={Clock01Icon} className="h-4 w-4 text-slate-500" />
-                  Giờ khởi hành / thời gian
+                  Giờ (không bắt buộc)
                 </span>
               }
               value={form.time}
@@ -860,7 +860,7 @@ export function SharedActivitiesSection({
                 <span className="flex flex-col gap-1">
                   <span className="flex items-center gap-1.5">
                     <HugeiconsIcon icon={MapsIcon} className="h-4 w-4 text-slate-500" />
-                    Link bản đồ Google Maps
+                    Link Google Maps
                   </span>
                   <span className="text-xs font-normal text-slate-400">
                     Dán link địa điểm từ Google Maps. Dùng để hiển thị vị trí chính xác nếu tên địa điểm không tự tìm được.
@@ -869,7 +869,7 @@ export function SharedActivitiesSection({
               }
               value={form.mapLink}
               onChange={val => setForm({ ...form, mapLink: val })}
-              placeholder="VD: https://www.google.com/maps/dir/..."
+              placeholder="https://maps.google.com/..."
             />
             {form.mapLink && (
               <div className="mt-1 flex justify-end">

@@ -362,7 +362,7 @@ export function SharedBackupPlansSheet({
 
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center justify-between">
-                        <span>Link bản đồ</span>
+                        <span>Link Google Maps</span>
                         {mapLink && (
                           <a
                             href={mapLink}

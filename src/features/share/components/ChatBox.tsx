@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { HugeiconsIcon } from "@hugeicons/react";
 import { SentIcon, Cancel01Icon, BubbleChatIcon, Loading01Icon, ArrowLeft01Icon } from "@hugeicons/core-free-icons";
 import { ChatMessage, subscribeToMessages, sendMessage } from '../../../services/chatService';
@@ -152,7 +152,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-[#FAF7F1]/30 to-[#FAF7F1] flex flex-col gap-3 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-[#F8FAFC]/30 to-[#F8FAFC] flex flex-col gap-3 custom-scrollbar">
           {loading ? (
             <div className="flex-1 flex flex-col items-center justify-center">
               <HugeiconsIcon icon={Loading01Icon} className="w-8 h-8 animate-spin text-kat-primary" />
@@ -180,7 +180,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                 <React.Fragment key={msg.id || index}>
                   {showDateSeparator && (
                     <div className="flex items-center justify-center my-3 select-none">
-                      <div className="bg-[#E8E1D8]/60 text-kat-text text-[10px] font-bold px-3 py-1 rounded-full shadow-sm tracking-wider uppercase border border-kat-border/40">
+                      <div className="bg-[#E2E8F0]/60 text-kat-text text-[10px] font-bold px-3 py-1 rounded-full shadow-sm tracking-wider uppercase border border-kat-border/40">
                         {dateStr}
                       </div>
                     </div>
@@ -196,7 +196,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                       <div className={classNames(
                         "w-8 h-8 rounded-full shrink-0 mr-2 mt-auto",
                         showAvatar && msg.senderAvatar 
-                          ? "overflow-hidden bg-[#E8E1D8]/40 border border-kat-border/60 shadow-sm transition-transform duration-200 hover:scale-110" 
+                          ? "overflow-hidden bg-[#E2E8F0]/40 border border-kat-border/60 shadow-sm transition-transform duration-200 hover:scale-110" 
                           : ""
                       )}>
                         {showAvatar ? renderSenderAvatar(msg.senderName) : null}

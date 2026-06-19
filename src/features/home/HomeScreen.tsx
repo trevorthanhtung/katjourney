@@ -1044,7 +1044,7 @@ export function HomeScreen({
       <WeatherDetailsModal
         isOpen={weatherModalOpen}
         onClose={() => setWeatherModalOpen(false)}
-        destination={trip.location || "Điểm đến"}
+        destination={trip.location || "Địa điểm"}
         forecast={forecast}
         currentLocationForecast={myForecast}
         currentLocationName={myLocationName}

@@ -165,7 +165,7 @@ export async function exportTripExcel(data: TripData) {
     .sort((a, b) => a.date.localeCompare(b.date) || (a.time || "").localeCompare(b.time || ""));
 
   if (sortedEvents.length === 0) {
-    const r = ws2.addRow(["—", "—", "—", "Chưa có mục lịch trình nào", "—", "—"]);
+    const r = ws2.addRow(["—", "—", "—", "Chưa có hoạt động nào", "—", "—"]);
     applyBodyRow(r, 0);
   } else {
     sortedEvents.forEach((e, i) => {

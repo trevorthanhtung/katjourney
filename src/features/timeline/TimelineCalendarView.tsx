@@ -161,7 +161,7 @@ export function TimelineCalendarView({
                   className="mt-4 inline-flex items-center gap-1.5 rounded-2xl bg-white border border-slate-200 px-4 py-2.5 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all shadow-sm motion-press"
                 >
                   <HugeiconsIcon icon={Add01Icon} className="w-4 h-4 text-kat-primary" />
-                  Thêm mục lịch trình
+                  Thêm hoạt động
                 </button>
               </div>
             )}

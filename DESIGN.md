@@ -5,9 +5,9 @@ colors:
   primary: "#00BFB7"
   primary-usable: "#00AFA8"
   dark: "#030D2E"
-  neutral-bg: "#FAF7F1"
-  neutral-surface: "#FFFDF8"
-  neutral-border: "#E8E1D8"
+  neutral-bg: "#F8FAFC"
+  neutral-surface: "#FFFFFF"
+  neutral-border: "#E2E8F0"
   neutral-muted: "#64748B"
   accent-yellow: "#F89B02"
   accent-pink: "#E50A62"
@@ -73,11 +73,11 @@ Bảng màu của Kat Journey mang sắc thái ấm áp, tự nhiên, tái hiệ
 - **Kat Primary Usable** (#00AFA8 / var(--kat-primary-usable)): Phiên bản tối hơn một chút của Teal dùng cho văn bản hoặc các nút bấm ở trạng thái hover nhằm đảm bảo độ tương phản an toàn (>= 4.5:1).
 
 ### Neutral
-- **Kat Cream Background** (#FAF7F1 / var(--kat-bg)): Màu giấy kem ấm, nền chủ đạo của toàn bộ ứng dụng giúp làm dịu mắt.
-- **Kat Warm White Surface** (#FFFDF8 / var(--kat-surface)): Màu trắng ấm nhẹ dùng cho các thẻ (cards), danh sách và ô nhập liệu nổi bật trên nền kem.
+- **Kat Slate Background** (#F8FAFC / var(--kat-bg)): Màu trắng xám dịu mát (Slate 50), nền chủ đạo của toàn bộ ứng dụng giúp làm dịu mắt và tạo cảm giác hiện đại.
+- **Kat Pure White Surface** (#FFFFFF / var(--kat-surface)): Màu trắng tinh khiết dùng cho các thẻ (cards), danh sách và ô nhập liệu nổi bật trên nền xám.
 - **Kat Dark Text** (#030D2E / var(--kat-text)): Sắc xanh đen đậm đà thay thế cho màu đen tuyền để hiển thị văn bản, tiêu đề và các icon chính.
 - **Kat Muted Gray** (#64748B / var(--kat-muted)): Màu xám đá phiến trầm lắng dùng cho phụ đề, trạng thái trống hoặc các thông tin phụ trợ.
-- **Kat Border Cream** (#E8E1D8 / var(--kat-border)): Màu kem trầm dùng cho các đường kẻ mảnh 1px phân tách nội dung mà không gây nhiễu thị giác.
+- **Kat Border Slate** (#E2E8F0 / var(--kat-border)): Màu xám viền nhạt dùng cho các đường kẻ mảnh 1px phân tách nội dung mà không gây nhiễu thị giác.
 
 ### Accent
 - **Kat Amber Yellow** (#F89B02 / var(--kat-yellow)): Sắc nắng ấm dùng cho các thông báo cảnh báo và huy hiệu kỷ niệm.
@@ -123,7 +123,7 @@ Kat Journey hướng tới sự phẳng lì tối giản của trang giấy. Chi
 
 ### Do's
 - Luôn chỉ định rõ các thuộc tính cần chuyển đổi (ví dụ: `transition-transform`, `transition-colors`) thay vì dùng `transition-all`.
-- Giữ vững tone nền kem giấy (#FAF7F1) đặc trưng làm linh hồn của ứng dụng.
+- Giữ vững tone nền trắng xám (#F8FAFC) hiện đại và sang trọng.
 - Kiểm tra độ tương phản của chữ luôn >= 4.5:1 đối với mọi nhãn văn bản.
 
 ### Don'ts

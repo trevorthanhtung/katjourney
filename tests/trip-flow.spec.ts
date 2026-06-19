@@ -30,8 +30,8 @@ test.describe('Trip Flow — Luồng tạo chuyến đi', () => {
     // Check that the form label "Tên chuyến đi" is visible
     await expect(page.getByText('Tên chuyến đi')).toBeVisible({ timeout: 5000 });
 
-    // The "Điểm đến" label should be visible (use exact to avoid matching the helper text)
-    await expect(page.getByText('Điểm đến', { exact: true })).toBeVisible();
+    // The "Địa điểm" label should be visible (use exact to avoid matching the helper text)
+    await expect(page.getByText('Địa điểm', { exact: true })).toBeVisible();
 
     // The "Thời gian chuyến đi" label should be visible
     await expect(page.getByText('Thời gian chuyến đi')).toBeVisible();
@@ -48,7 +48,7 @@ test.describe('Trip Flow — Luồng tạo chuyến đi', () => {
     await expect(page.getByText('Tên chuyến đi')).toBeVisible({ timeout: 5000 });
 
     // Fill in the trip name
-    const nameInput = page.getByPlaceholder('VD: Du lịch Đà Lạt');
+    const nameInput = page.getByPlaceholder('VD: Mùa hè rực rỡ');
     await expect(nameInput).toBeVisible();
     await nameInput.fill('Test Trip Đà Nẵng');
 
@@ -70,7 +70,7 @@ test.describe('Trip Flow — Luồng tạo chuyến đi', () => {
 
     await expect(page.getByText('Tên chuyến đi')).toBeVisible({ timeout: 5000 });
 
-    const nameInput = page.getByPlaceholder('VD: Du lịch Đà Lạt');
+    const nameInput = page.getByPlaceholder('VD: Mùa hè rực rỡ');
     await nameInput.fill('Chuyến đi Phú Quốc');
 
     const submitButton = page.getByLabel('Xác nhận tạo chuyến đi');
@@ -107,7 +107,7 @@ test.describe('Trip Flow — Luồng tạo chuyến đi', () => {
 
     // Type something and then clear to trigger the dirty state
     // (validation error only shows when dirty || submitAttempted)
-    const nameInput = page.getByPlaceholder('VD: Du lịch Đà Lạt');
+    const nameInput = page.getByPlaceholder('VD: Mùa hè rực rỡ');
     await nameInput.fill('temp');
     await nameInput.fill('');
 

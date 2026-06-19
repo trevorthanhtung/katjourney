@@ -258,7 +258,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
 
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 mb-1.5 flex items-center justify-between">
-                        <span>Link bản đồ</span>
+                        <span>Link Google Maps</span>
                         {mapLink && (
                           <a
                             href={mapLink}
@@ -325,7 +325,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
             </div>
           ) : plans.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="w-16 h-16 rounded-full bg-kat-teal bg-opacity-15 flex items-center justify-center text-kat-teal mb-4">
+              <div className="w-16 h-16 rounded-full bg-[#00BFB7]/15 flex items-center justify-center text-kat-teal mb-4">
                 <HugeiconsIcon icon={Route01Icon} className="w-8 h-8" />
               </div>
               <h4 className="text-[16px] font-extrabold text-kat-dark mb-2">Chưa có phương án dự phòng</h4>

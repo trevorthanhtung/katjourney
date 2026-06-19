@@ -1116,7 +1116,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             ) : (
               <div className="space-y-6">
                 {/* Unified User Info Card with Edit Display Name support */}
-                <div className="flex items-center gap-4.5 p-5 rounded-[24px] bg-gradient-to-br from-[#FFFDF8] to-[#FAF7F1]/80 border border-slate-200 shadow-soft hover:shadow-md transition-all duration-350">
+                <div className="flex items-center gap-4.5 p-5 rounded-[24px] bg-gradient-to-br from-white to-[#F8FAFC]/80 border border-slate-200 shadow-soft hover:shadow-md transition-all duration-350">
                   {provider === "google" ? (
                     user.photoURL ? (
                       <img 
@@ -1216,9 +1216,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
                 {provider === "guest" && (
                   <>
-                    {/* Upsell Message Box */}
-                    <div className="p-4 rounded-[22px] bg-kat-primary-soft border border-kat-teal border-opacity-25 text-left flex items-start gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-kat-teal bg-opacity-15 text-kat-teal shrink-0 mt-0.5">
+                    <div className="p-4 rounded-[22px] bg-kat-primary-soft border border-[#00BFB7]/25 text-left flex items-start gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#00BFB7]/15 text-kat-primary-usable shrink-0 mt-0.5">
                         <HugeiconsIcon icon={InformationCircleIcon} className="w-4 h-4" />
                       </div>
                       <p className="text-[13px] font-semibold leading-relaxed text-slate-600">

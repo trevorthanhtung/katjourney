@@ -53,7 +53,7 @@ const newRender = \`
                       <article 
                         key={j.id} 
                         className={classNames(
-                          "group rounded-[24px] border border-[#E8E1D8] bg-[#FFFDF8] p-5 shadow-soft hover:shadow-md transition-all flex flex-col justify-between gap-4 overflow-hidden",
+                          "group rounded-[24px] border border-[#E2E8F0] bg-white p-5 shadow-soft hover:shadow-md transition-all flex flex-col justify-between gap-4 overflow-hidden",
                           j.isPendingDelete ? "border-rose-100 bg-slate-50/50 opacity-70" : ""
                         )}
                       >

@@ -1236,7 +1236,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     <div className="flex items-center justify-between border-b border-slate-100/40 pb-2.5">
                       <span className="flex items-center gap-2">
                         <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
-                        Điểm đến
+                        Địa điểm
                       </span>
                       <span className="font-black text-kat-dark">{trip.destination || trip.location || "Chưa xác định"}</span>
                     </div>
@@ -1525,7 +1525,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       <WeatherDetailsModal
         isOpen={weatherModalOpen}
         onClose={() => setWeatherModalOpen(false)}
-        destination={trip.destination || trip.location || "Điểm đến"}
+        destination={trip.destination || trip.location || "Địa điểm"}
         forecast={forecast}
         currentLocationForecast={myForecast}
         currentLocationName={myLocationName}

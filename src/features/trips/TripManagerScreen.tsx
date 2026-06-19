@@ -407,7 +407,7 @@ export function TripManagerScreen({
           
           {/* Feature Showcase Grid */}
           <div className="grid grid-cols-3 gap-3 w-full max-w-[460px] mb-8 relative z-10">
-            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#FAF7F1]/50 border border-[#E8E1D8]/60 hover:bg-[#FAF7F1]/90 hover:border-[#0081BE]/30 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
+            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#F8FAFC]/50 border border-[#E2E8F0]/60 hover:bg-[#F8FAFC]/90 hover:border-[#0081BE]/30 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
               <div className="h-9 w-9 rounded-xl bg-[#0081BE]/8 text-[#0081BE] flex items-center justify-center mb-2 shadow-sm border border-[#0081BE]/10 group-hover/item:scale-110 transition-transform duration-300">
                 <HugeiconsIcon icon={Calendar01Icon} size={18} />
               </div>
@@ -415,7 +415,7 @@ export function TripManagerScreen({
               <span className="text-[9.5px] text-slate-400 font-semibold mt-0.5">Chi tiết từng ngày</span>
             </div>
 
-            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#FAF7F1]/50 border border-[#E8E1D8]/60 hover:bg-[#FAF7F1]/90 hover:border-[#F89B02]/30 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
+            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#F8FAFC]/50 border border-[#E2E8F0]/60 hover:bg-[#F8FAFC]/90 hover:border-[#F89B02]/30 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
               <div className="h-9 w-9 rounded-xl bg-[#F89B02]/8 text-[#F89B02] flex items-center justify-center mb-2 shadow-sm border border-[#F89B02]/10 group-hover/item:scale-110 transition-transform duration-300">
                 <HugeiconsIcon icon={WalletCardsIcon} size={18} />
               </div>
@@ -423,7 +423,7 @@ export function TripManagerScreen({
               <span className="text-[9.5px] text-slate-400 font-semibold mt-0.5">Chia hóa đơn</span>
             </div>
 
-            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#FAF7F1]/50 border border-[#E8E1D8]/60 hover:bg-[#FAF7F1]/90 hover:border-[#00BFB7]/30 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
+            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#F8FAFC]/50 border border-[#E2E8F0]/60 hover:bg-[#F8FAFC]/90 hover:border-[#00BFB7]/30 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
               <div className="h-9 w-9 rounded-xl bg-[#00BFB7]/8 text-[#00BFB7] flex items-center justify-center mb-2 shadow-sm border border-[#00BFB7]/10 group-hover/item:scale-110 transition-transform duration-300">
                 <HugeiconsIcon icon={CheckmarkCircle02Icon} size={18} />
               </div>

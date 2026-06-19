@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { 
   CheckIcon, 
@@ -93,7 +93,7 @@ const ActivityCard = React.memo(function ActivityCard({
         <button
           onClick={toggleComplete}
           className={classNames(
-            "flex h-11 w-11 items-center justify-center rounded-full shadow-sm ring-4 ring-[#FAF7F1] transition-all duration-200 motion-press",
+            "flex h-11 w-11 items-center justify-center rounded-full shadow-sm ring-4 ring-[#F8FAFC] transition-all duration-200 motion-press",
             item.completed 
               ? "bg-emerald-500 text-white hover:bg-emerald-600" 
               : `${category.bgColor} border hover:scale-105`
@@ -378,21 +378,21 @@ function EventForm({
 
   const selectedDateIdx = tripDays.indexOf(form.date);
   const helperText = selectedDateIdx !== -1 
-    ? `Mục lịch trình sẽ được thêm vào Ngày ${selectedDateIdx + 1} · ${formatDate(form.date)}`
+    ? `Hoạt động sẽ được thêm vào Ngày ${selectedDateIdx + 1} · ${formatDate(form.date)}`
     : "";
 
   return (
     <BottomSheet 
       isOpen={isOpen} 
       onClose={onClose} 
-      title={editing ? "Sửa mục lịch trình" : "Thêm mục lịch trình"}
+      title={editing ? "Sửa hoạt động" : "Thêm hoạt động"}
       footer={
         <div className="flex items-center gap-2.5 w-full">
           {editing && (
             <button
               type="button"
               onClick={onDelete}
-              title="Xóa mục lịch trình"
+              title="Xóa hoạt động này"
               className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 transition-colors hover:bg-rose-100 active:scale-[0.96] motion-press"
             >
               <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5" />
@@ -414,7 +414,7 @@ function EventForm({
             className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark text-white px-6 font-black shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed motion-press"
           >
             <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" />
-            {editing ? "Lưu thông tin" : "Thêm mục lịch trình"}
+            {editing ? "Lưu thay đổi" : "Thêm hoạt động"}
           </button>
         </div>
       }
@@ -425,17 +425,17 @@ function EventForm({
         label={
           <span className="flex items-center gap-1.5">
             <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-slate-500" />
-            Tên mục lịch trình *
+            Tiêu đề *
           </span>
         } 
         value={form.title} 
         onChange={(title) => setForm({ ...form, title })} 
-        placeholder="VD: Ăn trưa tại quán địa phương" 
+        placeholder="VD: Ăn trưa tại quán ngon..." 
       />
 
       {/* Category Selector Grid */}
       <div className="space-y-2">
-        <span className="text-sm font-semibold text-slate-600">Loại lịch trình</span>
+        <span className="text-sm font-semibold text-slate-600">Loại hoạt động</span>
         <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
           {ACTIVITY_CATEGORIES.map(cat => {
             const Icon = cat.icon;
@@ -497,7 +497,7 @@ function EventForm({
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={Clock01Icon} className="h-4 w-4 text-slate-500" />
-                Giờ khởi hành / thời gian
+                Giờ (không bắt buộc)
               </span>
             } 
             value={form.time} 
@@ -528,7 +528,7 @@ function EventForm({
             <span className="flex flex-col gap-1">
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={MapsIcon} className="h-4 w-4 text-slate-500" />
-                Link bản đồ Google Maps
+                Link Google Maps
               </span>
               <span className="text-xs font-normal text-slate-400">
                 Dán link địa điểm từ Google Maps. Dùng để hiển thị vị trí chính xác nếu tên địa điểm không tự tìm được.
@@ -537,7 +537,7 @@ function EventForm({
           } 
           value={form.mapLink} 
           onChange={(mapLink) => setForm({ ...form, mapLink })} 
-          placeholder="VD: https://www.google.com/maps/dir/..." 
+          placeholder="https://maps.google.com/..." 
         />
         {form.mapLink && (
           <div className="mt-1 flex justify-end">
@@ -785,7 +785,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 </div>
                 <div>
                   <h4 className="text-[16px] font-extrabold text-kat-dark">Chưa phân ngày</h4>
-                  <p className="text-[13px] font-semibold text-slate-500">Các mục lịch trình chưa xếp ngày cụ thể</p>
+                  <p className="text-[13px] font-semibold text-slate-500">Các hoạt động chưa xếp ngày cụ thể</p>
                 </div>
               </div>
             </div>
@@ -859,7 +859,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         </div>
         
         <div className="flex items-center justify-center w-full sm:w-auto gap-3">
-          <div className="flex bg-[#E8E1D8]/40 p-1 rounded-xl">
+          <div className="flex bg-[#E2E8F0]/40 p-1 rounded-xl">
             <button 
               onClick={() => setViewMode("list")}
               className={classNames(
@@ -928,8 +928,8 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5">
                     <HugeiconsIcon icon={Location01Icon} className="h-6 w-6" />
                   </div>
-                  <h4 className="text-[15px] font-bold text-kat-text">Chưa có mục lịch trình nào</h4>
-                  <p className="mt-1 text-[13.5px] text-kat-muted font-medium max-w-sm">Thêm điểm đến, thời gian di chuyển hoặc việc cần làm để hành trình rõ ràng hơn.</p>
+                  <h4 className="text-[15px] font-bold text-kat-text">Chưa có hoạt động nào</h4>
+                  <p className="mt-1 text-[13.5px] text-kat-muted font-medium max-w-sm">Thêm điểm đến, giờ di chuyển hoặc việc cần làm để chuyến đi rõ ràng hơn.</p>
                 </div>
               </div>
             </div>
@@ -1096,7 +1096,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               <div className="flex items-center justify-between border-b border-slate-50 pb-2">
                 <span className="flex items-center gap-2">
                   <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
-                  Điểm đến
+                  Địa điểm
                 </span>
                 <span className="font-bold text-kat-dark">{trip.location || "Chưa xác định"}</span>
               </div>
@@ -1142,10 +1142,10 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           setEventToDelete(null);
         }}
         onConfirm={executeDelete}
-        title="Xóa mục lịch trình này?"
+        title="Xóa hoạt động này?"
         itemName={eventToDelete?.title}
-        description="Mục lịch trình này sẽ không còn xuất hiện trong lịch trình. Sau khi xóa, không thể hoàn tác."
-        confirmLabel="Xóa mục lịch trình"
+        description="Hoạt động này sẽ không còn xuất hiện trong lịch trình. Sau khi xóa, không thể hoàn tác."
+        confirmLabel="Xóa hoạt động"
       />
 
       <BackupPlansSheet

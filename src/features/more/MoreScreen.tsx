@@ -510,7 +510,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
             } 
             value={form.title} 
             onChange={(title) => { setForm({ ...form, title }); setDirty(true); }} 
-            placeholder="VD: Du lịch Đà Lạt" 
+            placeholder="VD: Mùa hè rực rỡ" 
           />
           {(dirty || submitAttempted) && titleError && (
             <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{titleError}</p>
@@ -519,7 +519,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
         <div>
           <span className="mb-1.5 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
             <HugeiconsIcon icon={Location01Icon} size={16} className="text-slate-500" />
-            Điểm đến
+            Địa điểm
           </span>
           <LocationInput
             value={form.location}
@@ -1191,7 +1191,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             <h4 className="text-[13px] font-bold text-slate-500">Dấu ấn đầu tiên</h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
-            {firstMomentText || "Chưa có dấu ấn đầu tiên. Hãy thêm mục lịch trình hoặc đăng bài viết để lưu lại khoảnh khắc mở đầu."}
+            {firstMomentText || "Chưa có dấu ấn đầu tiên. Hãy thêm hoạt động hoặc đăng bài viết để lưu lại khoảnh khắc mở đầu."}
           </p>
         </div>
 
@@ -1204,7 +1204,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
             {maxEventsDate ? (
               <>
-                <span className="font-extrabold text-amber-600">{formatDate(maxEventsDate)}</span> là ngày bận rộn nhất với <span className="font-bold text-kat-dark">{maxEventsCount} mục lịch trình</span> được ghi nhận.
+                <span className="font-extrabold text-amber-600">{formatDate(maxEventsDate)}</span> là ngày bận rộn nhất với <span className="font-bold text-kat-dark">{maxEventsCount} hoạt động</span> được ghi nhận.
               </>
             ) : (
               "Chưa có ngày nào đủ dữ liệu để chọn làm ngày nổi bật."
