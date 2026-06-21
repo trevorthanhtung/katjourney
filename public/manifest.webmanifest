@@ -8,6 +8,7 @@
   "orientation": "portrait",
   "background_color": "#F8FAFC",
   "theme_color": "#F8FAFC",
+  "navigation_bar_color": "#F8FAFC",
   "icons": [
     {
       "src": "/asset/icon-192.png",

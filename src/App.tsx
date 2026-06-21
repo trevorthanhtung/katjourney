@@ -39,6 +39,7 @@ import { GlobalToast } from "./components/ui/ToastManager";
 import { useTripReminders } from "./hooks/useTripReminders";
 import { useMediaQuery } from "./hooks/useMediaQuery";
 import { useModalHistory } from "./hooks/useModalHistory";
+import { ReloadPrompt } from "./components/ReloadPrompt";
 
 // Screens
 import { HomeScreen } from "./features/home/HomeScreen";
@@ -1370,6 +1371,8 @@ function App() {
         onClose={() => setIsImportModalOpen(false)}
         showToast={showToast}
       />
+
+      <ReloadPrompt />
     </div>
   </>
 );

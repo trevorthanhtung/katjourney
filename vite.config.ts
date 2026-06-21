@@ -51,7 +51,7 @@ export default defineConfig({
     react(),
     firebaseSWPlugin(),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
       includeAssets: ["asset/favicon.ico", "asset/apple-touch-icon.png"],
       manifest: {
         name: "KAT Journey",
