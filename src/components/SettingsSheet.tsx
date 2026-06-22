@@ -1305,7 +1305,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             <div className="w-full max-w-lg rounded-[24px] border border-slate-200/60 bg-white p-5 text-left shadow-soft">
               <h4 className="text-[13.5px] font-black text-kat-dark">Công nghệ & giấy phép</h4>
               <p className="mt-2 text-[12.5px] font-semibold leading-relaxed text-slate-500">
-                KAT Journey được xây dựng bằng React, Vite, Dexie và Firebase. Hệ thống chỉ sử dụng Firebase để đồng bộ và chia sẻ khi bạn chủ động đăng nhập.
+                KAT Journey được xây dựng bằng React, Vite, Dexie và Supabase. Hệ thống chỉ sử dụng Supabase để đồng bộ và chia sẻ khi bạn chủ động đăng nhập.
               </p>
               <p className="mt-2 text-[11.5px] font-medium leading-relaxed text-slate-400">
                 Chúng mình xin gửi lời cảm ơn chân thành đến các tác giả và cộng đồng mã nguồn mở đã đồng hành cùng dự án.
