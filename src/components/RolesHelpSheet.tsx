@@ -28,11 +28,20 @@ export function RolesHelpSheet({
       ]
     },
     {
-      title: "Tài xế / Dẫn đường",
+      title: "Tài xế",
       icon: Car01Icon,
-      icon2: CompassIcon,
       colorClass: "bg-blue-50 text-blue-600 border-blue-200/50",
-      description: "Phụ trách di chuyển và định hướng lộ trình chính của đoàn.",
+      description: "Phụ trách di chuyển, lái xe và quản lý phương tiện chính.",
+      permissions: [
+        { label: "Sửa lịch trình trực tiếp", allowed: true },
+        { label: "Đề xuất thêm chi phí", allowed: false }
+      ]
+    },
+    {
+      title: "Dẫn đường",
+      icon: CompassIcon,
+      colorClass: "bg-sky-50 text-sky-600 border-sky-200/50",
+      description: "Phụ trách dẫn đường, lộ trình di chuyển và bản đồ.",
       permissions: [
         { label: "Sửa lịch trình trực tiếp", allowed: true },
         { label: "Đề xuất thêm chi phí", allowed: false }
@@ -74,13 +83,8 @@ export function RolesHelpSheet({
             className="p-4 rounded-2xl border border-slate-100 bg-slate-50/30 flex flex-col gap-3"
           >
             <div className="flex items-center gap-3">
-              <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${role.colorClass} shadow-sm shrink-0 relative`}>
+              <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${role.colorClass} shadow-sm shrink-0`}>
                 <HugeiconsIcon icon={role.icon} className="h-4.5 w-4.5" />
-                {role.icon2 && (
-                  <div className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm">
-                    <HugeiconsIcon icon={role.icon2} className="h-2.5 w-2.5 text-slate-500" />
-                  </div>
-                )}
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="text-[14.5px] font-extrabold text-slate-800 leading-none">
