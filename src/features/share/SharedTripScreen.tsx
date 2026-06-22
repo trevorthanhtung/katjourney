@@ -74,7 +74,8 @@ interface SharedData {
 import { useSharedTrip } from "../../hooks/useSharedTrip";
 
 export default function SharedTripScreen({ token }: { token: string }) {
-  const { data, error, loading } = useSharedTrip(token);
+  const [enteredPin, setEnteredPin] = useState<string | null>(null);
+  const { data, error, errorCode, loading } = useSharedTrip(token, enteredPin);
   const [identityChecked, setIdentityChecked] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserIdentity | null>(null);
 
@@ -235,9 +236,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       
       if (!saved || pendingSwap) {
         setShowIdentityModal(true);
-        if (pendingSwap || !data.sharePin) {
-          setStep("identity");
-        }
+        setStep("identity");
       } else {
         const member = data.members?.find((m: any) => m.name === saved.name);
         if (member) {
@@ -250,6 +249,12 @@ export default function SharedTripScreen({ token }: { token: string }) {
       }
     }
   }, [data]);
+
+  useEffect(() => {
+    if (errorCode === 'invalid_pin' && enteredPin) {
+      setPinError(true);
+    }
+  }, [errorCode, enteredPin]);
 
 
 
@@ -338,35 +343,113 @@ export default function SharedTripScreen({ token }: { token: string }) {
     );
   }
 
+  const isPinRequired = errorCode === 'invalid_pin' || error === 'Mã PIN không đúng.';
+
   if (error || !data) {
+    if (!isPinRequired) {
+      return (
+        <div className="flex min-h-screen items-center justify-center bg-white p-6">
+          <div className="max-w-md w-full flex flex-col items-center text-center space-y-6 animate-fadeIn">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+              <HugeiconsIcon icon={SecurityWarningIcon} className="h-10 w-10" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold text-slate-900">Không thể truy cập chuyến đi</h2>
+              <p className="text-base text-slate-500 font-medium leading-relaxed">
+                Liên kết này không tồn tại hoặc bạn không có quyền truy cập.
+              </p>
+              <p className="text-sm text-slate-400 font-medium mt-2 leading-relaxed">
+                Vui lòng kiểm tra lại đường dẫn hoặc yêu cầu chủ chuyến đi chia sẻ lại liên kết.
+              </p>
+            </div>
+            <button
+              onClick={() => window.location.href = "/"}
+              className="inline-flex min-h-[44px] w-fit items-center justify-center rounded-xl bg-kat-dark text-white px-6 py-2.5 font-bold shadow-sm hover:bg-[#0a1a5c] active:scale-95 transition-all focus:outline-none"
+            >
+              Quay lại trang chủ
+            </button>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  if (isPinRequired) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white p-6">
-        <div className="max-w-md w-full flex flex-col items-center text-center space-y-6 animate-fadeIn">
-          {/* Icon Container */}
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-            <HugeiconsIcon icon={SecurityWarningIcon} className="h-10 w-10" />
-          </div>
-          
-          {/* Heading */}
-          <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-slate-900">Không thể truy cập chuyến đi</h2>
-            
-            {/* Copywriting (Body & Sub-body) */}
-            <p className="text-base text-slate-500 font-medium leading-relaxed">
-              Liên kết này không tồn tại hoặc bạn không có quyền truy cập.
-            </p>
-            <p className="text-sm text-slate-400 font-medium mt-2 leading-relaxed">
-              Vui lòng kiểm tra lại đường dẫn hoặc yêu cầu chủ chuyến đi chia sẻ lại liên kết.
+      <div className="fixed inset-0 flex items-center justify-center bg-slate-50 p-4 animate-fadeIn overflow-hidden z-50">
+        <div className="w-full max-w-md max-h-[90dvh] rounded-[32px] bg-white p-6 shadow-xl border border-slate-100 animate-scaleIn flex flex-col relative">
+          <div className="flex flex-col items-center text-center shrink-0">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 mb-4">
+              <HugeiconsIcon icon={SecurityWarningIcon} className="h-8 w-8" />
+            </div>
+            <h2 className="text-[22px] font-extrabold text-kat-dark tracking-tight flex items-center justify-center gap-1.5">
+              <span>Trạm kiểm soát</span>
+            </h2>
+            <p className="mt-2 text-[14px] text-slate-500 font-medium leading-relaxed">
+              Chuyến đi này được bảo vệ bằng mã PIN. Vui lòng nhập mã PIN để xem nội dung.
             </p>
           </div>
-          
-          {/* CTA Button */}
-          <button
-            onClick={() => window.location.href = "/"}
-            className="inline-flex min-h-[44px] w-fit items-center justify-center rounded-xl bg-kat-dark text-white px-6 py-2.5 font-bold shadow-sm hover:bg-[#0a1a5c] active:scale-95 transition-all focus:outline-none"
-          >
-            Quay lại trang chủ
-          </button>
+
+          <div className="mt-6 flex-1 min-h-0 flex flex-col">
+            <div className="space-y-5">
+              <div className="flex gap-3 justify-center py-2">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <input
+                    key={i}
+                    type="password"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={1}
+                    id={`share-pin-digit-${i}`}
+                    autoComplete="one-time-code"
+                    spellCheck={false}
+                    value={pinInput[i] || ""}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "");
+                      const arr = pinInput.split("").slice(0, 4);
+                      arr[i] = val;
+                      const newPin = arr.join("").slice(0, 4);
+                      setPinInput(newPin);
+                      setPinError(false);
+                      if (val && i < 3) {
+                        const next = document.getElementById(`share-pin-digit-${i+1}`);
+                        next?.focus();
+                      }
+                      if (newPin.length === 4) {
+                        setEnteredPin(newPin);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Backspace" && !pinInput[i] && i > 0) {
+                        const prev = document.getElementById(`share-pin-digit-${i-1}`);
+                        prev?.focus();
+                      }
+                    }}
+                    className={classNames(
+                      "w-12 h-12 rounded-xl border-2 text-center text-[20px] font-black focus:ring-2 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                      pinError
+                        ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-200"
+                        : "border-slate-200 bg-slate-50 text-slate-900 focus:border-kat-dark focus:ring-[#030D2E]/20"
+                    )}
+                  />
+                ))}
+              </div>
+              {pinError && (
+                <p className="text-center text-xs font-bold text-rose-500">Mã PIN không chính xác. Vui lòng thử lại.</p>
+              )}
+              <button
+                disabled={pinInput.length < 4}
+                onClick={() => {
+                  if (pinInput.length === 4) {
+                    setEnteredPin(pinInput);
+                  }
+                }}
+                className="w-full rounded-[16px] bg-kat-dark py-3 text-[14px] font-black text-white transition-all active:scale-[0.98] shadow-sm hover:bg-[#0a1a5c] disabled:opacity-50 disabled:pointer-events-none"
+              >
+                Xác nhận mã PIN
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -522,101 +605,27 @@ export default function SharedTripScreen({ token }: { token: string }) {
           <div className="flex flex-col items-center text-center shrink-0">
             {/* Icon */}
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 mb-4">
-              {step === "pin"
-                ? <HugeiconsIcon icon={SecurityWarningIcon} className="h-8 w-8" />
-                : <HugeiconsIcon icon={UserGroupIcon} className="h-8 w-8" />
-              }
+              <HugeiconsIcon icon={UserGroupIcon} className="h-8 w-8" />
             </div>
 
             <h2 className="text-[22px] font-extrabold text-kat-dark tracking-tight flex items-center justify-center gap-1.5">
-              <span>{step === "pin" ? "Trạm kiểm soát" : "Bạn là ai trong chuyến đi?"}</span>
-              {step !== "pin" && (
-                <button
-                  type="button"
-                  onClick={() => setIsRolesHelpOpen(true)}
-                  className="text-slate-400 hover:text-kat-teal transition-colors p-1 flex items-center justify-center"
-                  title="Thông tin các vai trò"
-                >
-                  <HugeiconsIcon icon={InformationCircleIcon} className="h-4.5 w-4.5" />
-                </button>
-              )}
+              <span>Bạn là ai trong chuyến đi?</span>
+              <button
+                type="button"
+                onClick={() => setIsRolesHelpOpen(true)}
+                className="text-slate-400 hover:text-kat-teal transition-colors p-1 flex items-center justify-center"
+                title="Thông tin các vai trò"
+              >
+                <HugeiconsIcon icon={InformationCircleIcon} className="h-4.5 w-4.5" />
+              </button>
             </h2>
             <p className="mt-2 text-[14px] text-slate-500 font-medium leading-relaxed">
-              {step === "pin"
-                ? "Chuyến đi này được bảo vệ bằng mã PIN. Vui lòng nhập mã PIN để xem nội dung."
-                : "Chọn tên của bạn trong danh sách để chúng ta dễ dàng tương tác nhé."
-              }
+              Chọn tên của bạn trong danh sách để chúng ta dễ dàng tương tác nhé.
             </p>
           </div>
 
           <div className="mt-6 flex-1 min-h-0 flex flex-col">
-            {step === "pin" ? (
-              <div className="space-y-5">
-                <div className="flex gap-3 justify-center py-2">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <input
-                      key={i}
-                      type="password"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      maxLength={1}
-                      id={`share-pin-digit-${i}`}
-                      autoComplete="one-time-code"
-                      spellCheck={false}
-                      value={pinInput[i] || ""}
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, "");
-                        const arr = pinInput.split("").slice(0, 4);
-                        arr[i] = val;
-                        const newPin = arr.join("").slice(0, 4);
-                        setPinInput(newPin);
-                        setPinError(false);
-                        if (val && i < 3) {
-                          const next = document.getElementById(`share-pin-digit-${i+1}`);
-                          next?.focus();
-                        }
-                        if (newPin.length === 4) {
-                          if (newPin === data.sharePin) {
-                            setStep("identity");
-                          } else {
-                            setPinError(true);
-                          }
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Backspace" && !pinInput[i] && i > 0) {
-                          const prev = document.getElementById(`share-pin-digit-${i-1}`);
-                          prev?.focus();
-                        }
-                      }}
-                      className={classNames(
-                        "w-12 h-12 rounded-xl border-2 text-center text-[20px] font-black focus:ring-2 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
-                        pinError
-                          ? "border-rose-300 bg-rose-50 text-rose-900 focus:border-rose-400 focus:ring-rose-200"
-                          : "border-slate-200 bg-slate-50 text-slate-900 focus:border-kat-dark focus:ring-[#030D2E]/20"
-                      )}
-                    />
-                  ))}
-                </div>
-                {pinError && (
-                  <p className="text-center text-xs font-bold text-rose-500">Mã PIN không chính xác. Vui lòng thử lại.</p>
-                )}
-                <button
-                  disabled={pinInput.length < 4}
-                  onClick={() => {
-                    if (pinInput === data.sharePin) {
-                      setStep("identity");
-                    } else {
-                      setPinError(true);
-                    }
-                  }}
-                  className="w-full rounded-[16px] bg-kat-dark py-3 text-[14px] font-black text-white transition-all active:scale-[0.98] shadow-sm hover:bg-[#0a1a5c] disabled:opacity-50 disabled:pointer-events-none"
-                >
-                  Xác nhận mã PIN
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-3 flex-1 min-h-0 flex flex-col">
+            <div className="space-y-3 flex-1 min-h-0 flex flex-col">
                 {/* Search Bar */}
                 <div className="relative shrink-0">
                   <input
@@ -706,7 +715,6 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   <span className="text-[14px] font-bold text-slate-600">Tôi chỉ muốn xem bản tin chuyến đi</span>
                 </button>
               </div>
-            )}
           </div>
         </div>
         <RolesHelpSheet isOpen={isRolesHelpOpen} onClose={() => setIsRolesHelpOpen(false)} />

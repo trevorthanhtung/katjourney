@@ -5,6 +5,7 @@ import { verifyAndAuthShare, clearShareClaim, ShareAuthError } from '../lib/shar
 export function useSharedTrip(token: string, pin?: string | null) {
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,6 +15,8 @@ export function useSharedTrip(token: string, pin?: string | null) {
     async function setupSharedTrip() {
       try {
         setLoading(true);
+
+        setErrorCode(null);
 
         // 1. SERVER-SIDE VERIFY: kiểm tra token + PIN, set JWT claim share_token
         //    Sau bước này, RLS mới cho phép đọc data của token này.
@@ -38,6 +41,7 @@ export function useSharedTrip(token: string, pin?: string | null) {
         } catch (e: any) {
           if (e instanceof ShareAuthError) {
             setError(e.message);
+            setErrorCode(e.code);
           } else {
             setError(e.message || 'Lỗi khi tải dữ liệu chia sẻ.');
           }
@@ -261,7 +265,7 @@ export function useSharedTrip(token: string, pin?: string | null) {
       // Xóa claim share_token khi rời trang share
       clearShareClaim();
     };
-  }, [token]);
+  }, [token, pin]);
 
-  return { data, error, loading };
+  return { data, error, errorCode, loading };
 }
