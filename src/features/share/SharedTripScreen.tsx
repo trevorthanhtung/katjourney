@@ -102,6 +102,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [isGlobalBackupOpen, setIsGlobalBackupOpen] = useState(false);
   const [isRolesHelpOpen, setIsRolesHelpOpen] = useState(false);
+  const [memberSearchQuery, setMemberSearchQuery] = useState("");
 
   const renderRoleIcons = (role: string) => {
     const roles = (role || "Người đồng hành")
@@ -616,18 +617,52 @@ export default function SharedTripScreen({ token }: { token: string }) {
               </div>
             ) : (
               <div className="space-y-3 flex-1 min-h-0 flex flex-col">
+                {/* Search Bar */}
+                <div className="relative shrink-0">
+                  <input
+                    type="text"
+                    value={memberSearchQuery}
+                    onChange={(e) => setMemberSearchQuery(e.target.value)}
+                    placeholder="Tìm tên thành viên..."
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-2xl text-[14px] font-semibold text-kat-dark placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 focus:bg-white transition-all duration-200"
+                  />
+                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <HugeiconsIcon icon={Search01Icon} className="w-4 h-4" />
+                  </div>
+                  {memberSearchQuery && (
+                    <button
+                      onClick={() => setMemberSearchQuery("")}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1"
+                    >
+                      <HugeiconsIcon icon={Cancel01Icon} className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
                 <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-2xl bg-slate-50/50 custom-scrollbar">
-                  {members
-                    .filter((m: Member) => {
+                  {(() => {
+                    const filteredMembers = members.filter((m: Member) => {
                       const roleLower = (m.role || "").trim().toLowerCase();
-                      return !(
+                      const matchesSearch = memberSearchQuery.trim() === "" ||
+                        m.name.toLowerCase().includes(memberSearchQuery.toLowerCase());
+                      return matchesSearch && !(
                         roleLower === "trưởng nhóm" ||
                         roleLower === "trưởng đoàn" ||
                         roleLower === "người đại diện" ||
                         roleLower === "leader"
                       );
-                    })
-                    .map((m: Member) => (
+                    });
+
+                    if (filteredMembers.length === 0) {
+                      return (
+                        <div className="p-8 text-center text-slate-400 select-none">
+                          <HugeiconsIcon icon={Search01Icon} className="w-8 h-8 mx-auto mb-2 text-slate-350" />
+                          <p className="text-xs font-semibold">Không tìm thấy thành viên</p>
+                        </div>
+                      );
+                    }
+
+                    return filteredMembers.map((m: Member) => (
                       <button
                         key={m.id}
                         onClick={() => {
@@ -649,7 +684,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
                           {renderRoleIcons(m.role || "")}
                         </div>
                       </button>
-                    ))}
+                    ));
+                  })()}
                 </div>
                 
                 <button
