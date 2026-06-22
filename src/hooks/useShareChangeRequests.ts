@@ -43,7 +43,17 @@ export function useShareChangeRequests(trip: Trip | undefined) {
 
     const handleRequestsUpdate = async () => {
       if (isCancelled) return;
-      
+
+      // Owner phải đã login Google — nếu chưa login thì không có quyền xem
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        if (!isCancelled) {
+          setActiveToken(null);
+          setPendingRequests([]);
+        }
+        return;
+      }
+
       const { data: list, error } = await supabase
         .from('change_requests')
         .select('*')

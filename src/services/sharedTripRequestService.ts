@@ -15,41 +15,45 @@ export interface ChangeRequestPayload {
 }
 
 export async function submitChangeRequest(token: string, payload: ChangeRequestPayload): Promise<void> {
+  // Guest cần session (anonymous) để RLS cho phép INSERT change_request
+  // (RLS mới yêu cầu JWT claim share_token phải khớp)
   const { data: { session } } = await supabase.auth.getSession();
-  const user = session?.user;
-  if (!user) throw new Error("Vui lòng đăng nhập.");
-
-  const { data: shareData, error: shareError } = await supabase
-    .from('public_shares')
-    .select('*')
-    .eq('token', token)
-    .maybeSingle();
-
-  if (shareError || !shareData) {
-    throw new Error('Link chia sẻ không tồn tại.');
+  let user = session?.user;
+  if (!user) {
+    const { data: anonData, error: anonErr } = await supabase.auth.signInAnonymously();
+    if (anonErr || !anonData?.user) {
+      throw new Error("Vui lòng đăng nhập hoặc mở link chia sẻ hợp lệ trước khi gửi yêu cầu.");
+    }
+    user = anonData.user;
   }
 
-  if (shareData.revoked) {
-    throw new Error('Link chia sẻ đã bị thu hồi.');
+  // Verify share bằng RPC server-side (thay vì select trực tiếp)
+  const { data: verifyData, error: verifyError } = await supabase.rpc('verify_share_access', {
+    p_token: token,
+    p_pin: null,
+  });
+
+  if (verifyError || !verifyData || !verifyData.ok) {
+    throw new Error('Link chia sẻ không tồn tại hoặc đã bị thu hồi.');
   }
 
-  if (shareData.mode !== 'request_edit' && shareData.mode !== 'edit') {
+  if (verifyData.mode !== 'request_edit' && verifyData.mode !== 'edit') {
     throw new Error('Link này không cho phép gửi đề xuất chỉnh sửa.');
   }
 
   // Check section flags
   const sectionFlagMap: Record<ChangeRequestSection, string | null> = {
-    activities: null, // Always included
+    activities: null,
     expenses: 'include_expenses',
     checklist: 'include_checklist',
     journals: 'include_journals',
     backupPlans: 'include_backup_plans',
     travelDocuments: 'include_documents',
-    members: null // Always allowed to request edit if link is editable
+    members: null
   };
 
   const flagName = sectionFlagMap[payload.section];
-  if (flagName && shareData[flagName] !== true) {
+  if (flagName && verifyData[flagName] !== true) {
     throw new Error('Mục này không được phép chỉnh sửa.');
   }
 

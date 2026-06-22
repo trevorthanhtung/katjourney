@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { verifyAndAuthShare, clearShareClaim, ShareAuthError } from '../lib/shareAuth';
 
-export function useSharedTrip(token: string) {
+export function useSharedTrip(token: string, pin?: string | null) {
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -13,22 +14,33 @@ export function useSharedTrip(token: string) {
     async function setupSharedTrip() {
       try {
         setLoading(true);
-        // 1. Fetch initial parent share metadata
-        const { data: shareData, error: shareError } = await supabase
-          .from('public_shares')
-          .select('*')
-          .eq('token', token)
-          .maybeSingle();
 
-        if (shareError) throw shareError;
-        if (!shareData) {
-          setError('Link chia sẻ không tồn tại.');
-          setLoading(false);
-          return;
-        }
-
-        if (shareData.revoked) {
-          setError('Link chia sẻ đã bị thu hồi bởi người tạo.');
+        // 1. SERVER-SIDE VERIFY: kiểm tra token + PIN, set JWT claim share_token
+        //    Sau bước này, RLS mới cho phép đọc data của token này.
+        let shareData: any;
+        try {
+          const verified = await verifyAndAuthShare(token, pin);
+          // verified đã chứa metadata, dùng trực tiếp
+          shareData = {
+            token: verified.token,
+            revoked: false,
+            mode: verified.mode,
+            include_expenses: verified.includeExpenses,
+            include_journals: verified.includeJournals,
+            include_checklist: verified.includeChecklist,
+            include_backup_plans: verified.includeBackupPlans,
+            include_documents: verified.includeDocuments,
+            owner_uid: verified.ownerUid,
+            source_trip_id: verified.sourceTripId,
+            share_pin: verified.hasPin ? '***' : null,
+            trip: verified.trip,
+          };
+        } catch (e: any) {
+          if (e instanceof ShareAuthError) {
+            setError(e.message);
+          } else {
+            setError(e.message || 'Lỗi khi tải dữ liệu chia sẻ.');
+          }
           setLoading(false);
           return;
         }
@@ -246,6 +258,8 @@ export function useSharedTrip(token: string) {
         console.log("[useSharedTrip] Cleaning up realtime channel for token:", token);
         supabase.removeChannel(channel);
       }
+      // Xóa claim share_token khi rời trang share
+      clearShareClaim();
     };
   }, [token]);
 

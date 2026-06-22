@@ -17,9 +17,17 @@ export async function sendMessage(
   identity: UserIdentity,
   avatar?: string
 ) {
+  // Guest cần session (anonymous) để RLS cho phép INSERT
   const { data: { session } } = await supabase.auth.getSession();
-  const user = session?.user;
-  if (!user) throw new Error("Vui lòng đăng nhập trước khi nhắn tin.");
+  let user = session?.user;
+  if (!user) {
+    // Thử đăng nhập ẩn danh nếu chưa có session
+    const { data: anonData, error: anonErr } = await supabase.auth.signInAnonymously();
+    if (anonErr || !anonData?.user) {
+      throw new Error("Vui lòng đăng nhập hoặc mở link chia sẻ hợp lệ trước khi nhắn tin.");
+    }
+    user = anonData.user;
+  }
 
   const { error } = await supabase
     .from('messages')
