@@ -1,5 +1,4 @@
-import { ensureCloudShareReady } from './cloudShareService';
-import { initFirebase, ensureAnonymousUser } from '../lib/firebase';
+import { supabase } from '../lib/supabase';
 
 export type ChangeRequestSection = 'activities' | 'expenses' | 'checklist' | 'journals' | 'backupPlans' | 'travelDocuments' | 'members';
 export type ChangeRequestAction = 'create' | 'update' | 'delete';
@@ -16,19 +15,19 @@ export interface ChangeRequestPayload {
 }
 
 export async function submitChangeRequest(token: string, payload: ChangeRequestPayload): Promise<void> {
-  await ensureCloudShareReady();
-  const user = await ensureAnonymousUser();
-  const { db } = await initFirebase();
-  const { doc, getDoc, collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error("Vui lòng đăng nhập.");
 
-  const shareRef = doc(db, 'publicShares', token);
-  const shareSnap = await getDoc(shareRef);
+  const { data: shareData, error: shareError } = await supabase
+    .from('public_shares')
+    .select('*')
+    .eq('token', token)
+    .maybeSingle();
 
-  if (!shareSnap.exists()) {
+  if (shareError || !shareData) {
     throw new Error('Link chia sẻ không tồn tại.');
   }
-
-  const shareData = shareSnap.data();
 
   if (shareData.revoked) {
     throw new Error('Link chia sẻ đã bị thu hồi.');
@@ -41,11 +40,11 @@ export async function submitChangeRequest(token: string, payload: ChangeRequestP
   // Check section flags
   const sectionFlagMap: Record<ChangeRequestSection, string | null> = {
     activities: null, // Always included
-    expenses: 'includeExpenses',
-    checklist: 'includeChecklist',
-    journals: 'includeJournals',
-    backupPlans: 'includeBackupPlans',
-    travelDocuments: 'includeDocuments',
+    expenses: 'include_expenses',
+    checklist: 'include_checklist',
+    journals: 'include_journals',
+    backupPlans: 'include_backup_plans',
+    travelDocuments: 'include_documents',
     members: null // Always allowed to request edit if link is editable
   };
 
@@ -54,28 +53,38 @@ export async function submitChangeRequest(token: string, payload: ChangeRequestP
     throw new Error('Mục này không được phép chỉnh sửa.');
   }
 
-function removeUndefined(obj: any): any {
-  if (obj === undefined) return null;
-  if (typeof obj !== 'object' || obj === null) return obj;
-  if (Array.isArray(obj)) return obj.map(removeUndefined);
-  const newObj: any = {};
-  for (const key in obj) {
-    if (obj[key] !== undefined) {
-      newObj[key] = removeUndefined(obj[key]);
+  function removeUndefined(obj: any): any {
+    if (obj === undefined) return null;
+    if (typeof obj !== 'object' || obj === null) return obj;
+    if (Array.isArray(obj)) return obj.map(removeUndefined);
+    const newObj: any = {};
+    for (const key in obj) {
+      if (obj[key] !== undefined) {
+        newObj[key] = removeUndefined(obj[key]);
+      }
     }
+    return newObj;
   }
-  return newObj;
-}
 
   const sanitizedPayload = removeUndefined(payload);
 
-  const changeRequestsRef = collection(shareRef, 'changeRequests');
-  await addDoc(changeRequestsRef, {
-    token,
-    ...sanitizedPayload,
-    requesterUid: user.uid,
-    status: sanitizedPayload.status || 'pending',
-    createdAt: serverTimestamp()
-  });
-}
+  const { error: insertError } = await supabase
+    .from('change_requests')
+    .insert({
+      share_token: token,
+      section: sanitizedPayload.section,
+      action: sanitizedPayload.action,
+      target_id: sanitizedPayload.targetId ? String(sanitizedPayload.targetId) : null,
+      before_data: sanitizedPayload.before || null,
+      after_data: sanitizedPayload.after || null,
+      note: sanitizedPayload.note || null,
+      requester_name: sanitizedPayload.requesterName || null,
+      requester_uid: user.id,
+      status: sanitizedPayload.status || 'pending',
+      created_at: new Date().toISOString()
+    });
 
+  if (insertError) {
+    throw new Error("Gửi yêu cầu chỉnh sửa thất bại: " + insertError.message);
+  }
+}

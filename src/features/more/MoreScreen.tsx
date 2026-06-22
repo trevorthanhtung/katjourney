@@ -1552,7 +1552,8 @@ function MemberCardRow({
   );
 }
 
-import { ensureAnonymousUser, firebaseEnabled } from "../../lib/firebase";
+import { ensureAnonymousUser } from "../../services/authService";
+import { supabaseEnabled } from "../../lib/supabase";
 import { createShareLink, revokeShareLink, updateShareLink } from "../../services/cloudShareService";
 
 export function MoreScreen({
@@ -1701,10 +1702,9 @@ export function MoreScreen({
     });
     return list;
   }, [members, memberSearchQuery]);
-
   async function handleShareTrip() {
-    if (!firebaseEnabled) {
-      showToast("Chưa cấu hình Firebase. Vui lòng kiểm tra môi trường (env).", "error");
+    if (!supabaseEnabled) {
+      showToast("Chưa cấu hình Supabase. Vui lòng kiểm tra môi trường (env).", "error");
       return;
     }
     setShareLoading(true);
@@ -1712,12 +1712,11 @@ export function MoreScreen({
       await ensureAnonymousUser();
       setIsShareModalOpen(true);
     } catch (e: any) {
-      showToast("Không thể kết nối Firebase: " + e.message, "error");
+      showToast("Không thể kết nối Supabase: " + e.message, "error");
     } finally {
       setShareLoading(false);
     }
   }
-
   async function handleCreateLink() {
     try {
       setShareLoading(true);

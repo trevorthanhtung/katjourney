@@ -13,7 +13,7 @@ export const GlobalToast = () => {
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: any;
 
     const handleToast = (e: any) => {
       setToast(e.detail);

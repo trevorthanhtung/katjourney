@@ -1,6 +1,3 @@
-import { initFirebase } from "../lib/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
 // 1. Hàm nén ảnh bằng Canvas (Max 800px, Quality 0.7)
 export const compressImage = (file: File): Promise<Blob> => {
   return new Promise((resolve, reject) => {

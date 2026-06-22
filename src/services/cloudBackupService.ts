@@ -1,4 +1,4 @@
-import { firebaseEnabled, initFirebase } from "../lib/firebase";
+import { supabase } from "../lib/supabase";
 import { db } from "../db";
 
 export interface BackupInfo {
@@ -7,18 +7,8 @@ export interface BackupInfo {
 }
 
 /**
- * Ensures Firebase is ready and configured.
- */
-async function ensureFirebaseReady() {
-  if (!firebaseEnabled) {
-    throw new Error("Firebase chưa được cấu hình. Vui lòng kiểm tra cài đặt.");
-  }
-  return await initFirebase();
-}
-
-/**
  * Deep-clones and removes `undefined` properties from an object/array,
- * which Firestore does not support.
+ * which standard JSON/Postgres does not support.
  */
 function sanitizeData<T>(data: T): T {
   return JSON.parse(JSON.stringify(data));
@@ -65,13 +55,11 @@ function mergeCollections(
 }
 
 /**
- * Backup all local Dexie data to Firestore.
+ * Backup all local Dexie data to Supabase.
  */
 export async function backupToCloud(): Promise<void> {
-  const { db: firestore } = await ensureFirebaseReady();
-  const { doc, setDoc } = await import("firebase/firestore");
-  const { auth } = await initFirebase();
-  const user = auth.currentUser;
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
 
   if (!user) {
     throw new Error("Vui lòng đăng nhập để thực hiện sao lưu.");
@@ -141,21 +129,19 @@ export async function backupToCloud(): Promise<void> {
     backupPlans: sanitizeData(backupPlans)
   };
 
-  // 3. Update user profile and save backup document in Firestore
-  const userRef = doc(firestore, "users", user.uid);
-  const backupRef = doc(firestore, "users", user.uid, "backups", "latest");
+  // 3. Save backup snapshot in Supabase
+  const { error } = await supabase
+    .from("user_backups")
+    .upsert({
+      user_id: user.id,
+      data: snapshot,
+      app_version: "2.0.0",
+      updated_at: backupTime
+    });
 
-  await Promise.all([
-    setDoc(userRef, {
-      profile: {
-        displayName: user.displayName || "",
-        email: user.email || "",
-        photoURL: user.photoURL || "",
-        updatedAt: backupTime
-      }
-    }, { merge: true }),
-    setDoc(backupRef, snapshot)
-  ]);
+  if (error) {
+    throw new Error("Lỗi khi sao lưu dữ liệu lên Supabase: " + error.message);
+  }
 
   // Update local timestamp so it matches the cloud backup timestamp exactly
   if (typeof localStorage !== "undefined") {
@@ -164,25 +150,25 @@ export async function backupToCloud(): Promise<void> {
 }
 
 /**
- * Fetch metadata of the latest backup from Firestore.
+ * Fetch metadata of the latest backup from Supabase.
  */
 export async function getLastBackupInfo(): Promise<BackupInfo | null> {
-  const { db: firestore } = await ensureFirebaseReady();
-  const { doc, getDoc } = await import("firebase/firestore");
-  const { auth } = await initFirebase();
-  const user = auth.currentUser;
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
 
   if (!user) return null;
 
-  const backupRef = doc(firestore, "users", user.uid, "backups", "latest");
-  const snap = await getDoc(backupRef);
+  const { data, error } = await supabase
+    .from("user_backups")
+    .select("updated_at, app_version")
+    .eq("user_id", user.id)
+    .maybeSingle();
 
-  if (!snap.exists()) return null;
+  if (error || !data) return null;
 
-  const data = snap.data();
   return {
-    updatedAt: data.updatedAt || "",
-    appVersion: data.appVersion || "1.0.0"
+    updatedAt: data.updated_at || "",
+    appVersion: data.app_version || "1.0.0"
   };
 }
 
@@ -190,23 +176,24 @@ export async function getLastBackupInfo(): Promise<BackupInfo | null> {
  * Restore data from cloud using either 'merge' or 'replace' mode.
  */
 export async function restoreFromCloud(mode: "merge" | "replace"): Promise<void> {
-  const { db: firestore } = await ensureFirebaseReady();
-  const { doc, getDoc } = await import("firebase/firestore");
-  const { auth } = await initFirebase();
-  const user = auth.currentUser;
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
 
   if (!user) {
     throw new Error("Vui lòng đăng nhập để thực hiện khôi phục.");
   }
 
-  const backupRef = doc(firestore, "users", user.uid, "backups", "latest");
-  const snap = await getDoc(backupRef);
+  const { data, error } = await supabase
+    .from("user_backups")
+    .select("data")
+    .eq("user_id", user.id)
+    .maybeSingle();
 
-  if (!snap.exists()) {
+  if (error || !data || !data.data) {
     throw new Error("Không tìm thấy bản sao lưu nào trên Cloud.");
   }
 
-  const snapshot = snap.data() as any;
+  const snapshot = data.data as any;
 
   if (typeof localStorage !== "undefined") {
     localStorage.setItem("kat_sync_in_progress", "true");

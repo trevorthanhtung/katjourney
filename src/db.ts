@@ -326,16 +326,22 @@ const tablesToTrack = [
 tablesToTrack.forEach(table => {
   table.hook("creating", (primKey, obj) => {
     updateLocalTimestamp();
+    
     const withAudit = {
       ...obj,
       updatedAt: new Date().toISOString(),
       isDeleted: obj.isDeleted !== undefined ? obj.isDeleted : false
     };
     const encrypted = encryptObject(withAudit);
-    if (encrypted && 'id' in encrypted && encrypted.id === undefined) {
-      delete encrypted.id;
+    
+    // Mutate the original obj in-place to preserve Dexie's auto-increment key tracking
+    for (const key of Object.keys(obj)) {
+      delete (obj as any)[key];
     }
-    return encrypted;
+    Object.assign(obj, encrypted);
+    if ('id' in (obj as any) && (obj as any).id === undefined) {
+      delete (obj as any).id;
+    }
   });
   
   table.hook("reading", (obj) => {

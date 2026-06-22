@@ -1,4 +1,4 @@
-import { firebaseEnabled, initFirebase, ensureAnonymousUser } from '../lib/firebase';
+import { supabase } from '../lib/supabase';
 import { db as localDb } from '../db';
 import { decryptObject } from '../lib/crypto';
 
@@ -13,43 +13,29 @@ export interface ShareOptions {
 }
 
 /**
- * Ensures Firebase is ready and configured before attempting cloud actions.
+ * Ensures Supabase is initialized.
  */
 export async function ensureCloudShareReady() {
-  if (!firebaseEnabled) {
-    throw new Error('Firebase chưa được cấu hình. Vui lòng kiểm tra cài đặt.');
-  }
-  await initFirebase();
-}
-
-/**
- * Helper to split Firestore writes into batches of max 450 operations.
- */
-async function commitBatchedWritesInChunks(dbInstance: any, writes: { ref: any; data: any }[]) {
-  const { writeBatch } = await import('firebase/firestore');
-  const CHUNK_SIZE = 450;
-  for (let i = 0; i < writes.length; i += CHUNK_SIZE) {
-    const chunk = writes.slice(i, i + CHUNK_SIZE);
-    const batch = writeBatch(dbInstance);
-    chunk.forEach((write) => {
-      batch.set(write.ref, write.data);
-    });
-    await batch.commit();
+  if (!supabase) {
+    throw new Error('Supabase client is not initialized.');
   }
 }
 
 /**
  * Creates a share link for a given trip.
- * Generates a public snapshot in Firestore under `publicShares/{token}`.
+ * Generates a public snapshot in Supabase under `public_shares` and sub-tables.
  */
 export async function createShareLink(
   tripId: number,
   options: ShareOptions
 ): Promise<{ token: string; url: string }> {
   await ensureCloudShareReady();
-  const user = await ensureAnonymousUser();
-  const { db } = await initFirebase();
-  const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
+  
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) {
+    throw new Error('Vui lòng đăng nhập/đăng ký khách trước khi chia sẻ.');
+  }
 
   // 1. Fetch trip data from local Dexie and decrypt
   const tripRaw = await localDb.trips.get(tripId);
@@ -79,62 +65,59 @@ export async function createShareLink(
   const travelDocuments = travelDocumentsRaw.filter(d => !d.isPrivate).map(d => decryptObject(d));
 
   const randomUUID = () => {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-};
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  };
 
   // 2. Generate a secure token
   const token = randomUUID().replace(/-/g, '') + Math.random().toString(36).substring(2, 10);
-  const shareRef = doc(db, 'publicShares', token);
 
-  // 3. Parent public share document (Write this first so rules using get() pass)
-  console.log("[CloudShare] Attempting to set parent document...");
-  await setDoc(shareRef, {
-    token,
-    ownerUid: user.uid,
-    sourceTripId: String(tripId),
-    mode: options.mode,
-    revoked: false,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-    includeExpenses: options.includeExpenses,
-    includeJournals: options.includeJournals,
-    includeChecklist: options.includeChecklist,
-    includeBackupPlans: options.includeBackupPlans,
-    includeDocuments: options.includeDocuments,
-    sharePin: options.sharePin || null,
-    trip: {
-      id: String(trip.id),
-      name: trip.title,
-      destination: trip.location,
-      latitude: trip.latitude || null,
-      longitude: trip.longitude || null,
-      startDate: trip.startDate,
-      endDate: trip.endDate,
-      tripType: trip.tripType || "multiDay",
-      dayRoadmaps: trip.dayRoadmaps || null,
-      status: trip.status || "active",
-    }
-  });
+  // 3. Parent public share row
+  console.log("[CloudShare] Attempting to set parent document in Supabase...");
+  const { error: parentError } = await supabase
+    .from('public_shares')
+    .insert({
+      token,
+      owner_uid: user.id,
+      source_trip_id: String(tripId),
+      mode: options.mode,
+      revoked: false,
+      include_expenses: options.includeExpenses,
+      include_journals: options.includeJournals,
+      include_checklist: options.includeChecklist,
+      include_backup_plans: options.includeBackupPlans,
+      include_documents: options.includeDocuments,
+      share_pin: options.sharePin || null,
+      trip: {
+        id: String(trip.id),
+        name: trip.title,
+        destination: trip.location,
+        latitude: trip.latitude || null,
+        longitude: trip.longitude || null,
+        startDate: trip.startDate,
+        endDate: trip.endDate,
+        tripType: trip.tripType || "multiDay",
+        dayRoadmaps: trip.dayRoadmaps || null,
+        status: trip.status || "active",
+      }
+    });
+
+  if (parentError) {
+    throw new Error('Không thể tạo liên kết chia sẻ trên Supabase: ' + parentError.message);
+  }
 
   // 4. Update local trip with shareToken
   await localDb.trips.update(tripId, { shareToken: token });
 
-  console.log("[CloudShare] Done creating link:", token);
-
-  const writes: { ref: any; data: any }[] = [];
-
-  // 4. Subcollections
-  // We append createdAt, updatedAt, createdByUid, updatedByUid for audit trails in Phase 3A
-  const timestamp = serverTimestamp();
-  const auditFields = { createdAt: timestamp, updatedAt: timestamp, createdByUid: user.uid, updatedByUid: user.uid };
+  // 5. Bulk upload subcollection data
+  const now = new Date().toISOString();
+  const auditFields = { created_at: now, updated_at: now, created_by_uid: user.id, updated_by_uid: user.id };
   
-  // Helper to remove undefined values which Firestore rejects
   const sanitize = (obj: any) => {
     const newObj = { ...obj };
     Object.keys(newObj).forEach(key => {
@@ -145,18 +128,26 @@ export async function createShareLink(
     return newObj;
   };
 
-  members.forEach(m => writes.push({ ref: doc(shareRef, 'members', String(m.id)), data: { ...sanitize(m), ...auditFields } }));
-  activities.forEach(a => writes.push({ ref: doc(shareRef, 'activities', String(a.id)), data: { ...sanitize(a), ...auditFields } }));
-  expenses.forEach(e => writes.push({ ref: doc(shareRef, 'expenses', String(e.id)), data: { ...sanitize(e), ...auditFields } }));
-  checklist.forEach(c => writes.push({ ref: doc(shareRef, 'checklist', String(c.id)), data: { ...sanitize(c), ...auditFields } }));
-  journals.forEach(j => writes.push({ ref: doc(shareRef, 'journals', String(j.id)), data: { ...sanitize(j), ...auditFields } }));
-  backupPlans.forEach(b => writes.push({ ref: doc(shareRef, 'backupPlans', String(b.id)), data: { ...sanitize(b), ...auditFields } }));
-  travelDocuments.forEach(d => writes.push({ ref: doc(shareRef, 'travelDocuments', String(d.id)), data: { ...sanitize(d), ...auditFields } }));
+  const mapToTable = (list: any[]) => list.map(item => ({
+    id: String(item.id),
+    share_token: token,
+    data: sanitize(item),
+    ...auditFields
+  }));
 
-  // 5. Commit chunks
-  console.log("[CloudShare] Attempting to commit subcollections...");
-  await commitBatchedWritesInChunks(db, writes);
-  console.log("[CloudShare] Subcollections committed successfully.");
+  const uploadChunks = async () => {
+    if (members.length > 0) await supabase.from('share_members').insert(mapToTable(members));
+    if (activities.length > 0) await supabase.from('share_activities').insert(mapToTable(activities));
+    if (expenses.length > 0) await supabase.from('share_expenses').insert(mapToTable(expenses));
+    if (checklist.length > 0) await supabase.from('share_checklist').insert(mapToTable(checklist));
+    if (journals.length > 0) await supabase.from('share_journals').insert(mapToTable(journals));
+    if (backupPlans.length > 0) await supabase.from('share_backup_plans').insert(mapToTable(backupPlans));
+    if (travelDocuments.length > 0) await supabase.from('share_travel_documents').insert(mapToTable(travelDocuments));
+  };
+
+  console.log("[CloudShare] Uploading shared items...");
+  await uploadChunks();
+  console.log("[CloudShare] Upload completed successfully.");
 
   const url = `${window.location.origin}/share/${token}`;
   return { token, url };
@@ -171,14 +162,18 @@ export async function updateShareLink(
   options: ShareOptions
 ): Promise<void> {
   await ensureCloudShareReady();
-  const user = await ensureAnonymousUser();
-  const { db } = await initFirebase();
-  const { doc, getDoc, updateDoc, serverTimestamp } = await import('firebase/firestore');
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error('Vui lòng đăng nhập.');
 
-  const shareRef = doc(db, 'publicShares', token);
-  const snap = await getDoc(shareRef);
-  
-  if (!snap.exists() || snap.data().ownerUid !== user.uid) {
+  // Validate owner
+  const { data: shareData, error: fetchError } = await supabase
+    .from('public_shares')
+    .select('owner_uid')
+    .eq('token', token)
+    .maybeSingle();
+
+  if (fetchError || !shareData || shareData.owner_uid !== user.id) {
     throw new Error('Bạn không có quyền cập nhật link chia sẻ này.');
   }
 
@@ -209,33 +204,52 @@ export async function updateShareLink(
   const travelDocumentsRaw = options.includeDocuments ? await localDb.travelDocuments.where('tripId').equals(tripId).toArray() : [];
   const travelDocuments = travelDocumentsRaw.filter(d => !d.isPrivate).map(d => decryptObject(d));
 
-  console.log("[CloudShare] Attempting to update parent document...");
-  await updateDoc(shareRef, {
-    mode: options.mode,
-    updatedAt: serverTimestamp(),
-    includeExpenses: options.includeExpenses,
-    includeJournals: options.includeJournals,
-    includeChecklist: options.includeChecklist,
-    includeBackupPlans: options.includeBackupPlans,
-    includeDocuments: options.includeDocuments,
-    sharePin: options.sharePin || null,
-    trip: {
-      id: String(trip.id),
-      name: trip.title,
-      destination: trip.location,
-      latitude: trip.latitude || null,
-      longitude: trip.longitude || null,
-      startDate: trip.startDate,
-      endDate: trip.endDate,
-      tripType: trip.tripType || "multiDay",
-      dayRoadmaps: trip.dayRoadmaps || null,
-      status: trip.status || "active",
-    }
-  });
+  console.log("[CloudShare] Attempting to update parent row...");
+  const { error: parentUpdateError } = await supabase
+    .from('public_shares')
+    .update({
+      mode: options.mode,
+      updated_at: new Date().toISOString(),
+      include_expenses: options.includeExpenses,
+      include_journals: options.includeJournals,
+      include_checklist: options.includeChecklist,
+      include_backup_plans: options.includeBackupPlans,
+      include_documents: options.includeDocuments,
+      share_pin: options.sharePin || null,
+      trip: {
+        id: String(trip.id),
+        name: trip.title,
+        destination: trip.location,
+        latitude: trip.latitude || null,
+        longitude: trip.longitude || null,
+        startDate: trip.startDate,
+        endDate: trip.endDate,
+        tripType: trip.tripType || "multiDay",
+        dayRoadmaps: trip.dayRoadmaps || null,
+        status: trip.status || "active",
+      }
+    })
+    .eq('token', token);
 
-  const writes: { ref: any; data: any }[] = [];
-  const timestamp = serverTimestamp();
-  const auditFields = { updatedAt: timestamp, updatedByUid: user.uid };
+  if (parentUpdateError) {
+    throw new Error('Lỗi cập nhật bảng public_shares: ' + parentUpdateError.message);
+  }
+
+  // 2. Clear old items
+  console.log("[CloudShare] Clearing existing items in cloud...");
+  await Promise.all([
+    supabase.from('share_members').delete().eq('share_token', token),
+    supabase.from('share_activities').delete().eq('share_token', token),
+    supabase.from('share_expenses').delete().eq('share_token', token),
+    supabase.from('share_checklist').delete().eq('share_token', token),
+    supabase.from('share_journals').delete().eq('share_token', token),
+    supabase.from('share_backup_plans').delete().eq('share_token', token),
+    supabase.from('share_travel_documents').delete().eq('share_token', token)
+  ]);
+
+  // 3. Insert new items
+  const now = new Date().toISOString();
+  const auditFields = { created_at: now, updated_at: now, created_by_uid: user.id, updated_by_uid: user.id };
   
   const sanitize = (obj: any) => {
     const newObj = { ...obj };
@@ -247,16 +261,25 @@ export async function updateShareLink(
     return newObj;
   };
 
-  members.forEach(m => writes.push({ ref: doc(shareRef, 'members', String(m.id)), data: { ...sanitize(m), ...auditFields } }));
-  activities.forEach(a => writes.push({ ref: doc(shareRef, 'activities', String(a.id)), data: { ...sanitize(a), ...auditFields } }));
-  expenses.forEach(e => writes.push({ ref: doc(shareRef, 'expenses', String(e.id)), data: { ...sanitize(e), ...auditFields } }));
-  checklist.forEach(c => writes.push({ ref: doc(shareRef, 'checklist', String(c.id)), data: { ...sanitize(c), ...auditFields } }));
-  journals.forEach(j => writes.push({ ref: doc(shareRef, 'journals', String(j.id)), data: { ...sanitize(j), ...auditFields } }));
-  backupPlans.forEach(b => writes.push({ ref: doc(shareRef, 'backupPlans', String(b.id)), data: { ...sanitize(b), ...auditFields } }));
-  travelDocuments.forEach(d => writes.push({ ref: doc(shareRef, 'travelDocuments', String(d.id)), data: { ...sanitize(d), ...auditFields } }));
+  const mapToTable = (list: any[]) => list.map(item => ({
+    id: String(item.id),
+    share_token: token,
+    data: sanitize(item),
+    ...auditFields
+  }));
 
-  console.log("[CloudShare] Attempting to commit subcollections updates...");
-  await commitBatchedWritesInChunks(db, writes);
+  const uploadChunks = async () => {
+    if (members.length > 0) await supabase.from('share_members').insert(mapToTable(members));
+    if (activities.length > 0) await supabase.from('share_activities').insert(mapToTable(activities));
+    if (expenses.length > 0) await supabase.from('share_expenses').insert(mapToTable(expenses));
+    if (checklist.length > 0) await supabase.from('share_checklist').insert(mapToTable(checklist));
+    if (journals.length > 0) await supabase.from('share_journals').insert(mapToTable(journals));
+    if (backupPlans.length > 0) await supabase.from('share_backup_plans').insert(mapToTable(backupPlans));
+    if (travelDocuments.length > 0) await supabase.from('share_travel_documents').insert(mapToTable(travelDocuments));
+  };
+
+  console.log("[CloudShare] Uploading updated shared items...");
+  await uploadChunks();
   console.log("[CloudShare] Subcollections updates committed successfully.");
 }
 
@@ -265,22 +288,23 @@ export async function updateShareLink(
  */
 export async function revokeShareLink(tripId: number, token: string): Promise<void> {
   await ensureCloudShareReady();
-  const user = await ensureAnonymousUser();
-  const { db } = await initFirebase();
-  const { doc, getDoc, updateDoc, serverTimestamp } = await import('firebase/firestore');
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) return;
 
-  const shareRef = doc(db, 'publicShares', token);
-  const snap = await getDoc(shareRef);
-  
-  if (snap.exists() && snap.data().ownerUid === user.uid) {
-    await updateDoc(shareRef, {
+  const { error } = await supabase
+    .from('public_shares')
+    .update({
       revoked: true,
-      updatedAt: serverTimestamp()
-    });
-  }
+      updated_at: new Date().toISOString()
+    })
+    .eq('token', token)
+    .eq('owner_uid', user.id);
 
-  // Clear local shareToken
-  await localDb.trips.update(tripId, { shareToken: undefined });
+  if (!error) {
+    // Clear local shareToken
+    await localDb.trips.update(tripId, { shareToken: undefined });
+  }
 }
 
 /**
@@ -288,51 +312,56 @@ export async function revokeShareLink(tripId: number, token: string): Promise<vo
  */
 export async function getViewShareData(token: string) {
   await ensureCloudShareReady();
-  await ensureAnonymousUser();
-  const { db } = await initFirebase();
   
-  // Use dynamic import so we don't increase initial bundle size
-  const { doc, getDoc, collection, getDocs } = await import('firebase/firestore');
+  const { data: shareData, error: shareError } = await supabase
+    .from('public_shares')
+    .select('*')
+    .eq('token', token)
+    .maybeSingle();
   
-  const shareRef = doc(db, 'publicShares', token);
-  const shareSnap = await getDoc(shareRef);
-  
-  if (!shareSnap.exists()) {
+  if (shareError || !shareData) {
     throw new Error('Link chia sẻ không tồn tại.');
   }
   
-  const data = shareSnap.data();
-  if (data.revoked) {
+  if (shareData.revoked) {
     throw new Error('Link chia sẻ đã bị thu hồi bởi người tạo.');
   }
   
   // Fetch subcollections concurrently
   const [
-    membersSnap,
-    activitiesSnap,
-    expensesSnap,
-    checklistSnap,
-    journalsSnap,
-    backupPlansSnap,
-    documentsSnap
+    membersRes,
+    activitiesRes,
+    expensesRes,
+    checklistRes,
+    journalsRes,
+    backupPlansRes,
+    documentsRes
   ] = await Promise.all([
-    getDocs(collection(shareRef, 'members')),
-    getDocs(collection(shareRef, 'activities')),
-    data.includeExpenses ? getDocs(collection(shareRef, 'expenses')) : { docs: [] },
-    data.includeChecklist ? getDocs(collection(shareRef, 'checklist')) : { docs: [] },
-    data.includeJournals ? getDocs(collection(shareRef, 'journals')) : { docs: [] },
-    data.includeBackupPlans ? getDocs(collection(shareRef, 'backupPlans')) : { docs: [] },
-    data.includeDocuments ? getDocs(collection(shareRef, 'travelDocuments')) : { docs: [] },
+    supabase.from('share_members').select('data').eq('share_token', token),
+    supabase.from('share_activities').select('data').eq('share_token', token),
+    shareData.include_expenses ? supabase.from('share_expenses').select('data').eq('share_token', token) : { data: [] },
+    shareData.include_checklist ? supabase.from('share_checklist').select('data').eq('share_token', token) : { data: [] },
+    shareData.include_journals ? supabase.from('share_journals').select('data').eq('share_token', token) : { data: [] },
+    shareData.include_backup_plans ? supabase.from('share_backup_plans').select('data').eq('share_token', token) : { data: [] },
+    shareData.include_documents ? supabase.from('share_travel_documents').select('data').eq('share_token', token) : { data: [] },
   ]);
 
   return {
-    ...data,
-    members: membersSnap.docs.map(d => d.data()),
-    activities: activitiesSnap.docs.map(d => d.data()),
-    expenses: expensesSnap.docs.map(d => d.data()),
-    checklist: checklistSnap.docs.map(d => d.data()),
-    journals: journalsSnap.docs.map(d => d.data()),
-    backupPlans: backupPlansSnap.docs.map(d => d.data()),
-    travelDocuments: documentsSnap.docs.map(d => d.data()),
+    ...shareData,
+    includeExpenses: shareData.include_expenses,
+    includeJournals: shareData.include_journals,
+    includeChecklist: shareData.include_checklist,
+    includeBackupPlans: shareData.include_backup_plans,
+    includeDocuments: shareData.include_documents,
+    ownerUid: shareData.owner_uid,
+    sourceTripId: shareData.source_trip_id,
+    sharePin: shareData.share_pin,
+    members: membersRes.data?.map(d => d.data) || [],
+    activities: activitiesRes.data?.map(d => d.data) || [],
+    expenses: expensesRes.data?.map(d => d.data) || [],
+    checklist: checklistRes.data?.map(d => d.data) || [],
+    journals: journalsRes.data?.map(d => d.data) || [],
+    backupPlans: backupPlansRes.data?.map(d => d.data) || [],
+    travelDocuments: documentsRes.data?.map(d => d.data) || [],
   };
 }

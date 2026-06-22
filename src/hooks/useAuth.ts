@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { User } from "firebase/auth";
+import type { User } from "../services/authService";
 import { observeAuthState } from "../services/authService";
 
 export interface UseAuthResult {

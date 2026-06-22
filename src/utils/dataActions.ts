@@ -18,23 +18,16 @@ export async function clearTemporaryFiles(): Promise<void> {
  * ⚠️ KHÔNG THỂ HOÀN TÁC.
  */
 export async function executeDeleteAccount(): Promise<void> {
-  // 1. Xóa tài khoản trên Firebase Auth nếu người dùng đã đăng nhập
+  // 1. Xóa tài khoản trên Auth nếu người dùng đã đăng nhập
   try {
-    const { getAuth } = await import("firebase/auth");
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
-    if (currentUser) {
-      console.log("[DataActions] Deleting user account from Firebase Auth...", currentUser.uid);
-      await currentUser.delete();
-      console.log("[DataActions] Firebase account deleted successfully.");
-    }
+    const { deleteCurrentUser } = await import("../services/authService");
+    await deleteCurrentUser();
+    console.log("[DataActions] Account deleted successfully.");
   } catch (error: any) {
-    console.error("[DataActions] Firebase account deletion failed:", error);
-    if (error.code === "auth/requires-recent-login") {
+    console.error("[DataActions] Account deletion failed:", error);
+    if (error.message?.includes("requires-recent-login")) {
       throw new Error("requires-recent-login");
     }
-    // Với các lỗi khác (ví dụ: lỗi mạng, Firebase chưa bật), chúng ta vẫn tiếp tục
-    // xóa dữ liệu cục bộ để đảm bảo người dùng không bị kẹt.
   }
 
   // 2. Xóa toàn bộ dữ liệu Dexie
@@ -78,13 +71,12 @@ export async function executeFactoryReset(): Promise<void> {
     await Promise.all(cacheKeys.map((key) => caches.delete(key)));
   }
 
-  // 4. Đăng xuất Firebase (nếu có)
+  // 4. Đăng xuất Auth (nếu có)
   try {
-    const { getAuth, signOut } = await import("firebase/auth");
-    const auth = getAuth();
-    await signOut(auth);
+    const { signOutUser } = await import("../services/authService");
+    await signOutUser();
   } catch (_) {
-    // ignore nếu Firebase chưa init hoặc user chưa đăng nhập
+    // ignore nếu chưa init hoặc user chưa đăng nhập
   }
 
   // 5. Reload app

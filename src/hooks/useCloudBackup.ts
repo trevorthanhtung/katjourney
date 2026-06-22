@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "./useAuth";
 import { backupToCloud, restoreFromCloud, getLastBackupInfo } from "../services/cloudBackupService";
-import { initFirebase } from "../lib/firebase";
+import { supabase } from "../lib/supabase";
 
 export function useCloudBackup() {
   const { user } = useAuth();
@@ -83,7 +83,7 @@ export function useCloudBackup() {
     }
   }, [user, fetchBackupInfo]);
 
-  // Keep refs up to date to prevent stale closures in the Firestore snapshot listener
+  // Keep refs up to date to prevent stale closures in the Realtime snapshot listener
   const restoreNowRef = useRef(restoreNow);
   const fetchBackupInfoRef = useRef(fetchBackupInfo);
 
@@ -116,31 +116,33 @@ export function useCloudBackup() {
       return;
     }
 
-    let unsubscribe: (() => void) | null = null;
     let isSubscribed = true;
 
-    const setupListener = async () => {
-      try {
-        const { db: firestore } = await initFirebase();
-        const { doc, onSnapshot } = await import("firebase/firestore");
-        
-        if (!isSubscribed) return;
-
-        const docRef = doc(firestore, "users", user.uid, "backups", "latest");
-        
-        unsubscribe = onSnapshot(docRef, async (snapshot) => {
-          if (!snapshot.exists()) {
-            return;
-          }
+    console.log("[RealtimeSync] Subscribing to user backups channel for user:", user.uid);
+    const channel = supabase
+      .channel(`backup-changes-${user.uid}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "user_backups",
+          filter: `user_id=eq.${user.uid}`
+        },
+        async (payload) => {
+          if (!isSubscribed) return;
+          console.log("[RealtimeSync] Received database backup change payload:", payload);
           
+          const row = payload.new as any;
+          if (!row || !row.data) return;
+
           // Respect the kat_sync_in_progress lock
           if (typeof localStorage !== "undefined" && localStorage.getItem("kat_sync_in_progress") === "true") {
             console.log("[RealtimeSync] Sync already in progress, skipping snapshot");
             return;
           }
 
-          const data = snapshot.data();
-          const cloudTimeStr = data?.updatedAt || null;
+          const cloudTimeStr = row.data.updatedAt || null;
           if (!cloudTimeStr) return;
 
           // Compare with local timestamp
@@ -189,21 +191,14 @@ export function useCloudBackup() {
               (window as any).showToastGlobal("Có dữ liệu mới từ thiết bị khác. Vui lòng bấm Đồng bộ để tải về.");
             }
           }
-        }, (error) => {
-          console.error("[RealtimeSync] Error listening to backups:", error);
-        });
-      } catch (error) {
-        console.error("[RealtimeSync] Failed to initialize Firebase listener:", error);
-      }
-    };
-
-    setupListener();
+        }
+      )
+      .subscribe();
 
     return () => {
       isSubscribed = false;
-      if (unsubscribe) {
-        unsubscribe();
-      }
+      console.log("[RealtimeSync] Unsubscribing from user backups channel");
+      supabase.removeChannel(channel);
     };
   }, [user]);
 
@@ -258,7 +253,7 @@ export function useCloudBackup() {
   };
 
   // Background Auto-Backup Loop
-  const autoBackupTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const autoBackupTimerRef = useRef<any>(null);
 
   useEffect(() => {
     if (!user || !autoBackupEnabled) {

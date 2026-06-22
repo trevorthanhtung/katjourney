@@ -1,4 +1,4 @@
-import { initFirebase, ensureAnonymousUser } from '../lib/firebase';
+import { supabase } from '../lib/supabase';
 import { UserIdentity } from './identityService';
 
 export interface ChatMessage {
@@ -17,19 +17,24 @@ export async function sendMessage(
   identity: UserIdentity,
   avatar?: string
 ) {
-  const user = await ensureAnonymousUser();
-  const { db } = await initFirebase();
-  const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error("Vui lòng đăng nhập trước khi nhắn tin.");
 
-  const messagesRef = collection(db, 'chats', token, 'messages');
-  await addDoc(messagesRef, {
-    text: text.trim(),
-    senderId: user.uid,
-    senderName: identity.name,
-    senderRole: identity.role || (identity.canEdit ? "Thành viên" : "Khách"),
-    senderAvatar: avatar || null,
-    createdAt: serverTimestamp()
-  });
+  const { error } = await supabase
+    .from('messages')
+    .insert({
+      share_token: token,
+      text: text.trim(),
+      sender_id: user.id,
+      sender_name: identity.name,
+      sender_role: identity.role || (identity.canEdit ? "Thành viên" : "Khách"),
+      sender_avatar: avatar || null
+    });
+
+  if (error) {
+    throw new Error("Không thể gửi tin nhắn: " + error.message);
+  }
 }
 
 export async function subscribeToMessages(
@@ -37,31 +42,67 @@ export async function subscribeToMessages(
   onUpdate: (messages: ChatMessage[]) => void,
   onError?: (error: any) => void
 ) {
-  const { db } = await initFirebase();
-  const { collection, query, orderBy, onSnapshot, limit } = await import('firebase/firestore');
+  // 1. Fetch initial 100 messages
+  const { data: initialData, error: fetchError } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('share_token', token)
+    .order('created_at', { ascending: true })
+    .limit(100);
 
-  const messagesRef = collection(db, 'chats', token, 'messages');
-  // Lấy 100 tin nhắn gần nhất
-  const q = query(messagesRef, orderBy('createdAt', 'asc'), limit(100));
+  if (fetchError) {
+    console.error("Lỗi khi tải tin nhắn ban đầu:", fetchError);
+    if (onError) onError(fetchError);
+    return () => {};
+  }
 
-  return onSnapshot(q, (snapshot) => {
-    const messages: ChatMessage[] = [];
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      messages.push({
-        id: doc.id,
-        text: data.text,
-        senderId: data.senderId,
-        senderName: data.senderName,
-        senderRole: data.senderRole,
-        senderAvatar: data.senderAvatar,
-        // Dùng fallback cho lúc tin nhắn mới gửi lên chưa có timestamp từ server
-        createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
-      });
-    });
-    onUpdate(messages);
-  }, (error) => {
-    console.error("Lỗi khi lắng nghe tin nhắn:", error);
-    if (onError) onError(error);
-  });
+  let currentMessages: ChatMessage[] = (initialData || []).map((d: any) => ({
+    id: d.id,
+    text: d.text,
+    senderId: d.sender_id,
+    senderName: d.sender_name,
+    senderRole: d.sender_role,
+    senderAvatar: d.sender_avatar,
+    createdAt: d.created_at
+  }));
+
+  onUpdate(currentMessages);
+
+  // 2. Subscribe to realtime inserts
+  const channel = supabase
+    .channel(`messages-${token}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `share_token=eq.${token}`
+      },
+      (payload) => {
+        const newItem = payload.new as any;
+        if (!newItem) return;
+
+        const mapped: ChatMessage = {
+          id: newItem.id,
+          text: newItem.text,
+          senderId: newItem.sender_id,
+          senderName: newItem.sender_name,
+          senderRole: newItem.sender_role,
+          senderAvatar: newItem.sender_avatar,
+          createdAt: newItem.created_at
+        };
+
+        // Check if message already exists in list (avoid duplicate rendering)
+        if (!currentMessages.some(m => m.id === mapped.id)) {
+          currentMessages = [...currentMessages, mapped];
+          onUpdate(currentMessages);
+        }
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
 }

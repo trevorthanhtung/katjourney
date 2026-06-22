@@ -1,66 +1,78 @@
-import { firebaseEnabled, initFirebase } from "../lib/firebase";
-import type { User, Unsubscribe } from "firebase/auth";
+import { supabase } from "../lib/supabase";
+
+export interface User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  isAnonymous: boolean;
+  providerData: { providerId: string }[];
+}
 
 /**
- * Chuyển đổi mã lỗi Firebase Auth sang tiếng Việt thân thiện với người dùng.
+ * Maps a Supabase Auth User object to the custom Firebase-compatible User interface.
+ */
+export function mapSupabaseUser(sbUser: any): User | null {
+  if (!sbUser) return null;
+  
+  const isAnonymous = sbUser.is_anonymous || 
+                      !sbUser.app_metadata?.provider || 
+                      sbUser.app_metadata?.provider === "anonymous";
+                      
+  const isGoogle = sbUser.app_metadata?.provider === "google" || 
+                   sbUser.identities?.some((id: any) => id.provider === "google");
+  
+  return {
+    uid: sbUser.id,
+    email: sbUser.email || null,
+    displayName: sbUser.user_metadata?.full_name || 
+                 sbUser.user_metadata?.name || 
+                 sbUser.email?.split("@")[0] || 
+                 "Khách",
+    photoURL: sbUser.user_metadata?.avatar_url || null,
+    isAnonymous: isAnonymous,
+    providerData: isGoogle ? [{ providerId: "google.com" }] : [],
+  };
+}
+
+/**
+ * Maps Supabase authentication errors to user-friendly Vietnamese messages.
  */
 export function getFriendlyAuthErrorMessage(error: any): string {
   if (!error) return "Đã xảy ra lỗi không xác định.";
   if (typeof error === "string") return error;
   
-  const code = error.code;
-  switch (code) {
-    case "auth/popup-closed-by-user":
-      return "Cửa sổ đăng nhập đã bị đóng bởi người dùng.";
-    case "auth/popup-blocked":
-      return "Trình duyệt đã chặn cửa sổ đăng nhập. Vui lòng cho phép popup trong cài đặt trình duyệt để tiếp tục.";
-    case "auth/cancelled-popup-request":
-      return "Yêu cầu đăng nhập qua cửa sổ popup đã bị hủy.";
-    case "auth/network-request-failed":
-      return "Lỗi kết nối mạng. Vui lòng kiểm tra lại kết nối Internet của bạn.";
-    case "auth/credential-already-in-use":
-      return "Tài khoản Google này đã được liên kết với một tài khoản KAT Journey khác. Không thể liên kết với tài khoản Khách hiện tại.";
-    case "auth/operation-not-allowed":
-      return "Phương thức đăng nhập này chưa được kích hoạt trên hệ thống.";
-    case "auth/invalid-credential":
-      return "Thông tin xác thực tài khoản không chính xác, vui lòng thử lại.";
-    case "auth/user-disabled":
-      return "Tài khoản này đã bị vô hiệu hóa hoặc khóa.";
-    case "auth/email-already-in-use":
-      return "Địa chỉ email này đã được sử dụng bởi một tài khoản khác.";
-    case "auth/invalid-email":
-      return "Địa chỉ email không hợp lệ. Vui lòng kiểm tra lại định dạng email.";
-    case "auth/weak-password":
-      return "Mật khẩu quá yếu. Mật khẩu cần có ít nhất 6 ký tự.";
-    case "auth/wrong-password":
-      return "Mật khẩu không chính xác. Vui lòng kiểm tra và thử lại.";
-    case "auth/user-not-found":
-      return "Không tìm thấy tài khoản liên kết với email này. Vui lòng đăng ký.";
-    case "auth/too-many-requests":
-      return "Tài khoản đã bị tạm khóa do nhập sai nhiều lần. Vui lòng thử lại sau.";
-    default:
-      return error.message || "Đã xảy ra lỗi trong quá trình xác thực.";
+  const message = error.message || "";
+  const status = error.status;
+  
+  if (message.includes("Invalid login credentials") || message.includes("invalid_credentials")) {
+    return "Thông tin xác thực tài khoản không chính xác, vui lòng thử lại.";
   }
+  if (message.includes("Email already in use") || message.includes("User already exists")) {
+    return "Địa chỉ email này đã được sử dụng bởi một tài khoản khác.";
+  }
+  if (message.includes("Password should be") || message.includes("Signup requires a valid password")) {
+    return "Mật khẩu quá yếu. Mật khẩu cần có ít nhất 6 ký tự.";
+  }
+  if (message.includes("identity_already_exists") || message.includes("already linked")) {
+    return "Tài khoản Google này đã được liên kết với một tài khoản khác.";
+  }
+  if (status === 429 || message.includes("too many requests")) {
+    return "Hệ thống đang quá tải hoặc bạn thao tác quá nhanh. Vui lòng thử lại sau.";
+  }
+  
+  return message || "Đã xảy ra lỗi trong quá trình xác thực.";
 }
 
 /**
- * Đăng nhập ẩn danh dưới dạng Khách (Guest).
+ * Signs in anonymously as a Guest.
  */
 export async function signInAsGuest(): Promise<User> {
-  if (!firebaseEnabled) {
-    throw new Error("Không thể kết nối đến Firebase. Cấu hình ứng dụng (Environment Variables) bị thiếu.");
-  }
-
   try {
-    const { auth } = await initFirebase();
-    const { signInAnonymously } = await import("firebase/auth");
-    
-    if (auth.currentUser) {
-      return auth.currentUser;
-    }
-    
-    const credential = await signInAnonymously(auth);
-    return credential.user;
+    const { data, error } = await supabase.auth.signInAnonymously();
+    if (error) throw error;
+    if (!data.user) throw new Error("Đăng nhập ẩn danh thất bại.");
+    return mapSupabaseUser(data.user)!;
   } catch (error: any) {
     console.error("[AuthService] signInAsGuest error:", error);
     throw new Error(getFriendlyAuthErrorMessage(error));
@@ -68,53 +80,51 @@ export async function signInAsGuest(): Promise<User> {
 }
 
 /**
- * Đăng nhập bằng Google.
- * Hỗ trợ liên kết tài khoản (linkWithPopup) nếu người dùng hiện tại đang là tài khoản Khách (Anonymous User)
- * để bảo toàn Firebase UID cùng các dữ liệu Cloud Share/Permissions đi kèm.
+ * Signs in using Google OAuth with optional account linking for guest sessions.
  */
 export async function signInWithGoogle(): Promise<User> {
-  if (!firebaseEnabled) {
-    throw new Error("Không thể kết nối đến Firebase. Cấu hình ứng dụng (Environment Variables) bị thiếu.");
-  }
-
   try {
-    const { auth } = await initFirebase();
-    const { GoogleAuthProvider, signInWithPopup, linkWithPopup, signInWithCredential } = await import("firebase/auth");
+    const { data: { session } } = await supabase.auth.getSession();
+    const currentUser = session?.user;
     
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
-    
-    const currentUser = auth.currentUser;
-    
-    // Nếu có user hiện tại và là tài khoản ẩn danh (Khách), thực hiện liên kết
-    if (currentUser && currentUser.isAnonymous) {
-      try {
-        console.log("[AuthService] Linking current anonymous user to Google account...", currentUser.uid);
-        const result = await linkWithPopup(currentUser, provider);
-        console.log("[AuthService] Linking success! Preserved UID:", result.user.uid);
-        return result.user;
-      } catch (linkError: any) {
-        console.error("[AuthService] Link account error:", linkError);
-
-        // Nếu Google account này đã liên kết với account KAT Journey khác,
-        // tự động đăng nhập vào account đó thay vì báo lỗi
-        if (
-          linkError.code === "auth/credential-already-in-use" &&
-          linkError.credential
-        ) {
-          console.log("[AuthService] Google account already in use — signing in with existing credential instead...");
-          const result = await signInWithCredential(auth, linkError.credential);
-          console.log("[AuthService] Signed in with existing Google account:", result.user.uid);
-          return result.user;
+    if (currentUser && currentUser.is_anonymous) {
+      console.log("[AuthService] Linking anonymous guest to Google account...", currentUser.id);
+      
+      const { data, error } = await supabase.auth.linkIdentity({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin
         }
-
-        throw new Error(getFriendlyAuthErrorMessage(linkError));
+      });
+      
+      if (error) {
+        // If Google account is already in use by another user record
+        if (error.message.includes("identity_already_exists") || error.message.includes("already linked")) {
+          console.log("[AuthService] Google account already linked, signing in directly...");
+          const { error: oAuthError } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+              redirectTo: window.location.origin,
+              queryParams: { prompt: "select_account" }
+            }
+          });
+          if (oAuthError) throw oAuthError;
+          return null as any;
+        }
+        throw error;
       }
+      return null as any;
     } else {
-      // Trường hợp chưa đăng nhập gì cả, hoặc session hiện tại là tài khoản thật (Google)
       console.log("[AuthService] Initiating standard Google Sign-In...");
-      const result = await signInWithPopup(auth, provider);
-      return result.user;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin,
+          queryParams: { prompt: "select_account" }
+        }
+      });
+      if (error) throw error;
+      return null as any;
     }
   } catch (error: any) {
     console.error("[AuthService] signInWithGoogle error:", error);
@@ -123,29 +133,23 @@ export async function signInWithGoogle(): Promise<User> {
 }
 
 /**
- * Đăng xuất người dùng.
- * Nếu là tài khoản Khách (Anonymous), tiến hành xóa tài khoản trên Firebase
- * để tránh rác dữ liệu lưu trữ quá nhiều tài khoản ảo.
+ * Signs out the user. If they are anonymous, deletes their guest account.
  */
 export async function signOutUser(): Promise<void> {
-  if (!firebaseEnabled) return;
-
   try {
-    const { auth } = await initFirebase();
-    const currentUser = auth.currentUser;
+    const { data: { session } } = await supabase.auth.getSession();
+    const currentUser = session?.user;
     
-    if (currentUser && currentUser.isAnonymous) {
-      console.log("[AuthService] Deleting anonymous user to clean up Firebase...");
+    if (currentUser && currentUser.is_anonymous) {
+      console.log("[AuthService] Deleting anonymous user to clean up database...");
       try {
-        await currentUser.delete();
-        console.log("[AuthService] Anonymous user deleted successfully.");
-      } catch (delErr: any) {
-        // Fallback to normal sign out if delete fails (e.g. requires-recent-login)
-        console.warn("[AuthService] Could not delete anonymous user, falling back to sign out:", delErr);
-        await auth.signOut();
+        await deleteCurrentUser();
+      } catch (delErr) {
+        console.warn("[AuthService] Self deletion failed, signing out:", delErr);
+        await supabase.auth.signOut();
       }
     } else {
-      await auth.signOut();
+      await supabase.auth.signOut();
       console.log("[AuthService] User signed out successfully.");
     }
   } catch (error: any) {
@@ -155,21 +159,17 @@ export async function signOutUser(): Promise<void> {
 }
 
 /**
- * Cập nhật tên hiển thị của người dùng.
+ * Updates the display name of the user.
  */
 export async function updateUserDisplayName(name: string): Promise<void> {
-  if (!firebaseEnabled) {
-    throw new Error("Không thể kết nối đến Firebase.");
-  }
   try {
-    const { auth } = await initFirebase();
-    const { updateProfile } = await import("firebase/auth");
-    if (auth.currentUser) {
-      await updateProfile(auth.currentUser, { displayName: name });
-      console.log("[AuthService] Display name updated successfully:", name);
-    } else {
-      throw new Error("Không tìm thấy người dùng hiện tại.");
-    }
+    const { error } = await supabase.auth.updateUser({
+      data: {
+        full_name: name,
+      }
+    });
+    if (error) throw error;
+    console.log("[AuthService] Display name updated successfully:", name);
   } catch (error: any) {
     console.error("[AuthService] updateUserDisplayName error:", error);
     throw new Error(getFriendlyAuthErrorMessage(error));
@@ -177,13 +177,12 @@ export async function updateUserDisplayName(name: string): Promise<void> {
 }
 
 /**
- * Lấy thông tin người dùng hiện tại.
+ * Gets the current logged in user.
  */
 export async function getCurrentUser(): Promise<User | null> {
-  if (!firebaseEnabled) return null;
   try {
-    const { auth } = await initFirebase();
-    return auth.currentUser;
+    const { data: { session } } = await supabase.auth.getSession();
+    return mapSupabaseUser(session?.user);
   } catch (error) {
     console.error("[AuthService] getCurrentUser error:", error);
     return null;
@@ -191,61 +190,43 @@ export async function getCurrentUser(): Promise<User | null> {
 }
 
 /**
- * Lắng nghe thay đổi trạng thái xác thực thời gian thực.
- * Trả về hàm huỷ đăng ký (unsubscribe) đồng bộ.
+ * Observes active authentication state changes.
  */
 export function observeAuthState(callback: (user: User | null) => void): () => void {
-  let unsubscribe: Unsubscribe | null = null;
-  let isCancelled = false;
+  // Fire initial state
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    callback(mapSupabaseUser(session?.user));
+  });
 
-  if (!firebaseEnabled) {
-    // Trả về trạng thái null ngay lập tức nếu Firebase chưa bật
-    setTimeout(() => callback(null), 0);
-    return () => {};
-  }
-
-  initFirebase()
-    .then(({ auth }) => {
-      if (isCancelled) return;
-      import("firebase/auth").then(({ onAuthStateChanged }) => {
-        if (isCancelled) return;
-        unsubscribe = onAuthStateChanged(auth, (user) => {
-          callback(user);
-        });
-      });
-    })
-    .catch((err) => {
-      console.error("[AuthService] observeAuthState init error:", err);
-      callback(null);
-    });
+  // Listen to changes
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    console.log(`[AuthService] Auth State Changed: ${event}`);
+    callback(mapSupabaseUser(session?.user));
+  });
 
   return () => {
-    isCancelled = true;
-    if (unsubscribe) {
-      unsubscribe();
-    }
+    subscription.unsubscribe();
   };
 }
 
 /**
- * Đăng ký tài khoản mới bằng Email và Mật khẩu.
+ * Registers a new account using Email and Password.
  */
 export async function signUpWithEmailAndPassword(email: string, password: string, fullName: string): Promise<User> {
-  if (!firebaseEnabled) {
-    throw new Error("Không thể kết nối đến Firebase. Cấu hình ứng dụng (Environment Variables) bị thiếu.");
-  }
-
   try {
-    const { auth } = await initFirebase();
-    const { createUserWithEmailAndPassword, updateProfile } = await import("firebase/auth");
-    
     console.log("[AuthService] Registering user with email/password...");
-    const credential = await createUserWithEmailAndPassword(auth, email, password);
-    
-    console.log("[AuthService] Updating user profile with full name...");
-    await updateProfile(credential.user, { displayName: fullName });
-    
-    return credential.user;
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        }
+      }
+    });
+    if (error) throw error;
+    if (!data.user) throw new Error("Đăng ký tài khoản thất bại.");
+    return mapSupabaseUser(data.user)!;
   } catch (error: any) {
     console.error("[AuthService] signUpWithEmailAndPassword error:", error);
     throw new Error(getFriendlyAuthErrorMessage(error));
@@ -253,22 +234,45 @@ export async function signUpWithEmailAndPassword(email: string, password: string
 }
 
 /**
- * Đăng nhập bằng Email và Mật khẩu.
+ * Signs in using Email and Password.
  */
 export async function signInWithEmailAndPassword(email: string, password: string): Promise<User> {
-  if (!firebaseEnabled) {
-    throw new Error("Không thể kết nối đến Firebase. Cấu hình ứng dụng (Environment Variables) bị thiếu.");
-  }
-
   try {
-    const { auth } = await initFirebase();
-    const { signInWithEmailAndPassword: fbSignIn } = await import("firebase/auth");
-    
     console.log("[AuthService] Logging in user with email/password...");
-    const credential = await fbSignIn(auth, email, password);
-    return credential.user;
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+    if (!data.user) throw new Error("Đăng nhập thất bại.");
+    return mapSupabaseUser(data.user)!;
   } catch (error: any) {
     console.error("[AuthService] signInWithEmailAndPassword error:", error);
     throw new Error(getFriendlyAuthErrorMessage(error));
   }
+}
+
+/**
+ * Deletes the current user via secure database RPC function.
+ */
+export async function deleteCurrentUser(): Promise<void> {
+  console.log("[AuthService] Attempting to delete current user...");
+  const { error } = await supabase.rpc("delete_user");
+  if (error) {
+    console.error("[AuthService] RPC delete_user failed, signing out as fallback:", error);
+    await supabase.auth.signOut();
+  } else {
+    await supabase.auth.signOut();
+  }
+}
+
+/**
+ * Ensures an anonymous user session is active.
+ */
+export async function ensureAnonymousUser(): Promise<any> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.user) return session.user;
+  const { data, error } = await supabase.auth.signInAnonymously();
+  if (error) throw error;
+  return data.user;
 }
