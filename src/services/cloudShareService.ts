@@ -1,5 +1,6 @@
 import { firebaseEnabled, initFirebase, ensureAnonymousUser } from '../lib/firebase';
 import { db as localDb } from '../db';
+import { decryptObject } from '../lib/crypto';
 
 export interface ShareOptions {
   mode: "view" | "edit" | "request_edit";
@@ -50,21 +51,32 @@ export async function createShareLink(
   const { db } = await initFirebase();
   const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
 
-  // 1. Fetch trip data from local Dexie
-  const trip = await localDb.trips.get(tripId);
-  if (!trip) throw new Error('Không tìm thấy chuyến đi cục bộ.');
+  // 1. Fetch trip data from local Dexie and decrypt
+  const tripRaw = await localDb.trips.get(tripId);
+  if (!tripRaw) throw new Error('Không tìm thấy chuyến đi cục bộ.');
+  const trip = decryptObject(tripRaw);
 
-  const members = await localDb.members.where('tripId').equals(tripId).toArray();
-  const activities = await localDb.events.where('tripId').equals(tripId).toArray();
+  const membersRaw = await localDb.members.where('tripId').equals(tripId).toArray();
+  const members = membersRaw.map(m => decryptObject(m));
+
+  const activitiesRaw = await localDb.events.where('tripId').equals(tripId).toArray();
+  const activities = activitiesRaw.map(a => decryptObject(a));
   
   // Conditionally fetch optional data
-  const expenses = options.includeExpenses ? await localDb.expenses.where('tripId').equals(tripId).toArray() : [];
+  const expensesRaw = options.includeExpenses ? await localDb.expenses.where('tripId').equals(tripId).toArray() : [];
+  const expenses = expensesRaw.map(e => decryptObject(e));
+
   const checklistRaw = options.includeChecklist ? await localDb.checklist.where('tripId').equals(tripId).toArray() : [];
-  const checklist = checklistRaw.filter(c => !c.isPrivate);
-  const journals = options.includeJournals ? await localDb.journals.where('tripId').equals(tripId).toArray() : [];
-  const backupPlans = options.includeBackupPlans ? await localDb.backupPlans.where('tripId').equals(tripId).toArray() : [];
+  const checklist = checklistRaw.filter(c => !c.isPrivate).map(c => decryptObject(c));
+
+  const journalsRaw = options.includeJournals ? await localDb.journals.where('tripId').equals(tripId).toArray() : [];
+  const journals = journalsRaw.map(j => decryptObject(j));
+
+  const backupPlansRaw = options.includeBackupPlans ? await localDb.backupPlans.where('tripId').equals(tripId).toArray() : [];
+  const backupPlans = backupPlansRaw.map(b => decryptObject(b));
+
   const travelDocumentsRaw = options.includeDocuments ? await localDb.travelDocuments.where('tripId').equals(tripId).toArray() : [];
-  const travelDocuments = travelDocumentsRaw.filter(d => !d.isPrivate);
+  const travelDocuments = travelDocumentsRaw.filter(d => !d.isPrivate).map(d => decryptObject(d));
 
   const randomUUID = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -170,21 +182,32 @@ export async function updateShareLink(
     throw new Error('Bạn không có quyền cập nhật link chia sẻ này.');
   }
 
-  // 1. Fetch trip data from local Dexie
-  const trip = await localDb.trips.get(tripId);
-  if (!trip) throw new Error('Không tìm thấy chuyến đi cục bộ.');
+  // 1. Fetch trip data from local Dexie and decrypt
+  const tripRaw = await localDb.trips.get(tripId);
+  if (!tripRaw) throw new Error('Không tìm thấy chuyến đi cục bộ.');
+  const trip = decryptObject(tripRaw);
 
-  const members = await localDb.members.where('tripId').equals(tripId).toArray();
-  const activities = await localDb.events.where('tripId').equals(tripId).toArray();
+  const membersRaw = await localDb.members.where('tripId').equals(tripId).toArray();
+  const members = membersRaw.map(m => decryptObject(m));
+
+  const activitiesRaw = await localDb.events.where('tripId').equals(tripId).toArray();
+  const activities = activitiesRaw.map(a => decryptObject(a));
   
   // Conditionally fetch optional data
-  const expenses = options.includeExpenses ? await localDb.expenses.where('tripId').equals(tripId).toArray() : [];
+  const expensesRaw = options.includeExpenses ? await localDb.expenses.where('tripId').equals(tripId).toArray() : [];
+  const expenses = expensesRaw.map(e => decryptObject(e));
+
   const checklistRaw = options.includeChecklist ? await localDb.checklist.where('tripId').equals(tripId).toArray() : [];
-  const checklist = checklistRaw.filter(c => !c.isPrivate);
-  const journals = options.includeJournals ? await localDb.journals.where('tripId').equals(tripId).toArray() : [];
-  const backupPlans = options.includeBackupPlans ? await localDb.backupPlans.where('tripId').equals(tripId).toArray() : [];
+  const checklist = checklistRaw.filter(c => !c.isPrivate).map(c => decryptObject(c));
+
+  const journalsRaw = options.includeJournals ? await localDb.journals.where('tripId').equals(tripId).toArray() : [];
+  const journals = journalsRaw.map(j => decryptObject(j));
+
+  const backupPlansRaw = options.includeBackupPlans ? await localDb.backupPlans.where('tripId').equals(tripId).toArray() : [];
+  const backupPlans = backupPlansRaw.map(b => decryptObject(b));
+
   const travelDocumentsRaw = options.includeDocuments ? await localDb.travelDocuments.where('tripId').equals(tripId).toArray() : [];
-  const travelDocuments = travelDocumentsRaw.filter(d => !d.isPrivate);
+  const travelDocuments = travelDocumentsRaw.filter(d => !d.isPrivate).map(d => decryptObject(d));
 
   console.log("[CloudShare] Attempting to update parent document...");
   await updateDoc(shareRef, {
