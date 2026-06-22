@@ -331,7 +331,11 @@ tablesToTrack.forEach(table => {
       updatedAt: new Date().toISOString(),
       isDeleted: obj.isDeleted !== undefined ? obj.isDeleted : false
     };
-    return encryptObject(withAudit);
+    const encrypted = encryptObject(withAudit);
+    if (encrypted && 'id' in encrypted && encrypted.id === undefined) {
+      delete encrypted.id;
+    }
+    return encrypted;
   });
   
   table.hook("reading", (obj) => {
