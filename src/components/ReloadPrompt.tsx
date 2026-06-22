@@ -62,9 +62,8 @@ export function ReloadPrompt() {
           {needRefresh && (
             <button
               onClick={() => updateServiceWorker(true)}
-              className="px-4.5 py-2 text-xs font-extrabold text-white bg-kat-teal hover:bg-kat-primary-usable rounded-xl shadow-sm transition-all duration-200 flex items-center gap-1.5 active:scale-95"
+              className="px-4.5 py-2 text-xs font-extrabold text-white bg-kat-teal hover:bg-kat-primary-usable rounded-xl shadow-sm transition-all duration-200 active:scale-95"
             >
-              <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5" />
               Cập nhật ngay
             </button>
           )}
