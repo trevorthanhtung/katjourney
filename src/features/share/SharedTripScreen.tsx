@@ -31,8 +31,10 @@ import {
   CompassIcon,
   GitBranchIcon,
   CheckIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  InformationCircleIcon
 } from "@hugeicons/core-free-icons";
+import { RolesHelpSheet } from "../../components/RolesHelpSheet";
 import { getViewShareData } from "../../services/cloudShareService";
 import { formatDate, classNames, getTripTiming, formatMoney, daysBetween, formatDateShort } from "../../utils/helpers";
 import { EventItem, Expense, ChecklistItem, Member, JournalEntry, TravelDocument, BackupPlan } from "../../db";
@@ -99,6 +101,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [step, setStep] = useState<"pin" | "identity">("pin");
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [isGlobalBackupOpen, setIsGlobalBackupOpen] = useState(false);
+  const [isRolesHelpOpen, setIsRolesHelpOpen] = useState(false);
 
   const renderRoleIcons = (role: string) => {
     const roles = (role || "Người đồng hành")
@@ -524,8 +527,18 @@ export default function SharedTripScreen({ token }: { token: string }) {
               }
             </div>
 
-            <h2 className="text-[22px] font-extrabold text-kat-dark tracking-tight">
-              {step === "pin" ? "Trạm kiểm soát" : "Bạn là ai trong chuyến đi?"}
+            <h2 className="text-[22px] font-extrabold text-kat-dark tracking-tight flex items-center justify-center gap-1.5">
+              <span>{step === "pin" ? "Trạm kiểm soát" : "Bạn là ai trong chuyến đi?"}</span>
+              {step !== "pin" && (
+                <button
+                  type="button"
+                  onClick={() => setIsRolesHelpOpen(true)}
+                  className="text-slate-400 hover:text-kat-teal transition-colors p-1 flex items-center justify-center"
+                  title="Thông tin các vai trò"
+                >
+                  <HugeiconsIcon icon={InformationCircleIcon} className="h-4.5 w-4.5" />
+                </button>
+              )}
             </h2>
             <p className="mt-2 text-[14px] text-slate-500 font-medium leading-relaxed">
               {step === "pin"
@@ -660,6 +673,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             )}
           </div>
         </div>
+        <RolesHelpSheet isOpen={isRolesHelpOpen} onClose={() => setIsRolesHelpOpen(false)} />
       </div>
     );
   }
@@ -1589,6 +1603,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
         </div>
       </nav>
 
+      <RolesHelpSheet isOpen={isRolesHelpOpen} onClose={() => setIsRolesHelpOpen(false)} />
     </div>
   );
 }

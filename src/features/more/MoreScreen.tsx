@@ -97,6 +97,7 @@ import {
 } from "../../utils/helpers";
 import { normalizeVietnameseDisplayText } from "../../utils/helpers";
 import { BottomSheet, FormActions, Input, ScreenTitle, TypedDeleteConfirmModal, classNames } from "../../components/ui";
+import { RolesHelpSheet } from "../../components/RolesHelpSheet";
 import { JournalSection } from "../journal/JournalSection";
 import { TravelDocumentsSection } from "./TravelDocumentsSection";
 import { ChatBox } from "../share/components/ChatBox";
@@ -585,6 +586,7 @@ function MemberForm({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedPresets, setSelectedPresets] = useState<string[]>(["Người đồng hành"]);
+  const [isRolesHelpOpen, setIsRolesHelpOpen] = useState(false);
 
   const togglePreset = (preset: string) => {
     setDirty(true);
@@ -803,9 +805,20 @@ function MemberForm({
         </div>
 
         <div>
-          <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-            <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-4 w-4 text-slate-500" />
-            Vai trò trong chuyến đi
+          <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-4 w-4 text-slate-500" />
+              Vai trò trong chuyến đi
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsRolesHelpOpen(true)}
+              className="text-slate-400 hover:text-kat-teal transition-colors flex items-center gap-1 text-xs font-bold"
+              title="Thông tin các vai trò"
+            >
+              <HugeiconsIcon icon={InformationCircleIcon} className="h-3.5 w-3.5" />
+              <span>Xem vai trò</span>
+            </button>
           </span>
           <div className="flex flex-wrap gap-2 mb-3">
             {PRESETS.map((preset) => (
@@ -846,6 +859,7 @@ function MemberForm({
           </label>
         </div>
       </div>
+      <RolesHelpSheet isOpen={isRolesHelpOpen} onClose={() => setIsRolesHelpOpen(false)} />
     </BottomSheet>
   );
 }
