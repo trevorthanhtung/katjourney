@@ -168,6 +168,15 @@ function App() {
     };
   }, [isRemindersOpen, isUserMenuOpen]);
 
+  // Dọn dẹp các tham số lỗi OAuth trên URL để thanh địa chỉ luôn sạch sẽ
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("error") || url.searchParams.has("error_description")) {
+      url.search = "";
+      window.history.replaceState({}, document.title, url.pathname);
+    }
+  }, []);
+
   React.useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       // Chỉ tự động hiện màn hình welcome nếu người dùng chưa từng hoàn thành bước chào mừng (hoặc đã đăng xuất)
