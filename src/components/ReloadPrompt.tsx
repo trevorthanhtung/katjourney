@@ -4,6 +4,8 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { RefreshIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
 
 export function ReloadPrompt() {
+  const [registration, setRegistration] = React.useState<ServiceWorkerRegistration | null>(null);
+
   const {
     offlineReady: [offlineReady, setOfflineReady],
     needRefresh: [needRefresh, setNeedRefresh],
@@ -11,11 +13,59 @@ export function ReloadPrompt() {
   } = useRegisterSW({
     onRegistered(r) {
       console.log("Service Worker registered successfully", r);
+      if (r) {
+        setRegistration(r);
+      }
     },
     onRegisterError(error) {
       console.error("Service Worker registration failed", error);
     },
   });
+
+  // Tự động ẩn thông báo "Sẵn sàng chạy ngoại tuyến" sau 5 giây để không làm phiền người dùng
+  React.useEffect(() => {
+    if (offlineReady) {
+      const timer = setTimeout(() => {
+        setOfflineReady(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [offlineReady, setOfflineReady]);
+
+  // Kiểm tra cập nhật định kỳ và khi người dùng quay lại ứng dụng
+  React.useEffect(() => {
+    if (!registration) return;
+
+    // 1. Kiểm tra bản mới mỗi 60 phút
+    const interval = setInterval(() => {
+      registration.update().catch((err) => {
+        console.error("Periodic update check failed:", err);
+      });
+    }, 60 * 60 * 1000);
+
+    // 2. Kiểm tra bản mới khi người dùng quay trở lại tab app (focus)
+    const handleFocus = () => {
+      registration.update().catch((err) => {
+        console.error("Update check on focus failed:", err);
+      });
+    };
+
+    // 3. Kiểm tra bản mới khi thiết bị kết nối mạng trở lại
+    const handleOnline = () => {
+      registration.update().catch((err) => {
+        console.error("Update check on online failed:", err);
+      });
+    };
+
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("online", handleOnline);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("online", handleOnline);
+    };
+  }, [registration]);
 
   const close = () => {
     setOfflineReady(false);
