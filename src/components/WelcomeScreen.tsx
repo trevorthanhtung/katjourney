@@ -153,13 +153,8 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
     setErrorMsg(null);
     try {
       await signInWithGoogle();
-      // Lưu trạng thái phiên làm việc và chế độ đăng nhập
-      localStorage.setItem("kat_journey_welcome_viewed", "true");
-      localStorage.setItem("kat_auth_mode", "google");
-      onDismiss();
     } catch (err: any) {
       setErrorMsg(err.message || "Đăng nhập Google thất bại.");
-    } finally {
       setLoading(null);
     }
   };

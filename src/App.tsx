@@ -178,13 +178,22 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      // Chỉ tự động hiện màn hình welcome nếu người dùng chưa từng hoàn thành bước chào mừng (hoặc đã đăng xuất)
-      if (localStorage.getItem("kat_journey_welcome_viewed") !== "true") {
-        setShowWelcome(true);
+    if (!authLoading) {
+      if (isAuthenticated) {
+        // Tự động ẩn màn hình chào mừng và lưu trạng thái khi đã đăng nhập thành công
+        localStorage.setItem("kat_journey_welcome_viewed", "true");
+        if (provider) {
+          localStorage.setItem("kat_auth_mode", provider);
+        }
+        setShowWelcome(false);
+      } else {
+        // Chỉ tự động hiện màn hình welcome nếu người dùng chưa từng hoàn thành bước chào mừng (hoặc đã đăng xuất)
+        if (localStorage.getItem("kat_journey_welcome_viewed") !== "true") {
+          setShowWelcome(true);
+        }
       }
     }
-  }, [isAuthenticated, authLoading]);
+  }, [isAuthenticated, authLoading, provider]);
 
   const tripsRaw = useLiveQuery(async () => (await db.trips.toArray()).filter(t => !t.isDeleted && t.status !== 'archived'));
   const allTripsRaw = useLiveQuery(async () => (await db.trips.toArray()).filter(t => !t.isDeleted));
