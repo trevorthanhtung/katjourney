@@ -326,26 +326,16 @@ const tablesToTrack = [
 tablesToTrack.forEach(table => {
   table.hook("creating", (primKey, obj) => {
     updateLocalTimestamp();
-    obj.updatedAt = new Date().toISOString();
-    if (obj.isDeleted === undefined) {
-      obj.isDeleted = false;
-    }
-    
-    // Mã hóa obj trước khi lưu
-    const encrypted = encryptObject(obj);
-    // Xóa các key cũ có thể bị dư thừa (nếu cần) rồi assign lại
-    Object.keys(obj).forEach(k => delete (obj as any)[k]);
-    Object.assign(obj, encrypted);
+    const withAudit = {
+      ...obj,
+      updatedAt: new Date().toISOString(),
+      isDeleted: obj.isDeleted !== undefined ? obj.isDeleted : false
+    };
+    return encryptObject(withAudit);
   });
   
   table.hook("reading", (obj) => {
-    // Giải mã obj khi đọc
-    if (obj) {
-      const decrypted = decryptObject(obj);
-      Object.keys(obj).forEach(k => delete (obj as any)[k]);
-      Object.assign(obj, decrypted);
-    }
-    return obj;
+    return obj ? decryptObject(obj) : obj;
   });
   
   table.hook("updating", (modifications, primKey, obj) => {
