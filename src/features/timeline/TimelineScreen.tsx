@@ -31,7 +31,7 @@ import { classNames, formatDate, formatMoney, getTripTiming, formatDateShort, da
 import { BottomSheet, FormActions, Input, Textarea, Select, TimePicker, DeleteConfirmModal } from "../../components/ui";
 import { BackupPlansSheet } from "./BackupPlansSheet";
 import { TimelineCalendarView } from "./TimelineCalendarView";
-import { getEmbedMapUrl } from "../../utils/mapUtils";
+import { getEmbedMapUrl, ensureAbsoluteUrl } from "../../utils/mapUtils";
 import { WeatherWidget } from "./WeatherWidget";
 import { useModalHistory } from "../../hooks/useModalHistory";
 
@@ -180,7 +180,7 @@ const ActivityCard = React.memo(function ActivityCard({
                   return (
                     <a 
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[13px] font-bold text-emerald-600 border border-emerald-100 hover:bg-emerald-100 transition-colors" 
-                      href={item.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
+                      href={ensureAbsoluteUrl(item.mapLink) || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
                       target="_blank" 
                       rel="noreferrer"
                     >
@@ -353,16 +353,20 @@ function EventForm({
 
   async function save() {
     if (!form.title.trim()) return;
+    const cleanForm = {
+      ...form,
+      mapLink: form.mapLink ? ensureAbsoluteUrl(form.mapLink) : ""
+    };
     if (editing?.id) {
       await db.events.update(editing.id, { 
-        ...form, 
+        ...cleanForm, 
         completed: editing.completed 
       });
       onSaved?.(form.date);
       onClose();
     } else {
       await db.events.add({ 
-        ...form, 
+        ...cleanForm, 
         tripId, 
         completed: false 
       });
@@ -542,7 +546,7 @@ function EventForm({
         {form.mapLink && (
           <div className="mt-1 flex justify-end">
             <a
-              href={form.mapLink}
+              href={ensureAbsoluteUrl(form.mapLink)}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors"
@@ -599,18 +603,27 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
 
   const handleSaveRoadmap = async () => {
     if (!roadmapEditDay) return;
-    const currentRoadmaps = { ...(trip.dayRoadmaps || {}) };
-    if (roadmapInputLink.trim()) {
-      currentRoadmaps[roadmapEditDay] = roadmapInputLink.trim();
-    } else {
-      delete currentRoadmaps[roadmapEditDay];
+    try {
+      const currentRoadmaps = { ...(trip.dayRoadmaps || {}) };
+      if (roadmapInputLink.trim()) {
+        currentRoadmaps[roadmapEditDay] = ensureAbsoluteUrl(roadmapInputLink.trim());
+      } else {
+        delete currentRoadmaps[roadmapEditDay];
+      }
+      await db.trips.update(trip.id!, { dayRoadmaps: currentRoadmaps });
+      if (trip.shareToken) {
+        try {
+          const { updateSharedTripRoadmaps } = await import("../../services/sharedTripEditService");
+          await updateSharedTripRoadmaps(trip.shareToken, currentRoadmaps);
+        } catch (shareErr) {
+          console.error("Lỗi khi đồng bộ lộ trình lên cloud:", shareErr);
+        }
+      }
+      setIsRoadmapFormOpen(false);
+    } catch (err) {
+      console.error("Lỗi khi lưu lộ trình:", err);
+      alert("Không thể lưu lộ trình. Vui lòng thử lại.");
     }
-    await db.trips.update(trip.id!, { dayRoadmaps: currentRoadmaps });
-    if (trip.shareToken) {
-      const { updateSharedTripRoadmaps } = await import("../../services/sharedTripEditService");
-      await updateSharedTripRoadmaps(trip.shareToken, currentRoadmaps);
-    }
-    setIsRoadmapFormOpen(false);
   };
 
   useModalHistory(isFormOpen, () => {
@@ -964,6 +977,44 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
 
         {/* Right Column: Dynamic smart widgets */}
         <div className="space-y-6">
+          {/* Mini Trip Context Card */}
+          <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
+                <HugeiconsIcon icon={Route01Icon} className="h-4 w-4" />
+              </span>
+              <h4 className="text-[15px] font-extrabold text-kat-dark">Thông tin hành trình</h4>
+            </div>
+            
+            <div className="space-y-3 text-[14px] font-medium text-slate-600">
+              <div className="flex items-center justify-between border-b border-slate-50 pb-2">
+                <span className="flex items-center gap-2">
+                  <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
+                  Địa điểm
+                </span>
+                <span className="font-bold text-kat-dark">{trip.location || "Chưa xác định"}</span>
+              </div>
+              <div className="flex items-center justify-between border-b border-slate-50 pb-2">
+                <span className="flex items-center gap-2">
+                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-400" />
+                  Thời gian
+                </span>
+                <span className="font-bold text-kat-dark">
+                  {trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
+                </span>
+              </div>
+              <div className="flex items-center justify-between pb-1">
+                <span className="flex items-center gap-2">
+                  <HugeiconsIcon icon={Route01Icon} className="h-4 w-4 text-slate-400" />
+                  Mục lịch trình
+                </span>
+                <span className="font-bold text-kat-dark">{events.length} mục</span>
+              </div>
+            </div>
+          </div>
+
+          <WeatherWidget destination={trip.location} latitude={trip.latitude} longitude={trip.longitude} days={tripDays.length} startDate={trip.startDate} />
+
           {/* Roadmap Widget */}
           {days.length > 0 && (
             <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4 min-w-0 overflow-hidden">
@@ -1047,7 +1098,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                           )}
                         </p>
                         <a
-                          href={mapUrl}
+                          href={ensureAbsoluteUrl(mapUrl)}
                           target="_blank"
                           rel="noreferrer"
                           className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer"
@@ -1080,44 +1131,6 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               })()}
             </div>
           )}
-
-          <WeatherWidget destination={trip.location} latitude={trip.latitude} longitude={trip.longitude} days={tripDays.length} startDate={trip.startDate} />
-
-          {/* Mini Trip Context Card */}
-          <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
-                <HugeiconsIcon icon={Route01Icon} className="h-4 w-4" />
-              </span>
-              <h4 className="text-[15px] font-extrabold text-kat-dark">Thông tin hành trình</h4>
-            </div>
-            
-            <div className="space-y-3 text-[14px] font-medium text-slate-600">
-              <div className="flex items-center justify-between border-b border-slate-50 pb-2">
-                <span className="flex items-center gap-2">
-                  <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
-                  Địa điểm
-                </span>
-                <span className="font-bold text-kat-dark">{trip.location || "Chưa xác định"}</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-slate-50 pb-2">
-                <span className="flex items-center gap-2">
-                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-400" />
-                  Thời gian
-                </span>
-                <span className="font-bold text-kat-dark">
-                  {trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
-                </span>
-              </div>
-              <div className="flex items-center justify-between pb-1">
-                <span className="flex items-center gap-2">
-                  <HugeiconsIcon icon={Route01Icon} className="h-4 w-4 text-slate-400" />
-                  Mục lịch trình
-                </span>
-                <span className="font-bold text-kat-dark">{events.length} mục</span>
-              </div>
-            </div>
-          </div>
           
           {/* Gợi ý hành trình has been replaced by the redesigned WeatherWidget above */}
         </div>
@@ -1184,23 +1197,6 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               type="url"
               value={roadmapInputLink}
               onChange={e => setRoadmapInputLink(e.target.value)}
-              onPaste={e => {
-                const pasted = e.clipboardData.getData("text").trim();
-                if (pasted && pasted.startsWith("http")) {
-                  // Đặt giá trị rồi auto-save sau 1 tick để state kịp cập nhật
-                  setTimeout(async () => {
-                    if (!roadmapEditDay) return;
-                    const currentRoadmaps = { ...(trip.dayRoadmaps || {}) };
-                    currentRoadmaps[roadmapEditDay] = pasted;
-                    await db.trips.update(trip.id!, { dayRoadmaps: currentRoadmaps });
-                    if (trip.shareToken) {
-                      const { updateSharedTripRoadmaps } = await import("../../services/sharedTripEditService");
-                      await updateSharedTripRoadmaps(trip.shareToken, currentRoadmaps);
-                    }
-                    setIsRoadmapFormOpen(false);
-                  }, 50);
-                }
-              }}
               placeholder="https://www.google.com/maps/dir/..."
               className="w-full pl-11 pr-4 py-4 bg-white border-2 border-slate-200 rounded-2xl text-[14px] font-semibold text-kat-dark placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 transition-all duration-200"
             />
@@ -1209,7 +1205,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           {/* Test link button – only show when there's input */}
           {roadmapInputLink.trim() && (
             <a
-              href={roadmapInputLink}
+              href={ensureAbsoluteUrl(roadmapInputLink)}
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-[13.5px] font-bold text-emerald-700 hover:bg-emerald-100 transition-colors"

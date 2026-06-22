@@ -25,7 +25,7 @@ import { createPortal } from 'react-dom';
 
 import { EventItem, Member, Expense, BackupPlan, Trip } from '../../../db';
 import { classNames, formatDate, daysBetween } from '../../../utils/helpers';
-import { getEmbedMapUrl } from '../../../utils/mapUtils';
+import { getEmbedMapUrl, ensureAbsoluteUrl } from '../../../utils/mapUtils';
 import { submitChangeRequest } from '../../../services/sharedTripRequestService';
 import { showToast } from '../../../components/ui/ToastManager';
 import { BottomSheet, Input, Textarea, Select, DatePicker, TimePicker, DeleteConfirmModal } from '../../../components/ui';
@@ -264,11 +264,15 @@ export function SharedActivitiesSection({
     try {
       const status = isDirectEdit ? 'auto_approved' : undefined;
       const successMessage = isDirectEdit ? 'Đã cập nhật trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.';
+      const cleanForm = {
+        ...form,
+        mapLink: form.mapLink ? ensureAbsoluteUrl(form.mapLink) : ""
+      };
       if (!editingId) {
         await submitChangeRequest(token, {
           section: 'activities',
           action: 'create',
-          after: form,
+          after: cleanForm,
           note: '',
           status,
           requesterName: guestName
@@ -282,7 +286,7 @@ export function SharedActivitiesSection({
           action: 'update',
           targetId: editingId,
           before: currentItem as any,
-          after: form,
+          after: cleanForm,
           status,
           requesterName: guestName
         });
@@ -466,7 +470,7 @@ export function SharedActivitiesSection({
                 return (
                   <a 
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[13px] font-bold text-emerald-600 border border-emerald-100/80 hover:bg-emerald-100 transition-colors" 
-                    href={item.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
+                    href={ensureAbsoluteUrl(item.mapLink) || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
                     target="_blank" 
                     rel="noreferrer"
                   >
@@ -611,7 +615,7 @@ export function SharedActivitiesSection({
                       <h4 className="text-[15.5px] font-black text-kat-dark tracking-tight">{group.title}</h4>
                       {group.id !== "undated" && trip?.dayRoadmaps?.[group.id] && (
                         <a
-                          href={trip.dayRoadmaps[group.id]}
+                          href={ensureAbsoluteUrl(trip.dayRoadmaps[group.id])}
                           target="_blank"
                           rel="noreferrer"
                           className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100/50 text-[10px] font-extrabold tracking-wide transition-all active:scale-95 shadow-sm"
@@ -874,7 +878,7 @@ export function SharedActivitiesSection({
             {form.mapLink && (
               <div className="mt-1 flex justify-end">
                 <a
-                  href={form.mapLink}
+                  href={ensureAbsoluteUrl(form.mapLink)}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors"

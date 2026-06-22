@@ -50,6 +50,7 @@ import { getWeatherIcon, getWeatherText, getWeatherGradient } from "../../servic
 import { WeatherDetailsModal } from "../timeline/WeatherDetailsModal";
 import { BottomSheet, FormActions, Select } from "../../components/ui";
 import { SharedBackupPlansSheet } from "./components/SharedBackupPlansSheet";
+import { ensureAbsoluteUrl } from "../../utils/mapUtils";
 
 interface SharedData {
   trip: any;
@@ -143,6 +144,20 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const [indicatorStyle, setIndicatorStyle] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+
+  // Dynamic robots tag for SharedTripScreen to prevent SEO indexing of shared trips
+  useEffect(() => {
+    const robotsMeta = document.createElement("meta");
+    robotsMeta.name = "robots";
+    robotsMeta.content = "noindex, nofollow";
+    document.head.appendChild(robotsMeta);
+
+    return () => {
+      if (document.head.contains(robotsMeta)) {
+        document.head.removeChild(robotsMeta);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const updateIndicator = () => {
@@ -709,7 +724,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
         <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
           <div className="flex items-center gap-1.5 min-[390px]:gap-2 select-none shrink-0">
             <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden md:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
-            <span className="text-[17px] min-[390px]:text-[20px] font-extrabold tracking-tight text-kat-dark whitespace-nowrap shrink-0">KAT Journey</span>
+            <h1 className="text-[17px] min-[390px]:text-[20px] font-extrabold tracking-tight text-kat-dark whitespace-nowrap shrink-0">KAT Journey</h1>
             <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 px-1.5 min-[390px]:px-2 py-0.5 text-[10px] font-bold text-indigo-600 whitespace-nowrap shrink-0">
               <HugeiconsIcon icon={Share01Icon} className="h-3 w-3 shrink-0" /> Chia sẻ
             </span>
@@ -1037,7 +1052,109 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
               {/* Right Column: Sidebar Widgets */}
               <div className="space-y-6">
-                {/* 1. Shared Roadmap Widget */}
+                {/* 1. Trip Info context card */}
+                <div className="rounded-3xl bg-white p-5 border border-slate-200/50 shadow-[0_2px_12px_rgba(3,13,46,0.02)] space-y-4">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-dark/5 text-kat-dark">
+                      <HugeiconsIcon icon={RouteIcon} className="h-4 w-4" />
+                    </span>
+                    <h4 className="text-[15px] font-extrabold text-kat-dark">Thông tin hành trình</h4>
+                  </div>
+                  
+                  <div className="space-y-3 text-[13.5px] font-semibold text-slate-500 border-t border-slate-100 pt-3">
+                    <div className="flex items-center justify-between border-b border-slate-100/40 pb-2.5">
+                      <span className="flex items-center gap-2">
+                        <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
+                        Địa điểm
+                      </span>
+                      <span className="font-black text-kat-dark">{trip.destination || trip.location || "Chưa xác định"}</span>
+                    </div>
+                    <div className="flex items-center justify-between border-b border-slate-100/40 pb-2.5">
+                      <span className="flex items-center gap-2">
+                        <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-400" />
+                        Thời gian
+                      </span>
+                      <span className="font-black text-kat-dark">
+                        {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between pb-0.5">
+                      <span className="flex items-center gap-2">
+                        <HugeiconsIcon icon={RouteIcon} className="h-4 w-4 text-slate-400" />
+                        Mục lịch trình
+                      </span>
+                      <span className="font-black text-kat-dark">{activities.length} mục</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Weather Forecast Widget */}
+                <WeatherWidget 
+                  destination={trip.destination || trip.location} 
+                  latitude={trip.latitude} 
+                  longitude={trip.longitude} 
+                  days={tripDays.length || 3}
+                  startDate={trip.startDate}
+                />
+
+                {/* 3. Shared General Backup Plans Widget */}
+                {data.includeBackupPlans && (
+                  <div className="rounded-3xl bg-white p-5 border border-slate-200/50 shadow-[0_2px_12px_rgba(3,13,46,0.02)] space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+                          <HugeiconsIcon icon={GitBranchIcon} className="h-4 w-4" />
+                        </span>
+                        <div>
+                          <h4 className="text-[15px] font-extrabold text-kat-dark">Dự phòng chung</h4>
+                          <p className="text-[11px] text-slate-500/80 font-medium">Áp dụng cho toàn bộ chuyến đi</p>
+                        </div>
+                      </div>
+                      
+                      {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length > 0 && (
+                        <button
+                          onClick={() => setIsGlobalBackupOpen(true)}
+                          className="px-2.5 py-1 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 font-bold text-[12px] hover:bg-slate-100 transition-colors cursor-pointer"
+                        >
+                          Xem ({backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length})
+                        </button>
+                      )}
+                    </div>
+
+                    {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length > 0 ? (
+                      <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1 scrollbar-none">
+                        {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).map((plan: BackupPlan) => (
+                          <div key={plan.id} className="text-[13px] font-semibold text-kat-dark bg-slate-50/70 rounded-xl px-3 py-2.5 border border-slate-100/50 flex items-center justify-between gap-2">
+                            <span className="truncate">{plan.title}</span>
+                            <button
+                              onClick={() => setIsGlobalBackupOpen(true)}
+                              className="text-indigo-650 hover:text-indigo-800 shrink-0 text-[12px] font-bold"
+                            >
+                              Chi tiết &rarr;
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200/60">
+                        <p className="text-[12.5px] font-bold text-slate-400">Chưa có dự phòng chung</p>
+                        <p className="text-[11px] text-slate-400 mt-0.5">Các phương án áp dụng cho toàn bộ chuyến đi.</p>
+                      </div>
+                    )}
+
+                    {canRequestEdit && (
+                      <button
+                        onClick={() => setIsGlobalBackupOpen(true)}
+                        className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-indigo-200/80 text-indigo-600 font-bold text-[13px] hover:bg-indigo-50 transition-colors motion-press cursor-pointer"
+                      >
+                        <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
+                        {backupPlansMode === 'edit' ? 'Thêm phương án' : 'Đề xuất phương án'}
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* 4. Shared Roadmap Widget */}
                 {days.length > 0 && (
                   <div className="rounded-3xl bg-white p-5 border border-slate-200/50 shadow-[0_2px_12px_rgba(3,13,46,0.02)] space-y-4 min-w-0 overflow-hidden">
                     <div className="flex items-center gap-2">
@@ -1123,7 +1240,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                 )}
                               </p>
                               <a
-                                href={mapUrl}
+                                href={ensureAbsoluteUrl(mapUrl)}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
@@ -1156,108 +1273,6 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     })()}
                   </div>
                 )}
-
-                {/* 2. Weather Forecast Widget */}
-                <WeatherWidget 
-                  destination={trip.destination || trip.location} 
-                  latitude={trip.latitude} 
-                  longitude={trip.longitude} 
-                  days={tripDays.length || 3}
-                  startDate={trip.startDate}
-                />
-
-                {/* 3. Shared General Backup Plans Widget */}
-                {data.includeBackupPlans && (
-                  <div className="rounded-3xl bg-white p-5 border border-slate-200/50 shadow-[0_2px_12px_rgba(3,13,46,0.02)] space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
-                          <HugeiconsIcon icon={GitBranchIcon} className="h-4 w-4" />
-                        </span>
-                        <div>
-                          <h4 className="text-[15px] font-extrabold text-kat-dark">Dự phòng chung</h4>
-                          <p className="text-[11px] text-slate-500/80 font-medium">Áp dụng cho toàn bộ chuyến đi</p>
-                        </div>
-                      </div>
-                      
-                      {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length > 0 && (
-                        <button
-                          onClick={() => setIsGlobalBackupOpen(true)}
-                          className="px-2.5 py-1 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 font-bold text-[12px] hover:bg-slate-100 transition-colors cursor-pointer"
-                        >
-                          Xem ({backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length})
-                        </button>
-                      )}
-                    </div>
-
-                    {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length > 0 ? (
-                      <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1 scrollbar-none">
-                        {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).map((plan: BackupPlan) => (
-                          <div key={plan.id} className="text-[13px] font-semibold text-kat-dark bg-slate-50/70 rounded-xl px-3 py-2.5 border border-slate-100/50 flex items-center justify-between gap-2">
-                            <span className="truncate">{plan.title}</span>
-                            <button
-                              onClick={() => setIsGlobalBackupOpen(true)}
-                              className="text-indigo-650 hover:text-indigo-800 shrink-0 text-[12px] font-bold"
-                            >
-                              Chi tiết &rarr;
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200/60">
-                        <p className="text-[12.5px] font-bold text-slate-400">Chưa có dự phòng chung</p>
-                        <p className="text-[11px] text-slate-400 mt-0.5">Các phương án áp dụng cho toàn bộ chuyến đi.</p>
-                      </div>
-                    )}
-
-                    {canRequestEdit && (
-                      <button
-                        onClick={() => setIsGlobalBackupOpen(true)}
-                        className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-indigo-200/80 text-indigo-600 font-bold text-[13px] hover:bg-indigo-50 transition-colors motion-press cursor-pointer"
-                      >
-                        <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
-                        {backupPlansMode === 'edit' ? 'Thêm phương án' : 'Đề xuất phương án'}
-                      </button>
-                    )}
-                  </div>
-                )}
-
-                {/* 4. Trip Info context card */}
-                <div className="rounded-3xl bg-white p-5 border border-slate-200/50 shadow-[0_2px_12px_rgba(3,13,46,0.02)] space-y-4">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-dark/5 text-kat-dark">
-                      <HugeiconsIcon icon={RouteIcon} className="h-4 w-4" />
-                    </span>
-                    <h4 className="text-[15px] font-extrabold text-kat-dark">Thông tin hành trình</h4>
-                  </div>
-                  
-                  <div className="space-y-3 text-[13.5px] font-semibold text-slate-500 border-t border-slate-100 pt-3">
-                    <div className="flex items-center justify-between border-b border-slate-100/40 pb-2.5">
-                      <span className="flex items-center gap-2">
-                        <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
-                        Địa điểm
-                      </span>
-                      <span className="font-black text-kat-dark">{trip.destination || trip.location || "Chưa xác định"}</span>
-                    </div>
-                    <div className="flex items-center justify-between border-b border-slate-100/40 pb-2.5">
-                      <span className="flex items-center gap-2">
-                        <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-400" />
-                        Thời gian
-                      </span>
-                      <span className="font-black text-kat-dark">
-                        {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between pb-0.5">
-                      <span className="flex items-center gap-2">
-                        <HugeiconsIcon icon={RouteIcon} className="h-4 w-4 text-slate-400" />
-                        Mục lịch trình
-                      </span>
-                      <span className="font-black text-kat-dark">{activities.length} mục</span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           )}

@@ -16,7 +16,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { BackupPlan, BackupPlanType } from "../../../db";
 import { DeleteConfirmModal } from "../../../components/ui";
-import { getEmbedMapUrl } from "../../../utils/mapUtils";
+import { getEmbedMapUrl, ensureAbsoluteUrl } from "../../../utils/mapUtils";
 import { useModalHistory } from "../../../hooks/useModalHistory";
 import { useBodyScrollLock } from "../../../hooks/useBodyScrollLock";
 
@@ -196,7 +196,7 @@ export function SharedBackupPlansSheet({
       type,
       reason: reason.trim() || undefined,
       location: location.trim() || undefined,
-      mapLink: mapLink.trim() || undefined,
+      mapLink: mapLink.trim() ? ensureAbsoluteUrl(mapLink.trim()) : undefined,
       estimatedCost: costValue,
       note: note.trim() || undefined,
       updatedAt: new Date().toISOString()
@@ -365,7 +365,7 @@ export function SharedBackupPlansSheet({
                         <span>Link Google Maps</span>
                         {mapLink && (
                           <a
-                            href={mapLink}
+                            href={ensureAbsoluteUrl(mapLink)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs text-emerald-600 hover:text-emerald-700 font-bold hover:underline"
@@ -547,7 +547,7 @@ export function SharedBackupPlansSheet({
                                 return (
                                   <a 
                                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[12.5px] font-bold text-emerald-600 border border-emerald-100 hover:bg-emerald-100 transition-colors" 
-                                    href={plan.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(plan.location || "")}`} 
+                                    href={ensureAbsoluteUrl(plan.mapLink) || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(plan.location || "")}`} 
                                     target="_blank" 
                                     rel="noopener noreferrer"
                                   >
@@ -565,9 +565,9 @@ export function SharedBackupPlansSheet({
                         {isRequestEdit && !isPending && (
                           <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
                             <div className="flex-1 min-w-0">
-                              {plan.mapLink && !getEmbedMapUrl(plan.mapLink || plan.location || "") && (
+                              {plan.mapLink && !getEmbedMapUrl(plan.mapLink || plan.location || "", plan.location) && (
                                 <a
-                                  href={plan.mapLink}
+                                  href={ensureAbsoluteUrl(plan.mapLink)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="inline-flex items-center gap-1.5 text-[12.5px] font-black text-indigo-600 hover:text-indigo-700 transition-colors hover:underline truncate"

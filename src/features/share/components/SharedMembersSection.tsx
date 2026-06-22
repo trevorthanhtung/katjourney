@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../../db';
 import { createPortal } from 'react-dom';
@@ -253,9 +253,6 @@ export function SharedMembersSection({
       {/* Search Input Bar */}
       {mergedMembers.length > 0 && (
         <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <HugeiconsIcon icon={Search01Icon} className="h-4.5 w-4.5 text-slate-400" />
-          </div>
           <input
             type="text"
             placeholder="Tìm kiếm thành viên hoặc vai trò..."
@@ -263,6 +260,9 @@ export function SharedMembersSection({
             onChange={(e) => setSearchQuery(e.target.value)}
             className="block w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 placeholder-slate-450 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
           />
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 z-10">
+            <HugeiconsIcon icon={Search01Icon} className="h-4.5 w-4.5 text-slate-400" />
+          </div>
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}

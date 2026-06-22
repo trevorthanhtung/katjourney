@@ -1953,9 +1953,6 @@ export function MoreScreen({
             <h3 className="text-[17px] font-extrabold text-kat-dark">Danh sách thành viên {members.length > 0 && `(${members.length})`}</h3>
             {members.length > 0 && (
               <div className="relative w-full sm:w-72">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
-                  <HugeiconsIcon icon={Search01Icon} className="h-4.5 w-4.5 text-slate-400" />
-                </div>
                 <input
                   type="text"
                   placeholder="Tìm kiếm thành viên hoặc vai trò..."
@@ -1963,6 +1960,9 @@ export function MoreScreen({
                   onChange={(e) => setMemberSearchQuery(e.target.value)}
                   className="block w-full rounded-2xl border border-slate-200/60 bg-white/70 backdrop-blur-md py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 placeholder-slate-400 focus:border-slate-350 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all shadow-sm"
                 />
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 z-10">
+                  <HugeiconsIcon icon={Search01Icon} className="h-4.5 w-4.5 text-slate-400" />
+                </div>
                 {memberSearchQuery && (
                   <button
                     onClick={() => setMemberSearchQuery("")}

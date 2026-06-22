@@ -5,7 +5,7 @@ import { Cancel01Icon, Add01Icon, PencilEdit01Icon, Delete01Icon, Location01Icon
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, BackupPlan, BackupPlanType } from "../../db";
 import { DeleteConfirmModal } from "../../components/ui";
-import { getEmbedMapUrl } from "../../utils/mapUtils";
+import { getEmbedMapUrl, ensureAbsoluteUrl } from "../../utils/mapUtils";
 import { useModalHistory } from "../../hooks/useModalHistory";
 import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
 
@@ -125,7 +125,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
       type,
       reason: reason.trim(),
       location: location.trim(),
-      mapLink: mapLink.trim(),
+      mapLink: mapLink.trim() ? ensureAbsoluteUrl(mapLink.trim()) : "",
       estimatedCost: estimatedCost ? Number(estimatedCost) : undefined,
       note: note.trim(),
       updatedAt: new Date().toISOString()
@@ -261,7 +261,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                         <span>Link Google Maps</span>
                         {mapLink && (
                           <a
-                            href={mapLink}
+                            href={ensureAbsoluteUrl(mapLink)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs text-emerald-600 hover:text-emerald-700 font-bold hover:underline"
@@ -412,7 +412,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                               return (
                                 <a 
                                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[12.5px] font-bold text-emerald-600 border border-emerald-100 hover:bg-emerald-100 transition-colors" 
-                                  href={plan.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(plan.location || "")}`} 
+                                  href={ensureAbsoluteUrl(plan.mapLink) || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(plan.location || "")}`} 
                                   target="_blank" 
                                   rel="noopener noreferrer"
                                 >
@@ -429,9 +429,9 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                       {/* Actions toolbar */}
                       <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
                         <div className="flex-1 min-w-0">
-                          {plan.mapLink && !getEmbedMapUrl(plan.mapLink || plan.location || "") && (
+                          {plan.mapLink && !getEmbedMapUrl(plan.mapLink || plan.location || "", plan.location) && (
                             <a
-                              href={plan.mapLink}
+                              href={ensureAbsoluteUrl(plan.mapLink)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1.5 text-[12.5px] font-black text-kat-teal hover:text-[#00a89f] transition-colors hover:underline truncate"
