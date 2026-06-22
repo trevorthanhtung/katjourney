@@ -13,6 +13,6 @@ Files:
 - icon-192.png
 - icon-512.png
 - maskable-icon-512.png
-- og-image.png
+- og-image.webp
 - share-square-1024.png
 - manifest-snippet.json

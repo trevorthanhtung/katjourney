@@ -9,6 +9,7 @@ export default defineConfig({
       registerType: "prompt",
       includeAssets: ["asset/favicon.ico", "asset/apple-touch-icon.png"],
       manifest: {
+        lang: "vi",
         name: "KAT Journey",
         short_name: "KAT Journey",
         description: "Lên kế hoạch chuyến đi gọn gàng, theo dõi lịch trình, checklist, chi phí và lưu lại kỷ niệm du lịch.",

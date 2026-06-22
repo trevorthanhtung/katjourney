@@ -35,12 +35,11 @@ export async function fetchExchangeRates(): Promise<ExchangeRate[]> {
     }
   }
 
-  // Use a CORS proxy to bypass browser restrictions
-  const VCB_API_URL = "https://portal.vietcombank.com.vn/Usercontrols/TVPortal.TyGia/pXML.aspx";
-  const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(VCB_API_URL)}`;
+  // Use our local Vercel serverless function to proxy and cache Vietcombank exchange rates XML
+  const exchangeRatesUrl = "/api/exchange-rates";
 
   try {
-    const response = await fetch(proxyUrl);
+    const response = await fetch(exchangeRatesUrl);
     if (!response.ok) throw new Error("Failed to fetch exchange rates");
     
     const xmlText = await response.text();
