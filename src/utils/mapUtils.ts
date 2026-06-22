@@ -66,20 +66,27 @@ export function getEmbedMapUrl(input: string, fallbackLocation?: string): string
 
 export function ensureAbsoluteUrl(url?: string): string {
   if (!url) return "";
-  const trimmed = url.trim();
+  let trimmed = url.trim();
   if (!trimmed) return "";
+
+  // Remove leading and trailing double/single quotes if the user copied them
+  trimmed = trimmed.replace(/^["']|["']$/g, "").trim();
   
-  // If it starts with a protocol or is a mailto/tel link, return as is
+  let absoluteUrl = trimmed;
   if (/^(https?:\/\/|mailto:|tel:)/i.test(trimmed)) {
-    return trimmed;
+    absoluteUrl = trimmed;
+  } else if (trimmed.startsWith("//")) {
+    absoluteUrl = `https:${trimmed}`;
+  } else {
+    absoluteUrl = `https://${trimmed}`;
   }
   
-  // If it starts with //, prepend https:
-  if (trimmed.startsWith("//")) {
-    return `https:${trimmed}`;
+  try {
+    // encodeURI is safe to call on a full absolute URL.
+    // It will encode spaces to %20 and other unsafe characters, while leaving protocol, slashes, query params intact.
+    return encodeURI(absoluteUrl);
+  } catch (e) {
+    return absoluteUrl;
   }
-  
-  // Otherwise, prepend https://
-  return `https://${trimmed}`;
 }
 
