@@ -6,8 +6,7 @@ import {
   WalletCardsIcon,
   Car01Icon,
   CompassIcon,
-  UserGroupIcon,
-  Luggage01Icon
+  UserGroupIcon
 } from "@hugeicons/core-free-icons";
 
 export function RolesHelpSheet({
@@ -19,7 +18,7 @@ export function RolesHelpSheet({
 }) {
   const roles = [
     {
-      title: "Trưởng đoàn / Trưởng nhóm",
+      title: "Trưởng nhóm",
       icon: CrownIcon,
       colorClass: "bg-amber-50 text-amber-600 border-amber-200/50",
       description: "Người tạo chuyến đi và có toàn quyền quản trị tối cao.",
@@ -40,7 +39,7 @@ export function RolesHelpSheet({
       ]
     },
     {
-      title: "Thủ quỹ (Quản lý chi phí)",
+      title: "Quản lý chi phí",
       icon: WalletCardsIcon,
       colorClass: "bg-emerald-50 text-emerald-600 border-emerald-200/50",
       description: "Quản lý quỹ chung, ghi chép và chia tiền chi tiêu.",
@@ -50,11 +49,10 @@ export function RolesHelpSheet({
       ]
     },
     {
-      title: "Thành viên / Phụ trách hành lý",
+      title: "Người đồng hành",
       icon: UserGroupIcon,
-      icon2: Luggage01Icon,
       colorClass: "bg-slate-50 text-slate-600 border-slate-200/50",
-      description: "Xem thông tin chuyến đi hoặc phụ trách chuẩn bị đồ dùng.",
+      description: "Xem thông tin chuyến đi và gửi các ý kiến đề xuất.",
       permissions: [
         { label: "Đề xuất sửa lịch trình", allowed: false },
         { label: "Đề xuất thêm chi phí", allowed: false }
@@ -101,7 +99,7 @@ export function RolesHelpSheet({
                   className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold ${
                     p.allowed
                       ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-                      : "bg-amber-50 text-amber-600 border border-amber-100"
+                      : "bg-amber-50 text-amber-600 border-amber-100"
                   }`}
                 >
                   <span
