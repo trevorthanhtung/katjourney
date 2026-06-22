@@ -91,9 +91,10 @@ import {
   safeFileName, 
   today, 
   TripData, 
-  downloadBlob,
   getChecklistStats,
-  getTripTiming
+  getTripTiming,
+  APP_VERSION,
+  downloadBlob
 } from "../../utils/helpers";
 import { normalizeVietnameseDisplayText } from "../../utils/helpers";
 import { BottomSheet, FormActions, Input, ScreenTitle, TypedDeleteConfirmModal, classNames } from "../../components/ui";
@@ -2134,7 +2135,7 @@ export function MoreScreen({
                 <p className="text-[12px] text-slate-400 font-medium">Phiên bản hiện tại trên thiết bị</p>
               </div>
             </div>
-            <span className="text-xs font-black text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">2.0.0</span>
+            <span className="text-xs font-black text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">{APP_VERSION}</span>
           </div>
         </div>
 

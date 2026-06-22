@@ -42,7 +42,7 @@ import { clearTemporaryFiles } from "../utils/dataActions";
 import { DeleteAccountModal } from "./DeleteAccountModal";
 import { FactoryResetModal } from "./FactoryResetModal";
 import { useModalHistory } from "../hooks/useModalHistory";
-import { today, checklistSections, packingTripTypes } from "../utils/helpers";
+import { today, checklistSections, packingTripTypes, APP_VERSION } from "../utils/helpers";
 import { fetchExchangeRates, ExchangeRate } from "../services/currencyService";
 import { usePWAInstall } from "../hooks/usePWAInstall";
 import { PWAInstallInstructionsSheet } from "./PWAInstallInstructionsSheet";
@@ -952,7 +952,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 </div>
               </div>
               <span className="text-xs font-black text-slate-500 bg-slate-200/70 px-3 py-1 rounded-full border border-slate-200">
-                2.0.0
+                {APP_VERSION}
               </span>
             </div>
 

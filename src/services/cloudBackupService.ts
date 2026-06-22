@@ -1,5 +1,6 @@
 import { supabase } from "../lib/supabase";
 import { db } from "../db";
+import { APP_VERSION } from "../utils/helpers";
 
 export interface BackupInfo {
   updatedAt: string;
@@ -117,7 +118,7 @@ export async function backupToCloud(): Promise<void> {
   const backupTime = new Date().toISOString();
   const snapshot = {
     updatedAt: backupTime,
-    appVersion: "2.0.0", // matches version in package.json
+    appVersion: APP_VERSION, // matches version in package.json
     trips: sanitizeData(trips),
     members: sanitizeData(members),
     events: sanitizeData(events),
@@ -135,7 +136,7 @@ export async function backupToCloud(): Promise<void> {
     .upsert({
       user_id: user.id,
       data: snapshot,
-      app_version: "2.0.0",
+      app_version: APP_VERSION,
       updated_at: backupTime
     });
 

@@ -1,3 +1,5 @@
+import pkg from "../../package.json";
+export const APP_VERSION = pkg.version;
 import { ChecklistItem, Expense, JournalEntry, JournalMood, Member, PackingItem, PackingTripType, Trip } from "../db";
 
 export const checklistSections: import("../db").ChecklistSection[] = ["Before Trip", "During Trip", "After Trip"];
@@ -232,7 +234,7 @@ export function createTripExport({ trip, members, events, expenses, checklist, j
   return {
     app: "KAT Journey",
     version: 2,
-    appVersion: (import.meta as any).env?.VITE_APP_VERSION ?? "2.0.0",
+    appVersion: APP_VERSION,
     exportedAt: new Date().toISOString(),
     trip,
     members,
