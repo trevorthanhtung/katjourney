@@ -726,10 +726,11 @@ function App() {
     );
   }
 
-  if (showWelcome && !isShareRoute) {
-    return (
-      <>
-        {showSplash && <SplashScreen isFading={isSplashFading} />}
+  return (
+    <>
+      {showSplash && <SplashScreen isFading={isSplashFading} />}
+      
+      {showWelcome && !isShareRoute ? (
         <div 
           className={classNames(
             "fixed inset-0 z-[100]",
@@ -742,22 +743,16 @@ function App() {
         >
           <WelcomeScreen onDismiss={() => setShowWelcome(false)} />
         </div>
-      </>
-    );
-  }
-
-  return (
-    <>
-      {showSplash && <SplashScreen isFading={isSplashFading} />}
-      <div 
-        className={classNames(
-          "font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg",
-          showSplash && "transition-all duration-500 ease-out",
-          showSplash && (isSplashFading ? "scale-100 opacity-100" : "scale-[0.96] opacity-0")
-        )}
-        style={{
-          transitionTimingFunction: showSplash ? "var(--motion-ease-spring-soft)" : undefined,
-          "--sticky-header-offset": areBarsVisible ? "60px" : "0px",
+      ) : (
+        <div 
+          className={classNames(
+            "font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg",
+            showSplash && "transition-all duration-500 ease-out",
+            showSplash && (isSplashFading ? "scale-100 opacity-100" : "scale-[0.96] opacity-0")
+          )}
+          style={{
+            transitionTimingFunction: showSplash ? "var(--motion-ease-spring-soft)" : undefined,
+            "--sticky-header-offset": areBarsVisible ? "60px" : "0px",
           "--sticky-header-offset-md": areBarsVisible ? "68px" : "0px",
         } as React.CSSProperties}
       >
@@ -1390,10 +1385,12 @@ function App() {
         showToast={showToast}
       />
 
+        </div>
+      )}
+
       <ReloadPrompt />
-    </div>
-  </>
-);
+    </>
+  );
 }
 
 export default App;
