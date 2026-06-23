@@ -18,8 +18,8 @@ export function useSharedTrip(token: string, pin?: string | null, retryCount: nu
         setErrorCode(null);
         setError(null);
 
-        // 1. SERVER-SIDE VERIFY: kiểm tra token + PIN, set JWT claim share_token
-        //    Sau bước này, RLS mới cho phép đọc data của token này.
+        // 1. SERVER-SIDE VERIFY: kiểm tra token + PIN, tự động ghi nhận vào bảng share_access
+        //    Sau bước này, RLS mới cho phép đọc data của token này dựa trên bảng share_access.
         let shareData: any;
         try {
           const verified = await verifyAndAuthShare(token, pin);

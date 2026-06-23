@@ -5,16 +5,15 @@ import { supabase } from './supabase';
  * ------------
  * Cấp quyền truy cập share link cho khách KHÔNG cần login Google.
  *
- * Quy trình:
+ * Quy trình mới (Sử dụng bảng share_access server-trusted):
  *   1. signInAnonymously()  — khách tự đăng nhập ẩn danh, có auth.uid()
- *   2. verify_share_access(token, pin)  — server kiểm tra token + PIN
- *   3. updateUser({ data: { share_token } })  — nhét token vào JWT (raw_user_meta_data)
- *   4. RLS đọc JWT claim → chỉ cho phép đọc đúng token đó
+ *   2. verify_share_access(token, pin)  — server kiểm tra token + PIN và tự động insert vào bảng share_access
+ *   3. RLS đọc bảng share_access thay vì JWT claim → chỉ cho phép đọc đúng token đó
  *
  * Nhờ vậy:
- *   - Anonymous chưa verify → claim rỗng → RLS chặn → đọc 0 dòng
- *   - Anonymous đã verify đúng token → chỉ đọc được share đó
- *   - Realtime vẫn hoạt động vì RLS check theo JWT
+ *   - Tránh việc Anonymous tự update user_metadata để bypass PIN
+ *   - Anonymous chưa verify → không có record trong share_access → RLS chặn
+ *   - Anonymous đã verify đúng token → có record trong share_access → đọc được share đó
  */
 
 export interface VerifiedShare {
@@ -93,14 +92,9 @@ export async function verifyAndAuthShare(
     throw new ShareAuthError('unknown', 'Không thể truy cập link chia sẻ.');
   }
 
-  // 3. Nhét token vào JWT của user (raw_user_meta_data)
-  //    RLS sẽ đọc claim này để cấp quyền SELECT đúng token.
-  const { error: updErr } = await supabase.auth.updateUser({
-    data: { share_token: token },
-  });
-  if (updErr) {
-    throw new ShareAuthError('auth_failed', 'Không thể thiết lập quyền truy cập: ' + updErr.message);
-  }
+  // 3. (MỚI) Quyền truy cập giờ đã được cấp trên server (bằng cách insert vào bảng share_access)
+  // Không còn gọi supabase.auth.updateUser({ data: { share_token } }) từ client nữa
+  // để tránh lỗ hổng Anonymous tự update user_metadata (Bypass PIN).
 
   let parsedTrip = data.trip;
   if (typeof data.trip === 'string') {
@@ -128,12 +122,11 @@ export async function verifyAndAuthShare(
 }
 
 /**
- * Xóa claim share_token khi rời trang share (tránh leak session giữa các link).
+ * clearShareClaim: Hiện tại không cần dùng vì không lưu trong JWT nữa.
+ * Nếu cần thu hồi quyền ngay lập tức khi rời trang, bạn có thể gọi 1 RPC xóa record trong share_access.
  */
 export async function clearShareClaim() {
-  try {
-    await supabase.auth.updateUser({ data: { share_token: null } });
-  } catch {
-    /* ignore — có thể user là anonymous không update được */
-  }
+  // Không còn lưu trong user_metadata nên không cần update.
+  // Nếu muốn, có thể gọi RPC để xóa access record:
+  // await supabase.rpc('remove_share_access', { p_token: token });
 }
