@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { verifyAndAuthShare, clearShareClaim, ShareAuthError } from '../lib/shareAuth';
 
-export function useSharedTrip(token: string, pin?: string | null) {
+export function useSharedTrip(token: string, pin?: string | null, retryCount: number = 0) {
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
@@ -15,8 +15,8 @@ export function useSharedTrip(token: string, pin?: string | null) {
     async function setupSharedTrip() {
       try {
         setLoading(true);
-
         setErrorCode(null);
+        setError(null);
 
         // 1. SERVER-SIDE VERIFY: kiểm tra token + PIN, set JWT claim share_token
         //    Sau bước này, RLS mới cho phép đọc data của token này.
@@ -265,7 +265,7 @@ export function useSharedTrip(token: string, pin?: string | null) {
       // Xóa claim share_token khi rời trang share
       clearShareClaim();
     };
-  }, [token, pin]);
+  }, [token, pin, retryCount]);
 
   return { data, error, errorCode, loading };
 }

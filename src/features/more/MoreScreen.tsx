@@ -1568,7 +1568,7 @@ function MemberCardRow({
 }
 
 import { ensureAnonymousUser } from "../../services/authService";
-import { supabaseEnabled } from "../../lib/supabase";
+import { supabaseEnabled, supabase } from "../../lib/supabase";
 import { createShareLink, revokeShareLink, updateShareLink } from "../../services/cloudShareService";
 
 export function MoreScreen({
@@ -1610,6 +1610,18 @@ export function MoreScreen({
   isAutoSyncing?: boolean;
   lastSyncedAt?: Date | null;
 }) {
+  const [authName, setAuthName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (supabaseEnabled) {
+      supabase.auth.getUser().then(({ data }) => {
+        if (data?.user?.user_metadata?.full_name) {
+          setAuthName(data.user.user_metadata.full_name);
+        }
+      });
+    }
+  }, []);
+
   const [editingTrip, setEditingTrip] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [isMemberFormOpen, setIsMemberFormOpen] = useState(false);
@@ -1864,19 +1876,34 @@ export function MoreScreen({
         onShowToast={onShowToast} 
         onBack={() => setSection("overview")} 
         isReadOnly={isReadOnly} 
-        renderChatBox={trip.shareToken ? () => (
-          <ChatBox 
-            token={trip.shareToken!} 
-            currentUser={{ 
-              name: members?.find(m => m.role === "Trưởng nhóm" || m.role === "Leader")?.name || members?.[0]?.name || "Trưởng nhóm", 
-              role: "Trưởng nhóm",
-              isGuest: false, 
-              canEdit: true 
-            }} 
-            inline={true}
-            isReadOnly={isReadOnly}
-          />
-        ) : undefined}
+        renderChatBox={trip.shareToken ? () => {
+          const leader = members?.find(m => m.role?.toLowerCase().includes("trưởng nhóm") || m.role?.toLowerCase().includes("leader"));
+          
+          let chatName = "Người tạo chuyến đi";
+          let chatRole = "Người tạo chuyến đi";
+
+          if (leader) {
+            chatName = leader.name;
+            chatRole = "Trưởng nhóm";
+          } else if (authName) {
+            chatName = authName;
+            chatRole = "Người tạo chuyến đi";
+          }
+
+          return (
+            <ChatBox 
+              token={trip.shareToken!} 
+              currentUser={{ 
+                name: chatName, 
+                role: chatRole,
+                isGuest: false, 
+                canEdit: true 
+              }} 
+              inline={true}
+              isReadOnly={isReadOnly}
+            />
+          );
+        } : undefined}
       />
     );
   }
@@ -2600,9 +2627,9 @@ export function MoreScreen({
                           value={shareOptions.sharePin[i] || ""}
                           onChange={(e) => {
                             const val = e.target.value.replace(/\D/g, "").slice(-1);
-                            const arr = shareOptions.sharePin.split("").slice(0,4);
-                            arr[i] = val;
-                            const newPin = arr.join("").slice(0,4);
+                            const arr = shareOptions.sharePin.padEnd(4, " ").split("");
+                            arr[i] = val || " ";
+                            const newPin = arr.join("").replace(/ +$/, "");
                             setShareOptions(o => ({ ...o, sharePin: newPin }));
                             if (val && i < 3) {
                               const next = document.getElementById(`pin-digit-${i+1}`);

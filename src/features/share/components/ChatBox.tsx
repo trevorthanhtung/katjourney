@@ -32,7 +32,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
 
   const renderRoleIcon = (role?: string) => {
     if (!role) return null;
-    const isLead = role.toLowerCase().includes('trưởng');
+    const isLead = role.toLowerCase().includes('trưởng') || role.toLowerCase().includes('người tạo');
     if (isLead) {
       return (
         <span className="inline-flex items-center justify-center ml-1.5 select-none" title="Trưởng nhóm">

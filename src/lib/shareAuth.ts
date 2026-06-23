@@ -67,14 +67,17 @@ export async function verifyAndAuthShare(
   token: string,
   pin?: string | null
 ): Promise<VerifiedShare> {
+  console.log("[verifyAndAuthShare] START", { token, pin });
   // 1. Đảm bảo có session (anonymous nếu chưa login)
   await ensureSession();
 
   // 2. Gọi RPC verify_share_access để server kiểm tra token + PIN
+  console.log("[verifyAndAuthShare] Calling RPC with", { p_token: token, p_pin: pin ?? null });
   const { data, error } = await supabase.rpc('verify_share_access', {
     p_token: token,
     p_pin: pin ?? null,
   });
+  console.log("[verifyAndAuthShare] RPC Response", { data, error });
 
   if (error) {
     throw new ShareAuthError('unknown', 'Lỗi server khi verify share: ' + error.message);
@@ -99,6 +102,15 @@ export async function verifyAndAuthShare(
     throw new ShareAuthError('auth_failed', 'Không thể thiết lập quyền truy cập: ' + updErr.message);
   }
 
+  let parsedTrip = data.trip;
+  if (typeof data.trip === 'string') {
+    try {
+      parsedTrip = JSON.parse(data.trip);
+    } catch (e) {
+      console.error("Failed to parse trip JSON string:", e);
+    }
+  }
+
   return {
     ok: true,
     token: data.token,
@@ -111,7 +123,7 @@ export async function verifyAndAuthShare(
     includeBackupPlans: data.include_backup_plans,
     includeDocuments: data.include_documents,
     hasPin: data.has_pin,
-    trip: data.trip,
+    trip: parsedTrip,
   };
 }
 
