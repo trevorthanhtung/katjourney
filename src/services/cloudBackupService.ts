@@ -278,6 +278,7 @@ export async function restoreFromCloud(mode: "merge" | "replace"): Promise<void>
       try {
         console.log("[SmartMerge] Triggering post-merge background backup...");
         await backupToCloud();
+        return; // Fix infinite sync loop: backupToCloud already updated kat_journey_local_updated_at, skip reverting it
       } catch (backupErr) {
         console.error("[SmartMerge] Post-merge backup failed:", backupErr);
       }
