@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -54,11 +54,11 @@ const moodColorClasses: Record<JournalMood, string> = {
 };
 
 const moodBadgeClasses: Record<JournalMood, string> = {
-  good: "bg-amber-50 text-amber-800 border-amber-200",
-  okay: "bg-emerald-50 text-emerald-800 border-emerald-200",
-  great: "bg-rose-50 text-rose-800 border-rose-200",
-  very_bad: "bg-slate-100 text-slate-700 border-slate-300",
-  bad: "bg-blue-50 text-blue-800 border-blue-200"
+  good: "bg-amber-50 dark:bg-amber-950/25 text-amber-800 dark:text-amber-400 border-amber-200 dark:border-amber-900/35",
+  okay: "bg-emerald-50 dark:bg-emerald-950/25 text-emerald-800 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/35",
+  great: "bg-rose-50 dark:bg-rose-950/25 text-rose-800 dark:text-rose-400 border-rose-200 dark:border-rose-900/35",
+  very_bad: "bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700/80",
+  bad: "bg-blue-50 dark:bg-blue-950/25 text-blue-800 dark:text-blue-400 border-blue-200 dark:border-blue-900/35"
 };
 
 function JournalForm({ 
@@ -218,14 +218,14 @@ function JournalForm({
       }} 
       title={editing ? "Sửa bài viết bản tin" : "Đăng bài viết bản tin"}
       footer={
-        <div className="flex gap-3 w-full">
+        <div className="flex items-center gap-2.5 w-full">
           <button
             type="button"
             onClick={() => {
               onClearPrefilled();
               onClose();
             }}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+            className="flex h-[52px] shrink-0 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.96] transition-all border border-transparent dark:border-slate-700 motion-press"
           >
             Hủy
           </button>
@@ -233,9 +233,9 @@ function JournalForm({
             type="button"
             disabled={hasError}
             onClick={save}
-            className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-kat-dark text-white px-6 font-black hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-kat-dark disabled:active:scale-100 shadow-sm"
+            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
           >
-            <HugeiconsIcon icon={FloppyDiskIcon} className="h-4.5 w-4.5" />
+            <HugeiconsIcon icon={FloppyDiskIcon} className="h-5 w-5" />
             Đăng bài viết
           </button>
         </div>
@@ -310,8 +310,8 @@ function JournalForm({
                   onClick={() => { setForm({ ...form, mood: opt.value }); setDirty(true); }}
                   className={`flex items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-bold border transition-all duration-200 active:scale-95 ${
                     isActive
-                      ? "bg-kat-primary-soft border-[#00BFB7] text-kat-dark"
-                      : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                      ? "bg-kat-primary-soft dark:bg-kat-primary-soft/30 border-[#00BFB7] dark:border-kat-primary/50 text-kat-teal dark:text-kat-primary-usable shadow-sm"
+                      : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700/50 text-slate-650 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                   }`}
                 >
                   <span className={`h-2.5 w-2.5 rounded-full ${colorDot}`} />
@@ -343,7 +343,7 @@ function JournalForm({
         {/* Image Field */}
         <div>
           {form.imageUrl ? (
-            <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+            <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
               <img src={form.imageUrl} alt="Uploaded" className="w-full aspect-[4/3] object-contain" />
               <button
                 onClick={() => { setForm({ ...form, imageUrl: "" }); setDirty(true); }}
@@ -365,7 +365,7 @@ function JournalForm({
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="w-full h-12 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 text-slate-500 font-bold text-[14px] hover:bg-slate-100 hover:text-kat-teal transition-colors flex items-center justify-center gap-2"
+                className="w-full h-12 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 font-bold text-[14px] hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-kat-teal dark:hover:text-kat-primary transition-colors flex items-center justify-center gap-2"
               >
                 {uploading ? (
                   <><HugeiconsIcon icon={Loading01Icon} className="h-5 w-5 animate-spin" /> Đang tải ảnh...</>
@@ -389,7 +389,7 @@ function JournalForm({
                 key={prompt}
                 type="button"
                 onClick={() => handlePromptClick(prompt)}
-                className="rounded-lg bg-slate-50 border border-slate-200 px-3 py-1.5 text-[12.5px] font-bold text-slate-600 hover:bg-kat-primary-soft hover:text-kat-teal hover:border-[#00BFB7]/30 transition-all active:scale-95"
+                className="rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 px-3 py-1.5 text-[12.5px] font-bold text-slate-600 dark:text-slate-350 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
                 + {prompt}
               </button>
@@ -419,7 +419,11 @@ function JournalEntryMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: 
     <div className="relative shrink-0" ref={menuRef}>
       <button
         type="button"
-        className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none"
+        className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors focus:outline-none ${
+          isMenuOpen
+            ? "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-200"
+            : "text-slate-400 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200"
+        }`}
         onClick={(e) => {
           e.stopPropagation();
           setIsMenuOpen(!isMenuOpen);
@@ -430,7 +434,7 @@ function JournalEntryMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: 
       </button>
 
       {isMenuOpen && (
-        <div className="absolute right-0 top-full mt-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
+        <div className="absolute right-0 top-full mt-1 z-40 w-32 rounded-2xl border border-slate-150 dark:border-slate-700 bg-white dark:bg-slate-800 p-1.5 shadow-lg animate-scaleIn text-left">
           <button
             type="button"
             onClick={(e) => {
@@ -438,9 +442,9 @@ function JournalEntryMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: 
               setIsMenuOpen(false);
               onEdit();
             }}
-            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 active:bg-slate-100 dark:active:bg-slate-700 transition-colors"
           >
-            <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500" />
+            <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
             Sửa
           </button>
           <button
@@ -450,7 +454,7 @@ function JournalEntryMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: 
               setIsMenuOpen(false);
               onDelete();
             }}
-            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+            className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
           >
             <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
             Xóa
@@ -670,34 +674,38 @@ export function JournalSection({
           {onBack && (
             <button
               onClick={onBack}
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 text-slate-700 active:scale-95 transition-all shrink-0"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 active:scale-95 transition-all shrink-0"
               title="Quay lại"
             >
               <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
             </button>
           )}
           <div>
-            <h1 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark">Bản tin hành trình</h1>
-            <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Lưu lại cảm xúc, câu chuyện và những khoảnh khắc đáng nhớ.</p>
+            <h1 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">Bản tin hành trình</h1>
+            <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">Lưu lại cảm xúc, câu chuyện và những khoảnh khắc đáng nhớ.</p>
           </div>
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
         {renderChatBox ? (
-          <div className="flex bg-slate-100 p-1.5 rounded-2xl w-full sm:max-w-[320px] shadow-inner">
+          <div className="flex bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl w-full sm:max-w-[320px] shadow-inner border border-transparent dark:border-slate-800/50">
             <button
               onClick={() => setJournalMode("posts")}
-              className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 ${
-                journalMode === "posts" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700"
+              className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${
+                journalMode === "posts" 
+                  ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200/60 dark:border-slate-700 shadow-sm" 
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
               }`}
             >
               <HugeiconsIcon icon={GlobeIcon} className="w-4 h-4" /> Bản tin
             </button>
             <button
               onClick={() => setJournalMode("chat")}
-              className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 ${
-                journalMode === "chat" ? "bg-white text-kat-teal shadow-sm" : "text-slate-500 hover:text-slate-700"
+              className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${
+                journalMode === "chat" 
+                  ? "bg-white dark:bg-slate-800 text-kat-teal dark:text-kat-primary shadow-sm border-slate-200/60 dark:border-slate-700" 
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
               }`}
             >
               <HugeiconsIcon icon={BubbleChatIcon} className="w-4 h-4" /> Trò chuyện
@@ -710,7 +718,7 @@ export function JournalSection({
         {!isReadOnly && journalMode === "posts" && (
             <button
               onClick={openNewForm}
-              className="hidden md:flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark px-5 text-[14px] font-black text-white transition-all hover:bg-kat-dark bg-opacity-90 shadow-sm shrink-0 motion-press"
+              className="hidden md:flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 text-[14px] font-black text-white dark:text-slate-950 transition-all hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 shadow-sm shrink-0 motion-press border border-transparent dark:border-kat-primary"
             >
               <HugeiconsIcon icon={PenTool01Icon} className="w-4.5 h-4.5" />
               Đăng bài viết
@@ -721,18 +729,18 @@ export function JournalSection({
       {journalMode === "posts" ? (
         <>
           {/* Journal Overview Card */}
-      <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-soft">
+      <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft">
         <div className="flex items-start sm:items-center gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 dark:bg-kat-primary-soft text-kat-primary">
             <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
           </div>
-          <div className="grid grid-cols-1 divide-y divide-slate-100 sm:grid-cols-3 sm:divide-y-0 sm:divide-x sm:divide-slate-200/50 gap-3 sm:gap-0 flex-1 min-w-0 w-full">
+          <div className="grid grid-cols-1 divide-y divide-slate-100 dark:divide-slate-800 sm:grid-cols-3 sm:divide-y-0 sm:divide-x sm:divide-slate-200/50 dark:divide-slate-800/80 gap-3 sm:gap-0 flex-1 min-w-0 w-full">
             <div className="pb-3 sm:pb-0 sm:pr-4 md:pr-6">
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <HugeiconsIcon icon={BookOpen01Icon} className="h-3.5 w-3.5 text-kat-primary shrink-0" />
                 Bài viết đã đăng
               </span>
-              <span className="text-[15px] md:text-[17px] font-black text-kat-dark mt-1 block truncate">
+              <span className="text-[15px] md:text-[17px] font-black text-kat-dark dark:text-slate-200 mt-1 block truncate">
                 {journalCount > 0 ? `${journalCount} bài viết` : "Chưa có bài viết nào"}
               </span>
             </div>
@@ -741,7 +749,7 @@ export function JournalSection({
                 <HugeiconsIcon icon={SmilePlusIcon} className="h-3.5 w-3.5 text-amber-500 shrink-0" />
                 Cảm xúc mới nhất
               </span>
-              <span className="text-[15px] md:text-[17px] font-black text-kat-dark mt-1 block truncate">
+              <span className="text-[15px] md:text-[17px] font-black text-kat-dark dark:text-slate-200 mt-1 block truncate">
                 {lastMood || "—"}
               </span>
             </div>
@@ -750,14 +758,14 @@ export function JournalSection({
                 <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-blue-500 shrink-0" />
                 Lần ghi gần nhất
               </span>
-              <span className="text-[15px] md:text-[17px] font-black text-kat-dark mt-1 block truncate">
+              <span className="text-[15px] md:text-[17px] font-black text-kat-dark dark:text-slate-200 mt-1 block truncate">
                 {lastWriteDate || "—"}
               </span>
             </div>
           </div>
         </div>
         {journalCount === 0 && (
-          <p className="mt-3.5 pt-3.5 border-t border-slate-100 text-[13px] font-medium text-slate-500">
+          <p className="mt-3.5 pt-3.5 border-t border-slate-100 dark:border-slate-800 text-[13px] font-medium text-slate-500 dark:text-slate-400">
             Ghi lại một khoảnh khắc để chuyến đi có câu chuyện riêng.
           </p>
         )}
@@ -770,7 +778,7 @@ export function JournalSection({
             <section key={date} className="space-y-4">
               <div className="flex items-center gap-2 px-1">
                 <HugeiconsIcon icon={Calendar01Icon} className="h-4.5 w-4.5 text-slate-400" />
-                <h3 className="text-[15px] font-extrabold text-kat-dark">{formatDate(date)}</h3>
+                <h3 className="text-[15px] font-extrabold text-kat-dark dark:text-slate-350">{formatDate(date)}</h3>
               </div>
               
               <div className="columns-1 md:columns-2 gap-4">
@@ -779,7 +787,7 @@ export function JournalSection({
                   return (
                     <article 
                       key={entry.id} 
-                    className={`break-inside-avoid mb-4 group rounded-[24px] border border-slate-200 bg-white shadow-soft hover:shadow-md transition-all flex flex-col motion-card-enter overflow-hidden motion-delay-${Math.min(idx + 1, 5)}`}
+                    className={`break-inside-avoid mb-4 group rounded-[24px] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-soft hover:shadow-md transition-all flex flex-col motion-card-enter overflow-hidden motion-delay-${Math.min(idx + 1, 5)}`}
                     >
                       <div className="flex items-center justify-between gap-4 p-4 pb-3">
                         <div className="flex items-center gap-2.5">
@@ -813,19 +821,19 @@ export function JournalSection({
                               avatar = `${genderChar}${num}`;
                             }
                             return (
-                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full overflow-hidden bg-slate-200 text-slate-700 font-black text-[15px]">
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-black text-[15px]">
                                 {getAvatarSvg(avatar, "w-full h-full")}
                               </div>
                             );
                           })()}
                           <div className="flex flex-col">
-                            <span className="text-[14px] font-extrabold text-slate-800">{entry.authorName || "Trưởng nhóm"}</span>
+                            <span className="text-[14px] font-extrabold text-slate-800 dark:text-slate-200">{entry.authorName || "Trưởng nhóm"}</span>
                             <div className="flex items-center gap-1.5 mt-0.5">
                               <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider ${moodBadge}`}>
                                 {moodLabels[entry.mood] || "Đáng nhớ"}
                               </span>
                               {entry.postedAt && (
-                                <span className="text-[10px] font-semibold text-slate-400 flex items-center gap-0.5">
+                                <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 flex items-center gap-0.5">
                                   <HugeiconsIcon icon={Clock01Icon} className="h-2.5 w-2.5" />
                                   {new Date(entry.postedAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}
                                 </span>
@@ -844,28 +852,28 @@ export function JournalSection({
                       </div>
 
                       {entry.imageUrl && (
-                        <div className="w-full bg-[#F3F4F6] border-y border-slate-100/50 flex justify-center">
+                        <div className="w-full bg-[#F3F4F6] dark:bg-slate-950 border-y border-slate-100/50 dark:border-slate-800/80 flex justify-center">
                           <img src={entry.imageUrl} alt="Journal" className="w-full h-auto max-h-[500px] object-contain" />
                         </div>
                       )}
 
                       <div className="p-4 pt-3">
-                        <h4 className="text-[17px] font-black text-kat-dark leading-snug break-words">
+                        <h4 className="text-[17px] font-black text-kat-dark dark:text-slate-200 leading-snug break-words">
                           {entry.title || "Bản tin chuyến đi"}
                         </h4>
                         {entry.locationName && (
-                          <div className="mt-1 flex items-center gap-1.5 text-[13px] font-medium text-slate-500">
+                          <div className="mt-1 flex items-center gap-1.5 text-[13px] font-medium text-slate-500 dark:text-slate-400">
                             <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                             <span>{entry.locationName}</span>
                           </div>
                         )}
-                        <p className="mt-2 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600">
+                        <p className="mt-2 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-300">
                           {entry.content}
                         </p>
                       </div>
 
                       {/* Reactions bar */}
-                      <div className="px-4 pb-3.5 pt-2.5 border-t border-slate-100/60 flex flex-wrap items-center justify-between gap-2 bg-slate-50/20">
+                      <div className="px-4 pb-3.5 pt-2.5 border-t border-slate-100/60 dark:border-slate-800/60 flex flex-wrap items-center justify-between gap-2 bg-slate-50/20 dark:bg-slate-900/10">
                         <div className="flex flex-wrap gap-1.5">
                           {Object.entries(entry.reactions || {}).map(([emoji, users]) => {
                             if (!users || users.length === 0) return null;
@@ -876,8 +884,8 @@ export function JournalSection({
                                 onClick={() => handleToggleReaction(entry, emoji)}
                                 className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12.5px] border transition-all active:scale-95 ${
                                   hasReacted
-                                    ? "bg-indigo-50/70 border-indigo-200 text-indigo-700 font-bold"
-                                    : "bg-slate-50/80 border-slate-205 text-slate-500 hover:bg-slate-100"
+                                    ? "bg-indigo-50/70 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 font-bold"
+                                    : "bg-slate-50/80 dark:bg-slate-800/80 border-slate-205 dark:border-slate-700/80 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
                                 }`}
                                 title={users.join(", ")}
                               >
@@ -892,7 +900,7 @@ export function JournalSection({
                         <div className="relative">
                           <button
                             onClick={() => setActiveReactionPopover(activeReactionPopover === entry.id ? null : (entry.id || null))}
-                            className="flex h-7 px-2.5 items-center justify-center gap-1 rounded-full border border-slate-200 hover:border-slate-300 text-slate-400 hover:text-slate-600 transition-colors text-[11.5px] font-bold"
+                            className="flex h-7 px-2.5 items-center justify-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-350 transition-colors text-[11.5px] font-bold"
                           >
                             <span>+ Thả cảm xúc</span>
                           </button>
@@ -900,7 +908,7 @@ export function JournalSection({
                           {activeReactionPopover === entry.id && (
                             <>
                               <div className="fixed inset-0 z-40" onClick={() => setActiveReactionPopover(null)} />
-                              <div className="absolute right-0 bottom-full mb-2 z-50 flex gap-1 bg-white border border-slate-200 p-1.5 rounded-full shadow-md animate-scaleIn">
+                              <div className="absolute right-0 bottom-full mb-2 z-50 flex gap-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-full shadow-md animate-scaleIn">
                                 {["❤️", "👍", "😂", "😮", "😢"].map((emoji) => (
                                   <button
                                     key={emoji}
@@ -908,7 +916,7 @@ export function JournalSection({
                                       handleToggleReaction(entry, emoji);
                                       setActiveReactionPopover(null);
                                     }}
-                                    className="w-8 h-8 flex items-center justify-center text-[18px] hover:bg-slate-50 active:scale-125 transition-transform rounded-full"
+                                    className="w-8 h-8 flex items-center justify-center text-[18px] hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-125 transition-transform rounded-full"
                                   >
                                     {emoji}
                                   </button>

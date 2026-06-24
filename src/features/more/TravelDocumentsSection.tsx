@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
@@ -60,13 +60,13 @@ const typeIcons: Record<NonNullable<TravelDocument["type"]>, any> = {
 };
 
 const typeColors: Record<NonNullable<TravelDocument["type"]>, { bg: string; text: string; border: string }> = {
-  ticket: { bg: "bg-sky-50", text: "text-sky-600", border: "border-sky-200/50" },
-  hotel: { bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-200/50" },
-  booking: { bg: "bg-indigo-50", text: "text-indigo-600", border: "border-indigo-200/50" },
-  document: { bg: "bg-slate-50", text: "text-slate-600", border: "border-slate-200/50" },
-  contact: { bg: "bg-rose-50", text: "text-rose-600", border: "border-rose-200/50" },
-  map: { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200/50" },
-  other: { bg: "bg-slate-50", text: "text-slate-600", border: "border-slate-200/50" }
+  ticket: { bg: "bg-sky-50 dark:bg-sky-950/20", text: "text-sky-600 dark:text-sky-400", border: "border-sky-200/50 dark:border-sky-900/30" },
+  hotel: { bg: "bg-emerald-50 dark:bg-emerald-950/20", text: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-200/50 dark:border-emerald-900/30" },
+  booking: { bg: "bg-indigo-50 dark:bg-indigo-950/20", text: "text-indigo-600 dark:text-indigo-400", border: "border-indigo-200/50 dark:border-indigo-900/30" },
+  document: { bg: "bg-slate-50 dark:bg-slate-800/40", text: "text-slate-600 dark:text-slate-400", border: "border-slate-200/50 dark:border-slate-700/40" },
+  contact: { bg: "bg-rose-50 dark:bg-rose-950/20", text: "text-rose-600 dark:text-rose-400", border: "border-rose-200/50 dark:border-rose-900/30" },
+  map: { bg: "bg-amber-50 dark:bg-amber-950/20", text: "text-amber-600 dark:text-amber-400", border: "border-amber-200/50 dark:border-amber-900/30" },
+  other: { bg: "bg-slate-50 dark:bg-slate-800/40", text: "text-slate-600 dark:text-slate-400", border: "border-slate-200/50 dark:border-slate-700/40" }
 };
 
 interface DocumentFormProps {
@@ -163,6 +163,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
         await db.travelDocuments.update(editing.id, {
           ...form,
           attachmentUrl: finalAttachmentUrl,
+          createdBy: 'owner',
           updatedAt: new Date().toISOString()
         });
         onShowToast?.("Đã cập nhật giấy tờ");
@@ -171,6 +172,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           ...form,
           tripId,
           attachmentUrl: finalAttachmentUrl,
+          createdBy: 'owner',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         });
@@ -192,7 +194,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
       type="button"
       onClick={save}
       disabled={isSaveDisabled}
-      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark text-white hover:bg-kat-dark bg-opacity-90 px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
+      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 px-4 text-[13.5px] font-extrabold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed"
     >
       {isUploading ? <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin text-slate-400" /> : "Lưu"}
     </button>
@@ -284,7 +286,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-kat-dark">Ảnh đính kèm (Vé/CCCD/...)</label>
                 {(previewUrl || form.attachmentUrl) ? (
-                  <div className="relative w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
+                  <div className="relative w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/40 flex items-center justify-center">
                     <img 
                       src={previewUrl || form.attachmentUrl} 
                       alt="Preview" 
@@ -304,10 +306,11 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer text-slate-500">
+                  <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-200 dark:border-slate-700/50 rounded-xl bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors cursor-pointer text-slate-500 dark:text-slate-400">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <HugeiconsIcon icon={ImageAdd01Icon} className="w-6 h-6 mb-2 text-slate-400" />
                       <p className="text-[13px]"><span className="font-semibold text-kat-primary-usable">Nhấn để tải ảnh lên</span></p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">Chấp nhận PNG, JPG, WEBP</p>
                     </div>
                     <input type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
                   </label>
@@ -362,7 +365,7 @@ function DocumentCard({
   };
 
   return (
-    <article className={`motion-card-enter motion-delay-${Math.min(idx + 1, 5)} flex flex-col justify-between rounded-3xl bg-white p-5 border border-slate-200 transition-all duration-200 hover:shadow-md`}>
+    <article className={`motion-card-enter motion-delay-${Math.min(idx + 1, 5)} flex flex-col justify-between rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-200 dark:border-kat-border transition-all duration-200 hover:shadow-md`}>
       <div>
         {/* Top info row */}
         <div className="flex items-start justify-between gap-4 mb-3">
@@ -376,7 +379,7 @@ function DocumentCard({
             <div className="relative shrink-0" ref={menuRef}>
               <button
                 type="button"
-                className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors focus:outline-none"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsMenuOpen(!isMenuOpen);
@@ -387,7 +390,7 @@ function DocumentCard({
               </button>
 
               {isMenuOpen && (
-                <div className="absolute right-0 top-full mt-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
+                <div className="absolute right-0 top-full mt-1 z-40 w-32 rounded-2xl border border-slate-150 dark:border-slate-700/50 bg-white dark:bg-slate-800 p-1.5 shadow-lg animate-scaleIn text-left">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -395,9 +398,9 @@ function DocumentCard({
                       setIsMenuOpen(false);
                       onEdit();
                     }}
-                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 active:bg-slate-100 dark:active:bg-slate-600 transition-colors"
                   >
-                    <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500" />
+                    <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                     Sửa
                   </button>
                   <button
@@ -407,7 +410,7 @@ function DocumentCard({
                       setIsMenuOpen(false);
                       onDelete();
                     }}
-                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
                   >
                     <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
                     Xóa
@@ -425,15 +428,15 @@ function DocumentCard({
         {doc.code && (
           <div 
             onClick={handleCopy}
-            className="group/code flex items-center justify-between bg-slate-50 hover:bg-slate-100/80 border border-slate-200/50 rounded-xl p-3 mt-2.5 transition-all active:scale-[0.99] cursor-pointer"
+            className="group/code flex items-center justify-between bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100/80 dark:hover:bg-slate-800/70 border border-slate-200/50 dark:border-slate-700/40 rounded-xl p-3 mt-2.5 transition-all active:scale-[0.99] cursor-pointer"
           >
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Mã xác nhận / Code</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Mã xác nhận / Code</p>
               <p className="text-[14px] font-extrabold text-kat-dark truncate mt-0.5">{doc.code}</p>
             </div>
             <button
               type="button"
-              className="ml-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-slate-200/60 text-slate-500 hover:text-kat-dark transition-all shadow-sm shrink-0"
+              className="ml-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-slate-200 transition-all shadow-sm shrink-0"
               title="Sao chép mã"
             >
               {copied ? (
@@ -448,21 +451,21 @@ function DocumentCard({
         {/* Date & Note */}
         {formattedDate && (
           <p className="text-[13px] font-semibold text-slate-500 mt-3.5">
-            Ngày liên quan: <span className="font-extrabold text-slate-700">{formattedDate}</span>
+            Ngày liên quan: <span className="font-extrabold text-slate-700 dark:text-slate-200">{formattedDate}</span>
           </p>
         )}
 
         {doc.note && (
-          <p className="text-[13px] text-slate-500 font-medium whitespace-pre-line bg-slate-50/50 p-3 rounded-xl border border-slate-100 mt-2.5">
+          <p className="text-[13px] text-slate-500 dark:text-slate-400 font-medium whitespace-pre-line bg-slate-50/50 dark:bg-slate-800/30 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50 mt-2.5">
             {doc.note}
           </p>
         )}
 
         {doc.attachmentUrl && (
           <div className="mt-4">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Ảnh đính kèm</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Ảnh đính kèm</p>
             <div 
-              className="relative w-full rounded-xl overflow-hidden border border-slate-200 cursor-pointer group bg-[#F8F9FA] flex justify-center items-center"
+              className="relative w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/50 cursor-pointer group bg-[#F8F9FA] dark:bg-slate-800/40 flex justify-center items-center"
               onClick={(e) => {
                 e.stopPropagation();
                 setPreviewImage(doc.attachmentUrl || null);
@@ -579,20 +582,20 @@ export function TravelDocumentsSection({
         <div className="flex items-center gap-3 min-w-0">
           <button 
             onClick={onBack} 
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 text-slate-700 active:scale-95 transition-all shrink-0 motion-press"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 active:scale-95 transition-all shrink-0 motion-press"
             title="Quay lại"
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
           </button>
           <div className="min-w-0">
-            <h2 className="text-[28px] font-extrabold text-kat-dark leading-tight">Giấy tờ & đặt chỗ</h2>
-            <p className="text-[14px] font-medium text-slate-500 mt-0.5">Lưu vé, mã đặt chỗ và thông tin quan trọng để tra cứu nhanh khi cần.</p>
+            <h2 className="text-[28px] font-extrabold text-kat-dark dark:text-slate-200 leading-tight">Giấy tờ & đặt chỗ</h2>
+            <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">Lưu vé, mã đặt chỗ và thông tin quan trọng để tra cứu nhanh khi cần.</p>
           </div>
         </div>
         {!isReadOnly && (
           <button
             onClick={openNewForm}
-            className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark text-white px-5 text-[13.5px] font-bold hover:bg-kat-dark bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center"
+            className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-5 text-[13.5px] font-bold hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center border border-transparent dark:border-kat-primary"
           >
             <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
             <span>Thêm giấy tờ</span>
@@ -607,8 +610,8 @@ export function TravelDocumentsSection({
             onClick={() => setSelectedTypeFilter("all")}
             className={`px-4 py-2 rounded-full text-[13px] font-extrabold border transition-all motion-press ${
               selectedTypeFilter === "all"
-                ? "bg-kat-dark border-kat-dark text-white"
-                : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                ? "bg-kat-dark border-kat-dark text-white dark:bg-kat-primary dark:border-kat-primary dark:text-slate-950"
+                : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/80"
             }`}
           >
             Tất cả ({documents.length})
@@ -622,8 +625,8 @@ export function TravelDocumentsSection({
                 onClick={() => setSelectedTypeFilter(opt.value)}
                 className={`px-4 py-2 rounded-full text-[13px] font-extrabold border transition-all motion-press ${
                   selectedTypeFilter === opt.value
-                    ? "bg-kat-dark border-kat-dark text-white"
-                    : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                    ? "bg-kat-dark border-kat-dark text-white dark:bg-kat-primary dark:border-kat-primary dark:text-slate-950"
+                    : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/80"
                 }`}
               >
                 {opt.label} ({count})
@@ -635,14 +638,14 @@ export function TravelDocumentsSection({
 
       {/* Documents List */}
       {filteredDocs.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[28px] bg-white border border-slate-200 p-12 text-center shadow-soft max-w-md mx-auto">
+          <div className="flex flex-col items-center justify-center rounded-[28px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border p-12 text-center shadow-soft max-w-md mx-auto">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary">
             <HugeiconsIcon icon={File01Icon} className="h-8 w-8" />
           </div>
           <h4 className="text-[16px] font-extrabold text-kat-dark mb-1">
             {selectedTypeFilter === "all" ? "Chưa có giấy tờ nào" : "Không tìm thấy mục lưu trữ"}
           </h4>
-          <p className="text-[13.5px] font-semibold text-slate-400 mb-0 max-w-[280px]">
+          <p className="text-[13.5px] font-semibold text-slate-400 dark:text-slate-450 mb-0 max-w-[280px]">
             {selectedTypeFilter === "all" 
               ? "Lưu vé, mã đặt chỗ, liên hệ quan trọng hoặc link bản đồ để tra cứu nhanh khi cần."
               : "Chọn bộ lọc khác hoặc thêm mới giấy tờ & đặt chỗ thuộc nhóm này."}

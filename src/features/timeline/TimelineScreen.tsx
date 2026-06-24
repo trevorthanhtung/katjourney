@@ -31,19 +31,19 @@ import { classNames, formatDate, formatMoney, getTripTiming, formatDateShort, da
 import { BottomSheet, FormActions, Input, Textarea, Select, TimePicker, DeleteConfirmModal } from "../../components/ui";
 import { BackupPlansSheet } from "./BackupPlansSheet";
 import { TimelineCalendarView } from "./TimelineCalendarView";
-import { getEmbedMapUrl, ensureAbsoluteUrl } from "../../utils/mapUtils";
+import { getEmbedMapUrl, ensureAbsoluteUrl, getMapFilterClass } from "../../utils/mapUtils";
 import { WeatherWidget } from "./WeatherWidget";
 import { useModalHistory } from "../../hooks/useModalHistory";
 
 // Define categories for PWA Travel 2027
 const ACTIVITY_CATEGORIES = [
-  { id: "transport", label: "Di chuyển", icon: Route01Icon, bgColor: "bg-blue-50 text-blue-600 border-blue-100", activeBg: "bg-blue-100 border-blue-400 text-blue-700" },
-  { id: "dining", label: "Ăn uống", icon: Dish01Icon, bgColor: "bg-rose-50 text-rose-600 border-rose-100", activeBg: "bg-rose-100 border-rose-400 text-rose-700" },
-  { id: "sightseeing", label: "Tham quan", icon: Camera01Icon, bgColor: "bg-amber-50 text-amber-600 border-amber-100", activeBg: "bg-amber-100 border-amber-400 text-amber-700" },
-  { id: "accommodation", label: "Lưu trú", icon: HotelIcon, bgColor: "bg-slate-100 text-kat-dark border-slate-200", activeBg: "bg-kat-dark/10 border-kat-dark text-kat-dark" },
-  { id: "relaxation", label: "Nghỉ ngơi", icon: Coffee01Icon, bgColor: "bg-emerald-50 text-emerald-600 border-emerald-100", activeBg: "bg-emerald-100 border-emerald-400 text-emerald-700" },
-  { id: "shopping", label: "Mua sắm", icon: ShoppingBag01Icon, bgColor: "bg-purple-50 text-purple-600 border-purple-100", activeBg: "bg-purple-100 border-purple-400 text-purple-700" },
-  { id: "other", label: "Khác", icon: MoreHorizontalCircle01Icon, bgColor: "bg-slate-50 text-slate-600 border-slate-100", activeBg: "bg-slate-100 border-slate-400 text-slate-700" }
+  { id: "transport", label: "Di chuyển", icon: Route01Icon, bgColor: "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/30", activeBg: "bg-blue-100 dark:bg-blue-950/40 border-blue-400 dark:border-blue-500 text-blue-700 dark:text-blue-300" },
+  { id: "dining", label: "Ăn uống", icon: Dish01Icon, bgColor: "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30", activeBg: "bg-rose-100 dark:bg-rose-950/40 border-rose-400 dark:border-rose-500 text-rose-700 dark:text-rose-300" },
+  { id: "sightseeing", label: "Tham quan", icon: Camera01Icon, bgColor: "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/30", activeBg: "bg-amber-100 dark:bg-amber-950/40 border-amber-400 dark:border-amber-500 text-amber-700 dark:text-amber-300" },
+  { id: "accommodation", label: "Lưu trú", icon: HotelIcon, bgColor: "bg-slate-100 dark:bg-slate-800 text-kat-dark dark:text-slate-200 border-slate-200 dark:border-slate-700/50", activeBg: "bg-kat-dark/10 dark:bg-slate-800 border-kat-dark dark:border-slate-650 text-kat-dark dark:text-slate-200" },
+  { id: "relaxation", label: "Nghỉ ngơi", icon: Coffee01Icon, bgColor: "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30", activeBg: "bg-emerald-100 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-500 text-emerald-700 dark:text-emerald-300" },
+  { id: "shopping", label: "Mua sắm", icon: ShoppingBag01Icon, bgColor: "bg-purple-50 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400 border-purple-100 dark:border-purple-900/30", activeBg: "bg-purple-100 dark:bg-purple-950/40 border-purple-400 dark:border-purple-500 text-purple-700 dark:text-emerald-300" },
+  { id: "other", label: "Khác", icon: MoreHorizontalCircle01Icon, bgColor: "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-100 dark:border-slate-700/40", activeBg: "bg-slate-100 dark:bg-slate-800 border-slate-400 dark:border-slate-600 text-slate-700 dark:text-slate-350" }
 ];
 
 function getCategory(id?: string) {
@@ -86,14 +86,14 @@ const ActivityCard = React.memo(function ActivityCard({
   return (
     <article className={`group relative flex gap-4 pl-1 mb-6 last:mb-2 motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}>
       {/* Timeline connector line */}
-      <div className="absolute bottom-0 left-[21px] top-11 w-0.5 bg-slate-200/80 group-last:bg-transparent" />
+      <div className="absolute bottom-0 left-[21px] top-11 w-0.5 bg-slate-200/80 dark:bg-slate-800 group-last:bg-transparent" />
       
       {/* Activity type icon serving as timeline marker (min 44x44px target) */}
       <div className="relative z-10 flex shrink-0">
         <button
           onClick={toggleComplete}
           className={classNames(
-            "flex h-11 w-11 items-center justify-center rounded-full shadow-sm ring-4 ring-[#F8FAFC] transition-all duration-200 motion-press",
+            "flex h-11 w-11 items-center justify-center rounded-full shadow-sm ring-4 ring-[#F8FAFC] dark:ring-[#0A1124] transition-all duration-200 motion-press",
             item.completed 
               ? "bg-emerald-500 text-white hover:bg-emerald-600" 
               : `${category.bgColor} border hover:scale-105`
@@ -111,19 +111,19 @@ const ActivityCard = React.memo(function ActivityCard({
       {/* Card Body */}
       <div 
         onClick={onEdit}
-        className="min-w-0 flex-1 rounded-2xl bg-white p-4 shadow-sm border border-slate-100 hover:shadow-md hover:border-slate-200 cursor-pointer transition-all duration-200 motion-press"
+        className="min-w-0 flex-1 rounded-2xl bg-white dark:bg-kat-surface p-4 shadow-sm border border-slate-100 dark:border-kat-border hover:shadow-md hover:border-slate-200 dark:hover:border-kat-border cursor-pointer transition-all duration-200 motion-press"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             {/* Header: Time and Category Badge */}
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
               {item.time ? (
-                <span className="flex items-center gap-1 text-[13px] font-bold text-sunset-600 bg-sunset-50 px-2.5 py-0.5 rounded-full border border-sunset-100">
+                <span className="flex items-center gap-1 text-[13px] font-bold text-sunset-600 dark:text-sunset-400 bg-sunset-50 dark:bg-sunset-950/20 px-2.5 py-0.5 rounded-full border border-sunset-100 dark:border-sunset-900/30">
                   <HugeiconsIcon icon={Clock01Icon} className="h-3 w-3 shrink-0" />
                   {item.time}
                 </span>
               ) : (
-                <span className="text-[12px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100/60">
+                <span className="text-[12px] font-bold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/40 px-2 py-0.5 rounded-full border border-slate-100/60 dark:border-slate-700/40">
                   Chưa đặt giờ
                 </span>
               )}
@@ -151,7 +151,7 @@ const ActivityCard = React.memo(function ActivityCard({
 
             {/* Notes */}
             {item.notes && (
-              <p className="mt-2.5 whitespace-pre-wrap text-[13.5px] leading-relaxed text-slate-600 bg-slate-50/70 p-3 rounded-xl border border-slate-100 font-medium">
+              <p className="mt-2.5 whitespace-pre-wrap text-[13.5px] leading-relaxed text-slate-600 dark:text-slate-300 bg-slate-50/70 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-100 dark:border-kat-border/40 font-medium">
                 {item.notes}
               </p>
             )}
@@ -168,7 +168,7 @@ const ActivityCard = React.memo(function ActivityCard({
                       title="Google Maps Embed"
                       width="100%"
                       height="160"
-                      className="border-0 relative z-10"
+                      className={`border-0 relative z-10 ${getMapFilterClass(item.time)}`}
                       loading="lazy"
                       allowFullScreen
                       src={getEmbedMapUrl(item.mapLink || item.location || "", item.location)}
@@ -179,7 +179,7 @@ const ActivityCard = React.memo(function ActivityCard({
                   const isRoute = item.mapLink && (item.mapLink.includes("/maps/dir/") || item.mapLink.includes("maps/dir"));
                   return (
                     <a 
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[13px] font-bold text-emerald-600 border border-emerald-100 hover:bg-emerald-100 transition-colors" 
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-[13px] font-bold text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors" 
                       href={ensureAbsoluteUrl(item.mapLink) || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
                       target="_blank" 
                       rel="noreferrer"
@@ -200,8 +200,8 @@ const ActivityCard = React.memo(function ActivityCard({
                 className={classNames(
                   "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] font-bold border transition-colors motion-press",
                   backupCount && backupCount > 0 
-                    ? "bg-indigo-50 text-indigo-600 border-indigo-200 hover:bg-indigo-100"
-                    : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-700"
+                    ? "bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
+                    : "bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-kat-border/40 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
                 )}
               >
                 <HugeiconsIcon icon={GitBranchIcon} className="w-3.5 h-3.5" />
@@ -211,17 +211,17 @@ const ActivityCard = React.memo(function ActivityCard({
 
             {/* Expenses Linked */}
             {(linkedExpenses && linkedExpenses.length > 0 || onAddExpense) && (
-              <div className="mt-4 border-t border-slate-100 pt-3 flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
+              <div className="mt-4 border-t border-slate-100 dark:border-kat-border/40 pt-3 flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
                 {linkedExpenses?.map(exp => (
-                  <div key={exp.id} className="flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 text-rose-700 text-[12px] rounded-lg border border-rose-200 shadow-sm">
+                  <div key={exp.id} className="flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 text-[12px] rounded-lg border border-rose-200 dark:border-rose-900/30 shadow-sm">
                     <span className="font-extrabold">{new Intl.NumberFormat('vi-VN').format(exp.amount)}đ</span>
-                    <span className="text-rose-600 truncate max-w-[120px] font-medium">- {exp.description || exp.category}</span>
+                    <span className="text-rose-600 dark:text-rose-400/80 truncate max-w-[120px] font-medium">- {exp.description || exp.category}</span>
                   </div>
                 ))}
                 {onAddExpense && (
                   <button
                     onClick={(e) => { e.stopPropagation(); onAddExpense(); }}
-                    className="flex items-center gap-1 px-2 py-1.5 rounded-lg border border-dashed border-slate-300 text-slate-500 hover:text-slate-700 hover:bg-slate-50 text-[12px] font-bold transition-colors"
+                    className="flex items-center gap-1 px-2 py-1.5 rounded-lg border border-dashed border-slate-300 dark:border-slate-700/60 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-[12px] font-bold transition-colors"
                   >
                     <HugeiconsIcon icon={Add01Icon} className="w-3.5 h-3.5" />
                     Thêm chi phí
@@ -252,39 +252,39 @@ function DayHeader({
   return (
     <div 
       id={`day-section-${day}`} 
-      className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+      className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 dark:bg-slate-900/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40 dark:border-slate-800/60"
     >
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-dark text-white font-black text-[14px] shadow-sm">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-dark dark:bg-slate-800 text-white dark:text-slate-200 font-black text-[14px] shadow-sm shrink-0">
           {index + 1}
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <h4 className="text-[16px] font-extrabold text-kat-dark">Ngày {index + 1}</h4>
+            <h4 className="text-[16px] font-extrabold text-kat-dark dark:text-slate-200">Ngày {index + 1}</h4>
             {mapUrl && (
               <a
                 href={mapUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100/50 text-[11px] font-extrabold tracking-wide transition-all active:scale-95 shadow-sm"
+                className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/30 text-[11px] font-extrabold tracking-wide transition-all active:scale-95 shadow-sm"
                 title="Mở bản đồ lộ trình"
               >
-                <HugeiconsIcon icon={Location01Icon} className="w-3 h-3 text-emerald-600" />
+                <HugeiconsIcon icon={Location01Icon} className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                 <span>Bản đồ</span>
               </a>
             )}
           </div>
-          <p className="text-[13px] font-semibold text-slate-500">{formatDate(day)}</p>
+          <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">{formatDate(day)}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
         {totalExpense > 0 && (
-          <span className="text-[12.5px] font-bold text-slate-600 bg-white border border-slate-200 px-2.5 py-1 rounded-lg shadow-sm">
+          <span className="text-[12.5px] font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border px-2.5 py-1 rounded-lg shadow-sm">
             Đã chi: {new Intl.NumberFormat('vi-VN').format(totalExpense)}đ
           </span>
         )}
         {isToday && (
-          <span className="rounded-full bg-sunset-100 px-3 py-1 text-[10.5px] font-black uppercase tracking-widest text-sunset-700 shadow-inner">
+          <span className="rounded-full bg-sunset-100 dark:bg-sunset-950/20 px-3 py-1 text-[10.5px] font-black uppercase tracking-widest text-sunset-700 dark:text-sunset-400 border border-transparent dark:border-sunset-900/30 shadow-inner">
             Hôm nay
           </span>
         )}
@@ -397,7 +397,7 @@ function EventForm({
               type="button"
               onClick={onDelete}
               title="Xóa hoạt động này"
-              className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 transition-colors hover:bg-rose-100 active:scale-[0.96] motion-press"
+              className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30 transition-all hover:bg-rose-100/50 dark:hover:bg-rose-900/30 active:scale-[0.96] motion-press"
             >
               <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5" />
             </button>
@@ -406,7 +406,7 @@ function EventForm({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-[52px] shrink-0 items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.96] transition-all motion-press"
+            className="flex h-[52px] shrink-0 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.96] transition-all border border-transparent dark:border-slate-700 motion-press"
           >
             Hủy
           </button>
@@ -415,7 +415,7 @@ function EventForm({
             type="button"
             onClick={save}
             disabled={!form.title.trim()}
-            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark text-white px-6 font-black shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed motion-press"
+            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
           >
             <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" />
             {editing ? "Lưu thay đổi" : "Thêm hoạt động"}
@@ -453,7 +453,7 @@ function EventForm({
                   "flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border transition-all text-center h-[64px] motion-press",
                   isSelected 
                     ? cat.activeBg 
-                    : "border-slate-200 hover:bg-slate-50 text-slate-500"
+                    : "border-slate-200 dark:border-kat-border/40 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-slate-500 dark:text-slate-400"
                 )}
               >
                 <HugeiconsIcon icon={Icon} className="h-5 w-5" />
@@ -722,18 +722,18 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 className="scroll-mt-[180px] relative flex items-center justify-between h-[48px] pl-1 py-1 group"
               >
                 {/* Vertical line through marker */}
-                <div className="absolute bottom-0 left-[21px] top-0 w-0.5 bg-slate-200/80 group-last:bg-transparent" />
+                <div className="absolute bottom-0 left-[21px] top-0 w-0.5 bg-slate-200/80 dark:bg-slate-800 group-last:bg-transparent" />
                 
                 <div className="flex items-center gap-3.5 relative z-10">
                   {/* Circle marker */}
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 font-extrabold border border-slate-200 text-[12px]">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-extrabold border border-slate-200 dark:border-slate-700/50 text-[12px]">
                     {index + 1}
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-extrabold text-kat-dark">Ngày {index + 1}</span>
                     <span className="text-xs font-semibold text-slate-400">({formatDateShort(day)})</span>
                     {isToday && (
-                      <span className="rounded-full bg-sunset-50 px-2 py-0.5 text-[9.5px] font-black uppercase tracking-widest text-sunset-600 border border-sunset-100">
+                      <span className="rounded-full bg-sunset-50 dark:bg-sunset-950/20 px-2 py-0.5 text-[9.5px] font-black uppercase tracking-widest text-sunset-600 dark:text-sunset-400 border border-sunset-100 dark:border-sunset-900/30">
                         Hôm nay
                       </span>
                     )}
@@ -790,15 +790,15 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           <div key="undated" className="space-y-4">
             <div 
               id="day-section-undated"
-              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 dark:bg-slate-900/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40 dark:border-slate-800/60"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-400 text-white font-black text-[14px] shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-400 dark:bg-slate-800 text-white dark:text-slate-400 font-black text-[14px] shadow-sm shrink-0">
                   ?
                 </div>
                 <div>
-                  <h4 className="text-[16px] font-extrabold text-kat-dark">Chưa phân ngày</h4>
-                  <p className="text-[13px] font-semibold text-slate-500">Các hoạt động chưa xếp ngày cụ thể</p>
+                  <h4 className="text-[16px] font-extrabold text-kat-dark dark:text-slate-200">Chưa phân ngày</h4>
+                  <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">Các hoạt động chưa xếp ngày cụ thể</p>
                 </div>
               </div>
             </div>
@@ -823,20 +823,20 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           <div key="backup" className="space-y-4">
             <div 
               id="day-section-backup"
-              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40"
+              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 dark:bg-slate-900/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40 dark:border-slate-800/60"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 font-black text-[14px] shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black text-[14px] shadow-sm shrink-0">
                   <HugeiconsIcon icon={GitBranchIcon} className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-[16px] font-extrabold text-kat-dark">Dự phòng chung</h4>
-                  <p className="text-[13px] font-semibold text-slate-500">Các phương án áp dụng cho toàn bộ chuyến đi</p>
+                  <h4 className="text-[16px] font-extrabold text-kat-dark dark:text-slate-200">Dự phòng chung</h4>
+                  <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">Các phương án áp dụng cho toàn bộ chuyến đi</p>
                 </div>
               </div>
               <button
                 onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
-                className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold text-[13px] hover:bg-slate-50 motion-press"
+                className="px-3 py-1.5 rounded-xl bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border text-slate-600 dark:text-slate-350 font-bold text-[13px] hover:bg-slate-50 dark:hover:bg-kat-surface/80 motion-press"
               >
                 Xem chi tiết
               </button>
@@ -866,18 +866,20 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h2 className="text-[32px] font-black tracking-tight text-kat-dark">Lịch trình</h2>
-          <p className="mt-1 text-[15px] font-bold text-slate-500">
+          <p className="mt-1 text-[15px] font-bold text-slate-500 dark:text-slate-400">
             Sắp xếp từng điểm dừng để hành trình rõ ràng và trọn vẹn hơn.
           </p>
         </div>
         
         <div className="flex items-center justify-center w-full sm:w-auto gap-3">
-          <div className="flex bg-[#E2E8F0]/40 p-1 rounded-xl">
+          <div className="flex bg-[#E2E8F0]/40 dark:bg-slate-800/40 p-1 rounded-xl">
             <button 
               onClick={() => setViewMode("list")}
               className={classNames(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press",
-                viewMode === "list" ? "bg-white text-kat-dark shadow-sm" : "text-slate-500 hover:text-kat-dark"
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press border",
+                viewMode === "list" 
+                  ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-kat-text shadow-sm border-slate-200/10 dark:border-slate-700/55" 
+                  : "text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-kat-text border-transparent"
               )}
             >
               Danh sách
@@ -885,8 +887,10 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
             <button 
               onClick={() => setViewMode("calendar")}
               className={classNames(
-                "flex items-center justify-center w-9 h-8 rounded-lg transition-all motion-press",
-                viewMode === "calendar" ? "bg-white text-kat-dark shadow-sm" : "text-slate-500 hover:text-kat-dark"
+                "flex items-center justify-center w-9 h-8 rounded-lg transition-all motion-press border",
+                viewMode === "calendar" 
+                  ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-kat-text shadow-sm border-slate-200/10 dark:border-slate-700/55" 
+                  : "text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-kat-text border-transparent"
               )}
               aria-label="Xem dạng lịch"
             >
@@ -897,7 +901,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           {!isReadOnly && (
             <button 
               onClick={() => openNewForm()}
-              className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-kat-dark text-white px-4 py-2 text-[13.5px] font-extrabold shadow-[0_4px_14px_rgba(3,13,46,0.18)] hover:bg-kat-dark bg-opacity-90 active:scale-95 transition-all h-10 motion-press"
+              className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-4 py-2 text-[13.5px] font-extrabold shadow-[0_4px_14px_rgba(3,13,46,0.18)] dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all h-10 border border-transparent dark:border-kat-primary motion-press"
             >
               <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
               Thêm lịch trình
@@ -931,14 +935,14 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               <div className="px-1 relative flex gap-4 pl-1">
                 {/* Circle marker */}
                 <div className="relative z-10 flex shrink-0">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-400 font-extrabold border border-slate-200/50">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 font-extrabold border border-slate-200/50 dark:border-slate-700/50">
                     1
                   </div>
                 </div>
                 
                 {/* Compact Card */}
-                <div className="min-w-0 flex-1 rounded-[24px] bg-kat-surface p-6 border border-kat-border/60 shadow-soft animate-fadeIn flex flex-col items-center text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5">
+                <div className="min-w-0 flex-1 rounded-[24px] bg-kat-surface p-6 border border-slate-200 dark:border-kat-border shadow-soft animate-fadeIn flex flex-col items-center text-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary-soft text-kat-primary mb-4 ring-4 ring-[#00BFB7]/10">
                     <HugeiconsIcon icon={Location01Icon} className="h-6 w-6" />
                   </div>
                   <h4 className="text-[15px] font-bold text-kat-text">Chưa có hoạt động nào</h4>
@@ -978,9 +982,9 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         {/* Right Column: Dynamic smart widgets */}
         <div className="space-y-6">
           {/* Mini Trip Context Card */}
-          <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4">
+          <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 shadow-sm border border-slate-100 dark:border-kat-border space-y-4">
             <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary-soft text-kat-primary">
                 <HugeiconsIcon icon={Route01Icon} className="h-4 w-4" />
               </span>
               <h4 className="text-[15px] font-extrabold text-kat-dark">Thông tin hành trình</h4>
@@ -1017,9 +1021,9 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
 
           {/* Roadmap Widget */}
           {days.length > 0 && (
-            <div className="rounded-3xl bg-white p-5 shadow-sm border border-slate-100 space-y-4 min-w-0 overflow-hidden">
+            <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 shadow-sm border border-slate-100 dark:border-kat-border space-y-4 min-w-0 overflow-hidden">
               <div className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400">
                   <HugeiconsIcon icon={Route01Icon} className="h-4 w-4" />
                 </span>
                 <h4 className="text-[15px] font-extrabold text-kat-dark">Lộ trình di chuyển</h4>
@@ -1031,22 +1035,22 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   <button
                     type="button"
                     onClick={() => setIsRoadmapDayPickerOpen(true)}
-                    className="w-full relative overflow-hidden group flex items-center justify-between p-3 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50/50 border border-emerald-100/60 transition-all hover:border-emerald-200 hover:shadow-sm active:scale-[0.98]"
+                    className="w-full relative overflow-hidden group flex items-center justify-between p-3 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50/50 dark:from-emerald-950/20 dark:to-teal-950/10 border border-emerald-100/60 dark:border-emerald-900/30 transition-all hover:border-emerald-200 hover:shadow-sm active:scale-[0.98]"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-[14px] bg-white shadow-sm flex items-center justify-center text-emerald-600">
+                      <div className="w-10 h-10 rounded-[14px] bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                         <HugeiconsIcon icon={Calendar01Icon} className="w-5 h-5" />
                       </div>
                       <div className="text-left">
-                        <div className="text-[10.5px] font-bold text-emerald-600/70 uppercase tracking-wide mb-0.5">
+                        <div className="text-[10.5px] font-bold text-emerald-600/70 dark:text-emerald-400/80 uppercase tracking-wide mb-0.5">
                           Ngày đang xem
                         </div>
-                        <div className="text-[14.5px] font-extrabold text-kat-dark">
+                        <div className="text-[14.5px] font-extrabold text-kat-dark dark:text-slate-100">
                           {selectedRoadmapDay ? `Ngày ${days.indexOf(selectedRoadmapDay) + 1} (${formatDateShort(selectedRoadmapDay)})` : "Chọn ngày"}
                         </div>
                       </div>
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm transition-transform group-hover:scale-105">
+                    <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-sm transition-transform group-hover:scale-105">
                       <HugeiconsIcon icon={ChevronDownIcon} className="w-4 h-4" />
                     </div>
                   </button>
@@ -1068,7 +1072,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 const isRoute = mapUrl && (mapUrl.includes("/maps/dir/") || mapUrl.includes("maps/dir"));
 
                 return (
-                  <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-3.5 space-y-3">
+                  <div className="bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 rounded-2xl p-3.5 space-y-3">
                     <div className="flex items-center justify-between text-[12px] font-semibold text-slate-400">
                       <span>Ngày {dayIndex + 1} ({dateLabel})</span>
                       {!isReadOnly && (
@@ -1089,10 +1093,10 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
 
                     {mapUrl ? (
                       <div className="space-y-2.5">
-                        <p className="text-[13px] font-medium text-slate-600 flex items-center gap-1.5 flex-wrap">
+                        <p className="text-[13px] font-medium text-slate-600 dark:text-slate-350 flex items-center gap-1.5 flex-wrap">
                           {isRoute ? "Đã có link lộ trình cho ngày này." : "Đã liên kết bản đồ cho ngày này."}
                           {isAuto && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-sky-50 border border-sky-100 text-[10.5px] font-bold text-sky-500">
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-sky-50 dark:bg-sky-950/30 border border-sky-100 dark:border-sky-900/30 text-[10.5px] font-bold text-sky-500 dark:text-sky-400">
                               Từ lịch trình
                             </span>
                           )}
@@ -1118,7 +1122,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                               setRoadmapEditDay(selectedRoadmapDay);
                               setIsRoadmapFormOpen(true);
                             }}
-                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-[12px] font-bold text-slate-600 shadow-sm transition-all cursor-pointer"
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border hover:bg-slate-50 dark:hover:bg-kat-surface/80 text-[12px] font-bold text-slate-600 dark:text-slate-350 shadow-sm transition-all cursor-pointer"
                           >
                             <HugeiconsIcon icon={Add01Icon} className="w-3.5 h-3.5" />
                             Gắn link lộ trình
@@ -1182,7 +1186,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
             <HugeiconsIcon icon={Route01Icon} className="h-5 w-5 text-kat-teal shrink-0 mt-0.5" />
             <div>
               <p className="text-[13px] font-bold text-kat-dark">Dán link lộ trình Google Maps</p>
-              <p className="text-[12px] text-slate-500 font-medium mt-0.5 leading-relaxed">
+              <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium mt-0.5 leading-relaxed">
                 Vào Google Maps → chọn điểm đầu/cuối → nhấn <strong>Đường đi</strong> → sao chép link trên thanh địa chỉ.
               </p>
             </div>
@@ -1198,7 +1202,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               value={roadmapInputLink}
               onChange={e => setRoadmapInputLink(e.target.value)}
               placeholder="https://www.google.com/maps/dir/..."
-              className="w-full pl-11 pr-4 py-4 bg-white border-2 border-slate-200 rounded-2xl text-[14px] font-semibold text-kat-dark placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 transition-all duration-200"
+              className="w-full pl-11 pr-4 py-4 bg-white dark:bg-kat-surface border-2 border-slate-200 dark:border-kat-border rounded-2xl text-[14px] font-semibold text-kat-dark dark:text-kat-text placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 transition-all duration-200"
             />
           </div>
 
@@ -1208,7 +1212,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               href={ensureAbsoluteUrl(roadmapInputLink)}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-[13.5px] font-bold text-emerald-700 hover:bg-emerald-100 transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 text-[13.5px] font-bold text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-colors"
             >
               <HugeiconsIcon icon={MapsIcon} className="w-4 h-4" />
               Mở link kiểm tra &rarr;
@@ -1243,32 +1247,32 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 className={classNames(
                   "w-full flex items-center justify-between p-4 rounded-[16px] transition-all duration-200 active:scale-[0.98]",
                   isSelected 
-                    ? "bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 shadow-sm" 
-                    : "bg-white hover:bg-slate-50 border border-slate-100 hover:border-slate-200"
+                    ? "bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-100 dark:border-emerald-800/40 shadow-sm" 
+                    : "bg-white hover:bg-slate-50 dark:bg-kat-surface hover:dark:bg-slate-800/40 border border-slate-100 hover:border-slate-200 dark:border-kat-border/40 hover:dark:border-kat-border/70"
                 )}
               >
                 <div className="flex items-center gap-3.5">
                   <div className={classNames(
                     "w-9 h-9 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors",
-                    isSelected ? "bg-emerald-600 text-white shadow-sm" : "bg-slate-100 text-slate-500"
+                    isSelected ? "bg-emerald-600 text-white shadow-sm" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
                   )}>
                     {idx + 1}
                   </div>
                   <div className="text-left">
                     <div className={classNames(
                       "text-[15px] font-extrabold",
-                      isSelected ? "text-emerald-900" : "text-kat-dark"
+                      isSelected ? "text-emerald-900 dark:text-emerald-300" : "text-kat-dark"
                     )}>
                       Ngày {idx + 1}
                     </div>
-                    <div className="text-[12.5px] font-medium text-slate-500 mt-0.5">
+                    <div className="text-[12.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
                       {formatDate(day)}
                     </div>
                   </div>
                 </div>
                 {isSelected && (
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
-                    <HugeiconsIcon icon={CheckIcon} className="w-3.5 h-3.5 text-emerald-700" />
+                  <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center">
+                    <HugeiconsIcon icon={CheckIcon} className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                   </div>
                 )}
               </button>

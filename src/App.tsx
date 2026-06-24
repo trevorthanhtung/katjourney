@@ -65,6 +65,7 @@ import { signOutUser } from "./services/authService";
 import { updateShareLink } from "./services/cloudShareService";
 import { useNetworkStatus } from "./hooks/useNetworkStatus";
 import { useScrollBarVisibility } from "./hooks/useScrollBarVisibility";
+import { useTheme } from "./hooks/useTheme";
 
 const NavButton = React.forwardRef<
   HTMLButtonElement,
@@ -102,6 +103,7 @@ const NavButton = React.forwardRef<
 NavButton.displayName = "NavButton";
 
 function App() {
+  useTheme();
   const isOnline = useNetworkStatus();
   const [showSplash, setShowSplash] = useState(true);
   const [isSplashFading, setIsSplashFading] = useState(false);
@@ -614,55 +616,55 @@ function App() {
   function renderReminderItems() {
     if (reminders.length === 0) {
       return (
-        <div className="flex flex-col items-center justify-center py-8 px-5 text-center bg-white">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 mb-2.5 border border-emerald-100">
+        <div className="flex flex-col items-center justify-center py-8 px-5 text-center bg-white dark:bg-slate-900">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 mb-2.5 border border-emerald-100 dark:border-emerald-900/30">
             <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" strokeWidth={3} />
           </div>
           <p className="text-[14px] font-bold text-kat-dark">Tuyệt vời! Không có nhắc nhở</p>
-          <p className="text-[12px] text-slate-500 font-semibold mt-0.5">Hành trình của bạn đã sẵn sàng.</p>
+          <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5">Hành trình của bạn đã sẵn sàng.</p>
         </div>
       );
     }
 
     return reminders.map((rem) => {
       let icon = Notification01Icon;
-      let colorClasses = "bg-slate-50 text-slate-600 border border-slate-100/50";
+      let colorClasses = "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-100/50 dark:border-slate-700/50";
       
       switch (rem.tab) {
         case "timeline":
           icon = Calendar01Icon;
-          colorClasses = "bg-blue-50 text-blue-600 border border-blue-100/50";
+          colorClasses = "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/30";
           break;
         case "checklist":
           icon = CheckListIcon;
-          colorClasses = "bg-amber-50 text-amber-600 border border-amber-100/50";
+          colorClasses = "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/30";
           break;
         case "expenses":
           icon = WalletCardsIcon;
-          colorClasses = "bg-emerald-50 text-emerald-600 border border-emerald-100/50";
+          colorClasses = "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/30";
           break;
         case "documents":
           icon = File01Icon;
-          colorClasses = "bg-rose-50 text-rose-600 border border-rose-100/50";
+          colorClasses = "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/30";
           break;
         case "journal":
           icon = Globe02Icon;
-          colorClasses = "bg-violet-50 text-violet-600 border border-violet-100/50";
+          colorClasses = "bg-violet-50 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400 border border-violet-100/50 dark:border-violet-900/30";
           break;
         case "wrapped":
           icon = SparklesIcon;
-          colorClasses = "bg-sky-50 text-sky-600 border border-sky-100/50";
+          colorClasses = "bg-sky-50 dark:bg-sky-950/20 text-sky-600 dark:text-sky-400 border border-sky-100/50 dark:border-sky-900/30";
           break;
         case "share_requests" as any:
           icon = NotificationBubbleIcon;
-          colorClasses = "bg-rose-50 text-rose-600 border border-rose-100/50";
+          colorClasses = "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/30";
           break;
       }
 
       return (
         <button
           key={rem.id}
-          className="flex w-full items-center gap-3.5 bg-white p-4 text-left hover:bg-slate-50 active:bg-slate-100 transition-colors focus:outline-none"
+          className="flex w-full items-center gap-3.5 bg-white dark:bg-slate-900 p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 active:bg-slate-100 dark:active:bg-slate-800 transition-colors focus:outline-none"
           onClick={() => {
             const handleNavigation = (action: () => void) => {
               if (!isDesktop && window.location.hash === "#reminders-modal") {
@@ -701,13 +703,13 @@ function App() {
 
           {/* Message Content */}
           <div className="flex-1 min-w-0">
-            <p className="text-[13.5px] font-semibold text-slate-700 leading-snug break-words">
+            <p className="text-[13.5px] font-semibold text-slate-700 dark:text-slate-300 leading-snug break-words">
               {rem.text}
             </p>
           </div>
 
           {/* Trailing Icon */}
-          <HugeiconsIcon icon={ChevronRightIcon} className="h-4.5 w-4.5 shrink-0 text-slate-400" />
+          <HugeiconsIcon icon={ChevronRightIcon} className="h-4.5 w-4.5 shrink-0 text-slate-400 dark:text-slate-500" />
         </button>
       );
     });
@@ -761,7 +763,8 @@ function App() {
         <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
           <div className="flex items-center gap-3 shrink-0">
             <div className="flex items-center gap-1.5 min-[390px]:gap-2 select-none shrink-0">
-              <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden lg:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
+              <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden lg:block dark:hidden h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
+              <img src="/logo-dark.png" alt="KAT Journey Logo" className="hidden dark:lg:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
               <h1 className="text-[17px] min-[390px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap shrink-0">KAT Journey</h1>
             </div>
             
@@ -770,25 +773,25 @@ function App() {
               <div className="hidden lg:flex ml-6 gap-2 bg-kat-text/5 p-1 rounded-full">
                 <button 
                   onClick={() => setActiveTab("home")}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "home" ? "bg-white text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5")}
+                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "home" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
                 >
                   Tổng quan
                 </button>
                 <button 
                   onClick={() => setActiveTab("timeline")}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "timeline" ? "bg-white text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5")}
+                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "timeline" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
                 >
                   Lịch trình
                 </button>
                 <button 
                   onClick={() => setActiveTab("expenses")}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "expenses" ? "bg-white text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5")}
+                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "expenses" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
                 >
                   Chi phí
                 </button>
                 <button 
                   onClick={() => setActiveTab("checklist")}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "checklist" ? "bg-white text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5")}
+                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "checklist" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
                 >
                   Chuẩn bị
                 </button>
@@ -797,7 +800,7 @@ function App() {
                     setMoreSection("overview");
                     setActiveTab("more");
                   }}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "more" ? "bg-white text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5")}
+                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "more" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
                 >
                   Thêm
                 </button>
@@ -815,7 +818,7 @@ function App() {
 
             <button
               onClick={() => setIsImportModalOpen(true)}
-              className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
+              className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-slate-200 dark:border-kat-border text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
               title="Xem chuyến đi qua link chia sẻ"
               aria-label="Xem chuyến đi qua link chia sẻ"
             >
@@ -829,7 +832,7 @@ function App() {
               <>
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
+                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-slate-200 dark:border-kat-border text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
                   title="Tìm trong chuyến đi"
                   aria-label="Tìm kiếm trong chuyến đi"
                 >
@@ -839,7 +842,7 @@ function App() {
                 <div className="relative" ref={remindersRef}>
                   <button
                     onClick={() => setIsRemindersOpen(!isRemindersOpen)}
-                    className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
+                    className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 dark:border-kat-border text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
                     title="Việc cần chú ý"
                     aria-label="Xem việc cần chú ý"
                   >
@@ -860,15 +863,15 @@ function App() {
                     <>
                       {/* Desktop overlay backdrop to close popover on click outside */}
                       
-                      <div className="absolute right-0 mt-2.5 z-50 w-[360px] rounded-2xl bg-white border border-slate-200/80 shadow-floating overflow-hidden animate-fadeIn">
+                      <div className="absolute right-0 mt-2.5 z-50 w-[360px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-floating overflow-hidden animate-fadeIn">
                         {/* Popover Header */}
-                        <div className="px-5 py-4 border-b border-slate-150/60 bg-white">
+                        <div className="px-5 py-4 border-b border-slate-150/60 dark:border-slate-800/80 bg-white dark:bg-slate-900">
                           <h4 className="text-[14.5px] font-bold text-kat-dark leading-snug">Việc cần chú ý</h4>
-                          <p className="text-[11.5px] text-slate-500 font-semibold mt-0.5 leading-normal">Các nhắc nhở quan trọng</p>
+                          <p className="text-[11.5px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 leading-normal">Các nhắc nhở quan trọng</p>
                         </div>
                         
                         {/* Popover Content */}
-                        <div className="divide-y divide-slate-100 max-h-[400px] overflow-y-auto custom-scrollbar">
+                        <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[400px] overflow-y-auto custom-scrollbar">
                           {renderReminderItems()}
                         </div>
                       </div>
@@ -881,7 +884,7 @@ function App() {
                     setIsManagingTrips(true);
                     setIsViewingArchive(false);
                   }}
-                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 text-slate-500 hover:text-slate-800 hover:bg-slate-50 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
+                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-slate-200 dark:border-kat-border text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
                   title="Quay lại danh sách chuyến đi"
                   aria-label="Quay lại danh sách chuyến đi"
                 >
@@ -892,23 +895,23 @@ function App() {
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full overflow-hidden border border-kat-border/60 hover:ring-2 hover:ring-kat-teal/40 active:scale-[0.97] transition-[transform,box-shadow] duration-150 shadow-sm focus:outline-none shrink-0"
+                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full overflow-hidden bg-kat-surface border border-slate-200 dark:border-kat-border hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-[0.97] transition-[transform,box-shadow,background-color,border-color,color] duration-150 shadow-sm focus:outline-none shrink-0"
                   title="Menu tài khoản"
                   aria-label="Menu tài khoản"
                 >
                   {isAuthenticated && user && provider === "google" ? (
-                    user.photoURL ? (
-                      <img src={user.photoURL} alt="Avatar" className="h-full w-full object-cover" />
-                    ) : ( 
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[11px] min-[390px]:text-[13px]">
-                        {user.displayName ? user.displayName.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() : "G"}
-                      </div>
-                    )
+                     user.photoURL ? (
+                       <img src={user.photoURL} alt="Avatar" className="h-full w-full object-cover" />
+                     ) : ( 
+                       <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[11px] min-[390px]:text-[13px]">
+                         {user.displayName ? user.displayName.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() : "G"}
+                       </div>
+                     )
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-500">
+                    <div className="flex h-full w-full items-center justify-center bg-transparent text-slate-500 dark:text-slate-400">
                       <HugeiconsIcon 
                         icon={UserIcon} 
-                        className="h-4 w-4 min-[390px]:h-[18px] min-[390px]:w-[18px] text-slate-500" 
+                        className="h-4 w-4 min-[390px]:h-[18px] min-[390px]:w-[18px]" 
                       />
                     </div>
                   )}
@@ -916,8 +919,8 @@ function App() {
 
                 {isUserMenuOpen && (
                   <>
-                    <div className="absolute right-0 mt-2 z-50 w-52 rounded-2xl bg-white border border-slate-200/80 shadow-floating p-1.5 animate-fadeIn">
-                      <div className="px-3.5 py-2.5 border-b border-slate-100/80">
+                    <div className="absolute right-0 mt-2 z-50 w-52 rounded-2xl bg-white dark:bg-kat-surface border border-slate-200/80 dark:border-kat-border shadow-floating p-1.5 animate-fadeIn">
+                      <div className="px-3.5 py-2.5 border-b border-slate-100/80 dark:border-slate-800/60">
                         <p className="text-[13px] font-black text-kat-dark truncate text-left">
                           {isAuthenticated && user ? (
                             provider === "guest" ? "Khách" : (user.displayName || "Tài khoản ẩn danh")
@@ -946,7 +949,7 @@ function App() {
                                   setSettingsInitialView("auth");
                                   setIsSettingsOpen(true);
                                 }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                               >
                                 <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400 shrink-0" />
                                 Hồ sơ & Tài khoản
@@ -957,19 +960,19 @@ function App() {
                                   setSettingsInitialView("menu");
                                   setIsSettingsOpen(true);
                                 }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                               >
                                 <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 text-slate-400 shrink-0" />
                                 Cài đặt ứng dụng
                               </button>
                             </div>
-                            <div className="border-t border-slate-100/80 pt-1 mt-1">
+                            <div className="border-t border-slate-100/80 dark:border-slate-800/60 pt-1 mt-1">
                               <button
                                 onClick={() => {
                                   setIsUserMenuOpen(false);
                                   setIsLogoutConfirmOpen(true);
                                 }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 hover:bg-rose-50 transition-colors"
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
                               >
                                 <HugeiconsIcon icon={Logout01Icon} className="w-4 h-4 text-rose-500 shrink-0" />
                                 Thoát Khách
@@ -985,7 +988,7 @@ function App() {
                                   setSettingsInitialView("auth");
                                   setIsSettingsOpen(true);
                                 }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                               >
                                 <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400 shrink-0" />
                                 Hồ sơ & Tài khoản
@@ -996,19 +999,19 @@ function App() {
                                   setSettingsInitialView("menu");
                                   setIsSettingsOpen(true);
                                 }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                               >
                                 <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 text-slate-400 shrink-0" />
                                 Cài đặt ứng dụng
                               </button>
                             </div>
-                            <div className="border-t border-slate-100/80 pt-1 mt-1">
+                            <div className="border-t border-slate-100/80 dark:border-slate-800/60 pt-1 mt-1">
                               <button
                                 onClick={() => {
                                   setIsUserMenuOpen(false);
                                   setIsLogoutConfirmOpen(true);
                                 }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 hover:bg-rose-50 transition-colors"
+                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
                               >
                                 <HugeiconsIcon icon={Logout01Icon} className="w-4 h-4 text-rose-500 shrink-0" />
                                 Đăng xuất
@@ -1025,7 +1028,7 @@ function App() {
                                 setSettingsInitialView("auth");
                                 setIsSettingsOpen(true);
                               }}
-                              className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                              className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                             >
                               <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400 shrink-0" />
                               Đăng nhập / Đăng ký
@@ -1036,7 +1039,7 @@ function App() {
                                 setSettingsInitialView("menu");
                                 setIsSettingsOpen(true);
                               }}
-                              className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+                              className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                             >
                               <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 text-slate-400 shrink-0" />
                               Cài đặt ứng dụng
@@ -1064,18 +1067,18 @@ function App() {
 
       {syncProps.hasCloudVersion && (
         <div className="max-w-[1120px] mx-auto mt-4 mb-2 px-4 sm:px-6">
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/40 shadow-sm p-3 sm:py-2.5 sm:px-4 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/35 dark:to-indigo-950/35 border border-blue-100/40 dark:border-blue-900/40 shadow-sm p-3 sm:py-2.5 sm:px-4 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
             {/* Background decorative blob */}
-            <div className="absolute -right-6 -top-6 w-20 h-20 bg-blue-500/5 rounded-full blur-xl"></div>
-            <div className="absolute -left-6 -bottom-6 w-20 h-20 bg-indigo-500/5 rounded-full blur-xl"></div>
+            <div className="absolute -right-6 -top-6 w-20 h-20 bg-blue-500/5 dark:bg-blue-400/5 rounded-full blur-xl"></div>
+            <div className="absolute -left-6 -bottom-6 w-20 h-20 bg-indigo-500/5 dark:bg-indigo-400/5 rounded-full blur-xl"></div>
 
             <div className="relative flex items-center gap-2.5 z-10 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0 border border-blue-50 text-blue-600">
+              <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center shrink-0 border border-blue-50 dark:border-slate-700/50 text-blue-600 dark:text-blue-450">
                 <HugeiconsIcon icon={CloudIcon} className="w-4.5 h-4.5" />
               </div>
               <div className="min-w-0">
-                <h3 className="text-[13.5px] font-extrabold text-slate-800 leading-tight">Đã tìm thấy bản cập nhật mới</h3>
-                <p className="text-[12px] text-slate-500 mt-0.5 font-semibold leading-none truncate hidden sm:block">Có dữ liệu mới nhất từ thiết bị khác của bạn.</p>
+                <h3 className="text-[13.5px] font-extrabold text-slate-800 dark:text-slate-200 leading-tight">Đã tìm thấy bản cập nhật mới</h3>
+                <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5 font-semibold leading-none truncate hidden sm:block">Có dữ liệu mới nhất từ thiết bị khác của bạn.</p>
               </div>
             </div>
             
@@ -1090,7 +1093,7 @@ function App() {
                 }
               }}
               disabled={syncProps.isSyncing}
-              className="relative z-10 shrink-0 px-4 py-2 rounded-lg bg-blue-600 text-white text-[12.5px] font-bold hover:bg-blue-700 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-1.5 disabled:opacity-70 disabled:pointer-events-none"
+              className="relative z-10 shrink-0 px-4 py-2 rounded-lg bg-blue-600 text-white text-[12.5px] font-bold hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-1.5 disabled:opacity-70 disabled:pointer-events-none"
             >
               {syncProps.isSyncing ? (
                 <>
@@ -1190,7 +1193,7 @@ function App() {
             {/* Active Indicator Slide Pill */}
             {indicatorStyle.width > 0 && (
               <div 
-                className="absolute top-[6px] bottom-[6px] rounded-full bg-white transition-[left,width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45"
+                className="absolute top-[6px] bottom-[6px] rounded-full bg-white dark:bg-slate-800 transition-[left,width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45 dark:border-slate-700/50"
                 style={{
                   left: `${indicatorStyle.left}px`,
                   width: `${indicatorStyle.width}px`
@@ -1241,12 +1244,12 @@ function App() {
 
       {successToast && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-[420px] motion-toast-enter">
-          <div className="bg-kat-dark text-white px-5 py-3 rounded-2xl shadow-floating flex items-center justify-between gap-4 border border-slate-200/20">
+          <div className="bg-kat-dark dark:bg-slate-800 text-white px-5 py-3 rounded-2xl shadow-floating flex items-center justify-between gap-4 border border-slate-200/20 dark:border-slate-700/50">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="flex h-5.5 w-5.5 shrink-0 items-center justify-center rounded-full bg-kat-primary/20 text-kat-primary">
                 <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" strokeWidth={3.5} />
               </div>
-              <span className="text-[14px] font-bold tracking-wide text-sand">Đã tạo chuyến đi thành công</span>
+              <span className="text-[14px] font-bold tracking-wide text-sand dark:text-slate-200">Đã tạo chuyến đi thành công</span>
             </div>
             <div className="flex items-center gap-3 shrink-0">
               <button 
@@ -1269,8 +1272,8 @@ function App() {
 
       {toastMessage && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-[400px] pointer-events-none motion-toast-enter">
-          <div className="bg-kat-dark text-white px-5 py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 border border-slate-200/10">
-            <span className="text-[14px] font-bold text-center leading-snug">{toastMessage}</span>
+          <div className="bg-kat-dark dark:bg-slate-800 text-white px-5 py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 border border-slate-200/10 dark:border-slate-700/50">
+            <span className="text-[14px] font-bold text-center leading-snug text-white dark:text-slate-200">{toastMessage}</span>
           </div>
         </div>
       )}
@@ -1302,7 +1305,7 @@ function App() {
           title="Việc cần chú ý"
           subtitle="Các nhắc nhở quan trọng"
         >
-          <div className="divide-y divide-slate-100 -mx-5 -mb-4 mt-1 border-t border-slate-100">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800 -mx-5 -mb-4 mt-1 border-t border-slate-100 dark:border-slate-800/80">
             {renderReminderItems()}
           </div>
         </BottomSheet>
@@ -1349,15 +1352,15 @@ function App() {
         title="Đăng xuất tài khoản?"
       >
         <div className="space-y-5">
-          <div className="rounded-2xl bg-white border border-slate-200 p-4 text-[13.5px] text-slate-650 font-normal leading-relaxed text-left">
-            Bạn sắp đăng xuất khỏi thiết bị này. Đừng lo, toàn bộ dữ liệu đã sao lưu trên <strong className="font-semibold text-slate-800">Cloud</strong> vẫn được giữ <strong className="font-semibold text-slate-800">an toàn</strong>.
+          <div className="rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-800/80 p-4 text-[13.5px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed text-left">
+            Bạn sắp đăng xuất khỏi thiết bị này. Đừng lo, toàn bộ dữ liệu đã sao lưu trên <strong className="font-bold text-slate-800 dark:text-slate-100">Cloud</strong> vẫn được giữ <strong className="font-bold text-slate-800 dark:text-slate-100">an toàn</strong>.
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
             <button
               type="button"
               onClick={() => setIsLogoutConfirmOpen(false)}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200 motion-press"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200 motion-press"
             >
               Hủy
             </button>

@@ -91,6 +91,7 @@ export interface ChecklistItem {
   priority?: "normal" | "important" | "required";
   note?: string;
   isPrivate?: boolean;
+  createdBy?: string;
   createdAt?: string;
   updatedAt?: string;
   isDeleted?: boolean;
@@ -136,6 +137,7 @@ export interface TravelDocument {
   attachmentUrl?: string;
   note?: string;
   isPrivate?: boolean;
+  createdBy?: string;
   createdAt?: string;
   updatedAt?: string;
   isDeleted?: boolean;

@@ -165,7 +165,7 @@ function LocationInput({
           value={value}
           onChange={(e) => handleChange(e.target.value)}
           placeholder="VD: Phú Quốc"
-          className="w-full rounded-[14px] border border-slate-200 bg-slate-50/80 pl-10 pr-10 py-3 text-[14px] font-medium text-slate-800 placeholder-slate-400 focus:border-kat-primary focus:ring-2 focus:ring-kat-primary/20 focus:outline-none transition-all"
+          className="w-full rounded-[14px] border border-slate-200 dark:border-slate-700/50 bg-slate-50/80 dark:bg-slate-800/40 pl-10 pr-10 py-3 text-[14px] font-medium text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-kat-primary focus:ring-2 focus:ring-kat-primary/20 dark:focus:bg-kat-surface focus:outline-none transition-all"
           autoComplete="off"
         />
         {loading && (
@@ -177,7 +177,7 @@ function LocationInput({
           <button
             type="button"
             onClick={() => { onChange(""); setSuggestions([]); setIsOpen(false); }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-slate-500 hover:bg-slate-300 transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
           >
             <HugeiconsIcon icon={Cancel01Icon} size={12} />
           </button>
@@ -185,7 +185,7 @@ function LocationInput({
       </div>
 
       {isOpen && suggestions.length > 0 && (
-        <ul className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-floating animate-fadeIn">
+        <ul className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-floating animate-fadeIn">
           {suggestions.map((result, idx) => {
             const name = normalizeVietnameseDisplayText(result.name);
             const sub = normalizeVietnameseDisplayText([result.admin1, result.country].filter(Boolean).join(", "));
@@ -195,14 +195,14 @@ function LocationInput({
                   type="button"
                   onMouseDown={(e) => { e.preventDefault(); handleSelect(result); }}
                   onTouchStart={(e) => { e.preventDefault(); handleSelect(result); }}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 transition-colors border-b border-slate-100/60 last:border-0"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-100/60 dark:border-slate-700/50 last:border-0"
                 >
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-kat-primary/10">
-                    <HugeiconsIcon icon={Location01Icon} size={14} className="text-kat-primary" />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 dark:bg-kat-teal/20">
+                    <HugeiconsIcon icon={Location01Icon} size={14} className="text-kat-primary dark:text-kat-teal" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13.5px] font-bold text-slate-800 truncate">{name}</p>
-                    {sub && <p className="text-[11.5px] text-slate-400 font-medium truncate">{sub}</p>}
+                    <p className="text-[13.5px] font-bold text-slate-800 dark:text-slate-200 truncate">{name}</p>
+                    {sub && <p className="text-[11.5px] text-slate-400 dark:text-slate-500 font-medium truncate">{sub}</p>}
                   </div>
                 </button>
               </li>
@@ -311,17 +311,17 @@ function CalendarRangePicker({
       <div className="grid grid-cols-2 gap-2 mb-4">
         <button type="button" onClick={() => { onChangeTripType("dayTrip"); setPickingEnd(false); }}
           className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px]",
-            tripType === "dayTrip" ? "bg-[#00BFB7]/10 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100")}
+            tripType === "dayTrip" ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 dark:bg-slate-800/40 ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800/60")}
         >
-          <span className={classNames("text-[14px] font-bold", tripType === "dayTrip" ? "text-kat-primary" : "text-slate-700")}>Đi trong ngày</span>
-          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "dayTrip" ? "text-[#00BFB7]/80" : "text-slate-400")}>Đi và về cùng ngày</span>
+          <span className={classNames("text-[14px] font-bold", tripType === "dayTrip" ? "text-kat-primary dark:text-kat-teal" : "text-slate-700 dark:text-slate-350")}>Đi trong ngày</span>
+          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "dayTrip" ? "text-[#00BFB7]/80 dark:text-kat-teal/80" : "text-slate-400 dark:text-slate-500")}>Đi và về cùng ngày</span>
         </button>
         <button type="button" onClick={() => { onChangeTripType("multiDay"); setPickingEnd(false); }}
           className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px]",
-            tripType === "multiDay" ? "bg-[#00BFB7]/10 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 ring-1 ring-inset ring-slate-200/60 hover:bg-slate-100")}
+            tripType === "multiDay" ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 dark:bg-slate-800/40 ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800/60")}
         >
-          <span className={classNames("text-[14px] font-bold", tripType === "multiDay" ? "text-kat-primary" : "text-slate-700")}>Nhiều ngày</span>
-          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "multiDay" ? "text-[#00BFB7]/80" : "text-slate-400")}>Có ngày đi và về</span>
+          <span className={classNames("text-[14px] font-bold", tripType === "multiDay" ? "text-kat-primary dark:text-kat-teal" : "text-slate-700 dark:text-slate-350")}>Nhiều ngày</span>
+          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "multiDay" ? "text-[#00BFB7]/80 dark:text-kat-teal/80" : "text-slate-400 dark:text-slate-500")}>Có ngày đi và về</span>
         </button>
       </div>
 
@@ -335,29 +335,29 @@ function CalendarRangePicker({
           </p>
         )}
         {tripType === "multiDay" && pickingEnd && (
-          <p className="text-[12px] text-kat-primary font-semibold mt-0.5 animate-pulse">Chọn ngày kết thúc…</p>
+          <p className="text-[12px] text-kat-primary dark:text-kat-teal font-semibold mt-0.5 animate-pulse">Chọn ngày kết thúc…</p>
         )}
       </div>
 
       {/* Calendar grid */}
-      <div className="rounded-2xl border border-slate-200/80 bg-white overflow-hidden">
+      <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-slate-800/40 overflow-hidden">
         {/* Month navigation */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/40">
           <button type="button" onClick={prevMonth}
-            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors text-slate-500">
+            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors text-slate-500 dark:text-slate-400">
             <HugeiconsIcon icon={ChevronLeftIcon} size={16} />
           </button>
-          <span className="text-[14px] font-bold text-slate-800">{monthLabel}</span>
+          <span className="text-[14px] font-bold text-slate-800 dark:text-slate-200">{monthLabel}</span>
           <button type="button" onClick={nextMonth}
-            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 transition-colors text-slate-500">
+            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors text-slate-500 dark:text-slate-400">
             <HugeiconsIcon icon={ChevronRightIcon} size={16} />
           </button>
         </div>
 
         {/* Day headers */}
-        <div className="grid grid-cols-7 border-b border-slate-100">
+        <div className="grid grid-cols-7 border-b border-slate-100 dark:border-slate-700/40">
           {DAYS_OF_WEEK.map(d => (
-            <div key={d} className="py-1.5 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wide">{d}</div>
+            <div key={d} className="py-1.5 text-center text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">{d}</div>
           ))}
         </div>
 
@@ -386,7 +386,7 @@ function CalendarRangePicker({
                 {/* Range bar background */}
                 {(inRange || isStartCap || isEndCap) && !isSingleDay && (
                   <div className={classNames(
-                    "absolute inset-y-0.5 bg-[#00BFB7]/15",
+                    "absolute inset-y-0.5 bg-[#00BFB7]/15 dark:bg-kat-teal/20",
                     isStartCap ? "left-1/2 right-0" : isEndCap ? "left-0 right-1/2" : "left-0 right-0"
                   )} />
                 )}
@@ -397,14 +397,14 @@ function CalendarRangePicker({
                   className={classNames(
                     "relative z-10 h-7 w-7 flex items-center justify-center rounded-full text-[13px] font-semibold transition-all active:scale-95",
                     (isStart || isEnd) && !isSingleDay
-                      ? "bg-kat-primary text-white font-bold shadow-sm"
+                      ? "bg-kat-primary text-white dark:text-slate-950 font-bold shadow-sm"
                       : isSingleDay
-                      ? "bg-kat-primary text-white font-bold shadow-sm"
+                      ? "bg-kat-primary text-white dark:text-slate-950 font-bold shadow-sm"
                       : inRange
-                      ? "text-kat-primary font-semibold hover:bg-[#00BFB7]/10"
+                      ? "text-kat-primary dark:text-kat-teal font-semibold hover:bg-[#00BFB7]/10 dark:hover:bg-kat-teal/20"
                       : isToday
-                      ? "text-kat-primary font-bold ring-1 ring-[#00BFB7]/50 hover:bg-[#00BFB7]/10"
-                      : "text-slate-700 hover:bg-slate-100"
+                      ? "text-kat-primary dark:text-kat-teal font-bold ring-1 ring-[#00BFB7]/50 dark:ring-kat-teal/50 hover:bg-[#00BFB7]/10 dark:hover:bg-kat-teal/20"
+                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/80"
                   )}
                 >
                   {day}
@@ -712,11 +712,11 @@ function MemberForm({
       onClose={onClose} 
       title={editing ? "Sửa thành viên" : "Thêm thành viên"}
       footer={
-        <div className="flex gap-3 w-full">
+        <div className="flex items-center gap-2.5 w-full">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+            className="flex h-[52px] shrink-0 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.96] transition-all border border-transparent dark:border-slate-700 motion-press"
           >
             Hủy
           </button>
@@ -724,12 +724,12 @@ function MemberForm({
             type="button"
             disabled={hasError}
             onClick={save}
-            className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-kat-dark text-white px-6 font-black hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-kat-dark disabled:active:scale-100 shadow-sm"
+            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
           >
             {editing ? (
-              <HugeiconsIcon icon={CheckIcon} className="h-4.5 w-4.5" />
+              <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" />
             ) : (
-              <HugeiconsIcon icon={UserAdd01Icon} className="h-4.5 w-4.5" />
+              <HugeiconsIcon icon={UserAdd01Icon} className="h-5 w-5" />
             )}
             {editing ? "Lưu thông tin" : "Thêm thành viên"}
           </button>
@@ -775,8 +775,8 @@ function MemberForm({
                 className={classNames(
                   "flex-1 rounded-2xl py-3 text-[14px] font-black transition-all duration-200 active:scale-95 border text-center justify-center flex items-center",
                   gender === g.value
-                    ? "bg-kat-primary-soft border-[#00BFB7] text-kat-teal shadow-sm"
-                    : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                    ? "bg-kat-primary-soft dark:bg-kat-primary-soft/30 border-[#00BFB7] dark:border-kat-primary/50 text-kat-teal dark:text-kat-primary-usable shadow-sm"
+                    : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700/50 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700"
                 )}
               >
                 {g.label}
@@ -830,8 +830,8 @@ function MemberForm({
                 className={classNames(
                   "rounded-full px-4 py-2 text-[13.5px] font-extrabold transition-all duration-200 active:scale-95 border flex items-center gap-1.5",
                   selectedPresets.includes(preset)
-                    ? "bg-kat-primary-soft border-[#00BFB7] text-kat-teal"
-                    : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                    ? "bg-kat-primary-soft dark:bg-kat-primary-soft/30 border-[#00BFB7] dark:border-kat-primary/50 text-kat-teal dark:text-kat-primary-usable"
+                    : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700/50 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700"
                 )}
               >
                 {getPresetIcon(preset)}
@@ -852,7 +852,7 @@ function MemberForm({
               Ghi chú
             </span>
             <textarea
-              className="mt-1.5 min-h-[90px] w-full rounded-2xl border-0 bg-slate-50 px-4 py-3 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal placeholder-slate-400"
+              className="mt-1.5 min-h-[90px] w-full rounded-2xl border-0 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/50 transition-shadow focus:bg-white dark:focus:bg-slate-700 focus:ring-2 focus:ring-kat-teal placeholder-slate-400 dark:placeholder-slate-500"
               value={note}
               onChange={(event) => { setNote(event.target.value); setDirty(true); }}
               placeholder="VD: Ăn chay, dễ say xe, phụ trách đặt phòng..."
@@ -1023,7 +1023,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <div className="flex items-center gap-3">
           <button
             onClick={() => setSection("overview")}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 text-slate-700 active:scale-95 transition-all shrink-0 motion-press"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 active:scale-95 transition-all shrink-0 motion-press"
             title="Quay lại"
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
@@ -1032,13 +1032,13 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark">Tổng kết hành trình</h2>
             </div>
-            <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Nhìn lại những dấu ấn đáng nhớ trong chuyến đi của bạn.</p>
+            <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">Nhìn lại những dấu ấn đáng nhớ trong chuyến đi của bạn.</p>
           </div>
         </div>
         <button
           onClick={handleExportPdf}
           disabled={isGeneratingPdf}
-          className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark text-white px-5 text-[13.5px] font-bold hover:bg-kat-dark bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-5 text-[13.5px] font-bold hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center disabled:opacity-50 disabled:cursor-not-allowed border border-transparent dark:border-kat-primary"
         >
           <HugeiconsIcon icon={FileDownloadIcon} className={classNames("h-4 w-4", !isGeneratingPdf && "animate-bounce")} />
           <span>{isGeneratingPdf ? "Đang xuất..." : "Xuất PDF"}</span>
@@ -1046,21 +1046,21 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       </div>
       
       {/* Hero Recap Card */}
-      <section className="relative overflow-hidden rounded-[32px] bg-white border border-slate-200 p-8 text-kat-text shadow-soft">
+      <section className="relative overflow-hidden rounded-[32px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border p-8 text-kat-text shadow-soft">
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5 border border-kat-primary/20">
             <HugeiconsIcon icon={CompassIcon} className="h-6 w-6" />
           </div>
           <h2 className="text-[30px] md:text-[36px] font-black leading-tight tracking-tight text-kat-dark">{data.trip.title}</h2>
           <div className="mt-4 flex flex-wrap justify-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-4 py-2 text-[14px] font-bold text-slate-700">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
               <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-kat-primary" />
               {data.trip.location || "Chưa có địa điểm"}
             </span>
             {data.trip.tripType === "dayTrip" || data.trip.startDate === data.trip.endDate ? (
               <>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-4 py-2 text-[14px] font-bold text-slate-700">
-                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-[#0081BE]" />
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
+                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-[#0081BE] dark:text-[#33A6DA]" />
                   {formatDate(data.trip.startDate)}
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-kat-primary-soft border border-kat-primary/15 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable">
@@ -1069,62 +1069,62 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
                 </span>
               </>
             ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-4 py-2 text-[14px] font-bold text-slate-700">
-                <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-[#0081BE]" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
+                <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-[#0081BE] dark:text-[#33A6DA]" />
                 {formatDate(data.trip.startDate)} – {formatDate(data.trip.endDate)}
               </span>
             )}
           </div>
         </div>
       </section>
-
+ 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
             <HugeiconsIcon icon={Sun01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-kat-dark leading-none block">{stats.totalDays}</span>
-            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Ngày hành trình</span>
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">Ngày hành trình</span>
           </div>
         </div>
-
-        <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+ 
+        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary-soft text-kat-teal border border-kat-teal border-opacity-20">
             <HugeiconsIcon icon={Route01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-kat-dark leading-none block">{stats.activityCount}</span>
-            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Mục lịch trình</span>
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">Mục lịch trình</span>
           </div>
         </div>
-
-        <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+ 
+        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
             <HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-kat-dark leading-none block">{stats.checklistPercent}%</span>
-            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Hành lý</span>
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">Hành lý</span>
           </div>
         </div>
-
-        <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+ 
+        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary-soft text-kat-teal border border-kat-teal border-opacity-20">
             <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-kat-dark leading-none block">{stats.journalCount}</span>
-            <span className="text-[12px] font-bold text-slate-500 mt-1 block">Bài viết</span>
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">Bài viết</span>
           </div>
         </div>
       </div>
 
       {/* Finance Recap */}
-      <div className="rounded-[32px] bg-white border border-slate-200 p-8 text-kat-text shadow-soft relative overflow-hidden">
+      <div className="rounded-[32px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border p-8 text-kat-text shadow-soft relative overflow-hidden">
         <div className="relative z-10">
-          <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
+          <h3 className="text-[13px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
             <HugeiconsIcon icon={WalletCardsIcon} className="h-5 w-5 text-kat-primary" />
             CHI PHÍ CHUYẾN ĐI
           </h3>
@@ -1132,33 +1132,33 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           {data.expenses.length > 0 ? (
             <div className="space-y-6">
               <div>
-                <p className="text-[14px] font-semibold text-slate-500">Tổng chi phí</p>
+                <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">Tổng chi phí</p>
                 <p className="mt-1 text-[36px] font-black text-kat-dark leading-none">{formatMoney(stats.totalExpense)}</p>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200/60 pt-6 max-w-md">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200/60 dark:border-slate-700/50 pt-6 max-w-md">
                 <div>
-                  <p className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">Chi chung chuyến đi</p>
+                  <p className="text-[13px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider">Chi chung chuyến đi</p>
                   <p className="mt-1 text-[18px] font-black text-kat-primary-usable">{formatMoney(sharedTotal)}</p>
                 </div>
                 <div>
-                  <p className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">Chi cá nhân</p>
+                  <p className="text-[13px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider">Chi cá nhân</p>
                   <p className="mt-1 text-[18px] font-black text-kat-dark">{formatMoney(personalTotal)}</p>
                 </div>
               </div>
               
               {data.members.length === 0 ? (
-                <div className="border-t border-slate-200/60 pt-6">
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3.5 text-[13.5px] text-slate-500 font-semibold leading-relaxed">
+                <div className="border-t border-slate-200/60 dark:border-slate-700/50 pt-6">
+                  <div className="rounded-2xl border border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/25 px-4 py-3.5 text-[13.5px] text-slate-500 dark:text-slate-400 font-semibold leading-relaxed">
                     Chưa có người đồng hành để gợi ý cân đối chia tiền.
                   </div>
                 </div>
               ) : (
                 <>
                   {stats.topPayer && (
-                    <div className="border-t border-slate-200/60 pt-6">
-                      <p className="text-[14px] font-semibold text-slate-500">Nhà tài trợ chính</p>
-                      <p className="mt-1 text-[14.5px] font-medium leading-relaxed text-slate-600">
+                    <div className="border-t border-slate-200/60 dark:border-slate-700/50 pt-6">
+                      <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">Nhà tài trợ chính</p>
+                      <p className="mt-1 text-[14.5px] font-medium leading-relaxed text-slate-600 dark:text-slate-350">
                         <span className="font-extrabold text-kat-dark">{stats.topPayer.name}</span> là người chi nhiều nhất với <span className="font-extrabold text-kat-primary-usable">{formatMoney(stats.topPayer.amount)}</span>.
                       </p>
                     </div>
@@ -1167,30 +1167,35 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
               )}
             </div>
           ) : (
-            <div className="text-center py-6 border border-slate-200/60 rounded-2xl bg-slate-50/40">
-              <p className="text-[14.5px] font-semibold text-slate-500">Chưa có dữ liệu chi phí cho chuyến đi này.</p>
+            <div className="text-center py-6 border border-slate-200/60 dark:border-slate-700/50 rounded-2xl bg-slate-50/40 dark:bg-slate-800/10">
+              <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-450">Chưa có dữ liệu chi phí cho chuyến đi này.</p>
             </div>
           )}
         </div>
       </div>
 
       {/* Memory / Mood Section */}
-      <div className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-soft text-center flex flex-col items-center justify-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-500 mb-4 ring-4 ring-amber-500/5">
+      <div className="rounded-[32px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-8 shadow-soft text-center flex flex-col items-center justify-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-500 mb-4 ring-4 ring-amber-500/5 dark:ring-amber-500/10">
           <HugeiconsIcon icon={SmilePlusIcon} className="h-6 w-6" />
         </div>
-        <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-wider mb-2">DẤU ẤN CẢM XÚC</h3>
+        <h3 className="text-[13px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2">DẤU ẤN CẢM XÚC</h3>
         {mood ? (
-          <p className="mt-2 text-[26px] md:text-[30px] font-black text-kat-dark">{mood}</p>
+          <div className="mt-2 flex flex-col items-center animate-fadeIn">
+            <p className="text-[28px] md:text-[32px] font-black text-kat-dark dark:text-white">{mood}</p>
+            <p className="mt-2 text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 text-center max-w-[280px] leading-relaxed">
+              Cảm xúc chủ đạo được ghi nhận từ các bài viết trong bản tin hành trình của bạn.
+            </p>
+          </div>
         ) : (
           <div className="flex flex-col items-center mt-2">
             <p className="text-[16px] font-extrabold text-kat-dark mb-1.5">Chưa có đủ bài viết để tổng kết cảm xúc chuyến đi.</p>
-            <p className="text-[14px] font-semibold text-slate-500 mb-5 max-w-sm">Đăng thêm bản tin để lưu lại cảm xúc và khoảnh khắc đáng nhớ.</p>
+            <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 mb-5 max-w-sm">Đăng thêm bản tin để lưu lại cảm xúc và khoảnh khắc đáng nhớ.</p>
             <button 
               onClick={() => setSection("journal")}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-kat-dark px-5 py-2.5 text-[14px] font-extrabold text-white hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all shadow-sm"
+              className="flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 py-2.5 text-[14px] font-extrabold text-white dark:text-slate-950 hover:bg-kat-dark/95 dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] transition-all shadow-sm border border-transparent dark:border-kat-primary"
             >
-              <HugeiconsIcon icon={BookOpen01Icon} className="h-4.5 w-4.5 text-blue-500" />
+              <HugeiconsIcon icon={BookOpen01Icon} className="h-4.5 w-4.5" />
               Đăng bài viết đầu tiên
             </button>
           </div>
@@ -1200,26 +1205,26 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
       {/* Storytelling Blocks */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* First Moment */}
-        <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-soft flex flex-col justify-between">
+        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <HugeiconsIcon icon={Camera01Icon} className="h-5 w-5 text-amber-500" />
-            <h4 className="text-[13px] font-bold text-slate-500">Dấu ấn đầu tiên</h4>
+            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">Dấu ấn đầu tiên</h4>
           </div>
-          <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
+          <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
             {firstMomentText || "Chưa có dấu ấn đầu tiên. Hãy thêm hoạt động hoặc đăng bài viết để lưu lại khoảnh khắc mở đầu."}
           </p>
         </div>
 
         {/* Most Eventful Day */}
-        <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-soft flex flex-col justify-between">
+        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <HugeiconsIcon icon={StarIcon} className="h-5 w-5 text-amber-500" />
-            <h4 className="text-[13px] font-bold text-slate-500">Ngày nổi bật nhất</h4>
+            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">Ngày nổi bật nhất</h4>
           </div>
-          <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
+          <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
             {maxEventsDate ? (
               <>
-                <span className="font-extrabold text-amber-600">{formatDate(maxEventsDate)}</span> là ngày bận rộn nhất với <span className="font-bold text-kat-dark">{maxEventsCount} hoạt động</span> được ghi nhận.
+                <span className="font-extrabold text-amber-600 dark:text-amber-400">{formatDate(maxEventsDate)}</span> là ngày bận rộn nhất với <span className="font-bold text-kat-dark">{maxEventsCount} hoạt động</span> được ghi nhận.
               </>
             ) : (
               "Chưa có ngày nào đủ dữ liệu để chọn làm ngày nổi bật."
@@ -1228,12 +1233,12 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         </div>
 
         {/* Locations Visited */}
-        <div className="rounded-[24px] border border-slate-200 bg-white p-6 shadow-soft flex flex-col justify-between">
+        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <HugeiconsIcon icon={MapsIcon} className="h-5 w-5 text-kat-primary" />
-            <h4 className="text-[13px] font-bold text-slate-500">Điểm đến đã ghé qua</h4>
+            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">Điểm đến đã ghé qua</h4>
           </div>
-          <p className="text-[14.5px] font-semibold text-slate-500 leading-relaxed">
+          <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
             {uniqueLocations.length > 0 ? uniqueLocations.join(", ") : "Chưa có điểm đến cụ thể nào trong lịch trình."}
           </p>
         </div>
@@ -1267,10 +1272,10 @@ function ActionCard({
   icon: Icon,
   title,
   onClick,
-  iconBgColor = "bg-kat-primary-soft",
-  iconTextColor = "text-kat-teal",
+  iconBgColor = "bg-kat-primary-soft dark:bg-kat-primary/10",
+  iconTextColor = "text-kat-teal dark:text-kat-teal",
   className = "",
-  titleClassName = "text-kat-dark",
+  titleClassName = "text-kat-dark dark:text-slate-200",
   rightElement,
   disabled
 }: {
@@ -1317,8 +1322,8 @@ function ActionCard({
         className={classNames(
           "group flex w-full items-center justify-between px-4 py-3 rounded-2xl min-h-[56px] text-left transition-all focus:outline-none focus:ring-2 focus:ring-kat-teal/50",
           disabled 
-            ? "bg-slate-50 border border-slate-200/50 opacity-60 cursor-not-allowed" 
-            : "bg-white border border-slate-200 hover:bg-slate-50/60 motion-press md:motion-hover-lift",
+            ? "bg-slate-50 dark:bg-slate-900/40 border border-slate-200/50 dark:border-slate-800/80 opacity-60 cursor-not-allowed text-slate-400 dark:text-slate-500" 
+            : "bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50/60 dark:hover:bg-slate-800/80 text-kat-dark dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-650 motion-press md:motion-hover-lift",
           className
         )}
       >
@@ -1330,7 +1335,7 @@ function ActionCard({
   return (
     <div
       className={classNames(
-        "flex w-full items-center justify-between bg-white border border-slate-200 px-4 py-3 rounded-2xl min-h-[56px]",
+        "flex w-full items-center justify-between bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-4 py-3 rounded-2xl min-h-[56px] text-kat-dark dark:text-slate-200",
         className
       )}
     >
@@ -1373,23 +1378,23 @@ function MemberCardRow({
   const isGuide = roleLower.includes("dẫn đường");
   const isLuggage = roleLower.includes("hành lý") || roleLower.includes("phụ trách hành lý");
 
-  let cardBg = "bg-gradient-to-br from-slate-50/20 via-white to-white border-slate-200/60";
+  let cardBg = "bg-gradient-to-br from-slate-50/20 via-white to-white border-slate-200/60 dark:from-slate-800/10 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
   let borderAccent = "border-l-4 border-l-slate-400";
 
   if (isLeader) {
-    cardBg = "bg-gradient-to-br from-amber-50/30 via-white to-white border-slate-200/60";
+    cardBg = "bg-gradient-to-br from-amber-50/30 via-white to-white border-slate-200/60 dark:from-amber-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
     borderAccent = "border-l-4 border-l-amber-500";
   } else if (isCost) {
-    cardBg = "bg-gradient-to-br from-emerald-50/30 via-white to-white border-slate-200/60";
+    cardBg = "bg-gradient-to-br from-emerald-50/30 via-white to-white border-slate-200/60 dark:from-emerald-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
     borderAccent = "border-l-4 border-l-emerald-500";
   } else if (isDriver) {
-    cardBg = "bg-gradient-to-br from-blue-50/30 via-white to-white border-slate-200/60";
+    cardBg = "bg-gradient-to-br from-blue-50/30 via-white to-white border-slate-200/60 dark:from-blue-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
     borderAccent = "border-l-4 border-l-blue-500";
   } else if (isGuide) {
-    cardBg = "bg-gradient-to-br from-sky-50/30 via-white to-white border-slate-200/60";
+    cardBg = "bg-gradient-to-br from-sky-50/30 via-white to-white border-slate-200/60 dark:from-sky-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
     borderAccent = "border-l-4 border-l-sky-500";
   } else if (isLuggage) {
-    cardBg = "bg-gradient-to-br from-indigo-50/30 via-white to-white border-slate-200/60";
+    cardBg = "bg-gradient-to-br from-indigo-50/30 via-white to-white border-slate-200/60 dark:from-indigo-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
     borderAccent = "border-l-4 border-l-indigo-500";
   }
 
@@ -1403,41 +1408,41 @@ function MemberCardRow({
           const rLower = r.toLowerCase();
           if (rLower.includes("trưởng nhóm") || rLower.includes("trưởng đoàn") || rLower.includes("leader")) {
             return (
-              <span key={idx} title="Trưởng nhóm" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 text-amber-700 border border-amber-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span key={idx} title="Trưởng nhóm" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                 <HugeiconsIcon icon={CrownIcon} className="w-4 h-4 text-amber-500" />
               </span>
             );
           }
           if (rLower.includes("quản lý chi phí")) {
             return (
-              <span key={idx} title="Quản lý chi phí" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span key={idx} title="Quản lý chi phí" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                 <HugeiconsIcon icon={WalletCardsIcon} className="w-4 h-4 text-emerald-500" />
               </span>
             );
           }
           if (rLower.includes("tài xế")) {
             return (
-              <span key={idx} title="Tài xế" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 text-blue-700 border border-blue-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span key={idx} title="Tài xế" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                 <HugeiconsIcon icon={Car01Icon} className="w-4 h-4 text-blue-500" />
               </span>
             );
           }
           if (rLower.includes("dẫn đường")) {
             return (
-              <span key={idx} title="Dẫn đường" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 text-sky-700 border border-sky-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span key={idx} title="Dẫn đường" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-700 dark:text-sky-400 border border-sky-200/50 dark:border-sky-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                 <HugeiconsIcon icon={CompassIcon} className="w-4 h-4 text-sky-500" />
               </span>
             );
           }
           if (rLower.includes("phụ trách hành lý") || rLower.includes("hành lý")) {
             return (
-              <span key={idx} title="Hành lý" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span key={idx} title="Hành lý" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                 <HugeiconsIcon icon={Luggage01Icon} className="w-4 h-4 text-indigo-500" />
               </span>
             );
           }
           return (
-            <span key={idx} title="Bạn đồng hành" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 text-slate-600 border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+            <span key={idx} title="Bạn đồng hành" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-350 border border-slate-200/60 dark:border-slate-700/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
               <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 text-slate-400" />
             </span>
           );
@@ -1455,11 +1460,11 @@ function MemberCardRow({
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4 min-w-0 flex-1">
           {/* Avatar */}
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
             {member.avatar ? (
               getAvatarSvg(member.avatar, "w-full h-full")
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-indigo-50 text-indigo-600 text-[18px] font-black">
+              <div className="flex h-full w-full items-center justify-center bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 text-[18px] font-black">
                 {initial}
               </div>
             )}
@@ -1477,7 +1482,7 @@ function MemberCardRow({
               </p>
             )}
             {member.note && (
-              <p className="text-[13px] font-medium text-slate-400 italic mt-1 bg-slate-50/70 p-2.5 rounded-xl border border-slate-100/50 break-words">
+              <p className="text-[13px] font-medium text-slate-400 dark:text-slate-500 italic mt-1 bg-slate-50/70 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-100/50 dark:border-slate-700/30 break-words">
                 "{member.note}"
               </p>
             )}
@@ -1489,7 +1494,7 @@ function MemberCardRow({
           <div className="relative shrink-0">
             <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-kat-teal/40"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-kat-teal/40"
             onClick={(e) => {
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
@@ -1508,7 +1513,7 @@ function MemberCardRow({
                   setIsMenuOpen(false);
                 }}
               />
-              <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg text-left">
+              <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 dark:border-slate-700/50 bg-white dark:bg-slate-800 p-1.5 shadow-lg text-left">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -1516,9 +1521,9 @@ function MemberCardRow({
                     setIsMenuOpen(false);
                     openEditMember(member);
                   }}
-                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 active:bg-slate-100 dark:active:bg-slate-600 transition-colors"
                 >
-                  <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500" />
+                  <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                   Sửa
                 </button>
                 <button
@@ -1528,7 +1533,7 @@ function MemberCardRow({
                     setIsMenuOpen(false);
                     onDeleteMember(member);
                   }}
-                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
                 >
                   <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
                   Xóa
@@ -1541,13 +1546,13 @@ function MemberCardRow({
       </div>
 
       {/* Mini Stats Row */}
-      <div className="pt-3 border-t border-slate-100/60 flex items-center justify-between gap-4 flex-wrap">
+      <div className="pt-3 border-t border-slate-100/60 dark:border-slate-700/40 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex flex-wrap gap-2 text-[12px]">
           <span className={classNames(
             "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
             assignedTasksCount === 0 
-              ? "bg-slate-50/50 border-slate-100 text-slate-400 font-semibold" 
-              : "bg-sky-50/50 border-sky-100 text-sky-700 font-bold"
+              ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700/30 text-slate-400 dark:text-slate-500 font-semibold" 
+              : "bg-sky-50/50 dark:bg-sky-950/20 border-sky-100 dark:border-sky-900/30 text-sky-700 dark:text-sky-400 font-bold"
           )}>
             <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 shrink-0" />
             {assignedTasksCount} việc
@@ -1555,8 +1560,8 @@ function MemberCardRow({
           <span className={classNames(
             "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
             totalSpent === 0 
-              ? "bg-slate-50/50 border-slate-100 text-slate-400 font-semibold" 
-              : "bg-emerald-50/50 border-emerald-100 text-emerald-700 font-bold"
+              ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700/30 text-slate-400 dark:text-slate-500 font-semibold" 
+              : "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-bold"
           )}>
             <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5 shrink-0" />
             Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
@@ -1923,19 +1928,19 @@ export function MoreScreen({
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSection("overview")}
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 text-slate-700 active:scale-95 transition-all shrink-0"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 active:scale-95 transition-all shrink-0"
               title="Quay lại"
             >
               <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
             </button>
             <div>
-              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark">Thành viên</h2>
-              <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500">Quản lý những người cùng tham gia và chia sẻ hành trình.</p>
+              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">Thành viên</h2>
+              <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">Quản lý những người cùng tham gia và chia sẻ hành trình.</p>
             </div>
           </div>
           {!isReadOnly && (
             <button 
-              className="flex h-11 sm:h-12 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark px-5 text-[14px] font-black text-white transition-all hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] shadow-sm w-full sm:w-auto shrink-0"
+              className="flex h-11 sm:h-12 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 transition-all hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] shadow-sm w-full sm:w-auto shrink-0 border border-transparent dark:border-kat-primary px-5 text-[14px] font-black"
               onClick={openNewMember}
             >
               <HugeiconsIcon icon={UserAdd01Icon} className="w-4.5 h-4.5" />
@@ -1945,7 +1950,7 @@ export function MoreScreen({
         </div>
 
         {/* Overview Card */}
-        <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-soft">
+        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft">
           {members.length ? (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -1966,15 +1971,15 @@ export function MoreScreen({
                   <span className={classNames(
                     "text-[12.5px] font-black mt-1 inline-flex items-center px-3 py-1 rounded-full w-fit leading-none border", 
                     members.length >= 2 
-                      ? "bg-emerald-50 text-emerald-700 border-emerald-100" 
-                      : "bg-slate-50 text-slate-500 border-slate-100"
+                      ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-450 border-emerald-100 dark:border-emerald-900/30" 
+                      : "bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-100 dark:border-slate-700/50"
                   )}>
                     {members.length >= 2 ? "Sẵn sàng" : "Cần ≥ 2 người"}
                   </span>
                 </div>
               </div>
               {members.length < 2 && (
-                <div className="pt-3 border-t border-slate-100 flex items-start gap-2.5 text-[13px] font-semibold text-slate-500">
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-start gap-2.5 text-[13px] font-semibold text-slate-500">
                   <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5 text-kat-teal shrink-0" />
                   <p>Thêm thành viên để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ ràng hơn.</p>
                 </div>
@@ -1999,7 +2004,7 @@ export function MoreScreen({
                   placeholder="Tìm kiếm thành viên hoặc vai trò..."
                   value={memberSearchQuery}
                   onChange={(e) => setMemberSearchQuery(e.target.value)}
-                  className="block w-full rounded-2xl border border-slate-200/60 bg-white/70 backdrop-blur-md py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 placeholder-slate-400 focus:border-slate-350 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-100 transition-all shadow-sm"
+                  className="block w-full rounded-2xl border border-slate-200/60 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/40 backdrop-blur-md py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-350 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-100 dark:focus:ring-slate-800/50 transition-all shadow-sm"
                 />
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 z-10">
                   <HugeiconsIcon icon={Search01Icon} className="h-4.5 w-4.5 text-slate-400" />
@@ -2035,18 +2040,18 @@ export function MoreScreen({
             </div>
           ) : members.length > 0 ? (
             /* Search results empty state */
-            <div className="rounded-[24px] border border-slate-200 bg-white p-8 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 mx-auto mb-4 ring-4 ring-slate-50">
+            <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-8 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 mx-auto mb-4 ring-4 ring-slate-50 dark:ring-slate-900/30">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-6 w-6" />
               </div>
               <h3 className="text-[15px] font-extrabold text-kat-dark">Không tìm thấy kết quả</h3>
-              <p className="mt-2 text-[13.5px] font-semibold text-slate-500 leading-relaxed">
+              <p className="mt-2 text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">
                 Không tìm thấy thành viên nào khớp với từ khóa "{memberSearchQuery}"
               </p>
             </div>
           ) : (
             /* Empty State Layout */
-            <div className="rounded-[24px] border border-slate-200 bg-white p-6 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
+            <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-6 w-6" />
               </div>
@@ -2086,12 +2091,12 @@ export function MoreScreen({
       <div className="mx-auto max-w-[640px] space-y-6 pb-0 md:pb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark">Không gian chuyến đi</h2>
-            <p className="mt-1 text-[15px] font-medium text-slate-500">Quản lý ứng dụng và cấu hình dữ liệu.</p>
+            <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">Không gian chuyến đi</h2>
+            <p className="mt-1 text-[15px] font-medium text-slate-500 dark:text-slate-400">Quản lý ứng dụng và cấu hình dữ liệu.</p>
           </div>
           <button
             onClick={() => setSection("overview")}
-            className="flex h-10 items-center justify-center rounded-full bg-[#EDEAE2] border border-[#C8BDB0] px-4 text-[13.5px] font-bold text-kat-dark transition-all hover:bg-[#E2DDD3] active:scale-95 shadow-sm"
+            className="flex h-10 items-center justify-center rounded-full bg-[#EDEAE2] dark:bg-slate-800 border border-[#C8BDB0] dark:border-slate-700 px-4 text-[13.5px] font-bold text-kat-dark dark:text-slate-200 transition-all hover:bg-[#E2DDD3] dark:hover:bg-slate-700 active:scale-95 shadow-sm"
           >
             Quay lại
           </button>
@@ -2103,66 +2108,66 @@ export function MoreScreen({
           {/* Privacy */}
           <button
             onClick={() => onOpenSettings?.("privacy")}
-            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50/60 transition-all text-left focus:outline-none"
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50/60 dark:hover:bg-slate-800/80 transition-all text-left focus:outline-none"
           >
             <div className="flex items-center gap-3.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30">
                 <HugeiconsIcon icon={LockIcon} className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-[15px] font-bold text-kat-dark">Quyền riêng tư</h4>
-                <p className="text-[12px] text-slate-400 font-medium">Quản lý an toàn dữ liệu và quyền cá nhân</p>
+                <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">Quyền riêng tư</h4>
+                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium">Quản lý an toàn dữ liệu và quyền cá nhân</p>
               </div>
             </div>
-            <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+            <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500" />
           </button>
 
           {/* About */}
           <button
             onClick={() => onOpenSettings?.("about")}
-            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50/60 transition-all text-left focus:outline-none"
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50/60 dark:hover:bg-slate-800/80 transition-all text-left focus:outline-none"
           >
             <div className="flex items-center gap-3.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 border border-violet-100">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400 border border-violet-100 dark:border-violet-900/30">
                 <HugeiconsIcon icon={InformationCircleIcon} className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-[15px] font-bold text-kat-dark">Thông tin ứng dụng</h4>
-                <p className="text-[12px] text-slate-400 font-medium">Khám phá thông tin và hành trình phát triển</p>
+                <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">Thông tin ứng dụng</h4>
+                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium">Khám phá thông tin và hành trình phát triển</p>
               </div>
             </div>
-            <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+            <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500" />
           </button>
 
           {/* Donate */}
           <button
             onClick={() => onOpenSettings?.("donate")}
-            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50/60 transition-all text-left focus:outline-none"
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50/60 dark:hover:bg-slate-800/80 transition-all text-left focus:outline-none"
           >
             <div className="flex items-center gap-3.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 border border-amber-100">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30">
                 <HugeiconsIcon icon={Coffee01Icon} className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-[15px] font-bold text-kat-dark">Ủng hộ tác giả</h4>
-                <p className="text-[12px] text-slate-400 font-medium">Nếu bạn thấy app hữu ích, cảm ơn rất nhiều</p>
+                <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">Ủng hộ tác giả</h4>
+                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium">Nếu bạn thấy app hữu ích, cảm ơn rất nhiều</p>
               </div>
             </div>
-            <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+            <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500" />
           </button>
 
           {/* Version */}
-          <div className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white border border-slate-200">
+          <div className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50">
             <div className="flex items-center gap-3.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-500 border border-slate-200/60">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/60">
                 <HugeiconsIcon icon={PackageIcon} className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-[15px] font-bold text-kat-dark">Phiên bản</h4>
-                <p className="text-[12px] text-slate-400 font-medium">Phiên bản hiện tại trên thiết bị</p>
+                <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">Phiên bản</h4>
+                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium">Phiên bản hiện tại trên thiết bị</p>
               </div>
             </div>
-            <span className="text-xs font-black text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200/60">{APP_VERSION}</span>
+            <span className="text-xs font-black text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200/60 dark:border-slate-700/60">{APP_VERSION}</span>
           </div>
         </div>
 
@@ -2173,10 +2178,10 @@ export function MoreScreen({
             icon={Delete01Icon}
             title="Khôi phục cài đặt gốc"
             onClick={() => setIsFactoryResetConfirmOpen(true)}
-            iconBgColor="bg-rose-50"
-            iconTextColor="text-rose-600 border-rose-100/60"
-            titleClassName="text-rose-600 font-semibold"
-            className="border-rose-100 bg-rose-50/10 hover:bg-rose-50/20 text-rose-600 focus:ring-rose-500/50"
+            iconBgColor="bg-rose-50 dark:bg-rose-950/20"
+            iconTextColor="text-rose-600 border-rose-100/60 dark:text-rose-450 dark:border-rose-900/30"
+            titleClassName="text-rose-600 dark:text-rose-400 font-semibold"
+            className="border-rose-100 dark:border-rose-900/30 bg-rose-50/10 dark:bg-rose-950/5 hover:bg-rose-50/20 dark:hover:bg-rose-950/10 text-rose-600 dark:text-rose-400 focus:ring-rose-500/50"
           />
         </div>
         
@@ -2207,14 +2212,14 @@ export function MoreScreen({
         
         {/* Title Block */}
         <div>
-          <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark">Không gian chuyến đi</h2>
-          <p className="mt-1 text-[15px] font-medium text-slate-500">
+          <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">Không gian chuyến đi</h2>
+          <p className="mt-1 text-[15px] font-medium text-slate-500 dark:text-slate-400">
             Tùy chỉnh thông tin, thành viên và dữ liệu cho hành trình của bạn.
           </p>
         </div>
 
         {/* Hero chuyến đi compact hơn */}
-        <section className="relative overflow-hidden rounded-[28px] bg-white border border-slate-200 p-5 md:p-6 text-kat-text shadow-soft">
+        <section className="relative overflow-hidden rounded-[28px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-slate-800/80 p-5 md:p-6 text-kat-text shadow-soft">
           <div 
             className="absolute -right-6 -bottom-6 w-32 h-32 rotate-12 pointer-events-none z-0 flex items-center justify-center text-kat-primary"
             style={{ opacity: 0.04, color: "var(--kat-primary)" }}
@@ -2225,43 +2230,43 @@ export function MoreScreen({
           <div className="relative z-10 flex flex-col gap-4">
             {/* Header info */}
             <div>
-              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Hành trình hiện tại</p>
-              <h3 className="mt-1 break-words text-[24px] md:text-[28px] font-black leading-tight tracking-tight text-kat-dark">
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-550 dark:text-slate-450">Hành trình hiện tại</p>
+              <h3 className="mt-1 break-words text-[24px] md:text-[28px] font-black leading-tight tracking-tight text-kat-dark dark:text-slate-200">
                 {trip.title}
               </h3>
             </div>
             
             {/* Metadata tags */}
-            <div className="flex flex-wrap gap-2 text-[12.5px] font-bold text-slate-600">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-3 py-1.5">
+            <div className="flex flex-wrap gap-2 text-[12.5px] font-bold text-slate-600 dark:text-slate-400">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/35 px-3 py-1.5">
                 <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 {trip.location || "Chưa có địa điểm"}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-3 py-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/35 px-3 py-1.5">
                 <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 {trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}`}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-3 py-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/35 px-3 py-1.5">
                 <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 {tripDurationText}
               </span>
             </div>
 
             {/* Compact inline stats pills */}
-            <div className="flex flex-wrap gap-2 pt-2.5 border-t border-slate-200/60 mt-1">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-kat-primary-soft border border-kat-primary/20 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable">
+            <div className="flex flex-wrap gap-2 pt-2.5 border-t border-slate-200/60 dark:border-slate-800/80 mt-1">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-kat-primary-soft dark:bg-kat-primary/10 border border-kat-primary/20 dark:border-kat-primary/30 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable dark:text-kat-primary">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5" />
                 {members.length} thành viên
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0081BE]/8 border border-[#0081BE]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#0081BE]">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0081BE]/8 dark:bg-[#0081BE]/10 border border-[#0081BE]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#0081BE]">
                 <HugeiconsIcon icon={Route01Icon} className="h-3.5 w-3.5" />
                 {events.length} lịch trình
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/8 border border-emerald-500/15 px-3 py-1.5 text-[12.5px] font-extrabold text-emerald-600">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/8 dark:bg-emerald-500/10 border border-emerald-500/15 px-3 py-1.5 text-[12.5px] font-extrabold text-emerald-600 dark:text-emerald-450">
                 <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5" />
                 {formatMoney(totalExpense)} chi phí
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F89B02]/8 border border-[#F89B02]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#F89B02]">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F89B02]/8 dark:bg-[#F89B02]/10 border border-[#F89B02]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#F89B02]">
                 <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5" />
                 Chuẩn bị {checklistPercent}%
               </span>
@@ -2278,43 +2283,43 @@ export function MoreScreen({
               title="Thông tin chuyến đi"
               onClick={() => setEditingTrip(true)}
               disabled={isReadOnly}
-              iconBgColor="bg-sky-50"
-              iconTextColor="text-sky-600 border-sky-100"
+              iconBgColor="bg-sky-50 dark:bg-sky-950/20"
+              iconTextColor="text-sky-600 border-sky-100 dark:text-sky-400 dark:border-sky-900/30"
             />
             <ActionCard
               icon={UserGroupIcon}
               title="Thành viên"
               onClick={() => setSection("members")}
-              iconBgColor="bg-amber-50"
-              iconTextColor="text-amber-600 border-amber-100"
+              iconBgColor="bg-amber-50 dark:bg-amber-950/20"
+              iconTextColor="text-amber-600 border-amber-100 dark:text-amber-400 dark:border-amber-900/30"
             />
             <ActionCard
               icon={AwardIcon}
               title="Tổng kết hành trình"
               onClick={() => setSection("wrapped")}
-              iconBgColor="bg-indigo-50"
-              iconTextColor="text-indigo-600 border-indigo-100"
+              iconBgColor="bg-indigo-50 dark:bg-indigo-950/20"
+              iconTextColor="text-indigo-600 border-indigo-100 dark:text-indigo-400 dark:border-indigo-900/30"
             />
             <ActionCard
               icon={GlobeIcon}
               title="Bản tin hành trình"
               onClick={() => setSection("journal")}
-              iconBgColor="bg-emerald-50"
-              iconTextColor="text-emerald-600 border-emerald-100"
+              iconBgColor="bg-emerald-50 dark:bg-emerald-950/20"
+              iconTextColor="text-emerald-600 border-emerald-100 dark:text-emerald-400 dark:border-emerald-900/30"
             />
             <ActionCard
               icon={Ticket01Icon}
               title="Vé, đặt chỗ & giấy tờ"
               onClick={() => setSection("documents")}
-              iconBgColor="bg-teal-50"
-              iconTextColor="text-teal-600 border-teal-100"
+              iconBgColor="bg-teal-50 dark:bg-teal-950/20"
+              iconTextColor="text-teal-600 border-teal-100 dark:text-teal-400 dark:border-teal-900/30"
             />
             <ActionCard
               icon={Share01Icon}
               title="Chia sẻ chuyến đi"
               onClick={handleShareTrip}
-              iconBgColor="bg-violet-50"
-              iconTextColor="text-violet-600 border-violet-100"
+              iconBgColor="bg-violet-50 dark:bg-violet-950/20"
+              iconTextColor="text-violet-600 border-violet-100 dark:text-violet-400 dark:border-violet-900/30"
             />
           </div>
         </section>
@@ -2328,8 +2333,8 @@ export function MoreScreen({
                 icon={DatabaseBackupIcon}
                 title="Dữ liệu chuyến đi"
                 onClick={() => setIsDataSectionOpen(!isDataSectionOpen)}
-                iconBgColor="bg-blue-50"
-                iconTextColor="text-blue-600 border-blue-100"
+                iconBgColor="bg-blue-50 dark:bg-blue-950/20"
+                iconTextColor="text-blue-600 border-blue-100 dark:text-blue-400 dark:border-blue-900/30"
                 rightElement={
                   <HugeiconsIcon icon={ChevronRightIcon} 
                     className={classNames(
@@ -2346,8 +2351,8 @@ export function MoreScreen({
                     icon={Download01Icon}
                     title="Sao lưu hành trình"
                     onClick={exportTrip}
-                    iconBgColor="bg-sky-50"
-                    iconTextColor="text-sky-600 border-sky-100"
+                    iconBgColor="bg-sky-50 dark:bg-sky-950/20"
+                    iconTextColor="text-sky-600 border-sky-100 dark:text-sky-400 dark:border-sky-900/30"
                   />
 
 
@@ -2358,8 +2363,8 @@ export function MoreScreen({
                       const { exportTripPdf } = await import("../../utils/exportPdf");
                       exportTripPdf(tripData);
                     }}
-                    iconBgColor="bg-rose-50"
-                    iconTextColor="text-rose-600 border-rose-100"
+                    iconBgColor="bg-rose-50 dark:bg-rose-950/20"
+                    iconTextColor="text-rose-600 border-rose-100 dark:text-rose-450 dark:border-rose-900/30"
                   />
                   
                   <ActionCard
@@ -2369,8 +2374,8 @@ export function MoreScreen({
                       const { exportTripExcel } = await import("../../utils/exportExcel");
                       exportTripExcel(tripData).catch(console.error);
                     }}
-                    iconBgColor="bg-emerald-50"
-                    iconTextColor="text-emerald-600 border-emerald-100"
+                    iconBgColor="bg-emerald-50 dark:bg-emerald-950/20"
+                    iconTextColor="text-emerald-600 border-emerald-100 dark:text-emerald-400 dark:border-emerald-900/30"
                   />
                 </div>
               )}
@@ -2387,30 +2392,30 @@ export function MoreScreen({
                 icon={LockIcon}
                 title="Kết thúc chuyến đi"
                 onClick={() => setIsArchiveConfirmOpen(true)}
-                iconBgColor="bg-slate-100"
-                iconTextColor="text-slate-600 border-slate-200/60"
-                titleClassName="text-slate-700 font-semibold"
-                className="border-slate-200 bg-slate-50/50 hover:bg-slate-100/50 text-slate-700 focus:ring-slate-500/50 md:col-span-2"
+                iconBgColor="bg-slate-100 dark:bg-slate-800/40"
+                iconTextColor="text-slate-600 border-slate-200/60 dark:text-slate-400 dark:border-slate-700/30"
+                titleClassName="text-slate-700 dark:text-slate-300 font-semibold"
+                className="border-slate-200 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/10 hover:bg-slate-100/50 dark:hover:bg-slate-900/20 text-slate-700 dark:text-slate-300 focus:ring-slate-500/50 md:col-span-2"
               />
             ) : (
               <ActionCard
                 icon={CircleUnlock01Icon}
                 title="Khôi phục chuyến đi"
                 onClick={() => setIsUnarchiveConfirmOpen(true)}
-                iconBgColor="bg-emerald-50"
-                iconTextColor="text-emerald-600 border-emerald-100/60"
-                titleClassName="text-emerald-700 font-semibold"
-                className="border-emerald-100 bg-emerald-50/20 hover:bg-emerald-50/40 text-emerald-700 focus:ring-emerald-500/50 md:col-span-2"
+                iconBgColor="bg-emerald-50 dark:bg-emerald-950/20"
+                iconTextColor="text-emerald-600 border-emerald-100/60 dark:text-emerald-400 dark:border-emerald-900/30"
+                titleClassName="text-emerald-700 dark:text-emerald-450 font-semibold"
+                className="border-emerald-100 dark:border-emerald-900/30 bg-emerald-50/20 dark:bg-emerald-950/5 hover:bg-emerald-50/40 dark:hover:bg-emerald-950/10 text-emerald-700 dark:text-emerald-400 focus:ring-emerald-500/50 md:col-span-2"
               />
             )}
             <ActionCard
               icon={Delete01Icon}
               title="Xóa vĩnh viễn chuyến đi"
               onClick={() => setIsDeleteConfirmOpen(true)}
-              iconBgColor="bg-rose-50"
-              iconTextColor="text-rose-600 border-rose-100/60"
-              titleClassName="text-rose-600 font-semibold"
-              className="border-rose-100 bg-rose-50/10 hover:bg-rose-50/20 text-rose-600 focus:ring-rose-500/50 md:col-span-2"
+              iconBgColor="bg-rose-50 dark:bg-rose-950/20"
+              iconTextColor="text-rose-600 border-rose-100/60 dark:text-rose-450 dark:border-rose-900/30"
+              titleClassName="text-rose-600 dark:text-rose-400 font-semibold"
+              className="border-rose-100 dark:border-rose-900/30 bg-rose-50/10 dark:bg-rose-950/5 hover:bg-rose-50/20 dark:hover:bg-rose-950/10 text-rose-600 dark:text-rose-400 focus:ring-rose-500/50 md:col-span-2"
             />
           </div>
         </section>
@@ -2502,13 +2507,13 @@ export function MoreScreen({
                 {/* Row: Bao gồm chi phí */}
                 <div 
                   onClick={() => setShareOptions({ ...shareOptions, includeExpenses: !shareOptions.includeExpenses })}
-                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-150/60 rounded-2xl cursor-pointer transition-all"
+                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-slate-150/60 dark:border-slate-700/50 rounded-2xl cursor-pointer transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-500">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-500 dark:text-emerald-400">
                       <HugeiconsIcon icon={WalletCardsIcon} className="h-4.5 w-4.5" />
                     </span>
-                    <span className="text-[14.5px] font-bold text-slate-700">Bao gồm chi phí</span>
+                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">Bao gồm chi phí</span>
                   </div>
                   <ShareSwitch 
                     checked={shareOptions.includeExpenses} 
@@ -2519,13 +2524,13 @@ export function MoreScreen({
                 {/* Row: Bao gồm bản tin */}
                 <div 
                   onClick={() => setShareOptions({ ...shareOptions, includeJournals: !shareOptions.includeJournals })}
-                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-150/60 rounded-2xl cursor-pointer transition-all"
+                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-slate-150/60 dark:border-slate-700/50 rounded-2xl cursor-pointer transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-50 text-violet-500">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-50 dark:bg-violet-950/20 text-violet-500 dark:text-violet-400">
                       <HugeiconsIcon icon={BookOpen01Icon} className="h-4.5 w-4.5" />
                     </span>
-                    <span className="text-[14.5px] font-bold text-slate-700">Bao gồm bản tin</span>
+                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">Bao gồm bản tin</span>
                   </div>
                   <ShareSwitch 
                     checked={shareOptions.includeJournals} 
@@ -2536,13 +2541,13 @@ export function MoreScreen({
                 {/* Row: Bao gồm danh sách chuẩn bị */}
                 <div 
                   onClick={() => setShareOptions({ ...shareOptions, includeChecklist: !shareOptions.includeChecklist })}
-                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-150/60 rounded-2xl cursor-pointer transition-all"
+                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-slate-150/60 dark:border-slate-700/50 rounded-2xl cursor-pointer transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-500 dark:text-amber-400">
                       <HugeiconsIcon icon={CheckmarkCircle01Icon} className="h-4.5 w-4.5" />
                     </span>
-                    <span className="text-[14.5px] font-bold text-slate-700">Bao gồm danh sách chuẩn bị</span>
+                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">Bao gồm danh sách chuẩn bị</span>
                   </div>
                   <ShareSwitch 
                     checked={shareOptions.includeChecklist} 
@@ -2553,13 +2558,13 @@ export function MoreScreen({
                 {/* Row: Bao gồm phương án dự phòng */}
                 <div 
                   onClick={() => setShareOptions({ ...shareOptions, includeBackupPlans: !shareOptions.includeBackupPlans })}
-                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-150/60 rounded-2xl cursor-pointer transition-all"
+                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-slate-150/60 dark:border-slate-700/50 rounded-2xl cursor-pointer transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-50 text-sky-500">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-500 dark:text-sky-400">
                       <HugeiconsIcon icon={Alert01Icon} className="h-4.5 w-4.5" />
                     </span>
-                    <span className="text-[14.5px] font-bold text-slate-700">Bao gồm phương án dự phòng</span>
+                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">Bao gồm phương án dự phòng</span>
                   </div>
                   <ShareSwitch 
                     checked={shareOptions.includeBackupPlans} 
@@ -2570,13 +2575,13 @@ export function MoreScreen({
                 {/* Row: Bao gồm giấy tờ & đặt chỗ */}
                 <div 
                   onClick={() => setShareOptions({ ...shareOptions, includeDocuments: !shareOptions.includeDocuments })}
-                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 hover:bg-slate-50 border border-slate-150/60 rounded-2xl cursor-pointer transition-all"
+                  className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-slate-150/60 dark:border-slate-700/50 rounded-2xl cursor-pointer transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-50 text-rose-500">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-950/20 text-rose-500 dark:text-rose-400">
                       <HugeiconsIcon icon={File01Icon} className="h-4.5 w-4.5" />
                     </span>
-                    <span className="text-[14.5px] font-bold text-slate-700">Bao gồm giấy tờ & đặt chỗ</span>
+                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">Bao gồm giấy tờ & đặt chỗ</span>
                   </div>
                   <ShareSwitch 
                     checked={shareOptions.includeDocuments} 
@@ -2585,26 +2590,26 @@ export function MoreScreen({
                 </div>
 
                 {shareOptions.includeDocuments && (
-                  <div className="rounded-2xl bg-rose-50/70 border border-rose-100 p-4 text-[13px] text-rose-800 font-semibold flex gap-2 animate-fadeIn">
-                    <HugeiconsIcon icon={AlertCircleIcon} className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
+                  <div className="rounded-2xl bg-rose-50/70 border border-rose-100 p-4 text-[13px] text-rose-800 dark:text-rose-400 font-semibold flex gap-2 animate-fadeIn dark:bg-rose-950/20 dark:border-rose-900/30">
+                    <HugeiconsIcon icon={AlertCircleIcon} className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
                     <span>Giấy tờ có thể chứa mã đặt chỗ, vé, số điện thoại hoặc liên kết riêng tư. Chỉ bật nếu bạn thực sự tin tưởng người nhận link.</span>
                   </div>
                 )}
               </div>
 
               {/* PIN Protection */}
-              <div className="rounded-2xl border border-slate-200/80 bg-slate-50/50 overflow-hidden">
+              <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 overflow-hidden">
                 <div
                   onClick={() => setShareOptions(o => ({ ...o, usePinProtection: !o.usePinProtection, sharePin: "" }))}
-                  className="flex min-h-[52px] items-center justify-between py-3 px-4 cursor-pointer hover:bg-slate-50 transition-all"
+                  className="flex min-h-[52px] items-center justify-between py-3 px-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-50 text-amber-500">
-                      <HugeiconsIcon icon={LockIcon} className="h-4 w-4" />
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-500 dark:text-amber-400">
+                      <HugeiconsIcon icon={LockIcon} className="h-4.5 w-4.5" />
                     </span>
                     <div>
-                      <span className="text-[14.5px] font-bold text-slate-700">Bảo vệ bằng mã PIN</span>
-                      <p className="text-[11.5px] text-slate-400 font-medium">Người xem cần nhập đúng PIN để mở</p>
+                      <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">Bảo vệ bằng mã PIN</span>
+                      <p className="text-[11.5px] text-slate-400 dark:text-slate-500 font-medium">Người xem cần nhập đúng PIN để mở</p>
                     </div>
                   </div>
                   <ShareSwitch
@@ -2614,8 +2619,8 @@ export function MoreScreen({
                 </div>
 
                 {shareOptions.usePinProtection && (
-                  <div className="px-4 pb-4 pt-1 border-t border-slate-100 animate-fadeIn">
-                    <p className="text-[12px] text-slate-500 font-semibold mb-2.5">Nhập mã PIN 4 chữ số:</p>
+                  <div className="px-4 pb-4 pt-1 border-t border-slate-100 dark:border-slate-700/50 animate-fadeIn">
+                    <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mb-2.5">Nhập mã PIN 4 chữ số:</p>
                     <div className="flex gap-3 justify-center">
                       {[0,1,2,3].map((i) => (
                         <input
@@ -2642,18 +2647,18 @@ export function MoreScreen({
                               (prev as HTMLInputElement)?.focus();
                             }
                           }}
-                          className="w-12 h-12 rounded-xl border-2 text-center text-[20px] font-black text-slate-800 focus:border-kat-dark focus:ring-2 focus:ring-[#030D2E]/20 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="w-12 h-12 rounded-xl border-2 text-center text-[20px] font-black text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 focus:border-kat-dark focus:dark:border-kat-primary focus:ring-2 focus:ring-[#030D2E]/20 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           style={{ borderColor: shareOptions.sharePin[i] ? undefined : undefined }}
                         />
                       ))}
                     </div>
                     {shareOptions.sharePin.length === 4 && (
-                      <p className="mt-2 text-center text-[12px] text-emerald-600 font-semibold flex items-center justify-center gap-1">
+                      <p className="mt-2 text-center text-[12px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center justify-center gap-1">
                         <HugeiconsIcon icon={CheckIcon} className="h-3 w-3" /> Mã PIN đã sẵn sàng
                       </p>
                     )}
                     {shareOptions.usePinProtection && shareOptions.sharePin.length < 4 && (
-                      <p className="mt-2 text-center text-[12px] text-amber-500 font-semibold">Vui lòng nhập đủ 4 chữ số</p>
+                      <p className="mt-2 text-center text-[12px] text-amber-500 dark:text-amber-400 font-semibold">Vui lòng nhập đủ 4 chữ số</p>
                     )}
                   </div>
                 )}
@@ -2664,7 +2669,7 @@ export function MoreScreen({
                 <button
                   type="button"
                   onClick={() => setIsShareModalOpen(false)}
-                  className="flex-1 rounded-xl bg-slate-100 py-3 font-bold text-slate-700 hover:bg-slate-200 transition-colors min-h-[44px] text-[13.5px] focus:outline-none"
+                  className="flex-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent dark:border-slate-700/50 py-3 font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors min-h-[44px] text-[13.5px] focus:outline-none"
                 >
                   Đóng
                 </button>
@@ -2672,7 +2677,7 @@ export function MoreScreen({
                   type="button"
                   onClick={handleCreateLink}
                   disabled={shareLoading || (shareOptions.usePinProtection && shareOptions.sharePin.length < 4)}
-                  className="flex-[2] rounded-xl bg-kat-dark py-3 font-bold text-white hover:bg-kat-dark bg-opacity-90 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none"
+                  className="flex-[2] rounded-xl bg-kat-dark dark:bg-kat-primary py-3 font-bold text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none border border-transparent dark:border-kat-primary"
                 >
                   {shareLoading ? "Đang tạo link..." : "Tạo link chia sẻ"}
                 </button>
@@ -2681,20 +2686,20 @@ export function MoreScreen({
           ) : (
             <div className="space-y-5 animate-fadeIn">
               {/* Success layout */}
-              <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-100/80 p-3.5">
-                <HugeiconsIcon icon={CheckmarkCircle01Icon} className="h-5 w-5 text-emerald-600 shrink-0" />
-                <span className="text-[14px] font-bold text-emerald-800">Đã tạo link chia sẻ</span>
+              <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100/80 dark:border-emerald-900/30 p-3.5">
+                <HugeiconsIcon icon={CheckmarkCircle01Icon} className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span className="text-[14px] font-bold text-emerald-800 dark:text-emerald-300">Đã tạo link chia sẻ</span>
               </div>
 
               {/* Copy Link field inside an Input container with inline Copy button */}
-              <div className="relative flex items-center rounded-xl bg-slate-100 border border-slate-200 px-3 py-2.5">
+              <div className="relative flex items-center rounded-xl bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-3 py-2.5">
                 <input
                   type="text"
                   readOnly
                   value={activeShareLink.url}
                   onClick={(e) => (e.target as HTMLInputElement).select()}
                   className={classNames(
-                    "flex-1 bg-transparent border-none outline-none text-slate-600 text-[13.5px] font-medium truncate cursor-text",
+                    "flex-1 bg-transparent border-none outline-none text-slate-600 dark:text-slate-300 text-[13.5px] font-medium truncate cursor-text",
                     typeof navigator !== "undefined" && "share" in navigator ? "pr-20" : "pr-10"
                   )}
                 />
@@ -2706,11 +2711,11 @@ export function MoreScreen({
                       setCopiedLink(true);
                       setTimeout(() => setCopiedLink(false), 2000);
                     }}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-slate-800 transition-all shadow-sm active:scale-95"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all shadow-sm active:scale-95"
                     title="Sao chép link"
                   >
                     {copiedLink ? (
-                      <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 text-emerald-500" />
+                      <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
                     ) : (
                       <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />
                     )}
@@ -2729,7 +2734,7 @@ export function MoreScreen({
                           console.log("Share failed or cancelled", err);
                         }
                       }}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-kat-dark border border-kat-dark text-white hover:bg-kat-dark bg-opacity-90 transition-all shadow-sm active:scale-95"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-kat-dark dark:bg-kat-primary border border-kat-dark dark:border-kat-primary text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 transition-all shadow-sm active:scale-95"
                       title="Chia sẻ qua hệ thống"
                     >
                       <HugeiconsIcon icon={Share01Icon} className="h-4 w-4" />
@@ -2739,16 +2744,16 @@ export function MoreScreen({
               </div>
 
               {/* Status display */}
-              <div className="text-[12px] font-semibold flex items-center gap-2 bg-slate-50 border border-slate-150/50 rounded-xl py-2 px-3 animate-fadeIn">
+              <div className="text-[12px] font-semibold flex items-center gap-2 bg-slate-50 dark:bg-slate-800/20 border border-slate-150/50 dark:border-slate-700/30 rounded-xl py-2 px-3 animate-fadeIn text-slate-600 dark:text-slate-400">
                 {isAutoSyncing ? (
                   <>
-                    <HugeiconsIcon icon={Refresh01Icon} className="h-3.5 w-3.5 animate-spin text-sky-600" />
-                    <span className="text-sky-700">Đang tự động đồng bộ các thay đổi mới nhất...</span>
+                    <HugeiconsIcon icon={Refresh01Icon} className="h-3.5 w-3.5 animate-spin text-sky-600 dark:text-sky-400" />
+                    <span className="text-sky-700 dark:text-sky-300">Đang tự động đồng bộ các thay đổi mới nhất...</span>
                   </>
                 ) : (
                   <>
-                    <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5 text-emerald-600" />
-                    <span className="text-emerald-700">
+                    <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <span className="text-emerald-700 dark:text-emerald-400">
                       Tự động đồng bộ khi có thay đổi. Lần cuối: {lastSyncedAt ? lastSyncedAt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Vừa xong'}
                     </span>
                   </>
@@ -2760,7 +2765,7 @@ export function MoreScreen({
                 <button
                   type="button"
                   onClick={() => setIsShareModalOpen(false)}
-                  className="flex-1 rounded-xl border border-slate-200 bg-white py-3 font-bold text-slate-700 hover:bg-slate-50 transition-colors min-h-[44px] text-[13.5px] focus:outline-none"
+                  className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/40 py-3 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors min-h-[44px] text-[13.5px] focus:outline-none"
                 >
                   Đóng
                 </button>
@@ -2768,7 +2773,7 @@ export function MoreScreen({
                   type="button"
                   onClick={handleSyncLink}
                   disabled={syncLoading}
-                  className="flex-[2] rounded-xl bg-kat-dark/10 border border-kat-dark/20 py-3 font-bold text-kat-dark hover:bg-kat-dark/20 active:scale-95 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none flex items-center justify-center gap-1.5"
+                  className="flex-[2] rounded-xl bg-kat-dark/10 dark:bg-slate-800 border border-kat-dark/20 dark:border-slate-700 py-3 font-bold text-kat-dark dark:text-slate-200 hover:bg-kat-dark/20 dark:hover:bg-slate-700 active:scale-95 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none flex items-center justify-center gap-1.5"
                 >
                   <HugeiconsIcon icon={Refresh01Icon} className={classNames("h-4 w-4", syncLoading && "animate-spin")} />
                   {syncLoading ? "Đang đồng bộ..." : "Đồng bộ dữ liệu"}
@@ -2777,7 +2782,7 @@ export function MoreScreen({
                   type="button"
                   onClick={handleRevokeLink}
                   disabled={shareLoading}
-                  className="flex-1 rounded-xl bg-transparent hover:bg-rose-50 text-rose-600 py-3 font-bold active:scale-95 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none"
+                  className="flex-1 rounded-xl bg-transparent hover:bg-rose-50 dark:hover:bg-rose-950/20 text-rose-600 dark:text-rose-450 py-3 font-bold active:scale-95 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none"
                 >
                   {shareLoading ? "Đang tắt..." : "Tắt chia sẻ"}
                 </button>
@@ -2797,7 +2802,7 @@ export function MoreScreen({
         title="Đóng gói kỷ niệm?"
       >
         <div className="space-y-5">
-          <div className="rounded-[20px] bg-slate-100 border border-slate-200 p-5 text-[14px] text-slate-700 font-medium leading-relaxed">
+          <div className="rounded-[20px] bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 p-5 text-[14px] text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
             Hành trình này sẽ được đóng gói và đưa vào góc <b className="text-kat-dark">Kỷ niệm</b>. 
             Mọi dữ liệu sẽ được chuyển sang chế độ <b className="text-kat-dark">chỉ xem</b> để lưu giữ nguyên vẹn những khoảnh khắc của bạn.
           </div>
@@ -2806,7 +2811,7 @@ export function MoreScreen({
             <button
               type="button"
               onClick={() => setIsArchiveConfirmOpen(false)}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/50 px-6 font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
               Hủy
             </button>
@@ -2819,7 +2824,7 @@ export function MoreScreen({
                   onShowToast?.("Đã kết thúc chuyến đi và đưa vào kỷ niệm.");
                 }
               }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-kat-dark border border-kat-dark px-6 font-bold text-white hover:bg-kat-dark bg-opacity-90 active:scale-98 transition-all duration-200 shadow-[0_8px_24px_-8px_rgba(3,13,46,0.4)]"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary border border-kat-dark dark:border-kat-primary px-6 font-bold text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-98 transition-all duration-200 shadow-[0_8px_24px_-8px_rgba(3,13,46,0.4)] dark:shadow-[0_8px_24px_-8px_rgba(0,191,183,0.3)]"
             >
               <HugeiconsIcon icon={LockIcon} className="h-5 w-5 opacity-80" />
               Đồng ý đóng gói
@@ -2835,15 +2840,15 @@ export function MoreScreen({
         title="Mở khóa chuyến đi?"
       >
         <div className="space-y-5">
-          <div className="rounded-[20px] bg-emerald-50 border border-emerald-200 p-5 text-[14px] text-emerald-800 font-medium leading-relaxed">
-            Chuyến đi sẽ được <b className="text-emerald-700">mở khóa trở lại</b>. Bạn có thể tiếp tục lên lịch trình, đăng bài viết bản tin và quản lý chi phí như bình thường.
+          <div className="rounded-[20px] bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 p-5 text-[14px] text-emerald-800 dark:text-emerald-400 font-medium leading-relaxed">
+            Chuyến đi sẽ được <b className="text-emerald-700 dark:text-emerald-300">mở khóa trở lại</b>. Bạn có thể tiếp tục lên lịch trình, đăng bài viết bản tin và quản lý chi phí như bình thường.
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
             <button
               type="button"
               onClick={() => setIsUnarchiveConfirmOpen(false)}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/50 px-6 font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
               Hủy
             </button>
@@ -2856,7 +2861,7 @@ export function MoreScreen({
                   onShowToast?.("Đã mở khóa chuyến đi.");
                 }
               }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-emerald-600 border border-emerald-500 px-6 font-bold text-white hover:bg-emerald-700 active:scale-98 transition-all duration-200 shadow-[0_8px_24px_-8px_rgba(5,150,105,0.4)]"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-emerald-600 dark:bg-emerald-600 border border-emerald-500 dark:border-emerald-500 px-6 font-bold text-white hover:bg-emerald-700 dark:hover:bg-emerald-500 active:scale-98 transition-all duration-200 shadow-[0_8px_24px_-8px_rgba(5,150,105,0.4)]"
             >
               <HugeiconsIcon icon={CircleUnlock01Icon} className="h-5 w-5 opacity-80" />
               Tiếp tục hành trình

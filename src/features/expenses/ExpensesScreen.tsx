@@ -39,7 +39,7 @@ import { getCurrentPosition, reverseGeocode, getCurrencyForCountry } from "../..
 
 export function CategoryBar({ percent, colorClass }: { percent: number; colorClass: string }) {
   return (
-    <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100/80">
+    <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100/80 dark:bg-slate-800/60">
       <div className={`h-full rounded-full transition-all duration-500 ease-out ${colorClass}`} style={{ width: `${percent}%` }} />
     </div>
   );
@@ -53,7 +53,7 @@ export function BreakdownSection({
   items: Record<string, number>; 
   total: number; 
   emptyText: string 
-}) {
+  }) {
   const rows = Object.entries(items)
     .filter(([_, amount]) => amount > 0)
     .sort((a, b) => b[1] - a[1]);
@@ -61,7 +61,7 @@ export function BreakdownSection({
   if (!rows.length) {
     return (
       <div className="flex flex-col items-center justify-center py-6 text-center">
-        <p className="text-[14px] font-semibold text-slate-500">{emptyText}</p>
+        <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">{emptyText}</p>
       </div>
     );
   }
@@ -76,17 +76,17 @@ export function BreakdownSection({
             ? "bg-kat-primary/70" 
             : index === 2 
               ? "bg-kat-primary/40" 
-              : "bg-slate-300";
+              : "bg-slate-300 dark:bg-slate-600";
               
         return (
           <div key={label} className="group">
             <div className="flex items-center justify-between text-[14px] font-bold">
-              <p className="text-slate-700 group-hover:text-kat-dark transition-colors">{label}</p>
-              <p className="text-kat-dark">{formatMoney(amount)}</p>
+              <p className="text-slate-700 dark:text-slate-300 group-hover:text-kat-dark group-hover:dark:text-white transition-colors">{label}</p>
+              <p className="text-kat-dark dark:text-white">{formatMoney(amount)}</p>
             </div>
             <div className="mt-2 flex items-center gap-3">
               <CategoryBar percent={percent} colorClass={colorClass} />
-              <span className="w-10 text-right text-[12px] font-black text-slate-400 group-hover:text-slate-600 transition-colors">{percent}%</span>
+              <span className="w-10 text-right text-[12px] font-black text-slate-400 dark:text-slate-500 group-hover:text-slate-600 group-hover:dark:text-slate-350 transition-colors">{percent}%</span>
             </div>
           </div>
         );
@@ -112,34 +112,34 @@ export function SettlementCard({
   }
 
   return (
-    <section className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm mt-6 animate-fadeIn">
+    <section className="rounded-3xl border border-slate-100 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-sm mt-6 animate-fadeIn">
       <div className="flex items-center gap-2 mb-4">
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
           <HugeiconsIcon icon={BalanceScaleIcon} className="h-4.5 w-4.5" />
         </span>
-        <h3 className="text-[16px] font-extrabold text-kat-dark">Cân đối chia tiền</h3>
+        <h3 className="text-[16px] font-extrabold text-kat-dark dark:text-white">Cân đối chia tiền</h3>
       </div>
       {settlements.length ? (
         <div className="grid gap-3 sm:grid-cols-2">
           {settlements.map((s, idx) => (
-            <div key={idx} className="flex flex-col justify-center bg-white border border-slate-200 shadow-sm rounded-2xl p-4 gap-2">
+            <div key={idx} className="flex flex-col justify-center bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 shadow-sm rounded-2xl p-4 gap-2">
               <div className="flex items-center justify-between w-full">
                 <div className="flex flex-col items-center flex-1">
-                  <span className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-1">
+                  <span className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 mb-1">
                     <HugeiconsIcon icon={UserIcon} className="w-4 h-4" />
                   </span>
-                  <span className="font-bold text-kat-dark text-[13px] truncate max-w-[80px]">{s.from}</span>
+                  <span className="font-bold text-kat-dark dark:text-slate-200 text-[13px] truncate max-w-[80px]">{s.from}</span>
                 </div>
                 
                 <div className="flex flex-col items-center justify-center flex-[1.5] px-2">
                   <span className="font-black text-rose-600 text-[14.5px] mb-1">{formatMoney(s.amount)}</span>
-                  <div className="w-full h-[2px] bg-slate-200 relative flex items-center justify-center">
-                    <div className="absolute right-[-4px] top-1/2 -translate-y-1/2 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-slate-200" />
+                  <div className="w-full h-[2px] bg-slate-200 dark:bg-slate-700 relative flex items-center justify-center">
+                    <div className="absolute right-[-4px] top-1/2 -translate-y-1/2 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-slate-200 dark:border-l-slate-700" />
                   </div>
                 </div>
 
                 <div className="flex flex-col items-center flex-1">
-                  <span className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1 border border-emerald-100">
+                  <span className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-1 border border-emerald-100 dark:border-emerald-900/30">
                     <HugeiconsIcon icon={UserCheckIcon} className="w-4 h-4" />
                   </span>
                   <span className="font-bold text-kat-primary text-[13px] truncate max-w-[80px]">{s.to}</span>
@@ -149,8 +149,8 @@ export function SettlementCard({
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center p-6 text-center border border-dashed border-slate-200 rounded-2xl bg-slate-50/30">
-          <p className="text-[14px] font-semibold text-slate-500">{emptyText}</p>
+        <div className="flex flex-col items-center justify-center p-6 text-center border border-dashed border-slate-200 dark:border-kat-border/40 rounded-2xl bg-slate-50/30 dark:bg-slate-800/20">
+          <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">{emptyText}</p>
         </div>
       )}
     </section>
@@ -208,16 +208,16 @@ const ExpenseCard = React.memo(function ExpenseCard({
   };
 
   return (
-    <article className={`motion-card-enter motion-delay-${Math.min(idx + 1, 5)} flex items-center justify-between gap-4 rounded-3xl bg-white p-5 border border-slate-200 shadow-sm transition-all duration-200 hover:shadow-md`}>
+    <article className={`motion-card-enter motion-delay-${Math.min(idx + 1, 5)} flex items-center justify-between gap-4 rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-200 dark:border-kat-border/40 shadow-sm transition-all duration-200 hover:shadow-md`}>
       <div className="min-w-0 flex-1">
         {/* Description */}
-        <h4 className="text-base font-semibold text-kat-dark truncate">
+        <h4 className="text-base font-semibold text-kat-dark dark:text-white truncate">
           {item.description || "Khoản chi không tên"}
         </h4>
 
         {/* Category & Badge */}
-        <div className="flex items-center flex-wrap gap-2 text-xs text-slate-500 mt-1.5">
-          <span className="inline-flex items-center gap-1 font-medium bg-slate-100/80 px-2 py-0.5 rounded-md border border-slate-200/20">
+        <div className="flex items-center flex-wrap gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1.5">
+          <span className="inline-flex items-center gap-1 font-medium bg-slate-100/80 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/20 dark:border-slate-700/60">
             {getCategoryIcon(item.category)}
             {item.category}
           </span>
@@ -225,8 +225,8 @@ const ExpenseCard = React.memo(function ExpenseCard({
           <span className={classNames(
             "inline-flex items-center rounded-md px-2 py-0.5 font-bold border",
             isPersonal 
-              ? "bg-slate-50 text-slate-500 border-slate-200/80" 
-              : "bg-emerald-50 text-emerald-700 border-emerald-100"
+              ? "bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200/80 dark:border-slate-700/60" 
+              : "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-450 border-emerald-100 dark:border-emerald-900/30"
           )}>
             {isPersonal ? "Chi cá nhân" : "Chi chung"}
           </span>
@@ -236,7 +236,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
           </span>
           
           {item.date && (
-            <span className="font-medium px-2 py-0.5 bg-slate-50 border border-slate-200/60 rounded-md">
+            <span className="font-medium px-2 py-0.5 bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 rounded-md">
               {new Date(item.date).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
             </span>
           )}
@@ -245,11 +245,11 @@ const ExpenseCard = React.memo(function ExpenseCard({
 
       {/* Amount */}
       <div className="shrink-0 pl-2 text-right">
-        <p className="font-bold text-kat-dark text-lg">
+        <p className="font-bold text-kat-dark dark:text-white text-lg">
           {formatMoney(item.amount)}
         </p>
         {item.originalAmount && item.currency && item.currency !== "VND" && (
-          <p className="text-[12px] font-medium text-slate-500 mt-0.5">
+          <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
             {new Intl.NumberFormat('en-US').format(item.originalAmount)} {item.currency}
           </p>
         )}
@@ -260,7 +260,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
         <div className="relative shrink-0 self-center" ref={menuRef}>
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800/40 transition-colors focus:outline-none"
             onClick={(e) => {
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
@@ -271,7 +271,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
           </button>
 
           {isMenuOpen && (
-            <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 bg-white p-1.5 shadow-lg animate-scaleIn text-left">
+            <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 dark:border-kat-border bg-white dark:bg-kat-surface p-1.5 shadow-lg animate-scaleIn text-left">
               <button
                 type="button"
                 onClick={(e) => {
@@ -279,7 +279,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
                   setIsMenuOpen(false);
                   onEdit();
                 }}
-                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40 active:bg-slate-100 transition-colors"
               >
                 <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500" />
                 Sửa
@@ -291,7 +291,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
                   setIsMenuOpen(false);
                   onDelete();
                 }}
-                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+                className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
               >
                 <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
                 Xóa
@@ -518,7 +518,7 @@ function ExpenseForm({
       type="button"
       onClick={save}
       disabled={isSaveDisabled}
-      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark hover:bg-kat-dark bg-opacity-90 text-white px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
+      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 text-white dark:text-slate-950 px-4 text-[13.5px] font-bold shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] transition-all active:scale-[0.97] disabled:bg-slate-100 dark:disabled:bg-slate-800/40 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed"
     >
       {editing ? "Lưu" : "Thêm"}
     </button>
@@ -533,14 +533,14 @@ function ExpenseForm({
     >
       <div className="space-y-4">
         {/* Prominent Amount Input */}
-        <div className="relative flex flex-col items-center justify-center py-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+        <div className="relative flex flex-col items-center justify-center py-4 bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-700">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-[12px] font-bold uppercase tracking-wider text-slate-400">Số tiền</span>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setIsCurrencyDropdownOpen(true)}
-                className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white border border-slate-200 rounded-md px-2.5 py-1 text-kat-dark hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
+                className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1 text-kat-dark dark:text-slate-200 hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
               >
                 {form.currency}
                 <HugeiconsIcon icon={ChevronDownIcon} className="w-3.5 h-3.5 text-slate-400" />
@@ -560,8 +560,8 @@ function ExpenseForm({
                     }}
                     className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
                       form.currency === "VND"
-                        ? "bg-kat-primary-soft text-kat-primary"
-                        : "hover:bg-slate-50 text-kat-dark"
+                        ? "bg-kat-primary-soft text-kat-primary dark:bg-kat-primary/10"
+                        : "hover:bg-slate-50 dark:hover:bg-slate-800 text-kat-dark dark:text-slate-200"
                     }`}
                   >
                     <span className={`text-[15px] ${form.currency === "VND" ? 'font-extrabold' : 'font-semibold'}`}>
@@ -581,8 +581,8 @@ function ExpenseForm({
                         }}
                         className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
                           isSelected
-                            ? "bg-kat-primary-soft text-kat-primary"
-                            : "hover:bg-slate-50 text-kat-dark"
+                            ? "bg-kat-primary-soft text-kat-primary dark:bg-kat-primary/10"
+                            : "hover:bg-slate-50 dark:hover:bg-slate-800 text-kat-dark dark:text-slate-200"
                         }`}
                       >
                         <span className={`text-[15px] ${isSelected ? 'font-extrabold' : 'font-semibold'}`}>
@@ -608,12 +608,12 @@ function ExpenseForm({
                 setErrors({ ...errors, amount: "" });
               }}
               placeholder="0"
-              className="w-full text-center text-3xl font-black text-kat-dark bg-transparent border-none outline-none placeholder-slate-300 focus:ring-0"
+              className="w-full text-center text-3xl font-black text-kat-dark dark:text-white bg-transparent border-none outline-none placeholder-slate-300 focus:ring-0"
             />
           </div>
           {form.currency !== "VND" && form.amount && (
             <div className="mt-3 flex flex-col items-center">
-              <span className="text-[14px] font-bold text-slate-600">
+              <span className="text-[14px] font-bold text-slate-600 dark:text-slate-300">
                 ≈ {formatMoney(Math.round(Number(form.amount) * form.exchangeRate))}
               </span>
               <span className="text-[11px] font-medium text-slate-400 mt-1">
@@ -675,7 +675,7 @@ function ExpenseForm({
               )}
             </div>
           ) : (
-            <div className="rounded-2xl bg-amber-50/70 border border-amber-100 p-4 text-[13px] text-amber-800 font-semibold flex gap-2">
+            <div className="rounded-2xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 p-4 text-[13px] text-amber-800 dark:text-amber-400 font-semibold flex gap-2">
               <HugeiconsIcon icon={InformationCircleIcon} className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
               <span>Chuyến đi chưa có người đồng hành. Thêm người đồng hành để tính phần cần góp hoặc hoàn lại.</span>
             </div>
@@ -700,11 +700,11 @@ function ExpenseForm({
         )}
 
         {/* Accordion / Collapsible Panel */}
-        <div className="pt-2 border-t border-slate-100/80">
+        <div className="pt-2 border-t border-slate-100/80 dark:border-slate-800">
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-kat-dark transition-colors focus:outline-none"
+            className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-slate-200 transition-colors focus:outline-none"
           >
             <span className="flex items-center gap-1.5">
               <HugeiconsIcon icon={PreferenceHorizontalIcon} className="h-4 w-4 text-slate-400" />
@@ -780,11 +780,11 @@ function ExpenseForm({
 
               {/* Segmented Control for Cost Calculation */}
               <div className="space-y-2">
-                <span className="text-[13.5px] font-semibold text-slate-600 flex items-center gap-1.5">
+                <span className="text-[13.5px] font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
                   <HugeiconsIcon icon={BalanceScaleIcon} className="h-4 w-4 text-slate-500" />
                   Cách chia khoản chi
                 </span>
-                <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200/40">
+                <div className="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
                   <button
                     type="button"
                     onClick={() => {
@@ -794,8 +794,8 @@ function ExpenseForm({
                     className={classNames(
                       "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
                       form.splitType === "shared"
-                        ? "bg-white text-kat-dark shadow-sm border border-slate-200/10"
-                        : "text-slate-500 hover:text-slate-700"
+                        ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm border border-slate-200/10"
+                        : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                     )}
                   >
                     Chi chung nhóm
@@ -809,8 +809,8 @@ function ExpenseForm({
                     className={classNames(
                       "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
                       form.splitType === "personal"
-                        ? "bg-white text-kat-dark shadow-sm border border-slate-200/10"
-                        : "text-slate-500 hover:text-slate-700"
+                        ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm border border-slate-200/10"
+                        : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                     )}
                   >
                     Cá nhân tự trả
@@ -921,14 +921,15 @@ export function ExpensesScreen({
         {/* Title row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark">Chi phí</h2>
-            <p className="mt-1 text-[15px] font-medium text-slate-500">Theo dõi chi tiêu, khoản đã trả và phần cần chia trong chuyến đi.</p>
+            <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-white">Chi phí</h2>
+            <p className="mt-1 text-[15px] font-medium text-slate-500 dark:text-slate-400">Theo dõi chi tiêu, khoản đã trả và phần cần chia trong chuyến đi.</p>
           </div>
           {!isReadOnly && (
             <div>
               <button
+                type="button"
                 onClick={openNewForm}
-                className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-kat-dark px-5 text-[14px] font-bold text-white shadow-sm hover:bg-kat-dark bg-opacity-90 motion-press h-[48px]"
+                className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary hover:bg-opacity-95 dark:hover:brightness-110 px-5 text-[14px] font-bold text-white dark:text-slate-950 shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] motion-press h-[48px]"
               >
                 <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
                 Thêm khoản chi
@@ -938,43 +939,43 @@ export function ExpensesScreen({
         </div>
         
         {/* Total Expense Hero */}
-        <section className="relative overflow-hidden rounded-[32px] bg-white border-t-4 border-t-[#030D2E] border-x border-b border-slate-200 p-6 md:p-8 text-kat-dark shadow-soft">
+        <section className="relative overflow-hidden rounded-[32px] bg-white dark:bg-kat-surface border-t-4 border-t-[#030D2E] dark:border-t-kat-border/40 border-x border-b border-slate-200 dark:border-kat-border/40 p-6 md:p-8 text-kat-dark dark:text-slate-100 shadow-soft">
           
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="flex-1 space-y-5">
               <div>
-                <div className="flex items-center gap-1.5 text-slate-500">
+                <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
                   <HugeiconsIcon icon={ReceiptTextIcon} className="h-4.5 w-4.5" />
                   <p className="text-[13px] font-bold uppercase tracking-wider">Tổng chi phí chuyến đi</p>
                 </div>
-                <p className="mt-1 break-words text-[36px] md:text-[44px] font-black leading-none tracking-tight text-kat-dark">{formatMoney(totalExpense)}</p>
+                <p className="mt-1 break-words text-[36px] md:text-[44px] font-black leading-none tracking-tight text-kat-dark dark:text-white">{formatMoney(totalExpense)}</p>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
-                <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-start justify-between">
+                <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
-                    <p className="text-[12px] font-bold text-slate-500 uppercase tracking-wide">Chi chung chuyến đi</p>
-                    <p className="text-[18px] font-black text-[#00AFA8] mt-0.5">{formatMoney(totalSharedExpense)}</p>
+                    <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Chi chung chuyến đi</p>
+                    <p className="text-[18px] font-black text-[#00AFA8] dark:text-[#00BFB7] mt-0.5">{formatMoney(totalSharedExpense)}</p>
                   </div>
-                  <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-[#00AFA8]/60 shrink-0 mt-0.5" />
+                  <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-[#00AFA8]/60 dark:text-[#00BFB7]/60 shrink-0 mt-0.5" />
                 </div>
-                <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-start justify-between">
+                <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
-                    <p className="text-[12px] font-bold text-slate-500 uppercase tracking-wide">Chi cá nhân</p>
-                    <p className="text-[18px] font-black text-kat-dark mt-0.5">{formatMoney(totalPersonalExpense)}</p>
+                    <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Chi cá nhân</p>
+                    <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(totalPersonalExpense)}</p>
                   </div>
-                  <HugeiconsIcon icon={UserIcon} className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
+                  <HugeiconsIcon icon={UserIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500 shrink-0 mt-0.5" />
                 </div>
-                <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-start justify-between">
+                <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
-                    <p className="text-[12px] font-bold text-slate-500 uppercase tracking-wide">Bình quân / người</p>
+                    <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Bình quân / người</p>
                     {members.length > 0 ? (
-                      <p className="text-[18px] font-black text-kat-dark mt-0.5">{formatMoney(perPerson)}</p>
+                      <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(perPerson)}</p>
                     ) : (
-                      <span className="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-100 mt-1.5 inline-block">Chưa có người đồng hành</span>
+                      <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-lg border border-amber-100 dark:border-amber-900/30 mt-1.5 inline-block">Chưa có người đồng hành</span>
                     )}
                   </div>
-                  <HugeiconsIcon icon={CalculatorIcon} className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
+                  <HugeiconsIcon icon={CalculatorIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500 shrink-0 mt-0.5" />
                 </div>
               </div>
             </div>
@@ -983,8 +984,9 @@ export function ExpensesScreen({
             {!isReadOnly && (
               <div className="shrink-0 flex md:hidden items-center justify-end w-full">
                 <button 
+                  type="button"
                   onClick={openNewForm}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-kat-dark hover:bg-kat-dark bg-opacity-90 text-white px-6 py-3 text-[14px] font-bold shadow-sm motion-press h-[48px]"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary hover:bg-opacity-95 dark:hover:brightness-110 text-white dark:text-slate-950 px-6 py-3 text-[14px] font-bold shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] motion-press h-[48px]"
                 >
                   <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
                   Thêm khoản chi
@@ -998,27 +1000,27 @@ export function ExpensesScreen({
           <>
             {/* Breakdown Grid */}
             <section className="grid gap-6 lg:grid-cols-2">
-              <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+              <div className="rounded-3xl border border-slate-100 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-5">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
                     <HugeiconsIcon icon={PieChartIcon} className="h-4.5 w-4.5" />
                   </span>
-                  <h3 className="text-base font-extrabold text-kat-dark">Chi phí theo hạng mục</h3>
+                  <h3 className="text-base font-extrabold text-kat-dark dark:text-white">Chi phí theo hạng mục</h3>
                 </div>
                 <BreakdownSection items={byCategory} total={totalExpense} emptyText="Chưa có danh mục chi phí." />
               </div>
-              <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+              <div className="rounded-3xl border border-slate-100 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-5">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
                     <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5" />
                   </span>
-                  <h3 className="text-base font-extrabold text-kat-dark">Chi phí theo người đồng hành</h3>
+                  <h3 className="text-base font-extrabold text-kat-dark dark:text-white">Chi phí theo người đồng hành</h3>
                 </div>
                 {members.length > 0 ? (
                   <BreakdownSection items={paidByMember} total={totalSharedExpense} emptyText="Thêm người đồng hành để thống kê." />
                 ) : (
                   <div className="flex flex-col items-center justify-center py-6 text-center">
-                    <p className="text-[14px] font-semibold text-slate-500">Thêm người đồng hành để xem phần chi của từng người.</p>
+                    <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">Thêm người đồng hành để xem phần chi của từng người.</p>
                   </div>
                 )}
               </div>
@@ -1083,7 +1085,7 @@ export function ExpensesScreen({
       {/* Success Toast */}
       {toastMessage && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
-          <div className="bg-kat-dark text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2">
+          <div className="bg-kat-dark dark:bg-slate-800 text-white dark:text-slate-200 px-5 py-3 rounded-full shadow-lg flex items-center gap-2 border border-transparent dark:border-slate-700/50">
             <span className="text-[14px] font-bold">{toastMessage}</span>
           </div>
         </div>

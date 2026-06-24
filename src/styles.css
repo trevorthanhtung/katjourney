@@ -57,12 +57,39 @@
   --mobile-bottom-nav-height: 76px;
   --mobile-page-bottom-gap: 24px;
 
-  color: #030D2E;
-  background: #F8FAFC;
+  --kat-header-bg: rgba(248, 248, 252, 0.75);
+  --kat-nav-bg: rgba(255, 255, 255, 0.45);
+  --kat-nav-border: rgba(255, 255, 255, 0.5);
+
+  color: var(--kat-text);
+  background: var(--kat-bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+:root[data-theme="dark"] {
+  --kat-bg: #0A1124;
+  --kat-surface: #111A33;
+  --kat-text: #E8ECF4;
+  --kat-muted: #94A3B8;
+  --kat-border: #2A3654;
+
+  --kat-primary: #00BFB7;
+  --kat-primary-usable: #1FD3CB;
+  --kat-primary-soft: rgba(0, 191, 183, 0.16);
+
+  --kat-hero-start: #030D2E;
+  --kat-hero-end: #006B7A;
+
+  --kat-yellow: #FFB02E;
+  --kat-pink: #FF3D7F;
+  --kat-blue: #33A6DA;
+
+  --kat-header-bg: rgba(10, 17, 36, 0.75);
+  --kat-nav-bg: rgba(17, 26, 51, 0.45);
+  --kat-nav-border: rgba(42, 54, 84, 0.5);
 }
 
 /* Hide all scrollbars globally — iOS Safari PWA requires wildcard + explicit html/body */
@@ -116,7 +143,8 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0;
-  background-color: #F8FAFC;
+  background-color: var(--kat-bg);
+  color: var(--kat-text);
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -567,17 +595,17 @@ textarea,
 }
 
 .glass-panel-header {
-  background: rgba(248, 248, 252, 0.75) !important;
+  background: var(--kat-header-bg) !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.6) !important;
+  border-bottom: 1px solid var(--kat-border) !important;
 }
 
 .glass-panel-nav {
-  background: rgba(255, 255, 255, 0.45) !important;
+  background: var(--kat-nav-bg) !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  border: 1px solid var(--kat-nav-border) !important;
   box-shadow: 0 12px 40px rgba(3, 13, 46, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.4) !important;
 }
 

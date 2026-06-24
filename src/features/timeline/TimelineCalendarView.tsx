@@ -64,24 +64,24 @@ export function TimelineCalendarView({
   return (
     <div className="space-y-6 motion-page-enter">
       {/* Calendar Card */}
-      <div className="bg-white rounded-[28px] p-5 md:p-6 shadow-soft border border-slate-100">
+      <div className="bg-white dark:bg-kat-surface rounded-[28px] p-5 md:p-6 shadow-soft border border-slate-100 dark:border-kat-border">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[18px] font-black text-kat-dark capitalize">
             Tháng {month + 1}, {year}
           </h3>
           <div className="flex items-center gap-2">
-            <button onClick={prevMonth} aria-label="Tháng trước" className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-500 hover:bg-slate-100 transition-colors">
+            <button onClick={prevMonth} aria-label="Tháng trước" className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
               <HugeiconsIcon icon={ChevronLeftIcon} className="w-5 h-5" />
             </button>
-            <button onClick={nextMonth} aria-label="Tháng sau" className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-500 hover:bg-slate-100 transition-colors">
+            <button onClick={nextMonth} aria-label="Tháng sau" className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
               <HugeiconsIcon icon={ChevronRightIcon} className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 text-center mb-2 border-b border-slate-100 pb-2">
+        <div className="grid grid-cols-7 gap-1 text-center mb-2 border-b border-slate-100 dark:border-slate-700/40 pb-2">
           {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map(d => (
-            <div key={d} className="text-[12px] font-bold text-slate-400">
+            <div key={d} className="text-[12px] font-bold text-slate-400 dark:text-slate-500">
               {d}
             </div>
           ))}
@@ -105,16 +105,16 @@ export function TimelineCalendarView({
                 className={classNames(
                   "relative h-10 md:h-12 w-full flex flex-col items-center justify-center rounded-[14px] transition-all duration-200 cursor-pointer motion-press",
                   isSelected 
-                    ? "bg-kat-dark text-white shadow-md border border-kat-dark/20" 
-                    : "hover:bg-slate-50 border border-transparent",
-                  !isSelected && isTripDay ? "bg-kat-primary-soft text-kat-text font-extrabold" : (!isSelected && "text-slate-600 font-semibold")
+                    ? "bg-[#030D2E] dark:bg-kat-primary text-white dark:text-slate-950 shadow-md dark:shadow-[0_0_16px_rgba(0,191,183,0.3)] border border-[#030D2E]/20 dark:border-kat-primary font-extrabold" 
+                    : "hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent",
+                  !isSelected && isTripDay ? "bg-kat-primary-soft text-kat-text font-extrabold" : (!isSelected && "text-slate-600 dark:text-slate-400 font-semibold")
                 )}
               >
                 <span className={classNames("text-[14px] md:text-[15px]")}>{day}</span>
                 {hasEvents && (
                   <div className={classNames(
                     "absolute bottom-[5px] w-[5px] h-[5px] rounded-full",
-                    isSelected ? "bg-kat-teal" : "bg-kat-teal"
+                    isSelected ? "bg-white dark:bg-slate-900" : "bg-kat-teal"
                   )} />
                 )}
               </button>
@@ -126,7 +126,7 @@ export function TimelineCalendarView({
       {/* Selected Date Details */}
       {selectedDate && (
         <div className="animate-fadeIn">
-          <div className="flex items-center justify-between mb-4 px-1 border-b border-slate-100 pb-3">
+          <div className="flex items-center justify-between mb-4 px-1 border-b border-slate-100 dark:border-slate-700/40 pb-3">
             <h4 className="text-[16px] font-extrabold text-kat-dark flex items-center gap-2">
               <HugeiconsIcon icon={Calendar01Icon} className="w-5 h-5 text-kat-teal" />
               Lịch trình ngày {selectedDate.split('-').reverse().join('/')}
@@ -146,19 +146,19 @@ export function TimelineCalendarView({
                 {selectedEvents.map((item, idx) => renderActivityCard(item, idx))}
               </div>
             ) : (
-              <div className="bg-slate-50 border border-slate-200 rounded-[24px] p-6 text-center shadow-sm">
+              <div className="bg-slate-50 dark:bg-kat-surface border border-slate-200 dark:border-kat-border rounded-[24px] p-6 text-center shadow-sm">
                 <div className="flex justify-center mb-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm text-slate-400">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-sm text-slate-400 dark:text-slate-500">
                     <HugeiconsIcon icon={Clock01Icon} className="w-5 h-5" />
                   </div>
                 </div>
-                <h5 className="text-[15px] font-bold text-kat-dark">Ngày này trống</h5>
-                <p className="mt-1 text-[13.5px] font-medium text-slate-500 max-w-sm mx-auto">
+                <h5 className="text-[15px] font-bold text-kat-dark dark:text-slate-100">Ngày này trống</h5>
+                <p className="mt-1 text-[13.5px] font-medium text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
                   Không có sự kiện nào trong ngày này. Hãy thêm điểm dừng để lấp đầy hành trình.
                 </p>
                 <button 
                   onClick={() => onOpenNewForm(selectedDate)}
-                  className="mt-4 inline-flex items-center gap-1.5 rounded-2xl bg-white border border-slate-200 px-4 py-2.5 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all shadow-sm motion-press"
+                  className="mt-4 inline-flex items-center gap-1.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 px-4 py-2.5 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 transition-all shadow-sm motion-press"
                 >
                   <HugeiconsIcon icon={Add01Icon} className="w-4 h-4 text-kat-primary" />
                   Thêm hoạt động

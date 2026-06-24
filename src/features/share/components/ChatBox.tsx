@@ -130,9 +130,9 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
   // Helper to render the actual chat UI (Header, Messages Feed, Input Area)
   const renderChatContent = (isMobileFullscreen: boolean, onBackClick?: () => void) => {
     return (
-      <div className="bg-white flex flex-col overflow-hidden h-full w-full">
+      <div className="bg-white dark:bg-kat-surface flex flex-col overflow-hidden h-full w-full">
         {/* Header */}
-        <div className="bg-gradient-to-r from-kat-hero-start via-kat-hero-end to-kat-primary-usable p-4 text-white flex justify-between items-center shrink-0 border-b border-kat-border shadow-sm">
+        <div className="bg-gradient-to-r from-kat-hero-start via-kat-hero-end to-kat-primary-usable p-4 text-white flex justify-between items-center shrink-0 border-b border-kat-border dark:border-slate-800/80 shadow-sm">
           <div className="flex items-center gap-3 min-w-0">
             {isMobileFullscreen && onBackClick && (
               <button 
@@ -169,7 +169,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
         </div>
  
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-[#F8FAFC]/30 to-[#F8FAFC] flex flex-col custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-[#F8FAFC]/30 to-[#F8FAFC] dark:from-kat-surface/30 dark:to-kat-bg flex flex-col custom-scrollbar">
           {loading ? (
             <div className="flex-1 flex flex-col items-center justify-center">
               <HugeiconsIcon icon={Loading01Icon} className="w-8 h-8 animate-spin text-kat-primary" />
@@ -206,7 +206,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                 <React.Fragment key={msg.id || index}>
                   {showDateSeparator && (
                     <div className="flex items-center justify-center my-4 select-none">
-                      <div className="bg-[#E2E8F0]/60 text-kat-text text-[10px] font-bold px-3 py-1 rounded-full shadow-sm tracking-wider uppercase border border-kat-border/40">
+                      <div className="bg-[#E2E8F0]/60 dark:bg-slate-800/60 text-kat-text dark:text-slate-350 text-[10px] font-bold px-3 py-1 rounded-full shadow-sm tracking-wider uppercase border border-kat-border/40 dark:border-slate-700/30">
                         {dateStr}
                       </div>
                     </div>
@@ -223,7 +223,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                       <div className={classNames(
                         "w-8 h-8 rounded-full shrink-0 mr-2 mt-auto",
                         showAvatar && msg.senderAvatar 
-                          ? "overflow-hidden bg-[#E2E8F0]/40 border border-kat-border/60 shadow-sm transition-transform duration-200 hover:scale-110" 
+                          ? "overflow-hidden bg-[#E2E8F0]/40 dark:bg-slate-800/40 border border-kat-border/60 dark:border-slate-700/40 shadow-sm transition-transform duration-200 hover:scale-110" 
                           : ""
                       )}>
                         {showAvatar ? renderSenderAvatar(msg.senderName) : null}
@@ -236,7 +236,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                     )}>
                       {!isMe && showAvatar && (
                         <div className="flex items-center mb-1 ml-1 select-none">
-                          <span className="text-xs font-bold text-slate-500">{msg.senderName}</span>
+                          <span className="text-xs font-bold text-slate-500 dark:text-slate-400">{msg.senderName}</span>
                           {renderRoleIcon(msg.senderRole)}
                         </div>
                       )}
@@ -254,7 +254,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                                 "rounded-2xl rounded-tr-none"
                               )
                             : classNames(
-                                "bg-white text-kat-text border border-slate-100 hover:translate-x-1 hover:shadow-md",
+                                "bg-white dark:bg-slate-800 text-kat-text border border-slate-100 dark:border-slate-700/50 hover:translate-x-1 hover:shadow-md",
                                 isPrevSame && isNextSame ? "rounded-r-2xl rounded-l-md" :
                                 isPrevSame && !isNextSame ? "rounded-r-2xl rounded-tl-md rounded-bl-2xl" :
                                 !isPrevSame && isNextSame ? "rounded-r-2xl rounded-tl-2xl rounded-bl-md" :
@@ -284,14 +284,14 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
  
         {/* Input */}
         {isReadOnly ? (
-          <div className="mx-4 my-3 p-3 bg-slate-50 border border-kat-border/40 rounded-[20px] text-center text-[12px] font-bold text-slate-400 select-none flex items-center justify-center gap-1.5 shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-300 animate-pulse" />
+          <div className="mx-4 my-3 p-3 bg-slate-50 dark:bg-slate-800/45 border border-kat-border/40 dark:border-slate-700/40 rounded-[20px] text-center text-[12px] font-bold text-slate-400 dark:text-slate-400 select-none flex items-center justify-center gap-1.5 shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 animate-pulse" />
             Chuyến đi đã kết thúc &mdash; Chỉ xem trò chuyện
           </div>
         ) : (
           <form 
             onSubmit={handleSend}
-            className="mx-4 my-3 p-1.5 bg-white/85 backdrop-blur-md border border-slate-200/50 rounded-[22px] flex items-center gap-2 shrink-0 shadow-[0_8px_24px_rgba(3,13,46,0.06)] focus-within:shadow-[0_12px_28px_rgba(0,191,183,0.12)] focus-within:border-kat-primary/40 transition-all duration-300"
+            className="mx-4 my-3 p-1.5 bg-white/85 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/50 dark:border-slate-700/50 rounded-[22px] flex items-center gap-2 shrink-0 shadow-[0_8px_24px_rgba(3,13,46,0.06)] dark:shadow-none focus-within:shadow-[0_12px_28px_rgba(0,191,183,0.12)] focus-within:border-kat-primary/40 transition-all duration-300"
           >
             <input
               type="text"
@@ -307,7 +307,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                 "w-9 h-9 rounded-full text-white flex items-center justify-center transition-all duration-300 shrink-0 shadow-md active:scale-90 motion-press",
                 inputText.trim() && !sending
                   ? "bg-gradient-to-r from-kat-primary to-kat-primary-usable hover:scale-105 shadow-kat-primary/20 hover:shadow-[0_0_12px_rgba(0,191,183,0.4)]"
-                  : "bg-slate-100 text-slate-300 shadow-none scale-100 cursor-not-allowed"
+                  : "bg-slate-100 dark:bg-slate-900 text-slate-300 dark:text-slate-600 shadow-none scale-100 cursor-not-allowed"
               )}
             >
               {sending ? (
@@ -327,7 +327,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
       <>
         {/* Fullscreen Chat Modal on Mobile */}
         {isMobileModalOpen && (
-          <div className="fixed inset-0 bg-white z-[999] flex flex-col animate-slideUp">
+          <div className="fixed inset-0 bg-white dark:bg-kat-bg z-[999] flex flex-col animate-slideUp">
             {renderChatContent(true, () => setIsMobileModalOpen(false))}
           </div>
         )}
@@ -335,7 +335,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
         {/* Responsive Layout wrapper */}
         <div className="w-full">
           {/* Mobile View: Invitation CTA Card */}
-          <div className="block sm:hidden bg-white border border-kat-border rounded-[24px] p-6 shadow-soft text-center flex flex-col items-center justify-center h-[280px]">
+          <div className="block sm:hidden bg-white dark:bg-kat-surface border border-kat-border dark:border-kat-border/40 rounded-[24px] p-6 shadow-soft dark:shadow-none text-center flex flex-col items-center justify-center h-[280px]">
             <div className="w-16 h-16 rounded-full bg-kat-primary-soft flex items-center justify-center mb-4 relative">
               <HugeiconsIcon icon={BubbleChatIcon} className="w-7 h-7 text-kat-primary animate-pulse" />
               <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5">
@@ -356,7 +356,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
           </div>
 
           {/* Desktop View: Standard Embedded ChatBox */}
-          <div className="hidden sm:flex flex-col w-full h-[550px] sm:h-[650px] rounded-[24px] border border-kat-border shadow-soft overflow-hidden">
+          <div className="hidden sm:flex flex-col w-full h-[550px] sm:h-[650px] rounded-[24px] border border-kat-border dark:border-kat-border/40 shadow-soft dark:shadow-none overflow-hidden">
             {renderChatContent(false)}
           </div>
         </div>
@@ -369,13 +369,13 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
     <>
       {/* Mobile view: Fullscreen overlay */}
       <div className="block sm:hidden">
-        <div className="fixed inset-0 bg-white z-[999] flex flex-col">
+        <div className="fixed inset-0 bg-white dark:bg-kat-bg z-[999] flex flex-col">
           {renderChatContent(true, onClose)}
         </div>
       </div>
 
       {/* Desktop view: Standard floating card */}
-      <div className="hidden sm:flex fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[350px] sm:w-[400px] h-[550px] max-h-[80vh] rounded-[24px] shadow-floating border border-kat-border z-50 flex-col overflow-hidden animate-slideUp">
+      <div className="hidden sm:flex fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[350px] sm:w-[400px] h-[550px] max-h-[80vh] rounded-[24px] shadow-floating dark:shadow-none border border-kat-border dark:border-kat-border/40 z-50 flex-col overflow-hidden animate-slideUp">
         {renderChatContent(false, onClose)}
       </div>
     </>

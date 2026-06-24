@@ -6,9 +6,9 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Wallet01Icon, CheckmarkCircle02Icon, BookOpen01Icon, File01Icon, AlertCircleIcon, Add01Icon, PenTool01Icon, Delete01Icon, MoreVerticalIcon,
   ReceiptTextIcon, UserCheck01Icon, Tag01Icon, ChevronRightIcon, BalanceScaleIcon, InformationCircleIcon, CheckIcon, Cancel01Icon, Clock01Icon,
-  FileCheckIcon, ShirtIcon, Briefcase01Icon, PlugIcon, PillIcon, Bread01Icon, PackageIcon, BadgeCheckIcon, StickyNoteIcon, TextFontIcon, MinusSignIcon, UserIcon, Calendar01Icon, Maximize01Icon, Image01Icon, Loading01Icon, SmileIcon, NotebookIcon, SaveIcon, SparklesIcon, RouteIcon, HelpCircleIcon, UserGroupIcon, BubbleChatIcon, GlobeIcon,
+  FileCheckIcon, ShirtIcon, Briefcase01Icon, PlugIcon, PillIcon, Bread01Icon, PackageIcon, BadgeCheckIcon, StickyNoteIcon, MinusSignIcon, UserIcon, Calendar01Icon, Maximize01Icon, Image01Icon, Loading01Icon, SmileIcon, NotebookIcon, SaveIcon, SparklesIcon, HelpCircleIcon, UserGroupIcon, BubbleChatIcon, GlobeIcon,
   CrownIcon, Luggage01Icon, Car01Icon, CalculatorIcon, PieChartIcon, Search01Icon,
-  Airplane01Icon, KitchenUtensilsIcon, HotelIcon, Ticket01Icon, ShoppingBag01Icon, Gamepad2Icon, CompassIcon, ChevronDownIcon, Location01Icon, LocationOfflineIcon
+  Airplane01Icon, HotelIcon, Ticket01Icon, ShoppingBag01Icon, Gamepad2Icon, CompassIcon, ChevronDownIcon, Location01Icon, LocationOfflineIcon
 } from "@hugeicons/core-free-icons";
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
 import { formatMoney, expenseCategories, formatDate, moodLabels, sumBy, getSettlementSuggestions } from '../../../utils/helpers';
@@ -242,11 +242,11 @@ export function SharedMembersSection({
   }
 
   return (
-    <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+    <section className="bg-white dark:bg-kat-surface rounded-2xl border border-slate-200/60 dark:border-slate-800 p-5 shadow-sm space-y-4">
+      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-blue-500" />
-          <h3 className="text-[16px] font-black text-kat-dark">Thành viên</h3>
+          <h3 className="text-[16px] font-black text-kat-dark dark:text-slate-200">Thành viên</h3>
         </div>
       </div>
 
@@ -258,7 +258,7 @@ export function SharedMembersSection({
             placeholder="Tìm kiếm thành viên hoặc vai trò..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 placeholder-slate-450 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+            className="block w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-950 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
           />
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 z-10">
             <HugeiconsIcon icon={Search01Icon} className="h-4.5 w-4.5 text-slate-400" />
@@ -292,29 +292,29 @@ export function SharedMembersSection({
           const isGuide = roleLower.includes("dẫn đường");
           const isLuggage = roleLower.includes("hành lý") || roleLower.includes("phụ trách hành lý");
           
-          let cardBg = "bg-gradient-to-br from-slate-50/20 via-white to-white border-slate-200/60";
+          let cardBg = "bg-gradient-to-br from-slate-50/20 via-white to-white border-slate-200/60 dark:from-slate-800/10 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
           let borderAccent = "border-l-4 border-l-slate-400";
           
           if (member.isPendingCreate) {
-            cardBg = "bg-gradient-to-br from-sky-55/40 via-white to-white border-sky-200/80";
+            cardBg = "bg-gradient-to-br from-sky-50/40 via-white to-white border-sky-200/80 dark:from-sky-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
             borderAccent = "border-l-4 border-l-sky-500";
           } else if (member.isPendingDelete) {
-            cardBg = "bg-gradient-to-br from-rose-50/40 via-white to-white border-rose-200/80 opacity-80";
-            borderAccent = "border-l-4 border-l-rose-450";
+            cardBg = "bg-gradient-to-br from-rose-50/40 via-white to-white border-rose-200/80 opacity-80 dark:from-rose-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
+            borderAccent = "border-l-4 border-l-rose-500";
           } else if (isLeader) {
-            cardBg = "bg-gradient-to-br from-amber-50/30 via-white to-white border-slate-200/60";
+            cardBg = "bg-gradient-to-br from-amber-50/30 via-white to-white border-slate-200/60 dark:from-amber-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
             borderAccent = "border-l-4 border-l-amber-500";
           } else if (isCost) {
-            cardBg = "bg-gradient-to-br from-emerald-50/30 via-white to-white border-slate-200/60";
+            cardBg = "bg-gradient-to-br from-emerald-50/30 via-white to-white border-slate-200/60 dark:from-emerald-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
             borderAccent = "border-l-4 border-l-emerald-500";
           } else if (isDriver) {
-            cardBg = "bg-gradient-to-br from-blue-50/30 via-white to-white border-slate-200/60";
+            cardBg = "bg-gradient-to-br from-blue-50/30 via-white to-white border-slate-200/60 dark:from-blue-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
             borderAccent = "border-l-4 border-l-blue-500";
           } else if (isGuide) {
-            cardBg = "bg-gradient-to-br from-sky-50/30 via-white to-white border-slate-200/60";
+            cardBg = "bg-gradient-to-br from-sky-50/30 via-white to-white border-slate-200/60 dark:from-sky-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
             borderAccent = "border-l-4 border-l-sky-500";
           } else if (isLuggage) {
-            cardBg = "bg-gradient-to-br from-indigo-50/30 via-white to-white border-slate-200/60";
+            cardBg = "bg-gradient-to-br from-indigo-50/30 via-white to-white border-slate-200/60 dark:from-indigo-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
             borderAccent = "border-l-4 border-l-indigo-500";
           }
 
@@ -328,41 +328,41 @@ export function SharedMembersSection({
                   const rLower = r.toLowerCase();
                   if (rLower.includes("trưởng nhóm") || rLower.includes("trưởng đoàn") || rLower.includes("leader")) {
                     return (
-                      <span key={idx} title="Trưởng nhóm" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 text-amber-700 border border-amber-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title="Trưởng nhóm" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={CrownIcon} className="w-4 h-4 text-amber-500 fill-amber-500/10" />
                       </span>
                     );
                   }
                   if (rLower.includes("quản lý chi phí")) {
                     return (
-                      <span key={idx} title="Quản lý chi phí" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title="Quản lý chi phí" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={Wallet01Icon} className="w-4 h-4 text-emerald-500" />
                       </span>
                     );
                   }
                   if (rLower.includes("tài xế")) {
                     return (
-                      <span key={idx} title="Tài xế" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 text-blue-700 border border-blue-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title="Tài xế" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={Car01Icon} className="w-4 h-4 text-blue-500" />
                       </span>
                     );
                   }
                   if (rLower.includes("dẫn đường")) {
                     return (
-                      <span key={idx} title="Dẫn đường" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 text-sky-700 border border-sky-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title="Dẫn đường" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-700 dark:text-sky-400 border border-sky-200/50 dark:border-sky-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={CompassIcon} className="w-4 h-4 text-sky-500" />
                       </span>
                     );
                   }
                   if (rLower.includes("phụ trách hành lý") || rLower.includes("hành lý")) {
                     return (
-                      <span key={idx} title="Hành lý" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title="Hành lý" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={Luggage01Icon} className="w-4 h-4 text-indigo-500" />
                       </span>
                     );
                   }
                   return (
-                    <span key={idx} title="Bạn đồng hành" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 text-slate-600 border border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                    <span key={idx} title="Bạn đồng hành" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-350 border border-slate-200/60 dark:border-slate-700/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                       <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 text-slate-400" />
                     </span>
                   );
@@ -383,11 +383,11 @@ export function SharedMembersSection({
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4 min-w-0 flex-1">
                   {/* Avatar */}
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
                     {member.avatar ? (
                       getAvatarSvg(member.avatar, "w-full h-full")
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-indigo-50 text-indigo-600 text-[18px] font-black">
+                      <div className="flex h-full w-full items-center justify-center bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 text-[18px] font-black">
                         {initial}
                       </div>
                     )}
@@ -398,34 +398,34 @@ export function SharedMembersSection({
                     <div className="flex items-center flex-wrap gap-x-2 gap-y-1 min-w-0">
                       <h4 className={classNames(
                         "text-[16.5px] font-extrabold text-kat-dark truncate leading-tight min-w-0",
-                        member.isPendingDelete ? "line-through text-slate-400" : ""
+                        member.isPendingDelete ? "line-through text-slate-400 dark:text-slate-500" : ""
                       )}>
                         {member.name}
                       </h4>
                       {renderRoleBadge(member.role || "Người đồng hành")}
                       {member.isPendingCreate && (
-                        <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 shrink-0 select-none animate-pulse">
+                        <span className="inline-flex items-center rounded-full bg-sky-50 dark:bg-sky-950/30 border border-sky-100 dark:border-sky-900/50 px-2 py-0.5 text-[10px] font-bold text-sky-600 dark:text-sky-400 shrink-0 select-none animate-pulse">
                           Đề xuất mới
                         </span>
                       )}
                       {member.isPendingUpdate && (
-                        <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 shrink-0 select-none">
+                        <span className="inline-flex items-center rounded-full bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/50 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 shrink-0 select-none">
                           Đề xuất đổi vai trò
                         </span>
                       )}
                       {member.isPendingDelete && (
-                        <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 shrink-0 select-none">
+                        <span className="inline-flex items-center rounded-full bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 px-2 py-0.5 text-[10px] font-bold text-rose-600 dark:text-rose-400 shrink-0 select-none">
                           Đề xuất xóa
                         </span>
                       )}
                     </div>
                     {member.phone && (
-                      <p className="text-[13.5px] font-semibold text-slate-500">
-                        SĐT: <span className="text-kat-dark">{member.phone}</span>
+                      <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
+                        SĐT: <span className="text-kat-dark dark:text-slate-300">{member.phone}</span>
                       </p>
                     )}
                     {member.note && (
-                      <p className="text-[13px] font-medium text-slate-400 italic mt-1 bg-slate-50/70 p-2.5 rounded-xl border border-slate-100/50 break-words">
+                      <p className="text-[13px] font-medium text-slate-400 dark:text-slate-400 italic mt-1 bg-slate-50/70 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-100/50 dark:border-slate-700/30 break-words">
                         "{member.note}"
                       </p>
                     )}
@@ -449,7 +449,7 @@ export function SharedMembersSection({
                           setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
                         }
                       }}
-                      className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/80 transition-colors focus:outline-none focus:ring-2 focus:ring-kat-teal/40"
+                      className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/80 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-kat-teal/40"
                       title="Tùy chọn đề xuất"
                     >
                       <HugeiconsIcon icon={MoreVerticalIcon} className="h-5 w-5" />
@@ -459,13 +459,13 @@ export function SharedMembersSection({
               </div>
 
               {/* Mini Stats Row */}
-              <div className="pt-3 border-t border-slate-100/60 flex items-center justify-between gap-4 flex-wrap">
+              <div className="pt-3 border-t border-slate-100/60 dark:border-slate-700/40 flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex flex-wrap gap-2 text-[12px]">
                   <span className={classNames(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
                     assignedTasksCount === 0 
-                      ? "bg-slate-50/50 border-slate-100 text-slate-400 font-semibold" 
-                      : "bg-sky-50/50 border-sky-100 text-sky-700 font-bold"
+                      ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700/30 text-slate-400 dark:text-slate-500 font-semibold" 
+                      : "bg-sky-50/50 dark:bg-sky-950/20 border-sky-100 dark:border-sky-900/30 text-sky-700 dark:text-sky-400 font-bold"
                   )}>
                     <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 shrink-0" />
                     {assignedTasksCount} việc
@@ -473,8 +473,8 @@ export function SharedMembersSection({
                   <span className={classNames(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
                     totalSpent === 0 
-                      ? "bg-slate-50/50 border-slate-100 text-slate-400 font-semibold" 
-                      : "bg-emerald-50/50 border-emerald-100 text-emerald-700 font-bold"
+                      ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700/30 text-slate-400 dark:text-slate-500 font-semibold" 
+                      : "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-bold"
                   )}>
                     <HugeiconsIcon icon={Wallet01Icon} className="h-3.5 w-3.5 shrink-0" />
                     Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
@@ -487,7 +487,7 @@ export function SharedMembersSection({
         </div>
       ) : (
         <div className="text-center py-8">
-          <p className="text-[14px] font-semibold text-slate-450">
+          <p className="text-[14px] font-semibold text-slate-400 dark:text-slate-500">
             {mergedMembers.length > 0 
               ? `Không tìm thấy thành viên nào khớp với từ khóa "${searchQuery}"`
               : "Chưa có thành viên nào trong chuyến đi."
@@ -504,7 +504,7 @@ export function SharedMembersSection({
             onClick={() => { setActiveMenuId(null); setMenuPos(null); }}
           />
           <div
-            className="fixed z-[999] w-36 rounded-xl bg-white border border-slate-200 shadow-lg py-1.5 animate-fadeIn"
+            className="fixed z-[999] w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg dark:shadow-slate-900/50 py-1.5 animate-fadeIn"
             style={{ top: menuPos.top, right: menuPos.right }}
           >
             <button
@@ -521,7 +521,7 @@ export function SharedMembersSection({
                   setSelectedRoles(existingRoles.length > 0 ? existingRoles : ['Người đồng hành']);
                 }
               }}
-              className="flex w-full items-center px-4 py-2 text-[13px] font-bold text-slate-700 hover:bg-slate-50 transition-colors border-b border-slate-100"
+              className="flex w-full items-center px-4 py-2 text-[13px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-colors border-b border-slate-100 dark:border-slate-700"
             >
               Đổi vai trò
             </button>
@@ -532,7 +532,7 @@ export function SharedMembersSection({
                 setMenuPos(null);
                 handleDelete(id);
               }}
-              className="flex w-full items-center px-4 py-2 text-[13px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+              className="flex w-full items-center px-4 py-2 text-[13px] font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
             >
               Đề xuất xóa
             </button>
@@ -544,7 +544,7 @@ export function SharedMembersSection({
       {isRequestEdit && (
         <button 
           onClick={handleAdd} 
-          className="flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-kat-dark/80 bg-white hover:bg-slate-50 border-2 border-dashed border-slate-200/80 hover:border-indigo-200 hover:text-indigo-700 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100"
+          className="flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-kat-dark/80 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border-2 border-dashed border-slate-200/80 dark:border-slate-700/50 hover:border-indigo-200 dark:hover:border-indigo-500/50 hover:text-indigo-700 dark:hover:text-indigo-400 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100 dark:shadow-none"
           title="Đề xuất thêm thành viên"
         >
           <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" /> Đề xuất thêm thành viên
@@ -571,14 +571,16 @@ export function SharedMembersSection({
           )}
 
           <div className="space-y-2">
-            <span className="text-[13.5px] font-semibold text-slate-600">Giới tính (để tạo ảnh đại diện ngẫu nhiên)</span>
-            <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200/40">
+            <span className="text-[13.5px] font-semibold text-slate-600 dark:text-slate-400">Giới tính (để tạo ảnh đại diện ngẫu nhiên)</span>
+            <div className="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200/40 dark:border-slate-800/80">
               <button
                 type="button"
                 onClick={() => setForm({ ...form, gender: 'male' })}
                 className={classNames(
-                  "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
-                  form.gender === 'male' ? "bg-white text-kat-dark shadow-sm border" : "text-slate-500"
+                  "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all border",
+                  form.gender === 'male' 
+                    ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-slate-200 border-slate-200/60 dark:border-slate-700 shadow-sm" 
+                    : "bg-transparent border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
                 )}
               >
                 Nam
@@ -587,8 +589,10 @@ export function SharedMembersSection({
                 type="button"
                 onClick={() => setForm({ ...form, gender: 'female' })}
                 className={classNames(
-                  "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
-                  form.gender === 'female' ? "bg-white text-kat-dark shadow-sm border" : "text-slate-500"
+                  "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all border",
+                  form.gender === 'female' 
+                    ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-slate-200 border-slate-200/60 dark:border-slate-700 shadow-sm" 
+                    : "bg-transparent border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
                 )}
               >
                 Nữ
@@ -598,7 +602,7 @@ export function SharedMembersSection({
 
           <button
             onClick={handleSave}
-            className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-dark font-black text-white hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all shadow-sm"
+            className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-dark dark:bg-kat-primary font-black text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary/95 active:scale-[0.98] transition-all shadow-sm"
           >
             Gửi đề xuất thêm
           </button>
@@ -626,13 +630,13 @@ export function SharedMembersSection({
       >
         <div className="flex flex-col gap-5 py-2">
           <div className="space-y-1">
-            <p className="text-[13.5px] font-bold text-slate-500">
-              Thành viên: <span className="font-extrabold text-kat-dark">{members.find(m => String(m.id) === roleChangeMemberId)?.name}</span>
+            <p className="text-[13.5px] font-bold text-slate-500 dark:text-slate-400">
+              Thành viên: <span className="font-extrabold text-kat-dark dark:text-slate-200">{members.find(m => String(m.id) === roleChangeMemberId)?.name}</span>
             </p>
           </div>
 
           <div className="space-y-2">
-            <span className="text-[13px] font-bold text-slate-700 block">Chọn vai trò mới</span>
+            <span className="text-[13px] font-bold text-slate-700 dark:text-slate-350 block">Chọn vai trò mới</span>
             <div className="grid grid-cols-2 gap-2">
               {["Người đồng hành", "Quản lý chi phí", "Tài xế", "Dẫn đường"].map((r) => {
                 const isSelected = selectedRoles.includes(r);
@@ -651,8 +655,8 @@ export function SharedMembersSection({
                     className={classNames(
                       "py-2.5 px-3 text-left text-[12.5px] font-bold rounded-xl transition-all border",
                       isSelected 
-                        ? "bg-blue-50 border-blue-200 text-blue-700 shadow-sm" 
-                        : "bg-white border-slate-200 text-slate-650 hover:bg-slate-50"
+                        ? "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 shadow-sm" 
+                        : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700/50 text-slate-650 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                     )}
                   >
                     {r}
@@ -664,7 +668,7 @@ export function SharedMembersSection({
 
           <button
             onClick={handleRoleChangeSubmit}
-            className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-dark font-black text-white hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all shadow-sm"
+            className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-dark dark:bg-kat-primary font-black text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary/95 active:scale-[0.98] transition-all shadow-sm"
           >
             Gửi đề xuất đổi vai trò
           </button>

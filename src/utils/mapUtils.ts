@@ -90,3 +90,44 @@ export function ensureAbsoluteUrl(url?: string): string {
   }
 }
 
+/**
+ * Dynamically determines the appropriate CSS filter class for Google Maps iframe embeds.
+ * It implements "trời sáng nó sáng trời tối nó tối" (daytime map is light, nighttime map is dark).
+ * 
+ * @param timeStr Optional time of the activity (e.g. "08:00" or "19:30")
+ * @returns Tailwind filter classes to apply to the iframe
+ */
+export function getMapFilterClass(timeStr?: string): string {
+  let isNight = false;
+  if (timeStr) {
+    const match = timeStr.match(/^(\d{1,2}):(\d{2})/);
+    if (match) {
+      const hour = parseInt(match[1], 10);
+      isNight = hour < 6 || hour >= 18;
+    }
+  } else {
+    // If no time is specified, follow global dark theme first
+    const isGlobalDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+    if (isGlobalDark) {
+      isNight = true;
+    } else {
+      // Fallback to current system time
+      const hour = new Date().getHours();
+      isNight = hour < 6 || hour >= 18;
+    }
+  }
+
+  // Return custom filters:
+  // In light mode, standard Google Maps colors are bright and perfect.
+  // In dark mode, we apply a high-quality dark slate filter:
+  // - invert-[100%] flips colors completely (dark background, light text)
+  // - hue-rotate-[180deg] restores the original color spectrum (so the pin is restored to bright red, water to blue)
+  // - saturate-[110%] boosts the colors slightly to make the red pin pop and look bright red (đỏ tươi)
+  // - brightness-[90%] and contrast-[95%] ensure perfect readability
+  if (isNight) {
+    return "invert-[100%] hue-rotate-[180deg] saturate-[110%] brightness-[90%] contrast-[95%]";
+  }
+  return "";
+}
+
+

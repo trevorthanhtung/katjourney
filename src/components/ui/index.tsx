@@ -20,8 +20,8 @@ export { classNames };
 
 export function FormCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-2xl border border-emerald-950/5 bg-white p-5 shadow-soft">
-      <h3 className="mb-4 text-xl font-bold text-slate-800">{title}</h3>
+    <section className="rounded-2xl border border-kat-border/60 bg-kat-surface p-5 shadow-soft">
+      <h3 className="mb-4 text-xl font-bold text-kat-text">{title}</h3>
       <div className="space-y-4">{children}</div>
     </section>
   );
@@ -46,11 +46,11 @@ export function Input({
   
   return (
     <label className="block">
-      <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
+      <span className="text-sm font-semibold text-slate-650 dark:text-slate-350 flex items-center gap-1.5">{label}</span>
       <div className="relative mt-1.5">
         <input
-          className={`w-full rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal placeholder-slate-400 ${
-            isDateOrTime ? "[&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer bg-white" : ""
+          className={`w-full rounded-xl border-0 bg-slate-50 dark:bg-slate-800/40 px-4 h-[50px] text-[15px] font-medium text-kat-text outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/60 transition-shadow focus:bg-white dark:focus:bg-kat-surface focus:ring-2 focus:ring-kat-teal placeholder-slate-400 dark:placeholder-slate-500 ${
+            isDateOrTime ? "[&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer bg-white dark:bg-kat-surface" : ""
           }`}
           type={type}
           value={value}
@@ -59,7 +59,7 @@ export function Input({
           onFocus={onFocus}
         />
         {isDateOrTime && (
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 bg-white pl-2">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-slate-500 bg-white dark:bg-kat-surface pl-2">
             {type === "date" ? (
               <HugeiconsIcon icon={Calendar01Icon} size={16} />
             ) : (
@@ -85,9 +85,9 @@ export function Textarea({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
+      <span className="text-sm font-semibold text-slate-655 dark:text-slate-350 flex items-center gap-1.5">{label}</span>
       <textarea
-        className="mt-1.5 min-h-[120px] w-full rounded-xl border-0 bg-slate-50 px-4 py-3.5 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal placeholder-slate-400"
+        className="mt-1.5 min-h-[120px] w-full rounded-xl border-0 bg-slate-50 dark:bg-slate-800/40 px-4 py-3.5 text-[15px] font-medium text-kat-text outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/60 transition-shadow focus:bg-white dark:focus:bg-kat-surface focus:ring-2 focus:ring-kat-teal placeholder-slate-400 dark:placeholder-slate-500"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
@@ -177,16 +177,16 @@ export function TimePicker({
 
   return (
     <div className="block">
-      <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
+      <span className="text-sm font-semibold text-slate-650 dark:text-slate-350 flex items-center gap-1.5">{label}</span>
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal"
+        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 dark:bg-slate-800/40 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/60 transition-shadow focus:bg-white dark:focus:bg-kat-surface focus:ring-2 focus:ring-kat-teal"
       >
-        <span className={value ? "text-kat-dark font-bold" : "text-slate-400"}>
+        <span className={value ? "text-kat-text font-bold" : "text-slate-400 dark:text-slate-500"}>
           {value || placeholder}
         </span>
-        <HugeiconsIcon icon={Clock01Icon} size={16} className="text-slate-400" />
+        <HugeiconsIcon icon={Clock01Icon} size={16} className="text-slate-400 dark:text-slate-500" />
       </button>
 
       <BottomSheet
@@ -195,9 +195,9 @@ export function TimePicker({
         title="Chọn thời gian"
       >
         <div className="flex flex-col items-center">
-          <div className="flex justify-center w-full max-w-[240px] h-[200px] relative overflow-hidden bg-slate-50/80 rounded-3xl border border-slate-100 shadow-inner">
+          <div className="flex justify-center w-full max-w-[240px] h-[200px] relative overflow-hidden bg-slate-50/80 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-kat-border/40 shadow-inner">
             {/* Highlight bar in the middle */}
-            <div className="absolute top-1/2 -translate-y-1/2 w-[90%] h-[44px] bg-white rounded-2xl border border-slate-200/60 shadow-sm pointer-events-none" />
+            <div className="absolute top-1/2 -translate-y-1/2 w-[90%] h-[44px] bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-sm pointer-events-none" />
             
             {/* Hours column */}
             <div 
@@ -215,14 +215,14 @@ export function TimePicker({
                     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                   }}
                   data-hour={h}
-                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempHour === h ? 'font-black text-kat-teal scale-110' : 'font-medium text-slate-400 hover:text-slate-600'}`}
+                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempHour === h ? 'font-black text-kat-primary scale-110' : 'font-medium text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'}`}
                 >
                   {h}
                 </div>
               ))}
             </div>
 
-            <div className="flex items-center justify-center text-xl font-black text-kat-dark relative z-10 pb-1">:</div>
+            <div className="flex items-center justify-center text-xl font-black text-kat-text relative z-10 pb-1">:</div>
 
             {/* Minutes column */}
             <div 
@@ -240,7 +240,7 @@ export function TimePicker({
                     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                   }}
                   data-min={m}
-                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempMinute === m ? 'font-black text-kat-teal scale-110' : 'font-medium text-slate-400 hover:text-slate-600'}`}
+                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempMinute === m ? 'font-black text-kat-primary scale-110' : 'font-medium text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'}`}
                 >
                   {m}
                 </div>
@@ -251,7 +251,7 @@ export function TimePicker({
           <div className="w-full mt-6">
             <button
               onClick={handleSave}
-              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-kat-dark text-white px-6 font-black shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all motion-press"
+              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-kat-dark text-white dark:bg-kat-primary dark:text-kat-dark px-6 font-black shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all motion-press"
             >
               Lưu thời gian
             </button>
@@ -339,16 +339,16 @@ export function DatePicker({
 
   return (
     <div className="block">
-      <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>
+      <span className="text-sm font-semibold text-slate-650 dark:text-slate-300 flex items-center gap-1.5">{label}</span>
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal"
+        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 dark:bg-slate-800/40 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/60 transition-shadow focus:bg-white dark:focus:bg-kat-surface focus:ring-2 focus:ring-kat-teal"
       >
-        <span className={value ? "text-kat-dark font-bold" : "text-slate-400"}>
+        <span className={value ? "text-kat-text font-bold" : "text-slate-400 dark:text-slate-500"}>
           {displayValue || placeholder}
         </span>
-        <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-400" />
+        <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-400 dark:text-slate-500" />
       </button>
 
       <BottomSheet
@@ -361,16 +361,16 @@ export function DatePicker({
           <div className="flex items-center justify-between w-full mb-6">
             <button 
               onClick={handlePrevMonth}
-              className="p-2 rounded-full hover:bg-slate-100 active:bg-slate-200 text-slate-600 flex items-center justify-center"
+              className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 active:bg-slate-200 dark:active:bg-slate-700 text-slate-600 dark:text-slate-400 flex items-center justify-center"
             >
               <HugeiconsIcon icon={ChevronLeftIcon} size={20} />
             </button>
-            <h3 className="text-[17px] font-bold text-kat-dark">
+            <h3 className="text-[17px] font-bold text-kat-text">
               Tháng {month + 1} năm {year}
             </h3>
             <button 
               onClick={handleNextMonth}
-              className="p-2 rounded-full hover:bg-slate-100 active:bg-slate-200 text-slate-600 flex items-center justify-center"
+              className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 active:bg-slate-200 dark:active:bg-slate-700 text-slate-600 dark:text-slate-400 flex items-center justify-center"
             >
               <HugeiconsIcon icon={ChevronRightIcon} size={20} />
             </button>
@@ -379,7 +379,7 @@ export function DatePicker({
           {/* Days of week */}
           <div className="grid grid-cols-7 w-full mb-2">
             {dayNames.map(d => (
-              <div key={d} className="text-center text-[13px] font-bold text-slate-400">
+              <div key={d} className="text-center text-[13px] font-bold text-slate-400 dark:text-slate-500">
                 {d}
               </div>
             ))}
@@ -408,9 +408,9 @@ export function DatePicker({
                   <button
                     onClick={() => handleSelectDay(d)}
                     className={`w-9 h-9 rounded-full flex items-center justify-center text-[15px] font-medium transition-all duration-200
-                      ${isSelected ? 'bg-kat-teal text-white font-bold shadow-md scale-110' : 
-                        isToday ? 'bg-slate-100 text-kat-teal font-bold border border-kat-teal border-opacity-20' : 
-                        'text-kat-dark hover:bg-slate-100'}
+                      ${isSelected ? 'bg-kat-primary text-white font-bold shadow-md scale-110' : 
+                        isToday ? 'bg-slate-105 dark:bg-slate-800 text-kat-primary font-bold border border-kat-primary border-opacity-20' : 
+                        'text-kat-text hover:bg-slate-100 dark:hover:bg-slate-800'}
                     `}
                   >
                     {d}
@@ -429,7 +429,7 @@ export function DatePicker({
                 onChange(adjustedDate.toISOString().split('T')[0]);
                 setIsOpen(false);
               }}
-              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-slate-100 text-kat-dark px-6 font-bold hover:bg-slate-200 active:scale-[0.98] transition-all motion-press"
+              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-kat-text dark:text-slate-200 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.98] transition-all motion-press"
             >
               Chọn hôm nay
             </button>
@@ -470,16 +470,16 @@ export function Select({
 
   return (
     <div className="block">
-      {label && <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">{label}</span>}
+      {label && <span className="text-sm font-semibold text-slate-650 dark:text-slate-300 flex items-center gap-1.5">{label}</span>}
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={buttonClassName ?? "mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 transition-shadow focus:bg-white focus:ring-2 focus:ring-kat-teal"}
+        className={buttonClassName ?? "mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 dark:bg-slate-800/40 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/60 transition-shadow focus:bg-white dark:focus:bg-kat-surface focus:ring-2 focus:ring-kat-teal"}
       >
-        <span className={value ? "text-kat-dark" : "text-slate-400"}>
+        <span className={value ? "text-kat-text font-bold" : "text-slate-400 dark:text-slate-500"}>
           {value ? (labels?.[value] ?? value) : (placeholder ?? "Chưa chọn")}
         </span>
-        <HugeiconsIcon icon={ChevronDownIcon} size={16} className="text-slate-400" />
+        <HugeiconsIcon icon={ChevronDownIcon} size={16} className="text-slate-400 dark:text-slate-500" />
       </button>
 
       <BottomSheet
@@ -501,7 +501,7 @@ export function Select({
                 className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
                   isSelected 
                     ? "bg-kat-primary-soft text-kat-primary" 
-                    : "hover:bg-slate-50 text-kat-dark"
+                    : "hover:bg-slate-50 dark:hover:bg-slate-800/40 text-kat-text"
                 }`}
               >
                 <span className={`text-[15px] ${isSelected ? 'font-extrabold' : 'font-semibold'}`}>
@@ -534,7 +534,7 @@ export function FormActions({
     <div className="flex gap-2.5 pt-2 w-full">
       {onCancel && (
         <button
-          className="flex shrink-0 h-[52px] items-center justify-center rounded-2xl bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.96] transition-all duration-200 motion-press"
+          className="flex shrink-0 h-[52px] items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/50 px-6 font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.96] transition-all duration-200 motion-press"
           type="button"
           onClick={onCancel}
         >
@@ -542,7 +542,7 @@ export function FormActions({
         </button>
       )}
       <button
-        className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark text-white px-6 font-black shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed motion-press"
+        className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark text-white dark:bg-kat-primary dark:text-kat-dark px-6 font-black shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:cursor-not-allowed motion-press"
         type="button"
         onClick={onSave}
         disabled={disabled}
@@ -560,7 +560,9 @@ export function IconButton({ label, onClick, children, danger = false }: { label
     <button
       className={classNames(
         "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors motion-press",
-        danger ? "bg-rose-50 text-rose-600 hover:bg-rose-100" : "bg-slate-50 text-slate-500 hover:bg-slate-100"
+        danger 
+          ? "bg-rose-50 text-rose-600 hover:bg-rose-100 dark:bg-rose-950/20 dark:text-rose-400 dark:hover:bg-rose-900/30" 
+          : "bg-slate-50 text-slate-500 hover:bg-slate-100 dark:bg-slate-800/40 dark:text-slate-400 dark:hover:bg-slate-800/60"
       )}
       type="button"
       onClick={onClick}
@@ -589,8 +591,8 @@ export function ScreenTitle({ title, subtitle, action }: { title: string; subtit
   return (
     <div className="mb-6 px-1 flex items-start justify-between gap-4">
       <div>
-        <h2 className="text-[32px] font-bold tracking-tight text-slate-900">{title}</h2>
-        {subtitle && <p className="mt-1 text-[15px] font-medium text-slate-500">{subtitle}</p>}
+        <h2 className="text-[32px] font-bold tracking-tight text-slate-900 dark:text-slate-100">{title}</h2>
+        {subtitle && <p className="mt-1 text-[15px] font-medium text-slate-500 dark:text-slate-400">{subtitle}</p>}
       </div>
       {action && <div>{action}</div>}
     </div>
@@ -599,17 +601,17 @@ export function ScreenTitle({ title, subtitle, action }: { title: string; subtit
 
 export function StatCard({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">{icon}</div>
-      <p className="mt-4 text-[13px] font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="mt-1 break-words text-xl font-bold text-slate-900">{value}</p>
+    <div className="rounded-2xl bg-kat-surface p-5 shadow-sm border border-kat-border/40">
+      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400">{icon}</div>
+      <p className="mt-4 text-[13px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
+      <p className="mt-1 break-words text-xl font-bold text-kat-text">{value}</p>
     </div>
   );
 }
 
 export function ProgressBar({ value, compact = false }: { value: number; compact?: boolean }) {
   return (
-    <div className={classNames("overflow-hidden rounded-full bg-slate-100", compact ? "mt-3 h-1.5" : "mt-4 h-2.5")}>
+    <div className={classNames("overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800", compact ? "mt-3 h-1.5" : "mt-4 h-2.5")}>
       <div className="h-full rounded-full bg-emerald-600 transition-all duration-500 ease-out" style={{ width: `${Math.min(Math.max(value, 0), 100)}%` }} />
     </div>
   );
@@ -624,7 +626,7 @@ export function ProgressRing({ value, size = 120, strokeWidth = 10, children }: 
     <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
       <svg className="absolute -rotate-90 transform" width={size} height={size}>
         <circle
-          className="text-slate-100"
+          className="text-slate-100 dark:text-slate-800"
           strokeWidth={strokeWidth}
           stroke="currentColor"
           fill="transparent"
@@ -677,20 +679,20 @@ export function BottomSheet({
       <div className="absolute inset-0 motion-modal-overlay bg-slate-900/35 backdrop-blur-sm touch-none" onClick={onClose} />
       
       {/* Sheet / Dialog */}
-      <div className="relative z-10 flex w-full flex-col max-h-[90vh] sm:max-h-[min(720px,calc(100vh-48px))] motion-sheet-dialog sm:motion-modal-dialog rounded-t-[32px] sm:rounded-[24px] bg-white pb-safe shadow-floating sm:mx-auto sm:w-full sm:max-w-[600px] overflow-hidden">
+      <div className="relative z-10 flex w-full flex-col max-h-[90vh] sm:max-h-[min(720px,calc(100vh-48px))] motion-sheet-dialog sm:motion-modal-dialog rounded-t-[32px] sm:rounded-[24px] bg-kat-surface pb-safe shadow-floating sm:mx-auto sm:w-full sm:max-w-[600px] overflow-hidden border border-kat-border/40">
         {/* Drag handle (mobile only) */}
-        <div className="flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 sm:hidden touch-none" />
+        <div className="flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 dark:bg-slate-700 sm:hidden touch-none" />
         
         {/* Header */}
-        <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-5 sm:px-6 py-3.5 sm:py-4 gap-3 touch-none">
+        <div className="flex shrink-0 items-start justify-between border-b border-kat-border/60 px-5 sm:px-6 py-3.5 sm:py-4 gap-3 touch-none">
           <div className="pr-2 min-w-0 flex-1">
-            <h3 className="text-[20px] sm:text-[22px] font-bold text-slate-900 leading-snug truncate">{title}</h3>
-            {subtitle && <div className="mt-1 text-[13.5px] text-slate-500 leading-relaxed">{subtitle}</div>}
+            <h3 className="text-[20px] sm:text-[22px] font-bold text-kat-text leading-snug truncate">{title}</h3>
+            {subtitle && <div className="mt-1 text-[13.5px] text-kat-muted leading-relaxed">{subtitle}</div>}
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {headerAction}
             <button 
-              className="flex shrink-0 h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 focus:outline-none" 
+              className="flex shrink-0 h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none" 
               onClick={onClose}
               title="Đóng"
               aria-label="Đóng"
@@ -707,7 +709,7 @@ export function BottomSheet({
  
         {/* Footer */}
         {footer && (
-          <div className="flex-none border-t border-slate-100 bg-white px-5 sm:px-6 py-3.5 sm:py-4 touch-none">
+          <div className="flex-none border-t border-kat-border/60 bg-kat-surface px-5 sm:px-6 py-3.5 sm:py-4 touch-none">
             {footer}
           </div>
         )}
@@ -766,25 +768,25 @@ export function TypedDeleteConfirmModal({
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} title={title}>
       <div className="space-y-5">
-        <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed">
+        <div className="rounded-2xl bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 p-4 text-[13.5px] text-rose-800 dark:text-rose-400 font-semibold leading-relaxed">
           {warning ?? description}
         </div>
 
         {warning && (
-          <p className="text-[14px] font-semibold leading-relaxed text-slate-600">
+          <p className="text-[14px] font-semibold leading-relaxed text-kat-muted">
             {description}
           </p>
         )}
 
         {itemName && (
-          <div className="rounded-2xl border border-slate-200/70 bg-slate-50 px-4 py-3">
-            <p className="text-[12px] font-black uppercase tracking-wide text-slate-400">Mục sẽ xóa</p>
-            <p className="mt-1 break-words text-[15px] font-extrabold text-kat-dark">{itemName}</p>
+          <div className="rounded-2xl border border-kat-border/40 bg-slate-50 dark:bg-slate-800/20 px-4 py-3">
+            <p className="text-[12px] font-black uppercase tracking-wide text-slate-400 dark:text-slate-500">Mục sẽ xóa</p>
+            <p className="mt-1 break-words text-[15px] font-extrabold text-kat-text">{itemName}</p>
           </div>
         )}
 
         <label className="block space-y-2">
-          <span className="text-[13.5px] font-bold text-slate-600 block">
+          <span className="text-[13.5px] font-bold text-slate-650 dark:text-slate-400 block">
             Nhập <span className="text-rose-500 font-black">{confirmationText}</span> để xác nhận thao tác này.
           </span>
           <input
@@ -796,7 +798,7 @@ export function TypedDeleteConfirmModal({
             autoCorrect="off"
             autoComplete="off"
             spellCheck={false}
-            className="w-full rounded-[14px] border border-slate-200/60 bg-slate-50 px-4 h-[50px] text-[15px] font-bold text-kat-dark outline-none transition-all focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder:text-slate-400"
+            className="w-full rounded-[14px] border border-slate-200/60 dark:border-slate-700/65 bg-slate-50 dark:bg-slate-800/40 px-4 h-[50px] text-[15px] font-bold text-kat-text outline-none transition-all focus:bg-white dark:focus:bg-kat-surface focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
         </label>
 
@@ -804,7 +806,7 @@ export function TypedDeleteConfirmModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200 motion-press"
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/50 text-slate-700 dark:text-slate-200 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200 motion-press"
           >
             Hủy
           </button>
@@ -812,7 +814,7 @@ export function TypedDeleteConfirmModal({
             type="button"
             disabled={!isConfirmed || isSubmitting}
             onClick={handleConfirm}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:bg-rose-200 disabled:border-rose-200 disabled:cursor-not-allowed transition-all active:scale-[0.98] disabled:active:scale-100 motion-press"
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:bg-rose-200 dark:disabled:bg-rose-950/20 disabled:border-rose-200 dark:disabled:border-rose-900/10 disabled:cursor-not-allowed transition-all active:scale-[0.98] disabled:active:scale-100 motion-press"
           >
             <HugeiconsIcon icon={Delete01Icon} size={20} />
             {isSubmitting ? "Đang xóa..." : confirmLabel}
@@ -861,14 +863,14 @@ export function DeleteConfirmModal({
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose} title={title}>
       <div className="space-y-5">
-        <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed">
+        <div className="rounded-2xl bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 p-4 text-[13.5px] text-rose-800 dark:text-rose-400 font-semibold leading-relaxed">
           {description}
         </div>
 
         {itemName && (
-          <div className="rounded-2xl border border-slate-200/70 bg-slate-50 px-4 py-3">
-            <p className="text-[12px] font-black uppercase tracking-wide text-slate-400">Mục sẽ xóa</p>
-            <p className="mt-1 break-words text-[15px] font-extrabold text-kat-dark">{itemName}</p>
+          <div className="rounded-2xl border border-kat-border/40 bg-slate-50 dark:bg-slate-800/20 px-4 py-3">
+            <p className="text-[12px] font-black uppercase tracking-wide text-slate-400 dark:text-slate-500">Mục sẽ xóa</p>
+            <p className="mt-1 break-words text-[15px] font-extrabold text-kat-text">{itemName}</p>
           </div>
         )}
 
@@ -876,7 +878,7 @@ export function DeleteConfirmModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200 motion-press"
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/50 px-6 font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200 motion-press"
           >
             Hủy
           </button>
@@ -884,7 +886,7 @@ export function DeleteConfirmModal({
             type="button"
             disabled={isSubmitting}
             onClick={handleConfirm}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:bg-rose-200 disabled:border-rose-200 disabled:cursor-not-allowed transition-all active:scale-[0.98] disabled:active:scale-100 motion-press"
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:bg-rose-200 dark:disabled:bg-rose-950/20 disabled:border-rose-200 dark:disabled:border-rose-900/10 disabled:cursor-not-allowed transition-all active:scale-[0.98] disabled:active:scale-100 motion-press"
           >
             <HugeiconsIcon icon={Delete01Icon} size={20} />
             {isSubmitting ? "Đang xóa..." : confirmLabel}

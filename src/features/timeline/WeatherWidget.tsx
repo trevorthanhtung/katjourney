@@ -26,19 +26,19 @@ function getPackingTip(
   const isMyRainy = (myCode >= 51 && myCode <= 67) || (myCode >= 80 && myCode <= 82) || (myCode >= 95 && myCode <= 99);
 
   if (isDestRainy && !isMyRainy) {
-    return { emoji: "🌧️", message: `Điểm đến đang có mưa, đừng quên bỏ ô vào vali nhé!`, color: "bg-sky-50 border-sky-200 text-sky-800" };
+    return { emoji: "🌧️", message: `Điểm đến đang có mưa, đừng quên bỏ ô vào vali nhé!`, color: "bg-sky-50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-900/30 text-sky-800 dark:text-sky-350" };
   }
   if (diff <= -7) {
-    return { emoji: "🧥", message: `Điểm đến lạnh hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Nhớ mang áo ấm!`, color: "bg-indigo-50 border-indigo-200 text-indigo-800" };
+    return { emoji: "🧥", message: `Điểm đến lạnh hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Nhớ mang áo ấm!`, color: "bg-indigo-50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900/30 text-indigo-800 dark:text-indigo-350" };
   }
   if (diff <= -4) {
-    return { emoji: "🧣", message: `Điểm đến mát hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Mang theo áo khoác mỏng nhé.`, color: "bg-blue-50 border-blue-200 text-blue-800" };
+    return { emoji: "🧣", message: `Điểm đến mát hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Mang theo áo khoác mỏng nhé.`, color: "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/30 text-blue-800 dark:text-blue-350" };
   }
   if (diff >= 7) {
-    return { emoji: "☀️", message: `Điểm đến nóng hơn nơi bạn ${Math.round(diff)}°C. Chuẩn bị đồ mát và kem chống nắng!`, color: "bg-amber-50 border-amber-200 text-amber-800" };
+    return { emoji: "☀️", message: `Điểm đến nóng hơn nơi bạn ${Math.round(diff)}°C. Chuẩn bị đồ mát và kem chống nắng!`, color: "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/30 text-amber-800 dark:text-amber-350" };
   }
   if (diff >= 4) {
-    return { emoji: "🕶️", message: `Điểm đến ấm hơn nơi bạn ${Math.round(diff)}°C. Đừng quên kính mát và áo mỏng.`, color: "bg-orange-50 border-orange-200 text-orange-800" };
+    return { emoji: "🕶️", message: `Điểm đến ấm hơn nơi bạn ${Math.round(diff)}°C. Đừng quên kính mát và áo mỏng.`, color: "bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-900/30 text-orange-800 dark:text-orange-350" };
   }
   return null;
 }
@@ -63,12 +63,12 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
 
   if (!destination?.trim() && !latitude && !longitude) {
     return (
-      <div className="w-full mb-6 rounded-3xl bg-gradient-to-b from-sky-50/20 via-sky-50/5 to-white border border-slate-200/40 p-5 shadow-[0_4px_20px_rgba(3,13,46,0.02)] flex flex-col items-center justify-center text-center gap-2">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 text-sky-500 mb-1 shadow-sm animate-pulse">
+      <div className="w-full mb-6 rounded-3xl bg-gradient-to-b from-sky-50/20 via-sky-50/5 to-white dark:from-sky-950/10 dark:via-sky-950/5 dark:to-kat-surface border border-slate-200/40 dark:border-kat-border/40 p-5 shadow-[0_4px_20px_rgba(3,13,46,0.02)] dark:shadow-none flex flex-col items-center justify-center text-center gap-2">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 dark:bg-sky-950 text-sky-500 mb-1 shadow-sm animate-pulse">
           <HugeiconsIcon icon={CloudRainWindIcon} className="w-5.5 h-5.5" />
         </span>
         <span className="text-[14px] font-black text-kat-dark">Chưa có điểm đến</span>
-        <span className="text-[11.5px] text-slate-500/80 font-medium max-w-[220px] leading-relaxed">Hãy thêm điểm đến cho chuyến đi để xem dự báo thời tiết tại đây.</span>
+        <span className="text-[11.5px] text-slate-500/80 dark:text-slate-400 font-medium max-w-[220px] leading-relaxed">Hãy thêm điểm đến cho chuyến đi để xem dự báo thời tiết tại đây.</span>
       </div>
     );
   }
@@ -80,8 +80,8 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
       : 0;
 
     return (
-      <div className="w-full h-auto py-5 mb-6 rounded-3xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center gap-1.5 px-4 text-center">
-        <HugeiconsIcon icon={CloudRainWindIcon} className="w-6 h-6 mb-0.5 text-slate-300" />
+      <div className="w-full h-auto py-5 mb-6 rounded-3xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 flex flex-col items-center justify-center gap-1.5 px-4 text-center">
+        <HugeiconsIcon icon={CloudRainWindIcon} className="w-6 h-6 mb-0.5 text-slate-300 dark:text-slate-500" />
         {daysUntil > 0 ? (
           <span className="text-[12.5px] font-bold text-slate-400">
             Dự báo chưa có sẵn — còn {daysUntil} ngày nữa mới đến chuyến đi. Open-Meteo chỉ cung cấp tối đa 16 ngày tới.
@@ -95,8 +95,8 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
 
   if (loading) {
     return (
-      <div className="w-full h-24 mb-6 rounded-2xl bg-sky-50/50 border border-sky-100/50 animate-pulse flex items-center justify-center">
-        <span className="text-sky-300 text-[13px] font-bold">Đang tải thời tiết...</span>
+      <div className="w-full h-24 mb-6 rounded-2xl bg-sky-50/50 dark:bg-sky-950/20 border border-sky-100/50 dark:border-sky-900/30 animate-pulse flex items-center justify-center">
+        <span className="text-sky-400 dark:text-sky-300 text-[13px] font-bold">Đang tải thời tiết...</span>
       </div>
     );
   }
@@ -111,9 +111,9 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
 
   return (
     <>
-      <div className="w-full mb-6 rounded-3xl bg-gradient-to-b from-sky-50/70 via-sky-50/20 to-white border border-sky-100/70 shadow-[0_8px_30px_rgba(107,178,255,0.08)] relative overflow-hidden">
+      <div className="w-full mb-6 rounded-3xl bg-gradient-to-b from-sky-50/70 via-sky-50/20 to-white dark:from-sky-950/20 dark:via-sky-950/5 dark:to-kat-surface border border-sky-100/70 dark:border-kat-border/40 shadow-[0_8px_30px_rgba(107,178,255,0.08)] dark:shadow-none relative overflow-hidden">
         {/* Decorative background element */}
-        <div className="absolute -right-8 -top-8 text-sky-400/[0.04] pointer-events-none">
+        <div className="absolute -right-8 -top-8 text-sky-400/[0.04] dark:text-sky-400/[0.02] pointer-events-none">
           <HugeiconsIcon icon={CloudRainWindIcon} className="w-48 h-48" />
         </div>
 
@@ -123,12 +123,12 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
             className="flex items-center justify-between px-5 pt-5 pb-3 w-full text-left transition-colors"
           >
             <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/10 text-sky-500">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/10 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400">
                 <HugeiconsIcon icon={CloudRainWindIcon} className="h-4 w-4" />
               </span>
               <h4 className="text-[15px] font-extrabold text-kat-dark">Dự báo thời tiết</h4>
             </div>
-            <span className="text-[10.5px] font-bold text-sky-600 bg-sky-500/10 px-2.5 py-1 rounded-lg uppercase tracking-wider">
+            <span className="text-[10.5px] font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 dark:bg-sky-400/10 px-2.5 py-1 rounded-lg uppercase tracking-wider">
               {days} ngày
             </span>
           </button>
@@ -140,14 +140,13 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
             </div>
           )}
 
-          <div className="flex flex-col px-5 pb-5 max-h-[350px] overflow-y-auto pr-1 custom-scrollbar divide-y divide-slate-100">
+          <div className="flex flex-col px-5 pb-5 max-h-[350px] overflow-y-auto pr-1 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800/40">
             {forecast?.time.map((dateStr, idx) => {
               const dateObj = new Date(dateStr);
               const dayStr = dateObj.toLocaleDateString("vi-VN", { weekday: "short" });
               const maxTemp = Math.round(forecast.temperature_2m_max[idx]);
               const minTemp = Math.round(forecast.temperature_2m_min[idx]);
               
-              // We render the bar locally (always 100% width) for each day to avoid confusing blank/gray spaces on short forecasts
               const leftPercent = 0;
               const widthPercent = 100;
               
@@ -157,7 +156,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
                 const clampedTemp = Math.max(minTemp, Math.min(maxTemp, currentTemp));
                 const rangeForDay = maxTemp - minTemp;
                 if (rangeForDay === 0) {
-                  currentTempDotPercent = 50; // Center if no range
+                  currentTempDotPercent = 50;
                 } else {
                   currentTempDotPercent = ((clampedTemp - minTemp) / rangeForDay) * 100;
                 }
@@ -167,9 +166,9 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
                 <button
                   key={idx}
                   onClick={() => setWeatherModalOpen(true)}
-                  className="flex items-center justify-between py-3 last:pb-0 first:pt-0 group text-left w-full hover:bg-sky-50/30 transition-colors rounded-xl px-1 -mx-1"
+                  className="flex items-center justify-between py-3 last:pb-0 first:pt-0 group text-left w-full hover:bg-sky-50/30 dark:hover:bg-sky-950/20 transition-colors rounded-xl px-1 -mx-1"
                 >
-                  <span className="w-16 text-[13.5px] font-bold text-slate-600 group-hover:text-sky-600 transition-colors shrink-0">
+                  <span className="w-16 text-[13.5px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors shrink-0">
                     {idx === 0 && !isFuture ? "Hôm nay" : dayStr}
                   </span>
                   
@@ -178,10 +177,10 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
                   </div>
                   
                   <div className="flex items-center gap-3 flex-1 justify-end">
-                    <span className="font-semibold text-slate-400 text-[12.5px] w-8 text-right shrink-0">{minTemp}°</span>
+                    <span className="font-semibold text-slate-400 dark:text-slate-500 text-[12.5px] w-8 text-right shrink-0">{minTemp}°</span>
                     
                     {/* iOS Style Temperature Bar with current temp dot */}
-                    <div className="h-1.5 w-16 sm:w-20 bg-slate-100 rounded-full overflow-visible relative shrink-0">
+                    <div className="h-1.5 w-16 sm:w-20 bg-slate-100 dark:bg-slate-800 rounded-full overflow-visible relative shrink-0">
                       <div 
                         className="absolute h-full bg-gradient-to-r from-sky-400 via-emerald-400 to-amber-400 rounded-full opacity-90 shadow-sm" 
                         style={{ left: `${leftPercent}%`, width: `${widthPercent}%` }}
@@ -196,7 +195,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
                       )}
                     </div>
                     
-                    <span className="font-black text-kat-dark text-[13px] w-8 text-right shrink-0">{maxTemp}°</span>
+                    <span className="font-black text-kat-dark dark:text-slate-200 text-[13px] w-8 text-right shrink-0">{maxTemp}°</span>
                   </div>
                 </button>
               );

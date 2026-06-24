@@ -20,7 +20,7 @@ export function RolesHelpSheet({
     {
       title: "Trưởng nhóm",
       icon: CrownIcon,
-      colorClass: "bg-amber-50 text-amber-600 border-amber-200/50",
+      colorClass: "bg-amber-50 text-amber-600 border-amber-200/50 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/30",
       description: "Người tạo chuyến đi và có toàn quyền quản trị tối cao.",
       permissions: [
         { label: "Sửa lịch trình trực tiếp", allowed: true },
@@ -30,7 +30,7 @@ export function RolesHelpSheet({
     {
       title: "Tài xế",
       icon: Car01Icon,
-      colorClass: "bg-blue-50 text-blue-600 border-blue-200/50",
+      colorClass: "bg-blue-50 text-blue-600 border-blue-200/50 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/30",
       description: "Phụ trách di chuyển, lái xe và quản lý phương tiện chính.",
       permissions: [
         { label: "Sửa lịch trình trực tiếp", allowed: true },
@@ -40,7 +40,7 @@ export function RolesHelpSheet({
     {
       title: "Dẫn đường",
       icon: CompassIcon,
-      colorClass: "bg-sky-50 text-sky-600 border-sky-200/50",
+      colorClass: "bg-sky-50 text-sky-600 border-sky-200/50 dark:bg-sky-950/20 dark:text-sky-400 dark:border-sky-900/30",
       description: "Phụ trách dẫn đường, lộ trình di chuyển và bản đồ.",
       permissions: [
         { label: "Sửa lịch trình trực tiếp", allowed: true },
@@ -50,7 +50,7 @@ export function RolesHelpSheet({
     {
       title: "Quản lý chi phí",
       icon: WalletCardsIcon,
-      colorClass: "bg-emerald-50 text-emerald-600 border-emerald-200/50",
+      colorClass: "bg-emerald-50 text-emerald-600 border-emerald-200/50 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30",
       description: "Quản lý quỹ chung, ghi chép và chia tiền chi tiêu.",
       permissions: [
         { label: "Quản lý chi phí trực tiếp", allowed: true },
@@ -60,7 +60,7 @@ export function RolesHelpSheet({
     {
       title: "Người đồng hành",
       icon: UserGroupIcon,
-      colorClass: "bg-slate-50 text-slate-600 border-slate-200/50",
+      colorClass: "bg-slate-50 text-slate-600 border-slate-200/50 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700/50",
       description: "Xem thông tin chuyến đi và gửi các ý kiến đề xuất.",
       permissions: [
         { label: "Đề xuất sửa lịch trình", allowed: false },
@@ -80,30 +80,30 @@ export function RolesHelpSheet({
         {roles.map((role, idx) => (
           <div
             key={idx}
-            className="p-4 rounded-2xl border border-slate-100 bg-slate-50/30 flex flex-col gap-3"
+            className="p-4 rounded-2xl border border-slate-100 dark:border-slate-800/80 bg-slate-50/30 dark:bg-slate-800/40 flex flex-col gap-3"
           >
             <div className="flex items-center gap-3">
               <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${role.colorClass} shadow-sm shrink-0`}>
                 <HugeiconsIcon icon={role.icon} className="h-4.5 w-4.5" />
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="text-[14.5px] font-extrabold text-slate-800 leading-none">
+                <h4 className="text-[14.5px] font-extrabold text-slate-800 dark:text-slate-200 leading-none">
                   {role.title}
                 </h4>
-                <p className="text-[12px] text-slate-500 font-medium mt-1.5 leading-relaxed">
+                <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium mt-1.5 leading-relaxed">
                   {role.description}
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 pt-1.5 border-t border-slate-100/50">
+            <div className="flex flex-wrap gap-2 pt-1.5 border-t border-slate-100/50 dark:border-slate-800/50">
               {role.permissions.map((p, pIdx) => (
                 <span
                   key={pIdx}
                   className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold ${
                     p.allowed
-                      ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-                      : "bg-amber-50 text-amber-600 border-amber-100"
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30"
+                      : "bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/30"
                   }`}
                 >
                   <span

@@ -1,7 +1,7 @@
 import React from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { RefreshIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
+import { SystemUpdate01Icon, Download01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
 
 export function ReloadPrompt() {
   const [registration, setRegistration] = React.useState<ServiceWorkerRegistration | null>(null);
@@ -31,6 +31,17 @@ export function ReloadPrompt() {
       return () => clearTimeout(timer);
     }
   }, [offlineReady, setOfflineReady]);
+
+  // Hỗ trợ kiểm thử thông báo qua URL query (?test_update=true hoặc ?test_offline=true)
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("test_update") === "true") {
+      setNeedRefresh(true);
+    }
+    if (params.get("test_offline") === "true") {
+      setOfflineReady(true);
+    }
+  }, [setNeedRefresh, setOfflineReady]);
 
   // Kiểm tra cập nhật định kỳ và khi người dùng quay lại ứng dụng
   React.useEffect(() => {
@@ -77,42 +88,36 @@ export function ReloadPrompt() {
   }
 
   return (
-    <div className="fixed bottom-24 md:bottom-6 right-4 left-4 md:left-auto md:w-96 z-[9999] animate-slideUp">
-      <div className="bg-kat-surface border border-kat-border shadow-floating rounded-[20px] p-4 md:p-5 flex flex-col gap-4">
-        <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-kat-primary-soft flex items-center justify-center text-kat-teal shrink-0">
-            <HugeiconsIcon icon={RefreshIcon} className="w-5 h-5 animate-spin-slow text-kat-teal" />
+    <div className="fixed bottom-24 md:bottom-6 right-4 left-4 md:left-auto md:w-[380px] z-[9999] animate-slideUp">
+      <div className="backdrop-blur-xl bg-white/95 dark:bg-[#111A33]/90 border border-slate-200/50 dark:border-slate-800/60 shadow-[0_20px_50px_rgba(3,13,46,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.35)] rounded-[24px] p-5 flex flex-col gap-4.5 transition-all duration-300">
+        <div className="flex items-start gap-3.5">
+          <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500/10 to-emerald-500/10 border border-teal-500/20 dark:border-teal-500/30 text-kat-teal shrink-0 shadow-inner">
+            <div className="absolute inset-0 rounded-2xl bg-kat-teal/5 animate-pulse" />
+            <HugeiconsIcon icon={needRefresh ? SystemUpdate01Icon : Download01Icon} className="w-5.5 h-5.5 text-kat-teal relative z-10 animate-pulse" />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="font-display text-[15px] font-extrabold text-kat-dark leading-snug">
+            <h4 className="font-display text-[16px] font-black text-kat-dark dark:text-white tracking-tight leading-snug">
               {needRefresh ? "Có phiên bản mới!" : "Sẵn sàng chạy ngoại tuyến"}
             </h4>
-            <p className="text-xs text-kat-muted mt-1 leading-relaxed">
+            <p className="text-[12.5px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed font-medium">
               {needRefresh
                 ? "Ứng dụng KAT Journey đã có bản cập nhật mới nhất. Bạn có muốn tải về và làm mới ứng dụng ngay không?"
                 : "Ứng dụng đã được lưu ngoại tuyến thành công, bạn có thể truy cập mà không cần mạng."}
             </p>
           </div>
-          <button
-            onClick={close}
-            className="text-kat-muted hover:text-kat-dark transition-colors p-1 -mr-1 -mt-1 rounded-full hover:bg-kat-bg"
-            aria-label="Đóng"
-          >
-            <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
-          </button>
         </div>
 
         <div className="flex items-center gap-2 justify-end pt-1">
           <button
             onClick={close}
-            className="px-4 py-2 text-xs font-extrabold text-kat-muted hover:text-kat-dark hover:bg-kat-bg rounded-xl transition-all duration-200 active:scale-95"
+            className="px-4 py-2.5 text-xs font-black text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-50 hover:bg-slate-100/80 dark:bg-slate-800/30 dark:hover:bg-slate-800/60 border border-slate-200/30 dark:border-slate-700/30 rounded-xl transition-all duration-200 active:scale-[0.97] hover:scale-[1.01]"
           >
             Để sau
           </button>
           {needRefresh && (
             <button
               onClick={() => updateServiceWorker(true)}
-              className="px-4.5 py-2 text-xs font-extrabold text-white bg-kat-teal hover:bg-kat-primary-usable rounded-xl shadow-sm transition-all duration-200 active:scale-95"
+              className="px-5 py-2.5 text-xs font-black text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl shadow-md shadow-teal-500/10 hover:shadow-teal-500/25 hover:shadow-lg transition-all duration-200 active:scale-[0.97] hover:scale-[1.01]"
             >
               Cập nhật ngay
             </button>

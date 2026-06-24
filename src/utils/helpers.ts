@@ -52,6 +52,16 @@ export function formatMoney(value: number) {
     .replace(/[đĐVNDvnd]/g, "₫");
 }
 
+export function formatMoneyCompact(value: number) {
+  if (value >= 1e9) {
+    return `${(value / 1e9).toLocaleString("vi-VN", { maximumFractionDigits: 2 }).replace(/\s+/g, "")} tỷ`;
+  }
+  if (value >= 1e6) {
+    return `${(value / 1e6).toLocaleString("vi-VN", { maximumFractionDigits: 2 }).replace(/\s+/g, "")} tr`;
+  }
+  return formatMoney(value);
+}
+
 export function formatDate(value: string) {
   if (!value) return "";
   return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(

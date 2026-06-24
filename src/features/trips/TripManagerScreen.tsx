@@ -62,14 +62,14 @@ function TripCard({
     return (
       <div 
         onClick={() => onOpenTrip(trip.id!)}
-        className={`group relative cursor-pointer overflow-hidden rounded-[32px] bg-white border border-slate-200 border-l-4 ${statusColor} p-6 lg:p-8 shadow-soft hover:shadow-md hover:border-slate-350/80 hover:-translate-y-1 active:scale-[0.99] transition-all duration-300 w-full flex flex-col lg:flex-row gap-6 justify-between items-stretch lg:min-w-[560px] lg:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+        className={`group relative cursor-pointer overflow-hidden rounded-[32px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border border-l-4 ${statusColor} p-6 lg:p-8 shadow-soft hover:shadow-md hover:border-slate-350 dark:hover:border-kat-border hover:-translate-y-1 active:scale-[0.99] transition-all duration-300 w-full flex flex-col lg:flex-row gap-6 justify-between items-stretch lg:min-w-[560px] lg:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
       >
         {/* Left info column */}
         <div className="flex-1 flex flex-col justify-between pr-4">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-3">
               {timing.status === "active" && (
-                <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-3 py-1 text-[11px] font-bold text-emerald-700 uppercase tracking-wider shadow-sm">
+                <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-3 py-1 text-[11px] font-bold text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-800/40 dark:text-emerald-400 uppercase tracking-wider shadow-sm">
                   <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -78,7 +78,7 @@ function TripCard({
                 </span>
               )}
               {timing.status === "upcoming" && (
-                <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-3 py-1 text-[11px] font-bold text-amber-700 uppercase tracking-wider shadow-sm">
+                <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-3 py-1 text-[11px] font-bold text-amber-700 dark:bg-amber-950/30 dark:border-amber-800/40 dark:text-amber-400 uppercase tracking-wider shadow-sm">
                   <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -87,14 +87,14 @@ function TripCard({
                 </span>
               )}
               {timing.status === "past" && (
-                <span className="inline-flex items-center rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-600 uppercase tracking-wider shadow-sm">
+                <span className="inline-flex items-center rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-600 dark:bg-slate-800/60 dark:border-slate-700/60 dark:text-slate-300 uppercase tracking-wider shadow-sm">
                   <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-slate-400"></span>
                   </span>
                   Đã kết thúc
                 </span>
               )}
-              <span className="inline-flex items-center rounded-full bg-slate-100 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-655 tracking-wide">
+              <span className="inline-flex items-center rounded-full bg-slate-100 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-650 dark:bg-slate-800 dark:border-slate-700/60 dark:text-slate-300 tracking-wide">
                 {getTripDurationText(trip)}
               </span>
             </div>
@@ -105,11 +105,11 @@ function TripCard({
           </div>
 
           <div className="flex flex-col gap-2 pb-2">
-            <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#3D4B5E] bg-kat-dark/[0.02] border border-slate-200/45 px-3 py-1.5 rounded-[12px] w-fit max-w-full">
+            <div className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3 py-1.5 rounded-[12px] w-fit max-w-full">
               <HugeiconsIcon icon={Location01Icon} size={15} className="text-slate-400 shrink-0" />
               <span className="truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">{trip.location || "Chưa có địa điểm"}</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#3D4B5E] bg-kat-dark/[0.02] border border-slate-200/45 px-3 py-1.5 rounded-[12px] w-fit max-w-full">
+            <div className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3 py-1.5 rounded-[12px] w-fit max-w-full">
               <HugeiconsIcon icon={Calendar01Icon} size={15} className="text-slate-400 shrink-0" />
               <span className="truncate">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}</span>
             </div>
@@ -117,19 +117,19 @@ function TripCard({
         </div>
 
         {/* Right stats column */}
-        <div className="w-full lg:w-[250px] shrink-0 lg:border-l lg:border-slate-200/45 lg:pl-6 flex flex-col justify-center gap-2.5">
-          <div className="flex items-center gap-2 text-[12px] font-extrabold text-[#3D4B5E] bg-kat-dark/[0.02] border border-slate-200/45 px-3.5 py-2 rounded-[12px]">
+        <div className="w-full lg:w-[250px] shrink-0 lg:border-l lg:border-slate-200 dark:lg:border-kat-border lg:pl-6 flex flex-col justify-center gap-2.5">
+          <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3.5 py-2 rounded-[12px]">
             <HugeiconsIcon icon={UserGroupIcon} size={15} className="text-slate-400 shrink-0" />
             <span>{memberCounts[trip.id!] || 1} người đồng hành</span> 
           </div>
-          <div className="flex items-center gap-2 text-[12px] font-extrabold text-[#3D4B5E] bg-kat-dark/[0.02] border border-slate-200/45 px-3.5 py-2 rounded-[12px]">
+          <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3.5 py-2 rounded-[12px]">
             <HugeiconsIcon icon={WalletCardsIcon} size={15} className="text-slate-400 shrink-0" />
             <span>{totalExpense > 0 ? `${totalExpense.toLocaleString()}đ chi phí` : "Chưa có chi phí"}</span>
           </div>
           
           {tripChecklist.length > 0 && (
             checklistRemaining > 0 ? (
-              <div className="flex items-center gap-2 text-[12px] font-extrabold text-rose-700 bg-rose-50/40 border border-rose-100/60 px-3.5 py-2 rounded-[12px]">
+              <div className="flex items-center gap-2 text-[12px] font-extrabold text-rose-700 dark:text-rose-400 bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100/60 dark:border-rose-900/30 px-3.5 py-2 rounded-[12px]">
                 <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse shrink-0"></span>
                 <span className="truncate">
                   {timing.status === "past" 
@@ -138,7 +138,7 @@ function TripCard({
                 </span>
               </div>
             ) : (
-              <div className="flex items-center gap-2 text-[12px] font-extrabold text-emerald-700 bg-emerald-50/40 border border-emerald-100/60 px-3.5 py-2 rounded-[12px]">
+              <div className="flex items-center gap-2 text-[12px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-100/60 dark:border-emerald-900/30 px-3.5 py-2 rounded-[12px]">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0"></span>
                 <span className="truncate">Hành lý chuẩn bị xong</span>
               </div>
@@ -153,12 +153,12 @@ function TripCard({
   return (
     <div 
       onClick={() => onOpenTrip(trip.id!)}
-      className={`group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[24px] bg-white p-5 shadow-soft border border-slate-200 border-l-4 ${statusColor} hover:border-slate-350/80 hover:-translate-y-1 hover:shadow-md transition-all duration-300 w-full max-w-[420px] mx-auto md:mx-0 h-full motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+      className={`group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface p-5 shadow-soft border border-slate-200 dark:border-kat-border border-l-4 ${statusColor} hover:border-slate-350 dark:hover:border-kat-border hover:-translate-y-1 hover:shadow-md transition-all duration-300 w-full max-w-[420px] mx-auto md:mx-0 h-full motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
     >
       <div>
         <div className="flex flex-wrap items-center gap-2 mb-3">
           {timing.status === "active" && (
-            <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-emerald-700 uppercase tracking-wider shadow-sm">
+            <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-800/40 dark:text-emerald-400 uppercase tracking-wider shadow-sm">
               <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
@@ -167,7 +167,7 @@ function TripCard({
             </span>
           )}
           {timing.status === "upcoming" && (
-            <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-amber-700 uppercase tracking-wider shadow-sm">
+            <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-amber-700 dark:bg-amber-950/30 dark:border-amber-800/40 dark:text-amber-400 uppercase tracking-wider shadow-sm">
               <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
@@ -176,14 +176,14 @@ function TripCard({
             </span>
           )}
           {timing.status === "past" && (
-            <span className="inline-flex items-center rounded-full bg-slate-50 border border-slate-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-slate-600 uppercase tracking-wider shadow-sm">
+            <span className="inline-flex items-center rounded-full bg-slate-50 border border-slate-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-slate-600 dark:bg-slate-800/60 dark:border-slate-700/60 dark:text-slate-300 uppercase tracking-wider shadow-sm">
               <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-slate-400"></span>
               </span>
               Đã kết thúc
             </span>
           )}
-          <span className="inline-flex items-center rounded-full bg-slate-100 border border-slate-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-slate-600 tracking-wide">
+          <span className="inline-flex items-center rounded-full bg-slate-100 border border-slate-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-slate-600 dark:bg-slate-800 dark:border-slate-700/60 dark:text-slate-300 tracking-wide">
             {getTripDurationText(trip)}
           </span>
         </div>
@@ -193,16 +193,16 @@ function TripCard({
         </h4>
 
         {/* Glanceable Grid Info */}
-        <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 text-[12px] font-bold text-[#3D4B5E] mb-1">
-          <div className="flex items-center gap-1.5 bg-kat-dark/[0.02] border border-slate-200/40 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-kat-dark/[0.04]">
+        <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 text-[12px] font-bold text-slate-655 dark:text-slate-350 mb-1">
+          <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-slate-500/10 dark:group-hover:bg-slate-400/10">
             <HugeiconsIcon icon={Location01Icon} size={14} className="text-slate-400 shrink-0" />
             <span className="truncate">{trip.location || "Chưa xác định"}</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-kat-dark/[0.02] border border-slate-200/40 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-kat-dark/[0.04]">
+          <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-slate-500/10 dark:group-hover:bg-slate-400/10">
             <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-slate-400 shrink-0" />
-            <span className="truncate text-slate-600">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)}`}</span>
+            <span className="truncate text-slate-600 dark:text-slate-300">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)}`}</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-kat-dark/[0.02] border border-slate-200/40 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-kat-dark/[0.04] col-span-1 min-[360px]:col-span-2">
+          <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-slate-500/10 dark:group-hover:bg-slate-400/10 col-span-1 min-[360px]:col-span-2">
             <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-slate-400 shrink-0" />
             <span className="truncate">{memberCounts[trip.id!] || 1} người</span>
             <span className="text-slate-300 mx-0.5">·</span>
@@ -214,14 +214,14 @@ function TripCard({
 
       {/* Checklist Status Border Block */}
       {tripChecklist.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-slate-200/45 flex">
+        <div className="mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60 flex">
           {checklistRemaining > 0 ? (
-            <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-rose-700 bg-rose-50/40 border border-rose-100/60 px-2.5 py-1 rounded-[8px]">
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-rose-700 dark:text-rose-400 bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100/60 dark:border-rose-900/30 px-2.5 py-1 rounded-[8px]">
               <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse"></span>
               <span>Còn {checklistRemaining} món cần chuẩn bị</span>
             </div>
           ) : (
-            <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-700 bg-emerald-50/40 border border-emerald-100/60 px-2.5 py-1 rounded-[8px]">
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-100/60 dark:border-emerald-900/30 px-2.5 py-1 rounded-[8px]">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
               <span>Hành lý chuẩn bị xong</span>
             </div>
@@ -347,7 +347,7 @@ export function TripManagerScreen({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-32">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#00BFB7]/20 border-t-kat-primary"></div>
       </div>
     );
   }
@@ -355,7 +355,7 @@ export function TripManagerScreen({
   return (
     <div className={`mx-auto w-full max-w-[1120px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center py-0 md:py-0" : "py-6 md:pt-4 md:pb-16"}`}>
       {trips.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[32px] bg-white p-6 sm:p-10 md:p-14 text-center border border-slate-200 shadow-[0_20px_50px_rgba(0,191,183,0.06)] hover:shadow-[0_20px_50px_rgba(0,191,183,0.12)] hover:border-[#00BFB7]/40 transition-all duration-500 mx-auto w-full max-w-[580px] relative overflow-hidden motion-page-enter motion-hover-lift">
+        <div className="flex flex-col items-center justify-center rounded-[32px] bg-white dark:bg-kat-surface p-6 sm:p-10 md:p-14 text-center border border-slate-200 dark:border-kat-border shadow-[0_20px_50px_rgba(0,191,183,0.06)] hover:shadow-[0_20px_50px_rgba(0,191,183,0.12)] hover:border-[#00BFB7]/40 dark:hover:border-[#00BFB7]/60 transition-all duration-500 mx-auto w-full max-w-[580px] relative overflow-hidden motion-page-enter motion-hover-lift">
           {/* Ambient Background Glows */}
           <div className="absolute -right-16 -top-16 w-64 h-64 bg-[#00BFB7]/10 blur-[80px] rounded-full pointer-events-none animate-pulse duration-[8000ms]" />
           <div className="absolute -left-20 -bottom-20 w-72 h-72 bg-[#030D2E]/5 blur-[90px] rounded-full pointer-events-none animate-pulse duration-[6000ms]" />
@@ -443,7 +443,7 @@ export function TripManagerScreen({
           {archivedTripsCount > 0 && (
             <button
               onClick={onOpenArchive}
-              className="mt-3.5 flex h-12 sm:h-14 w-full items-center justify-center gap-2 rounded-[20px] border-2 border-[#00BFB7]/25 hover:border-[#00BFB7] bg-white text-[#030D2E] px-6 font-extrabold text-[14px] sm:text-[15px] active:scale-[0.98] hover:bg-slate-50/80 transition-all duration-300 relative z-10 shadow-[0_4px_12px_rgba(3,13,46,0.02)] hover:shadow-[0_6px_16px_rgba(0,191,183,0.08)] motion-press"
+              className="mt-3.5 flex h-12 sm:h-14 w-full items-center justify-center gap-2 rounded-[20px] border-2 border-[#00BFB7]/25 hover:border-[#00BFB7] bg-white dark:bg-kat-surface text-[#030D2E] dark:text-kat-text px-6 font-extrabold text-[14px] sm:text-[15px] active:scale-[0.98] hover:bg-slate-50/80 dark:hover:bg-kat-surface/80 transition-all duration-300 relative z-10 shadow-[0_4px_12px_rgba(3,13,46,0.02)] hover:shadow-[0_6px_16px_rgba(0,191,183,0.08)] motion-press"
             >
               <HugeiconsIcon icon={SparklesIcon} size={16} className="text-[#00BFB7] shrink-0" />
               Xem kỷ niệm chuyến đi ({archivedTripsCount})
@@ -489,7 +489,7 @@ export function TripManagerScreen({
               
               <button
                 onClick={onCreateNew}
-                className="group flex h-[46px] md:h-[50px] items-center justify-center gap-1.5 rounded-2xl bg-white text-kat-dark px-3.5 sm:px-7 font-black text-[12.5px] min-[360px]:text-[13.5px] md:text-[14px] shadow-[0_6px_20px_rgba(255,255,255,0.1)] active:scale-[0.97] transition-all duration-300 hover:bg-[#F8F9FA] hover:shadow-[0_8px_24px_rgba(255,255,255,0.2)] whitespace-nowrap shrink-0"
+                className="group flex h-[46px] md:h-[50px] items-center justify-center gap-1.5 rounded-2xl bg-white text-[#030D2E] px-3.5 sm:px-7 font-black text-[12.5px] min-[360px]:text-[13.5px] md:text-[14px] shadow-[0_6px_20px_rgba(255,255,255,0.1)] active:scale-[0.97] transition-all duration-300 hover:bg-[#F8F9FA] hover:shadow-[0_8px_24px_rgba(255,255,255,0.2)] whitespace-nowrap shrink-0"
               >
                 <span className="text-md md:text-lg leading-none group-hover:rotate-90 transition-transform duration-300 font-extrabold">+</span>
                 Tạo chuyến đi
@@ -508,7 +508,7 @@ export function TripManagerScreen({
               <section className="mb-12 md:mb-14">
                 <h3 className="mb-4 px-1 text-[20px] font-extrabold text-kat-text motion-title-enter">Chuyến tiếp theo</h3>
                 <div 
-                  className={`group relative overflow-hidden rounded-[32px] bg-white border border-slate-200 border-l-4 ${featuredBorderColor} p-6 sm:p-8 lg:p-10 shadow-soft cursor-pointer hover:shadow-md hover:border-slate-350/80 hover:-translate-y-1 transition-all duration-300 min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2`}
+                  className={`group relative overflow-hidden rounded-[32px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border border-l-4 ${featuredBorderColor} p-6 sm:p-8 lg:p-10 shadow-soft cursor-pointer hover:shadow-md hover:border-slate-350/80 dark:hover:border-kat-border hover:-translate-y-1 transition-all duration-300 min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2`}
                   onClick={() => onOpenTrip(featuredTrip.id!)}
                 >
                   
@@ -528,7 +528,7 @@ export function TripManagerScreen({
                   <div className="relative z-10 lg:w-2/3 pr-4">
                     <div className="flex flex-wrap gap-2 mb-4">
                       {featuredStatus.status === "active" ? (
-                        <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-3 py-1 text-[11px] font-bold text-emerald-700 uppercase tracking-wider shadow-sm">
+                        <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-3 py-1 text-[11px] font-bold text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-800/40 dark:text-emerald-400 uppercase tracking-wider shadow-sm">
                           <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -536,7 +536,7 @@ export function TripManagerScreen({
                           Đang diễn ra
                         </span>
                       ) : (
-                        <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-3 py-1 text-[11px] font-bold text-amber-700 uppercase tracking-wider shadow-sm">
+                        <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-3 py-1 text-[11px] font-bold text-amber-700 dark:bg-amber-950/30 dark:border-amber-800/40 dark:text-amber-400 uppercase tracking-wider shadow-sm">
                           <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
@@ -544,7 +544,7 @@ export function TripManagerScreen({
                           Sắp diễn ra
                         </span>
                       )}
-                      <span className="rounded-full bg-slate-100 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-600">
+                      <span className="rounded-full bg-slate-100 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-600 dark:bg-slate-800 dark:border-slate-700/60 dark:text-slate-300">
                         {getTripDurationText(featuredTrip)}
                       </span>
                     </div>
@@ -553,21 +553,21 @@ export function TripManagerScreen({
                       {featuredTrip.title}
                     </h4>
                     
-                    <div className="flex flex-wrap gap-2 text-slate-700">
-                      <div className="flex items-center gap-1.5 bg-kat-dark/[0.02] border border-slate-200/40 px-3 py-1.5 rounded-[12px] max-w-full">
+                    <div className="flex flex-wrap gap-2 text-slate-700 dark:text-slate-300">
+                      <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-kat-border px-3 py-1.5 rounded-[12px] max-w-full">
                         <HugeiconsIcon icon={Location01Icon} size={16} className="text-slate-400 shrink-0" />
-                        <span className="font-extrabold text-[13px] text-slate-600 truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">{featuredTrip.location || "Chưa có địa điểm"}</span>
+                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">{featuredTrip.location || "Chưa có địa điểm"}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-kat-dark/[0.02] border border-slate-200/40 px-3 py-1.5 rounded-[12px] max-w-full">
+                      <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-kat-border px-3 py-1.5 rounded-[12px] max-w-full">
                         <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-400 shrink-0" />
-                        <span className="font-extrabold text-[13px] text-slate-600 truncate">{featuredTrip.startDate === featuredTrip.endDate ? formatDate(featuredTrip.startDate) : `${formatDate(featuredTrip.startDate)} - ${formatDate(featuredTrip.endDate)}`}</span>
+                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{featuredTrip.startDate === featuredTrip.endDate ? formatDate(featuredTrip.startDate) : `${formatDate(featuredTrip.startDate)} - ${formatDate(featuredTrip.endDate)}`}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-kat-dark/[0.02] border border-slate-200/40 px-3 py-1.5 rounded-[12px] max-w-full">
+                      <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-kat-border px-3 py-1.5 rounded-[12px] max-w-full">
                         <HugeiconsIcon icon={UserGroupIcon} size={16} className="text-slate-400 shrink-0" />
-                        <span className="font-extrabold text-[13px] text-slate-600 truncate">{memberCounts[featuredTrip.id!] || 1} người</span>
-                        <span className="text-slate-300 mx-0.5">·</span>
+                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{memberCounts[featuredTrip.id!] || 1} người</span>
+                        <span className="text-slate-300 dark:text-slate-500 mx-0.5">·</span>
                         <HugeiconsIcon icon={WalletCardsIcon} size={16} className="text-slate-400 shrink-0" />
-                        <span className="font-extrabold text-[13px] text-slate-600 truncate">{featuredTotalExpense > 0 ? `${featuredTotalExpense.toLocaleString()}đ` : "Chưa chi"}</span>
+                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{featuredTotalExpense > 0 ? `${featuredTotalExpense.toLocaleString()}đ` : "Chưa chi"}</span>
                       </div>
                     </div>
                   </div>

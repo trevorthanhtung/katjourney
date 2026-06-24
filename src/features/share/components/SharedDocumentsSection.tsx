@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../../db';
 import { createPortal } from 'react-dom';
@@ -6,9 +6,9 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Wallet01Icon, CheckmarkCircle02Icon, BookOpen01Icon, File01Icon, AlertCircleIcon, Add01Icon, PenTool01Icon, Delete01Icon, MoreVerticalIcon,
   ReceiptTextIcon, UserCheck01Icon, Tag01Icon, ChevronRightIcon, BalanceScaleIcon, InformationCircleIcon, CheckIcon, Cancel01Icon, Clock01Icon,
-  FileCheckIcon, ShirtIcon, Briefcase01Icon, PlugIcon, PillIcon, Bread01Icon, PackageIcon, BadgeCheckIcon, StickyNoteIcon, TextFontIcon, MinusSignIcon, UserIcon, Calendar01Icon, Maximize01Icon, Image01Icon, Loading01Icon, SmileIcon, NotebookIcon, SaveIcon, SparklesIcon, RouteIcon, HelpCircleIcon, UserGroupIcon, BubbleChatIcon, GlobeIcon,
+  FileCheckIcon, ShirtIcon, Briefcase01Icon, PlugIcon, PillIcon, Bread01Icon, PackageIcon, BadgeCheckIcon, StickyNoteIcon, MinusSignIcon, UserIcon, Calendar01Icon, Maximize01Icon, Image01Icon, ImageAdd01Icon, Loading01Icon, SmileIcon, NotebookIcon, SaveIcon, SparklesIcon, HelpCircleIcon, UserGroupIcon, BubbleChatIcon, GlobeIcon,
   CrownIcon, Luggage01Icon, Car01Icon, CalculatorIcon, PieChartIcon, Search01Icon,
-  Airplane01Icon, KitchenUtensilsIcon, HotelIcon, Ticket01Icon, ShoppingBag01Icon, Gamepad2Icon, CompassIcon, ChevronDownIcon, Location01Icon, LocationOfflineIcon
+  Airplane01Icon, HotelIcon, Ticket01Icon, ShoppingBag01Icon, Gamepad2Icon, CompassIcon, ChevronDownIcon, Location01Icon, LocationOfflineIcon
 } from "@hugeicons/core-free-icons";
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
 import { formatMoney, expenseCategories, formatDate, moodLabels, sumBy, getSettlementSuggestions } from '../../../utils/helpers';
@@ -63,19 +63,19 @@ export function SharedDocumentsSection({
     const targetTripId = typeof tripId === 'number' ? tripId : (isNaN(Number(tripId)) ? tripId : Number(tripId));
     try {
       const items = await db.travelDocuments.where('tripId').equals(targetTripId).toArray();
-      return items.filter(d => d.isPrivate && !d.isDeleted);
+      return items.filter(d => d.isPrivate && !d.isDeleted && (d.createdBy === guestName || (!d.createdBy && !guestName)));
     } catch (e) {
       console.error("Error loading local private travel documents:", e);
       return [];
     }
-  }, [tripId, activeSubTab]) ?? [];
+  }, [tripId, activeSubTab, guestName]) ?? [];
 
   // Form states for private documents
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [editingDoc, setEditingDoc] = React.useState<TravelDocument | null>(null);
   const [form, setForm] = React.useState({
     title: "",
-    type: "document" as TravelDocument["type"],
+    type: "ticket" as TravelDocument["type"],
     code: "",
     date: "",
     link: "",
@@ -109,7 +109,7 @@ export function SharedDocumentsSection({
       if (editingDoc) {
         setForm({
           title: editingDoc.title,
-          type: editingDoc.type || "document",
+          type: editingDoc.type || "ticket",
           code: editingDoc.code || "",
           date: editingDoc.date || "",
           link: editingDoc.link || "",
@@ -120,7 +120,7 @@ export function SharedDocumentsSection({
       } else {
         setForm({
           title: "",
-          type: "document",
+          type: "ticket",
           code: "",
           date: "",
           link: "",
@@ -182,6 +182,7 @@ export function SharedDocumentsSection({
         await db.travelDocuments.update(editingDoc.id, {
           ...form,
           attachmentUrl: finalAttachmentUrl,
+          createdBy: guestName || 'guest',
           updatedAt: new Date().toISOString()
         });
         showToast("Đã cập nhật tài liệu cá nhân");
@@ -191,6 +192,7 @@ export function SharedDocumentsSection({
           tripId: targetTripId,
           isPrivate: true,
           attachmentUrl: finalAttachmentUrl,
+          createdBy: guestName || 'guest',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         });
@@ -231,30 +233,30 @@ export function SharedDocumentsSection({
       type="button"
       onClick={save}
       disabled={isSaveDisabled}
-      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark text-white hover:bg-kat-dark bg-opacity-90 px-4 text-[13.5px] font-bold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed"
+      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 px-4 text-[13.5px] font-extrabold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed"
     >
       {isUploading ? <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin text-slate-400" /> : "Lưu"}
     </button>
   );
 
   return (
-    <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm space-y-4">
+    <section className="bg-white dark:bg-kat-surface rounded-2xl border border-slate-200/60 dark:border-kat-border p-5 shadow-sm space-y-4">
       {/* Header */}
-      <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+      <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
         <HugeiconsIcon icon={File01Icon} className="h-5 w-5 text-rose-500" />
         <h3 className="text-[16px] font-black text-kat-dark">Giấy tờ & đặt chỗ</h3>
       </div>
 
       {/* Sub Tabs */}
-      <div className="flex bg-kat-dark/5 p-1 rounded-xl gap-1">
+      <div className="flex bg-kat-dark/5 dark:bg-slate-800/60 p-1 rounded-xl gap-1">
         <button
           type="button"
           onClick={() => setActiveSubTab('shared')}
           className={classNames(
             "flex-1 py-1.5 text-[13px] font-bold rounded-lg transition-all duration-300 text-center cursor-pointer",
             activeSubTab === 'shared'
-              ? "bg-white text-slate-800 shadow-sm"
-              : "text-slate-500 hover:text-slate-800"
+              ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm"
+              : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
           )}
         >
           Chung
@@ -265,13 +267,13 @@ export function SharedDocumentsSection({
           className={classNames(
             "flex-1 py-1.5 text-[13px] font-bold rounded-lg transition-all duration-300 text-center cursor-pointer flex items-center justify-center gap-1.5",
             activeSubTab === 'private'
-              ? "bg-white text-slate-800 shadow-sm"
-              : "text-slate-500 hover:text-slate-800"
+              ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm"
+              : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
           )}
         >
           Cá nhân
           {localPrivateDocs.length > 0 && (
-            <span className="flex items-center justify-center min-w-4.5 h-4.5 text-[9.5px] font-black px-1 rounded-full bg-purple-650 text-white">
+            <span className="flex items-center justify-center min-w-4.5 h-4.5 text-[9.5px] font-black px-1 rounded-full bg-purple-600 text-white">
               {localPrivateDocs.length}
             </span>
           )}
@@ -286,19 +288,21 @@ export function SharedDocumentsSection({
               key={d.id} 
               className={classNames(
                 "flex flex-col gap-1 rounded-xl p-3 border transition-all relative",
-                d.isPendingDelete ? "border-rose-100 bg-slate-50/50 opacity-70" : "bg-slate-50 border-slate-200"
+                d.isPendingDelete 
+                  ? "border-rose-100 dark:border-rose-950/60 bg-slate-50/50 dark:bg-slate-800/20 opacity-70" 
+                  : "bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/50"
               )}
             >
               <div className="flex justify-between items-start">
                 <div className="flex flex-wrap items-baseline gap-2">
                   <span className={classNames(
-                    "text-[14px] font-bold text-slate-700",
-                    d.isPendingDelete ? "line-through text-slate-400" : ""
+                    "text-[14px] font-bold text-slate-700 dark:text-slate-200",
+                    d.isPendingDelete ? "line-through text-slate-400 dark:text-slate-500" : ""
                   )}>
                     {d.title}
                   </span>
                   {d.isPendingDelete && (
-                    <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 select-none animate-fadeIn">
+                    <span className="inline-flex items-center rounded-full bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 px-2 py-0.5 text-[10px] font-bold text-rose-600 dark:text-rose-450 select-none animate-fadeIn">
                       Đề xuất xóa
                     </span>
                   )}
@@ -319,7 +323,7 @@ export function SharedDocumentsSection({
                           setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
                         }
                       }}
-                      className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 active:scale-90 transition-all focus:outline-none"
+                      className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800 active:scale-90 transition-all focus:outline-none"
                       title="Tùy chọn"
                     >
                       <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
@@ -329,7 +333,7 @@ export function SharedDocumentsSection({
                   isRequestEdit && !d.isPendingDelete && (
                     <button 
                       onClick={() => handleDelete(d)} 
-                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-slate-200/60 transition-all active:scale-95 shadow-sm bg-white shrink-0"
+                      className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/20 border border-slate-200/60 dark:border-slate-700/60 transition-all active:scale-95 shadow-sm bg-white dark:bg-slate-800 shrink-0"
                       title="Đề xuất xóa"
                     >
                       <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
@@ -340,12 +344,12 @@ export function SharedDocumentsSection({
               
               {d.code && (
                 <div className="text-[12px] font-bold text-slate-400 mt-0.5">
-                  Mã: <span className="text-slate-600">{d.code}</span>
+                  Mã: <span className="text-slate-600 dark:text-slate-300">{d.code}</span>
                 </div>
               )}
               {d.date && (
                 <div className="text-[11.5px] font-semibold text-slate-400">
-                  Ngày: <span className="text-slate-500">{formatDate(d.date)}</span>
+                  Ngày: <span className="text-slate-500 dark:text-slate-350">{formatDate(d.date)}</span>
                 </div>
               )}
               {d.link && (
@@ -353,7 +357,7 @@ export function SharedDocumentsSection({
                   href={d.link} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-[11.5px] font-bold text-blue-500 hover:underline mt-0.5 w-fit"
+                  className="text-[11.5px] font-bold text-blue-500 dark:text-blue-400 hover:underline mt-0.5 w-fit"
                   onClick={(e) => e.stopPropagation()}
                 >
                   Link liên kết
@@ -362,8 +366,8 @@ export function SharedDocumentsSection({
 
               {d.note && (
                 <span className={classNames(
-                  "text-[13px] text-slate-500 mt-1",
-                  d.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
+                  "text-[13px] text-slate-500 dark:text-slate-350 mt-1",
+                  d.isPendingDelete ? "line-through text-slate-400 dark:text-slate-500 opacity-60" : ""
                 )}>
                   {d.note}
                 </span>
@@ -372,10 +376,10 @@ export function SharedDocumentsSection({
               {/* Attachment Image Display */}
               {d.attachmentUrl && (
                 <div className="mt-3">
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Ảnh đính kèm</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">Ảnh đính kèm</p>
                   <div 
                     className={classNames(
-                      "relative w-full rounded-xl overflow-hidden border border-slate-200 cursor-pointer group bg-[#F8F9FA] flex justify-center items-center",
+                      "relative w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/50 cursor-pointer group bg-[#F8F9FA] dark:bg-slate-800/40 flex justify-center items-center",
                       d.isPendingDelete ? "opacity-60 grayscale" : ""
                     )}
                     onClick={(e) => {
@@ -401,14 +405,14 @@ export function SharedDocumentsSection({
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-8 px-4 text-center bg-slate-50/50 rounded-2xl border border-dashed border-slate-200/60 my-2">
-          <div className="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-rose-450 mb-3">
+        <div className="flex flex-col items-center justify-center py-8 px-4 text-center bg-slate-50/50 dark:bg-slate-900/20 rounded-2xl border border-dashed border-slate-200/60 dark:border-slate-800/60 my-2">
+          <div className="w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-rose-500 dark:text-rose-450 mb-3">
             <HugeiconsIcon icon={File01Icon} className="h-6 w-6" />
           </div>
-          <h4 className="text-[14px] font-bold text-kat-dark">
+          <h4 className="text-[14px] font-bold text-slate-800 dark:text-slate-200">
             {activeSubTab === 'private' ? "Chưa có giấy tờ cá nhân" : "Chưa có giấy tờ nào"}
           </h4>
-          <p className="text-[11.5px] text-slate-400 mt-1 font-bold max-w-[240px]">
+          <p className="text-[11.5px] text-slate-400 dark:text-slate-500 mt-1 font-bold max-w-[240px]">
             {activeSubTab === 'private' 
               ? "Thêm các thông tin vé, đặt phòng của riêng bạn tại đây"
               : "Các thông tin vé, đặt phòng chung cho chuyến đi sẽ hiển thị ở đây"}
@@ -420,7 +424,7 @@ export function SharedDocumentsSection({
       {activeSubTab === 'private' && (
         <button 
           onClick={startAdd} 
-          className="mt-4 flex items-center justify-center gap-2 text-[13.5px] font-bold text-rose-600 bg-rose-50 hover:bg-rose-100/80 active:scale-[0.99] rounded-xl transition-all shadow-sm shadow-rose-100/30 h-11 w-full"
+          className="mt-4 flex items-center justify-center gap-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100/80 dark:hover:bg-rose-950/30 active:scale-[0.99] rounded-xl transition-all shadow-sm shadow-rose-100/30 dark:shadow-none h-11 w-full"
         >
           <HugeiconsIcon icon={Add01Icon} className="w-4.5 h-4.5" />
           Thêm giấy tờ cá nhân
@@ -435,31 +439,32 @@ export function SharedDocumentsSection({
         headerAction={headerAction}
       >
         <div className="space-y-4">
+          {/* Title */}
           <div>
             <Input 
               label="Tên mục *" 
               value={form.title} 
-              onChange={(title) => setForm({ ...form, title })} 
-              placeholder="VD: Vé máy bay khứ hồi, đặt phòng..." 
+              onChange={(title) => { setForm({ ...form, title }); setShowValidationError(false); }} 
+              placeholder="VD: Vé máy bay khứ hồi, mã đặt phòng khách sạn..." 
             />
             {showValidationError && !form.title.trim() && (
-              <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">Vui lòng nhập tiêu đề.</p>
+              <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">Vui lòng nhập tên mục</p>
             )}
           </div>
 
+          {/* Phân loại & Mã đặt chỗ */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Select 
               label="Phân loại" 
-              value={form.type || "document"} 
+              value={form.type || "ticket"} 
               onChange={(type) => setForm({ ...form, type: type as any })}
-              options={["ticket", "hotel", "booking", "contact", "map", "document", "other"]}
+              options={["ticket", "hotel", "booking", "contact", "map", "other"]}
               labels={{
-                ticket: "Vé máy bay/tàu/xe",
-                hotel: "Khách sạn/Nơi ở",
-                booking: "Đặt chỗ/Vé tham quan",
-                contact: "Liên hệ khẩn cấp",
-                map: "Bản đồ/Lịch trình",
-                document: "Giấy tờ tùy thân",
+                ticket: "Vé di chuyển",
+                hotel: "Đặt phòng",
+                booking: "Mã đặt chỗ",
+                contact: "Liên hệ",
+                map: "Bản đồ",
                 other: "Khác"
               }}
             />
@@ -467,11 +472,11 @@ export function SharedDocumentsSection({
               label="Mã / thông tin đặt chỗ" 
               value={form.code} 
               onChange={(code) => setForm({ ...form, code })} 
-              placeholder="VD: PNR ABC123..." 
+              placeholder="VD: PNR ABC123, mã phòng, số vé..." 
             />
           </div>
 
-          {/* Advanced Info Toggle */}
+          {/* Collapsible Info Section */}
           <div className="pt-2 border-t border-slate-100/80">
             <button
               type="button"
@@ -497,7 +502,7 @@ export function SharedDocumentsSection({
                     label="Đường dẫn liên quan" 
                     value={form.link} 
                     onChange={(link) => setForm({ ...form, link })} 
-                    placeholder="VD: Link vé điện tử, bản đồ..." 
+                    placeholder="VD: Link vé điện tử, bản đồ, tệp đặt phòng..." 
                   />
                 </div>
                 <div>
@@ -505,15 +510,15 @@ export function SharedDocumentsSection({
                     label="Ghi chú" 
                     value={form.note} 
                     onChange={(note) => setForm({ ...form, note })} 
-                    placeholder="VD: Giờ nhận phòng, hành lý..." 
+                    placeholder="VD: Giờ nhận phòng, hành lý, số điện thoại liên hệ..." 
                   />
                 </div>
                 
                 {/* Image Upload Area */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-kat-dark">Ảnh đính kèm</label>
+                  <label className="block text-sm font-semibold text-kat-dark">Ảnh đính kèm (Vé/CCCD/...)</label>
                   {(previewUrl || form.attachmentUrl) ? (
-                    <div className="relative w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
+                    <div className="relative w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/40 flex items-center justify-center">
                       <img 
                         src={previewUrl || form.attachmentUrl} 
                         alt="Preview" 
@@ -532,17 +537,14 @@ export function SharedDocumentsSection({
                       </button>
                     </div>
                   ) : (
-                    <div className="relative border-2 border-dashed border-slate-200 hover:border-slate-350 transition-colors rounded-xl p-6 flex flex-col items-center justify-center bg-slate-50/50">
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        onChange={handleFileSelect} 
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
-                      />
-                      <HugeiconsIcon icon={Image01Icon} className="w-8 h-8 text-slate-400 mb-2" />
-                      <span className="text-xs font-bold text-slate-650">Chọn ảnh từ thiết bị</span>
-                      <span className="text-[10px] text-slate-400 mt-1 font-semibold">Chấp nhận PNG, JPG, WEBP</span>
-                    </div>
+                    <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-200 dark:border-slate-700/50 rounded-xl bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors cursor-pointer text-slate-500 dark:text-slate-400">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <HugeiconsIcon icon={ImageAdd01Icon} className="w-6 h-6 mb-2 text-slate-400" />
+                        <p className="text-[13px]"><span className="font-semibold text-kat-primary-usable">Nhấn để tải ảnh lên</span></p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">Chấp nhận PNG, JPG, WEBP</p>
+                      </div>
+                      <input type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
+                    </label>
                   )}
                 </div>
               </div>
@@ -588,7 +590,7 @@ export function SharedDocumentsSection({
             }}
           />
           <div 
-            className="fixed z-[999] w-36 rounded-xl bg-white border border-slate-200 shadow-lg py-1.5 animate-fadeIn"
+            className="fixed z-[999] w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 shadow-lg py-1.5 animate-fadeIn"
             style={{ top: menuPos.top, right: menuPos.right }}
           >
             <button
@@ -601,7 +603,7 @@ export function SharedDocumentsSection({
                   : mergedDocuments.find(x => String(x.id) === id);
                 if (item) startEdit(item);
               }}
-              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
             >
               Sửa
             </button>
@@ -615,7 +617,7 @@ export function SharedDocumentsSection({
                   : mergedDocuments.find(x => String(x.id) === id);
                 if (item) handleDelete(item);
               }}
-              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 transition-colors"
+              className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/35 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
             >
               Xóa
             </button>

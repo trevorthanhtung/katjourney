@@ -172,9 +172,9 @@ export function ArchiveGallery({
         <button
           onClick={onBack}
           aria-label="Quay lại"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white border border-slate-200 text-slate-650 hover:bg-slate-50 transition-colors shadow-sm"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-kat-surface border border-slate-200 dark:border-kat-border text-slate-650 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
         >
-          <HugeiconsIcon icon={ArrowLeft01Icon} size={20} className="text-slate-600" />
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={20} className="text-slate-600 dark:text-slate-300" />
         </button>
         <div>
           <h1 className="text-[24px] font-black text-kat-dark">Kỷ niệm</h1>

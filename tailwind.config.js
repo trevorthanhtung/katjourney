@@ -1,8 +1,10 @@
 import defaultTheme from "tailwindcss/defaultTheme";
+import colors from "tailwindcss/colors";
 
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -74,19 +76,25 @@ export default {
           950: "#431407",
         },
         slate: {
+          ...colors.slate,
+          350: "#94A3B8",
           450: "#78879C",
           455: "#78879C",
           550: "#536277",
           650: "#3D4B5E",
+          655: "#3D4B5E",
         },
         rose: {
+          ...colors.rose,
           650: "#D41C44",
         },
         amber: {
+          ...colors.amber,
           250: "#FDD96C",
           650: "#C66508",
         },
         red: {
+          ...colors.red,
           655: "#C62020",
         }
       },

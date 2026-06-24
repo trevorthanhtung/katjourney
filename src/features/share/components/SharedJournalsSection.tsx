@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../../db';
 import { createPortal } from 'react-dom';
@@ -6,9 +6,9 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Wallet01Icon, CheckmarkCircle02Icon, BookOpen01Icon, File01Icon, AlertCircleIcon, Add01Icon, PenTool01Icon, Delete01Icon, MoreVerticalIcon,
   ReceiptTextIcon, UserCheck01Icon, Tag01Icon, ChevronRightIcon, BalanceScaleIcon, InformationCircleIcon, CheckIcon, Cancel01Icon, Clock01Icon,
-  FileCheckIcon, ShirtIcon, Briefcase01Icon, PlugIcon, PillIcon, Bread01Icon, PackageIcon, BadgeCheckIcon, StickyNoteIcon, TextFontIcon, MinusSignIcon, UserIcon, Calendar01Icon, Maximize01Icon, Image01Icon, Loading01Icon, SmileIcon, NotebookIcon, SaveIcon, SparklesIcon, RouteIcon, HelpCircleIcon, UserGroupIcon, BubbleChatIcon, GlobeIcon,
+  FileCheckIcon, ShirtIcon, Briefcase01Icon, PlugIcon, PillIcon, Bread01Icon, PackageIcon, BadgeCheckIcon, StickyNoteIcon, TextIcon, MinusSignIcon, UserIcon, Calendar01Icon, Maximize01Icon, Image01Icon, Loading01Icon, SmileIcon, NotebookIcon, SaveIcon, SparklesIcon, HelpCircleIcon, UserGroupIcon, BubbleChatIcon, GlobeIcon,
   CrownIcon, Luggage01Icon, Car01Icon, CalculatorIcon, PieChartIcon, Search01Icon,
-  Airplane01Icon, KitchenUtensilsIcon, HotelIcon, Ticket01Icon, ShoppingBag01Icon, Gamepad2Icon, CompassIcon, ChevronDownIcon, Location01Icon, LocationOfflineIcon
+  Airplane01Icon, HotelIcon, Ticket01Icon, ShoppingBag01Icon, Gamepad2Icon, CompassIcon, ChevronDownIcon, Location01Icon, LocationOfflineIcon
 } from "@hugeicons/core-free-icons";
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem, JournalMood } from '../../../db';
 import { formatMoney, expenseCategories, formatDate, moodLabels, sumBy, getSettlementSuggestions } from '../../../utils/helpers';
@@ -47,11 +47,11 @@ const moodOptionList: Array<{ value: "good" | "okay" | "great" | "very_bad" | "b
 ];
 
 const moodBadgeClasses: Record<string, string> = {
-  good: "bg-amber-50 text-amber-800 border-amber-200",
-  okay: "bg-emerald-50 text-emerald-800 border-emerald-200",
-  great: "bg-rose-50 text-rose-800 border-rose-200",
-  very_bad: "bg-slate-100 text-slate-700 border-slate-300",
-  bad: "bg-blue-50 text-blue-800 border-blue-200"
+  good: "bg-amber-50 dark:bg-amber-950/25 text-amber-800 dark:text-amber-400 border-amber-200 dark:border-amber-900/35",
+  okay: "bg-emerald-50 dark:bg-emerald-950/25 text-emerald-800 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/35",
+  great: "bg-rose-50 dark:bg-rose-950/25 text-rose-800 dark:text-rose-400 border-rose-200 dark:border-rose-900/35",
+  very_bad: "bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700/80",
+  bad: "bg-blue-50 dark:bg-blue-950/25 text-blue-800 dark:text-blue-400 border-blue-200 dark:border-blue-900/35"
 };
 
 const moodColorClasses: Record<string, string> = {
@@ -263,28 +263,32 @@ export function SharedJournalsSection({
 
   return (
     <>
-      <section className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <section className="bg-white dark:bg-kat-surface rounded-2xl border border-slate-200/60 dark:border-slate-800 p-5 shadow-sm space-y-4">
+      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={GlobeIcon} className="h-5 w-5 text-sky-500" />
-          <h3 className="text-[16px] font-black text-kat-dark">Bản tin chuyến đi</h3>
+          <h3 className="text-[16px] font-black text-kat-dark dark:text-slate-200">Bản tin chuyến đi</h3>
         </div>
       </div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
         {renderChatBox ? (
-          <div className="flex bg-slate-100 p-1.5 rounded-2xl w-full sm:max-w-[320px] shadow-inner">
+          <div className="flex bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl w-full sm:max-w-[320px] shadow-inner border border-transparent dark:border-slate-800/50">
             <button
               onClick={() => setJournalMode("posts")}
-              className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 ${
-                journalMode === "posts" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700"
+              className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${
+                journalMode === "posts" 
+                  ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200/60 dark:border-slate-700 shadow-sm" 
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
               }`}
             >
               <HugeiconsIcon icon={GlobeIcon} className="w-4 h-4" /> Bản tin
             </button>
             <button
               onClick={() => setJournalMode("chat")}
-              className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 ${
-                journalMode === "chat" ? "bg-white text-kat-teal shadow-sm" : "text-slate-500 hover:text-slate-700"
+              className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${
+                journalMode === "chat" 
+                  ? "bg-white dark:bg-slate-800 text-kat-teal dark:text-kat-primary shadow-sm border-slate-200/60 dark:border-slate-700" 
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
               }`}
             >
               <HugeiconsIcon icon={BubbleChatIcon} className="w-4 h-4" /> Trò chuyện
@@ -298,7 +302,7 @@ export function SharedJournalsSection({
           <button 
             onClick={() => setIsFormOpen(true)}
             className={classNames(
-              "items-center justify-center gap-1.5 px-4 py-2 bg-kat-dark text-white font-bold rounded-[14px] text-[13px] hover:bg-kat-dark bg-opacity-90 transition-all shadow-sm shrink-0 motion-press",
+              "items-center justify-center gap-1.5 px-4 py-2 bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 font-bold rounded-[14px] text-[13px] hover:bg-opacity-95 dark:hover:bg-kat-primary/95 transition-all shadow-sm shrink-0 motion-press",
               mergedJournals.length > 0 ? "hidden lg:flex" : "flex"
             )}
           >
@@ -321,18 +325,18 @@ export function SharedJournalsSection({
               <section key={date} className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                   <HugeiconsIcon icon={Calendar01Icon} className="h-4.5 w-4.5 text-slate-400" />
-                  <h3 className="text-[15px] font-extrabold text-kat-dark">{formatDate(date)}</h3>
+                  <h3 className="text-[15px] font-extrabold text-kat-dark dark:text-slate-350">{formatDate(date)}</h3>
                 </div>
                 
                 <div className="columns-1 md:columns-2 gap-4">
                   {entries.map((j: any, idx) => {
-                    const moodBadge = moodBadgeClasses[j.mood] || "bg-slate-50 text-slate-700 border-slate-200";
+                    const moodBadge = moodBadgeClasses[j.mood] || "bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700";
                     return (
                       <article 
                         key={j.id} 
                         className={classNames(
-                          "break-inside-avoid mb-4 group rounded-[24px] border border-slate-200 bg-white shadow-soft hover:shadow-md transition-all flex flex-col overflow-hidden",
-                          j.isPendingDelete ? "border-rose-100 bg-slate-50/50 opacity-70" : ""
+                          "break-inside-avoid mb-4 group rounded-[24px] border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-soft hover:shadow-md transition-all flex flex-col overflow-hidden",
+                          j.isPendingDelete ? "border-rose-100 dark:border-rose-950/40 bg-slate-50/50 dark:bg-slate-900/50 opacity-70" : ""
                         )}
                       >
                         <div className="flex items-center justify-between gap-4 p-4 pb-3">
@@ -366,13 +370,13 @@ export function SharedJournalsSection({
                                 avatar = `${genderChar}${num}`;
                               }
                               return (
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full overflow-hidden bg-slate-200 text-slate-700 font-black text-[15px]">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-black text-[15px]">
                                   {getAvatarSvg(avatar, "w-full h-full")}
                                 </div>
                               );
                             })()}
                             <div className="flex flex-col">
-                              <span className="text-[14px] font-extrabold text-slate-800">{j.authorName || "Trưởng nhóm"}</span>
+                              <span className="text-[14px] font-extrabold text-slate-800 dark:text-slate-200">{j.authorName || "Trưởng nhóm"}</span>
                               {j.isPendingDelete ? (
                                 <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wide">Đề xuất xóa</span>
                               ) : (
@@ -381,7 +385,7 @@ export function SharedJournalsSection({
                                     {moodLabels[j.mood as keyof typeof moodLabels] || "Đáng nhớ"}
                                   </span>
                                   {j.postedAt && (
-                                    <span className="text-[10px] font-semibold text-slate-400 flex items-center gap-0.5">
+                                    <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 flex items-center gap-0.5">
                                       <HugeiconsIcon icon={Clock01Icon} className="h-2.5 w-2.5" />
                                       {new Date(j.postedAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}
                                     </span>
@@ -394,7 +398,7 @@ export function SharedJournalsSection({
                           {isRequestEdit && !j.isPendingDelete && (isDirectEdit || j.authorName === resolvedGuestName) && (
                             <button 
                               onClick={() => handleDelete(j as JournalEntry)} 
-                              className="flex h-8 w-8 items-center justify-center rounded-full text-rose-400 hover:text-rose-600 hover:bg-rose-50 transition-all motion-press"
+                              className="flex h-8 w-8 items-center justify-center rounded-full text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all motion-press"
                               title={isDirectEdit || j.authorName === resolvedGuestName ? "Xóa bài viết" : "Đề xuất xóa bài viết"}
                             >
                               <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
@@ -403,31 +407,31 @@ export function SharedJournalsSection({
                         </div>
 
                         {j.imageUrl && (
-                          <div className="w-full bg-[#F3F4F6] border-y border-slate-100/50 flex justify-center">
+                          <div className="w-full bg-[#F3F4F6] dark:bg-slate-950 border-y border-slate-100/50 dark:border-slate-800/80 flex justify-center">
                             <img src={j.imageUrl} alt="Journal" className="w-full h-auto max-h-[500px] object-contain" />
                           </div>
                         )}
 
                         <div className="p-4 pt-3">
-                          <h4 className="text-[17px] font-black text-kat-dark leading-snug break-words">
+                          <h4 className="text-[17px] font-black text-kat-dark dark:text-slate-200 leading-snug break-words">
                             {j.title || "Bản tin chuyến đi"}
                           </h4>
                           {j.locationName && (
-                            <div className="mt-1 flex items-center gap-1.5 text-[13px] font-medium text-slate-500">
+                            <div className="mt-1 flex items-center gap-1.5 text-[13px] font-medium text-slate-500 dark:text-slate-400">
                               <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                               <span>{j.locationName}</span>
                             </div>
                           )}
                           <p className={classNames(
-                            "mt-1.5 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600",
-                            j.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
+                            "mt-1.5 whitespace-pre-wrap text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-350",
+                            j.isPendingDelete ? "line-through text-slate-400 dark:text-slate-550 opacity-60" : ""
                           )}>
                             {j.content}
                           </p>
                         </div>
 
                         {/* Reactions bar */}
-                        <div className="px-4 pb-3.5 pt-2.5 border-t border-slate-100/60 flex flex-wrap items-center justify-between gap-2 bg-slate-50/20">
+                        <div className="px-4 pb-3.5 pt-2.5 border-t border-slate-100/60 dark:border-slate-800/60 flex flex-wrap items-center justify-between gap-2 bg-slate-50/20 dark:bg-slate-900/10">
                           <div className="flex flex-wrap gap-1.5">
                             {Object.entries(j.reactions || {}).map(([emoji, usersVal]) => {
                               const users = usersVal as string[];
@@ -439,8 +443,8 @@ export function SharedJournalsSection({
                                   onClick={() => handleToggleReaction(j, emoji)}
                                   className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12.5px] border transition-all active:scale-95 ${
                                     hasReacted
-                                      ? "bg-indigo-50/70 border-indigo-200 text-indigo-700 font-bold"
-                                      : "bg-slate-50/80 border-slate-205 text-slate-500 hover:bg-slate-100"
+                                      ? "bg-indigo-50/70 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 font-bold"
+                                      : "bg-slate-50/80 dark:bg-slate-800/80 border-slate-205 dark:border-slate-700/80 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
                                   }`}
                                   title={users.join(", ")}
                                 >
@@ -455,7 +459,7 @@ export function SharedJournalsSection({
                           <div className="relative">
                             <button
                               onClick={() => setActiveReactionPopover(activeReactionPopover === j.id ? null : (j.id || null))}
-                              className="flex h-7 px-2.5 items-center justify-center gap-1 rounded-full border border-slate-200 hover:border-slate-300 text-slate-400 hover:text-slate-650 transition-colors text-[11.5px] font-bold"
+                              className="flex h-7 px-2.5 items-center justify-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 text-slate-400 dark:text-slate-500 hover:text-slate-655 dark:hover:text-slate-300 transition-colors text-[11.5px] font-bold"
                             >
                               <span>+ Thả cảm xúc</span>
                             </button>
@@ -463,7 +467,7 @@ export function SharedJournalsSection({
                             {activeReactionPopover === j.id && (
                               <>
                                 <div className="fixed inset-0 z-40" onClick={() => setActiveReactionPopover(null)} />
-                                <div className="absolute right-0 bottom-full mb-2 z-50 flex gap-1 bg-white border border-slate-200/80 p-1 rounded-full shadow-floating animate-scaleIn">
+                                <div className="absolute right-0 bottom-full mb-2 z-50 flex gap-1 bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-1.5 rounded-full shadow-floating animate-scaleIn">
                                   {["❤️", "👍", "😂", "😮", "😢"].map((emoji) => (
                                     <button
                                       key={emoji}
@@ -471,7 +475,7 @@ export function SharedJournalsSection({
                                         handleToggleReaction(j, emoji);
                                         setActiveReactionPopover(null);
                                       }}
-                                      className="w-8 h-8 flex items-center justify-center text-[18px] hover:bg-slate-50 active:scale-125 transition-transform rounded-full"
+                                      className="w-8 h-8 flex items-center justify-center text-[18px] hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-125 transition-transform rounded-full"
                                     >
                                       {emoji}
                                     </button>
@@ -506,13 +510,13 @@ export function SharedJournalsSection({
         }} 
         title="Đăng bài viết bản tin"
         footer={
-          <div className="flex gap-3 w-full">
+          <div className="flex items-center gap-2.5 w-full">
             <button
               type="button"
               onClick={() => {
                 setIsFormOpen(false);
               }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200"
+              className="flex h-[52px] shrink-0 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.96] transition-all border border-transparent dark:border-slate-700 motion-press"
             >
               Hủy
             </button>
@@ -520,7 +524,7 @@ export function SharedJournalsSection({
               type="button"
               disabled={hasError}
               onClick={handleCreate}
-              className="flex-[2] inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-kat-dark text-white px-6 font-black hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all duration-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-transparent disabled:cursor-not-allowed disabled:active:scale-100 disabled:opacity-100 shadow-sm"
+              className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
             >
               <HugeiconsIcon icon={SaveIcon} className="h-4.5 w-4.5" strokeWidth={2.5} />
               Đăng bài viết
@@ -533,7 +537,7 @@ export function SharedJournalsSection({
           <div>
             <DatePicker 
               label={
-                <span className="flex items-center gap-1.5">
+                <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-350">
                   <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
                   Ngày ghi lại
                 </span>
@@ -547,8 +551,8 @@ export function SharedJournalsSection({
           <div>
             <Input 
               label={
-                <span className="flex items-center gap-1.5">
-                  <HugeiconsIcon icon={TextFontIcon} className="h-4 w-4 text-slate-500" />
+                <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-350">
+                  <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-slate-500" />
                   Tiêu đề bài viết *
                 </span>
               } 
@@ -583,7 +587,7 @@ export function SharedJournalsSection({
   
           {/* Mood Chips */}
           <div>
-            <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
+            <span className="mb-2 block text-sm font-semibold text-slate-600 dark:text-slate-350 flex items-center gap-1.5">
               <HugeiconsIcon icon={SmileIcon} className="h-4 w-4 text-slate-500" />
               Cảm xúc hôm nay
             </span>
@@ -598,8 +602,8 @@ export function SharedJournalsSection({
                     onClick={() => { setForm({ ...form, mood: opt.value as any }); setDirty(true); }}
                     className={`flex items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-bold border transition-all duration-200 active:scale-95 ${
                       isActive
-                        ? "bg-kat-primary-soft border-[#00BFB7] text-kat-dark"
-                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                        ? "bg-kat-primary-soft dark:bg-kat-primary-soft/30 border-[#00BFB7] dark:border-kat-primary/50 text-kat-teal dark:text-kat-primary-usable shadow-sm"
+                        : "bg-white dark:bg-slate-800 border-slate-205 dark:border-slate-700/50 text-slate-655 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                     }`}
                   >
                     <span className={`h-2.5 w-2.5 rounded-full ${colorDot}`} />
@@ -614,7 +618,7 @@ export function SharedJournalsSection({
           <div>
             <Textarea 
               label={
-                <span className="flex items-center gap-1.5">
+                <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-350">
                   <HugeiconsIcon icon={NotebookIcon} className="h-4 w-4 text-slate-500" />
                   Câu chuyện của bạn *
                 </span>
@@ -631,7 +635,7 @@ export function SharedJournalsSection({
           {/* Image Field */}
           <div>
             {form.imageUrl ? (
-              <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+              <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700/50 bg-slate-100 dark:bg-slate-800/40">
                 <img src={form.imageUrl} alt="Uploaded" className="w-full aspect-[4/3] object-contain" />
                 <button
                   onClick={() => { setForm({ ...form, imageUrl: "" }); setDirty(true); }}
@@ -653,7 +657,7 @@ export function SharedJournalsSection({
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
-                  className="w-full h-12 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 text-slate-500 font-bold text-[14px] hover:bg-slate-100 hover:text-kat-teal transition-colors flex items-center justify-center gap-2"
+                  className="w-full h-12 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 font-bold text-[14px] hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-kat-teal dark:hover:text-kat-primary transition-colors flex items-center justify-center gap-2"
                 >
                   {uploading ? (
                     <><HugeiconsIcon icon={Loading01Icon} className="h-5 w-5 animate-spin" /> Đang tải ảnh...</>
@@ -677,7 +681,7 @@ export function SharedJournalsSection({
                   key={prompt}
                   type="button"
                   onClick={() => handlePromptClick(prompt)}
-                  className="rounded-lg bg-slate-50 border border-slate-200 px-3 py-1.5 text-[12.5px] font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                  className="rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 px-3 py-1.5 text-[12.5px] font-bold text-slate-600 dark:text-slate-350 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                 >
                   + {prompt}
                 </button>

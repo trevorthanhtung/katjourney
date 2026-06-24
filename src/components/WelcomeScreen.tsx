@@ -180,11 +180,18 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
       
       {/* 1. LEFT SIDE - Hero Image (Desktop only) */}
       <div className="hidden lg:flex relative w-full h-full overflow-hidden select-text">
-        {/* Background Landscape Image */}
+        {/* Background Landscape Image - Light Mode */}
         <img 
           src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop" 
-          alt="Travel Landscape" 
-          className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-10000 hover:scale-105"
+          alt="Travel Landscape Light" 
+          className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-10000 hover:scale-105 dark:hidden"
+          loading="eager"
+        />
+        {/* Background Landscape Image - Dark Mode */}
+        <img 
+          src="https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?q=80&w=2070&auto=format&fit=crop" 
+          alt="Travel Landscape Dark" 
+          className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-10000 hover:scale-105 hidden dark:block"
           loading="eager"
         />
         
@@ -194,7 +201,8 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
         {/* Top Logo */}
         <div className="absolute top-8 left-12 flex items-center gap-3 z-10 select-none">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-white/20 shadow-sm shrink-0">
-            <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-6 w-6 object-contain" />
+            <img src="/asset/logo.png" alt="KAT Journey Logo" className="dark:hidden h-6 w-6 object-contain" />
+            <img src="/logo-dark.png" alt="KAT Journey Logo" className="hidden dark:block h-6 w-6 object-contain" />
           </div>
           <span className="text-[20px] font-black tracking-tight text-white drop-shadow-sm">KAT Journey</span>
         </div>
@@ -211,13 +219,13 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
       </div>
 
       {/* 2. RIGHT SIDE - Zero-Friction Auth Form (Mobile-first) */}
-      <div className="flex flex-col justify-between items-center relative w-full h-full px-6 py-6 pb-safe lg:px-12 lg:py-10 bg-white overflow-hidden">
+      <div className="flex flex-col justify-between items-center relative w-full h-full px-6 py-6 pb-safe lg:px-12 lg:py-10 bg-white dark:bg-[#0A1124] overflow-hidden">
         
         <div className="hidden lg:block h-2 w-full shrink-0 relative z-10" />
 
         {/* MIDDLE ACTIONS: Auth Card */}
         <div className="w-full max-w-[400px] mx-auto flex-1 flex flex-col justify-center">
-        <div className="w-full p-6 sm:p-8 bg-white rounded-[32px] shadow-[0_2px_24px_rgba(3,13,46,0.07)] border border-slate-200 flex flex-col items-center relative z-10 animate-scaleUp">
+        <div className="w-full p-6 sm:p-8 bg-white dark:bg-[#0F172A]/40 rounded-[32px] shadow-[0_2px_24px_rgba(3,13,46,0.07)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-slate-200 dark:border-slate-800/80 flex flex-col items-center relative z-10 animate-scaleUp">
           
           {/* Onboarding Carousel (2027 Premium Swipeable) */}
           <div 
@@ -236,7 +244,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                   <div key={idx} className="w-full shrink-0 flex flex-col items-center text-center px-1">
                     {/* Icon */}
                     <div className="relative mb-3 flex items-center justify-center">
-                      <div className="flex items-center justify-center h-14 w-14 rounded-[18px] bg-slate-50 border border-slate-200 shadow-sm animate-float-slow">
+                      <div className="flex items-center justify-center h-14 w-14 rounded-[18px] bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm animate-float-slow">
                         <HugeiconsIcon icon={IconComp} size={22} className={slide.iconColor} />
                       </div>
                     </div>
@@ -244,7 +252,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                     <h3 className="text-[18px] font-black tracking-tight text-kat-dark leading-tight mb-1.5 text-balance">
                       {slide.title}
                     </h3>
-                    <p className="text-[12.5px] font-semibold text-slate-500 leading-relaxed max-w-[280px] mx-auto">
+                    <p className="text-[12.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed max-w-[280px] mx-auto">
                       {slide.desc}
                     </p>
                   </div>
@@ -263,8 +271,8 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                   setActiveSlide(idx);
                   startAutoPlay();
                 }}
-                className={`h-1.5 rounded-full bg-slate-350 liquid-dot ${
-                  activeSlide === idx ? "w-5 bg-kat-primary" : "w-1.5 hover:bg-slate-400"
+                className={`h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 liquid-dot ${
+                  activeSlide === idx ? "w-5 bg-kat-primary" : "w-1.5 hover:bg-slate-400 dark:hover:bg-slate-500"
                 }`}
                 aria-label={`Go to slide ${idx + 1}`}
               />
@@ -273,8 +281,8 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
 
           {/* Error display */}
           {errorMsg && (
-            <div className="w-full mb-4 rounded-2xl bg-rose-50 border border-rose-100 p-3.5 text-[13px] text-rose-800 font-semibold leading-relaxed flex items-start gap-2.5 animate-fadeIn">
-              <HugeiconsIcon icon={AlertCircleIcon} className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <div className="w-full mb-4 rounded-2xl bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 p-3.5 text-[13px] text-rose-800 dark:text-rose-450 font-semibold leading-relaxed flex items-start gap-2.5 animate-fadeIn">
+              <HugeiconsIcon icon={AlertCircleIcon} className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
           )}
@@ -285,7 +293,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             <button
               onClick={handleGoogleLogin}
               disabled={loading !== null}
-              className="w-full flex items-center justify-center gap-3.5 h-14 rounded-2xl bg-white hover:bg-slate-50 active:scale-[0.97] transition-all font-extrabold text-[16px] text-kat-dark shadow-[0_4px_14px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] border border-slate-100 disabled:opacity-60 disabled:scale-100 group"
+              className="w-full flex items-center justify-center gap-3.5 h-14 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-[0.97] transition-all font-extrabold text-[16px] text-kat-dark dark:text-slate-200 shadow-[0_4px_14px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] border border-slate-100 dark:border-slate-700/50 disabled:opacity-60 disabled:scale-100 group"
             >
               {loading === "google" ? (
                 <HugeiconsIcon icon={Loading01Icon} className="h-5.5 w-5.5 text-kat-primary animate-spin" />
@@ -299,10 +307,10 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             <button
               onClick={handleGuestLogin}
               disabled={loading !== null}
-              className="w-full flex items-center justify-center gap-3 h-14 rounded-2xl border border-transparent bg-transparent hover:bg-black/5 active:scale-[0.97] transition-all font-bold text-[15px] text-slate-500 hover:text-slate-800 disabled:opacity-60 group"
+              className="w-full flex items-center justify-center gap-3 h-14 rounded-2xl border border-transparent bg-transparent hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.97] transition-all font-bold text-[15px] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 disabled:opacity-60 group"
             >
               {loading === "guest" ? (
-                <HugeiconsIcon icon={Loading01Icon} className="h-5.5 w-5.5 text-slate-700 animate-spin" />
+                <HugeiconsIcon icon={Loading01Icon} className="h-5.5 w-5.5 text-slate-700 dark:text-slate-350 animate-spin" />
               ) : (
                 <HugeiconsIcon 
                   icon={CompassIcon} 
@@ -356,13 +364,13 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
 
       {/* 3. LEGAL MODAL SHEETS */}
       {legalModal && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white w-full max-w-[500px] rounded-[28px] border border-slate-200 p-6 shadow-floating max-h-[85vh] flex flex-col animate-scaleUp">
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-[500px] rounded-[28px] border border-slate-200 dark:border-slate-800 p-6 shadow-floating max-h-[85vh] flex flex-col animate-scaleUp">
             
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 shrink-0">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
               <div className="flex items-center gap-2">
                 <HugeiconsIcon icon={LockIcon} className="h-5 w-5 text-kat-primary" />
-                <h4 className="text-[17px] font-black text-kat-text">
+                <h4 className="text-[17px] font-black text-kat-text dark:text-slate-200">
                   {legalModal === "terms" && "Điều khoản Sử dụng"}
                   {legalModal === "privacy" && "Chính sách Quyền riêng tư"}
                   {legalModal === "cookie" && "Chính sách Cookie"}
@@ -370,13 +378,13 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               </div>
               <button 
                 onClick={() => setLegalModal(null)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700"
               >
                 <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto py-4 pr-1 text-[13.5px] font-medium leading-relaxed text-slate-500 custom-scrollbar select-text space-y-3.5">
+            <div className="flex-1 overflow-y-auto py-4 pr-1 text-[13.5px] font-medium leading-relaxed text-slate-500 dark:text-slate-400 custom-scrollbar select-text space-y-3.5">
               {legalModal === "terms" && (
                 <>
                   <p className="font-bold text-kat-dark">1. Cùng tạo nên những hành trình tuyệt vời</p>
@@ -409,11 +417,11 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               )}
             </div>
 
-            <div className="pt-4 border-t border-slate-100 shrink-0">
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 shrink-0">
               <button
                 type="button"
                 onClick={() => setLegalModal(null)}
-                className="w-full inline-flex min-h-[44px] items-center justify-center rounded-[12px] bg-kat-primary text-white px-6 font-bold hover:brightness-105 active:scale-[0.98] transition-all shadow-sm"
+                className="w-full inline-flex min-h-[44px] items-center justify-center rounded-[12px] bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-bold hover:brightness-105 active:scale-[0.98] transition-all shadow-sm"
               >
                 Đồng ý và Đóng
               </button>

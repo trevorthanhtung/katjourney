@@ -71,7 +71,7 @@ function PackingItemRow({ item, onEdit, onDelete }: { item: PackingItem; onEdit:
                 setIsMenuOpen(false);
                 onDelete();
               }}
-              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 hover:bg-rose-50 active:bg-rose-100 transition-colors"
+              className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
             >
               <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
               Xóa

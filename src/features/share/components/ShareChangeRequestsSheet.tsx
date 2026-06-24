@@ -10,6 +10,25 @@ import { Member } from '../../../db';
 import { getAvatarSvg } from '../../../utils/avatars';
 import { useModalHistory } from '../../../hooks/useModalHistory';
 
+function formatRequestTime(createdAt: any) {
+  if (!createdAt) return 'Vừa xong';
+  try {
+    if (typeof createdAt.toMillis === 'function') {
+      return new Date(createdAt.toMillis()).toLocaleString();
+    }
+    if (typeof createdAt === 'object' && createdAt.seconds !== undefined) {
+      return new Date(createdAt.seconds * 1000 + Math.floor((createdAt.nanoseconds || 0) / 1000000)).toLocaleString();
+    }
+    const d = new Date(createdAt);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleString();
+    }
+  } catch (e) {
+    console.error("Error formatting request time:", e);
+  }
+  return 'Vừa xong';
+}
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -154,12 +173,12 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
       const newRole = (after as any)?.role || 'Người đồng hành';
       return (
         <div className="mt-2 space-y-1">
-          <p className="text-[13px] font-bold text-slate-700">Mục: {sectionName} • Đổi vai trò</p>
-          <div className="text-[13px] mt-1 font-medium text-slate-800">
+          <p className="text-[13px] font-bold text-slate-700 dark:text-slate-400">Mục: {sectionName} • Đổi vai trò</p>
+          <div className="text-[13px] mt-1 font-medium text-slate-800 dark:text-slate-200">
             Xin đổi vai trò cho <span className="font-bold">{memberName}</span>:
-            <div className="flex items-center gap-2 mt-1 pl-2 border-l-2 border-slate-200">
-              <span className="text-slate-400 line-through">{oldRole}</span>
-              <span className="text-slate-400">→</span>
+            <div className="flex items-center gap-2 mt-1 pl-2 border-l-2 border-slate-200 dark:border-slate-800">
+              <span className="text-slate-400 dark:text-slate-500 line-through">{oldRole}</span>
+              <span className="text-slate-400 dark:text-slate-550">→</span>
               <span className="text-kat-teal font-bold">{newRole}</span>
             </div>
           </div>
@@ -178,19 +197,19 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
 
     return (
       <div className="mt-2 space-y-1">
-        <p className="text-[13px] font-bold text-slate-700">Mục: {sectionName} • {actionName}</p>
+        <p className="text-[13px] font-bold text-slate-700 dark:text-slate-400">Mục: {sectionName} • {actionName}</p>
         {action === 'update' && (
           <div className="flex items-center gap-2 text-[13px] mt-1">
-            <span className="text-slate-400 line-through">{beforeText}</span>
-            <span className="text-slate-400">→</span>
-            <span className="text-sky-600 font-medium">{afterText}</span>
+            <span className="text-slate-400 dark:text-slate-500 line-through">{beforeText}</span>
+            <span className="text-slate-400 dark:text-slate-550">→</span>
+            <span className="text-sky-600 dark:text-sky-400 font-medium">{afterText}</span>
           </div>
         )}
         {action === 'create' && (
-          <p className="text-[13px] text-emerald-600 font-medium mt-1">+ {afterText}</p>
+          <p className="text-[13px] text-emerald-600 dark:text-emerald-400 font-medium mt-1">+ {afterText}</p>
         )}
         {action === 'delete' && (
-          <p className="text-[13px] text-rose-500 line-through mt-1">- {beforeText}</p>
+          <p className="text-[13px] text-rose-500 dark:text-rose-400 line-through mt-1">- {beforeText}</p>
         )}
       </div>
     );
@@ -209,14 +228,14 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
               <button
                 onClick={() => setIsConfirmRejectAllOpen(true)}
                 disabled={isApproving !== null}
-                className="flex-1 rounded-[16px] bg-slate-100 py-3.5 text-[13.5px] font-bold text-slate-700 hover:bg-slate-200 transition-all active:scale-[0.98] disabled:opacity-50"
+                className="flex-1 rounded-[16px] bg-slate-100 dark:bg-slate-800 py-3.5 text-[13.5px] font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700/80 transition-all active:scale-[0.98] disabled:opacity-50 border-transparent"
               >
                 {isApproving === 'all' ? 'Đang xử lý...' : 'Từ chối tất cả'}
               </button>
               <button
                 onClick={() => setIsConfirmApproveAllOpen(true)}
                 disabled={isApproving !== null}
-                className="flex-1 rounded-[16px] bg-kat-primary py-3.5 text-[13.5px] font-bold text-white hover:brightness-105 transition-all active:scale-[0.98] disabled:opacity-50 shadow-[0_4px_16px_rgba(0,191,183,0.25)]"
+                className="flex-1 rounded-[16px] bg-kat-primary py-3.5 text-[13.5px] font-bold text-white dark:text-slate-950 hover:brightness-105 transition-all active:scale-[0.98] disabled:opacity-50 shadow-[0_4px_16px_rgba(0,191,183,0.25)] border-transparent"
               >
                 {isApproving === 'all' ? 'Đang xử lý...' : 'Đồng ý tất cả'}
               </button>
@@ -263,16 +282,16 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
               }
 
               return (
-                <div key={req.id} className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                <div key={req.id} className="bg-white dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700/50 p-4 shadow-sm">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 border border-slate-200/50">
+                      <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/60">
                         {getAvatarSvg(avatar, "w-full h-full")}
                       </div>
                       <div>
-                        <p className="text-[14px] font-bold text-slate-800">{req.requesterName || "Người được chia sẻ"}</p>
-                        <p className="text-[11px] font-medium text-slate-400">
-                          {req.createdAt ? new Date(req.createdAt.toMillis()).toLocaleString() : 'Vừa xong'}
+                        <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200">{req.requesterName || "Người được chia sẻ"}</p>
+                        <p className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                          {formatRequestTime(req.createdAt)}
                         </p>
                       </div>
                     </div>
@@ -286,14 +305,14 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
                     <button
                       onClick={() => handleReject(req.id)}
                       disabled={isApproving !== null}
-                      className="flex-1 rounded-xl bg-slate-100 py-2 text-[13px] font-bold text-slate-600 hover:bg-slate-200 transition-colors disabled:opacity-50"
+                      className="flex-1 rounded-xl bg-slate-100 dark:bg-slate-800 py-2 text-[13px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 border-transparent"
                     >
                       {isApproving === req.id ? 'Đang xử lý...' : 'Từ chối'}
                     </button>
                     <button
                       onClick={() => handleApprove(req.id)}
                       disabled={isApproving !== null}
-                      className="flex-1 rounded-xl bg-kat-primary py-2 text-[13px] font-bold text-white hover:brightness-105 transition-colors disabled:opacity-50"
+                      className="flex-1 rounded-xl bg-kat-primary py-2 text-[13px] font-bold text-white dark:text-slate-950 hover:brightness-105 transition-colors disabled:opacity-50 border-transparent"
                     >
                       {isApproving === req.id ? 'Đang xử lý...' : 'Đồng ý áp dụng'}
                     </button>
@@ -359,7 +378,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
             <button
               type="button"
               onClick={confirmApproveAll}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-kat-primary border border-emerald-450 px-6 font-bold text-white hover:brightness-105 transition-all active:scale-[0.98] motion-press"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-kat-primary border border-transparent px-6 font-bold text-white hover:brightness-105 transition-all active:scale-[0.98] motion-press"
             >
               Đồng ý tất cả
             </button>
