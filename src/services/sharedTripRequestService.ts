@@ -27,13 +27,15 @@ export async function submitChangeRequest(token: string, payload: ChangeRequestP
     user = anonData.user;
   }
 
-  // Verify share bằng RPC server-side (thay vì select trực tiếp)
-  const { data: verifyData, error: verifyError } = await supabase.rpc('verify_share_access', {
-    p_token: token,
-    p_pin: null,
-  });
+  // Verify share thông qua RLS trên bảng public_shares
+  // (Chỉ đọc được nếu đã verify PIN thành công từ trước, có record trong share_access)
+  const { data: verifyData, error: verifyError } = await supabase
+    .from('public_shares')
+    .select('mode, include_expenses, include_checklist, include_journals, include_backup_plans, include_documents')
+    .eq('token', token)
+    .single();
 
-  if (verifyError || !verifyData || !verifyData.ok) {
+  if (verifyError || !verifyData) {
     throw new Error('Link chia sẻ không tồn tại hoặc đã bị thu hồi.');
   }
 
@@ -53,7 +55,7 @@ export async function submitChangeRequest(token: string, payload: ChangeRequestP
   };
 
   const flagName = sectionFlagMap[payload.section];
-  if (flagName && verifyData[flagName] !== true) {
+  if (flagName && (verifyData as any)[flagName] !== true) {
     throw new Error('Mục này không được phép chỉnh sửa.');
   }
 
