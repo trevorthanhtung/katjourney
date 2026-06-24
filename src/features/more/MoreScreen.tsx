@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { showToast } from "../../components/ui/ToastManager";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -234,7 +235,11 @@ function CalendarRangePicker({
   onChangeStart: (d: string) => void;
   onChangeEnd: (d: string) => void;
 }) {
-  const todayDate = new Date();
+  
+  const { t } = useTranslation();
+  const daysOfWeek = t("tripForm.daysOfWeek", { returnObjects: true }) as string[];
+  const months = t("tripForm.months", { returnObjects: true }) as string[];
+const todayDate = new Date();
   todayDate.setHours(0,0,0,0);
 
   const initialMonth = startDate ? new Date(startDate + "T00:00:00") : new Date();
@@ -300,10 +305,10 @@ function CalendarRangePicker({
   function fmtDisplay(iso: string) {
     if (!iso) return "--";
     const d = new Date(iso + "T00:00:00");
-    return `${d.getDate()} thg ${d.getMonth()+1}, ${d.getFullYear()}`;
+    return t('tripForm.dateFmt', { day: d.getDate(), month: months[d.getMonth()], year: d.getFullYear() });
   }
 
-  const monthLabel = `${MONTHS_VI[viewMonth]} ${viewYear}`;
+  const monthLabel = `${months[viewMonth]} ${viewYear}`;
 
   return (
     <div className="w-full">
@@ -313,15 +318,15 @@ function CalendarRangePicker({
           className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px]",
             tripType === "dayTrip" ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 dark:bg-slate-800/40 ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800/60")}
         >
-          <span className={classNames("text-[14px] font-bold", tripType === "dayTrip" ? "text-kat-primary dark:text-kat-teal" : "text-slate-700 dark:text-slate-350")}>Đi trong ngày</span>
-          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "dayTrip" ? "text-[#00BFB7]/80 dark:text-kat-teal/80" : "text-slate-400 dark:text-slate-500")}>Đi và về cùng ngày</span>
+          <span className={classNames("text-[14px] font-bold", tripType === "dayTrip" ? "text-kat-primary dark:text-kat-teal" : "text-slate-700 dark:text-slate-350")}>{t("tripForm.dayTripBtn")}</span>
+          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "dayTrip" ? "text-[#00BFB7]/80 dark:text-kat-teal/80" : "text-slate-400 dark:text-slate-500")}>{t("tripForm.dayTripDesc")}</span>
         </button>
         <button type="button" onClick={() => { onChangeTripType("multiDay"); setPickingEnd(false); }}
           className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px]",
             tripType === "multiDay" ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 dark:bg-slate-800/40 ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800/60")}
         >
-          <span className={classNames("text-[14px] font-bold", tripType === "multiDay" ? "text-kat-primary dark:text-kat-teal" : "text-slate-700 dark:text-slate-350")}>Nhiều ngày</span>
-          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "multiDay" ? "text-[#00BFB7]/80 dark:text-kat-teal/80" : "text-slate-400 dark:text-slate-500")}>Có ngày đi và về</span>
+          <span className={classNames("text-[14px] font-bold", tripType === "multiDay" ? "text-kat-primary dark:text-kat-teal" : "text-slate-700 dark:text-slate-350")}>{t("tripForm.multiDayBtn")}</span>
+          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "multiDay" ? "text-[#00BFB7]/80 dark:text-kat-teal/80" : "text-slate-400 dark:text-slate-500")}>{t("tripForm.multiDayDesc")}</span>
         </button>
       </div>
 
@@ -335,7 +340,7 @@ function CalendarRangePicker({
           </p>
         )}
         {tripType === "multiDay" && pickingEnd && (
-          <p className="text-[12px] text-kat-primary dark:text-kat-teal font-semibold mt-0.5 animate-pulse">Chọn ngày kết thúc…</p>
+          <p className="text-[12px] text-kat-primary dark:text-kat-teal font-semibold mt-0.5 animate-pulse">{t("tripForm.pickEndPrompt")}</p>
         )}
       </div>
 
@@ -356,7 +361,7 @@ function CalendarRangePicker({
 
         {/* Day headers */}
         <div className="grid grid-cols-7 border-b border-slate-100 dark:border-slate-700/40">
-          {DAYS_OF_WEEK.map(d => (
+          {daysOfWeek.map(d => (
             <div key={d} className="py-1.5 text-center text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">{d}</div>
           ))}
         </div>
@@ -420,7 +425,9 @@ function CalendarRangePicker({
 // --- End CalendarRangePicker ---
 
 function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boolean; onClose: () => void; onSaved: (id: number) => void }) {
-  const [form, setForm] = useState<{
+  
+  const { t } = useTranslation();
+const [form, setForm] = useState<{
     title: string;
     location: string;
     latitude?: number;
@@ -459,10 +466,10 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
     }
   }, [trip, isOpen]);
 
-  const titleError = !form.title.trim() ? "Vui lòng nhập tên chuyến đi." : "";
-  const startDateError = !form.startDate ? "Vui lòng chọn ngày bắt đầu." : "";
-  const endDateError = form.tripType === "multiDay" && !form.endDate ? "Vui lòng chọn ngày kết thúc." : "";
-  const dateCompareError = form.tripType === "multiDay" && form.endDate && form.startDate && form.endDate < form.startDate ? "Ngày kết thúc không thể trước ngày bắt đầu." : "";
+  const titleError = !form.title.trim() ? t("tripForm.nameError") : "";
+  const startDateError = !form.startDate ? t("tripForm.startDateError") : "";
+  const endDateError = form.tripType === "multiDay" && !form.endDate ? t("tripForm.endDateError") : "";
+  const dateCompareError = form.tripType === "multiDay" && form.endDate && form.startDate && form.endDate < form.startDate ? t("tripForm.dateCompareError") : "";
   const hasError = !!titleError || !!startDateError || !!endDateError || !!dateCompareError;
 
   async function save() {
@@ -489,13 +496,13 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
     <BottomSheet 
       isOpen={isOpen} 
       onClose={onClose} 
-      title={trip ? "Thông tin chuyến đi" : "Tạo chuyến đi"}
-      subtitle={trip ? undefined : "Điền thông tin cơ bản trước, lịch trình và chi phí có thể thêm sau."}
+      title={trip ? t("tripForm.editTitle") : t("tripForm.createTitle")}
+      subtitle={trip ? undefined : t("tripForm.createSubtitle")}
       footer={
         <FormActions 
           onSave={save} 
-          saveLabel={trip ? "Lưu thông tin" : "Tạo chuyến đi"} 
-          saveAriaLabel={trip ? "Xác nhận lưu thông tin chuyến đi" : "Xác nhận tạo chuyến đi"}
+          saveLabel={trip ? t("tripForm.saveBtn") : t("tripForm.createBtn")} 
+          saveAriaLabel={trip ? t("tripForm.saveAria") : t("tripForm.createAria")}
           disabled={hasError}
           onCancel={onClose}
         />
@@ -507,12 +514,12 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={PencilEdit01Icon} size={16} className="text-slate-500" />
-                Tên chuyến đi
+                {t("tripForm.nameLabel")}
               </span>
             } 
             value={form.title} 
             onChange={(title) => { setForm({ ...form, title }); setDirty(true); }} 
-            placeholder="VD: Mùa hè rực rỡ" 
+            placeholder={t("tripForm.namePlaceholder")}
           />
           {(dirty || submitAttempted) && titleError && (
             <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{titleError}</p>
@@ -521,7 +528,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
         <div>
           <span className="mb-1.5 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
             <HugeiconsIcon icon={Location01Icon} size={16} className="text-slate-500" />
-            Địa điểm
+            {t("tripForm.locationLabel")}
           </span>
           <LocationInput
             value={form.location}
@@ -534,11 +541,11 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
           />
           {form.latitude && form.longitude ? (
             <p className="mt-2.5 px-1 text-[11.5px] font-bold text-emerald-600 flex items-center gap-1 animate-fadeIn">
-              <HugeiconsIcon icon={CheckIcon} size={14} /> Khớp tọa độ thành công — Thời tiết đã tự động kết nối!
+              <HugeiconsIcon icon={CheckIcon} size={14} /> {t("tripForm.locationSuccess")}
             </p>
           ) : (
             <p className="mt-2.5 px-1 text-[11.5px] font-semibold text-slate-400 leading-relaxed">
-              Chọn đúng điểm đến từ danh sách gợi ý để tự động cập nhật dự báo thời tiết chuẩn xác nhất. Nếu không tìm thấy địa danh cụ thể, hãy chọn một khu vực hoặc thành phố lân cận nhé.
+              {t("tripForm.locationHelper")}
             </p>
           )}
         </div>
@@ -547,7 +554,7 @@ function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boo
         <div>
           <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
             <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-500" />
-            Thời gian chuyến đi
+            {t("tripForm.timeLabel")}
           </span>
           <CalendarRangePicker
             startDate={form.startDate}

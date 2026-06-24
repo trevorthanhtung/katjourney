@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNotification } from "../hooks/useNotification";
 import { showToast } from "./ui/ToastManager";
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   UserIcon,
@@ -36,6 +37,8 @@ import {
   Sun01Icon,
   Moon01Icon,
   ComputerIcon,
+  Globe02Icon,
+  LanguageSkillIcon,
 } from "@hugeicons/core-free-icons";
 import { BottomSheet, classNames } from "./ui";
 import { useAuth } from "../hooks/useAuth";
@@ -69,7 +72,7 @@ interface SettingsSheetProps {
   };
 }
 
-type SettingsView = "menu" | "auth" | "privacy" | "about" | "donate" | "exchangeRates" | "theme";
+type SettingsView = "menu" | "auth" | "privacy" | "about" | "donate" | "exchangeRates" | "theme" | "language";
 
 const GoogleIcon = () => (
   <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
@@ -82,6 +85,7 @@ const GoogleIcon = () => (
 
 
 export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripSelected }: SettingsSheetProps) {
+  const { t, i18n } = useTranslation();
   const { user, loading: authLoading, provider, isAuthenticated } = useAuth();
   const { theme, setTheme } = useTheme();
   const { 
@@ -314,16 +318,16 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
     try {
       const result = await syncData();
       if (result === "uploaded") {
-        setSyncSuccess("Đã đồng bộ dữ liệu lên Cloud thành công!");
+        setSyncSuccess(t('settings.auth.syncSuccessCloud'));
       } else if (result === "up_to_date") {
-        setSyncSuccess("Dữ liệu đã được cập nhật mới nhất.");
+        setSyncSuccess(t('settings.auth.syncSuccess'));
       } else if (result === "prompt_restore") {
         // Show restore confirm modal
         setIsRestoreConfirmOpen(true);
       }
     } catch (err: any) {
       console.error("Sync failed:", err);
-      setSyncError("Đồng bộ thất bại: " + (err.message || err));
+      setSyncError(t('settings.auth.syncFailed') + (err.message || err));
     }
   };
 
@@ -544,8 +548,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             <HugeiconsIcon icon={CloudIcon} className={`w-5 h-5 ${(isSyncing || isAutoBackingUp) ? "animate-spin" : ""}`} />
           </div>
           <div>
-            <h4 className="text-[15.5px] font-black text-kat-dark dark:text-slate-200">Đồng bộ dữ liệu</h4>
-            <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold">Tự động sao lưu và bảo mật dữ liệu</p>
+            <h4 className="text-[15.5px] font-black text-kat-dark dark:text-slate-200">{t('settings.auth.dataSync')}</h4>
+            <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold">{t('settings.auth.dataSyncDesc')}</p>
           </div>
         </div>
 
@@ -554,7 +558,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5">
               <HugeiconsIcon icon={AlertCircleIcon} className="w-4 h-4" />
             </div>
-            <span className="pt-0.5 flex-1">Có phiên bản mới hơn trên Cloud. Vui lòng bấm Đồng bộ để tải về.</span>
+            <span className="pt-0.5 flex-1">{t('settings.auth.newerVersionAlert')}</span>
           </div>
         )}
 
@@ -578,12 +582,12 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
         {!user ? (
           <div className="rounded-[22px] bg-amber-50/50 dark:bg-amber-950/20 border border-amber-100/70 dark:border-amber-900/30 p-4 text-[13.5px] text-amber-800 dark:text-amber-400 font-bold leading-relaxed shadow-soft">
-            Vui lòng đăng nhập để sử dụng đồng bộ.
+            {t('settings.auth.loginToSync')}
           </div>
         ) : (
           <>
             <div className="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-[22px] p-4.5 flex justify-between items-center text-[13.5px] font-bold text-slate-500 dark:text-slate-400 min-h-[60px] shadow-soft">
-              <span className="text-slate-500 dark:text-slate-400 font-bold">Lần đồng bộ cuối</span>
+              <span className="text-slate-500 dark:text-slate-400 font-bold">{t('settings.auth.lastSync')}</span>
               {lastBackupAt && backupTimeStr && backupDateStr ? (
                 <div className="flex gap-2 items-center">
                   <div className="inline-flex items-center gap-1.5 font-black text-kat-dark dark:text-slate-200 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 px-3.5 py-1.5 rounded-full text-[13px]">
@@ -597,7 +601,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 </div>
               ) : (
                 <span className="font-black text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 px-4 py-1.5 rounded-full text-[13px]">
-                  Chưa từng đồng bộ
+                  {t('settings.auth.neverSynced')}
                 </span>
               )}
             </div>
@@ -608,8 +612,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   <HugeiconsIcon icon={CloudIcon} className="w-5 h-5" />
                 </div>
                 <div className="text-left pr-2">
-                  <span className="text-[14px] font-black text-kat-dark dark:text-slate-200">Tự động sao lưu lên Cloud</span>
-                  <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 leading-normal">Sao lưu ngầm sau khi thay đổi dữ liệu 5s</p>
+                  <span className="text-[14px] font-black text-kat-dark dark:text-slate-200">{t('settings.auth.autoBackupCloud')}</span>
+                  <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 leading-normal">{t('settings.auth.autoBackupDesc')}</p>
                 </div>
               </div>
               
@@ -641,16 +645,16 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             {isSyncing ? (
               <>
                 <HugeiconsIcon icon={Loading01Icon} className="w-4.5 h-4.5 animate-spin shrink-0" />
-                <span>Đang đồng bộ dữ liệu...</span>
+                <span>{t('settings.auth.syncing')}</span>
               </>
             ) : isAutoBackingUp ? (
               <>
                 <HugeiconsIcon icon={Loading01Icon} className="w-4.5 h-4.5 animate-spin shrink-0" />
-                <span>Đang tự động sao lưu...</span>
+                <span>{t('settings.auth.autoBackingUp')}</span>
               </>
             ) : (
               <>
-                <span>Đồng bộ dữ liệu ngay</span>
+                <span>{t('settings.auth.syncNow')}</span>
               </>
             )}
           </button>
@@ -667,24 +671,25 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
   const renderTitle = () => {
     switch (view) {
       case "auth":
-        return "Tài khoản & Đồng bộ";
+        return t('settings.auth.title');
       case "privacy":
-        return "Quyền riêng tư";
+        return t('settings.menu.privacy.title');
       case "about":
-        return "Thông tin ứng dụng";
+        return t('settings.menu.about.title');
       case "donate":
-        return "Ủng hộ tác giả";
+        return t('settings.menu.donate.title');
       case "exchangeRates":
-        return "Tỉ giá ngoại tệ";
+        return t('settings.menu.exchangeRates.title');
       case "theme":
-        return "Giao diện";
+        return t('settings.menu.theme.title');
+      case "language":
+        return t('settings.menu.language.title');
       default:
-        return "Cài đặt";
+        return t('settings.header.title');
     }
   };
 
   const renderSubtitle = () => {
-    if (view === "menu") return "Tùy chỉnh hệ thống và cá nhân hóa trải nghiệm";
     return null;
   };
 
@@ -763,8 +768,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                     <HugeiconsIcon icon={Download01Icon} className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 text-left">
-                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">Mang KAT Journey theo bạn</h4>
-                    <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">Mở app siêu tốc từ màn hình chính, trải nghiệm mượt mà như ứng dụng gốc</p>
+                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.install.title')}</h4>
+                    <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.install.desc')}</p>
                   </div>
                 </div>
                 <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
@@ -781,8 +786,25 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   <HugeiconsIcon icon={ColorsIcon} className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">Giao diện</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">Chỉnh màu sắc cho ứng dụng</p>
+                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.theme.title')}</h4>
+                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.theme.desc')}</p>
+                </div>
+              </div>
+              <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+            </button>
+
+            {/* Language Selector Row */}
+            <button
+              onClick={() => setView("language")}
+              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-all text-left focus:outline-none mb-2"
+            >
+              <div className="flex items-center gap-3.5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-600 dark:text-sky-400 border border-sky-100/45 dark:border-sky-900/30 shrink-0">
+                  <HugeiconsIcon icon={LanguageSkillIcon} className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.language.title')}</h4>
+                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.language.desc')}</p>
                 </div>
               </div>
               <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
@@ -797,8 +819,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   <HugeiconsIcon icon={LockIcon} className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">Quyền riêng tư</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">Quản lý an toàn dữ liệu và quyền cá nhân</p>
+                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.privacy.title')}</h4>
+                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.privacy.desc')}</p>
                 </div>
               </div>
               <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
@@ -816,8 +838,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       <HugeiconsIcon icon={Notification01Icon} className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 text-left">
-                      <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">Thông báo</h4>
-                      <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">Nhắc lịch, chi phí và hoạt động chuyến đi</p>
+                      <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.notification.title')}</h4>
+                      <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.notification.desc')}</p>
                     </div>
                   </div>
                   
@@ -868,8 +890,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   <HugeiconsIcon icon={Location01Icon} className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 text-left">
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">Vị trí</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">Tự động gợi ý địa điểm và ngoại tệ</p>
+                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.location.title')}</h4>
+                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.location.desc')}</p>
                 </div>
               </div>
               
@@ -905,8 +927,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   <HugeiconsIcon icon={Coins01Icon} className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 text-left">
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">Tỉ giá ngoại tệ</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">Dữ liệu trực tuyến từ Vietcombank</p>
+                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.exchangeRates.title')}</h4>
+                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.exchangeRates.desc')}</p>
                 </div>
               </div>
               <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
@@ -922,8 +944,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   <HugeiconsIcon icon={InformationCircleIcon} className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">Thông tin ứng dụng</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">Khám phá thông tin và hành trình phát triển</p>
+                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.about.title')}</h4>
+                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.about.desc')}</p>
                 </div>
               </div>
               <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
@@ -939,8 +961,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   <HugeiconsIcon icon={Coffee01Icon} className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 text-left">
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">Ủng hộ tác giả</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">Tiếp thêm động lực để ứng dụng phát triển hơn</p>
+                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.donate.title')}</h4>
+                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.donate.desc')}</p>
                 </div>
               </div>
               <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
@@ -956,8 +978,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   <HugeiconsIcon icon={Mail01Icon} className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">Góp ý & Phản hồi</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">Chia sẻ ý kiến giúp KAT Journey hoàn thiện hơn mỗi ngày</p>
+                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.feedback.title')}</h4>
+                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.feedback.desc')}</p>
                 </div>
               </div>
               <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
@@ -970,8 +992,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   <HugeiconsIcon icon={PackageIcon} className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">Phiên bản</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">Phiên bản hiện tại trên thiết bị</p>
+                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.version.title')}</h4>
+                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.version.desc')}</p>
                 </div>
               </div>
               <span className="text-xs font-black text-slate-500 dark:text-slate-400 bg-slate-200/70 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700">
@@ -981,7 +1003,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             {/* ── Section: Quản lý dữ liệu ── */}
             <div className="pt-2 space-y-2">
-              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1 pb-2">Quản lý dữ liệu</p>
+              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1 pb-2">{t('settings.menu.dataManagement.title')}</p>
               <button
                 type="button"
                 disabled={isClearingTemp}
@@ -1005,13 +1027,13 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       : <HugeiconsIcon icon={EraserIcon} className="h-5 w-5" />}
                   </div>
                   <div>
-                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">Dọn dẹp tệp tạm</h4>
-                    <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">Xóa bộ nhớ đệm và tệp không quan trọng</p>
+                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.dataManagement.clearTemp.title')}</h4>
+                    <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.dataManagement.clearTemp.desc')}</p>
                   </div>
                 </div>
                 {clearTempSuccess
                   ? <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
-                      <HugeiconsIcon icon={CheckIcon} className="h-3 w-3" /> Xong!
+                      {t('common.done')}
                     </span>
                   : <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />}
               </button>
@@ -1027,9 +1049,9 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   </div>
                   <div>
                     <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">
-                      {importing ? "Đang nhập..." : "Khôi phục hành trình"}
+                      {importing ? "..." : t('settings.menu.dataManagement.restoreData.title')}
                     </h4>
-                    <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">Nhập chuyến đi từ tệp sao lưu (.katjourney)</p>
+                    <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.dataManagement.restoreData.desc')}</p>
                   </div>
                 </div>
                 <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
@@ -1049,7 +1071,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             {/* ── Section: Vùng nguy hiểm ── */}
             <div className="pt-1 pb-2">
-              <p className="text-[11px] font-bold text-red-400 dark:text-rose-500 uppercase tracking-widest px-1 pb-2">Vùng nguy hiểm</p>
+              <p className="text-[11px] font-bold text-red-400 dark:text-rose-500 uppercase tracking-widest px-1 pb-2">{t('settings.menu.dangerZone.title')}</p>
               {user && !user.isAnonymous ? (
                 <button
                   type="button"
@@ -1061,8 +1083,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       <HugeiconsIcon icon={UserRemove01Icon} className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-[15px] font-bold text-red-700 dark:text-rose-400">Xóa tài khoản</h4>
-                      <p className="text-[12px] text-red-400 dark:text-rose-500 font-medium">Xóa vĩnh viễn tài khoản & dữ liệu</p>
+                      <h4 className="text-[15px] font-bold text-red-700 dark:text-rose-400">{t('settings.menu.dangerZone.deleteAccount.title')}</h4>
+                      <p className="text-[12px] text-red-400 dark:text-rose-500 font-medium">{t('settings.menu.dangerZone.deleteAccount.desc')}</p>
                     </div>
                   </div>
                   <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5 text-red-500 dark:text-rose-500/80" />
@@ -1078,8 +1100,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       <HugeiconsIcon icon={RotateLeft01Icon} className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-[15px] font-bold text-red-700 dark:text-rose-400">Khôi phục cài đặt gốc</h4>
-                      <p className="text-[12px] text-red-400 dark:text-rose-500 font-medium">Xóa vĩnh viễn toàn bộ dữ liệu</p>
+                      <h4 className="text-[15px] font-bold text-red-700 dark:text-rose-400">{t('settings.menu.dangerZone.factoryReset.title')}</h4>
+                      <p className="text-[12px] text-red-400 dark:text-rose-500 font-medium">{t('settings.menu.dangerZone.factoryReset.desc')}</p>
                     </div>
                   </div>
                   <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5 text-red-400 dark:text-rose-500/80" />
@@ -1095,7 +1117,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             {authLoading ? (
               <div className="flex flex-col items-center justify-center py-10 space-y-3">
                 <HugeiconsIcon icon={Loading01Icon} className="h-8 w-8 text-kat-teal animate-spin" />
-                <p className="text-sm font-bold text-slate-400">Đang tải trạng thái tài khoản...</p>
+                <p className="text-sm font-bold text-slate-400">{t('settings.authView.loading')}</p>
               </div>
             ) : !user ? (
               <>
@@ -1105,9 +1127,9 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   </div>
 
                   <div className="space-y-2 max-w-sm">
-                    <h3 className="text-[20px] font-black text-kat-dark text-balance">Chào mừng đến với KAT Journey</h3>
+                    <h3 className="text-[20px] font-black text-kat-dark text-balance">{t('settings.authView.welcome')}</h3>
                     <p className="text-[13.5px] font-semibold leading-relaxed text-slate-500">
-                      Khách có thể sử dụng ứng dụng bình thường trên thiết bị hiện tại. Đăng nhập Google sẽ hỗ trợ đồng bộ dữ liệu trong các phiên bản tương lai.
+                      {t('settings.authView.guestDesc')}
                     </p>
                   </div>
 
@@ -1122,7 +1144,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       ) : (
                         <GoogleIcon />
                       )}
-                      Tiếp tục với Google
+                      {t('settings.authView.continueGoogle')}
                     </button>
 
                     <button
@@ -1135,7 +1157,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       ) : (
                         <HugeiconsIcon icon={UserIcon} className="h-5 w-5" />
                       )}
-                      Tiếp tục với Khách
+                      {t('settings.authView.continueGuest')}
                     </button>
                   </div>
                 </div>
@@ -1174,7 +1196,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         className="flex-1 h-10 px-3 text-[14.5px] font-bold text-slate-800 dark:text-slate-200 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-kat-teal/40 min-w-0"
-                        placeholder="Tên hiển thị..."
+                        placeholder={t('settings.authView.displayName')}
                         autoFocus
                         onKeyDown={(e) => {
                           if (e.key === "Enter") handleUpdateName();
@@ -1209,7 +1231,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                           title="Đổi tên hiển thị"
                         >
                           <h3 className="text-[17.5px] font-black text-slate-800 dark:text-slate-200 leading-snug truncate">
-                            {user.displayName || (provider === "guest" ? "Tài khoản cục bộ" : "Tài khoản ẩn danh")}
+                            {user.displayName || (provider === "guest" ? t('settings.authView.localAccount') : t('settings.authView.anonymousAccount'))}
                           </h3>
                           <div className="p-1.5 text-slate-400 dark:text-slate-500 group-hover:text-kat-teal group-hover:bg-slate-100 dark:group-hover:bg-slate-800 rounded-lg shrink-0 transition-all">
                             <HugeiconsIcon icon={PencilEdit01Icon} className="w-4 h-4" strokeWidth={2.5} />
@@ -1234,7 +1256,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                         ) : (
                           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-250/50 dark:border-amber-900/30 shadow-[inset_0_1px_1px_rgba(245,158,11,0.05)]">
                             <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-                            Chưa đồng bộ
+                            {t('settings.authView.notSynced')}
                           </div>
                         )}
                       </div>
@@ -1249,7 +1271,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                         <HugeiconsIcon icon={InformationCircleIcon} className="w-4 h-4" />
                       </div>
                       <p className="text-[13px] font-semibold leading-relaxed text-slate-650 dark:text-slate-300">
-                        Toàn bộ lịch trình và chi phí đang được lưu tạm trên thiết bị này. Hãy liên kết tài khoản để sao lưu <strong className="font-extrabold text-slate-800 dark:text-slate-200">an toàn</strong> lên đám mây và mở khóa tính năng <strong className="font-extrabold text-slate-800 dark:text-slate-200">chia sẻ chuyến đi</strong>.
+                        {t('settings.authView.guestNotice1')}<strong className="font-extrabold text-slate-800 dark:text-slate-200">{t('settings.authView.safe')}</strong>{t('settings.authView.guestNotice2')}<strong className="font-extrabold text-slate-800 dark:text-slate-200">{t('settings.authView.shareTrip')}</strong>{t('settings.authView.guestNotice3')}
                       </p>
                     </div>
 
@@ -1265,7 +1287,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                         ) : (
                           <GoogleIcon />
                         )}
-                        Liên kết Google để Đồng bộ
+                        {t('settings.authView.linkGoogle')}
                       </button>
 
                       <button
@@ -1274,7 +1296,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                         className="w-full flex items-center justify-center gap-2.5 h-11.5 rounded-[16px] border border-slate-200/60 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 text-slate-650 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 active:scale-[0.98] transition-all font-bold text-[13px] disabled:opacity-60 shadow-sm"
                       >
                         <HugeiconsIcon icon={Download01Icon} className="h-4.5 w-4.5 text-slate-500 shrink-0" />
-                        Sao lưu dữ liệu thủ công (.katjourney)
+                        {t('settings.authView.manualBackup')}
                       </button>
                     </div>
                   </>
@@ -1293,17 +1315,17 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               <HugeiconsIcon icon={LockIcon} className="h-6 w-6" />
             </div>
 
-            <h3 className="text-[18px] font-black text-kat-dark text-balance">Cam kết bảo mật dữ liệu</h3>
+            <h3 className="text-[18px] font-black text-kat-dark text-balance">{t('settings.privacyView.title')}</h3>
 
             <div className="space-y-3.5 text-[14px] font-semibold text-slate-600 dark:text-slate-400 leading-relaxed">
               <p>
-                <strong className="dark:text-slate-200">Lưu trữ an toàn trên thiết bị (Offline-first):</strong> Toàn bộ thông tin chi tiết về chuyến đi, chi phí và bản tin hành trình được cất giữ an toàn ngay trong bộ nhớ điện thoại của bạn. Bạn có thể tra cứu lịch trình mọi lúc, mọi nơi kể cả khi không có mạng.
+                <strong className="dark:text-slate-200">{t('settings.privacyView.offlineTitle')}</strong>{t('settings.privacyView.offlineDesc')}
               </p>
               <p>
-                <strong className="dark:text-slate-200">Bảo mật danh tính tuyệt đối:</strong> Hệ thống đăng nhập được thiết lập để xác minh danh tính nghiêm ngặt. Việc này đảm bảo tài khoản và mọi kế hoạch của bạn được phân quyền an toàn, chỉ duy nhất bạn (chính chủ) mới có quyền quản lý và chỉnh sửa.
+                <strong className="dark:text-slate-200">{t('settings.privacyView.identityTitle')}</strong>{t('settings.privacyView.identityDesc')}
               </p>
               <p>
-                <strong className="dark:text-slate-200">Nói "Không" với việc tự động lấy dữ liệu:</strong> Lịch trình là của riêng bạn. Chúng tôi cam kết không có bất kỳ thông tin cá nhân hay kế hoạch nào bị tự động tải lên đám mây. Dữ liệu chỉ được đưa lên mạng khi bạn chủ động bấm chọn tính năng Sao lưu hoặc Chia sẻ chuyến đi với bạn bè.
+                <strong className="dark:text-slate-200">{t('settings.privacyView.noDataTitle')}</strong>{t('settings.privacyView.noDataDesc')}
               </p>
             </div>
 
@@ -1312,7 +1334,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               onClick={() => setView("menu")}
               className="mt-4 w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
-              Quay lại menu
+              {t('settings.actions.backToMenu')}
             </button>
           </div>
         )}
@@ -1324,26 +1346,26 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             
             <h3 className="text-[20px] font-black text-kat-dark">KAT Journey</h3>
             <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200/50 dark:border-slate-700/50">
-              Trợ lý hành trình cá nhân
+              {t('settings.aboutView.subtitle')}
             </span>
 
             <p className="text-[14px] font-semibold leading-relaxed text-slate-650 dark:text-slate-300 text-center max-w-sm mt-2">
-              Hơn cả một công cụ lên kế hoạch, KAT Journey là người bạn đồng hành giúp bạn kiểm soát chi tiêu, sắp xếp lịch trình và gói ghém trọn vẹn mọi khoảnh khắc đáng nhớ.
+              {t('settings.aboutView.desc')}
             </p>
 
             <div className="w-full max-w-lg rounded-[24px] border border-slate-200/60 dark:border-kat-border/40 bg-white dark:bg-slate-800/40 p-5 text-left shadow-soft">
-              <h4 className="text-[13.5px] font-black text-kat-dark">Công nghệ & giấy phép</h4>
+              <h4 className="text-[13.5px] font-black text-kat-dark">{t('settings.aboutView.techTitle')}</h4>
               <p className="mt-2 text-[12.5px] font-semibold leading-relaxed text-slate-500 dark:text-slate-400">
-                KAT Journey được xây dựng bằng React, Vite, Dexie và Supabase. Hệ thống chỉ sử dụng Supabase để đồng bộ và chia sẻ khi bạn chủ động đăng nhập.
+                {t('settings.aboutView.techDesc1')}
               </p>
               <p className="mt-2 text-[11.5px] font-medium leading-relaxed text-slate-400 dark:text-slate-500">
-                Chúng mình xin gửi lời cảm ơn chân thành đến các tác giả và cộng đồng mã nguồn mở đã đồng hành cùng dự án.
+                {t('settings.aboutView.techDesc2')}
               </p>
             </div>
 
             <div className="pt-4 text-center">
               <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500">
-                thực hiện bởi{" "}
+                {t('settings.aboutView.madeBy')}{" "}
                 <a
                   href="https://tranthanhtung-trevor.vercel.app/"
                   target="_blank"
@@ -1360,7 +1382,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               onClick={() => setView("menu")}
               className="mt-4 w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
-              Quay lại menu
+              {t('settings.actions.backToMenu')}
             </button>
           </div>
         )}
@@ -1372,12 +1394,12 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             </div>
             
             <div className="space-y-2 max-w-md">
-              <h4 className="text-[18px] font-black text-kat-dark dark:text-slate-200">Đồng hành cùng KAT Journey</h4>
+              <h4 className="text-[18px] font-black text-kat-dark dark:text-slate-200">{t('settings.donateView.title')}</h4>
               <p className="text-[14px] font-semibold leading-relaxed text-slate-500 dark:text-slate-400">
-                Nếu KAT Journey hữu ích với bạn, bạn có thể gửi một ly cà phê nhỏ để ủng hộ tác giả tiếp tục phát triển ứng dụng.
+                {t('settings.donateView.desc1')}
               </p>
               <p className="text-[12px] font-medium text-slate-400 dark:text-slate-500">
-                Ủng hộ là tùy chọn. Cảm ơn bạn đã sử dụng KAT Journey.
+                {t('settings.donateView.desc2')}
               </p>
             </div>
 
@@ -1391,7 +1413,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 }}
               />
               <span className="mt-3 text-[11px] font-extrabold text-slate-700 dark:text-slate-400 uppercase tracking-wider bg-slate-50/80 dark:bg-slate-900/80 px-3 py-1 rounded-full border border-slate-100 dark:border-slate-800">
-                Quét mã QR để chuyển khoản
+                {t('settings.donateView.scanQR')}
               </span>
             </div>
 
@@ -1401,7 +1423,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               className="text-[13px] font-bold text-kat-teal hover:underline flex items-center gap-1 active:scale-95 transition-all"
             >
               <HugeiconsIcon icon={Download01Icon} className="w-4 h-4" />
-              Lưu mã QR về máy
+              {t('settings.donateView.saveQR')}
             </a>
 
             <button
@@ -1409,7 +1431,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               onClick={() => setView("menu")}
               className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
-              Quay lại menu
+              {t('settings.actions.backToMenu')}
             </button>
           </div>
         )}
@@ -1422,14 +1444,14 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   <HugeiconsIcon icon={Coins01Icon} className="w-4 h-4" />
                   <span className="text-[13px] font-bold">Vietcombank</span>
                 </div>
-                <div className="text-[12px] font-medium text-slate-400 dark:text-slate-500">Đơn vị: VNĐ</div>
+                <div className="text-[12px] font-medium text-slate-400 dark:text-slate-500">{t('settings.exchangeRatesView.unit')}</div>
               </div>
 
               <div className="space-y-2">
                 {exchangeRates.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-6 text-slate-400">
                     <HugeiconsIcon icon={Loading01Icon} className="w-5 h-5 animate-spin mb-2" />
-                    <span className="text-[13px] font-medium">Đang tải tỉ giá...</span>
+                    <span className="text-[13px] font-medium">{t('settings.exchangeRatesView.loading')}</span>
                   </div>
                 ) : (
                   exchangeRates.map((rate, idx) => (
@@ -1448,7 +1470,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                           {new Intl.NumberFormat('vi-VN').format(rate.transfer)}
                         </div>
                         <div className="text-[11px] font-medium text-slate-400 dark:text-slate-500 mt-0.5">
-                          Chuyển khoản
+                          {t('settings.exchangeRatesView.transfer')}
                         </div>
                       </div>
                     </div>
@@ -1461,7 +1483,87 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               onClick={() => setView("menu")}
               className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
-              Quay lại menu
+              {t('settings.actions.backToMenu')}
+            </button>
+          </div>
+        )}
+
+        {view === "language" && (
+          <div className="space-y-5 animate-fadeIn text-left">
+            <div className="bg-slate-50 dark:bg-slate-900/20 border border-slate-200/60 dark:border-kat-border/30 rounded-[28px] p-5">
+              <p className="text-[13px] font-bold text-slate-400 dark:text-slate-500 mb-5 leading-relaxed text-center">
+                {t('settings.languageView.desc')}
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                {[
+                  { code: 'vi', label: 'Tiếng Việt', char: 'Vi', bg: 'bg-orange-50 dark:bg-orange-500/10', border: 'border-orange-200/50 dark:border-orange-500/20', text: 'text-orange-600 dark:text-orange-400' },
+                  { code: 'en', label: 'English', char: 'En', bg: 'bg-blue-50 dark:bg-blue-500/10', border: 'border-blue-200/50 dark:border-blue-500/20', text: 'text-blue-600 dark:text-blue-400' },
+                  { code: 'ko', label: '한국어', char: '한', bg: 'bg-rose-50 dark:bg-rose-500/10', border: 'border-rose-200/50 dark:border-rose-500/20', text: 'text-rose-600 dark:text-rose-400' },
+                  { code: 'zh', label: '中文', char: '文', bg: 'bg-red-50 dark:bg-red-500/10', border: 'border-red-200/50 dark:border-red-500/20', text: 'text-red-600 dark:text-red-400' },
+                  { code: 'ja', label: '日本語', char: 'あ', bg: 'bg-fuchsia-50 dark:bg-fuchsia-500/10', border: 'border-fuchsia-200/50 dark:border-fuchsia-500/20', text: 'text-fuchsia-600 dark:text-fuchsia-400' },
+                  { code: 'th', label: 'ไทย', char: 'ก', bg: 'bg-emerald-50 dark:bg-emerald-500/10', border: 'border-emerald-200/50 dark:border-emerald-500/20', text: 'text-emerald-600 dark:text-emerald-400' },
+                  { code: 'es', label: 'Español', char: 'Es', bg: 'bg-yellow-50 dark:bg-yellow-500/10', border: 'border-yellow-200/50 dark:border-yellow-500/20', text: 'text-yellow-600 dark:text-yellow-400' },
+                  { code: 'fr', label: 'Français', char: 'Fr', bg: 'bg-sky-50 dark:bg-sky-500/10', border: 'border-sky-200/50 dark:border-sky-500/20', text: 'text-sky-600 dark:text-sky-400' },
+                  { code: 'de', label: 'Deutsch', char: 'De', bg: 'bg-slate-50 dark:bg-slate-500/10', border: 'border-slate-200/50 dark:border-slate-500/20', text: 'text-slate-600 dark:text-slate-400' },
+                  { code: 'it', label: 'Italiano', char: 'It', bg: 'bg-teal-50 dark:bg-teal-500/10', border: 'border-teal-200/50 dark:border-teal-500/20', text: 'text-teal-600 dark:text-teal-400' },
+                  { code: 'pt', label: 'Português', char: 'Pt', bg: 'bg-indigo-50 dark:bg-indigo-500/10', border: 'border-indigo-200/50 dark:border-indigo-500/20', text: 'text-indigo-600 dark:text-indigo-400' },
+                  { code: 'id', label: 'Indonesia', char: 'Id', bg: 'bg-cyan-50 dark:bg-cyan-500/10', border: 'border-cyan-200/50 dark:border-cyan-500/20', text: 'text-cyan-600 dark:text-cyan-400' },
+                ].map((lang) => (
+                  <button
+                    key={lang.code}
+                    type="button"
+                    onClick={() => i18n.changeLanguage(lang.code)}
+                    className={classNames(
+                      "relative flex items-center gap-3.5 p-3 rounded-[20px] border-2 transition-all duration-300 group focus:outline-none text-left overflow-hidden w-full",
+                      i18n.language === lang.code
+                        ? "border-kat-primary bg-kat-primary/[0.03] dark:bg-kat-primary/[0.05] shadow-sm scale-[1.02]"
+                        : "border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:scale-[1.01] active:scale-[0.98]"
+                    )}
+                  >
+                    {/* Icon */}
+                    <div className={classNames(
+                      "flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] shadow-sm transition-transform duration-300 group-hover:scale-105",
+                      lang.bg,
+                      "border",
+                      lang.border
+                    )}>
+                      <span className={classNames("font-black text-[18px]", lang.text)}>
+                        {lang.char}
+                      </span>
+                    </div>
+
+                    {/* Text */}
+                    <div className="flex-1 min-w-0">
+                      <span className={classNames(
+                        "block text-[14.5px] font-bold truncate transition-colors duration-200",
+                        i18n.language === lang.code ? "text-kat-primary" : "text-slate-800 dark:text-slate-200"
+                      )}>
+                        {lang.label}
+                      </span>
+                    </div>
+
+                    {/* Active Indicator */}
+                    <div className={classNames(
+                      "h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-300 mr-1",
+                      i18n.language === lang.code 
+                        ? "border-kat-primary bg-kat-primary" 
+                        : "border-slate-200 dark:border-slate-700 bg-transparent opacity-0 group-hover:opacity-100"
+                    )}>
+                      {i18n.language === lang.code && (
+                        <HugeiconsIcon icon={CheckIcon} className="w-3.5 h-3.5 text-white" />
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setView("menu")}
+              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
+            >
+              {t('settings.actions.backToMenu')}
             </button>
           </div>
         )}
@@ -1470,7 +1572,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           <div className="space-y-5 animate-fadeIn text-left">
             <div className="bg-slate-50 dark:bg-slate-900/20 border border-slate-200/60 dark:border-kat-border/30 rounded-[28px] p-5">
               <p className="text-[13px] font-bold text-slate-400 dark:text-slate-500 mb-5 leading-relaxed text-center">
-                Tùy chỉnh phong cách hiển thị của KAT Journey phù hợp với điều kiện ánh sáng môi trường của bạn.
+                {t('settings.themeView.desc')}
               </p>
               
               <div className="grid grid-cols-3 gap-3">
@@ -1495,10 +1597,10 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
                   <div className="mt-2.5 mb-0.5">
                     <span className="block text-[13.5px] font-black text-slate-800 dark:text-slate-200">
-                      Sáng
+                      {t('settings.themeView.light')}
                     </span>
                     <span className="block text-[9.5px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 whitespace-nowrap">
-                      Dịu mắt ban ngày
+                      {t('settings.themeView.lightDesc')}
                     </span>
                   </div>
 
@@ -1528,10 +1630,10 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
                   <div className="mt-2.5 mb-0.5">
                     <span className="block text-[13.5px] font-black text-slate-800 dark:text-slate-200">
-                      Tối
+                      {t('settings.themeView.dark')}
                     </span>
                     <span className="block text-[9.5px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 whitespace-nowrap">
-                      Tiết kiệm pin
+                      {t('settings.themeView.darkDesc')}
                     </span>
                   </div>
 
@@ -1575,10 +1677,10 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
                   <div className="mt-2.5 mb-0.5">
                     <span className="block text-[13.5px] font-black text-slate-800 dark:text-slate-200">
-                      Tự động
+                      {t('settings.themeView.system')}
                     </span>
                     <span className="block text-[9.5px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 whitespace-nowrap">
-                      Theo hệ thống
+                      {t('settings.themeView.systemDesc')}
                     </span>
                   </div>
 
@@ -1593,7 +1695,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               onClick={() => setView("menu")}
               className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
-              Quay lại menu
+              {t('settings.actions.backToMenu')}
             </button>
           </div>
         )}
@@ -1603,12 +1705,12 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
     <BottomSheet
       isOpen={isRestoreConfirmOpen}
       onClose={() => setIsRestoreConfirmOpen(false)}
-      title="Khôi phục dữ liệu từ Cloud?"
+      title={t('settings.dialogs.cloudRestore.title')}
     >
       <div className="space-y-5 text-left">
         <div className="rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 p-4 text-[13px] text-amber-900 dark:text-amber-350 font-bold leading-relaxed flex items-start gap-3">
           <HugeiconsIcon icon={AlertCircleIcon} className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-          <span>Dữ liệu trên thiết bị này có thể bị thay đổi. Vui lòng cân nhắc chọn phương thức khôi phục phù hợp bên dưới.</span>
+          <span>{t('settings.dialogs.cloudRestore.warning')}</span>
         </div>
 
         <div className="space-y-3.5">
@@ -1637,10 +1739,10 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               <p className={`text-[14.5px] font-black leading-tight ${
                 restoreMode === "merge" ? "text-indigo-950 dark:text-indigo-300" : "text-kat-dark"
               }`}>
-                Hợp nhất dữ liệu (Merge)
+                {t('settings.dialogs.cloudRestore.mergeTitle')}
               </p>
               <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-1 leading-normal">
-                Giữ nguyên dữ liệu hiện tại, chỉ bổ sung thêm chuyến đi và bài viết mới từ bản sao lưu.
+                {t('settings.dialogs.cloudRestore.mergeDesc')}
               </p>
             </div>
             <div className={`h-5.5 w-5.5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200 ${
@@ -1679,11 +1781,11 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               <p className={`text-[14.5px] font-black leading-tight ${
                 restoreMode === "replace" ? "text-rose-950 dark:text-rose-300" : "text-kat-dark"
               }`}>
-                Thay thế hoàn toàn (Replace)
+                {t('settings.dialogs.cloudRestore.replaceTitle')}
               </p>
               <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-1 leading-normal">
-                <span className="font-extrabold text-rose-650 dark:text-rose-400 uppercase tracking-wider block text-[10.5px] mb-0.5">CẢNH BÁO NGUY HIỂM</span>
-                Xóa sạch toàn bộ dữ liệu trên thiết bị này và ghi đè bằng bản sao lưu trên Cloud.
+                <span className="font-extrabold text-rose-650 dark:text-rose-400 uppercase tracking-wider block text-[10.5px] mb-0.5">{t('settings.dialogs.cloudRestore.replaceWarning')}</span>
+                {t('settings.dialogs.cloudRestore.replaceDesc')}
               </p>
             </div>
             <div className={`h-5.5 w-5.5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200 ${
@@ -1704,7 +1806,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             onClick={() => setIsRestoreConfirmOpen(false)}
             className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.98] transition-all duration-200 border border-transparent dark:border-slate-700 motion-press"
           >
-            Hủy
+            {t('settings.dialogs.cloudRestore.cancel')}
           </button>
           <button
             type="button"
@@ -1715,7 +1817,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 : "bg-kat-dark dark:bg-slate-800 hover:bg-kat-dark dark:hover:bg-slate-700 bg-opacity-90 hover:shadow-indigo-100"
             }`}
           >
-            Tiếp tục
+            {t('settings.dialogs.cloudRestore.continue')}
           </button>
         </div>
       </div>
@@ -1728,12 +1830,12 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
         setIsRestoreFileConfirmOpen(false);
         setSelectedFileForRestore(null);
       }} 
-      title="Khôi phục hành trình?"
+      title={t('settings.dialogs.fileRestore.title')}
     >
       <div className="space-y-5 text-left">
         <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-[13.5px] text-amber-800 font-semibold leading-relaxed flex items-start gap-2.5">
           <HugeiconsIcon icon={AlertCircleIcon} className="w-5 h-5 text-amber-650 shrink-0 mt-0.5" />
-          <span>Dữ liệu hiện tại có thể bị thay đổi sau khi nhập bản sao lưu. Vui lòng đảm bảo tệp của bạn là hợp lệ trước khi tiến hành.</span>
+          <span>{t('settings.dialogs.fileRestore.warning')}</span>
         </div>
 
         <div className="pt-2 flex flex-col sm:flex-row gap-3">
@@ -1745,7 +1847,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             }}
             className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.98] transition-all duration-200 border border-transparent dark:border-slate-700"
           >
-            Hủy
+            {t('settings.dialogs.fileRestore.cancel')}
           </button>
           <button
             type="button"
@@ -1759,7 +1861,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-slate-800 border border-kat-dark dark:border-slate-700/50 px-6 font-bold text-white dark:text-slate-200 hover:bg-kat-dark dark:hover:bg-slate-700 bg-opacity-90 active:scale-98 transition-all duration-200 shadow-sm"
           >
             <HugeiconsIcon icon={Upload01Icon} className="h-5 w-5" />
-            Khôi phục
+            {t('settings.dialogs.fileRestore.restore')}
           </button>
         </div>
       </div>
@@ -1785,8 +1887,8 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   <HugeiconsIcon icon={PackageReceiveIcon} className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-[16px] font-black text-kat-dark">Xác nhận nhập chuyến đi</h3>
-                  <p className="text-[11px] text-slate-400 font-medium">Kiểm tra thông tin trước khi nhập</p>
+                  <h3 className="text-[16px] font-black text-kat-dark">{t('settings.dialogs.importPreview.title')}</h3>
+                  <p className="text-[11px] text-slate-400 font-medium">{t('settings.dialogs.importPreview.subtitle')}</p>
                 </div>
               </div>
               <button
@@ -1800,22 +1902,22 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             {/* Trip info */}
             <div className="px-6 py-5 space-y-4">
               <div className="rounded-2xl bg-indigo-50 border border-indigo-100 p-4">
-                <p className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">Tên chuyến đi</p>
+                <p className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">{t('settings.dialogs.importPreview.tripName')}</p>
                 <p className="text-[18px] font-black text-kat-dark leading-tight">{importPreview.tripName}</p>
                 {importPreview.exportedAt && (
                   <p className="text-[11px] text-indigo-400 font-medium mt-1">
-                    Xuất lúc: {new Date(importPreview.exportedAt).toLocaleString("vi-VN")}
+                    {t('settings.dialogs.importPreview.exportedAt')} {new Date(importPreview.exportedAt).toLocaleString("vi-VN")}
                   </p>
                 )}
               </div>
 
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { label: "Thành viên", value: importPreview.memberCount },
-                  { label: "Lịch trình", value: importPreview.eventCount },
-                  { label: "Chi phí", value: importPreview.expenseCount },
-                  { label: "Chuẩn bị", value: importPreview.checklistCount },
-                  { label: "Nhật ký", value: importPreview.journalCount },
+                  { label: t('settings.dialogs.importPreview.members'), value: importPreview.memberCount },
+                  { label: t('settings.dialogs.importPreview.timeline'), value: importPreview.eventCount },
+                  { label: t('settings.dialogs.importPreview.expenses'), value: importPreview.expenseCount },
+                  { label: t('settings.dialogs.importPreview.checklist'), value: importPreview.checklistCount },
+                  { label: t('settings.dialogs.importPreview.journal'), value: importPreview.journalCount },
                 ].map(item => (
                   <div key={item.label} className="rounded-xl bg-slate-50 border border-slate-100 p-3 text-center">
                     <p className="text-[20px] font-black text-kat-dark">{item.value}</p>
@@ -1825,7 +1927,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               </div>
 
               <p className="text-[12px] text-slate-400 font-medium text-center leading-relaxed">
-                Dữ liệu sẽ được thêm vào thiết bị này. Chuyến đi hiện có sẽ không bị ảnh hưởng.
+                {t('settings.dialogs.importPreview.notice')}
               </p>
             </div>
 
@@ -1835,7 +1937,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 onClick={() => { setIsImportPreviewOpen(false); setImportPreview(null); }}
                 className="flex-1 inline-flex min-h-[48px] items-center justify-center rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-[0.98] transition-all"
               >
-                Hủy
+                {t('settings.dialogs.importPreview.cancel')}
               </button>
               <button
                 onClick={() => importTrip(importPreview.parsed)}
@@ -1843,7 +1945,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 className="flex-1 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary font-black text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] transition-all disabled:opacity-60 shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] border border-transparent dark:border-kat-primary dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent"
               >
                 {importing ? <HugeiconsIcon icon={Loading01Icon} className="h-4 w-4 animate-spin" /> : <HugeiconsIcon icon={Upload01Icon} className="h-4 w-4" />}
-                {importing ? "Đang nhập..." : "Nhập ngay"}
+                {importing ? t('settings.dialogs.importPreview.importing') : t('settings.dialogs.importPreview.importNow')}
               </button>
             </div>
           </div>

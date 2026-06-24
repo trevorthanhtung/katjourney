@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BottomSheet } from "./ui";
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Airplane01Icon,
@@ -14,6 +15,7 @@ interface ImportTripSheetProps {
 }
 
 export function ImportTripSheet({ isOpen, onClose, showToast }: ImportTripSheetProps) {
+  const { t } = useTranslation();
   const [sharedLinkInput, setSharedLinkInput] = useState("");
   const [recentSharedTrips, setRecentSharedTrips] = useState<{ token: string; title: string; date: string; timestamp: number }[]>([]);
 
@@ -49,7 +51,7 @@ export function ImportTripSheet({ isOpen, onClose, showToast }: ImportTripSheetP
     if (token) {
       window.location.href = "/share/" + token;
     } else {
-      showToast("Liên kết không hợp lệ. Vui lòng thử lại!");
+      showToast(t('sharedTrip.invalidLink'));
     }
   };
 
@@ -60,12 +62,12 @@ export function ImportTripSheet({ isOpen, onClose, showToast }: ImportTripSheetP
         onClose();
         setSharedLinkInput("");
       }}
-      title="Xem chuyến đi được chia sẻ"
+      title={t('sharedTrip.viewTitle')}
     >
       <div className="space-y-6">
         <div className="space-y-2">
           <label htmlFor="shared-link-input" className="text-sm font-semibold text-slate-600 dark:text-slate-400 block">
-            Nhập liên kết chia sẻ chuyến đi
+            {t('sharedTrip.inputLabel')}
           </label>
           <div className="flex gap-2.5">
             <input
@@ -74,7 +76,7 @@ export function ImportTripSheet({ isOpen, onClose, showToast }: ImportTripSheetP
               name="shared-link"
               value={sharedLinkInput}
               onChange={(e) => setSharedLinkInput(e.target.value)}
-              placeholder="Dán link chuyến đi được chia sẻ…"
+              placeholder={t('sharedTrip.inputPlaceholder')}
               autoComplete="off"
               spellCheck={false}
               className="w-full rounded-[14px] border border-slate-200 dark:border-kat-border bg-slate-50 dark:bg-slate-800/40 px-4 h-[50px] text-[15px] font-bold text-kat-dark dark:text-slate-100 outline-none transition-all focus:bg-white dark:focus:bg-slate-800/60 focus:ring-2 focus:ring-kat-teal focus:border-transparent placeholder:text-slate-400 dark:placeholder:text-slate-500"
@@ -83,7 +85,7 @@ export function ImportTripSheet({ isOpen, onClose, showToast }: ImportTripSheetP
               onClick={handleImport}
               className="inline-flex h-[50px] shrink-0 items-center justify-center rounded-[14px] bg-kat-dark dark:bg-kat-primary hover:bg-[#0a1a5c] dark:hover:brightness-110 text-white dark:text-slate-950 border border-transparent dark:border-kat-primary px-6 font-black active:scale-[0.98] transition-all duration-200 shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)]"
             >
-              Xem ngay
+              {t('sharedTrip.viewButton')}
             </button>
           </div>
         </div>
@@ -91,7 +93,7 @@ export function ImportTripSheet({ isOpen, onClose, showToast }: ImportTripSheetP
         {recentSharedTrips.length > 0 && (
           <div className="space-y-3 pt-2">
             <h4 className="text-[12px] font-black uppercase tracking-wider text-slate-400">
-              Lịch sử xem gần đây
+              {t('sharedTrip.recentHistory')}
             </h4>
             <div className="space-y-2">
               {recentSharedTrips.map((trip) => (
@@ -111,7 +113,7 @@ export function ImportTripSheet({ isOpen, onClose, showToast }: ImportTripSheetP
                         {trip.title}
                       </p>
                       <p className="text-[12px] font-semibold text-slate-400 mt-0.5">
-                        Khởi hành: {trip.date}
+                        {t('sharedTrip.departure')}: {trip.date}
                       </p>
                     </div>
                   </div>

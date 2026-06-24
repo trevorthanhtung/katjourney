@@ -1,0 +1,396 @@
+{
+  "nav": {
+    "home": "Beranda",
+    "timeline": "Jadwal",
+    "expenses": "Pengeluaran",
+    "checklist": "Daftar",
+    "more": "Menu"
+  },
+  "settings": {
+    "header": {
+      "title": "Pengaturan",
+      "subtitle": "Preferensi sistem dan personalisasi"
+    },
+    "menu": {
+      "install": {
+        "title": "Instal KAT Journey",
+        "desc": "Luncurkan langsung dari layar beranda untuk pengalaman native"
+      },
+      "theme": {
+        "title": "Tema",
+        "desc": "Sesuaikan warna dan tampilan aplikasi"
+      },
+      "language": {
+        "title": "Bahasa",
+        "desc": "Pilih bahasa tampilan"
+      },
+      "privacy": {
+        "title": "Privasi",
+        "desc": "Kelola keamanan data dan izin pribadi Anda"
+      },
+      "notification": {
+        "title": "Notifikasi",
+        "desc": "Pengingat perjalanan, pengeluaran, dan aktivitas"
+      },
+      "location": {
+        "title": "Layanan Lokasi",
+        "desc": "Saran tempat dan mata uang lokal secara otomatis"
+      },
+      "exchangeRates": {
+        "title": "Nilai Tukar",
+        "desc": "Data langsung dari Vietcombank"
+      },
+      "about": {
+        "title": "Tentang Aplikasi",
+        "desc": "Temukan perjalanan kami dan detail aplikasi"
+      },
+      "donate": {
+        "title": "Dukung Pembuat",
+        "desc": "Bantu pengembangan lebih lanjut aplikasi ini"
+      },
+      "feedback": {
+        "title": "Masukan & Saran",
+        "desc": "Bagikan pendapat Anda untuk membantu meningkatkan KAT Journey"
+      },
+      "version": {
+        "title": "Versi",
+        "desc": "Versi saat ini di perangkat ini"
+      },
+      "dataManagement": {
+        "title": "Manajemen Data",
+        "clearTemp": {
+          "title": "Hapus File Sementara",
+          "desc": "Hapus cache dan file yang tidak penting"
+        },
+        "restoreData": {
+          "title": "Pulihkan Perjalanan",
+          "desc": "Impor perjalanan dari file cadangan (.katjourney)"
+        }
+      },
+      "dangerZone": {
+        "title": "Zona Bahaya",
+        "factoryReset": {
+          "title": "Reset Pabrik",
+          "desc": "Hapus semua data secara permanen"
+        },
+        "deleteAccount": {
+          "title": "Hapus Akun",
+          "desc": "Hapus akun & data secara permanen"
+        }
+      }
+    },
+    "language": {
+      "title": "Bahasa",
+      "desc": "Pilih bahasa yang Anda kenal",
+      "vi": "Vietnam",
+      "en": "Inggris"
+    },
+    "actions": {
+      "backToMenu": "Kembali ke menu"
+    },
+    "themeView": {
+      "desc": "Sesuaikan gaya tampilan KAT Journey agar sesuai dengan kondisi pencahayaan sekitar Anda.",
+      "light": "Terang",
+      "lightDesc": "Nyaman di mata saat siang hari",
+      "dark": "Gelap",
+      "darkDesc": "Penghemat baterai",
+      "system": "Sistem",
+      "systemDesc": "Mengikuti pengaturan perangkat"
+    },
+    "exchangeRatesView": {
+      "unit": "Satuan: VND",
+      "loading": "Memuat nilai tukar...",
+      "transfer": "Transfer bank"
+    },
+    "donateView": {
+      "title": "Dukung KAT Journey",
+      "desc1": "Jika KAT Journey berguna bagi Anda, Anda dapat mengirimkan sedikit kopi untuk mendukung pembuat dalam mengembangkan aplikasi ini lebih lanjut.",
+      "desc2": "Dukungan bersifat opsional. Terima kasih telah menggunakan KAT Journey.",
+      "scanQR": "Pindai kode QR untuk mentransfer",
+      "saveQR": "Simpan kode QR ke perangkat"
+    },
+    "aboutView": {
+      "subtitle": "Asisten Perjalanan Pribadi",
+      "desc": "Lebih dari sekadar alat perencanaan, KAT Journey adalah teman yang membantu Anda mengelola pengeluaran, mengatur jadwal, dan mengemas semua momen tak terlupakan Anda.",
+      "techTitle": "Teknologi & Lisensi",
+      "techDesc1": "KAT Journey dibangun menggunakan React, Vite, Dexie, dan Supabase. Sistem ini hanya menggunakan Supabase untuk sinkronisasi dan berbagi ketika Anda aktif login.",
+      "techDesc2": "Kami ingin mengucapkan terima kasih yang tulus kepada para penulis dan komunitas open-source yang telah menemani proyek ini.",
+      "madeBy": "dibuat oleh"
+    },
+    "languageView": {
+      "desc": "Pilih bahasa tampilan untuk KAT Journey."
+    },
+    "authView": {
+      "loading": "Memuat status akun...",
+      "welcome": "Selamat datang di KAT Journey",
+      "guestDesc": "Tamu dapat menggunakan aplikasi secara normal di perangkat ini. Login Google akan mendukung sinkronisasi data di versi mendatang.",
+      "continueGoogle": "Lanjutkan dengan Google",
+      "continueGuest": "Lanjutkan sebagai Tamu",
+      "displayName": "Nama tampilan...",
+      "localAccount": "Akun lokal",
+      "anonymousAccount": "Akun anonim",
+      "notSynced": "Belum disinkronkan",
+      "guestNotice1": "Semua rencana perjalanan dan pengeluaran sementara disimpan di perangkat ini. Tautkan akun Anda untuk ",
+      "guestNotice2": "mencadangkan dengan aman ke cloud dan membuka kunci fitur ",
+      "guestNotice3": "berbagi perjalanan.",
+      "safe": "",
+      "shareTrip": "",
+      "linkGoogle": "Tautkan Google untuk Menyinkronkan",
+      "manualBackup": "Pencadangan data manual (.katjourney)"
+    },
+    "dialogs": {
+      "cloudRestore": {
+        "title": "Pulihkan data dari Cloud?",
+        "warning": "Data di perangkat ini mungkin berubah. Harap pertimbangkan metode pemulihan yang tepat di bawah ini.",
+        "mergeTitle": "Gabungkan data (Merge)",
+        "mergeDesc": "Pertahankan data saat ini, hanya tambahkan perjalanan dan entri baru dari cadangan.",
+        "replaceTitle": "Ganti sepenuhnya (Replace)",
+        "replaceWarning": "PERINGATAN BAHAYA",
+        "replaceDesc": "Hapus semua data di perangkat ini dan timpa dengan cadangan di Cloud.",
+        "cancel": "Batal",
+        "continue": "Lanjutkan"
+      },
+      "fileRestore": {
+        "title": "Pulihkan jadwal perjalanan?",
+        "warning": "Data saat ini mungkin berubah setelah mengimpor cadangan. Pastikan file Anda valid sebelum melanjutkan.",
+        "cancel": "Batal",
+        "restore": "Pulihkan"
+      },
+      "deleteAccount": {
+        "title": "Hapus akun Anda?",
+        "warning": "Untuk mengonfirmasi, ketik DELETE dengan tepat.",
+        "desc": "Tindakan ini akan menghapus akun Anda secara permanen di sistem Cloud dan semua data penyimpanan lokal. Anda tidak dapat membatalkan ini.",
+        "deletedData": "Data yang akan dihapus:",
+        "li1": "Akun login sistem",
+        "li2": "Semua perjalanan dan jadwal yang disimpan",
+        "li3": "Semua pengeluaran, jurnal perjalanan",
+        "li4": "Daftar pengepakan & dokumen",
+        "confirmBtn": "Konfirmasi penghapusan akun",
+        "confirmText": "DELETE",
+        "inputPlaceholder": "Ketik DELETE untuk mengonfirmasi",
+        "itemName": "Akun dan semua data KAT Journey",
+        "errorAuth": "Tindakan ini memerlukan login terbaru. Silakan logout dan login kembali dengan Google untuk memverifikasi sebelum menghapus akun.",
+        "errorGeneric": "Terjadi kesalahan saat menghapus akun. Silakan coba lagi nanti."
+      },
+      "factoryReset": {
+        "title": "Reset ke Pengaturan Pabrik?",
+        "warning": "Untuk mengonfirmasi, ketik DELETE dengan tepat.",
+        "desc": "Tindakan ini akan menghapus semua data di perangkat ini secara permanen. Anda tidak dapat membatalkannya.",
+        "li1": "Semua perjalanan dan rencana perjalanan",
+        "li2": "Semua pengeluaran dan jurnal perjalanan",
+        "li3": "Data pengepakan dan daftar periksa",
+        "li4": "Informasi akun tamu saat ini",
+        "confirmBtn": "Konfirmasi Reset",
+        "confirmText": "DELETE",
+        "inputPlaceholder": "Ketik DELETE",
+        "itemName": "Semua data aplikasi"
+      },
+      "importPreview": {
+        "title": "Konfirmasi impor perjalanan",
+        "subtitle": "Periksa informasi sebelum mengimpor",
+        "tripName": "Nama perjalanan",
+        "exportedAt": "Diekspor pada:",
+        "members": "Anggota",
+        "timeline": "Jadwal",
+        "expenses": "Pengeluaran",
+        "checklist": "Daftar periksa",
+        "journal": "Jurnal",
+        "notice": "Data akan ditambahkan ke perangkat ini. Perjalanan yang sudah ada tidak akan terpengaruh.",
+        "cancel": "Batal",
+        "importing": "Mengimpor...",
+        "importNow": "Impor sekarang"
+      }
+    },
+    "privacyView": {
+      "title": "Komitmen Privasi Data",
+      "offlineTitle": "Penyimpanan lokal yang aman (Offline-first):",
+      "offlineDesc": " Semua detail perjalanan, pengeluaran, dan jurnal Anda disimpan dengan aman tepat di memori ponsel Anda. Anda dapat mencari jadwal Anda kapan saja, di mana saja bahkan tanpa jaringan.",
+      "identityTitle": "Keamanan identitas mutlak:",
+      "identityDesc": " Sistem login diatur untuk verifikasi identitas yang ketat. Ini memastikan akun dan semua rencana Anda diotorisasi dengan aman, dan hanya Anda (pemilik) yang berhak mengelola dan mengeditnya.",
+      "noDataTitle": "Katakan \"Tidak\" pada pengumpulan data otomatis:",
+      "noDataDesc": " Rencana perjalanan adalah milik Anda sendiri. Kami berkomitmen tidak ada informasi atau rencana pribadi yang secara otomatis diunggah ke cloud. Data hanya dikirim ke jaringan ketika Anda secara aktif mengklik fitur pencadangan atau berbagi perjalanan."
+    },
+    "auth": {
+      "title": "Akun & Sinkronisasi",
+      "dataSync": "Sinkronisasi Data",
+      "dataSyncDesc": "Pencadangan otomatis dan amankan data",
+      "newerVersionAlert": "Versi yang lebih baru tersedia di Cloud. Ketuk Sinkronisasi untuk mengunduh.",
+      "loginToSync": "Silakan masuk untuk menggunakan sinkronisasi.",
+      "lastSync": "Sinkronisasi terakhir",
+      "neverSynced": "Belum pernah disinkronkan",
+      "autoBackupCloud": "Pencadangan Otomatis ke Cloud",
+      "autoBackupDesc": "Pencadangan di latar belakang 5d setelah data berubah",
+      "syncing": "Menyinkronkan data...",
+      "autoBackingUp": "Mencadangkan secara otomatis...",
+      "syncNow": "Sinkronkan Data Sekarang",
+      "syncSuccess": "Data sudah yang terbaru.",
+      "syncSuccessCloud": "Data berhasil disinkronkan ke Cloud!",
+      "syncFailed": "Gagal menyinkronkan: "
+    }
+  },
+  "welcomeScreen": {
+    "heroTitle1": "Jelajahi dunia.",
+    "heroTitle2": "Abadikan momen.",
+    "heroDesc": "Sinkronkan data lintas platform, kelola jadwal, dan bagi pengeluaran secara instan.",
+    "slide1Title": "Perencanaan perjalanan cerdas",
+    "slide1Desc": "Rencanakan hari demi hari, sematkan lokasi, dan atur jadwal secara visual dengan tim Anda.",
+    "slide2Title": "Berbagi pengeluaran yang adil",
+    "slide2Desc": "Catat pengeluaran grup, bagi tagihan otomatis, dan selesaikan pembayaran secara instan.",
+    "slide3Title": "Lestarikan setiap kenangan",
+    "slide3Desc": "Kemas barang dengan daftar periksa dan tulis jurnal perjalanan untuk menyimpan foto Anda.",
+    "googleLogin": "Lanjutkan dengan Google",
+    "guestLogin": "Jelajahi sebagai Tamu",
+    "googleLoginFail": "Login Google gagal.",
+    "guestLoginFail": "Login Tamu gagal.",
+    "legalTerms": "Dengan melanjutkan, Anda menyetujui <0>Persyaratan Layanan</0>, <1>Kebijakan Privasi</1>, dan <2>Kebijakan Cookie</2> kami.",
+    "multiplatform": "Tersedia di berbagai platform",
+    "modal": {
+      "termsTitle": "Persyaratan Layanan",
+      "privacyTitle": "Kebijakan Privasi",
+      "cookieTitle": "Kebijakan Cookie",
+      "terms1Title": "1. Mari buat perjalanan hebat bersama",
+      "terms1Desc": "Selamat datang di KAT Journey! Dengan menggunakan aplikasi ini, kita setuju untuk menghormati prinsip bersama demi membangun komunitas perjalanan yang beradab.",
+      "terms2Title": "2. Ruang kenangan Anda sendiri",
+      "terms2Desc": "Akun Anda adalah tempat Anda menyimpan perjalanan pribadi. Bantu kami melindunginya dengan menjaga keamanan informasi login Anda.",
+      "terms3Title": "3. Penyimpanan aman, pergi ke mana saja",
+      "terms3Desc": "KAT Journey memprioritaskan penyimpanan data langsung di perangkat Anda sehingga Anda dapat melihat jadwal meskipun offline.",
+      "privacy1Title": "1. Pengumpulan informasi pribadi minimal",
+      "privacy1Desc": "KAT Journey hanya mengumpulkan sedikit informasi dasar dari akun Google Anda.",
+      "privacy2Title": "2. Kenangan Anda, keamanan yang utama",
+      "privacy2Desc": "Semua rencana, pengeluaran, dan bagasi \"tidur dengan tenang\" di perangkat Anda.",
+      "privacy3Title": "3. Kontrol penuh di tangan Anda",
+      "privacy3Desc": "Anda adalah \"kapten\" dari akun ini. Anda memiliki hak penuh untuk membuat, mengedit, atau menghapus perjalanan secara permanen kapan saja dengan satu ketukan.",
+      "cookie1Title": "1. Cookie membuat perjalanan lebih lancar",
+      "cookie1Desc": "KAT Journey menggunakan cookie esensial untuk mengingat siapa Anda tanpa perlu login berulang kali.",
+      "cookie2Title": "2. Katakan \"Tidak\" pada iklan pelacakan",
+      "cookie2Desc": "KAT Journey sama sekali tidak akan melacak Anda atau menjual data Anda kepada pihak ketiga mana pun.",
+      "agreeAndClose": "Setuju dan Tutup"
+    }
+  },
+  "splash": {
+    "subtitle": "Jelajahi & Kenangan"
+  },
+  "userMenu": {
+    "guest": "Tamu",
+    "anonymous": "Anonim",
+    "notLoggedIn": "Belum masuk",
+    "loginToSync": "Masuk untuk sinkronisasi",
+    "profileAndAccount": "Profil & Akun",
+    "appSettings": "Pengaturan Aplikasi",
+    "exitGuest": "Keluar dari Tamu",
+    "logout": "Keluar",
+    "loginRegister": "Masuk / Daftar",
+    "accountMenu": "Menu Akun",
+    "logoutConfirmTitle": "Keluar?",
+    "logoutConfirmMessage": "Anda akan keluar dari perangkat ini. Jangan khawatir, semua data yang dicadangkan ke <1>Cloud</1> akan disimpan dengan <3>aman</3>.",
+    "logoutButton": "Keluar"
+  },
+  "common": {
+    "done": "Selesai",
+    "itemToDelete": "Item yang akan dihapus",
+    "typeToConfirm": "Ketik <1>{{text}}</1> untuk mengonfirmasi tindakan ini.",
+    "typeToConfirmPlaceholder": "Ketik {{text}} untuk konfirmasi",
+    "cancel": "Batal",
+    "deleting": "Menghapus...",
+    "delete": "Hapus"
+  },
+  "sharedTrip": {
+    "viewTitle": "Lihat perjalanan yang dibagikan",
+    "inputLabel": "Masukkan tautan perjalanan yang dibagikan",
+    "inputPlaceholder": "Tempel tautan perjalanan yang dibagikan…",
+    "viewButton": "Lihat sekarang",
+    "recentHistory": "Baru saja dilihat",
+    "departure": "Keberangkatan",
+    "invalidLink": "Tautan tidak valid. Silakan coba lagi!"
+  },
+  "dashboard": {
+    "heroTitle": "Perjalanan Anda",
+    "heroDesc": "Simpan rencana perjalanan, teman seperjalanan, pengeluaran, dan persiapan untuk setiap perjalanan.",
+    "memoriesBtn": "Kenangan",
+    "createTripBtn": "Buat perjalanan",
+    "nextTripTitle": "Perjalanan berikutnya",
+    "statusActive": "SEDANG BERLANGSUNG",
+    "statusUpcoming": "MENDATANG",
+    "statusPast": "SELESAI",
+    "dayTrip": "Perjalanan sehari",
+    "longTrip": "Perjalanan panjang",
+    "duration": "{{days}} hari {{nights}} malam",
+    "durationDaysOnly": "{{days}} hari",
+    "noLocation": "Tidak ada lokasi",
+    "noLocationGrid": "Tidak ditentukan",
+    "peopleCount": "{{count}} orang",
+    "peopleCountCompanion": "{{count}} pendamping",
+    "noExpense": "Belum ada pengeluaran",
+    "noExpenseFull": "Belum ada pengeluaran",
+    "expenseTotal": "{{amount}}",
+    "itemsToPrepare": "{{count}} barang yang harus disiapkan",
+    "itemsUnprepared": "{{count}} barang belum disiapkan",
+    "luggageReady": "Bagasi siap",
+    "allTripsTitle": "Semua perjalanan",
+    "allTripsDesc": "Semua perjalanan Anda.",
+    "activeTripsTitle": "Perjalanan yang sedang berlangsung",
+    "activeTripsDesc": "Perjalanan yang sedang terjadi saat ini.",
+    "upcomingTripsTitle": "Perjalanan mendatang",
+    "upcomingTripsDesc": "Perjalanan yang akan segera berangkat.",
+    "pastTripsTitle": "Perjalanan selesai",
+    "pastTripsDesc": "Perjalanan yang telah berakhir dan dapat diulas kembali."
+  },
+  "archive": {
+    "title": "Kenangan",
+    "back": "Kembali",
+    "savedTrips": "{{count}} perjalanan yang disimpan",
+    "noTripsDesc": "Perjalanan yang telah berakhir disimpan di sini.",
+    "emptyTitle": "Belum ada kenangan",
+    "emptyDesc": "Perjalanan yang telah berakhir akan muncul di sini untuk Anda kenang kembali.",
+    "tripCount": "{{count}} perjalanan",
+    "unknownYear": "Tahun tidak diketahui"
+  },
+  "tripForm": {
+    "editTitle": "Detail perjalanan",
+    "createTitle": "Buat perjalanan",
+    "createSubtitle": "Isi dasar-dasarnya dulu, jadwal dan pengeluaran bisa ditambah nanti.",
+    "saveBtn": "Simpan detail",
+    "createBtn": "Buat perjalanan",
+    "saveAria": "Konfirmasi penyimpanan",
+    "createAria": "Konfirmasi pembuatan perjalanan",
+    "nameLabel": "Nama perjalanan",
+    "namePlaceholder": "Contoh: Musim Panas Seru",
+    "nameError": "Mohon masukkan nama perjalanan.",
+    "locationLabel": "Lokasi",
+    "locationSuccess": "Koordinat cocok — Cuaca telah terhubung otomatis!",
+    "locationHelper": "Pilih tujuan yang tepat dari saran untuk mendapatkan ramalan cuaca yang akurat. Jika tidak menemukan lokasi spesifik, pilih area atau kota terdekat.",
+    "timeLabel": "Durasi perjalanan",
+    "dayTripBtn": "Perjalanan sehari",
+    "dayTripDesc": "Pergi dan pulang di hari yang sama",
+    "multiDayBtn": "Beberapa hari",
+    "multiDayDesc": "Ada tanggal pergi dan pulang",
+    "pickEndPrompt": "Pilih tanggal akhir…",
+    "startDateError": "Mohon pilih tanggal mulai.",
+    "endDateError": "Mohon pilih tanggal akhir.",
+    "dateCompareError": "Tanggal akhir tidak boleh mendahului tanggal mulai.",
+    "daysOfWeek": [
+      "Min",
+      "Sen",
+      "Sel",
+      "Rab",
+      "Kam",
+      "Jum",
+      "Sab"
+    ],
+    "months": [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember"
+    ],
+    "dateFmt": "{{day}} {{month}} {{year}}"
+  }
+}

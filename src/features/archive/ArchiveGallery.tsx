@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { 
   ArrowLeft01Icon, 
@@ -23,18 +24,18 @@ const CARD_GRADIENTS = [
   "linear-gradient(135deg, #5C2A1A 0%, #7A3A20 55%, #963F1E 100%)",
 ];
 
-function getTripDurationText(trip: Trip) {
+function getTripDurationText(trip: Trip, t: any) {
   const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
-  if (isDayTrip) return "Đi trong ngày";
+  if (isDayTrip) return t('dashboard.dayTrip');
   try {
     const start = new Date(trip.startDate);
     const end = new Date(trip.endDate);
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) return "Dài ngày";
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return t('dashboard.longTrip');
     const diffDays = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     const diffNights = diffDays > 1 ? diffDays - 1 : 0;
-    return `${diffDays} ngày ${diffNights} đêm`;
+    return diffNights > 0 ? t('dashboard.duration', { days: diffDays, nights: diffNights }) : t('dashboard.durationDaysOnly', { days: diffDays });
   } catch {
-    return "Dài ngày";
+    return t('dashboard.longTrip');
   }
 }
 
@@ -53,6 +54,7 @@ function TripCard({
   memberCounts,
   onOpenTrip
 }: TripCardProps) {
+  const { t } = useTranslation();
   const tripExpenses = allExpenses.filter(e => e.tripId === trip.id);
   const totalExpense = tripExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
   const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
@@ -76,7 +78,7 @@ function TripCard({
         <span className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold tracking-wide"
           style={{ background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.9)", border: "1px solid rgba(255,255,255,0.2)" }}
         >
-          {getTripDurationText(trip)}
+          {getTripDurationText(trip, t)}
         </span>
         <div className="flex h-8 w-8 items-center justify-center rounded-full"
           style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)" }}
@@ -107,13 +109,13 @@ function TripCard({
         <div className="flex items-center gap-2 min-w-0">
           <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-white/50 shrink-0" />
           <span className="text-[12.5px] font-semibold text-white/75 truncate">
-            {memberCounts[trip.id!] || 1} người
+            {t('dashboard.peopleCount', { count: memberCounts[trip.id!] || 1 })}
           </span>
         </div>
         <div className="flex items-center gap-2 min-w-0">
           <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-white/50 shrink-0" />
           <span className="text-[12.5px] font-semibold text-white/75 truncate">
-            {totalExpense > 0 ? `${totalExpense.toLocaleString()}đ` : "Chưa chi"}
+            {totalExpense > 0 ? t('dashboard.expenseTotal', { amount: totalExpense.toLocaleString() + 'đ' }) : t('dashboard.noExpense')}
           </span>
         </div>
       </div>
@@ -133,7 +135,9 @@ export function ArchiveGallery({
   onBack: () => void;
   onOpenTrip: (id: number) => void;
 }) {
-  const archivedTrips = useLiveQuery(async () =>
+  
+  const { t } = useTranslation();
+const archivedTrips = useLiveQuery(async () =>
     (await db.trips.toArray()).filter(t => !t.isDeleted && t.status === 'archived')
   ) ?? [];
   const allMembers = useLiveQuery(async () =>
@@ -154,7 +158,7 @@ export function ArchiveGallery({
 
   const tripsByYear: { [year: string]: Trip[] } = {};
   sortedTrips.forEach(trip => {
-    const year = trip.startDate ? trip.startDate.split("-")[0] : "Chưa rõ năm";
+    const year = trip.startDate ? trip.startDate.split("-")[0] : t('archive.unknownYear');
     if (!tripsByYear[year]) {
       tripsByYear[year] = [];
     }
@@ -171,17 +175,17 @@ export function ArchiveGallery({
       <div className="mb-8 flex items-center gap-4">
         <button
           onClick={onBack}
-          aria-label="Quay lại"
+          aria-label={t('archive.back')}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-kat-surface border border-slate-200 dark:border-kat-border text-slate-650 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
         >
           <HugeiconsIcon icon={ArrowLeft01Icon} size={20} className="text-slate-600 dark:text-slate-300" />
         </button>
         <div>
-          <h1 className="text-[24px] font-black text-kat-dark">Kỷ niệm</h1>
+          <h1 className="text-[24px] font-black text-kat-dark">{t('archive.title')}</h1>
           <p className="text-[13.5px] font-semibold text-slate-500">
             {archivedTrips.length > 0
-              ? `${archivedTrips.length} chuyến đi đã lưu giữ`
-              : "Các chuyến đi đã kết thúc và được lưu giữ."}
+              ? t('archive.savedTrips', { count: archivedTrips.length })
+              : t('archive.noTripsDesc')}
           </p>
         </div>
       </div>
@@ -194,9 +198,9 @@ export function ArchiveGallery({
           >
             <HugeiconsIcon icon={CompassIcon} size={40} className="text-white" />
           </div>
-          <h3 className="text-[20px] font-extrabold text-kat-dark">Chưa có kỷ niệm nào</h3>
+          <h3 className="text-[20px] font-extrabold text-kat-dark">{t('archive.emptyTitle')}</h3>
           <p className="mt-2 text-[14px] font-semibold text-slate-500 max-w-xs leading-relaxed">
-            Những chuyến đi đã kết thúc sẽ xuất hiện ở đây để bạn ôn lại.
+            {t('archive.emptyDesc')}
           </p>
         </div>
       ) : (
@@ -207,7 +211,7 @@ export function ArchiveGallery({
                 <h2 className="text-[19px] font-black text-kat-dark tracking-tight">{year}</h2>
                 <div className="h-px flex-1 bg-slate-200" />
                 <span className="text-[11px] font-extrabold text-slate-500 bg-slate-100/75 border border-slate-200/50 px-3 py-1 rounded-full">
-                  {tripsByYear[year].length} chuyến đi
+                  {t('archive.tripCount', { count: tripsByYear[year].length })}
                 </span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">

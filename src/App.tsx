@@ -29,6 +29,7 @@ import {
   Airplane01Icon
 } from "@hugeicons/core-free-icons";
 import React, { useEffect, useState, useRef } from "react";
+import { useTranslation, Trans } from "react-i18next";
 import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "./db";
 
 // Components & Helpers
@@ -103,6 +104,7 @@ const NavButton = React.forwardRef<
 NavButton.displayName = "NavButton";
 
 function App() {
+  const { t } = useTranslation();
   useTheme();
   const isOnline = useNetworkStatus();
   const [showSplash, setShowSplash] = useState(true);
@@ -896,8 +898,8 @@ function App() {
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full overflow-hidden bg-kat-surface border border-slate-200 dark:border-kat-border hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-[0.97] transition-[transform,box-shadow,background-color,border-color,color] duration-150 shadow-sm focus:outline-none shrink-0"
-                  title="Menu tài khoản"
-                  aria-label="Menu tài khoản"
+                  title={t('userMenu.accountMenu')}
+                  aria-label={t('userMenu.accountMenu')}
                 >
                   {isAuthenticated && user && provider === "google" ? (
                      user.photoURL ? (
@@ -923,9 +925,9 @@ function App() {
                       <div className="px-3.5 py-2.5 border-b border-slate-100/80 dark:border-slate-800/60">
                         <p className="text-[13px] font-black text-kat-dark truncate text-left">
                           {isAuthenticated && user ? (
-                            provider === "guest" ? "Khách" : (user.displayName || "Tài khoản ẩn danh")
+                            provider === "guest" ? t('userMenu.guest') : (user.displayName || t('userMenu.anonymous'))
                           ) : (
-                            "Chưa đăng nhập"
+                            t('userMenu.notLoggedIn')
                           )}
                         </p>
                         {isAuthenticated && user && provider !== "guest" && user.email ? (
@@ -934,7 +936,7 @@ function App() {
                           </p>
                         ) : (!isAuthenticated || !user) && (
                           <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
-                            Đăng nhập để đồng bộ
+                            {t('userMenu.loginToSync')}
                           </p>
                         )}
                       </div>
@@ -952,7 +954,7 @@ function App() {
                                 className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                               >
                                 <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400 shrink-0" />
-                                Hồ sơ & Tài khoản
+                                {t('userMenu.profileAndAccount')}
                               </button>
                               <button
                                 onClick={() => {
@@ -963,7 +965,7 @@ function App() {
                                 className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                               >
                                 <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 text-slate-400 shrink-0" />
-                                Cài đặt ứng dụng
+                                {t('userMenu.appSettings')}
                               </button>
                             </div>
                             <div className="border-t border-slate-100/80 dark:border-slate-800/60 pt-1 mt-1">
@@ -975,7 +977,7 @@ function App() {
                                 className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
                               >
                                 <HugeiconsIcon icon={Logout01Icon} className="w-4 h-4 text-rose-500 shrink-0" />
-                                Thoát Khách
+                                {t('userMenu.exitGuest')}
                               </button>
                             </div>
                           </>
@@ -991,7 +993,7 @@ function App() {
                                 className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                               >
                                 <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400 shrink-0" />
-                                Hồ sơ & Tài khoản
+                                {t('userMenu.profileAndAccount')}
                               </button>
                               <button
                                 onClick={() => {
@@ -1002,7 +1004,7 @@ function App() {
                                 className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                               >
                                 <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 text-slate-400 shrink-0" />
-                                Cài đặt ứng dụng
+                                {t('userMenu.appSettings')}
                               </button>
                             </div>
                             <div className="border-t border-slate-100/80 dark:border-slate-800/60 pt-1 mt-1">
@@ -1014,7 +1016,7 @@ function App() {
                                 className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
                               >
                                 <HugeiconsIcon icon={Logout01Icon} className="w-4 h-4 text-rose-500 shrink-0" />
-                                Đăng xuất
+                                {t('userMenu.logout')}
                               </button>
                             </div>
                           </>
@@ -1031,7 +1033,7 @@ function App() {
                               className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                             >
                               <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400 shrink-0" />
-                              Đăng nhập / Đăng ký
+                              {t('userMenu.loginRegister')}
                             </button>
                             <button
                               onClick={() => {
@@ -1042,7 +1044,7 @@ function App() {
                               className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                             >
                               <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 text-slate-400 shrink-0" />
-                              Cài đặt ứng dụng
+                              {t('userMenu.appSettings')}
                             </button>
                           </div>
                         </>
@@ -1204,29 +1206,29 @@ function App() {
               ref={(el) => { buttonsRef.current["home"] = el; }}
               isActive={activeTab === "home"}
               onClick={() => setActiveTab("home")}
-              icon={CompassIcon}
-              label="Tổng quan"
+              icon={Home01Icon}
+              label={t('nav.home')}
             />
             <NavButton
               ref={(el) => { buttonsRef.current["timeline"] = el; }}
               isActive={activeTab === "timeline"}
               onClick={() => setActiveTab("timeline")}
-              icon={Calendar01Icon}
-              label="Lịch trình"
+              icon={CompassIcon}
+              label={t('nav.timeline')}
             />
             <NavButton
               ref={(el) => { buttonsRef.current["expenses"] = el; }}
               isActive={activeTab === "expenses"}
               onClick={() => setActiveTab("expenses")}
               icon={WalletCardsIcon}
-              label="Chi phí"
+              label={t('nav.expenses')}
             />
             <NavButton
               ref={(el) => { buttonsRef.current["checklist"] = el; }}
               isActive={activeTab === "checklist"}
               onClick={() => setActiveTab("checklist")}
-              icon={CheckmarkCircle02Icon}
-              label="Chuẩn bị"
+              icon={CheckListIcon}
+              label={t('nav.checklist')}
             />
             <NavButton
               ref={(el) => { buttonsRef.current["more"] = el; }}
@@ -1236,7 +1238,7 @@ function App() {
                 setActiveTab("more");
               }}
               icon={Menu01Icon}
-              label="Thêm"
+              label={t('nav.more')}
             />
           </div>
         </nav>
@@ -1349,11 +1351,13 @@ function App() {
       <BottomSheet
         isOpen={isLogoutConfirmOpen}
         onClose={() => setIsLogoutConfirmOpen(false)}
-        title="Đăng xuất tài khoản?"
+        title={t('userMenu.logoutConfirmTitle')}
       >
         <div className="space-y-5">
           <div className="rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-800/80 p-4 text-[13.5px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed text-left">
-            Bạn sắp đăng xuất khỏi thiết bị này. Đừng lo, toàn bộ dữ liệu đã sao lưu trên <strong className="font-bold text-slate-800 dark:text-slate-100">Cloud</strong> vẫn được giữ <strong className="font-bold text-slate-800 dark:text-slate-100">an toàn</strong>.
+            <Trans i18nKey="userMenu.logoutConfirmMessage">
+              Bạn sắp đăng xuất khỏi thiết bị này. Đừng lo, toàn bộ dữ liệu đã sao lưu trên <strong className="font-bold text-slate-800 dark:text-slate-100">Cloud</strong> vẫn được giữ <strong className="font-bold text-slate-800 dark:text-slate-100">an toàn</strong>.
+            </Trans>
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
@@ -1362,7 +1366,7 @@ function App() {
               onClick={() => setIsLogoutConfirmOpen(false)}
               className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200 motion-press"
             >
-              Hủy
+              {t('common.cancel')}
             </button>
             <button
               type="button"
@@ -1376,7 +1380,7 @@ function App() {
               className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 active:scale-[0.98] transition-all duration-200 motion-press"
             >
               <HugeiconsIcon icon={Logout01Icon} className="h-5 w-5" />
-              Đăng xuất
+              {t('userMenu.logoutButton')}
             </button>
           </div>
         </div>

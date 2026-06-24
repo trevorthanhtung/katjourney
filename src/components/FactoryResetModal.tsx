@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { executeFactoryReset } from "../utils/dataActions";
 import { TypedDeleteConfirmModal } from "./ui";
 
@@ -8,6 +9,8 @@ interface FactoryResetModalProps {
 }
 
 export function FactoryResetModal({ isOpen, onClose }: FactoryResetModalProps) {
+  const { t } = useTranslation();
+
   const handleReset = async () => {
     try {
       await executeFactoryReset();
@@ -21,29 +24,29 @@ export function FactoryResetModal({ isOpen, onClose }: FactoryResetModalProps) {
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={handleReset}
-      title="Khôi phục cài đặt gốc?"
+      title={t('settings.dialogs.factoryReset.title')}
       warning={
         <span className="font-bold text-red-600">
-          Để xác nhận, vui lòng nhập chính xác chữ XÓA.
+          {t('settings.dialogs.factoryReset.warning')}
         </span>
       }
       description={
         <div className="space-y-3">
           <p>
-            Hành động này sẽ xóa vĩnh viễn toàn bộ dữ liệu trên thiết bị này. Bạn không thể hoàn tác.
+            {t('settings.dialogs.factoryReset.desc')}
           </p>
           <ul className="list-disc pl-5 space-y-1 text-slate-650 text-[13px]">
-            <li>Toàn bộ chuyến đi và lịch trình</li>
-            <li>Tất cả chi phí và bản tin hành trình</li>
-            <li>Dữ liệu gói đồ và checklist</li>
-            <li>Thông tin tài khoản khách hiện tại</li>
+            <li>{t('settings.dialogs.factoryReset.li1')}</li>
+            <li>{t('settings.dialogs.factoryReset.li2')}</li>
+            <li>{t('settings.dialogs.factoryReset.li3')}</li>
+            <li>{t('settings.dialogs.factoryReset.li4')}</li>
           </ul>
         </div>
       }
-      confirmLabel="Xác nhận khôi phục"
-      confirmationText="XÓA"
-      inputPlaceholder="Nhập XÓA"
-      itemName="Toàn bộ dữ liệu ứng dụng"
+      confirmLabel={t('settings.dialogs.factoryReset.confirmBtn')}
+      confirmationText={t('settings.dialogs.factoryReset.confirmText')}
+      inputPlaceholder={t('settings.dialogs.factoryReset.inputPlaceholder')}
+      itemName={t('settings.dialogs.factoryReset.itemName')}
     />
   );
 }

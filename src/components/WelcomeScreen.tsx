@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useTranslation, Trans } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   CompassIcon,
@@ -44,28 +45,29 @@ const AppleIcon = ({ className }: { className?: string }) => (
 const onboardingSlides = [
   {
     icon: CompassIcon,
-    title: "Lập lịch trình thông minh",
-    desc: "Lên kế hoạch chi tiết từng ngày, ghim địa điểm và sắp xếp hành trình trực quan cùng đồng đội.",
+    titleKey: "welcomeScreen.slide1Title",
+    descKey: "welcomeScreen.slide1Desc",
     accent: "from-kat-primary/10 to-teal-500/10",
     iconColor: "text-kat-primary",
   },
   {
     icon: WalletCardsIcon,
-    title: "Chia sẻ chi phí công bằng",
-    desc: "Ghi chép chi tiêu nhóm, tự động chia hóa đơn và giải quyết thanh toán tức thì.",
+    titleKey: "welcomeScreen.slide2Title",
+    descKey: "welcomeScreen.slide2Desc",
     accent: "from-amber-500/10 to-orange-500/10",
     iconColor: "text-amber-500",
   },
   {
     icon: SparklesIcon,
-    title: "Lưu giữ trọn vẹn kỷ niệm",
-    desc: "Chuẩn bị đồ đạc theo checklist và viết nhật ký hành trình lưu giữ những bức ảnh ý nghĩa.",
+    titleKey: "welcomeScreen.slide3Title",
+    descKey: "welcomeScreen.slide3Desc",
     accent: "from-pink-500/10 to-rose-500/10",
     iconColor: "text-rose-500",
   }
 ];
 
 export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState<"google" | "guest" | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [legalModal, setLegalModal] = useState<"terms" | "privacy" | "cookie" | null>(null);
@@ -154,7 +156,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
     try {
       await signInWithGoogle();
     } catch (err: any) {
-      setErrorMsg(err.message || "Đăng nhập Google thất bại.");
+      setErrorMsg(err.message || t('welcomeScreen.googleLoginFail'));
       setLoading(null);
     }
   };
@@ -169,7 +171,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
       localStorage.setItem("kat_auth_mode", "guest");
       onDismiss();
     } catch (err: any) {
-      setErrorMsg(err.message || "Đăng nhập Khách thất bại.");
+      setErrorMsg(err.message || t('welcomeScreen.guestLoginFail'));
     } finally {
       setLoading(null);
     }
@@ -209,10 +211,10 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
         {/* Cinematic Content Text */}
         <div className="absolute bottom-12 left-12 pr-12 z-10 space-y-3">
           <h2 className="text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-none mb-2 text-balance">
-            Khám phá thế giới.<br />Lưu giữ khoảnh khắc.
+            <span dangerouslySetInnerHTML={{__html: t('welcomeScreen.heroTitle1')}} /><br /><span dangerouslySetInnerHTML={{__html: t('welcomeScreen.heroTitle2')}} />
           </h2>
           <p className="text-lg text-gray-300 font-semibold leading-relaxed max-w-lg">
-            Đồng bộ dữ liệu đa nền tảng, quản lý lịch trình và chia sẻ chi phí tức thì.
+            {t('welcomeScreen.heroDesc')}
           </p>
         </div>
       </div>
@@ -249,10 +251,10 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                     </div>
 
                     <h3 className="text-[18px] font-black tracking-tight text-kat-dark leading-tight mb-1.5 text-balance">
-                      {slide.title}
+                      {t(slide.titleKey)}
                     </h3>
                     <p className="text-[12.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed max-w-[280px] mx-auto">
-                      {slide.desc}
+                      {t(slide.descKey)}
                     </p>
                   </div>
                 );
@@ -299,7 +301,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               ) : (
                 <div className="group-active:scale-95 transition-transform"><GoogleIcon /></div>
               )}
-              Tiếp tục với Google
+              {t('welcomeScreen.googleLogin')}
             </button>
 
             {/* Guest Login (Secondary Ghost) */}
@@ -317,7 +319,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                   className="text-slate-400 group-hover:text-slate-600 transition-colors group-active:scale-95" 
                 />
               )}
-              Khám phá tư cách Khách
+              {t('welcomeScreen.guestLogin')}
             </button>
 
             {/* Install PWA button removed per user request */}
@@ -328,34 +330,32 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
 
         {/* BOTTOM SECTION: LEGAL FOOTER */}
         <div className="w-full shrink-0 text-center pt-4 pb-1 relative z-10">
-          <div className="flex items-center justify-center gap-4 text-slate-300 opacity-80 mb-3" title="Sẵn sàng trên đa nền tảng">
+          <div className="flex items-center justify-center gap-4 text-slate-300 opacity-80 mb-3" title={t('welcomeScreen.multiplatform')}>
             <HugeiconsIcon icon={LaptopIcon} className="h-[16px] w-[16px] hover:text-sky-400 transition-colors" strokeWidth={2.5} />
             <AndroidIcon className="h-[16px] w-[16px] hover:text-emerald-400 transition-colors" />
             <AppleIcon className="h-[18px] w-[18px] hover:text-slate-400 transition-colors" />
           </div>
           <p className="text-[11.5px] leading-relaxed text-slate-400 font-medium max-w-xs mx-auto">
-            Bằng việc tiếp tục, bạn đồng ý với{" "}
-            <button 
-              onClick={() => setLegalModal("terms")}
-              className="text-kat-primary hover:underline font-semibold focus:outline-none"
-            >
-              Điều khoản Sử dụng
-            </button>
-            ,{" "}
-            <button 
-              onClick={() => setLegalModal("privacy")}
-              className="text-kat-primary hover:underline font-semibold focus:outline-none"
-            >
-              Chính sách Quyền riêng tư
-            </button>{" "}
-            và{" "}
-            <button 
-              onClick={() => setLegalModal("cookie")}
-              className="text-kat-primary hover:underline font-semibold focus:outline-none"
-            >
-              Chính sách Cookie
-            </button>{" "}
-            của chúng tôi.
+            <Trans
+              i18nKey="welcomeScreen.legalTerms"
+              components={[
+                <button 
+                  key="terms"
+                  onClick={() => setLegalModal("terms")}
+                  className="text-kat-primary hover:underline font-semibold focus:outline-none"
+                />,
+                <button 
+                  key="privacy"
+                  onClick={() => setLegalModal("privacy")}
+                  className="text-kat-primary hover:underline font-semibold focus:outline-none"
+                />,
+                <button 
+                  key="cookie"
+                  onClick={() => setLegalModal("cookie")}
+                  className="text-kat-primary hover:underline font-semibold focus:outline-none"
+                />
+              ]}
+            />
           </p>
         </div>
 
@@ -370,9 +370,9 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               <div className="flex items-center gap-2">
                 <HugeiconsIcon icon={LockIcon} className="h-5 w-5 text-kat-primary" />
                 <h4 className="text-[17px] font-black text-kat-text dark:text-slate-200">
-                  {legalModal === "terms" && "Điều khoản Sử dụng"}
-                  {legalModal === "privacy" && "Chính sách Quyền riêng tư"}
-                  {legalModal === "cookie" && "Chính sách Cookie"}
+                  {legalModal === "terms" && t('welcomeScreen.modal.termsTitle')}
+                  {legalModal === "privacy" && t('welcomeScreen.modal.privacyTitle')}
+                  {legalModal === "cookie" && t('welcomeScreen.modal.cookieTitle')}
                 </h4>
               </div>
               <button 
@@ -386,32 +386,32 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             <div className="flex-1 overflow-y-auto py-4 pr-1 text-[13.5px] font-medium leading-relaxed text-slate-500 dark:text-slate-400 custom-scrollbar select-text space-y-3.5">
               {legalModal === "terms" && (
                 <>
-                  <p className="font-bold text-kat-dark">1. Cùng tạo nên những hành trình tuyệt vời</p>
-                  <p>Chào mừng bạn đến với KAT Journey! Bằng việc trải nghiệm ứng dụng, chúng ta đồng ý tôn trọng các nguyên tắc chung để xây dựng một cộng đồng du lịch văn minh. Nếu có điểm nào chưa phù hợp, bạn luôn có quyền ngưng sử dụng dịch vụ bất cứ lúc nào.</p>
-                  <p className="font-bold text-kat-dark">2. Không gian kỷ niệm của riêng bạn</p>
-                  <p>Tài khoản là nơi cất giữ những chuyến đi mang đậm dấu ấn cá nhân. Hãy giúp chúng tôi bảo vệ nó bằng cách giữ an toàn thông tin đăng nhập (tài khoản Google). Chúng tôi luôn khuyến khích bạn bảo mật thiết bị cá nhân thật tốt để tránh rò rỉ dữ liệu.</p>
-                  <p className="font-bold text-kat-dark">3. Lưu trữ an toàn, đi muôn nơi</p>
-                  <p>KAT Journey ưu tiên lưu dữ liệu trực tiếp trên máy của bạn để bạn có thể xem lịch trình ngay cả khi lên rừng hay xuống biển (không có mạng). Lưu ý nhỏ: Đừng vội xóa dữ liệu duyệt web (clear cache) khi chưa đồng bộ lên đám mây, để tránh làm rơi rớt những kế hoạch đang dở dang nhé!</p>
+                  <p className="font-bold text-kat-dark">{t('welcomeScreen.modal.terms1Title')}</p>
+                  <p>{t('welcomeScreen.modal.terms1Desc')}</p>
+                  <p className="font-bold text-kat-dark">{t('welcomeScreen.modal.terms2Title')}</p>
+                  <p>{t('welcomeScreen.modal.terms2Desc')}</p>
+                  <p className="font-bold text-kat-dark">{t('welcomeScreen.modal.terms3Title')}</p>
+                  <p>{t('welcomeScreen.modal.terms3Desc')}</p>
                 </>
               )}
 
               {legalModal === "privacy" && (
                 <>
-                  <p className="font-bold text-kat-dark">1. Chúng tôi cần biết gì về bạn? Rất ít!</p>
-                  <p>KAT Journey chỉ thu thập một vài thông tin cơ bản (Họ tên, Email, Ảnh đại diện) từ tài khoản Google của bạn để làm "hộ chiếu" định danh. Việc này giúp bạn lưu trữ và đồng bộ hóa các chuyến đi xuyên suốt trên nhiều thiết bị.</p>
-                  <p className="font-bold text-kat-dark">2. Kỷ niệm của bạn, an toàn là trên hết</p>
-                  <p>Mọi kế hoạch, chi tiêu và hành lý đều "ngủ yên" trên thiết bị của bạn. Chỉ khi bạn chủ động mời bạn bè qua tính năng "Chia sẻ chuyến đi", dữ liệu mới được mã hóa cẩn thận và đưa lên hệ thống máy chủ đám mây với độ bảo mật cao nhất.</p>
-                  <p className="font-bold text-kat-dark">3. Quyền kiểm soát hoàn toàn trong tay bạn</p>
-                  <p>Bạn là "cơ trưởng" của tài khoản này. Bạn có toàn quyền tạo mới, chỉnh sửa, xóa bỏ vĩnh viễn các chuyến đi, hoặc thu hồi link chia sẻ bất kỳ lúc nào chỉ với một lần chạm.</p>
+                  <p className="font-bold text-kat-dark">{t('welcomeScreen.modal.privacy1Title')}</p>
+                  <p>{t('welcomeScreen.modal.privacy1Desc')}</p>
+                  <p className="font-bold text-kat-dark">{t('welcomeScreen.modal.privacy2Title')}</p>
+                  <p>{t('welcomeScreen.modal.privacy2Desc')}</p>
+                  <p className="font-bold text-kat-dark">{t('welcomeScreen.modal.privacy3Title')}</p>
+                  <p>{t('welcomeScreen.modal.privacy3Desc')}</p>
                 </>
               )}
 
               {legalModal === "cookie" && (
                 <>
-                  <p className="font-bold text-kat-dark">1. Cookie giúp hành trình mượt mà hơn</p>
-                  <p>KAT Journey sử dụng một ít "bánh quy" (Cookies và Local Storage) để ghi nhớ bạn là ai, chuyến đi nào đang xem dở, và giữ cho bạn luôn trong trạng thái sẵn sàng lên đường mà không cần đăng nhập lại nhiều lần.</p>
-                  <p className="font-bold text-kat-dark">2. Nói "Không" với quảng cáo theo dõi</p>
-                  <p>Trải nghiệm lên kế hoạch du lịch của bạn không nên bị làm phiền. Chúng tôi cam kết chỉ sử dụng các Cookie kỹ thuật thiết yếu để ứng dụng hoạt động chính xác. KAT Journey tuyệt đối KHÔNG bám đuôi hay bán dữ liệu của bạn cho bất kỳ bên thứ ba nào.</p>
+                  <p className="font-bold text-kat-dark">{t('welcomeScreen.modal.cookie1Title')}</p>
+                  <p>{t('welcomeScreen.modal.cookie1Desc')}</p>
+                  <p className="font-bold text-kat-dark">{t('welcomeScreen.modal.cookie2Title')}</p>
+                  <p>{t('welcomeScreen.modal.cookie2Desc')}</p>
                 </>
               )}
             </div>
@@ -422,7 +422,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                 onClick={() => setLegalModal(null)}
                 className="w-full inline-flex min-h-[44px] items-center justify-center rounded-[12px] bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-bold hover:brightness-105 active:scale-[0.98] transition-all shadow-sm"
               >
-                Đồng ý và Đóng
+                {t('welcomeScreen.modal.agreeAndClose')}
               </button>
             </div>
 

@@ -1,0 +1,396 @@
+{
+  "nav": {
+    "home": "首页",
+    "timeline": "行程",
+    "expenses": "费用",
+    "checklist": "清单",
+    "more": "菜单"
+  },
+  "settings": {
+    "header": {
+      "title": "设置",
+      "subtitle": "系统偏好与个性化"
+    },
+    "menu": {
+      "install": {
+        "title": "安装 KAT Journey",
+        "desc": "在主屏幕上快速启动以获得原生体验"
+      },
+      "theme": {
+        "title": "主题",
+        "desc": "自定义应用颜色和外观"
+      },
+      "language": {
+        "title": "语言",
+        "desc": "选择显示语言"
+      },
+      "privacy": {
+        "title": "隐私",
+        "desc": "管理您的数据安全和权限"
+      },
+      "notification": {
+        "title": "通知",
+        "desc": "行程提醒、费用和活动"
+      },
+      "location": {
+        "title": "定位服务",
+        "desc": "自动推荐地点和当地货币"
+      },
+      "exchangeRates": {
+        "title": "汇率",
+        "desc": "来自 Vietcombank 的实时数据"
+      },
+      "about": {
+        "title": "关于应用",
+        "desc": "了解我们的旅程和应用详情"
+      },
+      "donate": {
+        "title": "支持开发者",
+        "desc": "为应用的进一步开发提供动力"
+      },
+      "feedback": {
+        "title": "反馈与建议",
+        "desc": "分享您的想法以帮助改进 KAT Journey"
+      },
+      "version": {
+        "title": "版本",
+        "desc": "此设备上的当前版本"
+      },
+      "dataManagement": {
+        "title": "数据管理",
+        "clearTemp": {
+          "title": "清除临时文件",
+          "desc": "删除缓存和非必要文件"
+        },
+        "restoreData": {
+          "title": "恢复行程",
+          "desc": "从备份文件 (.katjourney) 导入行程"
+        }
+      },
+      "dangerZone": {
+        "title": "危险区域",
+        "factoryReset": {
+          "title": "恢复出厂设置",
+          "desc": "永久删除所有数据"
+        },
+        "deleteAccount": {
+          "title": "删除帐户",
+          "desc": "永久删除帐户及数据"
+        }
+      }
+    },
+    "language": {
+      "title": "语言",
+      "desc": "选择您熟悉的语言",
+      "vi": "越南语",
+      "en": "英语"
+    },
+    "actions": {
+      "backToMenu": "返回菜单"
+    },
+    "themeView": {
+      "desc": "自定义 KAT Journey 的显示风格以适应您的环境光线。",
+      "light": "浅色",
+      "lightDesc": "适合日间光线",
+      "dark": "深色",
+      "darkDesc": "省电模式",
+      "system": "跟随系统",
+      "systemDesc": "根据设备设置自动调整"
+    },
+    "exchangeRatesView": {
+      "unit": "单位：越南盾 (VND)",
+      "loading": "正在加载汇率...",
+      "transfer": "银行转账"
+    },
+    "donateView": {
+      "title": "支持 KAT Journey",
+      "desc1": "如果 KAT Journey 对您有帮助，您可以发送一杯咖啡来支持开发者进一步完善应用。",
+      "desc2": "支持是自愿的。感谢您使用 KAT Journey。",
+      "scanQR": "扫描二维码转账",
+      "saveQR": "保存二维码到设备"
+    },
+    "aboutView": {
+      "subtitle": "个人旅程助手",
+      "desc": "不仅仅是一个规划工具，KAT Journey 更是您的伴侣，帮助您管理费用、安排行程，并完整打包所有难忘的时刻。",
+      "techTitle": "技术与许可证",
+      "techDesc1": "KAT Journey 使用 React、Vite、Dexie 和 Supabase 构建。系统仅在您主动登录时才使用 Supabase 进行同步和分享。",
+      "techDesc2": "我们衷心感谢陪伴此项目的作者和开源社区。",
+      "madeBy": "开发者："
+    },
+    "languageView": {
+      "desc": "选择 KAT Journey 的显示语言。"
+    },
+    "authView": {
+      "loading": "正在加载帐户状态...",
+      "welcome": "欢迎来到 KAT Journey",
+      "guestDesc": "访客可以在此设备上正常使用应用。谷歌登录将支持未来版本的数据同步。",
+      "continueGoogle": "继续使用 Google 登录",
+      "continueGuest": "作为访客继续",
+      "displayName": "显示名称...",
+      "localAccount": "本地帐户",
+      "anonymousAccount": "匿名帐户",
+      "notSynced": "未同步",
+      "guestNotice1": "所有行程和费用暂时保存在此设备上。请绑定帐户以",
+      "guestNotice2": "备份到云端并解锁",
+      "guestNotice3": "功能。",
+      "safe": "安全地",
+      "shareTrip": "行程分享",
+      "linkGoogle": "关联 Google 以同步",
+      "manualBackup": "手动备份数据 (.katjourney)"
+    },
+    "dialogs": {
+      "cloudRestore": {
+        "title": "从云端恢复数据？",
+        "warning": "此设备上的数据可能会被更改。请谨慎选择下方的恢复方式。",
+        "mergeTitle": "合并数据 (Merge)",
+        "mergeDesc": "保留当前数据，仅从备份中添加新的行程和日记。",
+        "replaceTitle": "完全替换 (Replace)",
+        "replaceWarning": "危险警告",
+        "replaceDesc": "清除此设备上的所有数据并使用云端备份覆盖。",
+        "cancel": "取消",
+        "continue": "继续"
+      },
+      "fileRestore": {
+        "title": "恢复行程？",
+        "warning": "导入备份后当前数据可能会被更改。请在继续之前确保您的文件有效。",
+        "cancel": "取消",
+        "restore": "恢复"
+      },
+      "deleteAccount": {
+        "title": "删除您的帐户？",
+        "warning": "为了确认，请准确输入 DELETE。",
+        "desc": "此操作将永久删除您在云系统和所有本地存储的数据。此操作无法撤销。",
+        "deletedData": "将被删除的数据：",
+        "li1": "系统登录帐户",
+        "li2": "所有保存的行程",
+        "li3": "所有费用、旅行日记",
+        "li4": "行李清单和文档",
+        "confirmBtn": "确认删除帐户",
+        "confirmText": "DELETE",
+        "inputPlaceholder": "输入 DELETE 以确认",
+        "itemName": "帐户及所有 KAT Journey 数据",
+        "errorAuth": "此操作需要近期登录。请退出并使用 Google 重新登录以在删除帐户前进行验证。",
+        "errorGeneric": "删除帐户时出错，请稍后重试。"
+      },
+      "factoryReset": {
+        "title": "恢复出厂设置？",
+        "warning": "为了确认，请准确输入 DELETE。",
+        "desc": "此操作将永久删除此设备上的所有数据。此操作无法撤销。",
+        "li1": "所有行程",
+        "li2": "所有费用和旅行日记",
+        "li3": "行李数据和清单",
+        "li4": "当前的访客帐户信息",
+        "confirmBtn": "确认恢复",
+        "confirmText": "DELETE",
+        "inputPlaceholder": "输入 DELETE",
+        "itemName": "所有应用数据"
+      },
+      "importPreview": {
+        "title": "确认导入行程",
+        "subtitle": "导入前检查信息",
+        "tripName": "行程名称",
+        "exportedAt": "导出时间：",
+        "members": "成员",
+        "timeline": "时间线",
+        "expenses": "费用",
+        "checklist": "清单",
+        "journal": "日记",
+        "notice": "数据将添加到此设备。现有行程不会受到影响。",
+        "cancel": "取消",
+        "importing": "导入中...",
+        "importNow": "立即导入"
+      }
+    },
+    "privacyView": {
+      "title": "数据隐私承诺",
+      "offlineTitle": "安全的本地存储 (Offline-first):",
+      "offlineDesc": " 所有行程细节、费用和日记都安全保存在您手机内存中。即使没有网络，您也可以随时随地查看行程。",
+      "identityTitle": "绝对的身份安全:",
+      "identityDesc": " 登录系统设置为严格的身份验证。这确保您的帐户和所有计划得到安全授权，只有您（所有者）有权管理和编辑它们。",
+      "noDataTitle": "对自动收集数据说“不”:",
+      "noDataDesc": " 您的行程属于您自己。我们承诺不会自动上传任何个人信息或计划到云端。仅在您主动点击备份或分享行程功能时，数据才会被发送。"
+    },
+    "auth": {
+      "title": "帐户与同步",
+      "dataSync": "数据同步",
+      "dataSyncDesc": "自动备份和保护您的数据",
+      "newerVersionAlert": "云端有更新的版本。请点击同步进行下载。",
+      "loginToSync": "请登录以使用数据同步。",
+      "lastSync": "最后同步时间",
+      "neverSynced": "从未同步",
+      "autoBackupCloud": "自动备份到云端",
+      "autoBackupDesc": "数据更改后5秒后台备份",
+      "syncing": "正在同步数据...",
+      "autoBackingUp": "正在自动备份...",
+      "syncNow": "立即同步数据",
+      "syncSuccess": "数据已是最新。",
+      "syncSuccessCloud": "数据已成功同步到云端！",
+      "syncFailed": "同步失败："
+    }
+  },
+  "welcomeScreen": {
+    "heroTitle1": "探索世界。",
+    "heroTitle2": "捕捉精彩瞬间。",
+    "heroDesc": "跨平台同步数据，管理行程，即时分摊费用。",
+    "slide1Title": "智能行程规划",
+    "slide1Desc": "按天计划，标记地点，并与团队直观地安排行程。",
+    "slide2Title": "公平的费用分摊",
+    "slide2Desc": "记录团队支出，自动分摊账单，即时结算。",
+    "slide3Title": "珍藏每一份记忆",
+    "slide3Desc": "根据清单打包行李，并写下旅行日记来保留有意义的照片。",
+    "googleLogin": "使用 Google 继续",
+    "guestLogin": "以访客身份探索",
+    "googleLoginFail": "Google 登录失败。",
+    "guestLoginFail": "访客登录失败。",
+    "legalTerms": "继续即表示您同意我们的<0>服务条款</0>、<1>隐私政策</1>和<2>Cookie 政策</2>。",
+    "multiplatform": "可在多平台使用",
+    "modal": {
+      "termsTitle": "服务条款",
+      "privacyTitle": "隐私政策",
+      "cookieTitle": "Cookie 政策",
+      "terms1Title": "1. 让我们共同创造美好的旅程",
+      "terms1Desc": "欢迎来到 KAT Journey！通过使用该应用程序，我们同意尊重共同原则以建立文明的旅行社区。",
+      "terms2Title": "2. 你自己的记忆空间",
+      "terms2Desc": "您的帐户是您保存个人旅程的地方。请妥善保管您的登录信息（Google 帐户）。",
+      "terms3Title": "3. 安全存储，随处可去",
+      "terms3Desc": "KAT Journey 优先将数据直接存储在您的设备上，以便您即使在离线状态下也可以查看行程。",
+      "privacy1Title": "1. 个人信息收集最小化",
+      "privacy1Desc": "KAT Journey 仅从您的 Google 帐户中收集一些基本信息（姓名、电子邮件、头像）。",
+      "privacy2Title": "2. 您的回忆，安全第一",
+      "privacy2Desc": "所有计划、费用和行李都“安静地”保存在您的设备上。",
+      "privacy3Title": "3. 完全的控制权",
+      "privacy3Desc": "您是此帐户的“船长”。只需轻轻一按，即可随时创建、编辑、永久删除旅行。",
+      "cookie1Title": "1. Cookie 让旅程更顺畅",
+      "cookie1Desc": "KAT Journey 使用少量“cookie”来记住您是谁，让您无需多次登录。",
+      "cookie2Title": "2. 对跟踪广告说“不”",
+      "cookie2Desc": "KAT Journey 绝对不会跟踪您或将您的数据出售给任何第三方。",
+      "agreeAndClose": "同意并关闭"
+    }
+  },
+  "splash": {
+    "subtitle": "探索与回忆"
+  },
+  "userMenu": {
+    "guest": "访客",
+    "anonymous": "匿名",
+    "notLoggedIn": "未登录",
+    "loginToSync": "登录以同步",
+    "profileAndAccount": "个人资料和帐户",
+    "appSettings": "应用设置",
+    "exitGuest": "退出访客模式",
+    "logout": "登出",
+    "loginRegister": "登录 / 注册",
+    "accountMenu": "帐户菜单",
+    "logoutConfirmTitle": "确认登出？",
+    "logoutConfirmMessage": "您即将登出此设备。不用担心，备份到 <1>云端</1> 的所有数据都将保存在 <3>安全</3> 的地方。",
+    "logoutButton": "登出"
+  },
+  "common": {
+    "done": "完成",
+    "itemToDelete": "要删除的项目",
+    "typeToConfirm": "输入 <1>{{text}}</1> 以确认此操作。",
+    "typeToConfirmPlaceholder": "输入 {{text}} 以确认",
+    "cancel": "取消",
+    "deleting": "删除中...",
+    "delete": "删除"
+  },
+  "sharedTrip": {
+    "viewTitle": "查看分享的行程",
+    "inputLabel": "输入分享行程链接",
+    "inputPlaceholder": "粘贴分享行程链接…",
+    "viewButton": "立即查看",
+    "recentHistory": "最近浏览",
+    "departure": "出发",
+    "invalidLink": "无效链接。请重试！"
+  },
+  "dashboard": {
+    "heroTitle": "您的行程",
+    "heroDesc": "保存每次旅行的行程、同伴、费用和准备事项。",
+    "memoriesBtn": "回忆",
+    "createTripBtn": "创建行程",
+    "nextTripTitle": "下一次旅行",
+    "statusActive": "进行中",
+    "statusUpcoming": "即将到来",
+    "statusPast": "已结束",
+    "dayTrip": "一日游",
+    "longTrip": "长途旅行",
+    "duration": "{{days}}天 {{nights}}夜",
+    "durationDaysOnly": "{{days}}天",
+    "noLocation": "无地点",
+    "noLocationGrid": "未指定",
+    "peopleCount": "{{count}} 人",
+    "peopleCountCompanion": "{{count}} 个同伴",
+    "noExpense": "无费用",
+    "noExpenseFull": "暂无费用",
+    "expenseTotal": "{{amount}}",
+    "itemsToPrepare": "还要准备 {{count}} 样",
+    "itemsUnprepared": "{{count}} 样未准备",
+    "luggageReady": "行李已准备好",
+    "allTripsTitle": "所有行程",
+    "allTripsDesc": "您的所有行程。",
+    "activeTripsTitle": "进行中的行程",
+    "activeTripsDesc": "目前正在进行的旅程。",
+    "upcomingTripsTitle": "即将到来的行程",
+    "upcomingTripsDesc": "即将出发的旅程。",
+    "pastTripsTitle": "已完成的行程",
+    "pastTripsDesc": "已结束并可供回顾的旅行。"
+  },
+  "archive": {
+    "title": "回忆",
+    "back": "返回",
+    "savedTrips": "已保存 {{count}} 个行程",
+    "noTripsDesc": "已结束的行程将存储在这里。",
+    "emptyTitle": "暂无回忆",
+    "emptyDesc": "已结束的行程将出现在这里供您回顾。",
+    "tripCount": "{{count}} 个行程",
+    "unknownYear": "未知年份"
+  },
+  "tripForm": {
+    "editTitle": "行程详情",
+    "createTitle": "创建行程",
+    "createSubtitle": "先填写基本信息，日程和费用可以稍后添加。",
+    "saveBtn": "保存详情",
+    "createBtn": "创建行程",
+    "saveAria": "确认保存行程详情",
+    "createAria": "确认创建行程",
+    "nameLabel": "行程名称",
+    "namePlaceholder": "例：夏日狂欢",
+    "nameError": "请输入行程名称。",
+    "locationLabel": "地点",
+    "locationSuccess": "坐标匹配成功 — 天气已自动连接！",
+    "locationHelper": "从建议列表中选择正确的目的地以确保天气预报准确。如果找不到具体地点，请选择附近的区域或城市。",
+    "timeLabel": "行程时间",
+    "dayTripBtn": "一日游",
+    "dayTripDesc": "当天去当天回",
+    "multiDayBtn": "多日游",
+    "multiDayDesc": "有出发和返回日期",
+    "pickEndPrompt": "选择结束日期…",
+    "startDateError": "请选择开始日期。",
+    "endDateError": "请选择结束日期。",
+    "dateCompareError": "结束日期不能早于开始日期。",
+    "daysOfWeek": [
+      "日",
+      "一",
+      "二",
+      "三",
+      "四",
+      "五",
+      "六"
+    ],
+    "months": [
+      "1月",
+      "2月",
+      "3月",
+      "4月",
+      "5月",
+      "6月",
+      "7月",
+      "8月",
+      "9月",
+      "10月",
+      "11月",
+      "12月"
+    ],
+    "dateFmt": "{{year}}年{{month}}月{{day}}日"
+  }
+}

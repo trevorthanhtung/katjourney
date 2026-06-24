@@ -1,10 +1,13 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface SplashScreenProps {
   isFading: boolean;
 }
 
 export function SplashScreen({ isFading }: SplashScreenProps) {
+  const { t } = useTranslation();
+  
   return (
     <div
       className={`fixed inset-0 z-[200] flex flex-col items-center justify-center bg-kat-bg transition-all duration-500 select-none ${
@@ -39,7 +42,7 @@ export function SplashScreen({ isFading }: SplashScreenProps) {
             KAT Journey
           </h1>
           <p className="text-[12px] font-bold text-slate-500/80 mt-1.5 uppercase tracking-[0.2em]">
-            Khám phá &amp; Kỷ niệm
+            {t('splash.subtitle')}
           </p>
         </div>
       </div>

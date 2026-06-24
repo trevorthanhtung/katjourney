@@ -1,0 +1,396 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "timeline": "タイムライン",
+    "expenses": "費用",
+    "checklist": "チェックリスト",
+    "more": "メニュー"
+  },
+  "settings": {
+    "header": {
+      "title": "設定",
+      "subtitle": "システム設定とパーソナライズ"
+    },
+    "menu": {
+      "install": {
+        "title": "KAT Journey をインストール",
+        "desc": "ホーム画面からすぐに起動してネイティブな体験を"
+      },
+      "theme": {
+        "title": "テーマ",
+        "desc": "アプリの色と外観をカスタマイズ"
+      },
+      "language": {
+        "title": "言語",
+        "desc": "表示言語の選択"
+      },
+      "privacy": {
+        "title": "プライバシー",
+        "desc": "データセキュリティと権限を管理"
+      },
+      "notification": {
+        "title": "通知",
+        "desc": "旅行のリマインダー、費用、アクティビティ"
+      },
+      "location": {
+        "title": "位置情報サービス",
+        "desc": "場所と現地通貨を自動提案"
+      },
+      "exchangeRates": {
+        "title": "為替レート",
+        "desc": "Vietcombank のライブデータ"
+      },
+      "about": {
+        "title": "アプリについて",
+        "desc": "私たちの旅とアプリの詳細"
+      },
+      "donate": {
+        "title": "クリエイターを支援",
+        "desc": "アプリのさらなる開発をサポート"
+      },
+      "feedback": {
+        "title": "フィードバックと提案",
+        "desc": "KAT Journey の改善のためにご意見をお寄せください"
+      },
+      "version": {
+        "title": "バージョン",
+        "desc": "このデバイスの現在のバージョン"
+      },
+      "dataManagement": {
+        "title": "データ管理",
+        "clearTemp": {
+          "title": "一時ファイルをクリア",
+          "desc": "キャッシュと不要なファイルを削除"
+        },
+        "restoreData": {
+          "title": "旅行を復元",
+          "desc": "バックアップファイル (.katjourney) から旅行をインポート"
+        }
+      },
+      "dangerZone": {
+        "title": "危険ゾーン",
+        "factoryReset": {
+          "title": "初期化",
+          "desc": "すべてのデータを完全に削除"
+        },
+        "deleteAccount": {
+          "title": "アカウントを削除",
+          "desc": "アカウントとデータを完全に削除"
+        }
+      }
+    },
+    "language": {
+      "title": "言語",
+      "desc": "使い慣れた言語を選択してください",
+      "vi": "ベトナム語",
+      "en": "英語"
+    },
+    "actions": {
+      "backToMenu": "メニューに戻る"
+    },
+    "themeView": {
+      "desc": "周囲の明るさに合わせて KAT Journey の表示スタイルをカスタマイズします。",
+      "light": "ライト",
+      "lightDesc": "昼間の光に最適",
+      "dark": "ダーク",
+      "darkDesc": "バッテリー節約",
+      "system": "システム",
+      "systemDesc": "デバイス設定に従う"
+    },
+    "exchangeRatesView": {
+      "unit": "単位: VND (ベトナムドン)",
+      "loading": "レートを読み込み中...",
+      "transfer": "銀行振込"
+    },
+    "donateView": {
+      "title": "KAT Journey をサポート",
+      "desc1": "KAT Journey がお役に立っている場合は、アプリのさらなる開発をサポートするためにコーヒー 1 杯分を送ることができます。",
+      "desc2": "サポートは任意です。KAT Journey をご利用いただきありがとうございます。",
+      "scanQR": "QRコードをスキャンして送金",
+      "saveQR": "QRコードをデバイスに保存"
+    },
+    "aboutView": {
+      "subtitle": "パーソナルジャーニーアシスタント",
+      "desc": "単なる計画ツールにとどまらず、KAT Journey は費用を管理し、スケジュールを整理し、思い出に残るすべての瞬間を完全にパックするためのあなたの仲間です。",
+      "techTitle": "技術とライセンス",
+      "techDesc1": "KAT Journey は React、Vite、Dexie、Supabase で構築されています。システムは、あなたが積極的にログインした場合にのみ、同期と共有のために Supabase を使用します。",
+      "techDesc2": "このプロジェクトを共にしてくださった作成者とオープンソースコミュニティに心から感謝申し上げます。",
+      "madeBy": "作成者:"
+    },
+    "languageView": {
+      "desc": "KAT Journey の表示言語を選択してください。"
+    },
+    "authView": {
+      "loading": "アカウントのステータスを読み込み中...",
+      "welcome": "KAT Journey へようこそ",
+      "guestDesc": "ゲストはこのデバイスでアプリを通常通り使用できます。Google ログインは将来のバージョンでデータ同期をサポートする予定です。",
+      "continueGoogle": "Google で続行",
+      "continueGuest": "ゲストとして続行",
+      "displayName": "表示名...",
+      "localAccount": "ローカルアカウント",
+      "anonymousAccount": "匿名アカウント",
+      "notSynced": "未同期",
+      "guestNotice1": "すべての旅程と費用は一時的にこのデバイスに保存されています。クラウドに",
+      "guestNotice2": "安全にバックアップし、",
+      "guestNotice3": "旅行共有機能のロックを解除するには、アカウントをリンクしてください。",
+      "safe": "",
+      "shareTrip": "",
+      "linkGoogle": "Google をリンクして同期",
+      "manualBackup": "手動データバックアップ (.katjourney)"
+    },
+    "dialogs": {
+      "cloudRestore": {
+        "title": "クラウドからデータを復元しますか？",
+        "warning": "このデバイスのデータが変更される可能性があります。以下の適切な復元方法を慎重に選択してください。",
+        "mergeTitle": "データを結合 (Merge)",
+        "mergeDesc": "現在のデータを保持し、バックアップから新しい旅行と記録のみを追加します。",
+        "replaceTitle": "完全に置き換え (Replace)",
+        "replaceWarning": "危険警告",
+        "replaceDesc": "このデバイスのすべてのデータを消去し、クラウドのバックアップで上書きします。",
+        "cancel": "キャンセル",
+        "continue": "続行"
+      },
+      "fileRestore": {
+        "title": "旅程を復元しますか？",
+        "warning": "バックアップをインポートした後、現在のデータが変更される可能性があります。続行する前にファイルが有効であることを確認してください。",
+        "cancel": "キャンセル",
+        "restore": "復元"
+      },
+      "deleteAccount": {
+        "title": "アカウントを削除しますか？",
+        "warning": "確認するには、DELETE と正確に入力してください。",
+        "desc": "このアクションは、クラウドシステムおよびすべてのローカルストレージデータからあなたのアカウントを完全に削除します。この操作は元に戻せません。",
+        "deletedData": "削除されるデータ:",
+        "li1": "システムログインアカウント",
+        "li2": "保存されたすべての旅行と旅程",
+        "li3": "すべての費用、旅行記",
+        "li4": "持ち物リストとドキュメント",
+        "confirmBtn": "アカウントの削除を確認",
+        "confirmText": "DELETE",
+        "inputPlaceholder": "確認のために DELETE を入力",
+        "itemName": "アカウントおよびすべての KAT Journey データ",
+        "errorAuth": "このアクションには最近のログインが必要です。アカウントを削除する前に、ログアウトして Google で再度ログインし、確認してください。",
+        "errorGeneric": "アカウントの削除中にエラーが発生しました。後でもう一度お試しください。"
+      },
+      "factoryReset": {
+        "title": "初期化しますか？",
+        "warning": "確認するには、DELETE と正確に入力してください。",
+        "desc": "このアクションは、このデバイスのすべてのデータを完全に削除します。この操作は元に戻せません。",
+        "li1": "すべての旅行と旅程",
+        "li2": "すべての費用と旅行記",
+        "li3": "荷物データとチェックリスト",
+        "li4": "現在のゲストアカウント情報",
+        "confirmBtn": "初期化を確認",
+        "confirmText": "DELETE",
+        "inputPlaceholder": "DELETE を入力",
+        "itemName": "すべてのアプリデータ"
+      },
+      "importPreview": {
+        "title": "旅行インポートの確認",
+        "subtitle": "インポート前に情報を確認",
+        "tripName": "旅行名",
+        "exportedAt": "エクスポート時刻:",
+        "members": "メンバー",
+        "timeline": "タイムライン",
+        "expenses": "費用",
+        "checklist": "チェックリスト",
+        "journal": "旅行記",
+        "notice": "データはこのデバイスに追加されます。既存の旅行は影響を受けません。",
+        "cancel": "キャンセル",
+        "importing": "インポート中...",
+        "importNow": "今すぐインポート"
+      }
+    },
+    "privacyView": {
+      "title": "データプライバシーの誓約",
+      "offlineTitle": "安全なローカルストレージ (オフラインファースト):",
+      "offlineDesc": " すべての旅行の詳細、費用、日記はスマートフォンのメモリに安全に保管されます。ネットワークがなくてもいつでもどこでも旅程を検索できます。",
+      "identityTitle": "絶対的なアイデンティティセキュリティ:",
+      "identityDesc": " ログインシステムは厳格な本人確認のために設定されています。これにより、アカウントとすべての計画が安全に承認され、あなた（所有者）だけが管理および編集する権利を持ちます。",
+      "noDataTitle": "自動データ収集を「NO」:",
+      "noDataDesc": " あなたの旅程はあなた自身のものです。いかなる個人情報や計画も自動的にクラウドにアップロードされないことをお約束します。データは、あなたが積極的にバックアップや旅行の共有機能をクリックした場合にのみネットワークに送信されます。"
+    },
+    "auth": {
+      "title": "アカウントと同期",
+      "dataSync": "データ同期",
+      "dataSyncDesc": "データの自動バックアップと保護",
+      "newerVersionAlert": "クラウドに新しいバージョンがあります。ダウンロードするには同期をタップしてください。",
+      "loginToSync": "データ同期を使用するにはログインしてください。",
+      "lastSync": "最終同期",
+      "neverSynced": "同期したことがありません",
+      "autoBackupCloud": "クラウドへの自動バックアップ",
+      "autoBackupDesc": "データ変更の5秒後にバックグラウンドでバックアップ",
+      "syncing": "データを同期中...",
+      "autoBackingUp": "自動バックアップ中...",
+      "syncNow": "今すぐデータを同期",
+      "syncSuccess": "データは最新です。",
+      "syncSuccessCloud": "クラウドへのデータ同期が完了しました！",
+      "syncFailed": "同期に失敗しました: "
+    }
+  },
+  "welcomeScreen": {
+    "heroTitle1": "世界を探索する。",
+    "heroTitle2": "瞬間を捉える。",
+    "heroDesc": "プラットフォーム間でデータを同期し、旅程を管理し、費用を即座に分割します。",
+    "slide1Title": "スマートな旅行計画",
+    "slide1Desc": "日ごとに計画し、場所をピン留めし、チームと視覚的に旅程を調整します。",
+    "slide2Title": "公平な費用負担",
+    "slide2Desc": "グループの支出を記録し、請求書を自動分割し、即座に決済します。",
+    "slide3Title": "すべての思い出を保存する",
+    "slide3Desc": "チェックリストで荷造りし、旅行日記を書いて大切な写真を残しましょう。",
+    "googleLogin": "Google で続行",
+    "guestLogin": "ゲストとして探索",
+    "googleLoginFail": "Google ログインに失敗しました。",
+    "guestLoginFail": "ゲスト ログインに失敗しました。",
+    "legalTerms": "続行することで、当社の<0>利用規約</0>、<1>プライバシーポリシー</1>、および<2>クッキーポリシー</2>に同意したものとみなされます。",
+    "multiplatform": "マルチプラットフォーム対応",
+    "modal": {
+      "termsTitle": "利用規約",
+      "privacyTitle": "プライバシーポリシー",
+      "cookieTitle": "クッキーポリシー",
+      "terms1Title": "1. 一緒に素晴らしい旅を作りましょう",
+      "terms1Desc": "KAT Journeyへようこそ！アプリを使用することで、私たちは健全な旅行コミュニティを構築するための共通の原則を尊重することに同意します。",
+      "terms2Title": "2. あなた自身の思い出のスペース",
+      "terms2Desc": "あなたのアカウントは、個人的な旅を保管する場所です。ログイン情報（Googleアカウント）を安全に保つことで保護にご協力ください。",
+      "terms3Title": "3. 安全な保管、どこへでも",
+      "terms3Desc": "KAT Journeyは、オフラインでも旅程を確認できるように、デバイスに直接データを保存することを優先します。",
+      "privacy1Title": "1. 個人情報の収集は最小限に",
+      "privacy1Desc": "KAT Journeyは、Googleアカウントから氏名、メールアドレス、アバターなど、ごくわずかな基本情報のみを収集します。",
+      "privacy2Title": "2. あなたの思い出、安全第一",
+      "privacy2Desc": "すべての計画、費用、荷物はデバイス上で「静かに」保管されます。",
+      "privacy3Title": "3. あなたの手に委ねられた完全なコントロール",
+      "privacy3Desc": "あなたはこのアカウントの「キャプテン」です。ワンタップでいつでも旅行を作成、編集、永久に削除できます。",
+      "cookie1Title": "1. クッキーでスムーズな旅を",
+      "cookie1Desc": "KAT Journeyは、あなたが誰であるかを記憶し、何度もログインしなくてもすぐに旅に出られるように、必要不可欠なクッキーを使用しています。",
+      "cookie2Title": "2. 追跡広告に「ノー」と言う",
+      "cookie2Desc": "KAT Journeyは、あなたを追跡したり、第三者にデータを販売したりすることは絶対にありません。",
+      "agreeAndClose": "同意して閉じる"
+    }
+  },
+  "splash": {
+    "subtitle": "探索と記憶"
+  },
+  "userMenu": {
+    "guest": "ゲスト",
+    "anonymous": "匿名",
+    "notLoggedIn": "未ログイン",
+    "loginToSync": "ログインして同期",
+    "profileAndAccount": "プロフィールとアカウント",
+    "appSettings": "アプリ設定",
+    "exitGuest": "ゲストモード終了",
+    "logout": "ログアウト",
+    "loginRegister": "ログイン / 登録",
+    "accountMenu": "アカウントメニュー",
+    "logoutConfirmTitle": "ログアウトしますか？",
+    "logoutConfirmMessage": "このデバイスからログアウトしようとしています。ご心配なく、<1>クラウド</1>にバックアップされたすべてのデータは<3>安全に</3>保管されます。",
+    "logoutButton": "ログアウト"
+  },
+  "common": {
+    "done": "完了",
+    "itemToDelete": "削除する項目",
+    "typeToConfirm": "この操作を確認するには <1>{{text}}</1> と入力してください。",
+    "typeToConfirmPlaceholder": "確認のために {{text}} と入力",
+    "cancel": "キャンセル",
+    "deleting": "削除中...",
+    "delete": "削除"
+  },
+  "sharedTrip": {
+    "viewTitle": "共有された旅行を見る",
+    "inputLabel": "共有旅行リンクを入力",
+    "inputPlaceholder": "共有旅行リンクを貼り付け…",
+    "viewButton": "今すぐ見る",
+    "recentHistory": "最近見た旅行",
+    "departure": "出発",
+    "invalidLink": "無効なリンクです。もう一度お試しください！"
+  },
+  "dashboard": {
+    "heroTitle": "あなたの旅行",
+    "heroDesc": "各旅行の旅程、同行者、費用、準備項目を保存します。",
+    "memoriesBtn": "思い出",
+    "createTripBtn": "旅行を作成",
+    "nextTripTitle": "次の旅行",
+    "statusActive": "進行中",
+    "statusUpcoming": "予定",
+    "statusPast": "終了",
+    "dayTrip": "日帰り旅行",
+    "longTrip": "長期旅行",
+    "duration": "{{days}}日 {{nights}}泊",
+    "durationDaysOnly": "{{days}}日",
+    "noLocation": "場所なし",
+    "noLocationGrid": "指定なし",
+    "peopleCount": "{{count}} 人",
+    "peopleCountCompanion": "同行者 {{count}} 人",
+    "noExpense": "費用なし",
+    "noExpenseFull": "まだ費用はありません",
+    "expenseTotal": "{{amount}}",
+    "itemsToPrepare": "準備する項目が{{count}}個あります",
+    "itemsUnprepared": "未準備の項目が{{count}}個あります",
+    "luggageReady": "荷物の準備完了",
+    "allTripsTitle": "すべての旅行",
+    "allTripsDesc": "すべての旅行。",
+    "activeTripsTitle": "進行中の旅行",
+    "activeTripsDesc": "現在行われている旅。",
+    "upcomingTripsTitle": "予定されている旅行",
+    "upcomingTripsDesc": "間もなく出発する旅。",
+    "pastTripsTitle": "完了した旅行",
+    "pastTripsDesc": "終了し、振り返ることができる旅行。"
+  },
+  "archive": {
+    "title": "思い出",
+    "back": "戻る",
+    "savedTrips": "保存された旅行 {{count}} 件",
+    "noTripsDesc": "終了した旅行がここに保存されます。",
+    "emptyTitle": "まだ思い出はありません",
+    "emptyDesc": "終了した旅行はここに表示され、振り返ることができます。",
+    "tripCount": "旅行 {{count}} 件",
+    "unknownYear": "年不明"
+  },
+  "tripForm": {
+    "editTitle": "旅行の詳細",
+    "createTitle": "旅行を作成",
+    "createSubtitle": "まずは基本情報を入力してください。旅程や費用は後で追加できます。",
+    "saveBtn": "詳細を保存",
+    "createBtn": "旅行を作成",
+    "saveAria": "旅行の詳細を保存します",
+    "createAria": "旅行を作成します",
+    "nameLabel": "旅行名",
+    "namePlaceholder": "例：素晴らしい夏休み",
+    "nameError": "旅行名を入力してください。",
+    "locationLabel": "場所",
+    "locationSuccess": "座標が一致しました — 天気が自動的にリンクされました！",
+    "locationHelper": "正確な天気予報を取得するには、候補から正しい目的地を選択してください。特定の場所が見つからない場合は、近くの地域や都市を選択してください。",
+    "timeLabel": "旅行の期間",
+    "dayTripBtn": "日帰り旅行",
+    "dayTripDesc": "同日に出発して帰る",
+    "multiDayBtn": "複数日",
+    "multiDayDesc": "出発日と帰宅日がある",
+    "pickEndPrompt": "終了日を選択…",
+    "startDateError": "開始日を選択してください。",
+    "endDateError": "終了日を選択してください。",
+    "dateCompareError": "終了日を開始日より前にすることはできません。",
+    "daysOfWeek": [
+      "日",
+      "月",
+      "火",
+      "水",
+      "木",
+      "金",
+      "土"
+    ],
+    "months": [
+      "1月",
+      "2月",
+      "3月",
+      "4月",
+      "5月",
+      "6月",
+      "7月",
+      "8月",
+      "9月",
+      "10月",
+      "11月",
+      "12月"
+    ],
+    "dateFmt": "{{year}}年{{month}}月{{day}}日"
+  }
+}

@@ -1,0 +1,396 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "timeline": "Itinéraire",
+    "expenses": "Dépenses",
+    "checklist": "Listes",
+    "more": "Menu"
+  },
+  "settings": {
+    "header": {
+      "title": "Paramètres",
+      "subtitle": "Préférences système et personnalisation"
+    },
+    "menu": {
+      "install": {
+        "title": "Installer KAT Journey",
+        "desc": "Lancez instantanément depuis l'écran d'accueil pour une expérience native"
+      },
+      "theme": {
+        "title": "Thème",
+        "desc": "Personnalisez les couleurs et l'apparence de l'application"
+      },
+      "language": {
+        "title": "Langue",
+        "desc": "Choisir la langue d'affichage"
+      },
+      "privacy": {
+        "title": "Confidentialité",
+        "desc": "Gérez la sécurité de vos données et vos autorisations"
+      },
+      "notification": {
+        "title": "Notifications",
+        "desc": "Rappels de voyage, dépenses et activités"
+      },
+      "location": {
+        "title": "Services de localisation",
+        "desc": "Suggestion automatique des lieux et de la monnaie locale"
+      },
+      "exchangeRates": {
+        "title": "Taux de change",
+        "desc": "Données en direct de Vietcombank"
+      },
+      "about": {
+        "title": "À propos de l'application",
+        "desc": "Découvrez notre parcours et les détails de l'application"
+      },
+      "donate": {
+        "title": "Soutenir le créateur",
+        "desc": "Contribuez au développement futur de l'application"
+      },
+      "feedback": {
+        "title": "Commentaires et suggestions",
+        "desc": "Partagez vos idées pour aider à améliorer KAT Journey"
+      },
+      "version": {
+        "title": "Version",
+        "desc": "Version actuelle sur cet appareil"
+      },
+      "dataManagement": {
+        "title": "Gestion des données",
+        "clearTemp": {
+          "title": "Effacer les fichiers temporaires",
+          "desc": "Supprimer le cache et les fichiers non essentiels"
+        },
+        "restoreData": {
+          "title": "Restaurer les voyages",
+          "desc": "Importer des voyages à partir d'un fichier de sauvegarde (.katjourney)"
+        }
+      },
+      "dangerZone": {
+        "title": "Zone de danger",
+        "factoryReset": {
+          "title": "Réinitialisation d'usine",
+          "desc": "Supprimer définitivement toutes les données"
+        },
+        "deleteAccount": {
+          "title": "Supprimer le compte",
+          "desc": "Supprimer définitivement le compte et les données"
+        }
+      }
+    },
+    "language": {
+      "title": "Langue",
+      "desc": "Choisissez une langue qui vous est familière",
+      "vi": "Vietnamien",
+      "en": "Anglais"
+    },
+    "actions": {
+      "backToMenu": "Retour au menu"
+    },
+    "themeView": {
+      "desc": "Personnalisez le style d'affichage de KAT Journey pour l'adapter à vos conditions d'éclairage ambiant.",
+      "light": "Clair",
+      "lightDesc": "Agréable pour les yeux à la lumière du jour",
+      "dark": "Sombre",
+      "darkDesc": "Économiseur de batterie",
+      "system": "Système",
+      "systemDesc": "Suit les paramètres de l'appareil"
+    },
+    "exchangeRatesView": {
+      "unit": "Unité: VND",
+      "loading": "Chargement des taux...",
+      "transfer": "Virement bancaire"
+    },
+    "donateView": {
+      "title": "Soutenir KAT Journey",
+      "desc1": "Si KAT Journey vous est utile, vous pouvez envoyer un petit café pour aider le créateur à développer l'application.",
+      "desc2": "Le soutien est facultatif. Merci d'utiliser KAT Journey.",
+      "scanQR": "Scanner le code QR pour transférer",
+      "saveQR": "Enregistrer le code QR sur l'appareil"
+    },
+    "aboutView": {
+      "subtitle": "Assistant de voyage personnel",
+      "desc": "Plus qu'un simple outil de planification, KAT Journey est votre compagnon pour vous aider à gérer vos dépenses, organiser vos horaires et emballer entièrement tous vos moments mémorables.",
+      "techTitle": "Technologie et Licences",
+      "techDesc1": "KAT Journey est construit avec React, Vite, Dexie et Supabase. Le système n'utilise Supabase pour la synchronisation et le partage que lorsque vous vous connectez activement.",
+      "techDesc2": "Nous tenons à exprimer notre sincère gratitude aux auteurs et à la communauté open-source qui ont accompagné ce projet.",
+      "madeBy": "réalisé par"
+    },
+    "languageView": {
+      "desc": "Choisissez la langue d'affichage pour KAT Journey."
+    },
+    "authView": {
+      "loading": "Chargement de l'état du compte...",
+      "welcome": "Bienvenue sur KAT Journey",
+      "guestDesc": "Les invités peuvent utiliser l'application normalement sur cet appareil. La connexion Google prendra en charge la synchronisation des données dans les versions futures.",
+      "continueGoogle": "Continuer avec Google",
+      "continueGuest": "Continuer en tant qu'invité",
+      "displayName": "Nom d'affichage...",
+      "localAccount": "Compte local",
+      "anonymousAccount": "Compte anonyme",
+      "notSynced": "Non synchronisé",
+      "guestNotice1": "Tous les itinéraires et dépenses sont temporairement enregistrés sur cet appareil. Veuillez associer votre compte pour sauvegarder en toute",
+      "guestNotice2": "sécurité sur le cloud et débloquer la",
+      "guestNotice3": "fonction de partage de voyage.",
+      "safe": " ",
+      "shareTrip": " ",
+      "linkGoogle": "Associer Google pour synchroniser",
+      "manualBackup": "Sauvegarde manuelle des données (.katjourney)"
+    },
+    "dialogs": {
+      "cloudRestore": {
+        "title": "Restaurer les données depuis le Cloud ?",
+        "warning": "Les données de cet appareil peuvent être modifiées. Veuillez considérer le mode de restauration approprié ci-dessous.",
+        "mergeTitle": "Fusionner les données (Merge)",
+        "mergeDesc": "Conserver les données actuelles, ajouter uniquement de nouveaux voyages et de nouvelles entrées à partir de la sauvegarde.",
+        "replaceTitle": "Remplacer complètement (Replace)",
+        "replaceWarning": "AVERTISSEMENT DE DANGER",
+        "replaceDesc": "Effacer toutes les données de cet appareil et remplacer par la sauvegarde sur le Cloud.",
+        "cancel": "Annuler",
+        "continue": "Continuer"
+      },
+      "fileRestore": {
+        "title": "Restaurer l'itinéraire ?",
+        "warning": "Les données actuelles peuvent être modifiées après l'importation de la sauvegarde. Veuillez vous assurer que votre fichier est valide avant de continuer.",
+        "cancel": "Annuler",
+        "restore": "Restaurer"
+      },
+      "deleteAccount": {
+        "title": "Supprimer votre compte ?",
+        "warning": "Pour confirmer, veuillez saisir DELETE exactement.",
+        "desc": "Cette action supprimera définitivement votre compte sur le système Cloud et toutes les données de stockage local. Cette action est irréversible.",
+        "deletedData": "Données à supprimer :",
+        "li1": "Compte de connexion au système",
+        "li2": "Tous les voyages et itinéraires enregistrés",
+        "li3": "Toutes les dépenses, carnets de voyage",
+        "li4": "Listes de bagages et documents",
+        "confirmBtn": "Confirmer la suppression du compte",
+        "confirmText": "DELETE",
+        "inputPlaceholder": "Saisir DELETE pour confirmer",
+        "itemName": "Compte et toutes les données KAT Journey",
+        "errorAuth": "Cette action nécessite une connexion récente. Veuillez vous déconnecter et vous reconnecter avec Google pour vérifier avant de supprimer le compte.",
+        "errorGeneric": "Une erreur s'est produite lors de la suppression du compte. Veuillez réessayer plus tard."
+      },
+      "factoryReset": {
+        "title": "Réinitialisation d'usine ?",
+        "warning": "Pour confirmer, veuillez saisir DELETE exactement.",
+        "desc": "Cette action supprimera définitivement toutes les données sur cet appareil. Cette action est irréversible.",
+        "li1": "Tous les voyages et itinéraires",
+        "li2": "Toutes les dépenses et carnets de voyage",
+        "li3": "Données de bagages et listes de contrôle",
+        "li4": "Informations du compte invité actuel",
+        "confirmBtn": "Confirmer la réinitialisation",
+        "confirmText": "DELETE",
+        "inputPlaceholder": "Saisir DELETE",
+        "itemName": "Toutes les données de l'application"
+      },
+      "importPreview": {
+        "title": "Confirmer l'importation du voyage",
+        "subtitle": "Vérifier les informations avant d'importer",
+        "tripName": "Nom du voyage",
+        "exportedAt": "Exporté le :",
+        "members": "Membres",
+        "timeline": "Itinéraire",
+        "expenses": "Dépenses",
+        "checklist": "Listes de contrôle",
+        "journal": "Journal",
+        "notice": "Les données seront ajoutées à cet appareil. Les voyages existants ne seront pas affectés.",
+        "cancel": "Annuler",
+        "importing": "Importation...",
+        "importNow": "Importer maintenant"
+      }
+    },
+    "privacyView": {
+      "title": "Engagement de confidentialité des données",
+      "offlineTitle": "Stockage local sécurisé (Offline-first) :",
+      "offlineDesc": " Tous les détails de vos voyages, dépenses et journaux sont conservés en toute sécurité directement dans la mémoire de votre téléphone. Vous pouvez consulter votre itinéraire à tout moment, n'importe où, même sans réseau.",
+      "identityTitle": "Sécurité d'identité absolue :",
+      "identityDesc": " Le système de connexion est configuré pour une vérification d'identité stricte. Cela garantit que votre compte et tous vos plans sont autorisés en toute sécurité, et seul vous (le propriétaire) avez le droit de les gérer et de les modifier.",
+      "noDataTitle": "Dites \"Non\" à la collecte automatique de données :",
+      "noDataDesc": " Votre itinéraire vous appartient. Nous nous engageons à ce qu'aucune information personnelle ou aucun plan ne soit automatiquement téléchargé sur le cloud. Les données ne sont envoyées au réseau que lorsque vous cliquez activement sur la fonction de sauvegarde ou de partage de voyage."
+    },
+    "auth": {
+      "title": "Compte et synchronisation",
+      "dataSync": "Synchronisation des données",
+      "dataSyncDesc": "Sauvegarde automatique et sécurité",
+      "newerVersionAlert": "Une version plus récente est disponible sur le Cloud. Appuyez sur Synchroniser pour la télécharger.",
+      "loginToSync": "Veuillez vous connecter pour utiliser la synchronisation.",
+      "lastSync": "Dernière synchronisation",
+      "neverSynced": "Jamais synchronisé",
+      "autoBackupCloud": "Sauvegarde automatique sur le Cloud",
+      "autoBackupDesc": "Sauvegarde en arrière-plan 5s après modification",
+      "syncing": "Synchronisation des données...",
+      "autoBackingUp": "Sauvegarde automatique en cours...",
+      "syncNow": "Synchroniser maintenant",
+      "syncSuccess": "Les données sont à jour.",
+      "syncSuccessCloud": "Données synchronisées sur le Cloud avec succès !",
+      "syncFailed": "Échec de la synchronisation : "
+    }
+  },
+  "welcomeScreen": {
+    "heroTitle1": "Explorez le monde.",
+    "heroTitle2": "Capturez les moments.",
+    "heroDesc": "Synchronisez les données sur plusieurs plateformes, gérez les itinéraires et partagez les frais instantanément.",
+    "slide1Title": "Planification de voyage intelligente",
+    "slide1Desc": "Planifiez au jour le jour, épinglez des lieux et organisez visuellement les itinéraires avec votre équipe.",
+    "slide2Title": "Partage équitable des frais",
+    "slide2Desc": "Enregistrez les dépenses de groupe, partagez automatiquement les factures et réglez les paiements instantanément.",
+    "slide3Title": "Préservez chaque souvenir",
+    "slide3Desc": "Faites vos valises avec des listes de contrôle et rédigez des journaux de voyage pour conserver vos photos.",
+    "googleLogin": "Continuer avec Google",
+    "guestLogin": "Explorer en tant qu'invité",
+    "googleLoginFail": "Échec de la connexion Google.",
+    "guestLoginFail": "Échec de la connexion invité.",
+    "legalTerms": "En continuant, vous acceptez nos <0>Conditions d'utilisation</0>, notre <1>Politique de confidentialité</1> et notre <2>Politique en matière de cookies</2>.",
+    "multiplatform": "Disponible sur plusieurs plateformes",
+    "modal": {
+      "termsTitle": "Conditions d'utilisation",
+      "privacyTitle": "Politique de confidentialité",
+      "cookieTitle": "Politique en matière de cookies",
+      "terms1Title": "1. Créons de beaux voyages ensemble",
+      "terms1Desc": "Bienvenue sur KAT Journey ! En utilisant l'application, nous acceptons de respecter des principes communs pour construire une communauté de voyageurs civilisée.",
+      "terms2Title": "2. Votre propre espace de souvenirs",
+      "terms2Desc": "Votre compte est l'endroit où vous conservez vos voyages personnels. Aidez-nous à le protéger en gardant vos informations de connexion (compte Google) en sécurité.",
+      "terms3Title": "3. Stockage sécurisé, allez n'importe où",
+      "terms3Desc": "KAT Journey donne la priorité au stockage direct des données sur votre appareil afin que vous puissiez consulter votre itinéraire même hors ligne.",
+      "privacy1Title": "1. Collecte minimale d'informations personnelles",
+      "privacy1Desc": "KAT Journey ne collecte que quelques informations de base (Nom, E-mail, Avatar) de votre compte Google.",
+      "privacy2Title": "2. Vos souvenirs, la sécurité avant tout",
+      "privacy2Desc": "Tous les plans, dépenses et bagages « dorment paisiblement » sur votre appareil.",
+      "privacy3Title": "3. Contrôle total entre vos mains",
+      "privacy3Desc": "Vous êtes le « capitaine » de ce compte. Vous avez tous les droits pour créer, modifier, supprimer définitivement des voyages à tout moment en un seul clic.",
+      "cookie1Title": "1. Les cookies rendent le voyage plus fluide",
+      "cookie1Desc": "KAT Journey utilise des cookies essentiels pour se souvenir de qui vous êtes sans avoir à vous reconnecter plusieurs fois.",
+      "cookie2Title": "2. Dites « Non » au suivi publicitaire",
+      "cookie2Desc": "KAT Journey ne vous suivra absolument pas et ne vendra pas vos données à des tiers.",
+      "agreeAndClose": "Accepter et fermer"
+    }
+  },
+  "splash": {
+    "subtitle": "Explorer et Souvenirs"
+  },
+  "userMenu": {
+    "guest": "Invité",
+    "anonymous": "Anonyme",
+    "notLoggedIn": "Non connecté",
+    "loginToSync": "Connectez-vous pour sync",
+    "profileAndAccount": "Profil & Compte",
+    "appSettings": "Paramètres de l'app",
+    "exitGuest": "Quitter Invité",
+    "logout": "Se déconnecter",
+    "loginRegister": "Connexion / Inscription",
+    "accountMenu": "Menu du compte",
+    "logoutConfirmTitle": "Déconnexion ?",
+    "logoutConfirmMessage": "Vous êtes sur le point de vous déconnecter de cet appareil. Ne vous inquiétez pas, toutes les données sauvegardées sur le <1>Cloud</1> seront conservées en <3>sécurité</3>.",
+    "logoutButton": "Déconnexion"
+  },
+  "common": {
+    "done": "Terminé",
+    "itemToDelete": "Élément à supprimer",
+    "typeToConfirm": "Tapez <1>{{text}}</1> pour confirmer cette action.",
+    "typeToConfirmPlaceholder": "Tapez {{text}} pour confirmer",
+    "cancel": "Annuler",
+    "deleting": "Suppression...",
+    "delete": "Supprimer"
+  },
+  "sharedTrip": {
+    "viewTitle": "Voir le voyage partagé",
+    "inputLabel": "Entrez le lien du voyage partagé",
+    "inputPlaceholder": "Collez le lien du voyage partagé…",
+    "viewButton": "Voir maintenant",
+    "recentHistory": "Récemment consultés",
+    "departure": "Départ",
+    "invalidLink": "Lien invalide. Veuillez réessayer !"
+  },
+  "dashboard": {
+    "heroTitle": "Vos voyages",
+    "heroDesc": "Enregistrez les itinéraires, les compagnons, les dépenses et les préparatifs pour chaque voyage.",
+    "memoriesBtn": "Souvenirs",
+    "createTripBtn": "Créer un voyage",
+    "nextTripTitle": "Prochain voyage",
+    "statusActive": "EN COURS",
+    "statusUpcoming": "À VENIR",
+    "statusPast": "TERMINÉ",
+    "dayTrip": "Excursion",
+    "longTrip": "Long voyage",
+    "duration": "{{days}} jours {{nights}} nuits",
+    "durationDaysOnly": "{{days}} jours",
+    "noLocation": "Aucun lieu",
+    "noLocationGrid": "Non précisé",
+    "peopleCount": "{{count}} personnes",
+    "peopleCountCompanion": "{{count}} compagnons",
+    "noExpense": "Aucune dépense",
+    "noExpenseFull": "Pas encore de dépenses",
+    "expenseTotal": "{{amount}}",
+    "itemsToPrepare": "{{count}} articles à préparer",
+    "itemsUnprepared": "{{count}} articles non préparés",
+    "luggageReady": "Bagages prêts",
+    "allTripsTitle": "Tous les voyages",
+    "allTripsDesc": "Tous vos voyages.",
+    "activeTripsTitle": "Voyages en cours",
+    "activeTripsDesc": "Voyages actuellement en cours.",
+    "upcomingTripsTitle": "Voyages à venir",
+    "upcomingTripsDesc": "Voyages sur le point de partir.",
+    "pastTripsTitle": "Voyages terminés",
+    "pastTripsDesc": "Voyages terminés qui peuvent être passés en revue."
+  },
+  "archive": {
+    "title": "Souvenirs",
+    "back": "Retour",
+    "savedTrips": "{{count}} voyages enregistrés",
+    "noTripsDesc": "Les voyages terminés sont stockés ici.",
+    "emptyTitle": "Pas encore de souvenirs",
+    "emptyDesc": "Les voyages terminés apparaîtront ici pour que vous puissiez les revoir.",
+    "tripCount": "{{count}} voyages",
+    "unknownYear": "Année inconnue"
+  },
+  "tripForm": {
+    "editTitle": "Détails du voyage",
+    "createTitle": "Créer un voyage",
+    "createSubtitle": "Remplissez les bases d'abord, l'itinéraire et les dépenses pourront être ajoutés plus tard.",
+    "saveBtn": "Enregistrer",
+    "createBtn": "Créer le voyage",
+    "saveAria": "Confirmer les détails",
+    "createAria": "Confirmer la création",
+    "nameLabel": "Nom du voyage",
+    "namePlaceholder": "Ex : Super Été",
+    "nameError": "Veuillez entrer un nom.",
+    "locationLabel": "Lieu",
+    "locationSuccess": "Coordonnées associées — La météo est connectée automatiquement !",
+    "locationHelper": "Choisissez la bonne destination dans les suggestions pour obtenir des prévisions météo précises. Si vous ne trouvez pas de lieu spécifique, choisissez une zone ou ville proche.",
+    "timeLabel": "Durée",
+    "dayTripBtn": "Aller-retour",
+    "dayTripDesc": "Aller-retour dans la journée",
+    "multiDayBtn": "Plusieurs jours",
+    "multiDayDesc": "A des dates de départ et retour",
+    "pickEndPrompt": "Choisissez une date de fin…",
+    "startDateError": "Veuillez choisir une date de début.",
+    "endDateError": "Veuillez choisir une date de fin.",
+    "dateCompareError": "La date de fin ne peut précéder la date de début.",
+    "daysOfWeek": [
+      "Dim",
+      "Lun",
+      "Mar",
+      "Mer",
+      "Jeu",
+      "Ven",
+      "Sam"
+    ],
+    "months": [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre"
+    ],
+    "dateFmt": "{{day}} {{month}} {{year}}"
+  }
+}

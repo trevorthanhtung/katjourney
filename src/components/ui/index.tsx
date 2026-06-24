@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation, Trans } from "react-i18next";
 import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { 
@@ -726,8 +727,8 @@ export function TypedDeleteConfirmModal({
   title,
   description,
   warning,
-  confirmLabel = "Xóa",
-  confirmationText = "XÓA",
+  confirmLabel,
+  confirmationText,
   inputPlaceholder,
   itemName
 }: {
@@ -742,10 +743,14 @@ export function TypedDeleteConfirmModal({
   inputPlaceholder?: string;
   itemName?: string;
 }) {
+  const { t } = useTranslation();
+  const actualConfirmLabel = confirmLabel || t('common.delete');
+  const actualConfirmationText = confirmationText || t('common.delete').toUpperCase();
+  
   const [typedText, setTypedText] = React.useState("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const normalizedTypedText = typedText.trim().normalize("NFC").toUpperCase();
-  const normalizedConfirmationText = confirmationText.trim().normalize("NFC").toUpperCase();
+  const normalizedConfirmationText = actualConfirmationText.trim().normalize("NFC").toUpperCase();
   const isConfirmed = normalizedTypedText === normalizedConfirmationText;
 
   React.useEffect(() => {
@@ -780,20 +785,22 @@ export function TypedDeleteConfirmModal({
 
         {itemName && (
           <div className="rounded-2xl border border-kat-border/40 bg-slate-50 dark:bg-slate-800/20 px-4 py-3">
-            <p className="text-[12px] font-black uppercase tracking-wide text-slate-400 dark:text-slate-500">Mục sẽ xóa</p>
+            <p className="text-[12px] font-black uppercase tracking-wide text-slate-400 dark:text-slate-500">{t('common.itemToDelete')}</p>
             <p className="mt-1 break-words text-[15px] font-extrabold text-kat-text">{itemName}</p>
           </div>
         )}
 
         <label className="block space-y-2">
           <span className="text-[13.5px] font-bold text-slate-650 dark:text-slate-400 block">
-            Nhập <span className="text-rose-500 font-black">{confirmationText}</span> để xác nhận thao tác này.
+            <Trans i18nKey="common.typeToConfirm" values={{ text: actualConfirmationText }}>
+              Nhập <span className="text-rose-500 font-black">{actualConfirmationText}</span> để xác nhận thao tác này.
+            </Trans>
           </span>
           <input
             type="text"
             value={typedText}
             onChange={(event) => setTypedText(event.target.value)}
-            placeholder={inputPlaceholder ?? `Gõ ${confirmationText} để xác nhận`}
+            placeholder={inputPlaceholder ?? t('common.typeToConfirmPlaceholder', { text: actualConfirmationText })}
             autoCapitalize="none"
             autoCorrect="off"
             autoComplete="off"
@@ -808,7 +815,7 @@ export function TypedDeleteConfirmModal({
             onClick={onClose}
             className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/50 text-slate-700 dark:text-slate-200 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200 motion-press"
           >
-            Hủy
+            {t('common.cancel')}
           </button>
           <button
             type="button"
@@ -817,7 +824,7 @@ export function TypedDeleteConfirmModal({
             className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:bg-rose-200 dark:disabled:bg-rose-950/20 disabled:border-rose-200 dark:disabled:border-rose-900/10 disabled:cursor-not-allowed transition-all active:scale-[0.98] disabled:active:scale-100 motion-press"
           >
             <HugeiconsIcon icon={Delete01Icon} size={20} />
-            {isSubmitting ? "Đang xóa..." : confirmLabel}
+            {isSubmitting ? t('common.deleting') : actualConfirmLabel}
           </button>
         </div>
       </div>
@@ -832,7 +839,7 @@ export function DeleteConfirmModal({
   title,
   description,
   itemName,
-  confirmLabel = "Xóa"
+  confirmLabel
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -842,6 +849,8 @@ export function DeleteConfirmModal({
   itemName?: string;
   confirmLabel?: string;
 }) {
+  const { t } = useTranslation();
+  const actualConfirmLabel = confirmLabel || t('common.delete');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   React.useEffect(() => {
@@ -869,7 +878,7 @@ export function DeleteConfirmModal({
 
         {itemName && (
           <div className="rounded-2xl border border-kat-border/40 bg-slate-50 dark:bg-slate-800/20 px-4 py-3">
-            <p className="text-[12px] font-black uppercase tracking-wide text-slate-400 dark:text-slate-500">Mục sẽ xóa</p>
+            <p className="text-[12px] font-black uppercase tracking-wide text-slate-400 dark:text-slate-500">{t('common.itemToDelete')}</p>
             <p className="mt-1 break-words text-[15px] font-extrabold text-kat-text">{itemName}</p>
           </div>
         )}
@@ -880,7 +889,7 @@ export function DeleteConfirmModal({
             onClick={onClose}
             className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/50 px-6 font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200 motion-press"
           >
-            Hủy
+            {t('common.cancel')}
           </button>
           <button
             type="button"
@@ -889,7 +898,7 @@ export function DeleteConfirmModal({
             className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 disabled:bg-rose-200 dark:disabled:bg-rose-950/20 disabled:border-rose-200 dark:disabled:border-rose-900/10 disabled:cursor-not-allowed transition-all active:scale-[0.98] disabled:active:scale-100 motion-press"
           >
             <HugeiconsIcon icon={Delete01Icon} size={20} />
-            {isSubmitting ? "Đang xóa..." : confirmLabel}
+            {isSubmitting ? t('common.deleting') : actualConfirmLabel}
           </button>
         </div>
       </div>

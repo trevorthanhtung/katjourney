@@ -1,0 +1,394 @@
+{
+  "nav": {
+    "home": "Tổng quan",
+    "timeline": "Lịch trình",
+    "expenses": "Chi phí",
+    "checklist": "Chuẩn bị",
+    "more": "Menu"
+  },
+  "settings": {
+    "header": {
+      "title": "Cài đặt",
+      "subtitle": "Tùy chỉnh hệ thống và cá nhân hóa trải nghiệm"
+    },
+    "menu": {
+      "install": {
+        "title": "Mang KAT Journey theo bạn",
+        "desc": "Mở app siêu tốc từ màn hình chính, trải nghiệm mượt mà như ứng dụng gốc"
+      },
+      "theme": {
+        "title": "Giao diện",
+        "desc": "Chỉnh màu sắc cho ứng dụng"
+      },
+      "language": {
+        "title": "Ngôn ngữ",
+        "desc": "Chọn ngôn ngữ hiển thị"
+      },
+      "privacy": {
+        "title": "Quyền riêng tư",
+        "desc": "Quản lý an toàn dữ liệu và quyền cá nhân"
+      },
+      "notification": {
+        "title": "Thông báo",
+        "desc": "Nhắc lịch, chi phí và hoạt động chuyến đi"
+      },
+      "location": {
+        "title": "Vị trí",
+        "desc": "Tự động gợi ý địa điểm và ngoại tệ"
+      },
+      "exchangeRates": {
+        "title": "Tỉ giá ngoại tệ",
+        "desc": "Dữ liệu trực tuyến từ Vietcombank"
+      },
+      "about": {
+        "title": "Thông tin ứng dụng",
+        "desc": "Khám phá thông tin và hành trình phát triển"
+      },
+      "donate": {
+        "title": "Ủng hộ tác giả",
+        "desc": "Tiếp thêm động lực để ứng dụng phát triển hơn"
+      },
+      "feedback": {
+        "title": "Góp ý & Phản hồi",
+        "desc": "Chia sẻ ý kiến giúp KAT Journey hoàn thiện hơn mỗi ngày"
+      },
+      "version": {
+        "title": "Phiên bản",
+        "desc": "Phiên bản hiện tại trên thiết bị"
+      },
+      "dataManagement": {
+        "title": "Quản lý dữ liệu",
+        "clearTemp": {
+          "title": "Dọn dẹp tệp tạm",
+          "desc": "Xóa bộ nhớ đệm và tệp không quan trọng"
+        },
+        "restoreData": {
+          "title": "Khôi phục hành trình",
+          "desc": "Nhập chuyến đi từ tệp sao lưu (.katjourney)"
+        }
+      },
+      "dangerZone": {
+        "title": "Vùng nguy hiểm",
+        "factoryReset": {
+          "title": "Khôi phục cài đặt gốc",
+          "desc": "Xóa vĩnh viễn toàn bộ dữ liệu"
+        },
+        "deleteAccount": {
+          "title": "Xóa tài khoản",
+          "desc": "Xóa vĩnh viễn tài khoản & dữ liệu"
+        }
+      }
+    },
+    "language": {
+      "title": "Ngôn ngữ",
+      "desc": "Tiếng Việt / English",
+      "vi": "Tiếng Việt",
+      "en": "English"
+    },
+    "actions": {
+      "backToMenu": "Quay lại menu"
+    },
+    "themeView": {
+      "desc": "Tùy chỉnh phong cách hiển thị của KAT Journey phù hợp với điều kiện ánh sáng môi trường của bạn.",
+      "light": "Sáng",
+      "lightDesc": "Dịu mắt ban ngày",
+      "dark": "Tối",
+      "darkDesc": "Tiết kiệm pin",
+      "system": "Tự động",
+      "systemDesc": "Theo hệ thống"
+    },
+    "exchangeRatesView": {
+      "unit": "Đơn vị: VNĐ",
+      "loading": "Đang tải tỉ giá...",
+      "transfer": "Chuyển khoản"
+    },
+    "donateView": {
+      "title": "Đồng hành cùng KAT Journey",
+      "desc1": "Nếu KAT Journey hữu ích với bạn, bạn có thể gửi một ly cà phê nhỏ để ủng hộ tác giả tiếp tục phát triển ứng dụng.",
+      "desc2": "Ủng hộ là tùy chọn. Cảm ơn bạn đã sử dụng KAT Journey.",
+      "scanQR": "Quét mã QR để chuyển khoản",
+      "saveQR": "Lưu mã QR về máy"
+    },
+    "aboutView": {
+      "subtitle": "Trợ lý hành trình cá nhân",
+      "desc": "Hơn cả một công cụ lên kế hoạch, KAT Journey là người bạn đồng hành giúp bạn kiểm soát chi tiêu, sắp xếp lịch trình và gói ghém trọn vẹn mọi khoảnh khắc đáng nhớ.",
+      "techTitle": "Công nghệ & giấy phép",
+      "techDesc1": "KAT Journey được xây dựng bằng React, Vite, Dexie và Supabase. Hệ thống chỉ sử dụng Supabase để đồng bộ và chia sẻ khi bạn chủ động đăng nhập.",
+      "techDesc2": "Chúng mình xin gửi lời cảm ơn chân thành đến các tác giả và cộng đồng mã nguồn mở đã đồng hành cùng dự án.",
+      "madeBy": "thực hiện bởi"
+    },
+    "languageView": {
+      "desc": "Chọn ngôn ngữ hiển thị cho KAT Journey."
+    },
+    "authView": {
+      "loading": "Đang tải trạng thái tài khoản...",
+      "welcome": "Chào mừng đến với KAT Journey",
+      "guestDesc": "Khách có thể sử dụng ứng dụng bình thường trên thiết bị hiện tại. Đăng nhập Google sẽ hỗ trợ đồng bộ dữ liệu trong các phiên bản tương lai.",
+      "continueGoogle": "Tiếp tục với Google",
+      "continueGuest": "Tiếp tục với Khách",
+      "displayName": "Tên hiển thị...",
+      "localAccount": "Tài khoản cục bộ",
+      "anonymousAccount": "Tài khoản ẩn danh",
+      "notSynced": "Chưa đồng bộ",
+      "guestNotice1": "Toàn bộ lịch trình và chi phí đang được lưu tạm trên thiết bị này. Hãy liên kết tài khoản để sao lưu ",
+      "guestNotice2": " lên đám mây và mở khóa tính năng ",
+      "guestNotice3": ".",
+      "linkGoogle": "Liên kết Google để Đồng bộ",
+      "manualBackup": "Sao lưu dữ liệu thủ công (.katjourney)"
+    },
+    "dialogs": {
+      "cloudRestore": {
+        "title": "Khôi phục dữ liệu từ Cloud?",
+        "warning": "Dữ liệu trên thiết bị này có thể bị thay đổi. Vui lòng cân nhắc chọn phương thức khôi phục phù hợp bên dưới.",
+        "mergeTitle": "Hợp nhất dữ liệu (Merge)",
+        "mergeDesc": "Giữ nguyên dữ liệu hiện tại, chỉ bổ sung thêm chuyến đi và bài viết mới từ bản sao lưu.",
+        "replaceTitle": "Thay thế hoàn toàn (Replace)",
+        "replaceWarning": "CẢNH BÁO NGUY HIỂM",
+        "replaceDesc": "Xóa sạch toàn bộ dữ liệu trên thiết bị này và ghi đè bằng bản sao lưu trên Cloud.",
+        "cancel": "Hủy",
+        "continue": "Tiếp tục"
+      },
+      "fileRestore": {
+        "title": "Khôi phục hành trình?",
+        "warning": "Dữ liệu hiện tại có thể bị thay đổi sau khi nhập bản sao lưu. Vui lòng đảm bảo tệp của bạn là hợp lệ trước khi tiến hành.",
+        "cancel": "Hủy",
+        "restore": "Khôi phục"
+      },
+      "deleteAccount": {
+        "title": "Xóa tài khoản của bạn?",
+        "warning": "Để xác nhận, vui lòng nhập chính xác chữ XÓA.",
+        "desc": "Hành động này sẽ xóa vĩnh viễn tài khoản của bạn trên hệ thống Cloud và toàn bộ dữ liệu lưu trữ cục bộ. Bạn không thể hoàn tác.",
+        "deletedData": "Dữ liệu sẽ bị xóa:",
+        "li1": "Tài khoản đăng nhập trên hệ thống",
+        "li2": "Toàn bộ chuyến đi và lịch trình đã lưu",
+        "li3": "Tất cả chi phí, bản tin hành trình",
+        "li4": "Danh sách chuẩn bị hành lý & giấy tờ",
+        "confirmBtn": "Xác nhận xóa tài khoản",
+        "confirmText": "XÓA",
+        "inputPlaceholder": "Nhập XÓA để xác nhận",
+        "itemName": "Tài khoản và toàn bộ dữ liệu KAT Journey",
+        "errorAuth": "Hành động này yêu cầu đăng nhập gần đây. Vui lòng đăng xuất và đăng nhập lại bằng Google để xác thực trước khi thực hiện xóa tài khoản.",
+        "errorGeneric": "Đã xảy ra lỗi khi xóa tài khoản. Vui lòng thử lại sau."
+      },
+      "factoryReset": {
+        "title": "Khôi phục cài đặt gốc?",
+        "warning": "Để xác nhận, vui lòng nhập chính xác chữ XÓA.",
+        "desc": "Hành động này sẽ xóa vĩnh viễn toàn bộ dữ liệu trên thiết bị này. Bạn không thể hoàn tác.",
+        "li1": "Toàn bộ chuyến đi và lịch trình",
+        "li2": "Tất cả chi phí và bản tin hành trình",
+        "li3": "Dữ liệu gói đồ và checklist",
+        "li4": "Thông tin tài khoản khách hiện tại",
+        "confirmBtn": "Xác nhận khôi phục",
+        "confirmText": "XÓA",
+        "inputPlaceholder": "Nhập XÓA",
+        "itemName": "Toàn bộ dữ liệu ứng dụng"
+      },
+      "importPreview": {
+        "title": "Xác nhận nhập chuyến đi",
+        "subtitle": "Kiểm tra thông tin trước khi nhập",
+        "tripName": "Tên chuyến đi",
+        "exportedAt": "Xuất lúc:",
+        "members": "Thành viên",
+        "timeline": "Lịch trình",
+        "expenses": "Chi phí",
+        "checklist": "Chuẩn bị",
+        "journal": "Nhật ký",
+        "notice": "Dữ liệu sẽ được thêm vào thiết bị này. Chuyến đi hiện có sẽ không bị ảnh hưởng.",
+        "cancel": "Hủy",
+        "importing": "Đang nhập...",
+        "importNow": "Nhập ngay"
+      }
+    },
+    "privacyView": {
+      "title": "Cam kết bảo mật dữ liệu",
+      "offlineTitle": "Lưu trữ an toàn trên thiết bị (Offline-first):",
+      "offlineDesc": " Toàn bộ thông tin chi tiết về chuyến đi, chi phí và bản tin hành trình được cất giữ an toàn ngay trong bộ nhớ điện thoại của bạn. Bạn có thể tra cứu lịch trình mọi lúc, mọi nơi kể cả khi không có mạng.",
+      "identityTitle": "Bảo mật danh tính tuyệt đối:",
+      "identityDesc": " Hệ thống đăng nhập được thiết lập để xác minh danh tính nghiêm ngặt. Việc này đảm bảo tài khoản và mọi kế hoạch của bạn được phân quyền an toàn, chỉ duy nhất bạn (chính chủ) mới có quyền quản lý và chỉnh sửa.",
+      "noDataTitle": "Nói \"Không\" với việc tự động lấy dữ liệu:",
+      "noDataDesc": " Lịch trình là của riêng bạn. Chúng tôi cam kết không có bất kỳ thông tin cá nhân hay kế hoạch nào bị tự động tải lên đám mây. Dữ liệu chỉ được đưa lên mạng khi bạn chủ động bấm chọn tính năng Sao lưu hoặc Chia sẻ chuyến đi với bạn bè."
+    },
+    "auth": {
+      "title": "Tài khoản & Đồng bộ",
+      "dataSync": "Đồng bộ dữ liệu",
+      "dataSyncDesc": "Tự động sao lưu và bảo mật dữ liệu",
+      "newerVersionAlert": "Có phiên bản mới hơn trên Cloud. Vui lòng bấm Đồng bộ để tải về.",
+      "loginToSync": "Vui lòng đăng nhập để sử dụng đồng bộ.",
+      "lastSync": "Lần đồng bộ cuối",
+      "neverSynced": "Chưa từng đồng bộ",
+      "autoBackupCloud": "Tự động sao lưu lên Cloud",
+      "autoBackupDesc": "Sao lưu ngầm sau khi thay đổi dữ liệu 5s",
+      "syncing": "Đang đồng bộ dữ liệu...",
+      "autoBackingUp": "Đang tự động sao lưu...",
+      "syncNow": "Đồng bộ dữ liệu ngay",
+      "syncSuccess": "Dữ liệu đã được cập nhật mới nhất.",
+      "syncSuccessCloud": "Đã đồng bộ dữ liệu lên Cloud thành công!",
+      "syncFailed": "Đồng bộ thất bại: "
+    }
+  },
+  "welcomeScreen": {
+    "heroTitle1": "Khám phá thế giới.",
+    "heroTitle2": "Lưu giữ khoảnh khắc.",
+    "heroDesc": "Đồng bộ dữ liệu đa nền tảng, quản lý lịch trình và chia sẻ chi phí tức thì.",
+    "slide1Title": "Lập lịch trình thông minh",
+    "slide1Desc": "Lên kế hoạch chi tiết từng ngày, ghim địa điểm và sắp xếp hành trình trực quan cùng đồng đội.",
+    "slide2Title": "Chia sẻ chi phí công bằng",
+    "slide2Desc": "Ghi chép chi tiêu nhóm, tự động chia hóa đơn và giải quyết thanh toán tức thì.",
+    "slide3Title": "Lưu giữ trọn vẹn kỷ niệm",
+    "slide3Desc": "Chuẩn bị đồ đạc theo checklist và viết nhật ký hành trình lưu giữ những bức ảnh ý nghĩa.",
+    "googleLogin": "Tiếp tục với Google",
+    "guestLogin": "Khám phá tư cách Khách",
+    "googleLoginFail": "Đăng nhập Google thất bại.",
+    "guestLoginFail": "Đăng nhập Khách thất bại.",
+    "legalTerms": "Bằng việc tiếp tục, bạn đồng ý với <0>Điều khoản Sử dụng</0>, <1>Chính sách Quyền riêng tư</1> và <2>Chính sách Cookie</2> của chúng tôi.",
+    "multiplatform": "Sẵn sàng trên đa nền tảng",
+    "modal": {
+      "termsTitle": "Điều khoản Sử dụng",
+      "privacyTitle": "Chính sách Quyền riêng tư",
+      "cookieTitle": "Chính sách Cookie",
+      "terms1Title": "1. Cùng tạo nên những hành trình tuyệt vời",
+      "terms1Desc": "Chào mừng bạn đến với KAT Journey! Bằng việc trải nghiệm ứng dụng, chúng ta đồng ý tôn trọng các nguyên tắc chung để xây dựng một cộng đồng du lịch văn minh. Nếu có điểm nào chưa phù hợp, bạn luôn có quyền ngưng sử dụng dịch vụ bất cứ lúc nào.",
+      "terms2Title": "2. Không gian kỷ niệm của riêng bạn",
+      "terms2Desc": "Tài khoản là nơi cất giữ những chuyến đi mang đậm dấu ấn cá nhân. Hãy giúp chúng tôi bảo vệ nó bằng cách giữ an toàn thông tin đăng nhập (tài khoản Google). Chúng tôi luôn khuyến khích bạn bảo mật thiết bị cá nhân thật tốt để tránh rò rỉ dữ liệu.",
+      "terms3Title": "3. Lưu trữ an toàn, đi muôn nơi",
+      "terms3Desc": "KAT Journey ưu tiên lưu dữ liệu trực tiếp trên máy của bạn để bạn có thể xem lịch trình ngay cả khi lên rừng hay xuống biển (không có mạng). Lưu ý nhỏ: Đừng vội xóa dữ liệu duyệt web (clear cache) khi chưa đồng bộ lên đám mây, để tránh làm rơi rớt những kế hoạch đang dở dang nhé!",
+      "privacy1Title": "1. Chúng tôi cần biết gì về bạn? Rất ít!",
+      "privacy1Desc": "KAT Journey chỉ thu thập một vài thông tin cơ bản (Họ tên, Email, Ảnh đại diện) từ tài khoản Google của bạn để làm \"hộ chiếu\" định danh. Việc này giúp bạn lưu trữ và đồng bộ hóa các chuyến đi xuyên suốt trên nhiều thiết bị.",
+      "privacy2Title": "2. Kỷ niệm của bạn, an toàn là trên hết",
+      "privacy2Desc": "Mọi kế hoạch, chi tiêu và hành lý đều \"ngủ yên\" trên thiết bị của bạn. Chỉ khi bạn chủ động mời bạn bè qua tính năng \"Chia sẻ chuyến đi\", dữ liệu mới được mã hóa cẩn thận và đưa lên hệ thống máy chủ đám mây với độ bảo mật cao nhất.",
+      "privacy3Title": "3. Quyền kiểm soát hoàn toàn trong tay bạn",
+      "privacy3Desc": "Bạn là \"cơ trưởng\" của tài khoản này. Bạn có toàn quyền tạo mới, chỉnh sửa, xóa bỏ vĩnh viễn các chuyến đi, hoặc thu hồi link chia sẻ bất kỳ lúc nào chỉ với một lần chạm.",
+      "cookie1Title": "1. Cookie giúp hành trình mượt mà hơn",
+      "cookie1Desc": "KAT Journey sử dụng một ít \"bánh quy\" (Cookies và Local Storage) để ghi nhớ bạn là ai, chuyến đi nào đang xem dở, và giữ cho bạn luôn trong trạng thái sẵn sàng lên đường mà không cần đăng nhập lại nhiều lần.",
+      "cookie2Title": "2. Nói \"Không\" với quảng cáo theo dõi",
+      "cookie2Desc": "Trải nghiệm lên kế hoạch du lịch của bạn không nên bị làm phiền. Chúng tôi cam kết chỉ sử dụng các Cookie kỹ thuật thiết yếu để ứng dụng hoạt động chính xác. KAT Journey tuyệt đối KHÔNG bám đuôi hay bán dữ liệu của bạn cho bất kỳ bên thứ ba nào.",
+      "agreeAndClose": "Đồng ý và Đóng"
+    }
+  },
+  "splash": {
+    "subtitle": "Khám phá & Kỷ niệm"
+  },
+  "userMenu": {
+    "guest": "Khách",
+    "anonymous": "Tài khoản ẩn danh",
+    "notLoggedIn": "Chưa đăng nhập",
+    "loginToSync": "Đăng nhập để đồng bộ",
+    "profileAndAccount": "Hồ sơ & Tài khoản",
+    "appSettings": "Cài đặt ứng dụng",
+    "exitGuest": "Thoát Khách",
+    "logout": "Đăng xuất",
+    "loginRegister": "Đăng nhập / Đăng ký",
+    "accountMenu": "Menu tài khoản",
+    "logoutConfirmTitle": "Đăng xuất tài khoản?",
+    "logoutConfirmMessage": "Bạn sắp đăng xuất khỏi thiết bị này. Đừng lo, toàn bộ dữ liệu đã sao lưu trên <1>Cloud</1> vẫn được giữ <3>an toàn</3>.",
+    "logoutButton": "Đăng xuất"
+  },
+  "common": {
+    "done": "Xong",
+    "itemToDelete": "Mục sẽ xóa",
+    "typeToConfirm": "Nhập <1>{{text}}</1> để xác nhận thao tác này.",
+    "typeToConfirmPlaceholder": "Gõ {{text}} để xác nhận",
+    "cancel": "Hủy",
+    "deleting": "Đang xóa...",
+    "delete": "Xóa"
+  },
+  "sharedTrip": {
+    "viewTitle": "Xem chuyến đi được chia sẻ",
+    "inputLabel": "Nhập liên kết chia sẻ chuyến đi",
+    "inputPlaceholder": "Dán link chuyến đi được chia sẻ…",
+    "viewButton": "Xem ngay",
+    "recentHistory": "Lịch sử xem gần đây",
+    "departure": "Khởi hành",
+    "invalidLink": "Liên kết không hợp lệ. Vui lòng thử lại!"
+  },
+  "dashboard": {
+    "heroTitle": "Chuyến đi của bạn",
+    "heroDesc": "Lưu lịch trình, người đồng hành, chi phí và những việc cần chuẩn bị cho từng chuyến đi.",
+    "memoriesBtn": "Kỷ niệm",
+    "createTripBtn": "Tạo chuyến đi",
+    "nextTripTitle": "Chuyến tiếp theo",
+    "statusActive": "Đang diễn ra",
+    "statusUpcoming": "Sắp diễn ra",
+    "statusPast": "Đã kết thúc",
+    "dayTrip": "Đi trong ngày",
+    "longTrip": "Dài ngày",
+    "duration": "{{days}} ngày {{nights}} đêm",
+    "durationDaysOnly": "{{days}} ngày",
+    "noLocation": "Chưa có địa điểm",
+    "noLocationGrid": "Chưa xác định",
+    "peopleCount": "{{count}} người",
+    "peopleCountCompanion": "{{count}} người đồng hành",
+    "noExpense": "Chưa chi",
+    "noExpenseFull": "Chưa có chi phí",
+    "expenseTotal": "{{amount}}",
+    "itemsToPrepare": "Còn {{count}} món cần chuẩn bị",
+    "itemsUnprepared": "{{count}} món chưa chuẩn bị",
+    "luggageReady": "Hành lý chuẩn bị xong",
+    "allTripsTitle": "Tất cả chuyến đi",
+    "allTripsDesc": "Tất cả chuyến đi của bạn.",
+    "activeTripsTitle": "Đang diễn ra",
+    "activeTripsDesc": "Hành trình đang diễn ra ngay lúc này.",
+    "upcomingTripsTitle": "Sắp diễn ra",
+    "upcomingTripsDesc": "Hành trình chuẩn bị khởi hành sắp tới.",
+    "pastTripsTitle": "Đã hoàn thành",
+    "pastTripsDesc": "Những chuyến đi đã kết thúc và có thể xem lại tổng kết."
+  },
+  "archive": {
+    "title": "Kỷ niệm",
+    "back": "Quay lại",
+    "savedTrips": "{{count}} chuyến đi đã lưu giữ",
+    "noTripsDesc": "Các chuyến đi đã kết thúc và được lưu giữ.",
+    "emptyTitle": "Chưa có kỷ niệm nào",
+    "emptyDesc": "Những chuyến đi đã kết thúc sẽ xuất hiện ở đây để bạn ôn lại.",
+    "tripCount": "{{count}} chuyến đi",
+    "unknownYear": "Chưa rõ năm"
+  },
+  "tripForm": {
+    "editTitle": "Thông tin chuyến đi",
+    "createTitle": "Tạo chuyến đi",
+    "createSubtitle": "Điền thông tin cơ bản trước, lịch trình và chi phí có thể thêm sau.",
+    "saveBtn": "Lưu thông tin",
+    "createBtn": "Tạo chuyến đi",
+    "saveAria": "Xác nhận lưu thông tin chuyến đi",
+    "createAria": "Xác nhận tạo chuyến đi",
+    "nameLabel": "Tên chuyến đi",
+    "namePlaceholder": "VD: Mùa hè rực rỡ",
+    "nameError": "Vui lòng nhập tên chuyến đi.",
+    "locationLabel": "Địa điểm",
+    "locationSuccess": "Khớp tọa độ thành công — Thời tiết đã tự động kết nối!",
+    "locationHelper": "Chọn đúng điểm đến từ danh sách gợi ý để tự động cập nhật dự báo thời tiết chuẩn xác nhất. Nếu không tìm thấy địa danh cụ thể, hãy chọn một khu vực hoặc thành phố lân cận nhé.",
+    "timeLabel": "Thời gian chuyến đi",
+    "dayTripBtn": "Đi trong ngày",
+    "dayTripDesc": "Đi và về cùng ngày",
+    "multiDayBtn": "Nhiều ngày",
+    "multiDayDesc": "Có ngày đi và về",
+    "pickEndPrompt": "Chọn ngày kết thúc…",
+    "startDateError": "Vui lòng chọn ngày bắt đầu.",
+    "endDateError": "Vui lòng chọn ngày kết thúc.",
+    "dateCompareError": "Ngày kết thúc không thể trước ngày bắt đầu.",
+    "daysOfWeek": [
+      "CN",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T6",
+      "T7"
+    ],
+    "months": [
+      "Tháng 1",
+      "Tháng 2",
+      "Tháng 3",
+      "Tháng 4",
+      "Tháng 5",
+      "Tháng 6",
+      "Tháng 7",
+      "Tháng 8",
+      "Tháng 9",
+      "Tháng 10",
+      "Tháng 11",
+      "Tháng 12"
+    ],
+    "dateFmt": "{{day}} thg {{month}}, {{year}}"
+  }
+}

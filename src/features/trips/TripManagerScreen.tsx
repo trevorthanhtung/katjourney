@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Airplane01Icon, Calendar01Icon, Location01Icon, CompassIcon, UserGroupIcon, WalletCardsIcon, SparklesIcon, MapsIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -8,20 +9,20 @@ import { TripForm } from "../more/MoreScreen";
 import { TypedDeleteConfirmModal, BottomSheet } from "../../components/ui";
 import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
 
-function getTripDurationText(trip: Trip) {
+function getTripDurationText(trip: Trip, t: any) {
   const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
-  if (isDayTrip) return "Đi trong ngày";
+  if (isDayTrip) return t('dashboard.dayTrip');
   
   try {
     const start = new Date(trip.startDate);
     const end = new Date(trip.endDate);
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) return "Dài ngày";
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return t('dashboard.longTrip');
     const diffTime = Math.abs(end.getTime() - start.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
     const diffNights = diffDays > 1 ? diffDays - 1 : 0;
-    return `${diffDays} ngày ${diffNights} đêm`;
+    return diffNights > 0 ? t('dashboard.duration', { days: diffDays, nights: diffNights }) : t('dashboard.durationDaysOnly', { days: diffDays });
   } catch {
-    return "Dài ngày";
+    return t('dashboard.longTrip');
   }
 }
 
@@ -44,6 +45,7 @@ function TripCard({
   memberCounts,
   onOpenTrip
 }: TripCardProps) {
+  const { t } = useTranslation();
   const timing = getTripTiming(trip);
   const tripExpenses = allExpenses.filter(e => e.tripId === trip.id);
   const totalExpense = tripExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
@@ -74,7 +76,7 @@ function TripCard({
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
-                  Đang diễn ra
+                  {t('dashboard.statusActive')}
                 </span>
               )}
               {timing.status === "upcoming" && (
@@ -83,7 +85,7 @@ function TripCard({
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
-                  Sắp diễn ra
+                  {t('dashboard.statusUpcoming')}
                 </span>
               )}
               {timing.status === "past" && (
@@ -91,11 +93,11 @@ function TripCard({
                   <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-slate-400"></span>
                   </span>
-                  Đã kết thúc
+                  {t('dashboard.statusPast')}
                 </span>
               )}
               <span className="inline-flex items-center rounded-full bg-slate-100 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-650 dark:bg-slate-800 dark:border-slate-700/60 dark:text-slate-300 tracking-wide">
-                {getTripDurationText(trip)}
+                {getTripDurationText(trip, t)}
               </span>
             </div>
 
@@ -107,7 +109,7 @@ function TripCard({
           <div className="flex flex-col gap-2 pb-2">
             <div className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3 py-1.5 rounded-[12px] w-fit max-w-full">
               <HugeiconsIcon icon={Location01Icon} size={15} className="text-slate-400 shrink-0" />
-              <span className="truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">{trip.location || "Chưa có địa điểm"}</span>
+              <span className="truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">{trip.location || t('dashboard.noLocation')}</span>
             </div>
             <div className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3 py-1.5 rounded-[12px] w-fit max-w-full">
               <HugeiconsIcon icon={Calendar01Icon} size={15} className="text-slate-400 shrink-0" />
@@ -120,11 +122,11 @@ function TripCard({
         <div className="w-full lg:w-[250px] shrink-0 lg:border-l lg:border-slate-200 dark:lg:border-kat-border lg:pl-6 flex flex-col justify-center gap-2.5">
           <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3.5 py-2 rounded-[12px]">
             <HugeiconsIcon icon={UserGroupIcon} size={15} className="text-slate-400 shrink-0" />
-            <span>{memberCounts[trip.id!] || 1} người đồng hành</span> 
+            <span>{t('dashboard.peopleCountCompanion', { count: memberCounts[trip.id!] || 1 })}</span> 
           </div>
           <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3.5 py-2 rounded-[12px]">
             <HugeiconsIcon icon={WalletCardsIcon} size={15} className="text-slate-400 shrink-0" />
-            <span>{totalExpense > 0 ? `${totalExpense.toLocaleString()}đ chi phí` : "Chưa có chi phí"}</span>
+            <span>{totalExpense > 0 ? t('dashboard.expenseTotal', { amount: totalExpense.toLocaleString() + 'đ' }) : t('dashboard.noExpenseFull')}</span>
           </div>
           
           {tripChecklist.length > 0 && (
@@ -133,14 +135,14 @@ function TripCard({
                 <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse shrink-0"></span>
                 <span className="truncate">
                   {timing.status === "past" 
-                    ? `${checklistRemaining} món chưa chuẩn bị` 
-                    : `Còn ${checklistRemaining} món cần soạn`}
+                    ? t('dashboard.itemsUnprepared', { count: checklistRemaining }) 
+                    : t('dashboard.itemsToPrepare', { count: checklistRemaining })}
                 </span>
               </div>
             ) : (
               <div className="flex items-center gap-2 text-[12px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-100/60 dark:border-emerald-900/30 px-3.5 py-2 rounded-[12px]">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0"></span>
-                <span className="truncate">Hành lý chuẩn bị xong</span>
+                <span className="truncate">{t('dashboard.luggageReady')}</span>
               </div>
             )
           )}
@@ -163,7 +165,7 @@ function TripCard({
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
               </span>
-              Đang diễn ra
+              {t('dashboard.statusActive')}
             </span>
           )}
           {timing.status === "upcoming" && (
@@ -172,7 +174,7 @@ function TripCard({
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
               </span>
-              Sắp diễn ra
+              {t('dashboard.statusUpcoming')}
             </span>
           )}
           {timing.status === "past" && (
@@ -180,11 +182,11 @@ function TripCard({
               <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-slate-400"></span>
               </span>
-              Đã kết thúc
+              {t('dashboard.statusPast')}
             </span>
           )}
           <span className="inline-flex items-center rounded-full bg-slate-100 border border-slate-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-slate-600 dark:bg-slate-800 dark:border-slate-700/60 dark:text-slate-300 tracking-wide">
-            {getTripDurationText(trip)}
+            {getTripDurationText(trip, t)}
           </span>
         </div>
 
@@ -196,7 +198,7 @@ function TripCard({
         <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 text-[12px] font-bold text-slate-655 dark:text-slate-350 mb-1">
           <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-slate-500/10 dark:group-hover:bg-slate-400/10">
             <HugeiconsIcon icon={Location01Icon} size={14} className="text-slate-400 shrink-0" />
-            <span className="truncate">{trip.location || "Chưa xác định"}</span>
+            <span className="truncate">{trip.location || t('dashboard.noLocationGrid')}</span>
           </div>
           <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-slate-500/10 dark:group-hover:bg-slate-400/10">
             <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-slate-400 shrink-0" />
@@ -204,10 +206,10 @@ function TripCard({
           </div>
           <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-slate-500/10 dark:group-hover:bg-slate-400/10 col-span-1 min-[360px]:col-span-2">
             <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-slate-400 shrink-0" />
-            <span className="truncate">{memberCounts[trip.id!] || 1} người</span>
+            <span className="truncate">{t('dashboard.peopleCount', { count: memberCounts[trip.id!] || 1 })}</span>
             <span className="text-slate-300 mx-0.5">·</span>
             <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-slate-400 shrink-0" />
-            <span className="truncate">{totalExpense > 0 ? `${totalExpense.toLocaleString()}đ` : "Chưa chi"}</span>
+            <span className="truncate">{totalExpense > 0 ? t('dashboard.expenseTotal', { amount: totalExpense.toLocaleString() + 'đ' }) : t('dashboard.noExpense')}</span>
           </div>
         </div>
       </div>
@@ -218,12 +220,12 @@ function TripCard({
           {checklistRemaining > 0 ? (
             <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-rose-700 dark:text-rose-400 bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100/60 dark:border-rose-900/30 px-2.5 py-1 rounded-[8px]">
               <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-              <span>Còn {checklistRemaining} món cần chuẩn bị</span>
+              <span>{t('dashboard.itemsToPrepare', { count: checklistRemaining })}</span>
             </div>
           ) : (
             <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-100/60 dark:border-emerald-900/30 px-2.5 py-1 rounded-[8px]">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-              <span>Hành lý chuẩn bị xong</span>
+              <span>{t('dashboard.luggageReady')}</span>
             </div>
           )}
         </div>
@@ -302,6 +304,7 @@ export function TripManagerScreen({
   onOpenArchive: () => void;
   onShowToast?: (msg: string) => void;
 }) {
+  const { t } = useTranslation();
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [tripToDelete, setTripToDelete] = useState<Trip | null>(null);
 
@@ -466,10 +469,10 @@ export function TripManagerScreen({
             
             <div className="relative z-10">
               <h1 className="text-[28px] sm:text-[32px] md:text-[36px] font-black text-white tracking-tight leading-tight">
-                Chuyến đi của bạn
+                {t('dashboard.heroTitle')}
               </h1>
               <p className="mt-2 text-[14px] sm:text-[15px] font-medium text-white/70 max-w-md leading-relaxed">
-                Lưu lịch trình, người đồng hành, chi phí và những việc cần chuẩn bị cho từng chuyến đi.
+                {t('dashboard.heroDesc')}
               </p>
             </div>
             
@@ -484,7 +487,7 @@ export function TripManagerScreen({
                   size={16} 
                   className="text-kat-teal group-hover:scale-110 transition-transform duration-300" 
                 />
-                <span className="tracking-wide">Kỷ niệm</span>
+                <span className="tracking-wide">{t('dashboard.memoriesBtn')}</span>
               </button>
               
               <button
@@ -492,7 +495,7 @@ export function TripManagerScreen({
                 className="group flex h-[46px] md:h-[50px] items-center justify-center gap-1.5 rounded-2xl bg-white text-[#030D2E] px-3.5 sm:px-7 font-black text-[12.5px] min-[360px]:text-[13.5px] md:text-[14px] shadow-[0_6px_20px_rgba(255,255,255,0.1)] active:scale-[0.97] transition-all duration-300 hover:bg-[#F8F9FA] hover:shadow-[0_8px_24px_rgba(255,255,255,0.2)] whitespace-nowrap shrink-0"
               >
                 <span className="text-md md:text-lg leading-none group-hover:rotate-90 transition-transform duration-300 font-extrabold">+</span>
-                Tạo chuyến đi
+                {t('dashboard.createTripBtn')}
               </button>
             </div>
           </div>
@@ -506,7 +509,7 @@ export function TripManagerScreen({
               .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
             return (
               <section className="mb-12 md:mb-14">
-                <h3 className="mb-4 px-1 text-[20px] font-extrabold text-kat-text motion-title-enter">Chuyến tiếp theo</h3>
+                <h3 className="mb-4 px-1 text-[20px] font-extrabold text-kat-text motion-title-enter">{t('dashboard.nextTripTitle')}</h3>
                 <div 
                   className={`group relative overflow-hidden rounded-[32px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border border-l-4 ${featuredBorderColor} p-6 sm:p-8 lg:p-10 shadow-soft cursor-pointer hover:shadow-md hover:border-slate-350/80 dark:hover:border-kat-border hover:-translate-y-1 transition-all duration-300 min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2`}
                   onClick={() => onOpenTrip(featuredTrip.id!)}
@@ -533,7 +536,7 @@ export function TripManagerScreen({
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                           </span>
-                          Đang diễn ra
+                          {t('dashboard.statusActive')}
                         </span>
                       ) : (
                         <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-3 py-1 text-[11px] font-bold text-amber-700 dark:bg-amber-950/30 dark:border-amber-800/40 dark:text-amber-400 uppercase tracking-wider shadow-sm">
@@ -541,11 +544,11 @@ export function TripManagerScreen({
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                           </span>
-                          Sắp diễn ra
+                          {t('dashboard.statusUpcoming')}
                         </span>
                       )}
                       <span className="rounded-full bg-slate-100 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-600 dark:bg-slate-800 dark:border-slate-700/60 dark:text-slate-300">
-                        {getTripDurationText(featuredTrip)}
+                        {getTripDurationText(featuredTrip, t)}
                       </span>
                     </div>
                     
@@ -556,7 +559,7 @@ export function TripManagerScreen({
                     <div className="flex flex-wrap gap-2 text-slate-700 dark:text-slate-300">
                       <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-kat-border px-3 py-1.5 rounded-[12px] max-w-full">
                         <HugeiconsIcon icon={Location01Icon} size={16} className="text-slate-400 shrink-0" />
-                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">{featuredTrip.location || "Chưa có địa điểm"}</span>
+                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">{featuredTrip.location || t('dashboard.noLocation')}</span>
                       </div>
                       <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-kat-border px-3 py-1.5 rounded-[12px] max-w-full">
                         <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-400 shrink-0" />
@@ -564,10 +567,10 @@ export function TripManagerScreen({
                       </div>
                       <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-kat-border px-3 py-1.5 rounded-[12px] max-w-full">
                         <HugeiconsIcon icon={UserGroupIcon} size={16} className="text-slate-400 shrink-0" />
-                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{memberCounts[featuredTrip.id!] || 1} người</span>
+                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{t('dashboard.peopleCount', { count: memberCounts[featuredTrip.id!] || 1 })}</span>
                         <span className="text-slate-300 dark:text-slate-500 mx-0.5">·</span>
                         <HugeiconsIcon icon={WalletCardsIcon} size={16} className="text-slate-400 shrink-0" />
-                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{featuredTotalExpense > 0 ? `${featuredTotalExpense.toLocaleString()}đ` : "Chưa chi"}</span>
+                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{featuredTotalExpense > 0 ? t('dashboard.expenseTotal', { amount: featuredTotalExpense.toLocaleString() + 'đ' }) : t('dashboard.noExpense')}</span>
                       </div>
                     </div>
                   </div>
@@ -581,8 +584,8 @@ export function TripManagerScreen({
             <div className="space-y-4">
               {featuredTrip && remainingTrips.length <= 2 ? (
                 <TripList 
-                  title="Tất cả chuyến đi" 
-                  subtitle="Tất cả chuyến đi của bạn." 
+                  title={t('dashboard.allTripsTitle')} 
+                  subtitle={t('dashboard.allTripsDesc')} 
                   items={remainingTrips} 
                   allExpenses={allExpenses}
                   allChecklist={allChecklist}
@@ -592,8 +595,8 @@ export function TripManagerScreen({
               ) : (
                 <>
                   <TripList 
-                    title="Đang diễn ra" 
-                    subtitle="Hành trình đang diễn ra ngay lúc này." 
+                    title={t('dashboard.activeTripsTitle')} 
+                    subtitle={t('dashboard.activeTripsDesc')} 
                     items={remainingActive} 
                     allExpenses={allExpenses}
                     allChecklist={allChecklist}
@@ -601,8 +604,8 @@ export function TripManagerScreen({
                     onOpenTrip={onOpenTrip}
                   />
                   <TripList 
-                    title="Sắp diễn ra" 
-                    subtitle="Hành trình chuẩn bị khởi hành sắp tới." 
+                    title={t('dashboard.upcomingTripsTitle')} 
+                    subtitle={t('dashboard.upcomingTripsDesc')} 
                     items={remainingUpcoming} 
                     allExpenses={allExpenses}
                     allChecklist={allChecklist}
@@ -610,8 +613,8 @@ export function TripManagerScreen({
                     onOpenTrip={onOpenTrip}
                   />
                   <TripList 
-                    title="Đã hoàn thành" 
-                    subtitle="Những chuyến đi đã kết thúc và có thể xem lại tổng kết." 
+                    title={t('dashboard.pastTripsTitle')} 
+                    subtitle={t('dashboard.pastTripsDesc')} 
                     items={remainingPast} 
                     allExpenses={allExpenses}
                     allChecklist={allChecklist}

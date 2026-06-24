@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { executeDeleteAccount } from "../utils/dataActions";
 import { TypedDeleteConfirmModal } from "./ui";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -12,6 +13,8 @@ interface DeleteAccountModalProps {
 export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const { t } = useTranslation();
+
   const handleDelete = async () => {
     setErrorMsg(null);
     try {
@@ -19,9 +22,9 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
     } catch (err: any) {
       console.error("Account deletion failed:", err);
       if (err.message === "requires-recent-login") {
-        setErrorMsg("Hành động này yêu cầu đăng nhập gần đây. Vui lòng đăng xuất và đăng nhập lại bằng Google để xác thực trước khi thực hiện xóa tài khoản.");
+        setErrorMsg(t('settings.dialogs.deleteAccount.errorAuth'));
       } else {
-        setErrorMsg("Đã xảy ra lỗi khi xóa tài khoản. Vui lòng thử lại sau.");
+        setErrorMsg(t('settings.dialogs.deleteAccount.errorGeneric'));
       }
       throw err;
     }
@@ -38,24 +41,24 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={handleDelete}
-      title="Xóa tài khoản của bạn?"
+      title={t('settings.dialogs.deleteAccount.title')}
       warning={
         <span className="font-bold text-red-600">
-          Để xác nhận, vui lòng nhập chính xác chữ XÓA.
+          {t('settings.dialogs.deleteAccount.warning')}
         </span>
       }
       description={
         <div className="space-y-4">
           <p className="text-[14px] text-slate-700">
-            Hành động này sẽ xóa vĩnh viễn tài khoản của bạn trên hệ thống Cloud và toàn bộ dữ liệu lưu trữ cục bộ. Bạn không thể hoàn tác.
+            {t('settings.dialogs.deleteAccount.desc')}
           </p>
           <div className="bg-slate-100 p-3.5 rounded-xl text-left">
-            <p className="font-bold text-slate-700 text-[13px] mb-1">Dữ liệu sẽ bị xóa:</p>
+            <p className="font-bold text-slate-700 text-[13px] mb-1">{t('settings.dialogs.deleteAccount.deletedData')}</p>
             <ul className="list-disc pl-5 space-y-1 text-slate-650 text-[12.5px]">
-              <li>Tài khoản đăng nhập trên hệ thống</li>
-              <li>Toàn bộ chuyến đi và lịch trình đã lưu</li>
-              <li>Tất cả chi phí, bản tin hành trình</li>
-              <li>Danh sách chuẩn bị hành lý & giấy tờ</li>
+              <li>{t('settings.dialogs.deleteAccount.li1')}</li>
+              <li>{t('settings.dialogs.deleteAccount.li2')}</li>
+              <li>{t('settings.dialogs.deleteAccount.li3')}</li>
+              <li>{t('settings.dialogs.deleteAccount.li4')}</li>
             </ul>
           </div>
           {errorMsg && (
@@ -66,10 +69,10 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
           )}
         </div>
       }
-      confirmLabel="Xác nhận xóa tài khoản"
-      confirmationText="XÓA"
-      inputPlaceholder="Nhập XÓA để xác nhận"
-      itemName="Tài khoản và toàn bộ dữ liệu KAT Journey"
+      confirmLabel={t('settings.dialogs.deleteAccount.confirmBtn')}
+      confirmationText={t('settings.dialogs.deleteAccount.confirmText')}
+      inputPlaceholder={t('settings.dialogs.deleteAccount.inputPlaceholder')}
+      itemName={t('settings.dialogs.deleteAccount.itemName')}
     />
   );
 }
