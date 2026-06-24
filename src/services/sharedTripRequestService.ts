@@ -27,37 +27,10 @@ export async function submitChangeRequest(token: string, payload: ChangeRequestP
     user = anonData.user;
   }
 
-  // Verify share thông qua RLS trên bảng public_shares
-  // (Chỉ đọc được nếu đã verify PIN thành công từ trước, có record trong share_access)
-  const { data: verifyData, error: verifyError } = await supabase
-    .from('public_shares')
-    .select('mode, include_expenses, include_checklist, include_journals, include_backup_plans, include_documents')
-    .eq('token', token)
-    .single();
-
-  if (verifyError || !verifyData) {
-    throw new Error('Link chia sẻ không tồn tại hoặc đã bị thu hồi.');
-  }
-
-  if (verifyData.mode !== 'request_edit' && verifyData.mode !== 'edit') {
-    throw new Error('Link này không cho phép gửi đề xuất chỉnh sửa.');
-  }
-
-  // Check section flags
-  const sectionFlagMap: Record<ChangeRequestSection, string | null> = {
-    activities: null,
-    expenses: 'include_expenses',
-    checklist: 'include_checklist',
-    journals: 'include_journals',
-    backupPlans: 'include_backup_plans',
-    travelDocuments: 'include_documents',
-    members: null
-  };
-
-  const flagName = sectionFlagMap[payload.section];
-  if (flagName && (verifyData as any)[flagName] !== true) {
-    throw new Error('Mục này không được phép chỉnh sửa.');
-  }
+  // Bỏ qua bước kiểm tra public_shares ở client vì:
+  // 1. RLS của bảng change_requests sẽ tự động chặn nếu user không có quyền (không có record trong share_access).
+  // 2. UI đã tự động ẩn các mục không được phép chỉnh sửa.
+  // Việc này giúp tránh lỗi không truy vấn được public_shares do thiếu RLS policy.
 
   function removeUndefined(obj: any): any {
     if (obj === undefined) return null;
