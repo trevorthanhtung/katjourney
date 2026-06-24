@@ -25,17 +25,11 @@ export function SplashScreen({ isFading }: SplashScreenProps) {
 
       {/* Main Logo Container */}
       <div className="relative flex flex-col items-center gap-6 z-10 animate-splash-logo">
-        <div className="flex h-20 w-20 items-center justify-center rounded-[24px] bg-white dark:bg-slate-900 border border-slate-100/50 dark:border-slate-800 shadow-soft ring-8 ring-white/30 dark:ring-slate-800/20">
+        <div className="flex h-20 w-20 items-center justify-center rounded-[24px] bg-white border border-slate-100/50 shadow-soft ring-8 ring-white/30 dark:ring-white/10">
           <img
             src="/asset/logo.png"
             alt="KAT Journey Logo"
-            className="dark:hidden h-13 w-13 object-contain drop-shadow-sm"
-            loading="eager"
-          />
-          <img
-            src="/logo-dark.png"
-            alt="KAT Journey Logo"
-            className="hidden dark:block h-13 w-13 object-contain drop-shadow-sm"
+            className="h-13 w-13 object-contain drop-shadow-sm"
             loading="eager"
           />
         </div>
