@@ -9,3 +9,4 @@ public/firebase-messaging-sw.js
 test-results/
 playwright-report/
 blob-report/
+.vercel
