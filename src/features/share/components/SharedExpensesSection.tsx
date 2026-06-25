@@ -1072,32 +1072,80 @@ export function SharedExpensesSection({
                           >
                             Tất cả mọi người
                           </button>
-                          {members.map(m => {
-                            const isSelected = form.splitAmong?.includes(m.name);
-                            return (
-                              <button
-                                key={m.name}
-                                type="button"
-                                onClick={() => {
-                                  setForm(f => {
-                                    const current = f.splitAmong || [];
-                                    const next = isSelected 
-                                      ? current.filter(n => n !== m.name)
-                                      : [...current, m.name];
-                                    return { ...f, splitAmong: next.length === members.length ? [] : next };
-                                  });
-                                }}
-                                className={classNames(
-                                  "px-3 py-1.5 rounded-xl text-[12px] font-bold transition-colors border",
-                                  isSelected || (!form.splitAmong || form.splitAmong.length === 0)
-                                    ? "bg-kat-dark/10 dark:bg-kat-primary/20 text-kat-dark dark:text-kat-primary border-kat-dark/20 dark:border-kat-primary/30"
-                                    : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-kat-dark/30"
-                                )}
-                              >
-                                {m.name}
-                              </button>
-                            );
-                          })}
+                          {form.splitMode === "perGroup" ? (
+                            getGroupUnits(members).map(unit => {
+                              const label = unit.isGroup ? unit.groupName : unit.memberNames[0];
+                              const isSelected = !form.splitAmong || form.splitAmong.length === 0 || unit.memberNames.every(name => form.splitAmong.includes(name));
+                              return (
+                                <button
+                                  key={label}
+                                  type="button"
+                                  onClick={() => {
+                                    setForm(f => {
+                                      const current = f.splitAmong || [];
+                                      if (current.length === 0) {
+                                        const allNames = members.map(m => m.name);
+                                        const next = allNames.filter(n => !unit.memberNames.includes(n));
+                                        return { ...f, splitAmong: next };
+                                      } else {
+                                        if (isSelected) {
+                                          const next = current.filter(n => !unit.memberNames.includes(n));
+                                          return { ...f, splitAmong: next.length === 0 ? [] : next };
+                                        } else {
+                                          const next = Array.from(new Set([...current, ...unit.memberNames]));
+                                          return { ...f, splitAmong: next.length === members.length ? [] : next };
+                                        }
+                                      }
+                                    });
+                                  }}
+                                  className={classNames(
+                                    "px-3 py-1.5 rounded-xl text-[12px] font-bold transition-colors border",
+                                    isSelected
+                                      ? "bg-kat-dark/10 dark:bg-kat-primary/20 text-kat-dark dark:text-kat-primary border-kat-dark/20 dark:border-kat-primary/30"
+                                      : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-kat-dark/30"
+                                  )}
+                                >
+                                  {label}
+                                </button>
+                              );
+                            })
+                          ) : (
+                            members.map(m => {
+                              const isSelected = !form.splitAmong || form.splitAmong.length === 0 || form.splitAmong.includes(m.name);
+                              return (
+                                <button
+                                  key={m.name}
+                                  type="button"
+                                  onClick={() => {
+                                    setForm(f => {
+                                      const current = f.splitAmong || [];
+                                      if (current.length === 0) {
+                                        const allNames = members.map(mem => mem.name);
+                                        const next = allNames.filter(n => n !== m.name);
+                                        return { ...f, splitAmong: next };
+                                      } else {
+                                        if (isSelected) {
+                                          const next = current.filter(n => n !== m.name);
+                                          return { ...f, splitAmong: next.length === 0 ? [] : next };
+                                        } else {
+                                          const next = [...current, m.name];
+                                          return { ...f, splitAmong: next.length === members.length ? [] : next };
+                                        }
+                                      }
+                                    });
+                                  }}
+                                  className={classNames(
+                                    "px-3 py-1.5 rounded-xl text-[12px] font-bold transition-colors border",
+                                    isSelected
+                                      ? "bg-kat-dark/10 dark:bg-kat-primary/20 text-kat-dark dark:text-kat-primary border-kat-dark/20 dark:border-kat-primary/30"
+                                      : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-kat-dark/30"
+                                  )}
+                                >
+                                  {m.name}
+                                </button>
+                              );
+                            })
+                          )}
                         </div>
                       </div>
                     </div>

@@ -886,44 +886,79 @@ function ExpenseForm({
                         className={classNames(
                           "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
                           form.splitAmong.length === 0
-                            ? "bg-kat-teal text-white border-kat-teal"
+                            ? "bg-kat-dark text-white border-transparent"
                             : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700"
                         )}
                       >
                         Tất cả
                       </button>
-                      {members.map(m => {
-                        const isSelected = form.splitAmong.length === 0 || form.splitAmong.includes(m.name);
-                        return (
-                          <button
-                            key={m.id}
-                            type="button"
-                            onClick={() => {
-                              if (form.splitAmong.length === 0) {
-                                setForm({ ...form, splitAmong: members.map(mem => mem.name).filter(n => n !== m.name) });
-                              } else {
-                                if (form.splitAmong.includes(m.name)) {
-                                  const next = form.splitAmong.filter(n => n !== m.name);
-                                  setForm({ ...form, splitAmong: next.length === 0 ? [] : next });
+                      
+                      {form.splitMode === "perGroup" ? (
+                        getGroupUnits(members).map(unit => {
+                          const label = unit.isGroup ? unit.groupName : unit.memberNames[0];
+                          const isSelected = form.splitAmong.length === 0 || unit.memberNames.every(name => form.splitAmong.includes(name));
+                          return (
+                            <button
+                              key={label}
+                              type="button"
+                              onClick={() => {
+                                if (form.splitAmong.length === 0) {
+                                  const allNames = members.map(m => m.name);
+                                  const next = allNames.filter(n => !unit.memberNames.includes(n));
+                                  setForm({ ...form, splitAmong: next });
                                 } else {
-                                  const next = [...form.splitAmong, m.name];
-                                  setForm({ ...form, splitAmong: next.length === members.length ? [] : next });
+                                  if (isSelected) {
+                                    const next = form.splitAmong.filter(n => !unit.memberNames.includes(n));
+                                    setForm({ ...form, splitAmong: next.length === 0 ? [] : next });
+                                  } else {
+                                    const next = Array.from(new Set([...form.splitAmong, ...unit.memberNames]));
+                                    setForm({ ...form, splitAmong: next.length === members.length ? [] : next });
+                                  }
                                 }
-                              }
-                            }}
-                            className={classNames(
-                              "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
-                              isSelected && form.splitAmong.length > 0
-                                ? "bg-kat-teal text-white border-kat-teal"
-                                : !isSelected
-                                  ? "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 opacity-60"
-                                  : "hidden"
-                            )}
-                          >
-                            {m.name}
-                          </button>
-                        );
-                      })}
+                              }}
+                              className={classNames(
+                                "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
+                                isSelected || form.splitAmong.length === 0
+                                  ? "bg-kat-dark/10 dark:bg-kat-primary/20 text-kat-dark dark:text-kat-primary border-kat-dark/20 dark:border-kat-primary/30"
+                                  : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-kat-dark/30"
+                              )}
+                            >
+                              {label}
+                            </button>
+                          );
+                        })
+                      ) : (
+                        members.map(m => {
+                          const isSelected = form.splitAmong.length === 0 || form.splitAmong.includes(m.name);
+                          return (
+                            <button
+                              key={m.id}
+                              type="button"
+                              onClick={() => {
+                                if (form.splitAmong.length === 0) {
+                                  setForm({ ...form, splitAmong: members.map(mem => mem.name).filter(n => n !== m.name) });
+                                } else {
+                                  if (form.splitAmong.includes(m.name)) {
+                                    const next = form.splitAmong.filter(n => n !== m.name);
+                                    setForm({ ...form, splitAmong: next.length === 0 ? [] : next });
+                                  } else {
+                                    const next = [...form.splitAmong, m.name];
+                                    setForm({ ...form, splitAmong: next.length === members.length ? [] : next });
+                                  }
+                                }
+                              }}
+                              className={classNames(
+                                "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
+                                isSelected || form.splitAmong.length === 0
+                                  ? "bg-kat-dark/10 dark:bg-kat-primary/20 text-kat-dark dark:text-kat-primary border-kat-dark/20 dark:border-kat-primary/30"
+                                  : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-kat-dark/30"
+                              )}
+                            >
+                              {m.name}
+                            </button>
+                          );
+                        })
+                      )}
                     </div>
                   </div>
                 </>

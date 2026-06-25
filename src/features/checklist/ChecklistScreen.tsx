@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+ useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   CheckIcon,
@@ -32,6 +34,17 @@ import { DeleteConfirmModal, Select } from "../../components/ui";
 import { useModalHistory } from "../../hooks/useModalHistory";
 import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
 
+
+const categoryI18nMap: Record<string, string> = {
+  "Giấy tờ": "packing.catGiayTo",
+  "Quần áo": "packing.catQuanAo",
+  "Đồ cá nhân": "packing.catDoCaNhan",
+  "Thiết bị điện tử": "packing.catDienTu",
+  "Thuốc & y tế": "packing.catYTe",
+  "Tiền & ví": "packing.catTien",
+  "Đồ ăn nhẹ": "packing.catAnNhe",
+  "Khác": "packing.catOther"
+};
 
 const CATEGORIES = [
   "Giấy tờ",
@@ -67,14 +80,14 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 };
 
 const QUICK_SUGGESTIONS = [
-  { label: "Giấy tờ", title: "Hộ chiếu & CCCD", category: "Giấy tờ" },
-  { label: "Quần áo", title: "Quần áo dã ngoại", category: "Quần áo" },
-  { label: "Sạc dự phòng", title: "Sạc dự phòng, cáp sạc", category: "Thiết bị điện tử" },
-  { label: "Thuốc & y tế", title: "Thuốc hạ sốt, băng cá nhân", category: "Thuốc & y tế" },
-  { label: "Đồ cá nhân", title: "Bàn chải & Kem đánh răng", category: "Đồ cá nhân" },
-  { label: "Tiền & ví", title: "Tiền mặt & thẻ", category: "Tiền & ví" },
-  { label: "Khăn / vệ sinh", title: "Khăn mặt & Bộ vệ sinh", category: "Đồ cá nhân" },
-  { label: "Đồ ăn nhẹ", title: "Nước uống & bánh kẹo", category: "Đồ ăn nhẹ" }
+  { labelKey: "packing.catGiayTo", titleKey: "packing.sugPassport", category: "Giấy tờ" },
+  { labelKey: "packing.catQuanAo", titleKey: "packing.sugClothes", category: "Quần áo" },
+  { labelKey: "packing.catDienTu", titleKey: "packing.sugPowerBank", category: "Thiết bị điện tử" },
+  { labelKey: "packing.catYTe", titleKey: "packing.sugMeds", category: "Thuốc & y tế" },
+  { labelKey: "packing.catDoCaNhan", titleKey: "packing.sugToothbrush", category: "Đồ cá nhân" },
+  { labelKey: "packing.catTien", titleKey: "packing.sugMoney", category: "Tiền & ví" },
+  { labelKey: "packing.catDoCaNhan", titleKey: "packing.sugTowel", category: "Đồ cá nhân" },
+  { labelKey: "packing.catAnNhe", titleKey: "packing.sugSnacks", category: "Đồ ăn nhẹ" }
 ];
 
 function ChecklistItemRow({
@@ -90,6 +103,7 @@ function ChecklistItemRow({
   onDelete: (item: ChecklistItem) => void;
   isReadOnly?: boolean;
 }) {
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -128,7 +142,7 @@ function ChecklistItemRow({
             ? "bg-kat-teal/20 text-kat-teal border-transparent dark:border-kat-teal/30 shadow-sm"
             : "bg-slate-50 dark:bg-slate-800 border-slate-200/80 dark:border-slate-700/50 text-transparent hover:text-kat-teal hover:border-[#00BFB7]/50 hover:bg-slate-100 dark:hover:bg-slate-700"
         }`}
-        aria-label="Đánh dấu checklist"
+        aria-label={t("packing.toggleChecklist")}
       >
         <HugeiconsIcon icon={CheckIcon} className="h-5.5 w-5.5 text-current" />
       </button>
@@ -196,7 +210,7 @@ function ChecklistItemRow({
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
             }}
-            title="Tùy chọn"
+            title={t("packing.options")}
           >
             <HugeiconsIcon icon={MoreHorizontalIcon} className="h-5 w-5" />
           </button>
@@ -236,6 +250,7 @@ function ChecklistItemRow({
 }
 
 export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: ChecklistItem[]; tripId: number; isReadOnly?: boolean }) {
+  const { t } = useTranslation();
   // Modal & Form State
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -404,7 +419,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
   const isAdded = (sugTitle: string) =>
     checklist.some((item) => item.title.toLowerCase().trim() === sugTitle.toLowerCase().trim());
   
-  const allSuggestionsAdded = QUICK_SUGGESTIONS.every((sug) => isAdded(sug.title));
+  const allSuggestionsAdded = QUICK_SUGGESTIONS.every((sug) => isAdded(t(sug.titleKey)));
 
   // Determine status description text
   let statusText = "Chưa có món cần chuẩn bị.";
@@ -443,7 +458,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             <h3 className="text-[16.5px] font-black text-kat-text">{catName}</h3>
           </div>
           <span className="text-[11.5px] font-black text-slate-500 dark:text-slate-400 px-2.5 py-0.5 rounded-full bg-kat-dark/05 dark:bg-slate-800/80">
-            {catDone} / {catTotal} món
+            {t("packing.catCount", { done: catDone, total: catTotal })}
           </span>
         </div>
 
@@ -469,8 +484,8 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
       {/* Title Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-[32px] font-black tracking-tight text-kat-text">Chuẩn bị hành lý</h2>
-          <p className="mt-1 text-[15px] font-bold text-kat-muted">Chuẩn bị đủ những món cần mang theo cho chuyến đi.</p>
+          <h2 className="text-[32px] font-black tracking-tight text-kat-text">{t("packing.pageTitle")}</h2>
+          <p className="mt-1 text-[15px] font-bold text-kat-muted">{t("packing.pageSubtitle")}</p>
         </div>
       </div>
 
@@ -524,7 +539,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 border border-transparent dark:border-kat-primary px-4 text-[13.5px] font-black shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press w-full sm:w-auto shrink-0"
               >
                 <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
-                <span>Thêm món</span>
+                <span>{t("packing.addItem")}</span>
               </button>
             </div>
           )}
@@ -543,12 +558,12 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
           </div>
           <div className="flex flex-nowrap gap-2 overflow-x-auto pb-1 -mx-2 px-2 touch-pan-x scrollbar-none md:flex-wrap md:overflow-visible md:pb-0 md:mx-0 md:px-0">
             {QUICK_SUGGESTIONS.map((sug) => {
-              const added = isAdded(sug.title);
+              const added = isAdded(t(sug.titleKey));
               return (
                 <button
-                  key={sug.title}
+                  key={t(sug.titleKey)}
                   disabled={added}
-                  onClick={() => handleQuickAdd(sug.title, sug.category)}
+                  onClick={() => handleQuickAdd(t(sug.titleKey), sug.category)}
                   className={`h-9 px-3.5 shrink-0 rounded-xl border text-[12px] font-semibold flex items-center gap-1.5 transition-all duration-200 active:scale-95 ${
                     added
                       ? "bg-slate-50 dark:bg-slate-800/30 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed"
@@ -558,12 +573,12 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                   {added ? (
                     <>
                       <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                      <span className="truncate">{sug.label} · Đã thêm</span>
+                      <span className="truncate">{t(sug.labelKey)} · {t("packing.addedStatus")}</span>
                     </>
                   ) : (
                     <>
                       <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5 opacity-70 shrink-0" />
-                      <span className="truncate">{sug.label}</span>
+                      <span className="truncate">{t(sug.labelKey)}</span>
                     </>
                   )}
                 </button>
@@ -597,12 +612,12 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               </p>
               <div className="flex flex-wrap justify-center gap-2.5">
                 {QUICK_SUGGESTIONS.map((sug) => {
-                  const added = isAdded(sug.title);
+                  const added = isAdded(t(sug.titleKey));
                   return (
                     <button
-                      key={sug.title}
+                      key={t(sug.titleKey)}
                       disabled={added}
-                      onClick={() => handleQuickAdd(sug.title, sug.category)}
+                      onClick={() => handleQuickAdd(t(sug.titleKey), sug.category)}
                       className={`h-[38px] px-3.5 rounded-xl border text-[12px] font-semibold flex items-center gap-1.5 transition-all active:scale-95 duration-200 ${
                         added
                           ? "bg-slate-50 dark:bg-slate-800/30 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed"
@@ -612,12 +627,12 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                       {added ? (
                         <>
                           <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5 text-emerald-600 animate-fadeIn" />
-                          <span>{sug.label} · Đã thêm</span>
+                          <span>{t(sug.labelKey)} · {t("packing.addedStatus")}</span>
                         </>
                       ) : (
                         <>
                           <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5 text-kat-primary" />
-                          <span>{sug.label}</span>
+                          <span>{t(sug.labelKey)}</span>
                         </>
                       )}
                     </button>
@@ -671,7 +686,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             <div className="flex shrink-0 items-center justify-between border-b border-slate-200/60 dark:border-slate-800 px-6 py-4">
               <div>
                 <h3 className="text-[19px] md:text-[20px] font-black text-kat-text">
-                  {editingId ? "Sửa món hành lý" : "Thêm món hành lý"}
+                  {editingId ? t("packing.editTitle") : t("packing.addTitle")}
                 </h3>
               </div>
               <button 
@@ -700,7 +715,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                     setTitle(e.target.value);
                     if (e.target.value.trim()) setShowValidationError(false);
                   }}
-                  placeholder="VD: Sạc dự phòng"
+                  placeholder={t("packing.namePlaceholder")}
                 />
                 {showValidationError && (
                   <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1 flex items-center gap-1 motion-error-enter">
@@ -781,8 +796,8 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                     <div className="rounded-[16px] bg-slate-50 dark:bg-slate-800/30 border border-kat-border/60 dark:border-slate-800 p-3 flex items-start gap-2.5">
                       <HugeiconsIcon icon={UserIcon} className="h-4 w-4 text-kat-muted shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="text-[12.5px] font-bold text-kat-text">Chưa có người đồng hành</h4>
-                        <p className="text-[11.5px] text-kat-muted mt-0.5 font-bold">Thêm người đồng hành trong Không gian chuyến đi để phân công chuẩn bị hành lý.</p>
+                        <h4 className="text-[12.5px] font-bold text-kat-text">{t("packing.noMembersTitle")}</h4>
+                        <p className="text-[11.5px] text-kat-muted mt-0.5 font-bold">{t("packing.noMembersDesc")}</p>
                       </div>
                     </div>
                   </>
@@ -801,7 +816,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                       ...(assignedTo && !members.some((m) => m.name === assignedTo) ? [assignedTo] : []),
                       ...members.map((m) => m.name)
                     ]}
-                    labels={members.reduce((acc, m) => ({ ...acc, [m.name]: `${m.name} (${m.role || "Người đồng hành"})` }), {} as Record<string, string>)}
+                    labels={members.reduce((acc, m) => ({ ...acc, [m.name]: `${m.name} (${m.role || t("members.roleCompanion")})` }), {} as Record<string, string>)}
                     placeholder="Chọn người đồng hành"
                     buttonClassName="w-full flex items-center justify-between rounded-[12px] border border-kat-border dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50 px-3.5 h-11 text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-primary"
                   />
@@ -817,7 +832,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 <div className="flex p-1 bg-slate-50 dark:bg-slate-800/50 border border-kat-border/50 dark:border-slate-800 rounded-xl">
                   {(["normal", "important", "required"] as const).map((prio) => {
                     const isSelected = priority === prio;
-                    const labels = { normal: "Thường", important: "Quan trọng", required: "Bắt buộc" };
+                    const labels = { normal: t("packing.prioNormal"), important: t("packing.prioImportant"), required: t("packing.prioRequired") };
                     return (
                       <button
                         key={prio}
@@ -846,7 +861,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                   className="w-full h-[72px] rounded-[14px] border border-kat-border dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50 px-4 py-3 text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-primary/50 resize-none"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  placeholder="VD: Để trong balo nhỏ, nhớ sạc đầy..."
+                  placeholder={t("packing.notePlaceholder")}
                 />
               </div>
 
@@ -893,7 +908,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 disabled={!title.trim()}
               >
                 <HugeiconsIcon icon={CheckIcon} className="h-4.5 w-4.5" />
-                {editingId ? "Lưu thông tin" : "Thêm vào hành lý"}
+                {editingId ? t("packing.saveItem") : t("packing.addItemConfirm")}
               </button>
             </div>
           </div>
@@ -917,10 +932,10 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
         isOpen={Boolean(itemToDelete)}
         onClose={() => setItemToDelete(null)}
         onConfirm={executeDeleteItem}
-        title="Xóa món chuẩn bị này?"
+        title={t("packing.deleteTitle")}
         itemName={itemToDelete?.title}
-        description="Món chuẩn bị này sẽ bị xóa khỏi danh sách của chuyến đi. Sau khi xóa, không thể hoàn tác."
-        confirmLabel="Xóa món"
+        description={t("packing.deleteDesc")}
+        confirmLabel={t("packing.deleteConfirm")}
       />
 
       {/* Toast Notification popup */}
