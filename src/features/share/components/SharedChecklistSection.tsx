@@ -462,7 +462,7 @@ export function SharedChecklistSection({
                           ? "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30" 
                           : "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/30"
                       )}>
-                        {c.priority === 'required' ? 'Bắt buộc' : 'Quan trọng'}
+                        {c.priority === 'required' ? t("packing.priorityRequired") : t("packing.priorityImportant")}
                       </span>
                     )}
                   </div>

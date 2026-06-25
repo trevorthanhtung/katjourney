@@ -852,7 +852,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 <div className="flex p-1 bg-slate-50 dark:bg-slate-800/50 border border-kat-border/50 dark:border-slate-800 rounded-xl">
                   {(["normal", "important", "required"] as const).map((prio) => {
                     const isSelected = priority === prio;
-                    const labels = { normal: t("packing.prioNormal"), important: t("packing.prioImportant"), required: t("packing.prioRequired") };
+                    const labels = { normal: t("packing.priorityNormal"), important: t("packing.priorityImportant"), required: t("packing.priorityRequired") };
                     return (
                       <button
                         key={prio}
