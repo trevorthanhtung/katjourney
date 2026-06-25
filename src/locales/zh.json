@@ -1098,5 +1098,33 @@
     "catPreparation": "行前准备",
     "catOther": "其他",
     "catCustom": "其他..."
+  },
+  "more": {
+    "workspaceTitle": "旅行工作区",
+    "workspaceDesc": "自定义您的行程信息、成员和数据。",
+    "workspaceDescNoTrip": "管理应用和数据配置。",
+    "currentTrip": "当前行程",
+    "noLocation": "未设置地点",
+    "membersCount": "成员",
+    "eventsCount": "日程",
+    "expensesCount": "费用",
+    "packingProgress": "已准备",
+    "sectionFeatures": "功能",
+    "featureTripInfo": "行程信息",
+    "featureMembers": "成员",
+    "featureWrapped": "行程总结",
+    "featureJournal": "旅行日记",
+    "featureDocuments": "票务与证件",
+    "featureShare": "分享行程",
+    "sectionData": "数据管理",
+    "dataTripData": "行程数据",
+    "dataBackup": "备份行程",
+    "dataExportPdf": "导出 PDF 报告",
+    "dataExportExcel": "导出 Excel 表格",
+    "sectionDanger": "危险区域",
+    "actionEndTrip": "结束行程",
+    "actionRestoreTrip": "恢复行程",
+    "actionDeleteTrip": "永久删除行程",
+    "madeBy": "制作者"
   }
 }

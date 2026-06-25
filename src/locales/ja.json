@@ -1098,5 +1098,33 @@
     "catPreparation": "準備",
     "catOther": "その他",
     "catCustom": "その他..."
+  },
+  "more": {
+    "workspaceTitle": "旅行ワークスペース",
+    "workspaceDesc": "旅行の情報、メンバー、データをカスタマイズします。",
+    "workspaceDescNoTrip": "アプリとデータの構成を管理します。",
+    "currentTrip": "現在の旅行",
+    "noLocation": "場所未設定",
+    "membersCount": "メンバー",
+    "eventsCount": "イベント",
+    "expensesCount": "費用",
+    "packingProgress": "準備完了",
+    "sectionFeatures": "機能",
+    "featureTripInfo": "旅行情報",
+    "featureMembers": "メンバー",
+    "featureWrapped": "旅行のまとめ",
+    "featureJournal": "旅行日記",
+    "featureDocuments": "チケットと書類",
+    "featureShare": "旅行を共有",
+    "sectionData": "データ管理",
+    "dataTripData": "旅行データ",
+    "dataBackup": "旅行のバックアップ",
+    "dataExportPdf": "PDFレポートを出力",
+    "dataExportExcel": "Excelスプレッドシートを出力",
+    "sectionDanger": "危険エリア",
+    "actionEndTrip": "旅行を終了",
+    "actionRestoreTrip": "旅行を復元",
+    "actionDeleteTrip": "旅行を完全に削除",
+    "madeBy": "開発者"
   }
 }

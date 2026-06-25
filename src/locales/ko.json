@@ -1078,5 +1078,33 @@
     "catPreparation": "준비물",
     "catOther": "기타",
     "catCustom": "기타..."
+  },
+  "more": {
+    "workspaceTitle": "여행 워크스페이스",
+    "workspaceDesc": "여행 정보, 멤버 및 데이터를 사용자 지정합니다.",
+    "workspaceDescNoTrip": "앱 및 데이터 구성을 관리합니다.",
+    "currentTrip": "현재 여행",
+    "noLocation": "위치 미설정",
+    "membersCount": "멤버",
+    "eventsCount": "일정",
+    "expensesCount": "비용",
+    "packingProgress": "준비됨",
+    "sectionFeatures": "기능",
+    "featureTripInfo": "여행 정보",
+    "featureMembers": "멤버",
+    "featureWrapped": "여행 요약",
+    "featureJournal": "여행 일지",
+    "featureDocuments": "티켓 및 문서",
+    "featureShare": "여행 공유",
+    "sectionData": "데이터 관리",
+    "dataTripData": "여행 데이터",
+    "dataBackup": "여행 백업",
+    "dataExportPdf": "PDF 보고서 내보내기",
+    "dataExportExcel": "Excel 스프레드시트 내보내기",
+    "sectionDanger": "위험 구역",
+    "actionEndTrip": "여행 종료",
+    "actionRestoreTrip": "여행 복원",
+    "actionDeleteTrip": "여행 영구 삭제",
+    "madeBy": "제작자"
   }
 }

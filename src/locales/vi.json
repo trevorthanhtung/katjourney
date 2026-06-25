@@ -1076,5 +1076,33 @@
     "catPreparation": "Chuẩn bị hành lý",
     "catOther": "Khác",
     "catCustom": "Khác..."
+  },
+  "more": {
+    "workspaceTitle": "Không gian chuyến đi",
+    "workspaceDesc": "Tùy chỉnh thông tin, thành viên và dữ liệu cho hành trình của bạn.",
+    "workspaceDescNoTrip": "Quản lý ứng dụng và cấu hình dữ liệu.",
+    "currentTrip": "Hành trình hiện tại",
+    "noLocation": "Chưa có địa điểm",
+    "membersCount": "thành viên",
+    "eventsCount": "lịch trình",
+    "expensesCount": "chi phí",
+    "packingProgress": "Chuẩn bị",
+    "sectionFeatures": "Tính năng",
+    "featureTripInfo": "Thông tin chuyến đi",
+    "featureMembers": "Thành viên",
+    "featureWrapped": "Tổng kết hành trình",
+    "featureJournal": "Bản tin hành trình",
+    "featureDocuments": "Vé, đặt chỗ & giấy tờ",
+    "featureShare": "Chia sẻ chuyến đi",
+    "sectionData": "QUẢN LÝ DỮ LIỆU",
+    "dataTripData": "Dữ liệu chuyến đi",
+    "dataBackup": "Sao lưu hành trình",
+    "dataExportPdf": "Xuất báo cáo PDF",
+    "dataExportExcel": "Xuất bảng tính Excel",
+    "sectionDanger": "Vùng nguy hiểm",
+    "actionEndTrip": "Kết thúc chuyến đi",
+    "actionRestoreTrip": "Khôi phục chuyến đi",
+    "actionDeleteTrip": "Xóa vĩnh viễn chuyến đi",
+    "madeBy": "thực hiện bởi"
   }
 }

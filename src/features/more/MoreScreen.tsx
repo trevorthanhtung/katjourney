@@ -1054,6 +1054,7 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
 }
 
 function WrappedSection({ data, setSection }: { data: TripData; setSection: (section: any) => void }) {
+  const { t } = useTranslation();
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const stats = getWrappedStats(data);
   const mood = stats.mostCommonMood ? moodLabels[stats.mostCommonMood] : undefined;
@@ -1149,7 +1150,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           <div className="mt-4 flex flex-wrap justify-center gap-2.5">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
               <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-kat-primary" />
-              {data.trip.location || "Chưa có địa điểm"}
+              {data.trip.location || t("more.noLocation")}
             </span>
             {data.trip.tripType === "dayTrip" || data.trip.startDate === data.trip.endDate ? (
               <>
@@ -2274,8 +2275,8 @@ export function MoreScreen({
       <div className="mx-auto max-w-[640px] space-y-6 pb-0 md:pb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">Không gian chuyến đi</h2>
-            <p className="mt-1 text-[15px] font-medium text-slate-500 dark:text-slate-400">Quản lý ứng dụng và cấu hình dữ liệu.</p>
+            <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">{t("more.workspaceTitle")}</h2>
+            <p className="mt-1 text-[15px] font-medium text-slate-500 dark:text-slate-400">{t("more.workspaceDescNoTrip")}</p>
           </div>
           <button
             onClick={() => setSection("overview")}
@@ -2370,7 +2371,7 @@ export function MoreScreen({
         
         <div className="mt-8 text-center">
           <p className="text-[13.5px] font-bold text-slate-400">
-            thực hiện bởi{" "}
+            {t("more.madeBy")}{" "}
             <a
               href="https://tranthanhtung-trevor.vercel.app/"
               target="_blank"
@@ -2395,9 +2396,9 @@ export function MoreScreen({
         
         {/* Title Block */}
         <div>
-          <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">Không gian chuyến đi</h2>
+          <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">{t("more.workspaceTitle")}</h2>
           <p className="mt-1 text-[15px] font-medium text-slate-500 dark:text-slate-400">
-            Tùy chỉnh thông tin, thành viên và dữ liệu cho hành trình của bạn.
+            {t("more.workspaceDesc")}
           </p>
         </div>
 
@@ -2413,7 +2414,7 @@ export function MoreScreen({
           <div className="relative z-10 flex flex-col gap-4">
             {/* Header info */}
             <div>
-              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-550 dark:text-slate-450">Hành trình hiện tại</p>
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-550 dark:text-slate-450">{t("more.currentTrip")}</p>
               <h3 className="mt-1 break-words text-[24px] md:text-[28px] font-black leading-tight tracking-tight text-kat-dark dark:text-slate-200">
                 {trip.title}
               </h3>
@@ -2423,7 +2424,7 @@ export function MoreScreen({
             <div className="flex flex-wrap gap-2 text-[12.5px] font-bold text-slate-600 dark:text-slate-400">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/35 px-3 py-1.5">
                 <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
-                {trip.location || "Chưa có địa điểm"}
+                {trip.location || t("more.noLocation")}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/35 px-3 py-1.5">
                 <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-kat-primary" />
@@ -2439,19 +2440,19 @@ export function MoreScreen({
             <div className="flex flex-wrap gap-2 pt-2.5 border-t border-slate-200/60 dark:border-slate-800/80 mt-1">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-kat-primary-soft dark:bg-kat-primary/10 border border-kat-primary/20 dark:border-kat-primary/30 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable dark:text-kat-primary">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5" />
-                {members.length} thành viên
+                {members.length} {t("more.membersCount")}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0081BE]/8 dark:bg-[#0081BE]/10 border border-[#0081BE]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#0081BE]">
                 <HugeiconsIcon icon={Route01Icon} className="h-3.5 w-3.5" />
-                {events.length} lịch trình
+                {events.length} {t("more.eventsCount")}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/8 dark:bg-emerald-500/10 border border-emerald-500/15 px-3 py-1.5 text-[12.5px] font-extrabold text-emerald-600 dark:text-emerald-450">
                 <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5" />
-                {formatMoney(totalExpense)} chi phí
+                {formatMoney(totalExpense)} {t("more.expensesCount")}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F89B02]/8 dark:bg-[#F89B02]/10 border border-[#F89B02]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#F89B02]">
                 <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5" />
-                Chuẩn bị {checklistPercent}%
+                {t("more.packingProgress")} {checklistPercent}%
               </span>
             </div>
           </div>
@@ -2459,11 +2460,11 @@ export function MoreScreen({
 
         {/* Thao tác chính */}
         <section className="space-y-3">
-          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">Tính năng</h3>
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">{t("more.sectionFeatures")}</h3>
           <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
             <ActionCard
               icon={MapsIcon}
-              title="Thông tin chuyến đi"
+              title={t("more.featureTripInfo")}
               onClick={() => setEditingTrip(true)}
               disabled={isReadOnly}
               iconBgColor="bg-sky-50 dark:bg-sky-950/20"
@@ -2471,35 +2472,35 @@ export function MoreScreen({
             />
             <ActionCard
               icon={UserGroupIcon}
-              title="Thành viên"
+              title={t("more.featureMembers")}
               onClick={() => setSection("members")}
               iconBgColor="bg-amber-50 dark:bg-amber-950/20"
               iconTextColor="text-amber-600 border-amber-100 dark:text-amber-400 dark:border-amber-900/30"
             />
             <ActionCard
               icon={AwardIcon}
-              title="Tổng kết hành trình"
+              title={t("more.featureWrapped")}
               onClick={() => setSection("wrapped")}
               iconBgColor="bg-indigo-50 dark:bg-indigo-950/20"
               iconTextColor="text-indigo-600 border-indigo-100 dark:text-indigo-400 dark:border-indigo-900/30"
             />
             <ActionCard
               icon={GlobeIcon}
-              title="Bản tin hành trình"
+              title={t("more.featureJournal")}
               onClick={() => setSection("journal")}
               iconBgColor="bg-emerald-50 dark:bg-emerald-950/20"
               iconTextColor="text-emerald-600 border-emerald-100 dark:text-emerald-400 dark:border-emerald-900/30"
             />
             <ActionCard
               icon={Ticket01Icon}
-              title="Vé, đặt chỗ & giấy tờ"
+              title={t("more.featureDocuments")}
               onClick={() => setSection("documents")}
               iconBgColor="bg-teal-50 dark:bg-teal-950/20"
               iconTextColor="text-teal-600 border-teal-100 dark:text-teal-400 dark:border-teal-900/30"
             />
             <ActionCard
               icon={Share01Icon}
-              title="Chia sẻ chuyến đi"
+              title={t("more.featureShare")}
               onClick={handleShareTrip}
               iconBgColor="bg-violet-50 dark:bg-violet-950/20"
               iconTextColor="text-violet-600 border-violet-100 dark:text-violet-400 dark:border-violet-900/30"
@@ -2509,12 +2510,12 @@ export function MoreScreen({
 
         {/* Hệ thống */}
         <section className="space-y-3">
-          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">QUẢN LÝ DỮ LIỆU</h3>
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">{t("more.sectionData")}</h3>
           <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
             <div className="flex flex-col gap-2 md:col-span-2">
               <ActionCard
                 icon={DatabaseBackupIcon}
-                title="Dữ liệu chuyến đi"
+                title={t("more.dataTripData")}
                 onClick={() => setIsDataSectionOpen(!isDataSectionOpen)}
                 iconBgColor="bg-blue-50 dark:bg-blue-950/20"
                 iconTextColor="text-blue-600 border-blue-100 dark:text-blue-400 dark:border-blue-900/30"
@@ -2532,7 +2533,7 @@ export function MoreScreen({
                 <div className="flex flex-col gap-2 pl-4 border-l border-slate-200 mt-1 animate-fadeIn">
                   <ActionCard
                     icon={Download01Icon}
-                    title="Sao lưu hành trình"
+                    title={t("more.dataBackup")}
                     onClick={exportTrip}
                     iconBgColor="bg-sky-50 dark:bg-sky-950/20"
                     iconTextColor="text-sky-600 border-sky-100 dark:text-sky-400 dark:border-sky-900/30"
@@ -2541,7 +2542,7 @@ export function MoreScreen({
 
                   <ActionCard
                     icon={File01Icon}
-                    title="Xuất báo cáo PDF"
+                    title={t("more.dataExportPdf")}
                     onClick={async () => {
                       const { exportTripPdf } = await import("../../utils/exportPdf");
                       exportTripPdf(tripData);
@@ -2552,7 +2553,7 @@ export function MoreScreen({
                   
                   <ActionCard
                     icon={Table01Icon}
-                    title="Xuất bảng tính Excel"
+                    title={t("more.dataExportExcel")}
                     onClick={async () => {
                       const { exportTripExcel } = await import("../../utils/exportExcel");
                       exportTripExcel(tripData).catch(console.error);
@@ -2568,12 +2569,12 @@ export function MoreScreen({
 
         {/* Vùng thao tác cẩn trọng */}
         <section className="space-y-3 pt-2">
-          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-rose-500/80">Vùng nguy hiểm</h3>
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-rose-500/80">{t("more.sectionDanger")}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {!isReadOnly ? (
               <ActionCard
                 icon={LockIcon}
-                title="Kết thúc chuyến đi"
+                title={t("more.actionEndTrip")}
                 onClick={() => setIsArchiveConfirmOpen(true)}
                 iconBgColor="bg-slate-100 dark:bg-slate-800/40"
                 iconTextColor="text-slate-600 border-slate-200/60 dark:text-slate-400 dark:border-slate-700/30"
@@ -2583,7 +2584,7 @@ export function MoreScreen({
             ) : (
               <ActionCard
                 icon={CircleUnlock01Icon}
-                title="Khôi phục chuyến đi"
+                title={t("more.actionRestoreTrip")}
                 onClick={() => setIsUnarchiveConfirmOpen(true)}
                 iconBgColor="bg-emerald-50 dark:bg-emerald-950/20"
                 iconTextColor="text-emerald-600 border-emerald-100/60 dark:text-emerald-400 dark:border-emerald-900/30"
@@ -2593,7 +2594,7 @@ export function MoreScreen({
             )}
             <ActionCard
               icon={Delete01Icon}
-              title="Xóa vĩnh viễn chuyến đi"
+              title={t("more.actionDeleteTrip")}
               onClick={() => setIsDeleteConfirmOpen(true)}
               iconBgColor="bg-rose-50 dark:bg-rose-950/20"
               iconTextColor="text-rose-600 border-rose-100/60 dark:text-rose-450 dark:border-rose-900/30"
@@ -2606,7 +2607,7 @@ export function MoreScreen({
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-[13.5px] font-bold text-slate-400">
-            thực hiện bởi{" "}
+            {t("more.madeBy")}{" "}
             <a
               href="https://tranthanhtung-trevor.vercel.app/"
               target="_blank"
@@ -2679,7 +2680,7 @@ export function MoreScreen({
         onClose={() => {
           setIsShareModalOpen(false);
         }}
-        title="Chia sẻ chuyến đi"
+        title={t("more.featureShare")}
         subtitle="Tạo link để người khác xem lịch trình và thông tin chuyến đi."
       >
         <div className="space-y-5 px-1 pb-4">

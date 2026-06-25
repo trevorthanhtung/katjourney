@@ -1098,5 +1098,33 @@
     "catPreparation": "Persiapan",
     "catOther": "Lainnya",
     "catCustom": "Lainnya..."
+  },
+  "more": {
+    "workspaceTitle": "Ruang Perjalanan",
+    "workspaceDesc": "Sesuaikan info, anggota, dan data untuk perjalanan Anda.",
+    "workspaceDescNoTrip": "Kelola aplikasi dan konfigurasi data.",
+    "currentTrip": "Perjalanan saat ini",
+    "noLocation": "Belum ada lokasi",
+    "membersCount": "anggota",
+    "eventsCount": "acara",
+    "expensesCount": "pengeluaran",
+    "packingProgress": "Disiapkan",
+    "sectionFeatures": "Fitur",
+    "featureTripInfo": "Info Perjalanan",
+    "featureMembers": "Anggota",
+    "featureWrapped": "Ringkasan Perjalanan",
+    "featureJournal": "Jurnal Perjalanan",
+    "featureDocuments": "Tiket & Dokumen",
+    "featureShare": "Bagikan Perjalanan",
+    "sectionData": "Manajemen Data",
+    "dataTripData": "Data Perjalanan",
+    "dataBackup": "Cadangkan",
+    "dataExportPdf": "Ekspor Laporan PDF",
+    "dataExportExcel": "Ekspor Spreadsheet Excel",
+    "sectionDanger": "Zona Bahaya",
+    "actionEndTrip": "Akhiri perjalanan",
+    "actionRestoreTrip": "Pulihkan perjalanan",
+    "actionDeleteTrip": "Hapus permanen",
+    "madeBy": "dibuat oleh"
   }
 }

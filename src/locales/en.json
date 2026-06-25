@@ -1078,5 +1078,33 @@
     "catPreparation": "Preparation",
     "catOther": "Other",
     "catCustom": "Custom..."
+  },
+  "more": {
+    "workspaceTitle": "Trip Workspace",
+    "workspaceDesc": "Customize info, members, and data for your journey.",
+    "workspaceDescNoTrip": "Manage app and data configuration.",
+    "currentTrip": "Current trip",
+    "noLocation": "No location set",
+    "membersCount": "members",
+    "eventsCount": "events",
+    "expensesCount": "expenses",
+    "packingProgress": "Prepared",
+    "sectionFeatures": "FEATURES",
+    "featureTripInfo": "Trip Information",
+    "featureMembers": "Members",
+    "featureWrapped": "Trip Wrapped",
+    "featureJournal": "Travel Journal",
+    "featureDocuments": "Tickets & Documents",
+    "featureShare": "Share Trip",
+    "sectionData": "DATA MANAGEMENT",
+    "dataTripData": "Trip Data",
+    "dataBackup": "Backup Trip",
+    "dataExportPdf": "Export PDF Report",
+    "dataExportExcel": "Export Excel Spreadsheet",
+    "sectionDanger": "Danger Zone",
+    "actionEndTrip": "End trip",
+    "actionRestoreTrip": "Restore trip",
+    "actionDeleteTrip": "Delete trip permanently",
+    "madeBy": "made by"
   }
 }

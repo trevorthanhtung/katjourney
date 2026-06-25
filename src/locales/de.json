@@ -1098,5 +1098,33 @@
     "catPreparation": "Vorbereitung",
     "catOther": "Sonstiges",
     "catCustom": "Sonstiges..."
+  },
+  "more": {
+    "workspaceTitle": "Reise-Arbeitsbereich",
+    "workspaceDesc": "Passen Sie Infos, Mitglieder und Daten für Ihre Reise an.",
+    "workspaceDescNoTrip": "App- und Datenkonfiguration verwalten.",
+    "currentTrip": "Aktuelle Reise",
+    "noLocation": "Kein Ort",
+    "membersCount": "Mitglieder",
+    "eventsCount": "Ereignisse",
+    "expensesCount": "Ausgaben",
+    "packingProgress": "Vorbereitet",
+    "sectionFeatures": "Funktionen",
+    "featureTripInfo": "Reiseinfos",
+    "featureMembers": "Mitglieder",
+    "featureWrapped": "Reisezusammenfassung",
+    "featureJournal": "Reisetagebuch",
+    "featureDocuments": "Tickets & Dokumente",
+    "featureShare": "Reise teilen",
+    "sectionData": "Datenverwaltung",
+    "dataTripData": "Reisedaten",
+    "dataBackup": "Reise sichern",
+    "dataExportPdf": "PDF exportieren",
+    "dataExportExcel": "Excel exportieren",
+    "sectionDanger": "Gefahrenzone",
+    "actionEndTrip": "Reise beenden",
+    "actionRestoreTrip": "Reise wiederherstellen",
+    "actionDeleteTrip": "Reise dauerhaft löschen",
+    "madeBy": "erstellt von"
   }
 }

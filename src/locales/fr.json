@@ -1098,5 +1098,33 @@
     "catPreparation": "Préparation",
     "catOther": "Autre",
     "catCustom": "Autre..."
+  },
+  "more": {
+    "workspaceTitle": "Espace de voyage",
+    "workspaceDesc": "Personnalisez les infos, les membres et les données de votre voyage.",
+    "workspaceDescNoTrip": "Gérer la configuration de l'application et des données.",
+    "currentTrip": "Voyage actuel",
+    "noLocation": "Aucun lieu",
+    "membersCount": "membres",
+    "eventsCount": "événements",
+    "expensesCount": "dépenses",
+    "packingProgress": "Préparé",
+    "sectionFeatures": "Fonctionnalités",
+    "featureTripInfo": "Infos du voyage",
+    "featureMembers": "Membres",
+    "featureWrapped": "Résumé du voyage",
+    "featureJournal": "Journal de voyage",
+    "featureDocuments": "Billets et documents",
+    "featureShare": "Partager le voyage",
+    "sectionData": "Gestion des données",
+    "dataTripData": "Données du voyage",
+    "dataBackup": "Sauvegarder",
+    "dataExportPdf": "Exporter en PDF",
+    "dataExportExcel": "Exporter en Excel",
+    "sectionDanger": "Zone de danger",
+    "actionEndTrip": "Terminer le voyage",
+    "actionRestoreTrip": "Restaurer le voyage",
+    "actionDeleteTrip": "Supprimer définitivement",
+    "madeBy": "fait par"
   }
 }

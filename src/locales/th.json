@@ -1098,5 +1098,33 @@
     "catPreparation": "การเตรียมตัว",
     "catOther": "อื่นๆ",
     "catCustom": "อื่นๆ..."
+  },
+  "more": {
+    "workspaceTitle": "พื้นที่การเดินทาง",
+    "workspaceDesc": "ปรับแต่งข้อมูล สมาชิก และข้อมูลสำหรับการเดินทางของคุณ",
+    "workspaceDescNoTrip": "จัดการแอปและการกำหนดค่าข้อมูล",
+    "currentTrip": "ทริปปัจจุบัน",
+    "noLocation": "ไม่มีสถานที่",
+    "membersCount": "สมาชิก",
+    "eventsCount": "กิจกรรม",
+    "expensesCount": "ค่าใช้จ่าย",
+    "packingProgress": "เตรียมพร้อม",
+    "sectionFeatures": "คุณสมบัติ",
+    "featureTripInfo": "ข้อมูลการเดินทาง",
+    "featureMembers": "สมาชิก",
+    "featureWrapped": "สรุปการเดินทาง",
+    "featureJournal": "บันทึกการเดินทาง",
+    "featureDocuments": "ตั๋วและเอกสาร",
+    "featureShare": "แบ่งปันการเดินทาง",
+    "sectionData": "การจัดการข้อมูล",
+    "dataTripData": "ข้อมูลการเดินทาง",
+    "dataBackup": "สำรองข้อมูลทริป",
+    "dataExportPdf": "ส่งออกรายงาน PDF",
+    "dataExportExcel": "ส่งออกสเปรดชีต Excel",
+    "sectionDanger": "เขตอันตราย",
+    "actionEndTrip": "สิ้นสุดการเดินทาง",
+    "actionRestoreTrip": "กู้คืนการเดินทาง",
+    "actionDeleteTrip": "ลบการเดินทางอย่างถาวร",
+    "madeBy": "สร้างโดย"
   }
 }

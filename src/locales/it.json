@@ -1098,5 +1098,33 @@
     "catPreparation": "Preparativi",
     "catOther": "Altro",
     "catCustom": "Altro..."
+  },
+  "more": {
+    "workspaceTitle": "Spazio di viaggio",
+    "workspaceDesc": "Personalizza informazioni, membri e dati per il tuo viaggio.",
+    "workspaceDescNoTrip": "Gestisci l'app e la configurazione dei dati.",
+    "currentTrip": "Viaggio attuale",
+    "noLocation": "Nessuna posizione",
+    "membersCount": "membri",
+    "eventsCount": "eventi",
+    "expensesCount": "spese",
+    "packingProgress": "Preparato",
+    "sectionFeatures": "Funzionalità",
+    "featureTripInfo": "Info viaggio",
+    "featureMembers": "Membri",
+    "featureWrapped": "Riassunto viaggio",
+    "featureJournal": "Diario di viaggio",
+    "featureDocuments": "Biglietti e documenti",
+    "featureShare": "Condividi viaggio",
+    "sectionData": "Gestione dati",
+    "dataTripData": "Dati viaggio",
+    "dataBackup": "Esegui backup",
+    "dataExportPdf": "Esporta PDF",
+    "dataExportExcel": "Esporta Excel",
+    "sectionDanger": "Zona di pericolo",
+    "actionEndTrip": "Termina viaggio",
+    "actionRestoreTrip": "Ripristina viaggio",
+    "actionDeleteTrip": "Elimina definitivamente",
+    "madeBy": "creato da"
   }
 }
