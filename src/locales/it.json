@@ -1026,6 +1026,16 @@
     "deletingSugg": "Đang xóa...",
     "suggestDelete": "Đề xuất xóa",
     "splitGroupLabel": "Chi chung nhóm",
-    "personalSelfLabel": "Cá nhân tự trả"
+    "personalSelfLabel": "Cá nhân tự trả",
+    "catTransport": "Di chuyển",
+    "catFlights": "Vé máy bay",
+    "catFood": "Ăn uống",
+    "catAccommodation": "Lưu trú",
+    "catTickets": "Vé tham quan",
+    "catShopping": "Mua sắm",
+    "catEntertainment": "Vui chơi & Giải trí",
+    "catPreparation": "Chuẩn bị hành lý",
+    "catOther": "Khác",
+    "catCustom": "Khác..."
   }
 }

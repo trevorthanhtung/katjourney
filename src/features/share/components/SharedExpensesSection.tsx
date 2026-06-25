@@ -134,6 +134,26 @@ export function SharedExpensesSection({
     return [...defaultCats, ...uniqueUsedCats, "Khác..."];
   }, [expenses]);
 
+
+  const catMap: Record<string, string> = React.useMemo(() => ({
+    "Di chuyển": t("expenses.catTransport"),
+    "Vé máy bay": t("expenses.catFlights"),
+    "Ăn uống": t("expenses.catFood"),
+    "Lưu trú": t("expenses.catAccommodation"),
+    "Vé tham quan": t("expenses.catTickets"),
+    "Mua sắm": t("expenses.catShopping"),
+    "Vui chơi & Giải trí": t("expenses.catEntertainment"),
+    "Chuẩn bị hành lý": t("expenses.catPreparation"),
+    "Khác": t("expenses.catOther"),
+    "Khác...": t("expenses.catCustom"),
+  }), [t]);
+
+  const categoryLabels = React.useMemo(() => {
+    const labels: Record<string, string> = { ...catMap };
+    categoryOptions.forEach(c => { if (!labels[c]) labels[c] = c; });
+    return labels;
+  }, [categoryOptions, catMap]);
+
   const [form, setForm] = useState<{ 
     description: string; 
     amount: string; 
@@ -948,7 +968,8 @@ export function SharedExpensesSection({
                       setErrors({ ...errors, customCategory: "" });
                     }} 
                     options={categoryOptions} 
-                  />
+                  labels={categoryLabels}
+                          />
                   
                   {form.category === "Khác..." && (
                     <div className="animate-fadeIn">

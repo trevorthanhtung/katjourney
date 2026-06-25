@@ -55,6 +55,19 @@ export function BreakdownSection({
   total: number; 
   emptyText: string 
   }) {
+  const { t } = useTranslation();
+  const catMap: Record<string, string> = {
+    "Di chuyển": t("expenses.catTransport"),
+    "Vé máy bay": t("expenses.catFlights"),
+    "Ăn uống": t("expenses.catFood"),
+    "Lưu trú": t("expenses.catAccommodation"),
+    "Vé tham quan": t("expenses.catTickets"),
+    "Mua sắm": t("expenses.catShopping"),
+    "Vui chơi & Giải trí": t("expenses.catEntertainment"),
+    "Chuẩn bị hành lý": t("expenses.catPreparation"),
+    "Khác": t("expenses.catOther"),
+    "Khác...": t("expenses.catCustom"),
+  };
   const rows = Object.entries(items)
     .filter(([_, amount]) => amount > 0)
     .sort((a, b) => b[1] - a[1]);
@@ -82,7 +95,7 @@ export function BreakdownSection({
         return (
           <div key={label} className="group">
             <div className="flex items-center justify-between text-[14px] font-bold">
-              <p className="text-slate-700 dark:text-slate-300 group-hover:text-kat-dark group-hover:dark:text-white transition-colors">{label}</p>
+              <p className="text-slate-700 dark:text-slate-300 group-hover:text-kat-dark group-hover:dark:text-white transition-colors">{catMap[label] || label}</p>
               <p className="text-kat-dark dark:text-white">{formatMoney(amount)}</p>
             </div>
             <div className="mt-2 flex items-center gap-3">
@@ -181,7 +194,19 @@ const ExpenseCard = React.memo(function ExpenseCard({
   idx?: number;
   isReadOnly?: boolean;
 }) {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
+  const catMap: Record<string, string> = {
+    "Di chuyển": t("expenses.catTransport"),
+    "Vé máy bay": t("expenses.catFlights"),
+    "Ăn uống": t("expenses.catFood"),
+    "Lưu trú": t("expenses.catAccommodation"),
+    "Vé tham quan": t("expenses.catTickets"),
+    "Mua sắm": t("expenses.catShopping"),
+    "Vui chơi & Giải trí": t("expenses.catEntertainment"),
+    "Chuẩn bị hành lý": t("expenses.catPreparation"),
+    "Khác": t("expenses.catOther"),
+    "Khác...": t("expenses.catCustom"),
+  };
   const isPersonal = item.splitType === "personal";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -231,7 +256,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
         <div className="flex items-center flex-wrap gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1.5">
           <span className="inline-flex items-center gap-1 font-medium bg-slate-100/80 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/20 dark:border-slate-700/60">
             {getCategoryIcon(item.category)}
-            {item.category}
+            {catMap[item.category] || item.category}
           </span>
           
           <span className={classNames(
@@ -338,13 +363,32 @@ function ExpenseForm({
   onSaved: (msg: string) => void;
   onShowToast?: (msg: string) => void;
 }) {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
+  const catMap: Record<string, string> = React.useMemo(() => ({
+    "Di chuyển": t("expenses.catTransport"),
+    "Vé máy bay": t("expenses.catFlights"),
+    "Ăn uống": t("expenses.catFood"),
+    "Lưu trú": t("expenses.catAccommodation"),
+    "Vé tham quan": t("expenses.catTickets"),
+    "Mua sắm": t("expenses.catShopping"),
+    "Vui chơi & Giải trí": t("expenses.catEntertainment"),
+    "Chuẩn bị hành lý": t("expenses.catPreparation"),
+    "Khác": t("expenses.catOther"),
+    "Khác...": t("expenses.catCustom"),
+  }), [t]);
+  
   const categoryOptions = React.useMemo(() => {
     const defaultCats = expenseCategories.filter(c => c !== "Khác");
     const uniqueUsedCats = Array.from(new Set(expenses.map(e => e.category)))
       .filter(c => !defaultCats.includes(c) && c !== "Khác" && c !== "Khác...");
     return [...defaultCats, ...uniqueUsedCats, "Khác..."];
   }, [expenses]);
+
+  const categoryLabels = React.useMemo(() => {
+    const labels: Record<string, string> = { ...catMap };
+    categoryOptions.forEach(c => { if (!labels[c]) labels[c] = c; });
+    return labels;
+  }, [categoryOptions, catMap]);
 
   const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
   
@@ -755,6 +799,7 @@ function ExpenseForm({
                     setErrors({ ...errors, customCategory: "" });
                   }} 
                   options={categoryOptions} 
+                labels={categoryLabels}
                 />
                 
                 {form.category === "Khác..." && (
