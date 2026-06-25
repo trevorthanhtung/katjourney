@@ -619,7 +619,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             </div>
             <h3 className="text-[17px] font-bold text-kat-text">{t("packing.emptyStateTitle")}</h3>
             <p className="mt-1 text-[13.5px] text-kat-muted max-w-xs">
-              Thêm giấy tờ, quần áo, thiết bị hoặc thuốc men để chuyến đi sẵn sàng hơn.
+              {t("packing.emptyStateDesc")}
             </p>
           </div>
           
@@ -628,7 +628,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             <div className="w-full pt-5 border-t border-kat-border/50">
               <p className="text-[12px] font-bold text-kat-text/80 uppercase tracking-wider mb-3.5 flex items-center justify-center gap-1">
                 <HugeiconsIcon icon={SparklesIcon} className="h-3.5 w-3.5 text-kat-accent-yellow" />
-                Gợi ý nhanh
+                {t("packing.quickSuggestions")}
               </p>
               <div className="flex flex-wrap justify-center gap-2.5">
                 {QUICK_SUGGESTIONS.map((sug) => {
