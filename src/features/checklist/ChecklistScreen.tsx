@@ -237,7 +237,7 @@ function ChecklistItemRow({
                 className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 active:bg-slate-100 dark:active:bg-slate-700 transition-colors"
               >
                 <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                Sửa
+                {t("packing.edit")}
               </button>
               <button
                 type="button"
@@ -249,7 +249,7 @@ function ChecklistItemRow({
                 className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
               >
                 <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
-                Xóa
+                {t("packing.deleteAction")}
               </button>
             </div>
           )}
@@ -408,7 +408,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
   async function executeDeleteItem() {
     if (itemToDelete?.id) {
       await db.checklist.delete(itemToDelete.id);
-      showToastMessage(`Đã xóa: ${itemToDelete.title}`);
+      showToastMessage(`${t("packing.toastDeleted")} ${itemToDelete.title}`);
       setItemToDelete(null);
     }
   }
@@ -442,12 +442,12 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
   const allSuggestionsAdded = QUICK_SUGGESTIONS.every((sug) => isAdded(t(sug.titleKey)));
 
   // Determine status description text
-  let statusText = "Chưa có món cần chuẩn bị.";
+  let statusText = t("packing.statusEmpty");
   if (checklist.length > 0) {
     if (stats.percent === 100) {
       statusText = t("packing.progressPerfect");
     } else {
-      statusText = `Còn ${stats.total - stats.completed} món cần chuẩn bị.`;
+      statusText = t("packing.statusRemaining", { remaining: stats.total - stats.completed });
     }
   }
 
@@ -475,7 +475,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 </div>
               );
             })()}
-            <h3 className="text-[16.5px] font-black text-kat-text">{catName}</h3>
+            <h3 className="text-[16.5px] font-black text-kat-text">{catMap[catName] || catName}</h3>
           </div>
           <span className="text-[11.5px] font-black text-slate-500 dark:text-slate-400 px-2.5 py-0.5 rounded-full bg-kat-dark/05 dark:bg-slate-800/80">
             {t("packing.catCount", { done: catDone, total: catTotal })}
@@ -724,7 +724,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               <div className="space-y-1.5">
                 <label className="text-[13px] font-bold text-kat-text flex items-center gap-1.5">
                   <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                  Tên món cần mang *
+                  {t("packing.itemNameLabel")}
                 </label>
                 <input
                   className={`w-full rounded-[14px] border bg-slate-50/60 dark:bg-slate-800/50 px-4 h-[46px] text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-primary/50 ${
@@ -942,7 +942,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
           onClick={openAddForm}
           className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
           style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
-          aria-label="Thêm món chuẩn bị"
+          aria-label={t("packing.addItem")}
         >
           <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
         </button>

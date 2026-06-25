@@ -8,6 +8,7 @@ import { BottomSheet, EmptyCard, FAB, FormActions, FormCard, IconButton, Input, 
 import { useModalHistory } from "../../hooks/useModalHistory";
 
 function PackingItemRow({ item, onEdit, onDelete }: { item: PackingItem; onEdit: () => void; onDelete: () => void }) {
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -63,7 +64,7 @@ function PackingItemRow({ item, onEdit, onDelete }: { item: PackingItem; onEdit:
               className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
             >
               <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500" />
-              Sửa
+              {t("packing.edit")}
             </button>
             <button
               type="button"
@@ -75,7 +76,7 @@ function PackingItemRow({ item, onEdit, onDelete }: { item: PackingItem; onEdit:
               className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
             >
               <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
-              Xóa
+              {t("packing.deleteAction")}
             </button>
           </div>
         )}
@@ -214,16 +215,16 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
               ))}
             </div>
           ) : (
-            <EmptyCard text="Chưa có món đồ nào. Nhận gợi ý để bắt đầu chuẩn bị nhé!" icon={<HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />} />
+            <EmptyCard text={t("packing.emptyStateDetailed")} icon={<HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />} />
           )}
         </section>
       </div>
 
 
 
-      <BottomSheet isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} title={editing ? "Sửa món đồ" : "Thêm món đồ"}>
+      <BottomSheet isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} title={editing ? t("packing.editItem") : t("packing.addItem")}>
         <div className="space-y-4">
-          <Input label="Tên món đồ" value={title} onChange={setTitle} placeholder="VD: Bàn chải điện" />
+          <Input label={t("packing.itemNameLabel")} value={title} onChange={setTitle} placeholder={t("packing.itemPlaceholder")} />
           <div className="pt-2">
             <FormActions onSave={() => void addOrEditItem()} saveLabel={editing ? "Lưu thay đổi" : "Thêm vào danh sách"} />
           </div>
@@ -234,10 +235,10 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
         isOpen={Boolean(itemToDelete)}
         onClose={() => setItemToDelete(null)}
         onConfirm={executeDeleteItem}
-        title="Xóa món hành lý này?"
+        title={t("packing.deletePrivateTitle")}
         itemName={itemToDelete?.title}
-        description="Món hành lý này sẽ bị xóa khỏi danh sách chuẩn bị. Sau khi xóa, không thể hoàn tác."
-        confirmLabel="Xóa món"
+        description={t("packing.deletePrivateDesc")}
+        confirmLabel={t("packing.deleteAction")}
       />
     </div>
   );

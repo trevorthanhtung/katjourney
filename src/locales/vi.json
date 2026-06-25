@@ -870,7 +870,7 @@
     "pageSubtitle": "Chuẩn bị đủ những món cần mang theo cho chuyến đi.",
     "progressTitle": "Tiến độ chuẩn bị",
     "packedCount": "Đã xếp {{completed}} / {{total}} món",
-    "addItem": "Thêm món",
+    "addItem": "Thêm món chuẩn bị",
     "catCount": "{{done}} / {{total}} món",
     "cancel": "Hủy",
     "deleteTitle": "Xóa món chuẩn bị này?",
@@ -966,7 +966,14 @@
     "emptyStateDesc": "Thêm giấy tờ, quần áo, thiết bị hoặc thuốc men để chuyến đi sẵn sàng hơn.",
     "quickSuggestionsTitle": "Gợi ý nhanh cho hành lý",
     "quickSuggestions": "Gợi ý nhanh",
-    "scrollRight": "Cuộn ngang ›"
+    "scrollRight": "Cuộn ngang ›",
+    "toastDeleted": "Đã xóa:",
+    "statusEmpty": "Chưa có món cần chuẩn bị.",
+    "statusRemaining": "Còn {{remaining}} món cần chuẩn bị.",
+    "itemNameLabel": "Tên món cần mang *",
+    "emptyStateDetailed": "Chưa có món đồ nào. Nhận gợi ý để bắt đầu chuẩn bị nhé!",
+    "editItem": "Sửa món đồ",
+    "itemPlaceholder": "VD: Bàn chải điện"
   },
   "expenses": {
     "pageTitle": "Chi phí",

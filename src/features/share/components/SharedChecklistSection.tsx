@@ -593,7 +593,7 @@ export function SharedChecklistSection({
           <div className="space-y-1">
             <label className="text-[12.5px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
               <HugeiconsIcon icon={TextIcon} className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-              Tên món cần mang *
+              {t("packing.itemNameLabel")}
             </label>
             <input
               className={`w-full rounded-[12px] border bg-slate-50 dark:bg-slate-800/50 px-3.5 h-11 text-[14px] font-semibold text-slate-800 dark:text-slate-200 outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-teal placeholder-slate-400 ${
@@ -608,7 +608,7 @@ export function SharedChecklistSection({
             />
             {showValidationError && (
               <p className="text-rose-500 dark:text-rose-450 text-[11.5px] font-bold mt-1 pl-1 flex items-center gap-1">
-                <span>Vui lòng nhập tên món cần mang.</span>
+                <span>{t("packing.itemNameLabel")}</span>
               </p>
             )}
           </div>
