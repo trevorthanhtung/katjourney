@@ -1125,6 +1125,18 @@
     "actionEndTrip": "Finalizar viaje",
     "actionRestoreTrip": "Restaurar viaje",
     "actionDeleteTrip": "Eliminar viaje permanentemente",
-    "madeBy": "hecho por"
+    "madeBy": "hecho por",
+    "deleteModalTitle": "¿Eliminar este viaje permanentemente?",
+    "deleteModalDesc": "Esta acción eliminará permanentemente todos los datos del viaje, incluyendo miembros, horario, gastos, equipaje, diario, documentos y copias de seguridad de este dispositivo. No puedes deshacer esto.",
+    "deleteModalWarning": "Para confirmar, escribe exactamente ELIMINAR.",
+    "deleteModalConfirm": "Eliminar viaje permanentemente",
+    "deleteModalMatch": "ELIMINAR",
+    "deleteModalInput": "Escribe ELIMINAR",
+    "archiveModalTitle": "¿Archivar en Recuerdos?",
+    "archiveModalDesc": "Este viaje se empaquetará y moverá a <b>Recuerdos</b>. Todos los datos cambiarán al modo de <b>solo lectura</b> para preservar sus momentos intactos.",
+    "archiveModalConfirm": "Confirmar archivar",
+    "unarchiveModalTitle": "¿Desbloquear viaje?",
+    "unarchiveModalDesc": "El viaje se <b>desbloqueará</b>. Puede continuar planificando, publicando diarios y gestionando gastos como de costumbre.",
+    "unarchiveModalConfirm": "Continuar viaje"
   }
 }

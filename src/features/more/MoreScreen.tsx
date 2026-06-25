@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { useLiveQuery } from "dexie-react-hooks";
 import { showToast } from "../../components/ui/ToastManager";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -2983,12 +2983,11 @@ export function MoreScreen({
       <BottomSheet 
         isOpen={isArchiveConfirmOpen} 
         onClose={() => setIsArchiveConfirmOpen(false)} 
-        title="Đóng gói kỷ niệm?"
+        title={t("more.archiveModalTitle")}
       >
         <div className="space-y-5">
           <div className="rounded-[20px] bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 p-5 text-[14px] text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
-            Hành trình này sẽ được đóng gói và đưa vào góc <b className="text-kat-dark">Kỷ niệm</b>. 
-            Mọi dữ liệu sẽ được chuyển sang chế độ <b className="text-kat-dark">chỉ xem</b> để lưu giữ nguyên vẹn những khoảnh khắc của bạn.
+            <Trans i18nKey="more.archiveModalDesc" components={{ b: <b className="text-kat-dark" /> }} />
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
@@ -3011,7 +3010,7 @@ export function MoreScreen({
               className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary border border-kat-dark dark:border-kat-primary px-6 font-bold text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-98 transition-all duration-200 shadow-[0_8px_24px_-8px_rgba(3,13,46,0.4)] dark:shadow-[0_8px_24px_-8px_rgba(0,191,183,0.3)]"
             >
               <HugeiconsIcon icon={LockIcon} className="h-5 w-5 opacity-80" />
-              Đồng ý đóng gói
+              {t("more.archiveModalConfirm")}
             </button>
           </div>
         </div>
@@ -3021,11 +3020,11 @@ export function MoreScreen({
       <BottomSheet 
         isOpen={isUnarchiveConfirmOpen} 
         onClose={() => setIsUnarchiveConfirmOpen(false)} 
-        title="Mở khóa chuyến đi?"
+        title={t("more.unarchiveModalTitle")}
       >
         <div className="space-y-5">
           <div className="rounded-[20px] bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 p-5 text-[14px] text-emerald-800 dark:text-emerald-400 font-medium leading-relaxed">
-            Chuyến đi sẽ được <b className="text-emerald-700 dark:text-emerald-300">mở khóa trở lại</b>. Bạn có thể tiếp tục lên lịch trình, đăng bài viết bản tin và quản lý chi phí như bình thường.
+            <Trans i18nKey="more.unarchiveModalDesc" components={{ b: <b className="text-emerald-700 dark:text-emerald-300" /> }} />
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
@@ -3048,7 +3047,7 @@ export function MoreScreen({
               className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-emerald-600 dark:bg-emerald-600 border border-emerald-500 dark:border-emerald-500 px-6 font-bold text-white hover:bg-emerald-700 dark:hover:bg-emerald-500 active:scale-98 transition-all duration-200 shadow-[0_8px_24px_-8px_rgba(5,150,105,0.4)]"
             >
               <HugeiconsIcon icon={CircleUnlock01Icon} className="h-5 w-5 opacity-80" />
-              Tiếp tục hành trình
+              {t("more.unarchiveModalConfirm")}
             </button>
           </div>
         </div>

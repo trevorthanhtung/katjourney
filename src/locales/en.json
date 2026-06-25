@@ -1105,6 +1105,18 @@
     "actionEndTrip": "End trip",
     "actionRestoreTrip": "Restore trip",
     "actionDeleteTrip": "Delete trip permanently",
-    "madeBy": "made by"
+    "madeBy": "made by",
+    "deleteModalTitle": "Delete this trip permanently?",
+    "deleteModalDesc": "This action will permanently delete all trip data, including members, schedule, expenses, packing, journal, documents, and backups from this device. You cannot undo this.",
+    "deleteModalWarning": "To confirm, please type exactly DELETE.",
+    "deleteModalConfirm": "Permanently delete trip",
+    "deleteModalMatch": "DELETE",
+    "deleteModalInput": "Type DELETE",
+    "archiveModalTitle": "Archive to Memories?",
+    "archiveModalDesc": "This trip will be packed and moved to <b>Memories</b>. All data will switch to <b>read-only</b> mode to keep your moments intact.",
+    "archiveModalConfirm": "Confirm archive",
+    "unarchiveModalTitle": "Unlock trip?",
+    "unarchiveModalDesc": "The trip will be <b>unlocked</b>. You can continue planning, posting journals, and managing expenses as usual.",
+    "unarchiveModalConfirm": "Continue journey"
   }
 }

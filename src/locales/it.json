@@ -1125,6 +1125,18 @@
     "actionEndTrip": "Termina viaggio",
     "actionRestoreTrip": "Ripristina viaggio",
     "actionDeleteTrip": "Elimina definitivamente",
-    "madeBy": "creato da"
+    "madeBy": "creato da",
+    "deleteModalTitle": "Eliminare definitivamente questo viaggio?",
+    "deleteModalDesc": "Questa azione eliminerà definitivamente tutti i dati del viaggio, inclusi membri, programma, spese, bagagli, diario e documenti da questo dispositivo. Non puoi annullare l'operazione.",
+    "deleteModalWarning": "Per confermare, digita esattamente ELIMINA.",
+    "deleteModalConfirm": "Elimina definitivamente il viaggio",
+    "deleteModalMatch": "ELIMINA",
+    "deleteModalInput": "Digita ELIMINA",
+    "archiveModalTitle": "Archiviare in Ricordi?",
+    "archiveModalDesc": "Questo viaggio verrà confezionato e spostato in <b>Ricordi</b>. Tutti i dati passeranno in modalità <b>sola lettura</b> per preservare i tuoi momenti.",
+    "archiveModalConfirm": "Conferma archiviazione",
+    "unarchiveModalTitle": "Sbloccare il viaggio?",
+    "unarchiveModalDesc": "Il viaggio verrà <b>sbloccato</b>. Puoi continuare a pianificare, pubblicare diari e gestire le spese come al solito.",
+    "unarchiveModalConfirm": "Continua il viaggio"
   }
 }

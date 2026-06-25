@@ -1125,6 +1125,18 @@
     "actionEndTrip": "旅行を終了",
     "actionRestoreTrip": "旅行を復元",
     "actionDeleteTrip": "旅行を完全に削除",
-    "madeBy": "開発者"
+    "madeBy": "開発者",
+    "deleteModalTitle": "この旅行を完全に削除しますか？",
+    "deleteModalDesc": "この操作により、メンバー、スケジュール、費用、パッキング、日記、書類など、このデバイスからすべての旅行データが完全に削除されます。元に戻すことはできません。",
+    "deleteModalWarning": "確認のため、正確に 削除 と入力してください。",
+    "deleteModalConfirm": "旅行を完全に削除",
+    "deleteModalMatch": "削除",
+    "deleteModalInput": "削除 と入力",
+    "archiveModalTitle": "思い出にアーカイブしますか？",
+    "archiveModalDesc": "この旅行はパッケージ化され、<b>思い出</b> に移動します。すべてのデータは <b>読み取り専用</b> モードになり、そのまま保存されます。",
+    "archiveModalConfirm": "アーカイブを確認",
+    "unarchiveModalTitle": "旅行のロックを解除しますか？",
+    "unarchiveModalDesc": "旅行は <b>ロック解除</b> されます。通常通りスケジュール計画、日記投稿、費用管理を続けることができます。",
+    "unarchiveModalConfirm": "旅行を続ける"
   }
 }

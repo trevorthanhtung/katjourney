@@ -1103,6 +1103,18 @@
     "actionEndTrip": "Kết thúc chuyến đi",
     "actionRestoreTrip": "Khôi phục chuyến đi",
     "actionDeleteTrip": "Xóa vĩnh viễn chuyến đi",
-    "madeBy": "thực hiện bởi"
+    "madeBy": "thực hiện bởi",
+    "deleteModalTitle": "Xóa vĩnh viễn chuyến đi này?",
+    "deleteModalDesc": "Hành động này sẽ xóa vĩnh viễn toàn bộ dữ liệu của chuyến đi, bao gồm thành viên, lịch trình, chi phí, chuẩn bị, bản tin hành trình, giấy tờ và phương án dự phòng khỏi thiết bị này. Bạn không thể hoàn tác.",
+    "deleteModalWarning": "Để xác nhận, vui lòng nhập chính xác chữ XÓA.",
+    "deleteModalConfirm": "Xóa vĩnh viễn chuyến đi",
+    "deleteModalMatch": "XÓA",
+    "deleteModalInput": "Nhập XÓA",
+    "archiveModalTitle": "Đóng gói kỷ niệm?",
+    "archiveModalDesc": "Hành trình này sẽ được đóng gói và đưa vào góc <b>Kỷ niệm</b>. Mọi dữ liệu sẽ được chuyển sang chế độ <b>chỉ xem</b> để lưu giữ nguyên vẹn những khoảnh khắc của bạn.",
+    "archiveModalConfirm": "Đồng ý đóng gói",
+    "unarchiveModalTitle": "Mở khóa chuyến đi?",
+    "unarchiveModalDesc": "Chuyến đi sẽ được <b>mở khóa trở lại</b>. Bạn có thể tiếp tục lên lịch trình, đăng bài viết bản tin và quản lý chi phí như bình thường.",
+    "unarchiveModalConfirm": "Tiếp tục hành trình"
   }
 }

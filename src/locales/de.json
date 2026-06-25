@@ -1125,6 +1125,18 @@
     "actionEndTrip": "Reise beenden",
     "actionRestoreTrip": "Reise wiederherstellen",
     "actionDeleteTrip": "Reise dauerhaft löschen",
-    "madeBy": "erstellt von"
+    "madeBy": "erstellt von",
+    "deleteModalTitle": "Diese Reise dauerhaft löschen?",
+    "deleteModalDesc": "Diese Aktion wird alle Reisedaten, einschließlich Mitglieder, Zeitplan, Ausgaben, Gepäck, Tagebuch und Dokumente, dauerhaft von diesem Gerät löschen. Dies kann nicht rückgängig gemacht werden.",
+    "deleteModalWarning": "Zur Bestätigung tippen Sie bitte genau LÖSCHEN.",
+    "deleteModalConfirm": "Reise dauerhaft löschen",
+    "deleteModalMatch": "LÖSCHEN",
+    "deleteModalInput": "Tippen LÖSCHEN",
+    "archiveModalTitle": "In Erinnerungen archivieren?",
+    "archiveModalDesc": "Diese Reise wird verpackt und in <b>Erinnerungen</b> verschoben. Alle Daten wechseln in den <b>schreibgeschützten</b> Modus, um Ihre Momente intakt zu halten.",
+    "archiveModalConfirm": "Archivieren bestätigen",
+    "unarchiveModalTitle": "Reise entsperren?",
+    "unarchiveModalDesc": "Die Reise wird <b>entsperrt</b>. Sie können wie gewohnt weiter planen, Tagebücher posten und Ausgaben verwalten.",
+    "unarchiveModalConfirm": "Reise fortsetzen"
   }
 }

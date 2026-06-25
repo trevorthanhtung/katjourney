@@ -1105,6 +1105,18 @@
     "actionEndTrip": "여행 종료",
     "actionRestoreTrip": "여행 복원",
     "actionDeleteTrip": "여행 영구 삭제",
-    "madeBy": "제작자"
+    "madeBy": "제작자",
+    "deleteModalTitle": "이 여행을 영구적으로 삭제하시겠습니까?",
+    "deleteModalDesc": "이 작업은 이 기기에서 멤버, 일정, 비용, 짐싸기, 일지, 문서 등 모든 여행 데이터를 영구적으로 삭제합니다. 실행 취소할 수 없습니다.",
+    "deleteModalWarning": "확인하려면 정확히 삭제를 입력하세요.",
+    "deleteModalConfirm": "여행 영구 삭제",
+    "deleteModalMatch": "삭제",
+    "deleteModalInput": "삭제 입력",
+    "archiveModalTitle": "추억으로 보관하시겠습니까?",
+    "archiveModalDesc": "이 여행은 패키지되어 <b>추억</b>으로 이동됩니다. 모든 데이터는 순간을 온전히 보존하기 위해 <b>읽기 전용</b> 모드로 전환됩니다.",
+    "archiveModalConfirm": "보관 확인",
+    "unarchiveModalTitle": "여행 잠금을 해제하시겠습니까?",
+    "unarchiveModalDesc": "여행이 <b>잠금 해제</b>됩니다. 평소처럼 일정을 계획하고 일지를 게시하며 비용을 관리할 수 있습니다.",
+    "unarchiveModalConfirm": "여정 계속하기"
   }
 }

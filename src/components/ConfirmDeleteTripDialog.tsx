@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { TypedDeleteConfirmModal } from "./ui";
 
 type ConfirmDeleteTripDialogProps = {
@@ -14,21 +15,22 @@ export function ConfirmDeleteTripDialog({
   onClose,
   onConfirm
 }: ConfirmDeleteTripDialogProps) {
+  const { t } = useTranslation();
   return (
     <TypedDeleteConfirmModal
       isOpen={open}
       onClose={onClose}
       onConfirm={onConfirm}
-      title="Xóa vĩnh viễn chuyến đi này?"
-      description="Hành động này sẽ xóa vĩnh viễn toàn bộ dữ liệu của chuyến đi, bao gồm thành viên, lịch trình, chi phí, chuẩn bị, bản tin hành trình, giấy tờ và phương án dự phòng khỏi thiết bị này. Bạn không thể hoàn tác."
+      title={t("more.deleteModalTitle")}
+      description={t("more.deleteModalDesc")}
       warning={
         <span className="font-bold">
-          Để xác nhận, vui lòng nhập chính xác chữ XÓA.
+          {t("more.deleteModalWarning")}
         </span>
       }
-      confirmLabel="Xóa vĩnh viễn chuyến đi"
-      confirmationText="XÓA"
-      inputPlaceholder="Nhập XÓA"
+      confirmLabel={t("more.deleteModalConfirm")}
+      confirmationText={t("more.deleteModalMatch")}
+      inputPlaceholder={t("more.deleteModalInput")}
       itemName={tripName}
     />
   );

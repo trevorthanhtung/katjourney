@@ -1125,6 +1125,18 @@
     "actionEndTrip": "Akhiri perjalanan",
     "actionRestoreTrip": "Pulihkan perjalanan",
     "actionDeleteTrip": "Hapus permanen",
-    "madeBy": "dibuat oleh"
+    "madeBy": "dibuat oleh",
+    "deleteModalTitle": "Hapus perjalanan ini secara permanen?",
+    "deleteModalDesc": "Tindakan ini akan menghapus semua data perjalanan secara permanen, termasuk anggota, jadwal, pengeluaran, bagasi, jurnal, dan dokumen dari perangkat ini. Anda tidak dapat membatalkannya.",
+    "deleteModalWarning": "Untuk mengonfirmasi, ketik tepatnya HAPUS.",
+    "deleteModalConfirm": "Hapus perjalanan secara permanen",
+    "deleteModalMatch": "HAPUS",
+    "deleteModalInput": "Ketik HAPUS",
+    "archiveModalTitle": "Arsipkan ke Kenangan?",
+    "archiveModalDesc": "Perjalanan ini akan dikemas dan dipindahkan ke <b>Kenangan</b>. Semua data akan beralih ke mode <b>hanya baca</b> agar momen Anda tetap utuh.",
+    "archiveModalConfirm": "Konfirmasi arsip",
+    "unarchiveModalTitle": "Buka kunci perjalanan?",
+    "unarchiveModalDesc": "Perjalanan akan <b>dibuka kuncinya</b>. Anda dapat melanjutkan perencanaan, memposting jurnal, dan mengelola pengeluaran seperti biasa.",
+    "unarchiveModalConfirm": "Lanjutkan perjalanan"
   }
 }

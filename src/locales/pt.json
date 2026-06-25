@@ -1125,6 +1125,18 @@
     "actionEndTrip": "Encerrar viagem",
     "actionRestoreTrip": "Restaurar viagem",
     "actionDeleteTrip": "Excluir permanentemente",
-    "madeBy": "feito por"
+    "madeBy": "feito por",
+    "deleteModalTitle": "Excluir permanentemente esta viagem?",
+    "deleteModalDesc": "Esta ação excluirá permanentemente todos os dados da viagem, incluindo membros, cronograma, despesas, bagagem, diário e documentos deste dispositivo. Você não pode desfazer isso.",
+    "deleteModalWarning": "Para confirmar, digite exatamente EXCLUIR.",
+    "deleteModalConfirm": "Excluir viagem permanentemente",
+    "deleteModalMatch": "EXCLUIR",
+    "deleteModalInput": "Digite EXCLUIR",
+    "archiveModalTitle": "Arquivar em Memórias?",
+    "archiveModalDesc": "Esta viagem será empacotada e movida para <b>Memórias</b>. Todos os dados mudarão para o modo <b>somente leitura</b> para preservar seus momentos.",
+    "archiveModalConfirm": "Confirmar arquivamento",
+    "unarchiveModalTitle": "Desbloquear viagem?",
+    "unarchiveModalDesc": "A viagem será <b>desbloqueada</b>. Você pode continuar planejando, postando diários e gerenciando despesas normalmente.",
+    "unarchiveModalConfirm": "Continuar jornada"
   }
 }

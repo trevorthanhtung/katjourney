@@ -1125,6 +1125,18 @@
     "actionEndTrip": "结束行程",
     "actionRestoreTrip": "恢复行程",
     "actionDeleteTrip": "永久删除行程",
-    "madeBy": "制作者"
+    "madeBy": "制作者",
+    "deleteModalTitle": "永久删除此行程吗？",
+    "deleteModalDesc": "此操作将从此设备中永久删除所有行程数据，包括成员、日程、费用、行前准备、日记和文档等。此操作不可撤销。",
+    "deleteModalWarning": "为了确认，请准确输入 删除。",
+    "deleteModalConfirm": "永久删除行程",
+    "deleteModalMatch": "删除",
+    "deleteModalInput": "输入 删除",
+    "archiveModalTitle": "归档到回忆吗？",
+    "archiveModalDesc": "此行程将被打包并移动到<b>回忆</b>中。所有数据将切换为<b>只读</b>模式，以完好保存您的瞬间。",
+    "archiveModalConfirm": "确认归档",
+    "unarchiveModalTitle": "解锁行程吗？",
+    "unarchiveModalDesc": "行程将被<b>重新解锁</b>。您可以像往常一样继续规划日程、发布日记和管理费用。",
+    "unarchiveModalConfirm": "继续旅程"
   }
 }
