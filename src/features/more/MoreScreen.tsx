@@ -1072,14 +1072,14 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
   let firstMomentText = "";
   if (sortedEvents.length > 0 && sortedJournals.length > 0) {
     if (sortedEvents[0].date <= sortedJournals[0].date) {
-      firstMomentText = `Bạn đã bắt đầu với "${sortedEvents[0].title}" vào ngày ${formatDate(sortedEvents[0].date)}.`;
+      firstMomentText = `${t('more.wrappedFirstMomentEvent1')} "${sortedEvents[0].title}" vào ngày ${formatDate(sortedEvents[0].date)}.`;
     } else {
-      firstMomentText = `Kỷ niệm đầu tiên được ghi lại vào ngày ${formatDate(sortedJournals[0].date)}: "${sortedJournals[0].title}".`;
+      firstMomentText = `${t('more.wrappedFirstMomentJournal1')} ${formatDate(sortedJournals[0].date)}: "${sortedJournals[0].title}".`;
     }
   } else if (sortedEvents.length > 0) {
-    firstMomentText = `Bạn đã bắt đầu với "${sortedEvents[0].title}" vào ngày ${formatDate(sortedEvents[0].date)}.`;
+    firstMomentText = `${t('more.wrappedFirstMomentEvent1')} "${sortedEvents[0].title}" vào ngày ${formatDate(sortedEvents[0].date)}.`;
   } else if (sortedJournals.length > 0) {
-    firstMomentText = `Kỷ niệm đầu tiên được ghi lại vào ngày ${formatDate(sortedJournals[0].date)}: "${sortedJournals[0].title}".`;
+    firstMomentText = `${t('more.wrappedFirstMomentJournal1')} ${formatDate(sortedJournals[0].date)}: "${sortedJournals[0].title}".`;
   }
 
   const eventsByDate = data.events.reduce<Record<string, import("../../db").EventItem[]>>((result, item) => {
@@ -1125,9 +1125,9 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           </button>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark">Tổng kết hành trình</h2>
+              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark">{t("more.featureWrapped")}</h2>
             </div>
-            <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">Nhìn lại những dấu ấn đáng nhớ trong chuyến đi của bạn.</p>
+            <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">{t("more.wrappedSubtitle")}</p>
           </div>
         </div>
         <button
@@ -1136,7 +1136,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-5 text-[13.5px] font-bold hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center disabled:opacity-50 disabled:cursor-not-allowed border border-transparent dark:border-kat-primary"
         >
           <HugeiconsIcon icon={FileDownloadIcon} className={classNames("h-4 w-4", !isGeneratingPdf && "animate-bounce")} />
-          <span>{isGeneratingPdf ? "Đang xuất..." : "Xuất PDF"}</span>
+          <span>{isGeneratingPdf ? t("more.wrappedExporting") : t("more.wrappedExportPdf")}</span>
         </button>
       </div>
       
@@ -1160,7 +1160,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-kat-primary-soft border border-kat-primary/15 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable">
                   <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5" />
-                  Chuyến đi trong ngày
+                  {t("more.wrappedDayTrip")}
                 </span>
               </>
             ) : (
@@ -1181,7 +1181,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-kat-dark leading-none block">{stats.totalDays}</span>
-            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">Ngày hành trình</span>
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">{t("more.wrappedDays")}</span>
           </div>
         </div>
  
@@ -1191,7 +1191,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-kat-dark leading-none block">{stats.activityCount}</span>
-            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">Mục lịch trình</span>
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">{t("more.wrappedEvents")}</span>
           </div>
         </div>
  
@@ -1201,7 +1201,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-kat-dark leading-none block">{stats.checklistPercent}%</span>
-            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">Hành lý</span>
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">{t("more.wrappedPacking")}</span>
           </div>
         </div>
  
@@ -1211,7 +1211,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           </div>
           <div className="min-w-0">
             <span className="text-[28px] font-black text-kat-dark leading-none block">{stats.journalCount}</span>
-            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">Bài viết</span>
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">{t("more.wrappedJournals")}</span>
           </div>
         </div>
       </div>
@@ -1221,23 +1221,23 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <div className="relative z-10">
           <h3 className="text-[13px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
             <HugeiconsIcon icon={WalletCardsIcon} className="h-5 w-5 text-kat-primary" />
-            CHI PHÍ CHUYẾN ĐI
+            {t("more.wrappedExpenseTitle")}
           </h3>
           
           {data.expenses.length > 0 ? (
             <div className="space-y-6">
               <div>
-                <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">Tổng chi phí</p>
+                <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">{t("more.wrappedTotalExpense")}</p>
                 <p className="mt-1 text-[36px] font-black text-kat-dark leading-none">{formatMoney(stats.totalExpense)}</p>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200/60 dark:border-slate-700/50 pt-6 max-w-md">
                 <div>
-                  <p className="text-[13px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider">Chi chung chuyến đi</p>
+                  <p className="text-[13px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider">{t("more.wrappedSharedExpense")}</p>
                   <p className="mt-1 text-[18px] font-black text-kat-primary-usable">{formatMoney(sharedTotal)}</p>
                 </div>
                 <div>
-                  <p className="text-[13px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider">Chi cá nhân</p>
+                  <p className="text-[13px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider">{t("more.wrappedPersonalExpense")}</p>
                   <p className="mt-1 text-[18px] font-black text-kat-dark">{formatMoney(personalTotal)}</p>
                 </div>
               </div>
@@ -1245,16 +1245,16 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
               {data.members.length === 0 ? (
                 <div className="border-t border-slate-200/60 dark:border-slate-700/50 pt-6">
                   <div className="rounded-2xl border border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/25 px-4 py-3.5 text-[13.5px] text-slate-500 dark:text-slate-400 font-semibold leading-relaxed">
-                    Chưa có người đồng hành để gợi ý cân đối chia tiền.
+                    {t("more.wrappedNoMembersExpense")}
                   </div>
                 </div>
               ) : (
                 <>
                   {stats.topPayer && (
                     <div className="border-t border-slate-200/60 dark:border-slate-700/50 pt-6">
-                      <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">Nhà tài trợ chính</p>
+                      <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">{t("more.wrappedTopPayer")}</p>
                       <p className="mt-1 text-[14.5px] font-medium leading-relaxed text-slate-600 dark:text-slate-350">
-                        <span className="font-extrabold text-kat-dark">{stats.topPayer.name}</span> là người chi nhiều nhất với <span className="font-extrabold text-kat-primary-usable">{formatMoney(stats.topPayer.amount)}</span>.
+                        <span className="font-extrabold text-kat-dark">{stats.topPayer.name}</span> {t("more.wrappedTopPayerDesc")} <span className="font-extrabold text-kat-primary-usable">{formatMoney(stats.topPayer.amount)}</span>.
                       </p>
                     </div>
                   )}
@@ -1263,7 +1263,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             </div>
           ) : (
             <div className="text-center py-6 border border-slate-200/60 dark:border-slate-700/50 rounded-2xl bg-slate-50/40 dark:bg-slate-800/10">
-              <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-450">Chưa có dữ liệu chi phí cho chuyến đi này.</p>
+              <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-450">{t("more.wrappedNoExpenseData")}</p>
             </div>
           )}
         </div>
@@ -1274,24 +1274,24 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-500 mb-4 ring-4 ring-amber-500/5 dark:ring-amber-500/10">
           <HugeiconsIcon icon={SmilePlusIcon} className="h-6 w-6" />
         </div>
-        <h3 className="text-[13px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2">DẤU ẤN CẢM XÚC</h3>
+        <h3 className="text-[13px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2">{t("more.wrappedMoodTitle")}</h3>
         {mood ? (
           <div className="mt-2 flex flex-col items-center animate-fadeIn">
             <p className="text-[28px] md:text-[32px] font-black text-kat-dark dark:text-white">{mood}</p>
             <p className="mt-2 text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 text-center max-w-[280px] leading-relaxed">
-              Cảm xúc chủ đạo được ghi nhận từ các bài viết trong bản tin hành trình của bạn.
+              {t("more.wrappedMoodDesc")}
             </p>
           </div>
         ) : (
           <div className="flex flex-col items-center mt-2">
-            <p className="text-[16px] font-extrabold text-kat-dark mb-1.5">Chưa có đủ bài viết để tổng kết cảm xúc chuyến đi.</p>
-            <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 mb-5 max-w-sm">Đăng thêm bản tin để lưu lại cảm xúc và khoảnh khắc đáng nhớ.</p>
+            <p className="text-[16px] font-extrabold text-kat-dark mb-1.5">{t("more.wrappedNoMoodData")}</p>
+            <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 mb-5 max-w-sm">{t("more.wrappedNoMoodDesc")}</p>
             <button 
               onClick={() => setSection("journal")}
               className="flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 py-2.5 text-[14px] font-extrabold text-white dark:text-slate-950 hover:bg-kat-dark/95 dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] transition-all shadow-sm border border-transparent dark:border-kat-primary"
             >
               <HugeiconsIcon icon={BookOpen01Icon} className="h-4.5 w-4.5" />
-              Đăng bài viết đầu tiên
+              {t("more.wrappedPostFirstJournal")}
             </button>
           </div>
         )}
@@ -1303,7 +1303,7 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <HugeiconsIcon icon={Camera01Icon} className="h-5 w-5 text-amber-500" />
-            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">Dấu ấn đầu tiên</h4>
+            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">{t("more.wrappedFirstMoment")}</h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
             {firstMomentText || "Chưa có dấu ấn đầu tiên. Hãy thêm hoạt động hoặc đăng bài viết để lưu lại khoảnh khắc mở đầu."}
@@ -1314,15 +1314,15 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <HugeiconsIcon icon={StarIcon} className="h-5 w-5 text-amber-500" />
-            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">Ngày nổi bật nhất</h4>
+            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">{t("more.wrappedBusiestDay")}</h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
             {maxEventsDate ? (
               <>
-                <span className="font-extrabold text-amber-600 dark:text-amber-400">{formatDate(maxEventsDate)}</span> là ngày bận rộn nhất với <span className="font-bold text-kat-dark">{maxEventsCount} hoạt động</span> được ghi nhận.
+                <span className="font-extrabold text-amber-600 dark:text-amber-400">{formatDate(maxEventsDate)}</span> {t("more.wrappedBusiestDayDesc")} <span className="font-bold text-kat-dark">{maxEventsCount} {t("more.wrappedBusiestDayDesc2")}</span>
               </>
             ) : (
-              "Chưa có ngày nào đủ dữ liệu để chọn làm ngày nổi bật."
+              t("more.wrappedNoBusiestDay")
             )}
           </p>
         </div>
@@ -1331,10 +1331,10 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <HugeiconsIcon icon={MapsIcon} className="h-5 w-5 text-kat-primary" />
-            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">Điểm đến đã ghé qua</h4>
+            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">{t("more.wrappedLocations")}</h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
-            {uniqueLocations.length > 0 ? uniqueLocations.join(", ") : "Chưa có điểm đến cụ thể nào trong lịch trình."}
+            {uniqueLocations.length > 0 ? uniqueLocations.join(", ") : t("more.wrappedNoLocations")}
           </p>
         </div>
       </div>
@@ -1976,7 +1976,7 @@ export function MoreScreen({
 
   const getTripDurationText = () => {
     const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
-    if (isDayTrip) return "Chuyến đi trong ngày";
+    if (isDayTrip) return t("more.wrappedDayTrip");
     try {
       const start = new Date(trip.startDate);
       const end = new Date(trip.endDate);
