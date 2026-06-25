@@ -293,7 +293,8 @@
     "cancel": "ยกเลิก",
     "deleting": "กำลังลบ...",
     "delete": "ลบ",
-    "unknownLocation": "ไม่ทราบตำแหน่ง"
+    "unknownLocation": "ไม่ทราบตำแหน่ง",
+    "archivedBanner": "การเดินทางสิ้นสุดแล้ว — อ่านอย่างเดียว ไม่สามารถแก้ไขได้"
   },
   "sharedTrip": {
     "viewTitle": "ดูทริปที่แชร์",

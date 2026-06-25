@@ -293,7 +293,8 @@
     "cancel": "Annulla",
     "deleting": "Eliminazione...",
     "delete": "Elimina",
-    "unknownLocation": "Luogo sconosciuto"
+    "unknownLocation": "Luogo sconosciuto",
+    "archivedBanner": "Il viaggio è terminato — sola lettura, modifiche non consentite."
   },
   "sharedTrip": {
     "viewTitle": "Visualizza viaggio condiviso",

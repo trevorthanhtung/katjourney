@@ -291,7 +291,8 @@
     "cancel": "Hủy",
     "deleting": "Đang xóa...",
     "delete": "Xóa",
-    "unknownLocation": "Chưa xác định"
+    "unknownLocation": "Chưa xác định",
+    "archivedBanner": "Chuyến đi đã kết thúc — chỉ xem, không chỉnh sửa."
   },
   "sharedTrip": {
     "viewTitle": "Xem chuyến đi được chia sẻ",

@@ -1115,10 +1115,10 @@ function App() {
 
       {isReadOnly && !isManagingTrips && !isViewingArchive && !isCreatingTrip && (
         <div className="max-w-[1120px] mx-auto mt-4 px-4 md:px-6 animate-fadeIn">
-          <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-stone-100/80 border border-stone-200/70">
-            <HugeiconsIcon icon={LockIcon} className="w-3.5 h-3.5 text-stone-400 shrink-0" strokeWidth={2.5} />
-            <p className="text-[12.5px] text-stone-500 leading-snug">
-              Chuyến đi đã kết thúc &mdash; chỉ xem, không chỉnh sửa.
+          <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-stone-100/80 dark:bg-stone-800/40 border border-stone-200/70 dark:border-stone-700/50">
+            <HugeiconsIcon icon={LockIcon} className="w-3.5 h-3.5 text-stone-400 dark:text-stone-500 shrink-0" strokeWidth={2.5} />
+            <p className="text-[12.5px] text-stone-500 dark:text-stone-400 leading-snug">
+              {t("common.archivedBanner")}
             </p>
           </div>
         </div>

@@ -293,7 +293,8 @@
     "cancel": "キャンセル",
     "deleting": "削除中...",
     "delete": "削除",
-    "unknownLocation": "場所不明"
+    "unknownLocation": "場所不明",
+    "archivedBanner": "旅行は終了しました — 読み取り専用です。編集はできません。"
   },
   "sharedTrip": {
     "viewTitle": "共有された旅行を見る",

@@ -293,7 +293,8 @@
     "cancel": "取消",
     "deleting": "删除中...",
     "delete": "删除",
-    "unknownLocation": "未知地点"
+    "unknownLocation": "未知地点",
+    "archivedBanner": "行程已结束 — 仅供查看，不可编辑。"
   },
   "sharedTrip": {
     "viewTitle": "查看分享的行程",

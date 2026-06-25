@@ -293,7 +293,8 @@
     "cancel": "Batal",
     "deleting": "Menghapus...",
     "delete": "Hapus",
-    "unknownLocation": "Lokasi tidak diketahui"
+    "unknownLocation": "Lokasi tidak diketahui",
+    "archivedBanner": "Perjalanan telah berakhir — hanya baca, tidak dapat diedit."
   },
   "sharedTrip": {
     "viewTitle": "Lihat perjalanan yang dibagikan",

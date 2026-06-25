@@ -293,7 +293,8 @@
     "cancel": "Cancel",
     "deleting": "Deleting...",
     "delete": "Delete",
-    "unknownLocation": "Unknown location"
+    "unknownLocation": "Unknown location",
+    "archivedBanner": "Trip has ended — read-only, no edits allowed."
   },
   "sharedTrip": {
     "viewTitle": "View Shared Trip",
