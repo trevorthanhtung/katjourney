@@ -811,7 +811,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                   <>
                     <label className="text-[13px] font-bold text-kat-text flex items-center gap-1.5">
                       <HugeiconsIcon icon={UserCheckIcon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                      Người phụ trách
+                      {t("packing.assigneeLabel")}
                     </label>
                     <div className="rounded-[16px] bg-slate-50 dark:bg-slate-800/30 border border-kat-border/60 dark:border-slate-800 p-3 flex items-start gap-2.5">
                       <HugeiconsIcon icon={UserIcon} className="h-4 w-4 text-kat-muted shrink-0 mt-0.5" />
@@ -826,7 +826,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                     label={
                       <span className="flex items-center gap-1.5">
                         <HugeiconsIcon icon={UserCheckIcon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                        Người phụ trách
+                        {t("packing.assigneeLabel")}
                       </span>
                     }
                     value={assignedTo}
@@ -847,7 +847,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               <div className="space-y-2">
                 <label className="text-[13px] font-bold text-kat-text block flex items-center gap-1.5">
                   <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                  Mức độ cần thiết
+                  {t("packing.priorityLabel")}
                 </label>
                 <div className="flex p-1 bg-slate-50 dark:bg-slate-800/50 border border-kat-border/50 dark:border-slate-800 rounded-xl">
                   {(["normal", "important", "required"] as const).map((prio) => {
@@ -875,7 +875,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               <div className="space-y-1.5">
                 <label className="text-[13px] font-bold text-kat-text flex items-center gap-1.5">
                   <HugeiconsIcon icon={Note01Icon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                  Ghi chú
+                  {t("packing.noteLabel")}
                 </label>
                 <textarea
                   className="w-full h-[72px] rounded-[14px] border border-kat-border dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50 px-4 py-3 text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-primary/50 resize-none"
@@ -919,7 +919,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 onClick={() => setIsFormOpen(false)}
                 className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/50 px-6 font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
               >
-                Hủy
+                {t("packing.cancel")}
               </button>
               <button
                 type="button"
