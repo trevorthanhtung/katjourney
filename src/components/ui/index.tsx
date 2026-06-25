@@ -108,6 +108,7 @@ export function TimePicker({
   onChange: (value: string) => void;
   placeholder?: string;
 }) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
   const [tempHour, setTempHour] = React.useState("09");
   const [tempMinute, setTempMinute] = React.useState("00");
@@ -193,7 +194,7 @@ export function TimePicker({
       <BottomSheet
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title="Chọn thời gian"
+        title={t("ui.selectTime")}
       >
         <div className="flex flex-col items-center">
           <div className="flex justify-center w-full max-w-[240px] h-[200px] relative overflow-hidden bg-slate-50/80 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-kat-border/40 shadow-inner">
@@ -254,7 +255,7 @@ export function TimePicker({
               onClick={handleSave}
               className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-kat-dark text-white dark:bg-kat-primary dark:text-kat-dark px-6 font-black shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all motion-press"
             >
-              Lưu thời gian
+              {t("ui.saveTime")}
             </button>
           </div>
         </div>
@@ -267,7 +268,7 @@ export function DatePicker({
   label,
   value,
   onChange,
-  placeholder = "Chọn ngày",
+  placeholder,
   min,
   max
 }: {
@@ -278,6 +279,8 @@ export function DatePicker({
   min?: string;
   max?: string;
 }) {
+  const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t("ui.selectDate");
   const [isOpen, setIsOpen] = React.useState(false);
 
   const hash = React.useMemo(() => {
@@ -347,7 +350,7 @@ export function DatePicker({
         className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 dark:bg-slate-800/40 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/60 transition-shadow focus:bg-white dark:focus:bg-kat-surface focus:ring-2 focus:ring-kat-teal"
       >
         <span className={value ? "text-kat-text font-bold" : "text-slate-400 dark:text-slate-500"}>
-          {displayValue || placeholder}
+          {displayValue || resolvedPlaceholder}
         </span>
         <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-400 dark:text-slate-500" />
       </button>
@@ -355,7 +358,7 @@ export function DatePicker({
       <BottomSheet
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title="Chọn ngày"
+        title={t("ui.selectDate")}
       >
         <div className="flex flex-col items-center p-2">
           {/* Header */}
@@ -367,7 +370,7 @@ export function DatePicker({
               <HugeiconsIcon icon={ChevronLeftIcon} size={20} />
             </button>
             <h3 className="text-[17px] font-bold text-kat-text">
-              Tháng {month + 1} năm {year}
+              {t("ui.monthYear", { month: month + 1, year })}
             </h3>
             <button 
               onClick={handleNextMonth}
@@ -432,7 +435,7 @@ export function DatePicker({
               }}
               className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-kat-text dark:text-slate-200 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.98] transition-all motion-press"
             >
-              Chọn hôm nay
+              {t("ui.selectToday")}
             </button>
           </div>
         </div>
@@ -458,6 +461,7 @@ export function Select({
   labels?: Record<string, string>;
   buttonClassName?: string;
 }) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
 
   const hash = React.useMemo(() => {
@@ -478,7 +482,7 @@ export function Select({
         className={buttonClassName ?? "mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-slate-50 dark:bg-slate-800/40 px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/60 transition-shadow focus:bg-white dark:focus:bg-kat-surface focus:ring-2 focus:ring-kat-teal"}
       >
         <span className={value ? "text-kat-text font-bold" : "text-slate-400 dark:text-slate-500"}>
-          {value ? (labels?.[value] ?? value) : (placeholder ?? "Chưa chọn")}
+          {value ? (labels?.[value] ?? value) : (placeholder ?? t("ui.notSelected"))}
         </span>
         <HugeiconsIcon icon={ChevronDownIcon} size={16} className="text-slate-400 dark:text-slate-500" />
       </button>
@@ -486,12 +490,12 @@ export function Select({
       <BottomSheet
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title={typeof label === 'string' ? `Chọn ${label.toLowerCase()}` : "Chọn tuỳ chọn"}
+        title={t("ui.selectOption")}
       >
         <div className="space-y-1 max-h-[60vh] overflow-y-auto scrollbar-none pb-2">
           {options.map((option) => {
             const isSelected = value === option;
-            const displayLabel = option ? labels?.[option] ?? option : placeholder ?? "Chưa chọn";
+            const displayLabel = option ? labels?.[option] ?? option : placeholder ?? t("ui.notSelected");
             return (
               <button
                 key={option || "empty"}
@@ -671,6 +675,7 @@ export function BottomSheet({
   footer?: React.ReactNode;
   headerAction?: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   useBodyScrollLock(isOpen);
 
   if (!isOpen) return null;
@@ -696,8 +701,8 @@ export function BottomSheet({
             <button 
               className="flex shrink-0 h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none" 
               onClick={onClose}
-              title="Đóng"
-              aria-label="Đóng"
+              title={t("ui.close")}
+              aria-label={t("ui.close")}
             >
               <HugeiconsIcon icon={Cancel01Icon} size={20} />
             </button>

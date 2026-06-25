@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ChevronLeftIcon, ChevronRightIcon, Add01Icon, Calendar01Icon, Clock01Icon } from "@hugeicons/core-free-icons";
 import { EventItem, Trip } from "../../db";
@@ -19,6 +20,8 @@ export function TimelineCalendarView({
   onOpenNewForm: (date?: string) => void;
   renderActivityCard: (item: EventItem, idx: number) => React.ReactNode;
 }) {
+  const { t } = useTranslation();
+
   const [currentDate, setCurrentDate] = useState(() => {
     return trip.startDate ? new Date(trip.startDate) : new Date();
   });
@@ -67,20 +70,20 @@ export function TimelineCalendarView({
       <div className="bg-white dark:bg-kat-surface rounded-[28px] p-5 md:p-6 shadow-soft border border-slate-100 dark:border-kat-border">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[18px] font-black text-kat-dark capitalize">
-            Tháng {month + 1}, {year}
+            {t("calendar.monthTitle", { month: month + 1, year })}
           </h3>
           <div className="flex items-center gap-2">
-            <button onClick={prevMonth} aria-label="Tháng trước" className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+            <button onClick={prevMonth} aria-label={t("ui.prevMonth")} className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
               <HugeiconsIcon icon={ChevronLeftIcon} className="w-5 h-5" />
             </button>
-            <button onClick={nextMonth} aria-label="Tháng sau" className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+            <button onClick={nextMonth} aria-label={t("ui.nextMonth")} className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
               <HugeiconsIcon icon={ChevronRightIcon} className="w-5 h-5" />
             </button>
           </div>
         </div>
 
         <div className="grid grid-cols-7 gap-1 text-center mb-2 border-b border-slate-100 dark:border-slate-700/40 pb-2">
-          {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map(d => (
+          {[t("calendar.mon"), t("calendar.tue"), t("calendar.wed"), t("calendar.thu"), t("calendar.fri"), t("calendar.sat"), t("calendar.sun")].map(d => (
             <div key={d} className="text-[12px] font-bold text-slate-400 dark:text-slate-500">
               {d}
             </div>
@@ -129,14 +132,14 @@ export function TimelineCalendarView({
           <div className="flex items-center justify-between mb-4 px-1 border-b border-slate-100 dark:border-slate-700/40 pb-3">
             <h4 className="text-[16px] font-extrabold text-kat-dark flex items-center gap-2">
               <HugeiconsIcon icon={Calendar01Icon} className="w-5 h-5 text-kat-teal" />
-              Lịch trình ngày {selectedDate.split('-').reverse().join('/')}
+              {t("calendar.scheduleForDate", { date: selectedDate.split('-').reverse().join('/') })}
             </h4>
             <button 
               onClick={() => onOpenNewForm(selectedDate)}
               className="flex items-center gap-1 text-[13px] font-bold text-kat-teal hover:brightness-95 transition-colors motion-press px-2 py-1 bg-kat-primary-soft rounded-lg"
             >
               <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
-              Thêm
+              {t("calendar.add")}
             </button>
           </div>
 
@@ -152,16 +155,16 @@ export function TimelineCalendarView({
                     <HugeiconsIcon icon={Clock01Icon} className="w-5 h-5" />
                   </div>
                 </div>
-                <h5 className="text-[15px] font-bold text-kat-dark dark:text-slate-100">Ngày này trống</h5>
+                <h5 className="text-[15px] font-bold text-kat-dark dark:text-slate-100">{t("calendar.emptyDay")}</h5>
                 <p className="mt-1 text-[13.5px] font-medium text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-                  Không có sự kiện nào trong ngày này. Hãy thêm điểm dừng để lấp đầy hành trình.
+                  {t("calendar.emptyDayDesc")}
                 </p>
                 <button 
                   onClick={() => onOpenNewForm(selectedDate)}
                   className="mt-4 inline-flex items-center gap-1.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 px-4 py-2.5 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 transition-all shadow-sm motion-press"
                 >
                   <HugeiconsIcon icon={Add01Icon} className="w-4 h-4 text-kat-primary" />
-                  Thêm hoạt động
+                  {t("calendar.addActivity")}
                 </button>
               </div>
             )}

@@ -12,7 +12,7 @@ import {
   Airplane01Icon, KitchenUtensilsIcon, HotelIcon, Ticket01Icon, ShoppingBag01Icon, Gamepad2Icon, CompassIcon, ChevronDownIcon, Location01Icon, LocationOfflineIcon
 } from "@hugeicons/core-free-icons";
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
-import { formatMoney, expenseCategories, formatDate, moodLabels, sumBy, getSettlementSuggestions } from '../../../utils/helpers';
+import { formatMoney, expenseCategories, formatDate, moodLabels, sumBy, getSettlementSuggestions, getGroupUnits, getMemberShareForExpense } from '../../../utils/helpers';
 import { submitChangeRequest } from '../../../services/sharedTripRequestService';
 import { showToast } from '../../../components/ui/ToastManager';
 import { uploadJournalImage, uploadDocumentImage } from '../../../services/storageService';
@@ -140,6 +140,8 @@ export function SharedExpensesSection({
     category: string; 
     customCategory: string; 
     splitType: "shared" | "personal";
+    splitMode: "perPerson" | "perGroup";
+    splitAmong: string[];
     date: string;
     eventId: string;
     currency: string;
@@ -151,6 +153,8 @@ export function SharedExpensesSection({
     category: categoryOptions[0] || "Di chuyển", 
     customCategory: "", 
     splitType: "shared",
+    splitMode: "perPerson",
+    splitAmong: [],
     date: new Date().toISOString().split('T')[0],
     eventId: "",
     currency: "VND",
@@ -244,12 +248,14 @@ export function SharedExpensesSection({
             category: isCustom ? "Khác..." : item.category,
             customCategory: isCustom && item.category !== "Khác..." ? item.category : "",
             splitType: item.splitType ?? "shared",
+            splitMode: item.splitMode ?? "perPerson",
+            splitAmong: item.splitAmong ?? [],
             date: item.date ? new Date(item.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
             eventId: item.eventId ? String(item.eventId) : "",
             currency: item.currency || "VND",
             exchangeRate: item.exchangeRate || 1
           });
-          if (item.splitType === "personal" || isCustom || item.category !== categoryOptions[0] || item.eventId) {
+          if (item.splitType === "personal" || isCustom || item.category !== categoryOptions[0] || item.splitMode === "perGroup" || (item.splitAmong && item.splitAmong.length > 0) || item.eventId) {
             setShowAdvanced(true);
           }
         }
@@ -261,6 +267,8 @@ export function SharedExpensesSection({
           category: categoryOptions[0] || "Di chuyển", 
           customCategory: "", 
           splitType: "shared",
+          splitMode: "perPerson",
+          splitAmong: [],
           date: new Date().toISOString().split('T')[0],
           eventId: "",
           currency: "VND",
@@ -357,6 +365,8 @@ export function SharedExpensesSection({
       payer: form.splitType === "personal" ? (form.payer || "") : form.payer, 
       category: finalCategory, 
       splitType: form.splitType,
+      splitMode: form.splitType === "personal" ? "perPerson" : form.splitMode,
+      splitAmong: form.splitType === "personal" ? [] : form.splitAmong,
       date: new Date(form.date).toISOString(),
       eventId: form.eventId ? Number(form.eventId) : undefined,
       currency: form.currency,
@@ -417,6 +427,10 @@ export function SharedExpensesSection({
   const activeMembers = members.length > 0 ? members.length : 1;
   const avgPerPerson = Math.round(totalShared / activeMembers);
 
+  const groupUnits = React.useMemo(() => getGroupUnits(members), [members]);
+  const hasGroups = groupUnits.some(u => u.isGroup);
+  const avgPerGroup = groupUnits.length ? Math.round(totalShared / groupUnits.length) : 0;
+
   const categoryBreakdown = React.useMemo(() => {
     const acc: Record<string, number> = {};
     activeExpenses.forEach((e) => {
@@ -425,13 +439,17 @@ export function SharedExpensesSection({
     return acc;
   }, [activeExpenses]);
 
-  const payerBreakdown = React.useMemo(() => {
-    const acc: Record<string, number> = {};
-    activeExpenses.forEach((e) => {
-      if (e.payer) acc[e.payer] = (acc[e.payer] || 0) + e.amount;
+  const exactSharesByMember = React.useMemo(() => {
+    const shares: Record<string, number> = {};
+    members.forEach(m => shares[m.name] = 0);
+    sharedExpensesList.forEach(expense => {
+      const expenseShares = getMemberShareForExpense(expense, members);
+      for (const [name, amount] of Object.entries(expenseShares)) {
+        if (shares[name] !== undefined) shares[name] += amount;
+      }
     });
-    return acc;
-  }, [activeExpenses]);
+    return shares;
+  }, [sharedExpensesList, members]);
 
   const settlements = React.useMemo(() => {
     return getSettlementSuggestions(members, sharedExpensesList);
@@ -490,9 +508,11 @@ export function SharedExpensesSection({
               </div>
               <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                 <div>
-                  <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Bình quân / người</p>
+                  <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                    {hasGroups ? "Bình quân / nhóm" : "Bình quân / người"}
+                  </p>
                   {members.length > 0 ? (
-                    <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(avgPerPerson)}</p>
+                    <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(hasGroups ? avgPerGroup : avgPerPerson)}</p>
                   ) : (
                     <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-lg border border-amber-100 dark:border-amber-900/30 mt-1.5 inline-block">Chưa có người đồng hành</span>
                   )}
@@ -533,9 +553,15 @@ export function SharedExpensesSection({
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400">
               <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5" />
             </span>
-            <h3 className="text-[14px] font-extrabold text-kat-dark dark:text-white">Chi phí theo người trả</h3>
+            <h3 className="text-[14px] font-extrabold text-kat-dark dark:text-white">Phần cần góp của từng người/nhóm</h3>
           </div>
-          <BreakdownSection items={payerBreakdown} total={totalExpense} emptyText="Chưa có khoản chi nào để phân tích." />
+          {members.length > 0 ? (
+            <BreakdownSection items={exactSharesByMember} total={totalShared} emptyText="Chưa có khoản chi chung để phân tích." />
+          ) : (
+            <div className="flex flex-col items-center justify-center py-6 text-center">
+              <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">Thêm người đồng hành để xem phần chi của từng người.</p>
+            </div>
+          )}
         </section>
       </div>
 
@@ -630,7 +656,7 @@ export function SharedExpensesSection({
                                 ? "bg-indigo-50/50 dark:bg-indigo-950/20 border-indigo-100/60 dark:border-indigo-900/30 text-indigo-600 dark:text-indigo-400"
                                 : "bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-700/50 text-slate-500 dark:text-slate-400"
                             )}>
-                              {e.splitType === "shared" ? "Chi chung" : "Cá nhân"}
+                              {e.splitType === "personal" ? "Cá nhân" : e.splitMode === "perGroup" ? "Chi theo nhóm" : "Chi chung"}
                             </span>
                           </>
                         )}
@@ -1006,6 +1032,76 @@ export function SharedExpensesSection({
                       Cá nhân tự trả
                     </button>
                   </div>
+                  {form.splitType === "shared" && (
+                    <div className="mt-4 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-900/40 bg-indigo-50/30 dark:bg-indigo-950/10 space-y-3 animate-fadeIn">
+                      <div className="flex gap-2 p-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-xl">
+                        <button
+                          type="button"
+                          onClick={() => setForm(f => ({ ...f, splitMode: "perPerson" }))}
+                          className={classNames(
+                            "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
+                            form.splitMode === "perPerson" ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 hover:text-slate-700"
+                          )}
+                        >
+                          Chia đều mỗi người
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setForm(f => ({ ...f, splitMode: "perGroup" }))}
+                          className={classNames(
+                            "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
+                            form.splitMode === "perGroup" ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 hover:text-slate-700"
+                          )}
+                        >
+                          Chia theo nhóm
+                        </button>
+                      </div>
+                      
+                      <div className="pt-2 border-t border-indigo-100 dark:border-indigo-900/30">
+                        <span className="text-[12px] font-bold text-slate-600 dark:text-slate-400 block mb-2">Người tham gia khoản chi này:</span>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setForm(f => ({ ...f, splitAmong: [] }))}
+                            className={classNames(
+                              "px-3 py-1.5 rounded-xl text-[12px] font-bold transition-colors border",
+                              (!form.splitAmong || form.splitAmong.length === 0)
+                                ? "bg-kat-dark text-white border-transparent"
+                                : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-kat-dark/30"
+                            )}
+                          >
+                            Tất cả mọi người
+                          </button>
+                          {members.map(m => {
+                            const isSelected = form.splitAmong?.includes(m.name);
+                            return (
+                              <button
+                                key={m.name}
+                                type="button"
+                                onClick={() => {
+                                  setForm(f => {
+                                    const current = f.splitAmong || [];
+                                    const next = isSelected 
+                                      ? current.filter(n => n !== m.name)
+                                      : [...current, m.name];
+                                    return { ...f, splitAmong: next.length === members.length ? [] : next };
+                                  });
+                                }}
+                                className={classNames(
+                                  "px-3 py-1.5 rounded-xl text-[12px] font-bold transition-colors border",
+                                  isSelected || (!form.splitAmong || form.splitAmong.length === 0)
+                                    ? "bg-kat-dark/10 dark:bg-kat-primary/20 text-kat-dark dark:text-kat-primary border-kat-dark/20 dark:border-kat-primary/30"
+                                    : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-kat-dark/30"
+                                )}
+                              >
+                                {m.name}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

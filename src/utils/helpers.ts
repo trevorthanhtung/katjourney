@@ -142,16 +142,118 @@ export function roundVnd(value: number) {
   return Math.round(value / 1000) * 1000;
 }
 
+export interface GroupUnit {
+  isGroup: boolean;
+  groupName?: string;
+  leaderName?: string;
+  memberNames: string[];
+}
+
+export function getGroupUnits(members: Member[], participantNames?: string[]): GroupUnit[] {
+  const participants = participantNames 
+    ? members.filter(m => participantNames.includes(m.name))
+    : members;
+
+  const units: GroupUnit[] = [];
+  const groupsMap = new Map<string, Member[]>();
+
+  for (const m of participants) {
+    const groupName = m.group || m.note;
+    if (groupName) {
+      if (!groupsMap.has(groupName)) {
+        groupsMap.set(groupName, []);
+      }
+      groupsMap.get(groupName)!.push(m);
+    } else {
+      units.push({
+        isGroup: false,
+        memberNames: [m.name],
+        leaderName: m.name
+      });
+    }
+  }
+
+  for (const [groupName, groupMembers] of groupsMap.entries()) {
+    const leader = groupMembers.find(m => m.isGroupLeader) || groupMembers[0];
+    units.push({
+      isGroup: true,
+      groupName,
+      leaderName: leader ? leader.name : undefined,
+      memberNames: groupMembers.map(m => m.name)
+    });
+  }
+
+  return units;
+}
+
+export function getMemberShareForExpense(expense: Expense, members: Member[]): Record<string, number> {
+  const shares: Record<string, number> = {};
+  if (expense.splitType === "personal") return shares;
+
+  const amount = Number(expense.amount || 0);
+  if (amount <= 0) return shares;
+
+  const splitMode = expense.splitMode || "perPerson";
+  const participantNames = expense.splitAmong && expense.splitAmong.length > 0 
+    ? expense.splitAmong 
+    : members.map(m => m.name);
+
+  if (splitMode === "perGroup") {
+    const units = getGroupUnits(members, participantNames);
+    if (units.length === 0) return shares;
+
+    const amountPerUnit = amount / units.length;
+    
+    for (const unit of units) {
+      if (unit.isGroup && unit.leaderName) {
+        shares[unit.leaderName] = (shares[unit.leaderName] || 0) + amountPerUnit;
+      } else if (unit.isGroup && !unit.leaderName) {
+        const amountPerMember = amountPerUnit / unit.memberNames.length;
+        for (const name of unit.memberNames) {
+          shares[name] = (shares[name] || 0) + amountPerMember;
+        }
+      } else {
+        const name = unit.memberNames[0];
+        shares[name] = (shares[name] || 0) + amountPerUnit;
+      }
+    }
+  } else {
+    const validParticipants = members.filter(m => participantNames.includes(m.name));
+    if (validParticipants.length === 0) return shares;
+    const amountPerPerson = amount / validParticipants.length;
+    for (const m of validParticipants) {
+      shares[m.name] = (shares[m.name] || 0) + amountPerPerson;
+    }
+  }
+
+  return shares;
+}
+
 export function getSettlementSuggestions(members: Member[], expenses: Expense[]) {
   if (!members.length || !expenses.length) return [];
+  
+  const balancesMap: Record<string, number> = {};
+  members.forEach(m => { balancesMap[m.name] = 0; });
+
   const sharedExpenses = expenses.filter((e) => e.splitType !== "personal");
-  const total = sharedExpenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-  const share = total / members.length;
-  const paidByMember = sumBy(sharedExpenses, (item) => item.payer, (item) => Number(item.amount || 0));
+  
+  for (const expense of sharedExpenses) {
+    const amount = Number(expense.amount || 0);
+    if (expense.payer && balancesMap[expense.payer] !== undefined) {
+      balancesMap[expense.payer] += amount;
+    }
+    
+    const shares = getMemberShareForExpense(expense, members);
+    for (const [name, shareAmt] of Object.entries(shares)) {
+      if (balancesMap[name] !== undefined) {
+        balancesMap[name] -= shareAmt;
+      }
+    }
+  }
   
   const balances = members.map((member) => ({
     name: member.name,
-    balance: (paidByMember[member.name] ?? 0) - share
+    balance: balancesMap[member.name] || 0
   }));
   
   const debtors = balances

@@ -40,6 +40,8 @@ export interface Member {
   note?: string;
   gender?: "male" | "female" | "other" | string;
   avatar?: string;
+  group?: string;
+  isGroupLeader?: boolean;
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string;
@@ -70,6 +72,8 @@ export interface Expense {
   category: string;
   description: string;
   splitType?: "shared" | "personal";
+  splitMode?: "perPerson" | "perGroup";
+  splitAmong?: string[];
   date?: string;
   eventId?: string | number;
   originalAmount?: number;
@@ -239,6 +243,17 @@ export class KatJourneyDB extends Dexie {
           expense.date = expense.updatedAt || expense.createdAt || new Date().toISOString();
         }
       });
+    });
+    this.version(7).stores({
+      trips: "++id, title, startDate, endDate, createdAt",
+      members: "++id, tripId, name",
+      events: "++id, tripId, date, completed",
+      expenses: "++id, tripId, category, payer",
+      checklist: "++id, tripId, section, completed",
+      journals: "++id, tripId, date, mood",
+      packingItems: "++id, tripId, tripType, completed",
+      travelDocuments: "++id, tripId, type",
+      backupPlans: "++id, tripId, activityId, date"
     });
   }
 }

@@ -591,7 +591,7 @@ function MemberForm({
   onShowToast?: (msg: string) => void;
 }) {
   const { t } = useTranslation();
-  const PRESETS = ["Trưởng nhóm", "Quản lý chi phí", "Tài xế", "Dẫn đường", "Người đồng hành"];
+  const PRESETS = [t("members.roleLeader"), t("members.roleBudget"), t("members.roleDriver"), t("members.roleNavigator"), t("members.roleCompanion")];
   
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -618,6 +618,8 @@ function MemberForm({
 
   const [note, setNote] = useState("");
   const [gender, setGender] = useState<string>("male");
+  const [group, setGroup] = useState("");
+  const [isGroupLeader, setIsGroupLeader] = useState(false);
   
   const [dirty, setDirty] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
@@ -629,6 +631,8 @@ function MemberForm({
         setPhone(editing.phone ?? "");
         setNote(editing.note ?? "");
         setGender(editing.gender ?? "male");
+        setGroup(editing.group ?? "");
+        setIsGroupLeader(editing.isGroupLeader ?? false);
         
         const currentRole = editing.role ?? "Người đồng hành";
         const loadedPresets = currentRole
@@ -646,6 +650,8 @@ function MemberForm({
         setSelectedPresets(["Người đồng hành"]);
         setNote("");
         setGender("male");
+        setGroup("");
+        setIsGroupLeader(false);
       }
       setDirty(false);
       setSubmitAttempted(false);
@@ -656,7 +662,7 @@ function MemberForm({
   
   const phoneClean = phone.trim();
   const isPhoneInvalid = phoneClean !== "" && !/^(0[3|5|7|8|9])[0-9]{8}$/.test(phoneClean);
-  const phoneError = isPhoneInvalid ? "Số điện thoại không đúng định dạng (VD: 0987654321)." : "";
+  const phoneError = isPhoneInvalid ? t("members.phoneError") : "";
   
   const hasError = !!nameError || !!phoneError;
 
@@ -686,6 +692,8 @@ function MemberForm({
       note: note.trim(),
       gender,
       avatar: finalAvatar,
+      group: group.trim() || undefined,
+      isGroupLeader: group.trim() ? isGroupLeader : undefined,
       updatedAt: new Date().toISOString()
     };
 
@@ -798,8 +806,42 @@ function MemberForm({
           <Input 
             label={
               <span className="flex items-center gap-1.5">
+                <HugeiconsIcon icon={UserGroupIcon} className="h-4 w-4 text-slate-500" />
+                Nhóm / Gia đình (Tuỳ chọn)
+              </span>
+            } 
+            value={group} 
+            onChange={(val) => { setGroup(val); setDirty(true); }} 
+            placeholder="VD: Gia đình A, Nhóm bạn B..."
+          />
+          {group.trim() !== "" && (
+            <div className="mt-3 flex items-center justify-between px-1">
+              <span className="text-[13.5px] font-bold text-slate-600 dark:text-slate-400">Là đại diện nhóm</span>
+              <button
+                type="button"
+                onClick={() => { setIsGroupLeader(!isGroupLeader); setDirty(true); }}
+                className={classNames(
+                  "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                  isGroupLeader ? "bg-kat-teal" : "bg-slate-200 dark:bg-slate-700"
+                )}
+              >
+                <span
+                  className={classNames(
+                    "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                    isGroupLeader ? "translate-x-5" : "translate-x-0"
+                  )}
+                />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <Input 
+            label={
+              <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={CallIcon} className="h-4 w-4 text-slate-500" />
-                Số điện thoại
+                {t("members.phone")}
               </span>
             } 
             type="tel"
@@ -1490,6 +1532,12 @@ function MemberCardRow({
                 SĐT: <span className="text-kat-dark">{member.phone}</span>
               </p>
             )}
+            {member.group && (
+              <p className="text-[13.5px] font-semibold text-slate-500 flex items-center gap-1.5">
+                <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-slate-400" />
+                Nhóm: <span className="text-kat-dark">{member.group} {member.isGroupLeader && "(đại diện)"}</span>
+              </p>
+            )}
             {member.note && (
               <p className="text-[13px] font-medium text-slate-400 dark:text-slate-500 italic mt-1 bg-slate-50/70 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-100/50 dark:border-slate-700/30 break-words">
                 "{member.note}"
@@ -1736,11 +1784,26 @@ export function MoreScreen({
       );
     };
     list.sort((a, b) => {
+      const aHasGroup = !!a.group;
+      const bHasGroup = !!b.group;
+      
+      if (aHasGroup && bHasGroup) {
+        const groupComp = a.group!.localeCompare(b.group!);
+        if (groupComp !== 0) return groupComp;
+        
+        if (a.isGroupLeader && !b.isGroupLeader) return -1;
+        if (!a.isGroupLeader && b.isGroupLeader) return 1;
+      }
+      
+      if (aHasGroup && !bHasGroup) return -1;
+      if (!aHasGroup && bHasGroup) return 1;
+
       const aLeader = isLeader(a);
       const bLeader = isLeader(b);
       if (aLeader && !bLeader) return -1;
       if (!aLeader && bLeader) return 1;
-      return 0;
+      
+      return a.name.localeCompare(b.name);
     });
     return list;
   }, [members, memberSearchQuery]);

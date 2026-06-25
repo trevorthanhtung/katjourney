@@ -32,7 +32,7 @@ import {
   MoreHorizontalIcon
 } from "@hugeicons/core-free-icons";
 import { db, Expense, Member, EventItem } from "../../db";
-import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories } from "../../utils/helpers";
+import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories, getGroupUnits, getMemberShareForExpense } from "../../utils/helpers";
 import { BottomSheet, FormActions, Input, ScreenTitle, Select, DatePicker, DeleteConfirmModal, classNames } from "../../components/ui";
 import { useModalHistory } from "../../hooks/useModalHistory";
 import { fetchExchangeRates, ExchangeRate } from "../../services/currencyService";
@@ -122,32 +122,41 @@ export function SettlementCard({
       </div>
       {settlements.length ? (
         <div className="grid gap-3 sm:grid-cols-2">
-          {settlements.map((s, idx) => (
-            <div key={idx} className="flex flex-col justify-center bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 shadow-sm rounded-2xl p-4 gap-2">
-              <div className="flex items-center justify-between w-full">
-                <div className="flex flex-col items-center flex-1">
-                  <span className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 mb-1">
-                    <HugeiconsIcon icon={UserIcon} className="w-4 h-4" />
-                  </span>
-                  <span className="font-bold text-kat-dark dark:text-slate-200 text-[13px] truncate max-w-[80px]">{s.from}</span>
-                </div>
-                
-                <div className="flex flex-col items-center justify-center flex-[1.5] px-2">
-                  <span className="font-black text-rose-600 text-[14.5px] mb-1">{formatMoney(s.amount)}</span>
-                  <div className="w-full h-[2px] bg-slate-200 dark:bg-slate-700 relative flex items-center justify-center">
-                    <div className="absolute right-[-4px] top-1/2 -translate-y-1/2 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-slate-200 dark:border-l-slate-700" />
+          {settlements.map((s, idx) => {
+            const fromMember = members.find(m => m.name === s.from);
+            const toMember = members.find(m => m.name === s.to);
+            const fromGroup = fromMember?.isGroupLeader && fromMember.group ? fromMember.group : null;
+            const toGroup = toMember?.isGroupLeader && toMember.group ? toMember.group : null;
+            
+            return (
+              <div key={idx} className="flex flex-col justify-center bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 shadow-sm rounded-2xl p-4 gap-2">
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex flex-col items-center flex-1">
+                    <span className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 mb-1">
+                      <HugeiconsIcon icon={UserIcon} className="w-4 h-4" />
+                    </span>
+                    <span className="font-bold text-kat-dark dark:text-slate-200 text-[13px] text-center px-1 break-words leading-tight">{s.from}</span>
+                    {fromGroup && <span className="text-[10px] text-slate-400 font-medium text-center leading-tight mt-0.5">(ĐD nhóm {fromGroup})</span>}
+                  </div>
+                  
+                  <div className="flex flex-col items-center justify-center flex-[1.5] px-2 shrink-0">
+                    <span className="font-black text-rose-600 text-[14.5px] mb-1 whitespace-nowrap">{formatMoney(s.amount)}</span>
+                    <div className="w-full h-[2px] bg-slate-200 dark:bg-slate-700 relative flex items-center justify-center">
+                      <div className="absolute right-[-4px] top-1/2 -translate-y-1/2 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-slate-200 dark:border-l-slate-700" />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-center flex-1">
+                    <span className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-1 border border-emerald-100 dark:border-emerald-900/30">
+                      <HugeiconsIcon icon={UserCheckIcon} className="w-4 h-4" />
+                    </span>
+                    <span className="font-bold text-kat-primary text-[13px] text-center px-1 break-words leading-tight">{s.to}</span>
+                    {toGroup && <span className="text-[10px] text-slate-400 font-medium text-center leading-tight mt-0.5">(ĐD nhóm {toGroup})</span>}
                   </div>
                 </div>
-
-                <div className="flex flex-col items-center flex-1">
-                  <span className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-1 border border-emerald-100 dark:border-emerald-900/30">
-                    <HugeiconsIcon icon={UserCheckIcon} className="w-4 h-4" />
-                  </span>
-                  <span className="font-bold text-kat-primary text-[13px] truncate max-w-[80px]">{s.to}</span>
-                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center p-6 text-center border border-dashed border-slate-200 dark:border-kat-border/40 rounded-2xl bg-slate-50/30 dark:bg-slate-800/20">
@@ -229,11 +238,12 @@ const ExpenseCard = React.memo(function ExpenseCard({
               ? "bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200/80 dark:border-slate-700/60" 
               : "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-450 border-emerald-100 dark:border-emerald-900/30"
           )}>
-            {isPersonal ? "Chi cá nhân" : "Chi chung"}
+            {isPersonal ? "Chi cá nhân" : item.splitMode === "perGroup" ? "Chi theo nhóm" : "Chi chung"}
           </span>
 
           <span className="font-medium">
             • {isPersonal ? (item.payer ? `Của: ${item.payer}` : "Cá nhân") : `Trả: ${item.payer || "Chưa chọn"}`}
+            {item.splitType === "shared" && item.splitAmong && item.splitAmong.length > 0 && ` (cho ${item.splitAmong.length} người)`}
           </span>
           
           {item.date && (
@@ -346,6 +356,8 @@ function ExpenseForm({
     category: string; 
     customCategory: string; 
     splitType: "shared" | "personal";
+    splitMode: "perPerson" | "perGroup";
+    splitAmong: string[];
     date: string;
     eventId: string;
     currency: string;
@@ -357,6 +369,8 @@ function ExpenseForm({
     category: categoryOptions[0], 
     customCategory: "", 
     splitType: "shared",
+    splitMode: "perPerson",
+    splitAmong: [],
     date: new Date().toISOString().split('T')[0],
     eventId: "",
     currency: "VND",
@@ -386,12 +400,14 @@ function ExpenseForm({
           category: isCustom ? "Khác..." : editing.category,
           customCategory: isCustom && editing.category !== "Khác..." ? editing.category : "",
           splitType: editing.splitType ?? "shared",
+          splitMode: editing.splitMode ?? "perPerson",
+          splitAmong: editing.splitAmong ?? [],
           date: editing.date || new Date().toISOString().split('T')[0],
           eventId: editing.eventId ? String(editing.eventId) : "",
           currency: editing.currency || "VND",
           exchangeRate: editing.exchangeRate || 1
         });
-        if (editing.date || editing.splitType === "personal" || editing.eventId) {
+        if (editing.date || editing.splitType === "personal" || editing.splitMode === "perGroup" || (editing.splitAmong && editing.splitAmong.length > 0) || editing.eventId) {
           setShowAdvanced(true);
         }
       } else {
@@ -402,6 +418,8 @@ function ExpenseForm({
           category: categoryOptions[0], 
           customCategory: "", 
           splitType: "shared",
+          splitMode: "perPerson",
+          splitAmong: [],
           date: new Date().toISOString().split('T')[0],
           eventId: "",
           currency: "VND",
@@ -495,6 +513,8 @@ function ExpenseForm({
       payer: form.splitType === "personal" ? (form.payer || "") : form.payer, 
       category: finalCategory, 
       splitType: form.splitType,
+      splitMode: form.splitType === "personal" ? "perPerson" : form.splitMode,
+      splitAmong: form.splitType === "personal" ? [] : form.splitAmong,
       date: form.date || undefined,
       eventId: form.eventId ? form.eventId : undefined,
       updatedAt: new Date().toISOString(),
@@ -818,6 +838,96 @@ function ExpenseForm({
                   </button>
                 </div>
               </div>
+
+              {form.splitType === "shared" && members.length > 0 && (
+                <>
+                  <div className="space-y-2 pt-2">
+                    <span className="text-[13.5px] font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                      <HugeiconsIcon icon={UserGroupIcon} className="h-4 w-4 text-slate-500" />
+                      Đối tượng chia
+                    </span>
+                    <div className="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setForm({ ...form, splitMode: "perPerson" })}
+                        className={classNames(
+                          "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
+                          form.splitMode === "perPerson"
+                            ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm border border-slate-200/10"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                        )}
+                      >
+                        Chia theo người
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setForm({ ...form, splitMode: "perGroup" })}
+                        className={classNames(
+                          "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
+                          form.splitMode === "perGroup"
+                            ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm border border-slate-200/10"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                        )}
+                      >
+                        Chia theo gia đình
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-2">
+                    <span className="text-[13.5px] font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5 mb-2">
+                      <HugeiconsIcon icon={UserCheckIcon} className="h-4 w-4 text-slate-500" />
+                      Tham gia ({form.splitAmong.length === 0 ? "Tất cả" : `${form.splitAmong.length} người`})
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setForm({ ...form, splitAmong: [] })}
+                        className={classNames(
+                          "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
+                          form.splitAmong.length === 0
+                            ? "bg-kat-teal text-white border-kat-teal"
+                            : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700"
+                        )}
+                      >
+                        Tất cả
+                      </button>
+                      {members.map(m => {
+                        const isSelected = form.splitAmong.length === 0 || form.splitAmong.includes(m.name);
+                        return (
+                          <button
+                            key={m.id}
+                            type="button"
+                            onClick={() => {
+                              if (form.splitAmong.length === 0) {
+                                setForm({ ...form, splitAmong: members.map(mem => mem.name).filter(n => n !== m.name) });
+                              } else {
+                                if (form.splitAmong.includes(m.name)) {
+                                  const next = form.splitAmong.filter(n => n !== m.name);
+                                  setForm({ ...form, splitAmong: next.length === 0 ? [] : next });
+                                } else {
+                                  const next = [...form.splitAmong, m.name];
+                                  setForm({ ...form, splitAmong: next.length === members.length ? [] : next });
+                                }
+                              }
+                            }}
+                            className={classNames(
+                              "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
+                              isSelected && form.splitAmong.length > 0
+                                ? "bg-kat-teal text-white border-kat-teal"
+                                : !isSelected
+                                  ? "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 opacity-60"
+                                  : "hidden"
+                            )}
+                          >
+                            {m.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -897,6 +1007,23 @@ export function ExpensesScreen({
   const totalPersonalExpense = expenses.reduce((sum, item) => sum + Number(item.amount || 0), 0) - totalSharedExpense;
   const settlements = getSettlementSuggestions(members, sharedExpenses);
 
+  const groupUnits = React.useMemo(() => getGroupUnits(members), [members]);
+  const hasGroups = groupUnits.some(u => u.isGroup);
+  const perGroup = groupUnits.length ? totalSharedExpense / groupUnits.length : 0;
+  
+  // Calculate exact share per member based on new algorithm
+  const exactSharesByMember = React.useMemo(() => {
+    const shares: Record<string, number> = {};
+    members.forEach(m => shares[m.name] = 0);
+    sharedExpenses.forEach(expense => {
+      const expenseShares = getMemberShareForExpense(expense, members);
+      for (const [name, amount] of Object.entries(expenseShares)) {
+        if (shares[name] !== undefined) shares[name] += amount;
+      }
+    });
+    return shares;
+  }, [sharedExpenses, members]);
+
   function openNewForm() {
     setEditing(null);
     setIsFormOpen(true);
@@ -970,9 +1097,11 @@ export function ExpensesScreen({
                 </div>
                 <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
-                    <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Bình quân / người</p>
+                    <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                      {hasGroups ? "Bình quân / nhóm" : "Bình quân / người"}
+                    </p>
                     {members.length > 0 ? (
-                      <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(perPerson)}</p>
+                      <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(hasGroups ? perGroup : perPerson)}</p>
                     ) : (
                       <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-lg border border-amber-100 dark:border-amber-900/30 mt-1.5 inline-block">Chưa có người đồng hành</span>
                     )}
@@ -1016,10 +1145,10 @@ export function ExpensesScreen({
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
                     <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5" />
                   </span>
-                  <h3 className="text-base font-extrabold text-kat-dark dark:text-white">Chi phí theo người đồng hành</h3>
+                  <h3 className="text-base font-extrabold text-kat-dark dark:text-white">Phần cần góp của từng người/nhóm</h3>
                 </div>
                 {members.length > 0 ? (
-                  <BreakdownSection items={paidByMember} total={totalSharedExpense} emptyText="Thêm người đồng hành để thống kê." />
+                  <BreakdownSection items={exactSharesByMember} total={totalSharedExpense} emptyText="Thêm người đồng hành để thống kê." />
                 ) : (
                   <div className="flex flex-col items-center justify-center py-6 text-center">
                     <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">Thêm người đồng hành để xem phần chi của từng người.</p>

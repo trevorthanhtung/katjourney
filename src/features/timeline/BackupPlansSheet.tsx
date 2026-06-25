@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Cancel01Icon, Add01Icon, PencilEdit01Icon, Delete01Icon, Location01Icon, DollarSignIcon, AlignLeftIcon, Route01Icon, HelpCircleIcon, ChevronRightIcon, MapsIcon } from "@hugeicons/core-free-icons";
@@ -20,13 +21,13 @@ interface BackupPlansSheetProps {
 }
 
 const typeLabels: Record<BackupPlanType, string> = {
-  food: "Ăn uống",
-  place: "Địa điểm thay thế",
-  transport: "Di chuyển",
-  hotel: "Lưu trú",
-  indoor: "Trong nhà",
-  weather: "Thời tiết xấu",
-  other: "Khác"
+  food: "backup.catFood",
+  place: "backup.catPlace",
+  transport: "backup.catTransport",
+  hotel: "backup.catHotel",
+  indoor: "backup.catIndoor",
+  weather: "backup.catWeather",
+  other: "backup.catOther"
 };
 
 const typeColors: Record<BackupPlanType, string> = {
@@ -40,6 +41,7 @@ const typeColors: Record<BackupPlanType, string> = {
 };
 
 export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, onShowToast }: BackupPlansSheetProps) {
+  const { t } = useTranslation();
   useBodyScrollLock(isOpen);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<BackupPlan | null>(null);
@@ -113,7 +115,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
 
   async function handleSave() {
     if (!title.trim()) {
-      onShowToast?.("Vui lòng nhập tên phương án");
+      onShowToast?.(t("backup.toastEnterName"));
       return;
     }
 
@@ -133,11 +135,11 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
 
     if (editingPlan?.id) {
       await db.backupPlans.update(editingPlan.id, payload);
-      onShowToast?.("Đã cập nhật phương án");
+      onShowToast?.(t("backup.toastUpdated"));
     } else {
       payload.createdAt = new Date().toISOString();
       await db.backupPlans.add(payload);
-      onShowToast?.("Đã lưu phương án dự phòng");
+      onShowToast?.(t("backup.toastSaved"));
     }
 
     setIsFormOpen(false);
@@ -147,7 +149,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
   async function handleDeleteConfirm() {
     if (planToDelete?.id) {
       await db.backupPlans.update(planToDelete.id, { isDeleted: true });
-      onShowToast?.("Đã xóa phương án");
+      onShowToast?.(t("backup.toastDeleted"));
     }
     setIsDeleteConfirmOpen(false);
     setPlanToDelete(null);
@@ -165,8 +167,8 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface sticky top-0 z-10 gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="text-[18px] font-extrabold text-kat-dark dark:text-slate-100 truncate">Phương án dự phòng</h3>
-            <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 truncate">Kế hoạch B cho những tình huống phát sinh</p>
+            <h3 className="text-[18px] font-extrabold text-kat-dark dark:text-slate-100 truncate">{t("backup.title")}</h3>
+            <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 truncate">{t("backup.subtitle")}</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {!isFormOpen && plans.length > 0 && (
@@ -175,14 +177,14 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                 className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-kat-teal text-kat-dark px-3.5 text-[13px] font-extrabold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
-                <span>Thêm</span>
+                <span>{t("backup.add")}</span>
               </button>
             )}
             <button 
               onClick={onClose} 
               className="flex shrink-0 h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none"
-              title="Đóng"
-              aria-label="Đóng"
+              title={t("backup.close")}
+              aria-label={t("backup.close")}
             >
               <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5" />
             </button>
@@ -194,30 +196,30 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
           {isFormOpen ? (
             <div className="space-y-5">
               <div>
-                <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tên phương án *</label>
+                <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t("backup.nameLabel")}</label>
                 <input
                   type="text"
                   value={title}
                   onChange={e => setTitle(e.target.value)}
-                  placeholder="VD: Quán ăn gần khách sạn, điểm tham quan trong nhà..."
+                  placeholder={t("backup.namePlaceholder")}
                   className="w-full px-4 py-3 bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-kat-border rounded-xl text-[14.5px] font-bold text-kat-dark dark:text-slate-100 focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-[#00BFB7]/30 transition-all placeholder:font-semibold placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               <div>
-                <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-300 mb-1.5">Loại phương án</label>
+                <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t("backup.typeLabel")}</label>
                 <div className="flex flex-wrap gap-2">
-                  {(Object.keys(typeLabels) as BackupPlanType[]).map(t => (
+                  {(Object.keys(typeLabels) as BackupPlanType[]).map(typ => (
                     <button
-                      key={t}
-                      onClick={() => setType(t)}
+                      key={typ}
+                      onClick={() => setType(typ)}
                       className={`px-3 py-1.5 rounded-full text-[13px] font-bold border transition-colors motion-press ${
-                        type === t 
-                          ? typeColors[t] + " border-opacity-100" 
+                        type === typ 
+                          ? typeColors[typ] + " border-opacity-100" 
                           : "bg-white dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/60 text-slate-600 dark:text-slate-350 hover:border-slate-300 dark:hover:border-slate-600"
                       }`}
                     >
-                      {typeLabels[t]}
+                      {t(typeLabels[typ])}
                     </button>
                   ))}
                 </div>
@@ -225,13 +227,13 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
 
               <div>
                 <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <HugeiconsIcon icon={HelpCircleIcon} className="w-4 h-4 text-slate-400" /> Dùng khi nào?
+                  <HugeiconsIcon icon={HelpCircleIcon} className="w-4 h-4 text-slate-400" /> {t("backup.whenToUse")}
                 </label>
                 <input
                   type="text"
                   value={reason}
                   onChange={e => setReason(e.target.value)}
-                  placeholder="VD: Khi trời mưa, quán đóng cửa, quá đông..."
+                  placeholder={t("backup.whenPlaceholder")}
                   className="w-full px-4 py-3 bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-kat-border rounded-xl text-[14.5px] font-semibold text-kat-dark dark:text-slate-100 focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-[#00BFB7]/30 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
@@ -242,7 +244,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                   onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
                   className="w-full flex items-center justify-between text-[13.5px] font-extrabold text-slate-700 dark:text-slate-200 hover:text-kat-dark dark:hover:text-white focus:outline-none transition-colors"
                 >
-                  <span>Thông tin bổ sung</span>
+                  <span>{t("backup.additionalInfo")}</span>
                   <HugeiconsIcon icon={ChevronRightIcon} className={`h-4.5 w-4.5 text-slate-400 transition-transform duration-200 ${showAdditionalInfo ? "rotate-90" : ""}`} />
                 </button>
 
@@ -250,13 +252,13 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                   <div className="space-y-4 mt-4 animate-fadeIn">
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                        <HugeiconsIcon icon={Location01Icon} className="w-4 h-4 text-slate-400" /> Địa điểm
+                        <HugeiconsIcon icon={Location01Icon} className="w-4 h-4 text-slate-400" /> {t("backup.location")}
                       </label>
                       <input
                         type="text"
                         value={location}
                         onChange={e => setLocation(e.target.value)}
-                        placeholder="VD: Quán B gần khách sạn"
+                        placeholder={t("backup.locationPlaceholder")}
                         className="w-full px-4 py-3 bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-kat-border rounded-xl text-[14.5px] font-semibold text-kat-dark dark:text-slate-100 focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-[#00BFB7]/30 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </div>
@@ -271,7 +273,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                             rel="noopener noreferrer"
                             className="text-xs text-emerald-655 dark:text-emerald-400 hover:text-emerald-700 font-bold hover:underline"
                           >
-                            Mở link kiểm tra &rarr;
+                            {t("backup.checkLink")} &rarr;
                           </a>
                         )}
                       </label>
@@ -286,7 +288,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
 
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                        <HugeiconsIcon icon={DollarSignIcon} className="w-4 h-4 text-slate-400" /> Chi phí dự kiến
+                        <HugeiconsIcon icon={DollarSignIcon} className="w-4 h-4 text-slate-400" /> {t("backup.estimatedCost")}
                       </label>
                       <input
                         type="number"
@@ -299,12 +301,12 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
 
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                        <HugeiconsIcon icon={AlignLeftIcon} className="w-4 h-4 text-slate-400" /> Ghi chú
+                        <HugeiconsIcon icon={AlignLeftIcon} className="w-4 h-4 text-slate-400" /> {t("backup.notes")}
                       </label>
                       <textarea
                         value={note}
                         onChange={e => setNote(e.target.value)}
-                        placeholder="VD: Gọi trước khi đến, nên đi taxi..."
+                        placeholder={t("backup.notesPlaceholder")}
                         rows={3}
                         className="w-full px-4 py-3 bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-kat-border rounded-xl text-[14.5px] font-semibold text-kat-dark dark:text-slate-100 focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-[#00BFB7]/30 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 resize-none"
                       />
@@ -318,13 +320,13 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                   onClick={() => setIsFormOpen(false)}
                   className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-slate-650 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors motion-press focus:outline-none"
                 >
-                  Hủy
+                  {t("backup.cancel")}
                 </button>
                 <button
                   onClick={handleSave}
                   className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-kat-dark bg-kat-teal hover:brightness-105 transition-all motion-press focus:outline-none"
                 >
-                  Lưu phương án
+                  {t("backup.savePlan")}
                 </button>
               </div>
             </div>
@@ -333,16 +335,16 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
               <div className="w-16 h-16 rounded-full bg-[#00BFB7]/15 dark:bg-emerald-950/20 flex items-center justify-center text-kat-teal mb-4">
                 <HugeiconsIcon icon={Route01Icon} className="w-8 h-8" />
               </div>
-              <h4 className="text-[16px] font-extrabold text-kat-dark dark:text-slate-100 mb-2">Chưa có phương án dự phòng</h4>
+              <h4 className="text-[16px] font-extrabold text-kat-dark dark:text-slate-100 mb-2">{t("backup.emptyTitle")}</h4>
               <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 mb-6 max-w-[260px]">
-                Thêm một lựa chọn thay thế để chuyến đi linh hoạt hơn khi có thay đổi.
+                {t("backup.emptyDesc")}
               </p>
               <button
                 onClick={handleOpenAdd}
                 className="flex items-center gap-2 px-6 py-3.5 bg-kat-teal text-kat-dark rounded-xl text-[14.5px] font-bold hover:brightness-105 transition-all motion-press"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-5 h-5" />
-                Thêm phương án đầu tiên
+                {t("backup.addFirst")}
               </button>
             </div>
           ) : (
@@ -356,7 +358,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                         {/* Type Badge */}
                         <div className="mb-2">
                           <span className={`px-2 py-0.5 rounded-md text-[11px] font-extrabold border ${typeColors[plan.type || "other"]}`}>
-                            {typeLabels[plan.type || "other"]}
+                            {t(typeLabels[plan.type || "other"])}
                           </span>
                         </div>
 
@@ -399,7 +401,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                             {getEmbedMapUrl(plan.mapLink || plan.location || "", plan.location) && (
                               <div className="w-full overflow-hidden rounded-xl border border-slate-200 dark:border-kat-border shadow-sm bg-slate-100 dark:bg-slate-800 relative min-h-[140px]">
                                 <div className="absolute inset-0 flex items-center justify-center text-slate-400 dark:text-slate-500">
-                                  <span className="text-[12px] font-medium animate-pulse">Đang tải bản đồ...</span>
+                                  <span className="text-[12px] font-medium animate-pulse">{t("backup.loadingMap")}</span>
                                 </div>
                                 <iframe
                                   title="Google Maps Embed"
@@ -422,7 +424,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                                   rel="noopener noreferrer"
                                 >
                                   {isRoute ? <HugeiconsIcon icon={Route01Icon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />}
-                                  {isRoute ? "Xem lộ trình di chuyển " : "Mở bằng ứng dụng Google Maps "}
+                                  {isRoute ? t("backup.viewRoute") + " " : t("backup.openGoogleMaps") + " "}
                                   &rarr;
                                 </a>
                               );
@@ -441,7 +443,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1.5 text-[12.5px] font-black text-kat-teal hover:text-[#00a89f] transition-colors hover:underline truncate"
                             >
-                              Xem bản đồ
+                              {t("backup.viewMap")}
                             </a>
                           )}
                         </div>
@@ -450,10 +452,10 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                           <button
                             onClick={() => handleOpenEdit(plan)}
                             className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-slate-650 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 active:scale-95 transition-all border border-slate-200/40 dark:border-slate-700/50 motion-press focus:outline-none"
-                            title="Sửa phương án"
+                            title={t("backup.editPlan")}
                           >
                             <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />
-                            <span>Sửa</span>
+                            <span>{t("backup.edit")}</span>
                           </button>
                           <button
                             onClick={() => {
@@ -461,10 +463,10 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                               setIsDeleteConfirmOpen(true);
                             }}
                             className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-900/20 active:scale-95 transition-all border border-rose-200/40 dark:border-rose-900/30 motion-press focus:outline-none"
-                            title="Xóa phương án"
+                            title={t("backup.deletePlan")}
                           >
                             <HugeiconsIcon icon={Delete01Icon} className="w-3.5 h-3.5" />
-                            <span>Xóa</span>
+                            <span>{t("backup.delete")}</span>
                           </button>
                         </div>
                       </div>
@@ -481,10 +483,10 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
         isOpen={isDeleteConfirmOpen}
         onClose={() => setIsDeleteConfirmOpen(false)}
         onConfirm={handleDeleteConfirm}
-        title="Xóa phương án dự phòng này?"
+        title={t("backup.deleteTitle")}
         itemName={planToDelete?.title}
-        description="Phương án này sẽ không còn xuất hiện trong chuyến đi. Sau khi xóa, không thể hoàn tác."
-        confirmLabel="Xóa phương án"
+        description={t("backup.deleteDesc")}
+        confirmLabel={t("backup.deleteConfirm")}
       />
     </div>,
     document.body
