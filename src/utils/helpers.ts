@@ -158,12 +158,11 @@ export function getGroupUnits(members: Member[], participantNames?: string[]): G
   const groupsMap = new Map<string, Member[]>();
 
   for (const m of participants) {
-    const groupName = m.group || m.note;
-    if (groupName) {
-      if (!groupsMap.has(groupName)) {
-        groupsMap.set(groupName, []);
+    if (m.group) {
+      if (!groupsMap.has(m.group)) {
+        groupsMap.set(m.group, []);
       }
-      groupsMap.get(groupName)!.push(m);
+      groupsMap.get(m.group)!.push(m);
     } else {
       units.push({
         isGroup: false,

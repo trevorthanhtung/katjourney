@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { useLiveQuery } from "dexie-react-hooks";
 import { showToast } from "../../components/ui/ToastManager";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -624,6 +625,9 @@ function MemberForm({
   const [dirty, setDirty] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
+  const liveMembers = useLiveQuery(() => db.members.where({ tripId }).toArray(), [tripId]) || [];
+  const existingGroups = Array.from(new Set(liveMembers.map(m => m.group).filter(Boolean))) as string[];
+
   useEffect(() => {
     if (isOpen) {
       if (editing) {
@@ -699,16 +703,25 @@ function MemberForm({
 
     if (editing?.id) {
       await db.members.update(editing.id, payload);
-      onShowToast?.("Đã cập nhật thành viên");
-      onClose();
     } else {
       await db.members.add({
         ...payload,
         createdAt: new Date().toISOString()
       });
-      onShowToast?.("Đã thêm thành viên");
-      onClose();
     }
+
+    // Automatically unset other group leaders if this member is now the leader
+    if (payload.group && payload.isGroupLeader) {
+      const otherLeaders = existingMembers.filter(m => m.group === payload.group && m.isGroupLeader && m.id !== editing?.id);
+      for (const leader of otherLeaders) {
+        if (leader.id) {
+          await db.members.update(leader.id, { isGroupLeader: false });
+        }
+      }
+    }
+
+    onShowToast?.(editing?.id ? "Đã cập nhật thành viên" : "Đã thêm thành viên");
+    onClose();
   }
 
   const getPresetIcon = (preset: string) => {
@@ -814,10 +827,39 @@ function MemberForm({
             onChange={(val) => { setGroup(val); setDirty(true); }} 
             placeholder="VD: Gia đình A, Nhóm bạn B..."
           />
-          {group.trim() !== "" && (
-            <div className="mt-3 flex items-center justify-between px-1">
-              <span className="text-[13.5px] font-bold text-slate-600 dark:text-slate-400">Là đại diện nhóm</span>
-              <button
+          {existingGroups.length > 0 && (
+            <div className="mt-2.5 flex flex-wrap gap-2">
+              {existingGroups.map(g => (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => { setGroup(g); setDirty(true); }}
+                  className={classNames(
+                    "px-3 py-1.5 rounded-xl text-[12px] font-bold transition-colors border",
+                    group === g
+                      ? "bg-teal-50 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-500/30"
+                      : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  )}
+                >
+                  {g}
+                </button>
+              ))}
+            </div>
+          )}
+          {(() => {
+            const currentGroupMembers = liveMembers.filter(m => m.group === group.trim());
+            const existingLeader = currentGroupMembers.find(m => m.isGroupLeader && m.id !== editing?.id);
+            return group.trim() !== "" && (
+              <div className="mt-3 flex items-center justify-between px-1">
+                <div className="flex flex-col">
+                  <span className="text-[13.5px] font-bold text-slate-600 dark:text-slate-400">Là đại diện nhóm</span>
+                  {existingLeader && (
+                    <span className="text-[11px] text-slate-400 mt-0.5">
+                      {isGroupLeader ? t("members.willReplace", { name: existingLeader.name }) : t("members.currentLeaderIs", { name: existingLeader.name })}
+                    </span>
+                  )}
+                </div>
+                <button
                 type="button"
                 onClick={() => { setIsGroupLeader(!isGroupLeader); setDirty(true); }}
                 className={classNames(
@@ -833,7 +875,8 @@ function MemberForm({
                 />
               </button>
             </div>
-          )}
+            );
+          })()}
         </div>
 
         <div>
@@ -1016,8 +1059,8 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
   const mood = stats.mostCommonMood ? moodLabels[stats.mostCommonMood] : undefined;
 
   // Derived Finance Data
-  const sharedExpenses = data.expenses.filter(e => e.splitType !== "personal");
-  const personalExpenses = data.expenses.filter(e => e.splitType === "personal");
+  const sharedExpenses = data.expenses.filter(e => e.splitType !== "personal" && !e.isDeleted);
+  const personalExpenses = data.expenses.filter(e => e.splitType === "personal" && !e.isDeleted);
   const sharedTotal = sharedExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
   const personalTotal = personalExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
 
@@ -1413,12 +1456,13 @@ function MemberCardRow({
   onDeleteMember: (member: Member) => void;
   isReadOnly?: boolean;
 }) {
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const initial = member.name.trim().charAt(0).toUpperCase() || "?";
                 
   // Helper computations
   const assignedTasksCount = checklist.filter(c => c.assignedTo === member.name).length;
-  const memberExpenses = expenses.filter(e => e.payer === member.name);
+  const memberExpenses = expenses.filter(e => e.payer === member.name && !e.isDeleted);
   const paidExpensesCount = memberExpenses.length;
   const totalSpent = memberExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
 
@@ -1533,9 +1577,8 @@ function MemberCardRow({
               </p>
             )}
             {member.group && (
-              <p className="text-[13.5px] font-semibold text-slate-500 flex items-center gap-1.5">
-                <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-slate-400" />
-                Nhóm: <span className="text-kat-dark">{member.group} {member.isGroupLeader && "(đại diện)"}</span>
+              <p className="text-[13.5px] font-semibold text-slate-500">
+                {t("members.groupPrefix")}<span className={member.isGroupLeader ? "text-kat-dark dark:text-kat-primary-usable" : "text-slate-700 dark:text-slate-300"}>{member.group}</span>
               </p>
             )}
             {member.note && (
@@ -2023,34 +2066,45 @@ export function MoreScreen({
         </div>
 
         {/* Overview Card */}
-        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft">
+        <div className="mb-6">
           {members.length ? (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                <div className="flex flex-col">
-                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Thành viên</span>
-                  <span className="text-[18px] md:text-[20px] font-black text-kat-dark mt-1">{members.length} người</span>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="rounded-[20px] bg-white dark:bg-kat-surface border border-slate-200/60 dark:border-slate-800/60 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-transform hover:scale-[1.02]">
+                  <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-500 flex items-center justify-center mb-2">
+                    <HugeiconsIcon icon={UserGroupIcon} className="w-5 h-5" />
+                  </div>
+                  <span className="text-[20px] font-black text-kat-dark leading-none">{members.length}</span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">{t("members.statMembers")}</span>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Được phân công</span>
-                  <span className="text-[18px] md:text-[20px] font-black text-kat-dark mt-1">{membersWithTasks} người</span>
+                
+                <div className="rounded-[20px] bg-white dark:bg-kat-surface border border-slate-200/60 dark:border-slate-800/60 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-transform hover:scale-[1.02]">
+                  <div className="h-10 w-10 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-500 flex items-center justify-center mb-2">
+                    <HugeiconsIcon icon={CheckmarkBadge01Icon} className="w-5 h-5" />
+                  </div>
+                  <span className="text-[20px] font-black text-kat-dark leading-none">{membersWithTasks}</span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">{t("members.statTasks")}</span>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Đã chi trả</span>
-                  <span className="text-[18px] md:text-[20px] font-black text-kat-dark mt-1">{membersWithExpenses} người</span>
+
+                <div className="rounded-[20px] bg-white dark:bg-kat-surface border border-slate-200/60 dark:border-slate-800/60 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-transform hover:scale-[1.02]">
+                  <div className="h-10 w-10 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 flex items-center justify-center mb-2">
+                    <HugeiconsIcon icon={WalletCardsIcon} className="w-5 h-5" />
+                  </div>
+                  <span className="text-[20px] font-black text-kat-dark leading-none">{membersWithExpenses}</span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">{t("members.statPaid")}</span>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Chia chi phí</span>
-                  <span className={classNames(
-                    "text-[12.5px] font-black mt-1 inline-flex items-center px-3 py-1 rounded-full w-fit leading-none border", 
-                    members.length >= 2 
-                      ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-450 border-emerald-100 dark:border-emerald-900/30" 
-                      : "bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-100 dark:border-slate-700/50"
-                  )}>
-                    {members.length >= 2 ? "Sẵn sàng" : "Cần ≥ 2 người"}
+
+                <div className="rounded-[20px] bg-white dark:bg-kat-surface border border-slate-200/60 dark:border-slate-800/60 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-transform hover:scale-[1.02]">
+                  <div className={classNames("h-10 w-10 rounded-full flex items-center justify-center mb-2", members.length >= 2 ? "bg-teal-50 dark:bg-teal-900/20 text-teal-500" : "bg-slate-50 dark:bg-slate-800 text-slate-400")}>
+                    <HugeiconsIcon icon={members.length >= 2 ? CheckmarkCircle01Icon : AlertCircleIcon} className="w-5 h-5" />
+                  </div>
+                  <span className={classNames("text-[14px] font-black leading-none", members.length >= 2 ? "text-kat-dark" : "text-slate-400")}>
+                    {members.length >= 2 ? t("members.statReady") : t("members.statNeedMore")}
                   </span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">{t("members.statSplit")}</span>
                 </div>
               </div>
+              
               {members.length < 2 && (
                 <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-start gap-2.5 text-[13px] font-semibold text-slate-500">
                   <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5 text-kat-teal shrink-0" />
@@ -2095,24 +2149,80 @@ export function MoreScreen({
           </div>
           
           {sortedMembers.length ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {sortedMembers.map((member) => (
-                <MemberCardRow
-                  key={member.id}
-                  member={member}
-                  checklist={checklist}
-                  expenses={expenses}
-                  openEditMember={openEditMember}
-                  isReadOnly={isReadOnly}
-                  onDeleteMember={(m) => {
-                    setMemberToDelete(m);
-                    setIsDeleteMemberConfirmOpen(true);
-                  }}
-                />
-              ))}
-            </div>
+            (() => {
+              const groups: { name: string; members: typeof sortedMembers }[] = [];
+              const noGroup: typeof sortedMembers = [];
+              
+              sortedMembers.forEach(m => {
+                if (m.group) {
+                  let g = groups.find(x => x.name === m.group);
+                  if (!g) {
+                    g = { name: m.group, members: [] };
+                    groups.push(g);
+                  }
+                  g.members.push(m);
+                } else {
+                  noGroup.push(m);
+                }
+              });
+
+              return (
+                <div className="flex flex-col gap-6">
+                  {groups.map(g => (
+                    <div key={g.name} className="animate-fadeIn">
+                      <div className="flex items-center gap-2 mb-3 px-1">
+                        <HugeiconsIcon icon={UserGroupIcon} className="w-5 h-5 text-kat-teal" />
+                        <h3 className="text-[14px] font-bold text-slate-700 dark:text-slate-300">{g.name}</h3>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {g.members.map((member) => (
+                          <MemberCardRow
+                            key={member.id}
+                            member={member}
+                            checklist={checklist}
+                            expenses={expenses}
+                            openEditMember={openEditMember}
+                            isReadOnly={isReadOnly}
+                            onDeleteMember={(m) => {
+                              setMemberToDelete(m);
+                              setIsDeleteMemberConfirmOpen(true);
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {noGroup.length > 0 && (
+                    <div className={groups.length > 0 ? "animate-fadeIn" : "animate-fadeIn"}>
+                      {groups.length > 0 && (
+                        <div className="flex items-center gap-2 mb-3 px-1">
+                          <HugeiconsIcon icon={UserIcon} className="w-5 h-5 text-slate-400" />
+                          <h3 className="text-[14px] font-bold text-slate-700 dark:text-slate-300">{t("members.otherMembers")}</h3>
+                        </div>
+                      )}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {noGroup.map((member) => (
+                          <MemberCardRow
+                            key={member.id}
+                            member={member}
+                            checklist={checklist}
+                            expenses={expenses}
+                            openEditMember={openEditMember}
+                            isReadOnly={isReadOnly}
+                            onDeleteMember={(m) => {
+                              setMemberToDelete(m);
+                              setIsDeleteMemberConfirmOpen(true);
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()
           ) : members.length > 0 ? (
-            /* Search results empty state */
             <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-8 text-center shadow-soft max-w-md mx-auto my-6 animate-fadeIn">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 mx-auto mb-4 ring-4 ring-slate-50 dark:ring-slate-900/30">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-6 w-6" />

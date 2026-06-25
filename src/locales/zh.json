@@ -875,7 +875,17 @@
     "roleBudget": "费用管理",
     "roleDriver": "司机",
     "roleNavigator": "导航",
-    "roleCompanion": "同行者"
+    "roleCompanion": "同行者",
+    "willReplace": "(Sẽ thay thế {{name}})",
+    "currentLeaderIs": "(Đang là: {{name}})",
+    "statMembers": "Thành viên",
+    "statTasks": "Phân công",
+    "statPaid": "Đã chi trả",
+    "statSplit": "Chia chi phí",
+    "statReady": "Sẵn sàng",
+    "statNeedMore": "Cần ≥ 2",
+    "otherMembers": "Thành viên khác",
+    "groupPrefix": "Nhóm: "
   },
   "packing": {
     "pageTitle": "Chuẩn bị hành lý",

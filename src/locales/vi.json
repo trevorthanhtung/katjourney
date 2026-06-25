@@ -853,7 +853,17 @@
     "roleBudget": "Quản lý chi phí",
     "roleDriver": "Tài xế",
     "roleNavigator": "Dẫn đường",
-    "roleCompanion": "Người đồng hành"
+    "roleCompanion": "Người đồng hành",
+    "willReplace": "(Sẽ thay thế {{name}})",
+    "currentLeaderIs": "(Đang là: {{name}})",
+    "statMembers": "Thành viên",
+    "statTasks": "Phân công",
+    "statPaid": "Đã chi trả",
+    "statSplit": "Chia chi phí",
+    "statReady": "Sẵn sàng",
+    "statNeedMore": "Cần ≥ 2",
+    "otherMembers": "Thành viên khác",
+    "groupPrefix": "Nhóm: "
   },
   "packing": {
     "pageTitle": "Chuẩn bị hành lý",

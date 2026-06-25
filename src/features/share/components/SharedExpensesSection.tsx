@@ -9,7 +9,7 @@ import {
   ReceiptTextIcon, UserCheck01Icon, Tag01Icon, TagsIcon, PreferenceHorizontalIcon, Route01Icon, ChevronRightIcon, BalanceScaleIcon, InformationCircleIcon, CheckIcon, Cancel01Icon, Clock01Icon,
   FileCheckIcon, ShirtIcon, Briefcase01Icon, PlugIcon, PillIcon, Bread01Icon, PackageIcon, BadgeCheckIcon, StickyNoteIcon, TextFontIcon, MinusSignIcon, UserIcon, Calendar01Icon, Maximize01Icon, Image01Icon, Loading01Icon, SmileIcon, NotebookIcon, SaveIcon, SparklesIcon, RouteIcon, HelpCircleIcon, UserGroupIcon, BubbleChatIcon, GlobeIcon,
   CrownIcon, Luggage01Icon, Car01Icon, CalculatorIcon, PieChartIcon, Search01Icon,
-  Airplane01Icon, KitchenUtensilsIcon, HotelIcon, Ticket01Icon, ShoppingBag01Icon, Gamepad2Icon, CompassIcon, ChevronDownIcon, Location01Icon, LocationOfflineIcon
+  Airplane01Icon, KitchenUtensilsIcon, HotelIcon, Ticket01Icon, ShoppingBag01Icon, Gamepad2Icon, CompassIcon, ChevronDownIcon, Location01Icon, LocationOfflineIcon, PencilEdit01Icon
 } from "@hugeicons/core-free-icons";
 import { Expense, ChecklistItem, JournalEntry, TravelDocument, BackupPlan, Member, EventItem } from '../../../db';
 import { formatMoney, expenseCategories, formatDate, moodLabels, sumBy, getSettlementSuggestions, getGroupUnits, getMemberShareForExpense } from '../../../utils/helpers';
@@ -65,6 +65,7 @@ export function SharedExpensesSection({
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null);
+  const [showParticipants, setShowParticipants] = useState(false);
 
   const getCategoryDetails = (category: string) => {
     switch (category) {
@@ -878,7 +879,7 @@ export function SharedExpensesSection({
                   label={
                     <span className="flex items-center gap-1.5">
                       <HugeiconsIcon icon={UserCheck01Icon} className="h-4 w-4 text-slate-500" />
-                      Người đã trả *
+                      Người thanh toán
                     </span>
                   }
                   value={form.payer}
@@ -1033,121 +1034,150 @@ export function SharedExpensesSection({
                     </button>
                   </div>
                   {form.splitType === "shared" && (
-                    <div className="mt-4 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-900/40 bg-indigo-50/30 dark:bg-indigo-950/10 space-y-3 animate-fadeIn">
-                      <div className="flex gap-2 p-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-xl">
-                        <button
-                          type="button"
-                          onClick={() => setForm(f => ({ ...f, splitMode: "perPerson" }))}
-                          className={classNames(
-                            "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
-                            form.splitMode === "perPerson" ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 hover:text-slate-700"
-                          )}
-                        >
-                          Chia đều mỗi người
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setForm(f => ({ ...f, splitMode: "perGroup" }))}
-                          className={classNames(
-                            "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all",
-                            form.splitMode === "perGroup" ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 hover:text-slate-700"
-                          )}
-                        >
-                          Chia theo nhóm
-                        </button>
-                      </div>
-                      
-                      <div className="pt-2 border-t border-indigo-100 dark:border-indigo-900/30">
-                        <span className="text-[12px] font-bold text-slate-600 dark:text-slate-400 block mb-2">Người tham gia khoản chi này:</span>
-                        <div className="flex flex-wrap gap-2">
+                    <div className="mt-4 pt-2 border-t border-indigo-100 dark:border-indigo-900/30">
+                      {!showParticipants ? (
+                        <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">
+                              {!form.splitAmong || form.splitAmong.length === 0 ? "Tất cả mọi người" : `${form.splitAmong.length} người tham gia`}
+                            </span>
+                          </div>
                           <button
                             type="button"
-                            onClick={() => setForm(f => ({ ...f, splitAmong: [] }))}
-                            className={classNames(
-                              "px-3 py-1.5 rounded-xl text-[12px] font-bold transition-colors border",
-                              (!form.splitAmong || form.splitAmong.length === 0)
-                                ? "bg-kat-dark text-white border-transparent"
-                                : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-kat-dark/30"
-                            )}
+                            onClick={() => setShowParticipants(true)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 text-[12px] font-bold text-kat-teal border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                           >
-                            Tất cả mọi người
+                            Sửa
                           </button>
-                          {form.splitMode === "perGroup" ? (
-                            getGroupUnits(members).map(unit => {
-                              const label = unit.isGroup ? unit.groupName : unit.memberNames[0];
-                              const isSelected = !form.splitAmong || form.splitAmong.length === 0 || unit.memberNames.every(name => form.splitAmong.includes(name));
-                              return (
-                                <button
-                                  key={label}
-                                  type="button"
-                                  onClick={() => {
-                                    setForm(f => {
-                                      const current = f.splitAmong || [];
-                                      if (current.length === 0) {
-                                        const allNames = members.map(m => m.name);
-                                        const next = allNames.filter(n => !unit.memberNames.includes(n));
-                                        return { ...f, splitAmong: next };
-                                      } else {
-                                        if (isSelected) {
-                                          const next = current.filter(n => !unit.memberNames.includes(n));
-                                          return { ...f, splitAmong: next.length === 0 ? [] : next };
-                                        } else {
-                                          const next = Array.from(new Set([...current, ...unit.memberNames]));
-                                          return { ...f, splitAmong: next.length === members.length ? [] : next };
-                                        }
-                                      }
-                                    });
-                                  }}
-                                  className={classNames(
-                                    "px-3 py-1.5 rounded-xl text-[12px] font-bold transition-colors border",
-                                    isSelected
-                                      ? "bg-kat-dark/10 dark:bg-kat-primary/20 text-kat-dark dark:text-kat-primary border-kat-dark/20 dark:border-kat-primary/30"
-                                      : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-kat-dark/30"
-                                  )}
-                                >
-                                  {label}
-                                </button>
-                              );
-                            })
-                          ) : (
-                            members.map(m => {
-                              const isSelected = !form.splitAmong || form.splitAmong.length === 0 || form.splitAmong.includes(m.name);
-                              return (
-                                <button
-                                  key={m.name}
-                                  type="button"
-                                  onClick={() => {
-                                    setForm(f => {
-                                      const current = f.splitAmong || [];
-                                      if (current.length === 0) {
-                                        const allNames = members.map(mem => mem.name);
-                                        const next = allNames.filter(n => n !== m.name);
-                                        return { ...f, splitAmong: next };
-                                      } else {
-                                        if (isSelected) {
-                                          const next = current.filter(n => n !== m.name);
-                                          return { ...f, splitAmong: next.length === 0 ? [] : next };
-                                        } else {
-                                          const next = [...current, m.name];
-                                          return { ...f, splitAmong: next.length === members.length ? [] : next };
-                                        }
-                                      }
-                                    });
-                                  }}
-                                  className={classNames(
-                                    "px-3 py-1.5 rounded-xl text-[12px] font-bold transition-colors border",
-                                    isSelected
-                                      ? "bg-kat-dark/10 dark:bg-kat-primary/20 text-kat-dark dark:text-kat-primary border-kat-dark/20 dark:border-kat-primary/30"
-                                      : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-kat-dark/30"
-                                  )}
-                                >
-                                  {m.name}
-                                </button>
-                              );
-                            })
-                          )}
                         </div>
-                      </div>
+                      ) : (
+                        <div className="p-3 rounded-xl border border-kat-teal/20 bg-teal-50/30 dark:bg-teal-900/10">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                              Tham gia ({!form.splitAmong || form.splitAmong.length === 0 ? "Tất cả" : `${form.splitAmong.length} người`})
+                            </span>
+                            
+                            <div className="flex bg-slate-100 dark:bg-slate-800/80 rounded-lg p-0.5 border border-slate-200 dark:border-slate-700">
+                              <button
+                                type="button"
+                                onClick={() => setForm(f => ({ ...f, splitMode: "perPerson" }))}
+                                className={classNames(
+                                  "px-2.5 py-1 text-[11px] font-bold rounded-md transition-all",
+                                  form.splitMode === "perPerson" ? "bg-white dark:bg-slate-600 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                                )}
+                              >
+                                Cá nhân
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setForm(f => ({ ...f, splitMode: "perGroup" }))}
+                                className={classNames(
+                                  "px-2.5 py-1 text-[11px] font-bold rounded-md transition-all",
+                                  form.splitMode === "perGroup" ? "bg-white dark:bg-slate-600 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                                )}
+                              >
+                                Gia đình
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-between items-center mb-3">
+                            <button
+                              type="button"
+                              onClick={() => setShowParticipants(false)}
+                              className="text-[12px] font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                              Đóng
+                            </button>
+                            {(!form.splitAmong || form.splitAmong.length > 0) && (
+                              <button
+                                type="button"
+                                onClick={() => setForm(f => ({ ...f, splitAmong: [] }))}
+                                className="text-[12px] font-bold text-kat-teal hover:underline"
+                              >
+                                Chọn lại tất cả
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="flex flex-wrap gap-2">
+                            {form.splitMode === "perGroup" ? (
+                              getGroupUnits(members).map(unit => {
+                                const label = unit.isGroup ? unit.groupName : unit.memberNames[0];
+                                const isSelected = !form.splitAmong || form.splitAmong.length === 0 || unit.memberNames.every(name => form.splitAmong.includes(name));
+                                return (
+                                  <button
+                                    key={label}
+                                    type="button"
+                                    onClick={() => {
+                                      setForm(f => {
+                                        const current = f.splitAmong || [];
+                                        if (current.length === 0) {
+                                          const allNames = members.map(m => m.name);
+                                          const next = allNames.filter(n => !unit.memberNames.includes(n));
+                                          return { ...f, splitAmong: next };
+                                        } else {
+                                          if (isSelected) {
+                                            const next = current.filter(n => !unit.memberNames.includes(n));
+                                            return { ...f, splitAmong: next.length === 0 ? [] : next };
+                                          } else {
+                                            const next = Array.from(new Set([...current, ...unit.memberNames]));
+                                            return { ...f, splitAmong: next.length === members.length ? [] : next };
+                                          }
+                                        }
+                                      });
+                                    }}
+                                    className={classNames(
+                                      "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
+                                      isSelected
+                                        ? "bg-teal-50 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-500/30"
+                                        : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-teal-500/30"
+                                    )}
+                                  >
+                                    {label}
+                                  </button>
+                                );
+                              })
+                            ) : (
+                              members.map(m => {
+                                const isSelected = !form.splitAmong || form.splitAmong.length === 0 || form.splitAmong.includes(m.name);
+                                return (
+                                  <button
+                                    key={m.name}
+                                    type="button"
+                                    onClick={() => {
+                                      setForm(f => {
+                                        const current = f.splitAmong || [];
+                                        if (current.length === 0) {
+                                          const allNames = members.map(mem => mem.name);
+                                          const next = allNames.filter(n => n !== m.name);
+                                          return { ...f, splitAmong: next };
+                                        } else {
+                                          if (isSelected) {
+                                            const next = current.filter(n => n !== m.name);
+                                            return { ...f, splitAmong: next.length === 0 ? [] : next };
+                                          } else {
+                                            const next = [...current, m.name];
+                                            return { ...f, splitAmong: next.length === members.length ? [] : next };
+                                          }
+                                        }
+                                      });
+                                    }}
+                                    className={classNames(
+                                      "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
+                                      isSelected
+                                        ? "bg-teal-50 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-500/30"
+                                        : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-teal-500/30"
+                                    )}
+                                  >
+                                    {m.name}
+                                  </button>
+                                );
+                              })
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

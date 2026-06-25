@@ -875,7 +875,17 @@
     "roleBudget": "Gestão de custos",
     "roleDriver": "Motorista",
     "roleNavigator": "Navegador",
-    "roleCompanion": "Acompanhante"
+    "roleCompanion": "Acompanhante",
+    "willReplace": "(Sẽ thay thế {{name}})",
+    "currentLeaderIs": "(Đang là: {{name}})",
+    "statMembers": "Thành viên",
+    "statTasks": "Phân công",
+    "statPaid": "Đã chi trả",
+    "statSplit": "Chia chi phí",
+    "statReady": "Sẵn sàng",
+    "statNeedMore": "Cần ≥ 2",
+    "otherMembers": "Thành viên khác",
+    "groupPrefix": "Nhóm: "
   },
   "packing": {
     "pageTitle": "Chuẩn bị hành lý",

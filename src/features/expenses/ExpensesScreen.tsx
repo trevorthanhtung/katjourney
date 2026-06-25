@@ -136,7 +136,7 @@ export function SettlementCard({
                       <HugeiconsIcon icon={UserIcon} className="w-4 h-4" />
                     </span>
                     <span className="font-bold text-kat-dark dark:text-slate-200 text-[13px] text-center px-1 break-words leading-tight">{s.from}</span>
-                    {fromGroup && <span className="text-[10px] text-slate-400 font-medium text-center leading-tight mt-0.5">(ĐD nhóm {fromGroup})</span>}
+                    {fromGroup && <span className="text-[10px] text-slate-400 font-medium text-center leading-tight mt-0.5">(Nhóm: {fromGroup})</span>}
                   </div>
                   
                   <div className="flex flex-col items-center justify-center flex-[1.5] px-2 shrink-0">
@@ -151,7 +151,7 @@ export function SettlementCard({
                       <HugeiconsIcon icon={UserCheckIcon} className="w-4 h-4" />
                     </span>
                     <span className="font-bold text-kat-primary text-[13px] text-center px-1 break-words leading-tight">{s.to}</span>
-                    {toGroup && <span className="text-[10px] text-slate-400 font-medium text-center leading-tight mt-0.5">(ĐD nhóm {toGroup})</span>}
+                    {toGroup && <span className="text-[10px] text-slate-400 font-medium text-center leading-tight mt-0.5">(Nhóm: {toGroup})</span>}
                   </div>
                 </div>
               </div>
@@ -384,6 +384,7 @@ function ExpenseForm({
   }>({});
 
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showParticipants, setShowParticipants] = useState(false);
   const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
 
   const editingId = editing?.id;
@@ -680,7 +681,7 @@ function ExpenseForm({
                 label={
                   <span className="flex items-center gap-1.5">
                     <HugeiconsIcon icon={UserCheckIcon} className="h-4 w-4 text-slate-500" />
-                    Người đã trả *
+                    Người thanh toán
                   </span>
                 }
                 value={form.payer}
@@ -841,125 +842,142 @@ function ExpenseForm({
 
               {form.splitType === "shared" && members.length > 0 && (
                 <>
-                  <div className="space-y-2 pt-2">
-                    <span className="text-[13.5px] font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
-                      <HugeiconsIcon icon={UserGroupIcon} className="h-4 w-4 text-slate-500" />
-                      Đối tượng chia
-                    </span>
-                    <div className="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-                      <button
-                        type="button"
-                        onClick={() => setForm({ ...form, splitMode: "perPerson" })}
-                        className={classNames(
-                          "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
-                          form.splitMode === "perPerson"
-                            ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm border border-slate-200/10"
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
-                        )}
-                      >
-                        Chia theo người
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setForm({ ...form, splitMode: "perGroup" })}
-                        className={classNames(
-                          "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
-                          form.splitMode === "perGroup"
-                            ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm border border-slate-200/10"
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
-                        )}
-                      >
-                        Chia theo gia đình
-                      </button>
-                    </div>
-                  </div>
-                  
                   <div className="pt-2">
-                    <span className="text-[13.5px] font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5 mb-2">
-                      <HugeiconsIcon icon={UserCheckIcon} className="h-4 w-4 text-slate-500" />
-                      Tham gia ({form.splitAmong.length === 0 ? "Tất cả" : `${form.splitAmong.length} người`})
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setForm({ ...form, splitAmong: [] })}
-                        className={classNames(
-                          "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
-                          form.splitAmong.length === 0
-                            ? "bg-kat-dark text-white border-transparent"
-                            : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700"
-                        )}
-                      >
-                        Tất cả
-                      </button>
-                      
-                      {form.splitMode === "perGroup" ? (
-                        getGroupUnits(members).map(unit => {
-                          const label = unit.isGroup ? unit.groupName : unit.memberNames[0];
-                          const isSelected = form.splitAmong.length === 0 || unit.memberNames.every(name => form.splitAmong.includes(name));
-                          return (
+                    {!showParticipants ? (
+                      <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">
+                            {form.splitAmong.length === 0 ? "Tất cả mọi người" : `${form.splitAmong.length} người tham gia`}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setShowParticipants(true)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 text-[12px] font-bold text-kat-teal border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                        >
+                          Sửa
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="p-3 rounded-xl border border-kat-teal/20 bg-teal-50/30 dark:bg-teal-900/10">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                            Tham gia ({form.splitAmong.length === 0 ? "Tất cả" : `${form.splitAmong.length} người`})
+                          </span>
+                          
+                          <div className="flex bg-slate-100 dark:bg-slate-800/80 rounded-lg p-0.5 border border-slate-200 dark:border-slate-700">
                             <button
-                              key={label}
                               type="button"
-                              onClick={() => {
-                                if (form.splitAmong.length === 0) {
-                                  const allNames = members.map(m => m.name);
-                                  const next = allNames.filter(n => !unit.memberNames.includes(n));
-                                  setForm({ ...form, splitAmong: next });
-                                } else {
-                                  if (isSelected) {
-                                    const next = form.splitAmong.filter(n => !unit.memberNames.includes(n));
-                                    setForm({ ...form, splitAmong: next.length === 0 ? [] : next });
-                                  } else {
-                                    const next = Array.from(new Set([...form.splitAmong, ...unit.memberNames]));
-                                    setForm({ ...form, splitAmong: next.length === members.length ? [] : next });
-                                  }
-                                }
-                              }}
+                              onClick={() => setForm({ ...form, splitMode: "perPerson" })}
                               className={classNames(
-                                "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
-                                isSelected || form.splitAmong.length === 0
-                                  ? "bg-kat-dark/10 dark:bg-kat-primary/20 text-kat-dark dark:text-kat-primary border-kat-dark/20 dark:border-kat-primary/30"
-                                  : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-kat-dark/30"
+                                "px-2.5 py-1 text-[11px] font-bold rounded-md transition-all",
+                                form.splitMode === "perPerson" ? "bg-white dark:bg-slate-600 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                               )}
                             >
-                              {label}
+                              Cá nhân
                             </button>
-                          );
-                        })
-                      ) : (
-                        members.map(m => {
-                          const isSelected = form.splitAmong.length === 0 || form.splitAmong.includes(m.name);
-                          return (
                             <button
-                              key={m.id}
                               type="button"
-                              onClick={() => {
-                                if (form.splitAmong.length === 0) {
-                                  setForm({ ...form, splitAmong: members.map(mem => mem.name).filter(n => n !== m.name) });
-                                } else {
-                                  if (form.splitAmong.includes(m.name)) {
-                                    const next = form.splitAmong.filter(n => n !== m.name);
-                                    setForm({ ...form, splitAmong: next.length === 0 ? [] : next });
-                                  } else {
-                                    const next = [...form.splitAmong, m.name];
-                                    setForm({ ...form, splitAmong: next.length === members.length ? [] : next });
-                                  }
-                                }
-                              }}
+                              onClick={() => setForm({ ...form, splitMode: "perGroup" })}
                               className={classNames(
-                                "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
-                                isSelected || form.splitAmong.length === 0
-                                  ? "bg-kat-dark/10 dark:bg-kat-primary/20 text-kat-dark dark:text-kat-primary border-kat-dark/20 dark:border-kat-primary/30"
-                                  : "bg-white dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700 hover:border-kat-dark/30"
+                                "px-2.5 py-1 text-[11px] font-bold rounded-md transition-all",
+                                form.splitMode === "perGroup" ? "bg-white dark:bg-slate-600 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                               )}
                             >
-                              {m.name}
+                              Gia đình
                             </button>
-                          );
-                        })
-                      )}
-                    </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex justify-between items-center mb-3">
+                          <button
+                            type="button"
+                            onClick={() => setShowParticipants(false)}
+                            className="text-[12px] font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg transition-colors"
+                          >
+                            Đóng
+                          </button>
+                          {form.splitAmong.length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setForm({ ...form, splitAmong: [] })}
+                              className="text-[12px] font-bold text-kat-teal hover:underline"
+                            >
+                              Chọn lại tất cả
+                            </button>
+                          )}
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-2">
+                          {form.splitMode === "perGroup" ? (
+                            getGroupUnits(members).map(unit => {
+                              const label = unit.isGroup ? unit.groupName : unit.memberNames[0];
+                              const isSelected = form.splitAmong.length === 0 || unit.memberNames.every(name => form.splitAmong.includes(name));
+                              return (
+                                <button
+                                  key={label}
+                                  type="button"
+                                  onClick={() => {
+                                    if (form.splitAmong.length === 0) {
+                                      const allNames = members.map(m => m.name);
+                                      const next = allNames.filter(n => !unit.memberNames.includes(n));
+                                      setForm({ ...form, splitAmong: next });
+                                    } else {
+                                      if (isSelected) {
+                                        const next = form.splitAmong.filter(n => !unit.memberNames.includes(n));
+                                        setForm({ ...form, splitAmong: next.length === 0 ? [] : next });
+                                      } else {
+                                        const next = Array.from(new Set([...form.splitAmong, ...unit.memberNames]));
+                                        setForm({ ...form, splitAmong: next.length === members.length ? [] : next });
+                                      }
+                                    }
+                                  }}
+                                  className={classNames(
+                                    "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
+                                    isSelected || form.splitAmong.length === 0
+                                      ? "bg-teal-50 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-500/30"
+                                      : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-teal-500/30"
+                                  )}
+                                >
+                                  {label}
+                                </button>
+                              );
+                            })
+                          ) : (
+                            members.map(m => {
+                              const isSelected = form.splitAmong.length === 0 || form.splitAmong.includes(m.name);
+                              return (
+                                <button
+                                  key={m.id}
+                                  type="button"
+                                  onClick={() => {
+                                    if (form.splitAmong.length === 0) {
+                                      setForm({ ...form, splitAmong: members.map(mem => mem.name).filter(n => n !== m.name) });
+                                    } else {
+                                      if (form.splitAmong.includes(m.name)) {
+                                        const next = form.splitAmong.filter(n => n !== m.name);
+                                        setForm({ ...form, splitAmong: next.length === 0 ? [] : next });
+                                      } else {
+                                        const next = [...form.splitAmong, m.name];
+                                        setForm({ ...form, splitAmong: next.length === members.length ? [] : next });
+                                      }
+                                    }
+                                  }}
+                                  className={classNames(
+                                    "rounded-full px-3 py-1.5 text-[12px] font-bold transition-all border",
+                                    isSelected || form.splitAmong.length === 0
+                                      ? "bg-teal-50 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-500/30"
+                                      : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-teal-500/30"
+                                  )}
+                                >
+                                  {m.name}
+                                </button>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </>
               )}

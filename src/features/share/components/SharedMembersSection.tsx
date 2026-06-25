@@ -5,7 +5,7 @@ import { db } from '../../../db';
 import { createPortal } from 'react-dom';
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Wallet01Icon, CheckmarkCircle02Icon, BookOpen01Icon, File01Icon, AlertCircleIcon, Add01Icon, PenTool01Icon, Delete01Icon, MoreVerticalIcon,
+  Wallet01Icon, CheckmarkBadge01Icon, CheckmarkCircle01Icon, CheckmarkCircle02Icon, BookOpen01Icon, File01Icon, AlertCircleIcon, Add01Icon, PenTool01Icon, Delete01Icon, MoreVerticalIcon,
   ReceiptTextIcon, UserCheck01Icon, Tag01Icon, ChevronRightIcon, BalanceScaleIcon, InformationCircleIcon, CheckIcon, Cancel01Icon, Clock01Icon,
   FileCheckIcon, ShirtIcon, Briefcase01Icon, PlugIcon, PillIcon, Bread01Icon, PackageIcon, BadgeCheckIcon, StickyNoteIcon, MinusSignIcon, UserIcon, Calendar01Icon, Maximize01Icon, Image01Icon, Loading01Icon, SmileIcon, NotebookIcon, SaveIcon, SparklesIcon, HelpCircleIcon, UserGroupIcon, BubbleChatIcon, GlobeIcon,
   CrownIcon, Luggage01Icon, Car01Icon, CalculatorIcon, PieChartIcon, Search01Icon,
@@ -284,8 +284,8 @@ export function SharedMembersSection({
           const initial = member.name.trim().charAt(0).toUpperCase() || "?";
           
           // Helper computations
-          const assignedTasksCount = checklist.filter(c => c.assignedTo === member.name).length;
-          const memberExpenses = expenses.filter(e => e.payer === member.name);
+          const assignedTasksCount = checklist.filter(c => c.assignedTo === member.name && !c.isDeleted).length;
+          const memberExpenses = expenses.filter(e => e.payer === member.name && !e.isDeleted);
           const paidExpensesCount = memberExpenses.length;
           const totalSpent = memberExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
           const roleLower = (member.role || "").trim().toLowerCase();
@@ -422,6 +422,13 @@ export function SharedMembersSection({
                         </span>
                       )}
                     </div>
+                                        {member.group && (
+                      <p className="text-[13.5px] font-semibold text-slate-500">
+                        {t("members.groupPrefix")}<span className={member.isGroupLeader ? "text-kat-dark dark:text-kat-primary-usable" : "text-slate-700 dark:text-slate-300"}>
+                          {member.group}
+                        </span>
+                      </p>
+                    )}
                     {member.phone && (
                       <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
                         SĐT: <span className="text-kat-dark dark:text-slate-300">{member.phone}</span>
