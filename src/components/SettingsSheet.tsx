@@ -1879,15 +1879,15 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
       {/* ── Import Preview Modal ── */}
       {isImportPreviewOpen && importPreview && (
         <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white w-full max-w-md rounded-[28px] border border-slate-200 shadow-2xl overflow-hidden animate-scaleUp">
+          <div className="bg-white dark:bg-kat-surface w-full max-w-md rounded-[28px] border border-slate-200 dark:border-kat-border/60 shadow-2xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-hidden animate-scaleUp">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100">
+            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100 dark:border-kat-border/40">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/40">
                   <HugeiconsIcon icon={PackageReceiveIcon} className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-[16px] font-black text-kat-dark">{t('settings.dialogs.importPreview.title')}</h3>
+                  <h3 className="text-[16px] font-black text-kat-dark dark:text-slate-100">{t('settings.dialogs.importPreview.title')}</h3>
                   <p className="text-[11px] text-slate-400 font-medium">{t('settings.dialogs.importPreview.subtitle')}</p>
                 </div>
               </div>
@@ -1901,11 +1901,11 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             {/* Trip info */}
             <div className="px-6 py-5 space-y-4">
-              <div className="rounded-2xl bg-indigo-50 border border-indigo-100 p-4">
-                <p className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">{t('settings.dialogs.importPreview.tripName')}</p>
-                <p className="text-[18px] font-black text-kat-dark leading-tight">{importPreview.tripName}</p>
+              <div className="rounded-2xl bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/30 p-4">
+                <p className="text-[11px] font-bold text-indigo-400 dark:text-indigo-500 uppercase tracking-wider mb-1">{t('settings.dialogs.importPreview.tripName')}</p>
+                <p className="text-[18px] font-black text-kat-dark dark:text-slate-100 leading-tight">{importPreview.tripName}</p>
                 {importPreview.exportedAt && (
-                  <p className="text-[11px] text-indigo-400 font-medium mt-1">
+                  <p className="text-[11px] text-indigo-400 dark:text-indigo-500 font-medium mt-1">
                     {t('settings.dialogs.importPreview.exportedAt')} {new Date(importPreview.exportedAt).toLocaleString("vi-VN")}
                   </p>
                 )}
@@ -1919,14 +1919,14 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   { label: t('settings.dialogs.importPreview.checklist'), value: importPreview.checklistCount },
                   { label: t('settings.dialogs.importPreview.journal'), value: importPreview.journalCount },
                 ].map(item => (
-                  <div key={item.label} className="rounded-xl bg-slate-50 border border-slate-100 p-3 text-center">
-                    <p className="text-[20px] font-black text-kat-dark">{item.value}</p>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase">{item.label}</p>
+                  <div key={item.label} className="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/50 p-3 text-center">
+                    <p className="text-[20px] font-black text-kat-dark dark:text-slate-100">{item.value}</p>
+                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{item.label}</p>
                   </div>
                 ))}
               </div>
 
-              <p className="text-[12px] text-slate-400 font-medium text-center leading-relaxed">
+              <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium text-center leading-relaxed">
                 {t('settings.dialogs.importPreview.notice')}
               </p>
             </div>
