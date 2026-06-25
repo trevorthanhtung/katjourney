@@ -105,11 +105,12 @@ export function SettlementCard({
   expenses: Expense[]; 
   settlements: Array<{ from: string; to: string; amount: number }> 
 }) {
-  let emptyText = "Mọi người đã cân bằng, không ai nợ ai.";
+  const { t } = useTranslation();
+  let emptyText = t("expenses.settlementBalanced");
   if (!members.length) {
-    emptyText = "Thêm người đồng hành để tính phần cần góp hoặc hoàn lại.";
+    emptyText = t("expenses.settlementAddCompanion");
   } else if (!expenses.length) {
-    emptyText = "Chưa có khoản chi chung để cân đối chia tiền.";
+    emptyText = t("expenses.settlementNoExpense");
   }
 
   return (
@@ -118,7 +119,7 @@ export function SettlementCard({
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
           <HugeiconsIcon icon={BalanceScaleIcon} className="h-4.5 w-4.5" />
         </span>
-        <h3 className="text-[16px] font-extrabold text-kat-dark dark:text-white">Cân đối chia tiền</h3>
+        <h3 className="text-[16px] font-extrabold text-kat-dark dark:text-white">{t("expenses.settlementTitle")}</h3>
       </div>
       {settlements.length ? (
         <div className="grid gap-3 sm:grid-cols-2">
@@ -136,7 +137,7 @@ export function SettlementCard({
                       <HugeiconsIcon icon={UserIcon} className="w-4 h-4" />
                     </span>
                     <span className="font-bold text-kat-dark dark:text-slate-200 text-[13px] text-center px-1 break-words leading-tight">{s.from}</span>
-                    {fromGroup && <span className="text-[10px] text-slate-400 font-medium text-center leading-tight mt-0.5">(Nhóm: {fromGroup})</span>}
+                    {fromGroup && <span className="text-[10px] text-slate-400 font-medium text-center leading-tight mt-0.5">{t("expenses.groupLabel", { group: fromGroup })}</span>}
                   </div>
                   
                   <div className="flex flex-col items-center justify-center flex-[1.5] px-2 shrink-0">
@@ -151,7 +152,7 @@ export function SettlementCard({
                       <HugeiconsIcon icon={UserCheckIcon} className="w-4 h-4" />
                     </span>
                     <span className="font-bold text-kat-primary text-[13px] text-center px-1 break-words leading-tight">{s.to}</span>
-                    {toGroup && <span className="text-[10px] text-slate-400 font-medium text-center leading-tight mt-0.5">(Nhóm: {toGroup})</span>}
+                    {toGroup && <span className="text-[10px] text-slate-400 font-medium text-center leading-tight mt-0.5">{t("expenses.groupLabel", { group: toGroup })}</span>}
                   </div>
                 </div>
               </div>
@@ -180,6 +181,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
   idx?: number;
   isReadOnly?: boolean;
 }) {
+  const { t } = useTranslation();
   const isPersonal = item.splitType === "personal";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -222,7 +224,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
       <div className="min-w-0 flex-1">
         {/* Description */}
         <h4 className="text-base font-semibold text-kat-dark dark:text-white truncate">
-          {item.description || "Khoản chi không tên"}
+          {item.description || t("expenses.unnamed")}
         </h4>
 
         {/* Category & Badge */}
@@ -238,12 +240,12 @@ const ExpenseCard = React.memo(function ExpenseCard({
               ? "bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200/80 dark:border-slate-700/60" 
               : "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-450 border-emerald-100 dark:border-emerald-900/30"
           )}>
-            {isPersonal ? "Chi cá nhân" : item.splitMode === "perGroup" ? "Chi theo nhóm" : "Chi chung"}
+            {isPersonal ? t("expenses.splitPersonal") : item.splitMode === "perGroup" ? t("expenses.splitPerGroup") : t("expenses.splitShared")}
           </span>
 
           <span className="font-medium">
-            • {isPersonal ? (item.payer ? `Của: ${item.payer}` : "Cá nhân") : `Trả: ${item.payer || "Chưa chọn"}`}
-            {item.splitType === "shared" && item.splitAmong && item.splitAmong.length > 0 && ` (cho ${item.splitAmong.length} người)`}
+            • {isPersonal ? (item.payer ? t("expenses.paidByOf", { name: item.payer }) : t("expenses.personalLabel")) : t(item.payer ? "expenses.paidByPay" : "expenses.paidByNone", { name: item.payer || "" })}
+            {item.splitType === "shared" && item.splitAmong && item.splitAmong.length > 0 && ` ${t("expenses.forNPeople", { count: item.splitAmong.length })}`}
           </span>
           
           {item.date && (
@@ -276,7 +278,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
             }}
-            title="Tùy chọn"
+            title={t("expenses.options")}
           >
             <HugeiconsIcon icon={MoreHorizontalIcon} className="h-5 w-5" />
           </button>
@@ -293,7 +295,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
                 className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40 active:bg-slate-100 transition-colors"
               >
                 <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500" />
-                Sửa
+                {t("expenses.edit")}
               </button>
               <button
                 type="button"
@@ -305,7 +307,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
                 className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
               >
                 <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
-                Xóa
+                {t("expenses.delete")}
               </button>
             </div>
           )}
@@ -336,6 +338,7 @@ function ExpenseForm({
   onSaved: (msg: string) => void;
   onShowToast?: (msg: string) => void;
 }) {
+  const { t } = useTranslation();
   const categoryOptions = React.useMemo(() => {
     const defaultCats = expenseCategories.filter(c => c !== "Khác");
     const uniqueUsedCats = Array.from(new Set(expenses.map(e => e.category)))
@@ -481,7 +484,7 @@ function ExpenseForm({
     const amountVal = Number(form.amount);
     
     if (!form.amount.trim() || Number.isNaN(amountVal) || amountVal <= 0) {
-      newErrors.amount = "Vui lòng nhập số tiền lớn hơn 0.";
+      newErrors.amount = t("expenses.errAmount");
     }
 
     const vndAmount = form.currency === "VND" ? amountVal : Math.round(amountVal * form.exchangeRate);
@@ -490,14 +493,14 @@ function ExpenseForm({
     if (form.category === "Khác...") {
       const trimmedCustom = form.customCategory.trim();
       if (!trimmedCustom) {
-        newErrors.customCategory = "Vui lòng nhập tên danh mục.";
+        newErrors.customCategory = t("expenses.errCategory");
       } else {
         finalCategory = trimmedCustom.slice(0, 30);
       }
     }
 
     if (form.splitType === "shared" && members.length > 0 && !form.payer) {
-      newErrors.payer = "Vui lòng chọn người trả.";
+      newErrors.payer = t("expenses.errPayer");
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -524,11 +527,11 @@ function ExpenseForm({
 
     if (editing?.id) {
       await db.expenses.update(editing.id, payload);
-      onSaved("Đã cập nhật khoản chi");
+      onSaved(t("expenses.toastUpdated"));
       onClose();
     } else {
       await db.expenses.add(payload);
-      onSaved("Đã thêm khoản chi");
+      onSaved(t("expenses.toastAdded"));
       onClose();
     }
   }
@@ -542,7 +545,7 @@ function ExpenseForm({
       disabled={isSaveDisabled}
       className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 text-white dark:text-slate-950 px-4 text-[13.5px] font-bold shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] transition-all active:scale-[0.97] disabled:bg-slate-100 dark:disabled:bg-slate-800/40 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed"
     >
-      {editing ? "Lưu" : "Thêm"}
+      {editing ? t("expenses.save") : t("expenses.add")}
     </button>
   );
 
@@ -550,14 +553,14 @@ function ExpenseForm({
     <BottomSheet 
       isOpen={isOpen} 
       onClose={onClose} 
-      title={editing ? "Sửa khoản chi" : "Thêm khoản chi"}
+      title={editing ? t("expenses.editExpense") : t("expenses.addExpense")}
       headerAction={headerAction}
     >
       <div className="space-y-4">
         {/* Prominent Amount Input */}
         <div className="relative flex flex-col items-center justify-center py-4 bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-700">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-[12px] font-bold uppercase tracking-wider text-slate-400">Số tiền</span>
+            <span className="text-[12px] font-bold uppercase tracking-wider text-slate-400">{t("expenses.amount")}</span>
             <div className="relative">
               <button
                 type="button"
@@ -571,7 +574,7 @@ function ExpenseForm({
               <BottomSheet
                 isOpen={isCurrencyDropdownOpen}
                 onClose={() => setIsCurrencyDropdownOpen(false)}
-                title="Chọn ngoại tệ"
+                title={t("expenses.selectCurrency")}
               >
                 <div className="space-y-1 max-h-[60vh] overflow-y-auto scrollbar-none pb-2">
                   <button
@@ -587,7 +590,7 @@ function ExpenseForm({
                     }`}
                   >
                     <span className={`text-[15px] ${form.currency === "VND" ? 'font-extrabold' : 'font-semibold'}`}>
-                      VND (Việt Nam Đồng)
+                      {t("expenses.vnd")}
                     </span>
                     {form.currency === "VND" && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
                   </button>
@@ -639,7 +642,7 @@ function ExpenseForm({
                 ≈ {formatMoney(Math.round(Number(form.amount) * form.exchangeRate))}
               </span>
               <span className="text-[11px] font-medium text-slate-400 mt-1">
-                Tỷ giá: 1 {form.currency} = {new Intl.NumberFormat('vi-VN').format(form.exchangeRate)} đ
+                {t("expenses.exchangeRate", { currency: form.currency, rate: new Intl.NumberFormat("vi-VN").format(form.exchangeRate) })}
               </span>
             </div>
           )}
@@ -653,7 +656,7 @@ function ExpenseForm({
           label={
             <span className="flex items-center gap-1.5">
               <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
-              Ngày chi tiêu
+              {t("expenses.dateLabel")}
             </span>
           } 
           value={form.date} 
@@ -665,12 +668,12 @@ function ExpenseForm({
           label={
             <span className="flex items-center gap-1.5">
               <HugeiconsIcon icon={ReceiptTextIcon} className="h-4 w-4 text-slate-500" />
-              Nội dung chi tiêu
+              {t("expenses.descLabel")}
             </span>
           } 
           value={form.description} 
           onChange={(description) => setForm({ ...form, description })} 
-          placeholder="VD: Taxi, ăn trưa, vé tham quan..." 
+          placeholder={t("expenses.descPlaceholder")} 
         />
 
         {/* Payer Select (Always Visible in Default Section) */}
@@ -681,7 +684,7 @@ function ExpenseForm({
                 label={
                   <span className="flex items-center gap-1.5">
                     <HugeiconsIcon icon={UserCheckIcon} className="h-4 w-4 text-slate-500" />
-                    Người thanh toán
+                    {t("expenses.payerLabel")}
                   </span>
                 }
                 value={form.payer}
@@ -690,7 +693,7 @@ function ExpenseForm({
                   setErrors({ ...errors, payer: "" });
                 }}
                 options={["", ...members.map((member) => member.name)]}
-                placeholder="Chọn người trả"
+                placeholder={t("expenses.payerPlaceholder")}
               />
               {errors.payer && (
                 <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1">{errors.payer}</p>
@@ -699,7 +702,7 @@ function ExpenseForm({
           ) : (
             <div className="rounded-2xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 p-4 text-[13px] text-amber-800 dark:text-amber-400 font-semibold flex gap-2">
               <HugeiconsIcon icon={InformationCircleIcon} className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
-              <span>Chuyến đi chưa có người đồng hành. Thêm người đồng hành để tính phần cần góp hoặc hoàn lại.</span>
+              <span>{t("expenses.noCompanionWarn")}</span>
             </div>
           )
         ) : (
@@ -709,13 +712,13 @@ function ExpenseForm({
                 label={
                   <span className="flex items-center gap-1.5">
                     <HugeiconsIcon icon={UserCheckIcon} className="h-4 w-4 text-slate-500" />
-                    Khoản chi này của ai?
+                    {t("expenses.personalOwner")}
                   </span>
                 }
                 value={form.payer}
                 onChange={(payer) => setForm({ ...form, payer })}
                 options={["", ...members.map((member) => member.name)]}
-                placeholder="Chọn người đồng hành (không bắt buộc)"
+                placeholder={t("expenses.personalPlaceholder")}
               />
             </div>
           )
@@ -730,7 +733,7 @@ function ExpenseForm({
           >
             <span className="flex items-center gap-1.5">
               <HugeiconsIcon icon={PreferenceHorizontalIcon} className="h-4 w-4 text-slate-400" />
-              Chi tiết nâng cao
+              {t("expenses.advanced")}
             </span>
             <HugeiconsIcon icon={ChevronRightIcon} className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
           </button>
@@ -743,7 +746,7 @@ function ExpenseForm({
                   label={
                     <span className="flex items-center gap-1.5">
                       <HugeiconsIcon icon={TagsIcon} className="h-4 w-4 text-slate-500" />
-                      Hạng mục
+                      {t("expenses.categoryLabel")}
                     </span>
                   } 
                   value={form.category} 
@@ -760,7 +763,7 @@ function ExpenseForm({
                       label={
                         <span className="flex items-center gap-1.5">
                           <HugeiconsIcon icon={TagsIcon} className="h-4 w-4 text-slate-500" />
-                          Tên hạng mục tự nhập *
+                          {t("expenses.customCatLabel")}
                         </span>
                       } 
                       value={form.customCategory} 
@@ -768,7 +771,7 @@ function ExpenseForm({
                         setForm({ ...form, customCategory: customCategory.slice(0, 30) });
                         setErrors({ ...errors, customCategory: "" });
                       }} 
-                      placeholder="VD: Quà lưu niệm, Thuê xe máy" 
+                      placeholder={t("expenses.customCatPlaceholder")} 
                     />
                     {errors.customCategory && (
                       <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1">{errors.customCategory}</p>
@@ -781,14 +784,14 @@ function ExpenseForm({
                     label={
                       <span className="flex items-center gap-1.5">
                         <HugeiconsIcon icon={Route01Icon} className="h-4 w-4 text-slate-500" />
-                        Gắn vào lịch trình (Tùy chọn)
+                        {t("expenses.linkTimeline")}
                       </span>
                     }
                     value={form.eventId}
                     onChange={(eventId) => setForm({ ...form, eventId })}
                     options={["", ...filteredEvents.map(e => String(e.id))]}
                     labels={{
-                      "": "Không gắn (Chi phí chung)",
+                      "": t("expenses.noLink"),
                       ...Object.fromEntries(filteredEvents.map(e => {
                         const dateParts = (e.date || "").split('-');
                         const shortDate = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}` : (e.date || "");
@@ -804,7 +807,7 @@ function ExpenseForm({
               <div className="space-y-2">
                 <span className="text-[13.5px] font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
                   <HugeiconsIcon icon={BalanceScaleIcon} className="h-4 w-4 text-slate-500" />
-                  Cách chia khoản chi
+                  {t("expenses.splitMethod")}
                 </span>
                 <div className="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
                   <button
@@ -820,7 +823,7 @@ function ExpenseForm({
                         : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                     )}
                   >
-                    Chi chung nhóm
+                    {t("expenses.splitGroupLabel")}
                   </button>
                   <button
                     type="button"
@@ -835,7 +838,7 @@ function ExpenseForm({
                         : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                     )}
                   >
-                    Cá nhân tự trả
+                    {t("expenses.personalSelfLabel")}
                   </button>
                 </div>
               </div>
@@ -847,7 +850,7 @@ function ExpenseForm({
                       <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
                         <div className="flex items-center gap-2">
                           <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">
-                            {form.splitAmong.length === 0 ? "Tất cả mọi người" : `${form.splitAmong.length} người tham gia`}
+                            {form.splitAmong.length === 0 ? t("expenses.allPeople") : t("expenses.nParticipants", { count: form.splitAmong.length })}
                           </span>
                         </div>
                         <button
@@ -855,14 +858,14 @@ function ExpenseForm({
                           onClick={() => setShowParticipants(true)}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 text-[12px] font-bold text-kat-teal border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                         >
-                          Sửa
+                          {t("expenses.edit")}
                         </button>
                       </div>
                     ) : (
                       <div className="p-3 rounded-xl border border-kat-teal/20 bg-teal-50/30 dark:bg-teal-900/10">
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                            Tham gia ({form.splitAmong.length === 0 ? "Tất cả" : `${form.splitAmong.length} người`})
+                            {t("expenses.participate")} ({form.splitAmong.length === 0 ? t("expenses.participateAll") : t("expenses.participateN", { count: form.splitAmong.length })})
                           </span>
                           
                           <div className="flex bg-slate-100 dark:bg-slate-800/80 rounded-lg p-0.5 border border-slate-200 dark:border-slate-700">
@@ -874,7 +877,7 @@ function ExpenseForm({
                                 form.splitMode === "perPerson" ? "bg-white dark:bg-slate-600 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                               )}
                             >
-                              Cá nhân
+                              {t("expenses.perPerson")}
                             </button>
                             <button
                               type="button"
@@ -884,7 +887,7 @@ function ExpenseForm({
                                 form.splitMode === "perGroup" ? "bg-white dark:bg-slate-600 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                               )}
                             >
-                              Gia đình
+                              {t("expenses.perGroup")}
                             </button>
                           </div>
                         </div>
@@ -895,7 +898,7 @@ function ExpenseForm({
                             onClick={() => setShowParticipants(false)}
                             className="text-[12px] font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg transition-colors"
                           >
-                            Đóng
+                            {t("expenses.close")}
                           </button>
                           {form.splitAmong.length > 0 && (
                             <button
@@ -903,7 +906,7 @@ function ExpenseForm({
                               onClick={() => setForm({ ...form, splitAmong: [] })}
                               className="text-[12px] font-bold text-kat-teal hover:underline"
                             >
-                              Chọn lại tất cả
+                              {t("expenses.reselectAll")}
                             </button>
                           )}
                         </div>
@@ -1103,8 +1106,8 @@ export function ExpensesScreen({
         {/* Title row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-white">Chi phí</h2>
-            <p className="mt-1 text-[15px] font-medium text-slate-500 dark:text-slate-400">Theo dõi chi tiêu, khoản đã trả và phần cần chia trong chuyến đi.</p>
+            <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-white">{t("expenses.pageTitle")}</h2>
+            <p className="mt-1 text-[15px] font-medium text-slate-500 dark:text-slate-400">{t("expenses.pageSubtitle")}</p>
           </div>
           {!isReadOnly && (
             <div>
@@ -1114,7 +1117,7 @@ export function ExpensesScreen({
                 className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary hover:bg-opacity-95 dark:hover:brightness-110 px-5 text-[14px] font-bold text-white dark:text-slate-950 shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] motion-press h-[48px]"
               >
                 <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
-                Thêm khoản chi
+                {t("expenses.addExpense")}
               </button>
             </div>
           )}
@@ -1128,7 +1131,7 @@ export function ExpensesScreen({
               <div>
                 <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
                   <HugeiconsIcon icon={ReceiptTextIcon} className="h-4.5 w-4.5" />
-                  <p className="text-[13px] font-bold uppercase tracking-wider">Tổng chi phí chuyến đi</p>
+                  <p className="text-[13px] font-bold uppercase tracking-wider">{t("expenses.totalTrip")}</p>
                 </div>
                 <p className="mt-1 break-words text-[36px] md:text-[44px] font-black leading-none tracking-tight text-kat-dark dark:text-white">{formatMoney(totalExpense)}</p>
               </div>
@@ -1136,14 +1139,14 @@ export function ExpensesScreen({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
                 <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
-                    <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Chi chung chuyến đi</p>
+                    <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{t("expenses.sharedTrip")}</p>
                     <p className="text-[18px] font-black text-[#00AFA8] dark:text-[#00BFB7] mt-0.5">{formatMoney(totalSharedExpense)}</p>
                   </div>
                   <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-[#00AFA8]/60 dark:text-[#00BFB7]/60 shrink-0 mt-0.5" />
                 </div>
                 <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
-                    <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Chi cá nhân</p>
+                    <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{t("expenses.personalExpense")}</p>
                     <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(totalPersonalExpense)}</p>
                   </div>
                   <HugeiconsIcon icon={UserIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500 shrink-0 mt-0.5" />
@@ -1151,12 +1154,12 @@ export function ExpensesScreen({
                 <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
                     <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                      {hasGroups ? "Bình quân / nhóm" : "Bình quân / người"}
+                      {hasGroups ? t("expenses.avgPerGroup") : t("expenses.avgPerPerson")}
                     </p>
                     {members.length > 0 ? (
                       <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(hasGroups ? perGroup : perPerson)}</p>
                     ) : (
-                      <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-lg border border-amber-100 dark:border-amber-900/30 mt-1.5 inline-block">Chưa có người đồng hành</span>
+                      <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-lg border border-amber-100 dark:border-amber-900/30 mt-1.5 inline-block">{t("expenses.noCompanion")}</span>
                     )}
                   </div>
                   <HugeiconsIcon icon={CalculatorIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500 shrink-0 mt-0.5" />
@@ -1173,7 +1176,7 @@ export function ExpensesScreen({
                   className="flex w-full items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary hover:bg-opacity-95 dark:hover:brightness-110 text-white dark:text-slate-950 px-6 py-3 text-[14px] font-bold shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] motion-press h-[48px]"
                 >
                   <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
-                  Thêm khoản chi
+                  {t("expenses.addExpense")}
                 </button>
               </div>
             )}
@@ -1189,22 +1192,22 @@ export function ExpensesScreen({
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
                     <HugeiconsIcon icon={PieChartIcon} className="h-4.5 w-4.5" />
                   </span>
-                  <h3 className="text-base font-extrabold text-kat-dark dark:text-white">Chi phí theo hạng mục</h3>
+                  <h3 className="text-base font-extrabold text-kat-dark dark:text-white">{t("expenses.byCategory")}</h3>
                 </div>
-                <BreakdownSection items={byCategory} total={totalExpense} emptyText="Chưa có danh mục chi phí." />
+                <BreakdownSection items={byCategory} total={totalExpense} emptyText={t("expenses.noCatYet")} />
               </div>
               <div className="rounded-3xl border border-slate-100 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-5">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
                     <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5" />
                   </span>
-                  <h3 className="text-base font-extrabold text-kat-dark dark:text-white">Phần cần góp của từng người/nhóm</h3>
+                  <h3 className="text-base font-extrabold text-kat-dark dark:text-white">{t("expenses.sharePerMember")}</h3>
                 </div>
                 {members.length > 0 ? (
-                  <BreakdownSection items={exactSharesByMember} total={totalSharedExpense} emptyText="Thêm người đồng hành để thống kê." />
+                  <BreakdownSection items={exactSharesByMember} total={totalSharedExpense} emptyText={t("expenses.addCompanionStats")} />
                 ) : (
                   <div className="flex flex-col items-center justify-center py-6 text-center">
-                    <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">Thêm người đồng hành để xem phần chi của từng người.</p>
+                    <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">{t("expenses.addCompanionShare")}</p>
                   </div>
                 )}
               </div>
@@ -1221,7 +1224,7 @@ export function ExpensesScreen({
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-dark/5 text-kat-dark/70">
               <HugeiconsIcon icon={ReceiptTextIcon} className="h-4.5 w-4.5" />
             </span>
-            <h3 className="text-lg font-extrabold text-kat-dark">Danh sách khoản chi</h3>
+            <h3 className="text-lg font-extrabold text-kat-dark">{t("expenses.expenseList")}</h3>
           </div>
           <div className={isEmpty ? "" : "grid gap-4 lg:grid-cols-2"}>
             {isEmpty ? (
@@ -1229,9 +1232,9 @@ export function ExpensesScreen({
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5">
                   <HugeiconsIcon icon={WalletCardsIcon} className="h-5.5 w-5.5" />
                 </div>
-                <h3 className="text-[17px] font-bold text-kat-text mb-1.5">Chưa có khoản chi nào</h3>
+                <h3 className="text-[17px] font-bold text-kat-text mb-1.5">{t("expenses.noExpenses")}</h3>
                 <p className="text-[13.5px] font-medium text-kat-muted mb-0 max-w-xs">
-                  Ghi lại chi phí ăn uống, di chuyển, vé tham quan để hệ thống tự động cân đối chia tiền sau chuyến đi.
+                  {t("expenses.noExpensesDesc")}
                 </p>
               </div>
             ) : (
@@ -1260,10 +1263,10 @@ export function ExpensesScreen({
         isOpen={Boolean(expenseToDelete)}
         onClose={() => setExpenseToDelete(null)}
         onConfirm={executeDelete}
-        title="Xóa khoản chi này?"
+        title={t("expenses.deleteTitle")}
         itemName={expenseToDelete?.description || expenseToDelete?.category}
-        description="Khoản chi này sẽ bị xóa khỏi danh sách chi phí của chuyến đi. Sau khi xóa, không thể hoàn tác."
-        confirmLabel="Xóa khoản chi"
+        description={t("expenses.deleteDesc")}
+        confirmLabel={t("expenses.deleteConfirm")}
       />
 
       {/* Success Toast */}

@@ -336,7 +336,7 @@ export function SharedExpensesSection({
     const amountVal = Number(form.amount);
     
     if (!form.amount.trim() || Number.isNaN(amountVal) || amountVal <= 0) {
-      newErrors.amount = "Vui lòng nhập số tiền lớn hơn 0.";
+      newErrors.amount = t("expenses.errAmount");
     }
 
     const vndAmount = form.currency === "VND" ? amountVal : Math.round(amountVal * form.exchangeRate);
@@ -345,14 +345,14 @@ export function SharedExpensesSection({
     if (form.category === "Khác...") {
       const trimmedCustom = form.customCategory.trim();
       if (!trimmedCustom) {
-        newErrors.customCategory = "Vui lòng nhập tên danh mục.";
+        newErrors.customCategory = t("expenses.errCategory");
       } else {
         finalCategory = trimmedCustom.slice(0, 30);
       }
     }
 
     if (form.splitType === "shared" && members.length > 0 && !form.payer) {
-      newErrors.payer = "Vui lòng chọn người trả.";
+      newErrors.payer = t("expenses.errPayer");
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -463,8 +463,8 @@ export function SharedExpensesSection({
       {/* Header Section (Adopted from Main View) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
         <div>
-          <h2 className="text-[32px] font-extrabold text-kat-dark dark:text-white tracking-tight">Chi phí</h2>
-          <p className="text-slate-500 dark:text-slate-400 font-medium text-[15px] mt-1">Theo dõi chi tiêu, khoản đã trả và phân chia trong chuyến đi.</p>
+          <h2 className="text-[32px] font-extrabold text-kat-dark dark:text-white tracking-tight">{t("expenses.pageTitle")}</h2>
+          <p className="text-slate-500 dark:text-slate-400 font-medium text-[15px] mt-1">{t("expenses.pageSubtitle")}</p>
         </div>
         {isRequestEdit && (
           <div>
@@ -487,7 +487,7 @@ export function SharedExpensesSection({
             <div>
               <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
                 <HugeiconsIcon icon={ReceiptTextIcon} className="h-4.5 w-4.5" />
-                <p className="text-[13px] font-bold uppercase tracking-wider">Tổng chi phí chuyến đi</p>
+                <p className="text-[13px] font-bold uppercase tracking-wider">{t("expenses.totalTrip")}</p>
               </div>
               <p className="mt-1 break-words text-[36px] md:text-[44px] font-black leading-none tracking-tight text-kat-dark dark:text-white">{formatMoney(totalExpense)}</p>
             </div>
@@ -495,14 +495,14 @@ export function SharedExpensesSection({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
               <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                 <div>
-                  <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Chi chung chuyến đi</p>
+                  <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{t("expenses.sharedTrip")}</p>
                   <p className="text-[18px] font-black text-[#00AFA8] dark:text-[#00BFB7] mt-0.5">{formatMoney(totalShared)}</p>
                 </div>
                 <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-[#00AFA8]/60 dark:text-[#00BFB7]/60 shrink-0 mt-0.5" />
               </div>
               <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                 <div>
-                  <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Chi cá nhân</p>
+                  <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{t("expenses.personalExpense")}</p>
                   <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(totalPersonal)}</p>
                 </div>
                 <HugeiconsIcon icon={UserIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500 shrink-0 mt-0.5" />
@@ -510,12 +510,12 @@ export function SharedExpensesSection({
               <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                 <div>
                   <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                    {hasGroups ? "Bình quân / nhóm" : "Bình quân / người"}
+                    {hasGroups ? t("expenses.avgPerGroup") : t("expenses.avgPerPerson")}
                   </p>
                   {members.length > 0 ? (
                     <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(hasGroups ? avgPerGroup : avgPerPerson)}</p>
                   ) : (
-                    <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-lg border border-amber-100 dark:border-amber-900/30 mt-1.5 inline-block">Chưa có người đồng hành</span>
+                    <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-lg border border-amber-100 dark:border-amber-900/30 mt-1.5 inline-block">{t("expenses.noCompanion")}</span>
                   )}
                 </div>
                 <HugeiconsIcon icon={CalculatorIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500 shrink-0 mt-0.5" />
@@ -544,9 +544,9 @@ export function SharedExpensesSection({
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400">
               <HugeiconsIcon icon={PieChartIcon} className="h-4 w-4" />
             </span>
-            <h3 className="text-[14px] font-extrabold text-kat-dark dark:text-white">Chi phí theo hạng mục</h3>
+            <h3 className="text-[14px] font-extrabold text-kat-dark dark:text-white">{t("expenses.byCategory")}</h3>
           </div>
-          <BreakdownSection items={categoryBreakdown} total={totalExpense} emptyText="Chưa có khoản chi nào để phân tích." />
+          <BreakdownSection items={categoryBreakdown} total={totalExpense} emptyText={t("expenses.noExpenseAnalysis")} />
         </section>
 
         <section className="rounded-3xl border border-slate-100 dark:border-kat-border/40 bg-kat-surface p-6 shadow-sm">
@@ -554,13 +554,13 @@ export function SharedExpensesSection({
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400">
               <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5" />
             </span>
-            <h3 className="text-[14px] font-extrabold text-kat-dark dark:text-white">Phần cần góp của từng người/nhóm</h3>
+            <h3 className="text-[14px] font-extrabold text-kat-dark dark:text-white">{t("expenses.sharePerMember")}</h3>
           </div>
           {members.length > 0 ? (
-            <BreakdownSection items={exactSharesByMember} total={totalShared} emptyText="Chưa có khoản chi chung để phân tích." />
+            <BreakdownSection items={exactSharesByMember} total={totalShared} emptyText={t("expenses.noSharedAnalysis")} />
           ) : (
             <div className="flex flex-col items-center justify-center py-6 text-center">
-              <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">Thêm người đồng hành để xem phần chi của từng người.</p>
+              <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">{t("expenses.addCompanionShare")}</p>
             </div>
           )}
         </section>
@@ -573,14 +573,14 @@ export function SharedExpensesSection({
         <div className="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-slate-800 pb-3">
           <div className="flex items-center gap-2">
             <HugeiconsIcon icon={ReceiptTextIcon} className="h-5 w-5 text-amber-500" />
-            <h3 className="text-[16px] font-black text-kat-dark dark:text-white">Danh sách khoản chi</h3>
+            <h3 className="text-[16px] font-black text-kat-dark dark:text-white">{t("expenses.expenseList")}</h3>
           </div>
         </div>
         {mergedExpenses.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10 text-center bg-slate-50/35 dark:bg-slate-800/10 border border-dashed border-slate-200/80 dark:border-slate-700/40 my-2">
             <HugeiconsIcon icon={ReceiptTextIcon} className="h-10 w-10 text-slate-350 dark:text-slate-600 mb-2.5 animate-pulse" />
-            <p className="text-[13px] font-bold text-slate-400 dark:text-slate-500">Chưa có khoản chi nào trong danh sách</p>
-            <p className="text-[11.5px] text-slate-400/80 dark:text-slate-500/80 mt-1 max-w-xs px-4">Đề xuất thêm chi phí để chia đều và quyết toán sau chuyến đi.</p>
+            <p className="text-[13px] font-bold text-slate-400 dark:text-slate-500">{t("expenses.noExpenseList")}</p>
+            <p className="text-[11.5px] text-slate-400/80 dark:text-slate-500/80 mt-1 max-w-xs px-4">{t("expenses.sharedSuggest")}</p>
           </div>
         ) : (
           <div className="space-y-2.5 mt-3">
@@ -613,17 +613,17 @@ export function SharedExpensesSection({
                         {/* Pending Request Badges */}
                         {e.isPendingDelete && (
                           <span className="inline-flex items-center rounded-full bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 px-1.5 py-0.5 text-[9.5px] font-bold text-rose-600 dark:text-rose-400 shrink-0 select-none animate-fadeIn">
-                            {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang xóa...' : 'Đề xuất xóa'}
+                            {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? t('expenses.deletingSugg') : t('expenses.suggestDelete')}
                           </span>
                         )}
                         {e.isPendingCreate && (
                           <span className="inline-flex items-center rounded-full bg-sky-50 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 px-1.5 py-0.5 text-[9.5px] font-bold text-sky-600 dark:text-sky-400 shrink-0 select-none animate-fadeIn">
-                            {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
+                            {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? t('expenses.savingNew') : t('expenses.suggestNew')}
                           </span>
                         )}
                         {e.isPendingUpdate && (
                           <span className="inline-flex items-center rounded-full bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 px-1.5 py-0.5 text-[9.5px] font-bold text-amber-600 dark:text-amber-400 shrink-0 select-none animate-fadeIn">
-                            {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
+                            {changeRequests.find(r => String(r.id) === String(e.changeRequestId))?.status === 'auto_approved' ? t('expenses.savingNew') : t('expenses.suggestEdit')}
                           </span>
                         )}
                       </div>
@@ -642,7 +642,7 @@ export function SharedExpensesSection({
                           <>
                             <span className="text-slate-300 dark:text-slate-700">•</span>
                             <span className="truncate max-w-[80px] sm:max-w-[120px]">
-                              Trả bởi: <span className="text-slate-500 dark:text-slate-400 font-extrabold">{e.payer}</span>
+                              {t("expenses.paidBy")} <span className="text-slate-500 dark:text-slate-400 font-extrabold">{e.payer}</span>
                             </span>
                           </>
                         )}
@@ -657,7 +657,7 @@ export function SharedExpensesSection({
                                 ? "bg-indigo-50/50 dark:bg-indigo-950/20 border-indigo-100/60 dark:border-indigo-900/30 text-indigo-600 dark:text-indigo-400"
                                 : "bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-700/50 text-slate-500 dark:text-slate-400"
                             )}>
-                              {e.splitType === "personal" ? "Cá nhân" : e.splitMode === "perGroup" ? "Chi theo nhóm" : "Chi chung"}
+                              {e.splitType === "personal" ? t("expenses.personalLabel") : e.splitMode === "perGroup" ? t("expenses.splitPerGroup") : t("expenses.splitShared")}
                             </span>
                           </>
                         )}
@@ -688,7 +688,7 @@ export function SharedExpensesSection({
                             }
                           }}
                           className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/60 active:scale-90 transition-all focus:outline-none cursor-pointer"
-                          title="Tùy chọn đề xuất"
+                          title={t("expenses.suggestOption")}
                         >
                           <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
                         </button>
@@ -765,7 +765,7 @@ export function SharedExpensesSection({
           {/* Amount Box */}
           <div className="relative flex flex-col items-center justify-center py-4 bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-700">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-[12px] font-bold uppercase tracking-wider text-slate-400">Số tiền</span>
+              <span className="text-[12px] font-bold uppercase tracking-wider text-slate-400">{t("expenses.amount")}</span>
               <div className="relative">
                 <button
                   type="button"
@@ -779,7 +779,7 @@ export function SharedExpensesSection({
                 <BottomSheet
                   isOpen={isCurrencyDropdownOpen}
                   onClose={() => setIsCurrencyDropdownOpen(false)}
-                  title="Chọn ngoại tệ"
+                  title={t("expenses.selectCurrency")}
                 >
                   <div className="space-y-1 max-h-[60vh] overflow-y-auto scrollbar-none pb-2">
                     <button
@@ -795,7 +795,7 @@ export function SharedExpensesSection({
                       }`}
                     >
                       <span className={`text-[15px] ${form.currency === "VND" ? 'font-extrabold' : 'font-semibold'}`}>
-                        VND (Việt Nam Đồng)
+                        {t("expenses.vnd")}
                       </span>
                       {form.currency === "VND" && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
                     </button>
@@ -851,7 +851,7 @@ export function SharedExpensesSection({
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
-                Ngày chi tiêu
+                {t("expenses.dateLabel")}
               </span>
             } 
             value={form.date} 
@@ -863,12 +863,12 @@ export function SharedExpensesSection({
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={ReceiptTextIcon} className="h-4 w-4 text-slate-500" />
-                Nội dung chi tiêu
+                {t("expenses.descLabel")}
               </span>
             } 
             value={form.description} 
             onChange={(description) => setForm({ ...form, description })} 
-            placeholder="VD: Taxi, ăn trưa, vé tham quan..." 
+            placeholder={t("expenses.descPlaceholder")} 
           />
 
           {/* Payer Select */}
@@ -879,7 +879,7 @@ export function SharedExpensesSection({
                   label={
                     <span className="flex items-center gap-1.5">
                       <HugeiconsIcon icon={UserCheck01Icon} className="h-4 w-4 text-slate-500" />
-                      Người thanh toán
+                      {t("expenses.payerLabel")}
                     </span>
                   }
                   value={form.payer}
@@ -888,14 +888,14 @@ export function SharedExpensesSection({
                     if (errors.payer) setErrors({ ...errors, payer: undefined });
                   }}
                   options={["", ...(members || []).map(m => m.name)]}
-                  placeholder="Chọn người trả"
+                  placeholder={t("expenses.payerPlaceholder")}
                   />
                   {errors.payer && <p className="mt-1 text-[12px] font-bold text-rose-500 pl-1">{errors.payer}</p>}
                 </div>
             ) : (
               <div className="rounded-2xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 p-4 text-[13px] text-amber-800 dark:text-amber-400 font-semibold flex gap-2">
                 <HugeiconsIcon icon={InformationCircleIcon} className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
-                <span>Chuyến đi chưa có người đồng hành. Chọn "Cá nhân tự trả" hoặc đề xuất thêm người đồng hành.</span>
+                <span>{t("expenses.noCompanionShared")}</span>
               </div>
             )
           ) : (
@@ -905,13 +905,13 @@ export function SharedExpensesSection({
                   label={
                     <span className="flex items-center gap-1.5">
                       <HugeiconsIcon icon={UserCheck01Icon} className="h-4 w-4 text-slate-500" />
-                      Khoản chi này của ai?
+                      {t("expenses.personalOwner")}
                     </span>
                   }
                   value={form.payer}
                   onChange={(payer) => setForm({ ...form, payer })}
                   options={["", ...members.map((member) => member.name)]}
-                  placeholder="Chọn người đồng hành (không bắt buộc)"
+                  placeholder={t("expenses.personalPlaceholder")}
                 />
               </div>
             )
@@ -926,7 +926,7 @@ export function SharedExpensesSection({
             >
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={PreferenceHorizontalIcon} className="h-4 w-4 text-slate-400" />
-                Chi tiết nâng cao
+                {t("expenses.advanced")}
               </span>
               <HugeiconsIcon icon={ChevronRightIcon} className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
             </button>
@@ -939,7 +939,7 @@ export function SharedExpensesSection({
                     label={
                       <span className="flex items-center gap-1.5">
                         <HugeiconsIcon icon={TagsIcon} className="h-4 w-4 text-slate-500" />
-                        Hạng mục
+                        {t("expenses.categoryLabel")}
                       </span>
                     } 
                     value={form.category} 
@@ -956,7 +956,7 @@ export function SharedExpensesSection({
                         label={
                           <span className="flex items-center gap-1.5">
                             <HugeiconsIcon icon={TagsIcon} className="h-4 w-4 text-slate-500" />
-                            Tên hạng mục tự nhập *
+                            {t("expenses.customCatLabel")}
                           </span>
                         } 
                         value={form.customCategory} 
@@ -964,7 +964,7 @@ export function SharedExpensesSection({
                           setForm({ ...form, customCategory: customCategory.slice(0, 30) });
                           setErrors({ ...errors, customCategory: "" });
                         }} 
-                        placeholder="VD: Quà lưu niệm, Thuê xe máy" 
+                        placeholder={t("expenses.customCatPlaceholder")} 
                       />
                       {errors.customCategory && (
                         <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1">{errors.customCategory}</p>
@@ -976,7 +976,7 @@ export function SharedExpensesSection({
                       label={
                         <span className="flex items-center gap-1.5">
                           <HugeiconsIcon icon={Route01Icon} className="h-4 w-4 text-slate-500" />
-                          Gắn vào lịch trình (Tùy chọn)
+                          {t("expenses.linkTimeline")}
                         </span>
                       }
                       value={form.eventId}
@@ -999,7 +999,7 @@ export function SharedExpensesSection({
                 <div className="space-y-2">
                   <span className="text-[13.5px] font-semibold text-slate-600 flex items-center gap-1.5">
                     <HugeiconsIcon icon={BalanceScaleIcon} className="h-4 w-4 text-slate-500" />
-                    Cách chia khoản chi
+                    {t("expenses.splitMethod")}
                   </span>
                   <div className="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
                     <button
@@ -1015,7 +1015,7 @@ export function SharedExpensesSection({
                           : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                       )}
                     >
-                      Chi chung nhóm
+                      {t("expenses.splitGroupLabel")}
                     </button>
                     <button
                       type="button"
@@ -1030,7 +1030,7 @@ export function SharedExpensesSection({
                           : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                       )}
                     >
-                      Cá nhân tự trả
+                      {t("expenses.personalSelfLabel")}
                     </button>
                   </div>
                   {form.splitType === "shared" && (
@@ -1039,7 +1039,7 @@ export function SharedExpensesSection({
                         <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
                           <div className="flex items-center gap-2">
                             <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">
-                              {!form.splitAmong || form.splitAmong.length === 0 ? "Tất cả mọi người" : `${form.splitAmong.length} người tham gia`}
+                              {!form.splitAmong || form.splitAmong.length === 0 ? t("expenses.allPeople") : t("expenses.nParticipants", { count: form.splitAmong.length })}
                             </span>
                           </div>
                           <button
@@ -1047,14 +1047,14 @@ export function SharedExpensesSection({
                             onClick={() => setShowParticipants(true)}
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 text-[12px] font-bold text-kat-teal border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                           >
-                            Sửa
+                            {t("expenses.edit")}
                           </button>
                         </div>
                       ) : (
                         <div className="p-3 rounded-xl border border-kat-teal/20 bg-teal-50/30 dark:bg-teal-900/10">
                           <div className="flex items-center justify-between mb-3">
                             <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                              Tham gia ({!form.splitAmong || form.splitAmong.length === 0 ? "Tất cả" : `${form.splitAmong.length} người`})
+                              Tham gia ({!form.splitAmong || form.splitAmong.length === 0 ? t("expenses.participateAll") : t("expenses.participateN", { count: form.splitAmong.length })})
                             </span>
                             
                             <div className="flex bg-slate-100 dark:bg-slate-800/80 rounded-lg p-0.5 border border-slate-200 dark:border-slate-700">
@@ -1066,7 +1066,7 @@ export function SharedExpensesSection({
                                   form.splitMode === "perPerson" ? "bg-white dark:bg-slate-600 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                                 )}
                               >
-                                Cá nhân
+                                {t("expenses.perPerson")}
                               </button>
                               <button
                                 type="button"
@@ -1076,7 +1076,7 @@ export function SharedExpensesSection({
                                   form.splitMode === "perGroup" ? "bg-white dark:bg-slate-600 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                                 )}
                               >
-                                Gia đình
+                                {t("expenses.perGroup")}
                               </button>
                             </div>
                           </div>
@@ -1087,7 +1087,7 @@ export function SharedExpensesSection({
                               onClick={() => setShowParticipants(false)}
                               className="text-[12px] font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg transition-colors"
                             >
-                              Đóng
+                              {t("expenses.close")}
                             </button>
                             {(!form.splitAmong || form.splitAmong.length > 0) && (
                               <button
@@ -1095,7 +1095,7 @@ export function SharedExpensesSection({
                                 onClick={() => setForm(f => ({ ...f, splitAmong: [] }))}
                                 className="text-[12px] font-bold text-kat-teal hover:underline"
                               >
-                                Chọn lại tất cả
+                                {t("expenses.reselectAll")}
                               </button>
                             )}
                           </div>
