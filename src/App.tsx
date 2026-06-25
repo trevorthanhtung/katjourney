@@ -777,25 +777,25 @@ function App() {
                   onClick={() => setActiveTab("home")}
                   className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "home" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
                 >
-                  Tổng quan
+                  {t('nav.home')}
                 </button>
                 <button 
                   onClick={() => setActiveTab("timeline")}
                   className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "timeline" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
                 >
-                  Lịch trình
+                  {t('nav.timeline')}
                 </button>
                 <button 
                   onClick={() => setActiveTab("expenses")}
                   className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "expenses" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
                 >
-                  Chi phí
+                  {t('nav.expenses')}
                 </button>
                 <button 
                   onClick={() => setActiveTab("checklist")}
                   className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "checklist" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
                 >
-                  Chuẩn bị
+                  {t('nav.checklist')}
                 </button>
                 <button 
                   onClick={() => {
@@ -804,7 +804,7 @@ function App() {
                   }}
                   className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "more" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
                 >
-                  Thêm
+                  {t('nav.more')}
                 </button>
               </div>
             )}
@@ -836,7 +836,7 @@ function App() {
                   onClick={() => setIsSearchOpen(true)}
                   className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-slate-200 dark:border-kat-border text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
                   title="Tìm trong chuyến đi"
-                  aria-label="Tìm kiếm trong chuyến đi"
+                  aria-label={t("search.placeholder")}
                 >
                   <HugeiconsIcon icon={Search01Icon} className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5" />
                 </button>
@@ -845,8 +845,8 @@ function App() {
                   <button
                     onClick={() => setIsRemindersOpen(!isRemindersOpen)}
                     className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 dark:border-kat-border text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
-                    title="Việc cần chú ý"
-                    aria-label="Xem việc cần chú ý"
+                    title={t("reminders.title")}
+                    aria-label={t("reminders.title")}
                   >
                     {reminders.length > 0 ? (
                       <HugeiconsIcon icon={NotificationBubbleIcon} className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5 text-amber-500 animate-pulse" />
@@ -868,8 +868,8 @@ function App() {
                       <div className="absolute right-0 mt-2.5 z-50 w-[360px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-floating overflow-hidden animate-fadeIn">
                         {/* Popover Header */}
                         <div className="px-5 py-4 border-b border-slate-150/60 dark:border-slate-800/80 bg-white dark:bg-slate-900">
-                          <h4 className="text-[14.5px] font-bold text-kat-dark leading-snug">Việc cần chú ý</h4>
-                          <p className="text-[11.5px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 leading-normal">Các nhắc nhở quan trọng</p>
+                          <h4 className="text-[14.5px] font-bold text-kat-dark leading-snug">{t("reminders.title")}</h4>
+                          <p className="text-[11.5px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 leading-normal">{t("reminders.subtitle")}</p>
                         </div>
                         
                         {/* Popover Content */}
@@ -1304,8 +1304,8 @@ function App() {
         <BottomSheet
           isOpen={isRemindersOpen}
           onClose={() => setIsRemindersOpen(false)}
-          title="Việc cần chú ý"
-          subtitle="Các nhắc nhở quan trọng"
+          title={t("reminders.title")}
+          subtitle={t("reminders.subtitle")}
         >
           <div className="divide-y divide-slate-100 dark:divide-slate-800 -mx-5 -mb-4 mt-1 border-t border-slate-100 dark:border-slate-800/80">
             {renderReminderItems()}

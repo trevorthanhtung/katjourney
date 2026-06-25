@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { CloudRainWindIcon } from "@hugeicons/core-free-icons";
@@ -19,31 +20,33 @@ function getPackingTip(
   destTemp: number,
   myTemp: number,
   destCode: number,
-  myCode: number
+  myCode: number,
+  t: any
 ): { emoji: string; message: string; color: string } | null {
   const diff = destTemp - myTemp;
   const isDestRainy = (destCode >= 51 && destCode <= 67) || (destCode >= 80 && destCode <= 82) || (destCode >= 95 && destCode <= 99);
   const isMyRainy = (myCode >= 51 && myCode <= 67) || (myCode >= 80 && myCode <= 82) || (myCode >= 95 && myCode <= 99);
 
   if (isDestRainy && !isMyRainy) {
-    return { emoji: "🌧️", message: `Điểm đến đang có mưa, đừng quên bỏ ô vào vali nhé!`, color: "bg-sky-50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-900/30 text-sky-800 dark:text-sky-350" };
+    return { emoji: "🌧️", message: t("weather.packingRain"), color: "bg-sky-50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-900/30 text-sky-800 dark:text-sky-350" };
   }
   if (diff <= -7) {
-    return { emoji: "🧥", message: `Điểm đến lạnh hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Nhớ mang áo ấm!`, color: "bg-indigo-50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900/30 text-indigo-800 dark:text-indigo-350" };
+    return { emoji: "🧥", message: t("weather.colder", { diff: Math.abs(Math.round(diff)) }), color: "bg-indigo-50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900/30 text-indigo-800 dark:text-indigo-350" };
   }
   if (diff <= -4) {
-    return { emoji: "🧣", message: `Điểm đến mát hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Mang theo áo khoác mỏng nhé.`, color: "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/30 text-blue-800 dark:text-blue-350" };
+    return { emoji: "🧣", message: t("weather.cooler", { diff: Math.abs(Math.round(diff)) }), color: "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/30 text-blue-800 dark:text-blue-350" };
   }
   if (diff >= 7) {
-    return { emoji: "☀️", message: `Điểm đến nóng hơn nơi bạn ${Math.round(diff)}°C. Chuẩn bị đồ mát và kem chống nắng!`, color: "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/30 text-amber-800 dark:text-amber-350" };
+    return { emoji: "☀️", message: t("weather.hotter", { diff: Math.round(diff) }), color: "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/30 text-amber-800 dark:text-amber-350" };
   }
   if (diff >= 4) {
-    return { emoji: "🕶️", message: `Điểm đến ấm hơn nơi bạn ${Math.round(diff)}°C. Đừng quên kính mát và áo mỏng.`, color: "bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-900/30 text-orange-800 dark:text-orange-350" };
+    return { emoji: "🕶️", message: t("weather.warmer", { diff: Math.round(diff) }), color: "bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-900/30 text-orange-800 dark:text-orange-350" };
   }
   return null;
 }
 
 export function WeatherWidget({ destination, latitude, longitude, days = 3, startDate }: WeatherWidgetProps) {
+  const { t } = useTranslation();
   const today = new Date().toISOString().split("T")[0];
   const isFuture = startDate && startDate > today;
 
@@ -58,7 +61,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
     const myTemp = myForecast.current?.temperature ?? ((myForecast.temperature_2m_max?.[0] ?? 0) + (myForecast.temperature_2m_min?.[0] ?? 0)) / 2;
     const destCode = forecast.current?.weathercode ?? forecast.weathercode?.[0] ?? 0;
     const myCode = myForecast.current?.weathercode ?? myForecast.weathercode?.[0] ?? 0;
-    return getPackingTip(destTemp, myTemp, destCode, myCode);
+    return getPackingTip(destTemp, myTemp, destCode, myCode, t);
   })();
 
   if (!destination?.trim() && !latitude && !longitude) {
@@ -67,8 +70,8 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 dark:bg-sky-950 text-sky-500 mb-1 shadow-sm animate-pulse">
           <HugeiconsIcon icon={CloudRainWindIcon} className="w-5.5 h-5.5" />
         </span>
-        <span className="text-[14px] font-black text-kat-dark">Chưa có điểm đến</span>
-        <span className="text-[11.5px] text-slate-500/80 dark:text-slate-400 font-medium max-w-[220px] leading-relaxed">Hãy thêm điểm đến cho chuyến đi để xem dự báo thời tiết tại đây.</span>
+        <span className="text-[14px] font-black text-kat-dark">{t("weather.noDestinationTitle")}</span>
+        <span className="text-[11.5px] text-slate-500/80 dark:text-slate-400 font-medium max-w-[220px] leading-relaxed">{t("weather.noDestinationDesc")}</span>
       </div>
     );
   }
@@ -84,10 +87,10 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
         <HugeiconsIcon icon={CloudRainWindIcon} className="w-6 h-6 mb-0.5 text-slate-300 dark:text-slate-500" />
         {daysUntil > 0 ? (
           <span className="text-[12.5px] font-bold text-slate-400">
-            Dự báo chưa có sẵn — còn {daysUntil} ngày nữa mới đến chuyến đi. Open-Meteo chỉ cung cấp tối đa 16 ngày tới.
+            {t("weather.forecastNotAvailable", { daysUntil })}
           </span>
         ) : (
-          <span className="text-[12.5px] font-bold text-slate-400">Địa điểm không có dữ liệu để cập nhật thời tiết</span>
+          <span className="text-[12.5px] font-bold text-slate-400">{t("weather.noData")}</span>
         )}
       </div>
     );
@@ -96,7 +99,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
   if (loading) {
     return (
       <div className="w-full h-24 mb-6 rounded-2xl bg-sky-50/50 dark:bg-sky-950/20 border border-sky-100/50 dark:border-sky-900/30 animate-pulse flex items-center justify-center">
-        <span className="text-sky-400 dark:text-sky-300 text-[13px] font-bold">Đang tải thời tiết...</span>
+        <span className="text-sky-400 dark:text-sky-300 text-[13px] font-bold">{t("weather.loading")}</span>
       </div>
     );
   }
@@ -126,10 +129,10 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/10 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400">
                 <HugeiconsIcon icon={CloudRainWindIcon} className="h-4 w-4" />
               </span>
-              <h4 className="text-[15px] font-extrabold text-kat-dark">Dự báo thời tiết</h4>
+              <h4 className="text-[15px] font-extrabold text-kat-dark">{t("weather.weatherForecast")}</h4>
             </div>
             <span className="text-[10.5px] font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 dark:bg-sky-400/10 px-2.5 py-1 rounded-lg uppercase tracking-wider">
-              {days} ngày
+              {t("weather.days", { days })}
             </span>
           </button>
 
@@ -169,7 +172,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
                   className="flex items-center justify-between py-3 last:pb-0 first:pt-0 group text-left w-full hover:bg-sky-50/30 dark:hover:bg-sky-950/20 transition-colors rounded-xl px-1 -mx-1"
                 >
                   <span className="w-16 text-[13.5px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors shrink-0">
-                    {idx === 0 && !isFuture ? "Hôm nay" : dayStr}
+                    {idx === 0 && !isFuture ? t("weather.today") : dayStr}
                   </span>
                   
                   <div className="w-8 flex items-center justify-center shrink-0">
@@ -190,7 +193,7 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
                         <div
                           className="absolute w-3 h-3 bg-white border-2 border-sky-500 rounded-full shadow-md -top-[3px] transition-all"
                           style={{ left: `calc(${currentTempDotPercent}% - 6px)` }}
-                          title={`Hiện tại: ${Math.round(currentTemp!)}°`}
+                          title={t("weather.currentTemp", { temp: Math.round(currentTemp!) })}
                         />
                       )}
                     </div>

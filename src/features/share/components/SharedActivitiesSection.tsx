@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Route01Icon,
@@ -72,6 +73,8 @@ export function SharedActivitiesSection({
   backupPlans?: BackupPlan[];
   trip?: Trip;
 }) {
+  const { t } = useTranslation();
+
   const tripDays = React.useMemo(() => {
     if (!trip?.startDate || !trip?.endDate) return [];
     return daysBetween(trip.startDate, trip.endDate);
@@ -259,7 +262,7 @@ export function SharedActivitiesSection({
 
   async function handleSave() {
     if (!form.title.trim() || !form.date) {
-      showToast('Vui lòng nhập tên hoạt động và chọn ngày.', 'error');
+      showToast(t("toast.activityRequireName"), 'error');
       return;
     }
     
@@ -298,7 +301,7 @@ export function SharedActivitiesSection({
       }
     } catch (e: any) {
       console.error(e);
-      showToast((isDirectEdit ? 'Lỗi cập nhật: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error');
+      showToast(isDirectEdit ? t("toast.updateError", { message: e.message }) : t("toast.submitRequestError", { message: e.message }), 'error');
     }
   }
 
@@ -317,9 +320,9 @@ export function SharedActivitiesSection({
         status: isDirectEdit ? 'auto_approved' : undefined,
         requesterName: guestName
       });
-      showToast(isDirectEdit ? 'Đã xóa trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+      showToast(isDirectEdit ? t("toast.directDelete") : t("toast.requestSent"));
     } catch (e: any) {
-      showToast((isDirectEdit ? 'Lỗi xóa: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error');
+      showToast(isDirectEdit ? t("toast.deleteError", { message: e.message }) : t("toast.submitRequestError", { message: e.message }), 'error');
     }
   }
 

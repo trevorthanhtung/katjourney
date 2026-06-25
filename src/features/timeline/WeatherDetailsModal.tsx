@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
@@ -26,6 +27,7 @@ interface WeatherDetailsModalProps {
 }
 
 export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, currentLocationForecast, currentLocationName }: WeatherDetailsModalProps) {
+  const { t } = useTranslation();
   useBodyScrollLock(isOpen);
   const [shouldRender, setShouldRender] = useState(isOpen);
   const [animate, setAnimate] = useState(false);
@@ -71,8 +73,8 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
     function getTravelRecommendation(code: number) {
       if (code === 0 || code === 1) {
         return {
-          title: "Thời tiết lý tưởng cho hoạt động ngoài trời",
-          desc: "Trời nắng đẹp và quang đãng. Rất thích hợp để đi tắm biển, leo núi, cắm trại hoặc chụp ảnh ngoài trời. Đừng quên bôi kem chống nắng và mang kính râm nhé!",
+          title: t("weather.outdoorIdealTitle"),
+          desc: t("weather.outdoorIdealDesc"),
           icon: <SunIcon className="w-7 h-7" />,
           bg: "bg-amber-500/10 border-amber-500/20 text-amber-900 dark:text-amber-400",
           badgeBg: "bg-amber-500/20 text-amber-800 dark:text-amber-400"
@@ -80,8 +82,8 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
       }
       if (code === 2 || code === 3) {
         return {
-          title: "Thời tiết dịu mát, thuận tiện di chuyển",
-          desc: "Trời nhiều mây mát mẽ, không quá nắng gắt. Rất thích hợp để đi bộ dạo phố cổ, đi chợ đêm hoặc tham quan danh lam thắng cảnh mà không lo bị kiệt sức.",
+          title: t("weather.coolPleasantTitle"),
+          desc: t("weather.coolPleasantDesc"),
           icon: <PartlyCloudyIcon className="w-7 h-7" />,
           bg: "bg-sky-500/10 border-sky-500/20 text-sky-900 dark:text-sky-400",
           badgeBg: "bg-sky-500/20 text-sky-800 dark:text-sky-400"
@@ -89,8 +91,8 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
       }
       if (code === 45 || code === 48) {
         return {
-          title: "Sương mù mờ ảo, chú ý đường đèo dốc",
-          desc: "Không khí lạnh có sương mù đẹp mộng mơ. Thích hợp đi quán cà phê lãng mạn, ăn lẩu nóng. Nếu tự lái xe hoặc đi phượt bằng xe máy, hãy bật đèn cảnh báo và đi chậm.",
+          title: t("weather.foggyTitle"),
+          desc: t("weather.foggyDesc"),
           icon: <FogIcon className="w-7 h-7" />,
           bg: "bg-slate-500/10 border-slate-500/20 text-slate-900 dark:text-slate-300",
           badgeBg: "bg-slate-500/20 text-slate-800 dark:text-slate-400"
@@ -98,8 +100,8 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
       }
       if (isRainy) {
         return {
-          title: "Có mưa rào, hãy chuyển hướng vui chơi trong nhà",
-          desc: "Trời ẩm ướt và có mưa. Bạn nên ưu tiên đi bảo tàng, khu vui chơi trong nhà, thủy cung, ghé các quán cà phê hoặc tự tay làm quà lưu niệm.",
+          title: t("weather.rainyTitle"),
+          desc: t("weather.rainyDesc"),
           icon: <RainIcon className="w-7 h-7" />,
           bg: "bg-blue-500/10 border-blue-500/20 text-blue-900 dark:text-blue-300",
           badgeBg: "bg-blue-500/20 text-blue-800 dark:text-blue-400"
@@ -107,16 +109,16 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
       }
       if (isStormy) {
         return {
-          title: "Dông bão nguy hiểm, nên nghỉ ngơi tại phòng",
-          desc: "Thời tiết xấu kèm theo sấm sét nguy hiểm. Tránh tuyệt đối đi thuyền, bơi biển hoặc đi rừng. Hãy mua đồ ăn về phòng cùng chơi board game hoặc xem phim thư giãn nhé.",
+          title: t("weather.stormTitle"),
+          desc: t("weather.stormDesc"),
           icon: <ThunderstormIcon className="w-7 h-7" />,
           bg: "bg-indigo-500/10 border-indigo-500/20 text-indigo-900 dark:text-indigo-300",
           badgeBg: "bg-indigo-500/20 text-indigo-800 dark:text-indigo-400"
         };
       }
       return {
-        title: "Thời tiết thích hợp cho kỳ nghỉ",
-        desc: "Điều kiện thời tiết bình thường. Hãy theo dõi các khung giờ trong ngày để lên lịch trình đi chơi hợp lý nhất.",
+        title: t("weather.normalTitle"),
+        desc: t("weather.normalDesc"),
         icon: <ThermometerIcon className="w-7 h-7" />,
         bg: "bg-teal-500/10 border-teal-500/20 text-teal-900 dark:text-teal-300",
         badgeBg: "bg-teal-500/20 text-teal-800 dark:text-teal-400"
@@ -127,11 +129,11 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
 
     // Get UV Index Rating Text
     function getUvRating(uv: number) {
-      if (uv <= 2) return { text: "Thấp", color: "text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30" };
-      if (uv <= 5) return { text: "Trung bình", color: "text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900/30" };
+      if (uv <= 2) return { text: t("weather.uvLow"), color: "text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30" };
+      if (uv <= 5) return { text: t("weather.uvMedium"), color: "text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900/30" };
       if (uv <= 7) return { text: "Cao", color: "text-orange-600 bg-orange-50 dark:text-orange-400 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/30" };
-      if (uv <= 10) return { text: "Rất cao", color: "text-rose-600 bg-rose-50 dark:text-rose-400 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30" };
-      return { text: "Cực độ", color: "text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-950/20 border-purple-100 dark:border-purple-900/30 animate-pulse" };
+      if (uv <= 10) return { text: t("weather.uvVeryHigh"), color: "text-rose-600 bg-rose-50 dark:text-rose-400 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30" };
+      return { text: t("weather.uvExtreme"), color: "text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-950/20 border-purple-100 dark:border-purple-900/30 animate-pulse" };
     }
 
     const uvRating = getUvRating(uvIndex);
@@ -266,7 +268,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
 
             {/* Location details */}
             <div className="relative z-10 text-left drop-shadow-md">
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-white/70">Thời tiết hiện tại</span>
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-white/70">{t("weather.currentWeather")}</span>
               <h3 className="text-xl md:text-2xl font-black text-white line-clamp-1">{destination}</h3>
               
               <div className="flex items-end justify-between mt-2">
@@ -279,9 +281,9 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
                 </div>
                 
                 <div className="text-right text-[12.5px] font-bold text-white/90">
-                  <span>Cao: {maxTemp}°</span>
+                  <span>{t("weather.high")}: {maxTemp}°</span>
                   <span className="mx-1.5 opacity-60">|</span>
-                  <span>Thấp: {minTemp}°</span>
+                  <span>{t("weather.low")}: {minTemp}°</span>
                 </div>
               </div>
             </div>
@@ -308,16 +310,16 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
               const myHumidity = currentLocationForecast.current?.humidity ?? null;
               const myWind = currentLocationForecast.current?.windspeed ?? null;
               const diff = currentTemp - myTemp;
-              const diffLabel = diff === 0 ? "Giống nơi bạn" : diff > 0 ? `+${Math.round(diff)}°C so với nơi bạn` : `${Math.round(diff)}°C so với nơi bạn`;
+              const diffLabel = diff === 0 ? t("weather.sameTemp") : diff > 0 ? t("weather.tempDiffPositive", { diff: Math.round(diff) }) : t("weather.tempDiffNegative", { diff: Math.round(diff) });
               const diffColor = diff >= 4 ? "text-amber-600 dark:text-amber-400" : diff <= -4 ? "text-sky-600 dark:text-sky-400" : "text-slate-500 dark:text-slate-400";
               return (
                 <div className="space-y-2.5">
-                  <h4 className="text-[13.5px] font-extrabold text-kat-dark text-left px-0.5">So sánh với nơi bạn đang ở</h4>
+                  <h4 className="text-[13.5px] font-extrabold text-kat-dark text-left px-0.5">{t("weather.compareLocation")}</h4>
                   <div className="bg-white/60 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50 rounded-2xl p-4 shadow-inner">
                     <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
                       {/* Current location column */}
                       <div className="flex flex-col items-center gap-1.5 text-center">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 line-clamp-1 max-w-full">{currentLocationName ?? "Nơi bạn ở"}</span>
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 line-clamp-1 max-w-full">{currentLocationName ?? t("weather.yourLocation")}</span>
                         <div className="flex items-center justify-center h-8">
                           {getWeatherIcon(myCode, "w-7 h-7 drop-shadow-sm")}
                         </div>
@@ -372,7 +374,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
             {/* Hourly 24-Hour Forecast */}
             {forecast.hourly && (
               <div className="space-y-2.5">
-                <h4 className="text-[13.5px] font-extrabold text-kat-dark text-left px-0.5">Dự báo 24 giờ tới</h4>
+                <h4 className="text-[13.5px] font-extrabold text-kat-dark text-left px-0.5">{t("weather.forecast24h")}</h4>
                 
                 <div className="flex overflow-x-auto gap-3.5 pb-2 pt-1 px-0.5 custom-scrollbar">
                   {forecast.hourly.time?.map((timeStr, idx) => {
@@ -387,7 +389,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
                         className="shrink-0 w-[64px] rounded-2xl bg-white/70 dark:bg-slate-800/40 hover:bg-white dark:hover:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/50 py-3.5 flex flex-col items-center gap-2 shadow-[0_4px_12px_rgba(3,13,46,0.02)] transition-all duration-300"
                       >
                         <span className="text-[11.5px] font-bold text-slate-500 dark:text-slate-400">
-                          {idx === 0 ? "Bây giờ" : `${hour}:00`}
+                          {idx === 0 ? t("weather.now") : `${hour}:00`}
                         </span>
                         
                         <div className="relative h-7 flex items-center justify-center">
@@ -411,19 +413,19 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
 
             {/* Weather Parameters Grid */}
             <div className="space-y-2.5">
-              <h4 className="text-[13.5px] font-extrabold text-kat-dark text-left px-0.5">Chỉ số thời tiết chi tiết</h4>
+              <h4 className="text-[13.5px] font-extrabold text-kat-dark text-left px-0.5">{t("weather.detailedIndex")}</h4>
               
               <div className="grid grid-cols-2 gap-3.5">
                 {/* Feel Temp Card */}
                 <div className="bg-white/60 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50 rounded-2xl p-4 flex flex-col text-left justify-between h-24 shadow-inner">
                   <div className="flex items-center justify-between text-slate-400 dark:text-slate-500">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wide">Cảm giác thực tế</span>
+                    <span className="text-[11px] font-extrabold uppercase tracking-wide">{t("weather.feelsLike")}</span>
                     <ThermometerIcon className="w-5 h-5 text-rose-500" />
                   </div>
                   <div className="flex flex-col justify-end mt-auto min-h-0">
                     <span className="text-2xl font-black text-kat-dark leading-none">{apparentTemp}°</span>
                     <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
-                      {apparentTemp === currentTemp ? "Bằng nhiệt độ thực" : apparentTemp > currentTemp ? "Nóng hơn thực tế" : "Mát hơn thực tế"}
+                      {apparentTemp === currentTemp ? t("weather.sameAsActual") : apparentTemp > currentTemp ? t("weather.hotterThanActual") : t("weather.coolerThanActual")}
                     </span>
                   </div>
                 </div>
@@ -431,7 +433,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
                 {/* Humidity Card */}
                 <div className="bg-white/60 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50 rounded-2xl p-4 flex flex-col text-left justify-between h-24 shadow-inner">
                   <div className="flex items-center justify-between text-slate-400 dark:text-slate-500">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wide">Độ ẩm</span>
+                    <span className="text-[11px] font-extrabold uppercase tracking-wide">{t("weather.humidity")}</span>
                     <HumidityIcon className="w-5 h-5 text-sky-500" />
                   </div>
                   <div className="flex flex-col mt-auto">
@@ -448,7 +450,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
                 {/* Wind speed Card */}
                 <div className="bg-white/60 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50 rounded-2xl p-4 flex flex-col text-left justify-between h-24 shadow-inner">
                   <div className="flex items-center justify-between text-slate-400 dark:text-slate-500">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wide">Tốc độ gió</span>
+                    <span className="text-[11px] font-extrabold uppercase tracking-wide">{t("weather.windSpeed")}</span>
                     <WindIcon className="w-5 h-5 text-slate-400" />
                   </div>
                   <div className="flex items-baseline gap-1 mt-auto">
@@ -460,7 +462,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
                 {/* UV index Card */}
                 <div className="bg-white/60 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50 rounded-2xl p-4 flex flex-col text-left justify-between h-24 shadow-inner">
                   <div className="flex items-center justify-between text-slate-400 dark:text-slate-500">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wide">Chỉ số UV</span>
+                    <span className="text-[11px] font-extrabold uppercase tracking-wide">{t("weather.uvIndex")}</span>
                     <SunIcon className="w-5 h-5 text-amber-500" />
                   </div>
                   <div className="flex flex-col mt-auto">
@@ -489,7 +491,7 @@ export function WeatherDetailsModal({ isOpen, onClose, destination, forecast, cu
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">Lỗi hiển thị thời tiết</h3>
+          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">{t("weather.weatherErrorTitle")}</h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{err.message}</p>
           <button 
             onClick={onClose}

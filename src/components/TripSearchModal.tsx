@@ -15,6 +15,7 @@ import {
   GitBranchIcon
 } from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useTranslation } from "react-i18next";
 import { db, EventItem, Expense, ChecklistItem, JournalEntry, Member, TravelDocument } from "../db";
 import { normalizeSearchText, formatDate, formatMoney } from "../utils/helpers";
 
@@ -33,6 +34,7 @@ export function TripSearchModal({
   onNavigateTab, 
   onNavigateMore 
 }: SearchModalProps) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -122,7 +124,7 @@ export function TripSearchModal({
             ref={inputRef}
             type="text"
             className="flex-1 text-[16px] font-bold text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 outline-none border-none bg-transparent"
-            placeholder="Tìm kiếm trong chuyến đi..."
+            placeholder={t("search.placeholder")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -138,7 +140,7 @@ export function TripSearchModal({
             onClick={onClose}
             className="text-[13.5px] font-black text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 bg-slate-100 dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700/50 px-3 py-1.5 rounded-full shrink-0 motion-press"
           >
-            Đóng
+            {t("search.close")}
           </button>
         </div>
 
@@ -149,8 +151,8 @@ export function TripSearchModal({
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 mb-3">
                 <HugeiconsIcon icon={Search01Icon} className="h-6 w-6" />
               </div>
-              <p className="text-[14px] font-extrabold text-slate-600 dark:text-slate-300">Nhập từ khóa để bắt đầu tìm kiếm</p>
-              <p className="text-[12.5px] font-semibold text-slate-400 dark:text-slate-500 max-w-[280px] mt-1">Tìm kiếm mọi ghi chép, kế hoạch, giấy tờ đã lưu trữ trong chuyến đi này.</p>
+              <p className="text-[14px] font-extrabold text-slate-600 dark:text-slate-300">{t("search.emptyTitle")}</p>
+              <p className="text-[12.5px] font-semibold text-slate-400 dark:text-slate-500 max-w-[280px] mt-1">{t("search.emptySubtitle")}</p>
             </div>
           ) : totalResults === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">

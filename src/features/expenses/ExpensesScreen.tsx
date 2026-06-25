@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Add01Icon,
@@ -846,6 +847,7 @@ export function ExpensesScreen({
   onClearInitialAddState?: () => void;
   isReadOnly?: boolean;
 }) {
+  const { t } = useTranslation();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
@@ -909,7 +911,7 @@ export function ExpensesScreen({
     if (!expenseToDelete?.id) return;
     await db.expenses.update(expenseToDelete.id, { isDeleted: true });
     setExpenseToDelete(null);
-    showToast("Đã xóa khoản chi");
+    showToast(t("toast.expenseDeleted"));
   };
 
   const isEmpty = expenses.length === 0;

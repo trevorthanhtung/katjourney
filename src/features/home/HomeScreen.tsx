@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   UserGroupIcon,
@@ -73,6 +74,7 @@ export function HomeScreen({
   onOpenInbox?: () => void;
   isReadOnly?: boolean;
 }) {
+  const { t } = useTranslation();
   const journals = useLiveQuery(async () => (await db.journals.where("tripId").equals(trip.id!).toArray()).filter(j => !j.isDeleted), [trip.id]) ?? [];
   const packingItems = useLiveQuery(async () => (await db.packingItems.where("tripId").equals(trip.id!).toArray()).filter(p => !p.isDeleted), [trip.id]) ?? [];
   const backupPlans = useLiveQuery(async () => (await db.backupPlans.where("tripId").equals(trip.id!).toArray()).filter(b => !b.isDeleted), [trip.id]) ?? [];
@@ -103,9 +105,9 @@ export function HomeScreen({
       const diffTime = Math.abs(end.getTime() - start.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
       const diffNights = diffDays > 1 ? diffDays - 1 : 0;
-      durationText = `${diffDays} ngày ${diffNights} đêm`;
+      durationText = t("home.duration", { days: diffDays, nights: diffNights });
     } catch {
-      durationText = "Dài ngày";
+      durationText = t("home.longTrip");
     }
   }
 
@@ -115,7 +117,7 @@ export function HomeScreen({
   // Reusable helper to render visual Avatar Group + concise description for companions
   const renderCompanions = () => {
     if (members.length === 0) {
-      return <span className="font-semibold text-slate-400">Chưa có thành viên</span>;
+      return <span className="font-semibold text-slate-400 dark:text-white/50">{t("home.noMembers")}</span>;
     }
     
     // First member's first name
@@ -124,7 +126,7 @@ export function HomeScreen({
     if (members.length === 1) {
       text = firstMemberName;
     } else {
-      text = `${firstMemberName} và ${members.length - 1} người khác`;
+      text = t("home.andOthers", { name: firstMemberName, count: members.length - 1 });
     }
 
     // Get first 3 members for avatars
@@ -148,7 +150,7 @@ export function HomeScreen({
             return (
               <div 
                 key={member.id || i} 
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-white overflow-hidden bg-slate-50 shadow-sm"
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-white dark:border-[#1E293B] overflow-hidden bg-slate-50 shadow-sm"
                 title={member.name}
               >
                 {member.avatar ? (
@@ -162,27 +164,27 @@ export function HomeScreen({
             );
           })}
           {remainingCount > 0 && (
-            <div className="inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-slate-100 text-[11px] font-extrabold text-slate-600">
+            <div className="inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-white dark:border-[#1E293B] bg-slate-100 dark:bg-white/10 text-[11px] font-extrabold text-slate-600 dark:text-white/90 backdrop-blur-md">
               +{remainingCount}
             </div>
           )}
         </div>
-        <span className="text-[14.5px] font-semibold text-slate-800">{text}</span>
+        <span className="text-[14.5px] font-semibold text-slate-700 dark:text-slate-300">{text}</span>
       </div>
     );
   };
 
   // 1. Hero rendering helper
   const renderHero = () => {
-    let badge = "Sắp diễn ra";
-    let statusLabel = "Đếm ngược";
+    let badge = t("home.upcoming");
+    let statusLabel = t("home.countdown");
     let statusValue = timing.label;
     let isPast = false;
 
     if (status === "active") {
-      badge = "Đang diễn ra";
+      badge = t("home.ongoing");
     } else if (status === "past") {
-      badge = "Đã kết thúc";
+      badge = t("home.ended");
     }
 
     const currentCode = forecast?.current?.weathercode;
@@ -226,7 +228,7 @@ export function HomeScreen({
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-5">
           <div className="space-y-3 min-w-0 flex-1">
             <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-md">
-              ● {status === "past" ? "Đã kết thúc" : status === "active" ? "Đang diễn ra" : "Sắp diễn ra"}
+              ● {status === "past" ? t("home.ended") : status === "active" ? t("home.ongoing") : t("home.upcoming")}
             </span>
             <h2 className="text-[24px] sm:text-[26px] font-black leading-tight tracking-tight drop-shadow-sm">
               {trip.title}
@@ -234,7 +236,7 @@ export function HomeScreen({
             <div className="flex flex-wrap gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[12px] font-medium border border-white/10 text-white/90">
                 <HugeiconsIcon icon={Location01Icon} size={13} className="text-white/70" />
-                {trip.location || "Đang lên kế hoạch"}
+                {trip.location || t("home.planning")}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[12px] font-medium border border-white/10 text-white/90">
                 <HugeiconsIcon icon={Calendar01Icon} size={13} className="text-white/70" />
@@ -257,9 +259,9 @@ export function HomeScreen({
             {/* Timing box with Progress Bar */}
             <div className="flex flex-col items-stretch justify-center rounded-2xl bg-white/10 px-4 py-3 border border-white/20 flex-1 lg:flex-none lg:w-full text-center shrink-0 min-h-[64px]">
               <p className="text-[10px] font-semibold text-white/60 text-center">
-                {status === "past" ? "Trạng thái" : "Hành trình"}
+                {status === "past" ? t("home.status") : t("home.journey")}
               </p>
-              <p className="mt-1 text-[17px] sm:text-[19px] font-black text-white drop-shadow-sm tracking-tight leading-none text-center">
+              <p className="mt-1 text-[17px] sm:text-[19px] font-black text-white drop-shadow-sm tracking-tight leading-tight pb-[2px] text-center">
                 {timing.label}
               </p>
               {status === "active" && (() => {
@@ -277,9 +279,9 @@ export function HomeScreen({
                 return (
                   <div className="mt-2.5 w-full space-y-1 text-left z-10">
                     <div className="flex items-center justify-between text-[8px] font-bold text-white/70">
-                      <span>Khởi hành</span>
-                      <span>Đang đi</span>
-                      <span>Kết thúc</span>
+                      <span>{t("home.depart")}</span>
+                      <span>{t("home.traveling")}</span>
+                      <span>{t("home.end")}</span>
                     </div>
                     <div className="relative h-1.5 w-full rounded-full bg-white/15 overflow-hidden border border-white/10">
                       <div 
@@ -296,7 +298,7 @@ export function HomeScreen({
                       </div>
                     </div>
                     <p className="text-[8.5px] text-right text-white/50 font-semibold leading-none">
-                      Đã hoàn thành {Math.round(progressPercent)}%
+                      {t("home.completedPercent", { percent: Math.round(progressPercent) })}
                     </p>
                   </div>
                 );
@@ -336,16 +338,16 @@ export function HomeScreen({
                <div className="flex items-center gap-2.5 bg-white/5 backdrop-blur-md rounded-3xl p-3 border border-white/10 flex-1 lg:flex-none lg:w-full">
                  <HugeiconsIcon icon={Location01Icon} className="w-5 h-5 text-white/40 shrink-0" />
                  <div className="flex flex-col gap-0.5 min-w-0">
-                   <span className="text-white/80 font-bold text-[11px]">Chưa có điểm đến</span>
-                   <span className="text-white/50 text-[10px]">Thêm điểm đến để xem thời tiết</span>
+                   <span className="text-white/80 font-bold text-[11px]">{t("home.noDestination")}</span>
+                   <span className="text-white/50 text-[10px]">{t("home.addDestinationWeather")}</span>
                  </div>
                </div>
             ) : (!trip.latitude || !trip.longitude) ? null : weatherError || !forecast ? (
                <div className="flex items-center gap-2.5 bg-red-500/20 backdrop-blur-md rounded-3xl p-3 border border-red-500/30 flex-1 lg:flex-none lg:w-full">
                  <HugeiconsIcon icon={CloudRainWindIcon} className="w-5 h-5 text-white/60 shrink-0" />
                  <div className="flex flex-col gap-1">
-                   <span className="text-white font-bold text-[11px]">Không thể tải thời tiết</span>
-                   <span className="text-white/70 text-[10px]">Lỗi kết nối</span>
+                   <span className="text-white font-bold text-[11px]">{t("home.weatherError")}</span>
+                   <span className="text-white/70 text-[10px]">{t("home.connectionError")}</span>
                  </div>
                </div>
             ) : (
@@ -354,27 +356,27 @@ export function HomeScreen({
                 className="flex flex-col items-stretch justify-center bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-3 gap-2 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
               >
                 {/* Weather Info Block */}
-                <div className="flex items-center justify-between gap-2 w-full">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-3xl min-[360px]:text-4xl font-black text-white drop-shadow-sm tracking-tighter">
+                <div className="flex items-center justify-between gap-2 w-full min-w-0">
+                  <div className="flex items-center gap-1.5 min-w-0 shrink">
+                    <span className="text-3xl min-[360px]:text-4xl font-black text-white drop-shadow-sm tracking-tighter shrink-0">
                       {Math.round(forecast.current?.temperature || 20)}°
                     </span>
-                    <div className="flex flex-col ml-1 flex-shrink-0">
-                      <span className="mb-[-4px] flex items-center justify-center h-8">
+                    <div className="flex flex-col ml-1 min-w-0 shrink">
+                      <span className="mb-[-4px] flex items-center justify-center h-8 shrink-0">
                         {getWeatherIcon(forecast.current?.weathercode || 0, "w-7 h-7 drop-shadow-md")}
                       </span>
-                      <span className="text-[10.5px] min-[360px]:text-[11.5px] font-extrabold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
+                      <span className="text-[10px] min-[360px]:text-[11px] font-extrabold text-white/95 uppercase tracking-normal mt-1 drop-shadow-sm truncate text-center">
                         {getWeatherText(forecast.current?.weathercode || 0)}
                       </span>
                     </div>
                   </div>
                   <div className="w-px h-10 bg-white/30 mx-0.5 shrink-0" />
-                  <div className="flex flex-col text-right whitespace-nowrap">
+                  <div className="flex flex-col text-right whitespace-nowrap shrink-0">
                     <span className="text-[11px] min-[360px]:text-[11.5px] font-extrabold text-white/95">
-                      Cao: {Math.round(forecast.temperature_2m_max[0])}°
+                      {t("weather.high")}: {Math.round(forecast.temperature_2m_max[0])}°
                     </span>
                     <span className="text-[11px] min-[360px]:text-[11.5px] font-bold text-white/70">
-                      Thấp: {Math.round(forecast.temperature_2m_min[0])}°
+                      {t("weather.low")}: {Math.round(forecast.temperature_2m_min[0])}°
                     </span>
                   </div>
                 </div>
@@ -406,7 +408,7 @@ export function HomeScreen({
       <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-start space-y-4 lg:space-y-0">
         {/* Left Column: Nhìn lại chuyến đi */}
         <section className="space-y-4">
-          <h3 className="text-[17px] font-extrabold text-kat-dark px-1 motion-title-enter">Nhìn lại chuyến đi</h3>
+          <h3 className="text-[17px] font-extrabold text-kat-dark px-1 motion-title-enter">{t("home.lookBackTrip")}</h3>
           
           <div className="space-y-3">
             {/* Tổng kết card — hero card, full width, accent bg */}
@@ -415,8 +417,8 @@ export function HomeScreen({
                 <HugeiconsIcon icon={Award01Icon} className="h-28 w-28 -mr-4 -mb-4" />
               </div>
               <div className="relative z-10">
-                <p className="text-[11px] font-bold text-amber-100/80 uppercase tracking-wider mb-1">Kỷ niệm</p>
-                <h4 className="text-[17px] font-black text-white leading-snug">Tổng kết chuyến đi</h4>
+                <p className="text-[11px] font-bold text-amber-100/80 uppercase tracking-wider mb-1">{t("home.memories")}</p>
+                <h4 className="text-[17px] font-black text-white leading-snug">{t("home.tripSummary")}</h4>
                 <p className="text-[12.5px] font-medium text-amber-100/90 mt-1.5 leading-relaxed">
                   Xem lại chi phí, hoạt động và những dấu ấn đáng nhớ.
                 </p>
@@ -435,9 +437,9 @@ export function HomeScreen({
                 <HugeiconsIcon icon={BookOpen01Icon} className="h-5.5 w-5.5" />
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-[14px] font-extrabold text-kat-dark">Bản tin chuyến đi</h4>
+                <h4 className="text-[14px] font-extrabold text-kat-dark">{t("home.tripJournal")}</h4>
                 <p className="text-[12.5px] text-slate-400 dark:text-slate-400 font-medium mt-0.5">
-                  {journals.length > 0 ? `${journals.length} bài viết` : "Chưa có bài nào"}
+                  {journals.length > 0 ? t("home.journalCount", { count: journals.length }) : t("home.noArticles")}
                 </p>
               </div>
               {!isReadOnly && (
@@ -456,7 +458,7 @@ export function HomeScreen({
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                   <HugeiconsIcon icon={FileDownloadIcon} className="h-4.5 w-4.5" />
                 </div>
-                <h4 className="text-[14px] font-extrabold text-kat-dark">Xuất báo cáo</h4>
+                <h4 className="text-[14px] font-extrabold text-kat-dark">{t("home.exportReport")}</h4>
               </div>
               <div className="flex gap-2.5">
                 <button
@@ -484,7 +486,7 @@ export function HomeScreen({
 
         {/* Right Column: Tổng quan hành trình */}
         <section className="space-y-4">
-          <h3 className="text-[17px] font-extrabold text-kat-dark px-1 motion-title-enter">Tổng quan hành trình</h3>
+          <h3 className="text-[17px] font-extrabold text-kat-dark px-1 motion-title-enter">{t("home.tripOverview")}</h3>
           
           <div className="rounded-3xl bg-white dark:bg-kat-surface p-6 shadow-sm border border-slate-100 dark:border-kat-border motion-card-enter motion-delay-2">
             <ul className="space-y-6">
@@ -493,7 +495,7 @@ export function HomeScreen({
                   <HugeiconsIcon icon={UserGroupIcon} size={20} />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
+                  <p className="text-[13px] font-semibold text-kat-muted">{t("home.members")}</p>
                   <div className="mt-1.5">
                     {renderCompanions()}
                   </div>
@@ -505,14 +507,14 @@ export function HomeScreen({
                   <HugeiconsIcon icon={Calendar01Icon} size={20} />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">Lịch trình đã ghi</p>
+                  <p className="text-[13px] font-semibold text-kat-muted">{t("home.recordedSchedule")}</p>
                   {events.length > 0 ? (
                     <p className="mt-0.5 text-[15px] font-extrabold text-kat-dark">
-                      {events.length} hoạt động đã được ghi lại
+                      {t("home.recordedEvents", { count: events.length })}
                     </p>
                   ) : (
                     <div>
-                      <p className="mt-0.5 text-[14px] font-semibold text-slate-400 dark:text-slate-500">Chưa có lịch trình được ghi lại</p>
+                      <p className="mt-0.5 text-[14px] font-semibold text-slate-400 dark:text-slate-500">{t("home.noScheduleRecorded")}</p>
                       {!isReadOnly && (
                         <button 
                           onClick={() => onNavigateTab("timeline")}
@@ -531,11 +533,11 @@ export function HomeScreen({
                   <HugeiconsIcon icon={Briefcase01Icon} size={20} />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
+                  <p className="text-[13px] font-semibold text-kat-muted">{t("home.packing")}</p>
                   <p className="mt-0.5 text-[15px] font-extrabold text-kat-dark">
                     {checklistStats.total > 0 
-                      ? `${checklistStats.completed} / ${checklistStats.total} món hành lý` 
-                      : "Chưa có món nào trong checklist"}
+                      ? t("home.checklistProgress", { completed: checklistStats.completed, total: checklistStats.total }) 
+                      : t("home.noChecklistItems")}
                   </p>
                 </div>
               </li>
@@ -545,8 +547,8 @@ export function HomeScreen({
                   <HugeiconsIcon icon={ReceiptTextIcon} size={20} />
                 </div>
                 <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">Tổng đã chi chuyến đi</p>
-                  <p className="mt-0.5 text-[15px] font-extrabold text-kat-dark">{formatMoney(totalExpense)}</p>
+                  <p className="text-[13px] font-semibold text-kat-muted">{t("home.totalSpent")}</p>
+                  <p className="mt-0.5 text-[15px] font-extrabold text-kat-dark">{totalExpense > 0 ? formatMoney(totalExpense) : t("home.noCostYet")}</p>
                 </div>
               </li>
             </ul>
@@ -566,7 +568,7 @@ export function HomeScreen({
         <div className="space-y-4 lg:space-y-6">
           {/* Hoạt động tiếp theo */}
           <section className="space-y-4">
-            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Hoạt động tiếp theo</h3>
+            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.nextActivity")}</h3>
             {nextEvent ? (
               <div 
                 className="flex items-center gap-4 rounded-3xl bg-white dark:bg-kat-surface p-5 shadow-sm border border-slate-100 dark:border-kat-border transition-[box-shadow,transform,border-color] duration-200 hover:shadow-md cursor-pointer group motion-card-enter motion-delay-1 motion-press active:scale-[0.97]" 
@@ -574,7 +576,7 @@ export function HomeScreen({
               >
                 <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-kat-primary-soft text-kat-primary transition-colors group-hover:bg-[#00BFB7]/20">
                   <span className="text-[13px] font-extrabold uppercase leading-none">{formatDate(nextEvent.date).split("/")[0]}</span>
-                  <span className="mt-1 text-[11px] font-bold leading-none opacity-90">Tháng {formatDate(nextEvent.date).split("/")[1]}</span>
+                  <span className="mt-1 text-[11px] font-bold leading-none opacity-90">{t("home.month", { month: formatDate(nextEvent.date).split("/")[1] })}</span>
                 </div>
                 <div className="min-w-0 flex-1">
                   {nextEvent.time && (
@@ -590,7 +592,7 @@ export function HomeScreen({
               </div>
             ) : (
               <div className="rounded-[24px] bg-white dark:bg-kat-surface p-6 border border-slate-200 dark:border-kat-border shadow-sm flex flex-col items-center text-center motion-card-enter motion-delay-1">
-                <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">Chưa có hoạt động nào được lên lịch trình.</p>
+                <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">{t("home.noScheduledActivity")}</p>
                 {!isReadOnly && (
                     <button 
                       onClick={() => onNavigateTab("timeline")}
@@ -606,7 +608,7 @@ export function HomeScreen({
 
           {/* Nhắc việc trước chuyến đi */}
           <section className="space-y-4">
-            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Nhắc việc trước chuyến đi</h3>
+            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.preTripReminders")}</h3>
             {reminders.length > 0 ? (
               <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-100 dark:border-kat-border shadow-sm space-y-4 motion-card-enter motion-delay-2">
                 <div className="grid grid-cols-1 gap-3.5">
@@ -645,7 +647,7 @@ export function HomeScreen({
               </div>
             ) : (
               <div className="rounded-[24px] bg-white dark:bg-kat-surface p-6 border border-slate-200 dark:border-kat-border shadow-sm flex flex-col items-center text-center motion-card-enter motion-delay-2">
-                <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">Mọi thứ đã sẵn sàng cho chuyến đi sắp tới!</p>
+                <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">{t("home.everythingReady")}</p>
                 {!isReadOnly && (
                     <button 
                       onClick={() => onNavigateTab("checklist")}
@@ -664,7 +666,7 @@ export function HomeScreen({
         <div className="space-y-6">
           {/* Tổng quan hành trình */}
           <section className="space-y-4">
-            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Tổng quan hành trình</h3>
+            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.tripOverview")}</h3>
             <div className="rounded-3xl bg-white dark:bg-kat-surface p-6 shadow-sm border border-slate-100 dark:border-kat-border motion-card-enter motion-delay-3">
               <ul className="space-y-6">
                 <li className="flex items-start gap-4">
@@ -672,7 +674,7 @@ export function HomeScreen({
                     <HugeiconsIcon icon={UserGroupIcon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
+                    <p className="text-[13px] font-semibold text-kat-muted">{t("home.members")}</p>
                     <div className="mt-1.5">
                       {renderCompanions()}
                     </div>
@@ -683,9 +685,9 @@ export function HomeScreen({
                     <HugeiconsIcon icon={Briefcase01Icon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
+                    <p className="text-[13px] font-semibold text-kat-muted">{t("home.packing")}</p>
                     <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">
-                      {checklistStats.total > 0 ? `${checklistStats.completed} / ${checklistStats.total} món hành lý` : "Chưa có món nào được lên checklist"}
+                      {checklistStats.total > 0 ? t("home.checklistProgress", { completed: checklistStats.completed, total: checklistStats.total }) : t("home.noChecklistItems")}
                     </p>
                   </div>
                 </li>
@@ -694,9 +696,9 @@ export function HomeScreen({
                     <HugeiconsIcon icon={Calendar01Icon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Lịch trình kế tiếp</p>
+                    <p className="text-[13px] font-semibold text-kat-muted">{t("home.nextSchedule")}</p>
                     <p className="mt-0.5 truncate text-[15px] font-extrabold text-kat-text">
-                      {nextEvent ? nextEvent.title : "Chưa có hoạt động nào"}
+                      {nextEvent ? nextEvent.title : t("home.noActivity")}
                     </p>
                   </div>
                 </li>
@@ -705,8 +707,8 @@ export function HomeScreen({
                     <HugeiconsIcon icon={ReceiptTextIcon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Dự kiến chi phí</p>
-                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">{formatMoney(totalExpense)}</p>
+                    <p className="text-[13px] font-semibold text-kat-muted">{t("home.estimatedCost")}</p>
+                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">{totalExpense > 0 ? formatMoney(totalExpense) : t("home.noCostYet")}</p>
                   </div>
                 </li>
               </ul>
@@ -715,21 +717,21 @@ export function HomeScreen({
 
           {/* Giấy tờ & đặt chỗ */}
           <section className="space-y-4">
-            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Giấy tờ & đặt chỗ</h3>
+            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.docsAndBookings")}</h3>
             <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-100 dark:border-kat-border shadow-sm motion-card-enter motion-delay-4">
               {travelDocuments.length > 0 ? (
                 <div className="space-y-3">
                   <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
-                    Đã lưu {travelDocuments.length} tài liệu quan trọng cho chuyến đi.
+                    {t("home.savedDocs", { count: travelDocuments.length })}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {Array.from(new Set(travelDocuments.map(d => d.type || "other"))).map((type) => {
                       const label = 
-                        type === "ticket" ? "Vé xe/máy bay" :
-                        type === "hotel" ? "Khách sạn" :
-                        type === "booking" ? "Mã đặt chỗ" :
-                        type === "contact" ? "Liên hệ" :
-                        type === "map" ? "Bản đồ" : "Khác";
+                        type === "ticket" ? t("home.ticket") :
+                        type === "hotel" ? t("home.hotel") :
+                        type === "booking" ? t("home.bookingCode") :
+                        type === "contact" ? t("home.contact") :
+                        type === "map" ? t("home.map") : t("home.other");
                       const count = travelDocuments.filter(d => d.type === type).length;
                       return (
                         <span key={type} className="inline-flex items-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 px-2.5 py-1 text-[11.5px] font-bold text-slate-650 dark:text-slate-300">
@@ -742,13 +744,13 @@ export function HomeScreen({
                     onClick={() => onNavigateMore("documents")}
                     className="mt-2.5 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center gap-1.5 motion-press"
                   >
-                    <span>Xem toàn bộ giấy tờ</span>
+                    <span>{t("home.viewAllDocs")}</span>
                     <HugeiconsIcon icon={ChevronRightIcon} size={16} />
                   </button>
                 </div>
               ) : (
                 <div className="text-center py-2">
-                  <p className="text-[13.5px] font-semibold text-slate-400 dark:text-slate-500">Chưa lưu vé xe, mã khách sạn hay tài liệu nào.</p>
+                  <p className="text-[13.5px] font-semibold text-slate-400 dark:text-slate-500">{t("home.noSavedDocs")}</p>
                   {!isReadOnly && (
                       <button 
                         onClick={() => onNavigateMore("documents")}
@@ -793,7 +795,7 @@ export function HomeScreen({
         <div className="space-y-4 lg:space-y-6">
           {/* Lịch trình hôm nay */}
           <section className="space-y-4">
-            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Lịch trình hôm nay</h3>
+            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.todaySchedule")}</h3>
             <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-100 dark:border-kat-border shadow-sm space-y-4 motion-card-enter motion-delay-1">
               {/* Phương án dự phòng hôm nay */}
               {todayBackupPlans.length > 0 && (
@@ -802,9 +804,9 @@ export function HomeScreen({
                     <HugeiconsIcon icon={GitBranchIcon} className="w-5 h-5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-[14.5px] font-extrabold text-kat-dark">Phương án dự phòng hôm nay</h4>
+                    <h4 className="text-[14.5px] font-extrabold text-kat-dark">{t("home.todayBackupPlans")}</h4>
                     <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
-                      Bạn có {todayBackupPlans.length} phương án dự phòng cho hôm nay.
+                      {t("home.backupPlansCount", { count: todayBackupPlans.length })}
                     </p>
                     <button 
                       onClick={() => onNavigateTab("timeline")}
@@ -819,12 +821,12 @@ export function HomeScreen({
               {/* Hoạt động hôm nay */}
               {todayEvents.length === 0 ? (
                 <div className="p-4 rounded-2xl border border-slate-100/80 dark:border-kat-border/40 bg-slate-50/20 dark:bg-slate-800/10 text-center">
-                  <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500">Không có lịch trình nào được lên kế hoạch hôm nay.</p>
+                  <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500">{t("home.noTodaySchedule")}</p>
                   <button 
                     onClick={() => onNavigateTab("timeline")}
                     className="mt-2.5 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors inline-flex items-center gap-1 motion-press"
                   >
-                    <span>Xem lịch trình đầy đủ</span>
+                    <span>{t("home.viewFullSchedule")}</span>
                     <HugeiconsIcon icon={ChevronRightIcon} size={14} />
                   </button>
                 </div>
@@ -865,7 +867,7 @@ export function HomeScreen({
 
           {/* Giấy tờ cần kiểm tra */}
           <section className="space-y-4">
-            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Giấy tờ cần kiểm tra</h3>
+            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.docsToCheck")}</h3>
             <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-100 dark:border-kat-border shadow-sm motion-card-enter motion-delay-2">
               {idDocs.length > 0 ? (
                 <div className="space-y-3.5">
@@ -891,7 +893,7 @@ export function HomeScreen({
                 </div>
               ) : (
                 <div className="text-center py-2">
-                  <p className="text-[13.5px] font-semibold text-slate-400 dark:text-slate-500">Chưa có vé hay đặt chỗ nào được đánh dấu cần kiểm tra.</p>
+                  <p className="text-[13.5px] font-semibold text-slate-400 dark:text-slate-500">{t("home.noDocsToCheck")}</p>
                   {!isReadOnly && (
                     <button 
                       onClick={() => onNavigateMore("documents")}
@@ -911,7 +913,7 @@ export function HomeScreen({
         <div className="space-y-6">
           {/* Tổng quan hành trình */}
           <section className="space-y-4">
-            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Tổng quan hành trình</h3>
+            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.tripOverview")}</h3>
             <div className="rounded-3xl bg-white dark:bg-kat-surface p-6 shadow-sm border border-slate-100 dark:border-kat-border motion-card-enter motion-delay-3">
               <ul className="space-y-6">
                 <li className="flex items-start gap-4">
@@ -919,7 +921,7 @@ export function HomeScreen({
                     <HugeiconsIcon icon={UserGroupIcon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Thành viên</p>
+                    <p className="text-[13px] font-semibold text-kat-muted">{t("home.members")}</p>
                     <div className="mt-1.5">
                       {renderCompanions()}
                     </div>
@@ -930,9 +932,9 @@ export function HomeScreen({
                     <HugeiconsIcon icon={Briefcase01Icon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Chuẩn bị</p>
+                    <p className="text-[13px] font-semibold text-kat-muted">{t("home.packing")}</p>
                     <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">
-                      {checklistStats.total > 0 ? `${checklistStats.completed} / ${checklistStats.total} món hành lý` : "Chưa có món nào được lên checklist"}
+                      {checklistStats.total > 0 ? t("home.checklistProgress", { completed: checklistStats.completed, total: checklistStats.total }) : t("home.noChecklistItems")}
                     </p>
                   </div>
                 </li>
@@ -941,9 +943,9 @@ export function HomeScreen({
                     <HugeiconsIcon icon={Calendar01Icon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Hoạt động tiếp theo</p>
+                    <p className="text-[13px] font-semibold text-kat-muted">{t("home.nextActivity")}</p>
                     <p className="mt-0.5 truncate text-[15px] font-extrabold text-kat-text">
-                      {nextEvent ? nextEvent.title : "Chưa có hoạt động nào"}
+                      {nextEvent ? nextEvent.title : t("home.noActivity")}
                     </p>
                   </div>
                 </li>
@@ -952,8 +954,8 @@ export function HomeScreen({
                     <HugeiconsIcon icon={ReceiptTextIcon} size={20} />
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">Tổng đã chi chuyến đi</p>
-                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">{formatMoney(totalExpense)}</p>
+                    <p className="text-[13px] font-semibold text-kat-muted">{t("home.totalSpent")}</p>
+                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">{totalExpense > 0 ? formatMoney(totalExpense) : t("home.noCostYet")}</p>
                   </div>
                 </li>
               </ul>
@@ -962,11 +964,11 @@ export function HomeScreen({
 
           {/* Chuẩn bị còn thiếu */}
           <section className="space-y-4">
-            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Chuẩn bị còn thiếu</h3>
+            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.missingPacking")}</h3>
             <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-100 dark:border-kat-border shadow-sm motion-card-enter motion-delay-4">
               {checklist.length === 0 ? (
                 <div className="p-4 rounded-2xl border border-slate-100/80 dark:border-kat-border/40 bg-slate-50/20 dark:bg-slate-800/10 text-center">
-                  <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500">Chưa có món nào được lên checklist.</p>
+                  <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500">{t("home.noChecklistItems")}</p>
                 </div>
               ) : (
                 <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1 scrollbar-none">
@@ -999,7 +1001,7 @@ export function HomeScreen({
                       onClick={() => onNavigateTab("checklist")}
                       className="w-full text-center py-2 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center justify-center gap-1"
                     >
-                      <span>Xem thêm {incompleteChecklist.length - 5} món chưa chuẩn bị</span>
+                      <span>{t("home.viewMoreMissing", { count: incompleteChecklist.length - 5 })}</span>
                       <HugeiconsIcon icon={ChevronRightIcon} size={14} />
                     </button>
                   )}
@@ -1010,18 +1012,18 @@ export function HomeScreen({
 
           {/* Lịch trình đã ghi */}
           <section className="space-y-4">
-            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">Lịch trình đã ghi</h3>
+            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.recordedSchedule")}</h3>
             <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-100 dark:border-kat-border shadow-sm motion-card-enter motion-delay-5">
               <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
                 {events.length > 0 
-                  ? `Đang có ${events.length} hoạt động trong lịch trình chuyến đi.`
-                  : "Chưa ghi nhận hoạt động nào trong lịch trình."}
+                  ? t("home.activeEvents", { count: events.length })
+                  : t("home.noEventsRecorded")}
               </p>
               <button 
                 onClick={() => onNavigateTab("timeline")}
                 className="mt-3.5 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center gap-1.5 motion-press"
               >
-                <span>Xem lịch trình chi tiết</span>
+                <span>{t("home.viewDetailedSchedule")}</span>
                 <HugeiconsIcon icon={ChevronRightIcon} size={16} />
               </button>
             </div>
@@ -1044,7 +1046,7 @@ export function HomeScreen({
       <WeatherDetailsModal
         isOpen={weatherModalOpen}
         onClose={() => setWeatherModalOpen(false)}
-        destination={trip.location || "Địa điểm"}
+        destination={trip.location || t("home.location")}
         forecast={forecast}
         currentLocationForecast={myForecast}
         currentLocationName={myLocationName}

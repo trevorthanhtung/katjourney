@@ -117,6 +117,7 @@ function LocationInput({
   onChange: (val: string) => void;
   onSelectResult: (result: GeocodingResult) => void;
 }) {
+  const { t } = useTranslation();
   const [suggestions, setSuggestions] = useState<GeocodingResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -165,7 +166,7 @@ function LocationInput({
           type="text"
           value={value}
           onChange={(e) => handleChange(e.target.value)}
-          placeholder="VD: Phú Quốc"
+          placeholder={t("trips.exampleLocation")}
           className="w-full rounded-[14px] border border-slate-200 dark:border-slate-700/50 bg-slate-50/80 dark:bg-slate-800/40 pl-10 pr-10 py-3 text-[14px] font-medium text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-kat-primary focus:ring-2 focus:ring-kat-primary/20 dark:focus:bg-kat-surface focus:outline-none transition-all"
           autoComplete="off"
         />
@@ -589,6 +590,7 @@ function MemberForm({
   onClose: () => void;
   onShowToast?: (msg: string) => void;
 }) {
+  const { t } = useTranslation();
   const PRESETS = ["Trưởng nhóm", "Quản lý chi phí", "Tài xế", "Dẫn đường", "Người đồng hành"];
   
   const [name, setName] = useState("");
@@ -725,7 +727,7 @@ function MemberForm({
             onClick={onClose}
             className="flex h-[52px] shrink-0 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.96] transition-all border border-transparent dark:border-slate-700 motion-press"
           >
-            Hủy
+            {t("common.cancel")}
           </button>
           <button
             type="button"
@@ -1622,6 +1624,7 @@ export function MoreScreen({
   isAutoSyncing?: boolean;
   lastSyncedAt?: Date | null;
 }) {
+  const { t } = useTranslation();
   const [authName, setAuthName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -1743,7 +1746,7 @@ export function MoreScreen({
   }, [members, memberSearchQuery]);
   async function handleShareTrip() {
     if (!supabaseEnabled) {
-      showToast("Chưa cấu hình Supabase. Vui lòng kiểm tra môi trường (env).", "error");
+      showToast(t("toast.supabaseNotConfigured"), "error");
       return;
     }
     setShareLoading(true);
@@ -1751,7 +1754,7 @@ export function MoreScreen({
       await ensureAnonymousUser();
       setIsShareModalOpen(true);
     } catch (e: any) {
-      showToast("Không thể kết nối Supabase: " + e.message, "error");
+      showToast(t("toast.supabaseError", { message: e.message }), "error");
     } finally {
       setShareLoading(false);
     }
@@ -1775,7 +1778,7 @@ export function MoreScreen({
         sharePin: shareOptions.usePinProtection && shareOptions.sharePin.length === 4 ? shareOptions.sharePin : undefined
       });
     } catch (e: any) {
-      showToast("Lỗi khi tạo link chia sẻ. Vui lòng thử lại sau.", "error");
+      showToast(t("toast.shareLinkCreateError"), "error");
       console.error(e);
     } finally {
       setShareLoading(false);
@@ -1791,9 +1794,9 @@ export function MoreScreen({
         mode: "request_edit",
         sharePin: shareOptions.usePinProtection && shareOptions.sharePin.length === 4 ? shareOptions.sharePin : undefined
       });
-      showToast("Đã đồng bộ dữ liệu chia sẻ.");
+      showToast(t("toast.syncSuccess"));
     } catch (e: any) {
-      showToast("Lỗi khi đồng bộ dữ liệu. Vui lòng thử lại sau.", "error");
+      showToast(t("toast.syncError"), "error");
       console.error(e);
     } finally {
       setSyncLoading(false);
@@ -1805,9 +1808,9 @@ export function MoreScreen({
     try {
       setShareLoading(true);
       await revokeShareLink(trip.id!, activeShareLink.token);
-      showToast("Đã tắt link chia sẻ.");
+      showToast(t("toast.shareLinkDisabled"));
     } catch (e: any) {
-      showToast("Lỗi khi tắt link chia sẻ. Vui lòng thử lại sau.", "error");
+      showToast(t("toast.shareLinkDisableError"), "error");
       console.error(e);
     } finally {
       setShareLoading(false);
@@ -1845,12 +1848,12 @@ export function MoreScreen({
   async function factoryReset() {
     try {
       await db.delete();
-      showToast("Đã xóa dữ liệu thành công. Đang tải lại trang...");
+      showToast(t("toast.deleteDataSuccess"));
       setTimeout(() => {
         window.location.reload();
       }, 1500);
     } catch (e) {
-      showToast("Đã xảy ra lỗi khi xóa dữ liệu.", "error");
+      showToast(t("toast.deleteDataError"), "error");
     }
   }
 
@@ -1870,13 +1873,13 @@ export function MoreScreen({
     try {
       const start = new Date(trip.startDate);
       const end = new Date(trip.endDate);
-      if (isNaN(start.getTime()) || isNaN(end.getTime())) return "Dài ngày";
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) return t("home.longTrip");
       const diffTime = Math.abs(end.getTime() - start.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
       const diffNights = diffDays > 1 ? diffDays - 1 : 0;
-      return `${diffDays} ngày ${diffNights} đêm`;
+      return t("home.duration", { days: diffDays, nights: diffNights });
     } catch {
-      return "Dài ngày";
+      return t("home.longTrip");
     }
   };
 
@@ -2820,7 +2823,7 @@ export function MoreScreen({
               onClick={() => setIsArchiveConfirmOpen(false)}
               className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/50 px-6 font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
-              Hủy
+              {t("common.cancel")}
             </button>
              <button
               type="button"
@@ -2857,7 +2860,7 @@ export function MoreScreen({
               onClick={() => setIsUnarchiveConfirmOpen(false)}
               className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/50 px-6 font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
-              Hủy
+              {t("common.cancel")}
             </button>
              <button
               type="button"

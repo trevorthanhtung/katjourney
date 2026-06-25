@@ -1,3 +1,4 @@
+import i18n from "../i18n";
 import pkg from "../../package.json";
 export const APP_VERSION = pkg.version;
 import { ChecklistItem, Expense, JournalEntry, JournalMood, Member, PackingItem, PackingTripType, Trip } from "../db";
@@ -98,21 +99,21 @@ export function getTripTiming(trip: Trip) {
   const now = new Date(`${today}T00:00:00`).getTime();
   const daysToStart = Math.ceil((start - now) / 86400000);
 
-  if (Number.isNaN(start) || Number.isNaN(end)) return { label: "Chưa rõ ngày", status: "unknown" };
-  if (now < start) return { label: `Còn ${daysToStart} ngày nữa`, status: "upcoming" };
+  if (Number.isNaN(start) || Number.isNaN(end)) return { label: i18n.t("home.unknownDate"), status: "unknown" };
+  if (now < start) return { label: i18n.t("home.daysLeft", { days: daysToStart }), status: "upcoming" };
   
   const totalDays = Math.ceil((end - start) / 86400000) + 1;
   
   if (now >= start && now <= end) {
     if (now === start) {
-      return { label: "Hôm nay là ngày đi", status: "active" };
+      return { label: i18n.t("home.todayIsDeparture"), status: "active" };
     }
     const currentDay = Math.ceil((now - start) / 86400000) + 1;
-    return { label: `Ngày ${currentDay} / ${totalDays}`, status: "active" };
+    return { label: i18n.t("home.tripDayStatus", { currentDay, totalDays }), status: "active" };
   }
   
   const daysSinceEnd = Math.ceil((now - end) / 86400000);
-  return { label: `Đã kết thúc ${daysSinceEnd} ngày trước`, status: "past" };
+  return { label: i18n.t("home.endedDaysAgo", { days: daysSinceEnd }), status: "past" };
 }
 
 export function getChecklistStats(checklist: ChecklistItem[]) {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { SentIcon, Cancel01Icon, BubbleChatIcon, Loading01Icon, ArrowLeft01Icon, CrownIcon, UserIcon } from "@hugeicons/core-free-icons";
 import { ChatMessage, subscribeToMessages, sendMessage } from '../../../services/chatService';
@@ -16,6 +17,7 @@ interface ChatBoxProps {
 }
 
 export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = false }: ChatBoxProps) {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(true);
@@ -35,7 +37,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
     const isLead = role.toLowerCase().includes('trưởng') || role.toLowerCase().includes('người tạo');
     if (isLead) {
       return (
-        <span className="inline-flex items-center justify-center ml-1.5 select-none" title="Trưởng nhóm">
+        <span className="inline-flex items-center justify-center ml-1.5 select-none" title={t("roles.leader")}>
           <HugeiconsIcon icon={CrownIcon} className="w-3.5 h-3.5 text-amber-500 fill-amber-500/10" />
         </span>
       );

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 import { AppChangeRequest } from '../../../hooks/useShareChangeRequests';
@@ -38,15 +39,17 @@ interface Props {
 }
 
 export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, members = [] }: Props) {
+  const { t } = useTranslation();
+
   const [isApproving, setIsApproving] = useState<string | null>(null);
 
   async function handleApprove(requestId: string) {
     try {
       setIsApproving(requestId);
       await approveChangeRequest(token, requestId);
-      showToast("Đã áp dụng thay đổi vào chuyến đi.", "success");
+      showToast(t("toast.changesApplied"), "success");
     } catch (e: any) {
-      showToast("Lỗi khi duyệt: " + e.message, "error");
+      showToast(t("toast.approveError", { message: e.message }), "error");
       console.error(e);
     } finally {
       setIsApproving(null);
@@ -70,9 +73,9 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
     try {
       setIsApproving(requestId);
       await rejectChangeRequest(token, requestId);
-      showToast("Đã từ chối yêu cầu chỉnh sửa.", "success");
+      showToast(t("toast.requestRejected"), "success");
     } catch (e: any) {
-      showToast("Lỗi khi từ chối: " + e.message, "error");
+      showToast(t("toast.rejectError", { message: e.message }), "error");
       console.error(e);
     } finally {
       setIsApproving(null);
@@ -97,9 +100,9 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
     
     setIsApproving(null);
     if (failCount === 0) {
-      showToast(`Đã áp dụng thành công tất cả ${successCount} thay đổi vào chuyến đi.`, "success");
+      showToast(t("toast.allAppliedSuccess", { successCount }), "success");
     } else {
-      showToast(`Đã áp dụng ${successCount} thay đổi. Thất bại ${failCount} yêu cầu.`, "error");
+      showToast(t("toast.partialApplied", { successCount, failCount }), "error");
     }
   }
 
@@ -121,9 +124,9 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
     
     setIsApproving(null);
     if (failCount === 0) {
-      showToast(`Đã từ chối tất cả ${successCount} yêu cầu chỉnh sửa.`, "success");
+      showToast(t("toast.allRejectedSuccess", { successCount }), "success");
     } else {
-      showToast(`Đã từ chối ${successCount} yêu cầu. Thất bại ${failCount} yêu cầu.`, "error");
+      showToast(t("toast.partialRejected", { successCount, failCount }), "error");
     }
   }
 

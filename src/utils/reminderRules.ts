@@ -1,3 +1,4 @@
+import i18n from "../i18n";
 import { Trip, Member, EventItem, Expense, ChecklistItem, TravelDocument } from "../db";
 import { today } from "./helpers";
 
@@ -40,18 +41,18 @@ export function getTripReminders({
       reminders.push({
         id: "checklist_incomplete",
         type: daysToStart <= 2 ? "danger" : "warning",
-        title: "Nhiệm vụ chuẩn bị chưa hoàn thành",
-        description: `Còn ${uncompletedChecklist} đồ dùng hoặc đầu việc chưa chuẩn bị xong.`,
-        actionLabel: "Chuẩn bị ngay",
+        title: i18n.t("home.checklistIncompleteTitle"),
+        description: i18n.t("home.checklistIncompleteDesc", { count: uncompletedChecklist }),
+        actionLabel: i18n.t("home.prepareNow"),
         onClickSection: "checklist"
       });
     } else if (checklist.length === 0) {
       reminders.push({
         id: "checklist_empty",
         type: "info",
-        title: "Danh sách chuẩn bị trống",
-        description: "Lên danh sách các vật dụng cần mang theo và đầu việc cần làm trước khi đi.",
-        actionLabel: "Tạo danh sách",
+        title: i18n.t("home.checklistEmptyTitle"),
+        description: i18n.t("home.checklistEmptyDesc"),
+        actionLabel: i18n.t("home.createList"),
         onClickSection: "checklist"
       });
     }

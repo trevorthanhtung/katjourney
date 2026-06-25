@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from "react-i18next";
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../../db';
 import { createPortal } from 'react-dom';
@@ -56,6 +57,8 @@ export function SharedExpensesSection({
   events?: EventItem[];
   guestName?: string;
 }) {
+  const { t } = useTranslation();
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -377,7 +380,7 @@ export function SharedExpensesSection({
         showToast(successMessage);
       }
     } catch (e: any) { 
-      showToast((isDirectEdit ? 'Lỗi cập nhật: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); 
+      showToast(isDirectEdit ? t("toast.updateError", { message: e.message }) : t("toast.submitRequestError", { message: e.message }), 'error'); 
     } finally {
       setIsSubmitting(false);
     }
@@ -398,8 +401,8 @@ export function SharedExpensesSection({
         status: isDirectEdit ? 'auto_approved' : undefined,
         requesterName: guestName 
       });
-      showToast(isDirectEdit ? 'Đã xóa trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
-    } catch (e: any) { showToast((isDirectEdit ? 'Lỗi xóa: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); }
+      showToast(isDirectEdit ? t("toast.directDelete") : t("toast.requestSent"));
+    } catch (e: any) { showToast(isDirectEdit ? t("toast.deleteError", { message: e.message }) : t("toast.submitRequestError", { message: e.message }), 'error'); }
   }
 
   const activeExpenses = mergedExpenses.filter(e => !e.isPendingDelete);

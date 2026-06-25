@@ -350,7 +350,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
     try {
       const parsed = JSON.parse(await file.text()) as any;
       if (parsed.app !== "KAT Journey" || !parsed.trip?.title) {
-        showToast("Tệp không đúng định dạng KAT Journey.", "error");
+        showToast(t("toast.invalidFileFormat"), "error");
         return;
       }
       setImportPreview({
@@ -365,7 +365,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
       });
       setIsImportPreviewOpen(true);
     } catch {
-      showToast("Không đọc được tệp. Đảm bảo file đúng định dạng .katjourney", "error");
+      showToast(t("toast.cantReadFile"), "error");
     }
   }
 
@@ -517,9 +517,9 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
       setIsImportPreviewOpen(false);
       setImportPreview(null);
       onClose();
-      showToast("Đã nhập chuyến đi thành công!");
+      showToast(t("toast.importSuccess"));
     } catch (error) {
-      showToast(error instanceof Error ? error.message : "Không thể import tệp này.", "error");
+      showToast(t("toast.importError", { message: error instanceof Error ? error.message : "Unknown error" }), "error");
     } finally {
       setImporting(false);
     }
@@ -855,17 +855,17 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                         const result = await requestNotificationPermission();
                         if (result === "granted") {
                           setNotificationEnabled(true);
-                          showToast("Đã bật nhận thông báo thành công!", "success");
+                          showToast(t("toast.pushNotifEnabled"), "success");
                         } else if (result === "denied") {
-                          showToast("Quyền thông báo bị từ chối. Hãy bật lại trong cài đặt trình duyệt.", "error");
+                          showToast(t("toast.pushNotifDenied"), "error");
                         }
                       } else {
                         const nextState = !notificationEnabled;
                         setNotificationEnabled(nextState);
                         if (nextState) {
-                          showToast("Đã bật nhận thông báo từ ứng dụng.", "success");
+                          showToast(t("toast.inAppNotifEnabled"), "success");
                         } else {
-                          showToast("Đã tắt nhận thông báo từ ứng dụng.", "success");
+                          showToast(t("toast.inAppNotifDisabled"), "success");
                         }
                       }
                     }}
@@ -903,7 +903,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   const nextState = !gpsEnabled;
                   setGpsEnabled(nextState);
                   localStorage.setItem("kat_gps_enabled", String(nextState));
-                  showToast(nextState ? "Đã bật tự động truy cập GPS." : "Đã tắt tự động truy cập GPS.", "success");
+                  showToast(nextState ? t("toast.gpsAutoEnabled") : t("toast.gpsAutoDisabled"), "success");
                 }}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
                   gpsEnabled ? "bg-kat-primary" : "bg-slate-200 dark:bg-slate-700"

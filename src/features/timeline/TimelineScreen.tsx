@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { 
   CheckIcon, 
@@ -575,6 +576,7 @@ function EventForm({
   );
 }
 export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isReadOnly }: { trip: Trip; events: EventItem[]; expenses?: Expense[]; onAddExpense?: (date: string, eventId: number) => void; isReadOnly?: boolean }) {
+  const { t } = useTranslation();
   const tripDays = daysBetween(trip.startDate, trip.endDate);
   const eventDays = Array.from(new Set(events.map((e) => e.date)));
   const days = Array.from(new Set([...tripDays, ...eventDays])).filter(Boolean).sort();
@@ -996,7 +998,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
                   Địa điểm
                 </span>
-                <span className="font-bold text-kat-dark">{trip.location || "Chưa xác định"}</span>
+                <span className="font-bold text-kat-dark">{trip.location || t("common.unknownLocation")}</span>
               </div>
               <div className="flex items-center justify-between border-b border-slate-50 pb-2">
                 <span className="flex items-center gap-2">

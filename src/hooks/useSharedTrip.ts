@@ -52,25 +52,32 @@ export function useSharedTrip(token: string, pin?: string | null, retryCount: nu
         if (isCancelled) return;
 
         // 2. Fetch subcollection rows concurrently
-        const [
-          membersRes,
-          activitiesRes,
-          expensesRes,
-          checklistRes,
-          journalsRes,
-          backupPlansRes,
-          documentsRes,
-          requestsRes
-        ] = await Promise.all([
-          supabase.from('share_members').select('data').eq('share_token', token),
-          supabase.from('share_activities').select('data').eq('share_token', token),
-          shareData.include_expenses ? supabase.from('share_expenses').select('data').eq('share_token', token) : { data: [] },
-          shareData.include_checklist ? supabase.from('share_checklist').select('data').eq('share_token', token) : { data: [] },
-          shareData.include_journals ? supabase.from('share_journals').select('data').eq('share_token', token) : { data: [] },
-          shareData.include_backup_plans ? supabase.from('share_backup_plans').select('data').eq('share_token', token) : { data: [] },
-          shareData.include_documents ? supabase.from('share_travel_documents').select('data').eq('share_token', token) : { data: [] },
-          supabase.from('change_requests').select('*').eq('share_token', token).in('status', ['pending', 'auto_approved'])
-        ]);
+        let membersRes, activitiesRes, expensesRes, checklistRes, journalsRes, backupPlansRes, documentsRes, requestsRes;
+        try {
+          [
+            membersRes,
+            activitiesRes,
+            expensesRes,
+            checklistRes,
+            journalsRes,
+            backupPlansRes,
+            documentsRes,
+            requestsRes
+          ] = await Promise.all([
+            supabase.from('share_members').select('data').eq('share_token', token),
+            supabase.from('share_activities').select('data').eq('share_token', token),
+            shareData.include_expenses ? supabase.from('share_expenses').select('data').eq('share_token', token) : { data: [] },
+            shareData.include_checklist ? supabase.from('share_checklist').select('data').eq('share_token', token) : { data: [] },
+            shareData.include_journals ? supabase.from('share_journals').select('data').eq('share_token', token) : { data: [] },
+            shareData.include_backup_plans ? supabase.from('share_backup_plans').select('data').eq('share_token', token) : { data: [] },
+            shareData.include_documents ? supabase.from('share_travel_documents').select('data').eq('share_token', token) : { data: [] },
+            supabase.from('change_requests').select('*').eq('share_token', token).in('status', ['pending', 'auto_approved'])
+          ]);
+        } catch (e: any) {
+          setError(e.message || 'Lỗi khi tải dữ liệu chia sẻ (subcollections).');
+          setLoading(false);
+          return;
+        }
 
         if (isCancelled) return;
 

@@ -531,6 +531,7 @@ export function FormActions({
   onCancel?: () => void;
   disabled?: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="flex gap-2.5 pt-2 w-full">
       {onCancel && (
@@ -539,7 +540,7 @@ export function FormActions({
           type="button"
           onClick={onCancel}
         >
-          Hủy
+          {t("common.cancel")}
         </button>
       )}
       <button

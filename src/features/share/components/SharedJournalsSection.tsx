@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from "react-i18next";
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../../db';
 import { createPortal } from 'react-dom';
@@ -88,6 +89,7 @@ export function SharedJournalsSection({
   members?: Member[];
   renderChatBox?: () => React.ReactNode;
 }) {
+  const { t } = useTranslation();
   const isRequestEdit = mode === 'request_edit' || mode === 'edit';
   const isDirectEdit = mode === 'edit';
   const [isFormOpen, setIsFormOpen] = React.useState(false);
@@ -122,7 +124,7 @@ export function SharedJournalsSection({
         requesterName: resolvedGuestName
       });
     } catch (e: any) {
-      showToast("Lỗi: " + e.message, "error");
+      showToast(t("toast.errorMsg", { message: e.message }), "error");
     }
   }
   const [form, setForm] = React.useState({ 
@@ -150,7 +152,7 @@ export function SharedJournalsSection({
       setForm(prev => ({ ...prev, imageUrl: url }));
       setDirty(true);
     } catch (err) {
-      showToast("Lỗi tải ảnh lên. Vui lòng thử lại.", "error");
+      showToast(t("toast.uploadError"), "error");
     } finally {
       setUploading(false);
     }
@@ -164,7 +166,7 @@ export function SharedJournalsSection({
       setForm(prev => ({...prev, locationName: geo.displayName, latitude: pos.latitude, longitude: pos.longitude}));
     } catch (err: any) {
       if (err.message !== "GPS is disabled by user setting") {
-        showToast(err.message || "Không thể lấy vị trí.", "error");
+        showToast(err.message || t("toast.locationError"), "error");
       }
     } finally {
       setIsLocating(false);
@@ -231,7 +233,7 @@ export function SharedJournalsSection({
       setSubmitAttempted(false);
       setDirty(false);
       setIsFormOpen(false);
-    } catch (e: any) { showToast('Lỗi: ' + e.message, 'error'); }
+    } catch (e: any) { showToast(t("toast.errorMsg", { message: e.message }), 'error'); }
   }
 
   function handlePromptClick(prompt: string) {
@@ -257,8 +259,8 @@ export function SharedJournalsSection({
         requesterName: guestName,
         status: autoApprove ? 'auto_approved' : undefined
       });
-      showToast(autoApprove ? 'Đã xóa bài viết.' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
-    } catch (e: any) { showToast('Lỗi: ' + e.message, 'error'); }
+      showToast(autoApprove ? t("toast.postDeleted") : t("toast.requestSent"));
+    } catch (e: any) { showToast(t("toast.errorMsg", { message: e.message }), 'error'); }
   }
 
   return (

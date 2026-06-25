@@ -97,7 +97,7 @@ function TripCard({
         <div className="flex items-center gap-2 min-w-0">
           <HugeiconsIcon icon={Location01Icon} size={14} className="text-white/50 shrink-0" />
           <span className="text-[12.5px] font-semibold text-white/75 truncate">
-            {trip.location || "Chưa xác định"}
+            {trip.location || t("common.unknownLocation")}
           </span>
         </div>
         <div className="flex items-center gap-2 min-w-0">

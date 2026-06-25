@@ -1,4 +1,5 @@
 import React from "react";
+import i18n from "../i18n";
 import {
   SunIcon,
   PartlyCloudyIcon,
@@ -339,14 +340,14 @@ export function getWeatherIcon(code: number, className: string = "w-5 h-5"): Rea
 
 
 export function getWeatherText(code: number): string {
-  if (code === 0) return "Trời quang";
-  if (code === 1 || code === 2) return "Ít mây";
-  if (code === 3) return "Nhiều mây";
-  if ([45, 48].includes(code)) return "Sương mù";
-  if (code >= 51 && code <= 67) return "Có mưa";
-  if (code >= 80 && code <= 82) return "Mưa rào";
-  if (code >= 95 && code <= 99) return "Có dông bão";
-  return "Có mây";
+  if (code === 0) return i18n.t("weather.clear");
+  if (code === 1 || code === 2) return i18n.t("weather.partlyCloudy");
+  if (code === 3) return i18n.t("weather.cloudy");
+  if ([45, 48].includes(code)) return i18n.t("weather.fog");
+  if (code >= 51 && code <= 67) return i18n.t("weather.rain");
+  if (code >= 80 && code <= 82) return i18n.t("weather.showers");
+  if (code >= 95 && code <= 99) return i18n.t("weather.thunderstorm");
+  return i18n.t("weather.mostlyCloudy");
 }
 
 export function getWeatherGradient(code: number): string {

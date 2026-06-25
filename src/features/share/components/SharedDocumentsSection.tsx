@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from "react-i18next";
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../../db';
 import { createPortal } from 'react-dom';
@@ -52,6 +53,8 @@ export function SharedDocumentsSection({
   changeRequests?: any[];
   guestName?: string;
 }) {
+  const { t } = useTranslation();
+
   const [activeSubTab, setActiveSubTab] = React.useState<'shared' | 'private'>('shared');
   const [previewImage, setPreviewImage] = React.useState<string | null>(null);
   const [deleteTargetId, setDeleteTargetId] = React.useState<TravelDocument | null>(null);
@@ -185,7 +188,7 @@ export function SharedDocumentsSection({
           createdBy: guestName || 'guest',
           updatedAt: new Date().toISOString()
         });
-        showToast("Đã cập nhật tài liệu cá nhân");
+        showToast(t("toast.personalDocUpdated"));
       } else {
         await db.travelDocuments.add({
           ...form,
@@ -196,11 +199,11 @@ export function SharedDocumentsSection({
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         });
-        showToast("Đã thêm tài liệu cá nhân");
+        showToast(t("toast.personalDocAdded"));
       }
       setIsFormOpen(false);
     } catch (e: any) {
-      showToast("Lỗi khi lưu: " + e.message, "error");
+      showToast(t("toast.saveError", { message: e.message }), "error");
     } finally {
       setIsUploading(false);
     }
@@ -215,14 +218,14 @@ export function SharedDocumentsSection({
       if (activeSubTab === 'private') {
         if (d.id) {
           await db.travelDocuments.update(d.id, { isDeleted: true });
-          showToast("Đã xóa tài liệu cá nhân!");
+          showToast(t("toast.personalDocDeleted"));
         }
       } else {
         await submitChangeRequest(token, { section: 'travelDocuments', action: 'delete', targetId: String(d.id), before: d as any, requesterName: guestName });
-        showToast('Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+        showToast(t("toast.requestSent"));
       }
     } catch (e: any) { 
-      showToast('Lỗi: ' + e.message, 'error'); 
+      showToast(t("toast.errorMsg", { message: e.message }), 'error'); 
     }
   }
 

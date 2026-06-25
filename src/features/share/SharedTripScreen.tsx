@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   GlobeIcon,
@@ -75,6 +76,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { useSharedTrip } from "../../hooks/useSharedTrip";
 
 export default function SharedTripScreen({ token }: { token: string }) {
+  const { t } = useTranslation();
   useTheme();
   const [enteredPin, setEnteredPin] = useState<string | null>(null);
   const { data, error, errorCode, loading } = useSharedTrip(token, enteredPin);
@@ -117,22 +119,22 @@ export default function SharedTripScreen({ token }: { token: string }) {
       <div className="flex items-center gap-1 flex-wrap justify-end">
         {roles.map((roleLower, i) => {
           if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
-            return <span key={i} title="Trưởng nhóm" className="shrink-0"><HugeiconsIcon icon={CrownIcon} className="h-3.5 w-3.5 text-amber-500" /></span>;
+            return <span key={i} title={t("roles.leader")} className="shrink-0"><HugeiconsIcon icon={CrownIcon} className="h-3.5 w-3.5 text-amber-500" /></span>;
           }
           if (roleLower === "quản lý chi phí") {
-            return <span key={i} title="Quản lý chi phí" className="shrink-0"><HugeiconsIcon icon={Wallet01Icon} className="h-3.5 w-3.5 text-emerald-500" /></span>;
+            return <span key={i} title={t("roles.costManager")} className="shrink-0"><HugeiconsIcon icon={Wallet01Icon} className="h-3.5 w-3.5 text-emerald-500" /></span>;
           }
           if (roleLower === "tài xế") {
-            return <span key={i} title="Tài xế" className="shrink-0"><HugeiconsIcon icon={Car01Icon} className="h-3.5 w-3.5 text-blue-500" /></span>;
+            return <span key={i} title={t("roles.driver")} className="shrink-0"><HugeiconsIcon icon={Car01Icon} className="h-3.5 w-3.5 text-blue-500" /></span>;
           }
           if (roleLower === "dẫn đường") {
-            return <span key={i} title="Dẫn đường" className="shrink-0"><HugeiconsIcon icon={CompassIcon} className="h-3.5 w-3.5 text-sky-500" /></span>;
+            return <span key={i} title={t("roles.navigator")} className="shrink-0"><HugeiconsIcon icon={CompassIcon} className="h-3.5 w-3.5 text-sky-500" /></span>;
           }
           if (roleLower === "phụ trách hành lý") {
-            return <span key={i} title="Phụ trách hành lý" className="shrink-0"><HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 text-indigo-500" /></span>;
+            return <span key={i} title={t("roles.luggage")} className="shrink-0"><HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 text-indigo-500" /></span>;
           }
           if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
-            return <span key={i} title="Người đồng hành" className="shrink-0"><HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5 text-slate-400" /></span>;
+            return <span key={i} title={t("roles.companion")} className="shrink-0"><HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5 text-slate-400" /></span>;
           }
           return <span key={i} title={roleLower} className="shrink-0"><HugeiconsIcon icon={BadgeCheckIcon} className="h-3.5 w-3.5 text-teal-500" /></span>;
         })}
@@ -340,7 +342,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white dark:bg-[#0A1124] flex-col gap-4">
         <div className="h-10 w-10 animate-spin rounded-full border-4 border-kat-primary/30 border-t-kat-primary"></div>
-        <p className="text-slate-500 dark:text-slate-400 font-bold animate-pulse">Đang tải hành trình...</p>
+        <p className="text-slate-500 dark:text-slate-400 font-bold animate-pulse">{t("share.loadingTrip")}</p>
       </div>
     );
   }
@@ -356,12 +358,12 @@ export default function SharedTripScreen({ token }: { token: string }) {
               <HugeiconsIcon icon={SecurityWarningIcon} className="h-10 w-10" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-200">Không thể truy cập chuyến đi</h2>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-200">{t("share.cannotAccessTrip")}</h2>
               <p className="text-base text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-                Liên kết này không tồn tại hoặc bạn không có quyền truy cập.
+                {t("share.linkNotExist")}
               </p>
               <p className="text-sm text-slate-400 dark:text-slate-500 font-medium mt-2 leading-relaxed">
-                Vui lòng kiểm tra lại đường dẫn hoặc yêu cầu chủ chuyến đi chia sẻ lại liên kết.
+                {t("share.askOwnerToReshare")}
               </p>
             </div>
             <button
@@ -385,10 +387,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
               <HugeiconsIcon icon={SecurityWarningIcon} className="h-8 w-8" />
             </div>
             <h2 className="text-[22px] font-extrabold text-kat-dark tracking-tight flex items-center justify-center gap-1.5">
-              <span>Trạm kiểm soát</span>
+              <span>{t("share.checkpoint")}</span>
             </h2>
             <p className="mt-2 text-[14px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-              Chuyến đi này được bảo vệ bằng mã PIN. Vui lòng nhập mã PIN để xem nội dung.
+              {t("share.pinProtected")}
             </p>
           </div>
 
@@ -437,7 +439,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 ))}
               </div>
               {pinError && (
-                <p className="text-center text-xs font-bold text-rose-500">Mã PIN không chính xác. Vui lòng thử lại.</p>
+                <p className="text-center text-xs font-bold text-rose-500">{t("share.pinIncorrect")}</p>
               )}
               <button
                 disabled={pinInput.length < 4}
@@ -473,7 +475,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
 
   const isDayTrip = trip.startDate === trip.endDate;
-  let durationText = "Trong ngày";
+  let durationText = t("share.sameDay");
   if (!isDayTrip) {
     try {
       const start = new Date(trip.startDate);
@@ -481,9 +483,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
       const diffTime = Math.abs(end.getTime() - start.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
       const diffNights = diffDays > 1 ? diffDays - 1 : 0;
-      durationText = `${diffDays} ngày ${diffNights} đêm`;
+      durationText = t("home.duration", { days: diffDays, nights: diffNights });
     } catch {
-      durationText = "Dài ngày";
+      durationText = t("home.longTrip");
     }
   }
 
@@ -580,11 +582,11 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   // Navigation Tabs construction (always show enabled categories even if they are empty)
   const tabsList = [
-    {id: "activities", label: "Lịch trình", show: true, icon: RouteIcon },
-    {id: "journals", label: "Bản tin", show: Boolean(data?.includeJournals), icon: GlobeIcon },
-    {id: "expenses", label: "Chi phí", show: Boolean(data?.includeExpenses), icon: Wallet01Icon },
-    {id: "checklist", label: "Chuẩn bị", show: Boolean(data?.includeChecklist || data?.includeDocuments), icon: CheckmarkCircle02Icon },
-    {id: "members", label: "Thành viên", show: true, icon: UserGroupIcon },
+    {id: "activities", label: t("share.activities"), show: true, icon: RouteIcon },
+    {id: "journals", label: t("share.journals"), show: Boolean(data?.includeJournals), icon: GlobeIcon },
+    {id: "expenses", label: t("share.expenses"), show: Boolean(data?.includeExpenses), icon: Wallet01Icon },
+    {id: "checklist", label: t("share.checklist"), show: Boolean(data?.includeChecklist || data?.includeDocuments), icon: CheckmarkCircle02Icon },
+    {id: "members", label: t("share.members"), show: true, icon: UserGroupIcon },
   ].filter(t => t.show);
 
   if (showIdentityModal) {
@@ -611,7 +613,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             </div>
 
             <h2 className="text-[22px] font-extrabold text-kat-dark tracking-tight flex items-center justify-center gap-1.5">
-              <span>Bạn là ai trong chuyến đi?</span>
+              <span>{t("share.whoAreYou")}</span>
               <button
                 type="button"
                 onClick={() => setIsRolesHelpOpen(true)}
@@ -622,7 +624,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               </button>
             </h2>
             <p className="mt-2 text-[14px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-              Chọn tên của bạn trong danh sách để chúng ta dễ dàng tương tác nhé.
+              {t("share.selectYourName")}
             </p>
           </div>
 
@@ -634,7 +636,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     type="text"
                     value={memberSearchQuery}
                     onChange={(e) => setMemberSearchQuery(e.target.value)}
-                    placeholder="Tìm tên thành viên..."
+                    placeholder={t("share.searchMember")}
                     className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl text-[14px] font-semibold text-kat-dark placeholder:text-slate-400 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-none focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 focus:bg-white dark:focus:bg-slate-800 transition-all duration-200"
                   />
                   <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
@@ -668,7 +670,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       return (
                         <div className="p-8 text-center text-slate-400 dark:text-slate-500 select-none">
                           <HugeiconsIcon icon={Search01Icon} className="w-8 h-8 mx-auto mb-2 text-slate-350 dark:text-slate-600" />
-                          <p className="text-xs font-semibold">Không tìm thấy thành viên</p>
+                          <p className="text-xs font-semibold">{t("share.memberNotFound")}</p>
                         </div>
                       );
                     }
@@ -714,7 +716,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-400">
                     <HugeiconsIcon icon={GlobeIcon} className="h-4 w-4" />
                   </div>
-                  <span className="text-[14px] font-bold text-slate-600 dark:text-slate-300">Tôi chỉ muốn xem bản tin chuyến đi</span>
+                  <span className="text-[14px] font-bold text-slate-600 dark:text-slate-300">{t("share.justWantToView")}</span>
                 </button>
               </div>
           </div>
@@ -838,7 +840,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               <div className="flex flex-wrap gap-2.5">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90 max-w-full">
                   <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-white/70 shrink-0" />
-                  <span className="truncate">{trip.destination || "Chưa rõ điểm đến"}</span>
+                  <span className="truncate">{trip.destination || t("share.unknownDestination")}</span>
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90 max-w-full">
                   <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-white/70 shrink-0" />
@@ -851,7 +853,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 {trip.mediaLink && (
                   <a href={trip.mediaLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/20 px-3 py-1 text-[12px] font-bold backdrop-blur-md border border-sky-400/30 shadow-inner text-sky-100 hover:bg-sky-500/30 transition-colors max-w-full">
                     <HugeiconsIcon icon={Link02Icon} className="h-3 w-3 shrink-0" />
-                    <span className="truncate">Kho Ảnh Gốc</span>
+                    <span className="truncate">{t("share.originalPhotos")}</span>
                   </a>
                 )}
               </div>
@@ -881,9 +883,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   return (
                     <div className="mt-2.5 w-full space-y-1 text-left z-10">
                       <div className="flex items-center justify-between text-[8px] font-bold text-white/70">
-                        <span>Khởi hành</span>
-                        <span>Đang đi</span>
-                        <span>Kết thúc</span>
+                        <span>{t("share.depart")}</span>
+                        <span>{t("share.onGoing")}</span>
+                        <span>{t("share.end")}</span>
                       </div>
                       <div className="relative h-1.5 w-full rounded-full bg-white/15 overflow-hidden border border-white/10">
                         <div 
@@ -940,16 +942,16 @@ export default function SharedTripScreen({ token }: { token: string }) {
                  <div className="flex items-center gap-2.5 bg-white/5 backdrop-blur-md rounded-3xl p-3 border border-white/10 flex-1 lg:flex-none lg:w-full">
                    <HugeiconsIcon icon={Location01Icon} className="w-5 h-5 text-white/40 shrink-0" />
                    <div className="flex flex-col gap-0.5 min-w-0">
-                     <span className="text-white/80 font-bold text-[11px]">Chưa có điểm đến</span>
-                     <span className="text-white/50 text-[10px]">Thêm điểm đến để xem thời tiết</span>
+                     <span className="text-white/80 font-bold text-[11px]">{t("share.noDestination")}</span>
+                     <span className="text-white/50 text-[10px]">{t("share.addDestinationForWeather")}</span>
                    </div>
                  </div>
               ) : (!trip.latitude || !trip.longitude) ? null : weatherError || !forecast ? (
                  <div className="flex items-center gap-2.5 bg-red-500/20 backdrop-blur-md rounded-3xl p-3 border border-red-500/30 flex-1 lg:flex-none lg:w-full">
                    <HugeiconsIcon icon={CloudRainWindIcon} className="w-5 h-5 text-white/60 shrink-0" />
                    <div className="flex flex-col gap-1">
-                     <span className="text-white font-bold text-[11px]">Không thể tải thời tiết</span>
-                     <span className="text-white/70 text-[10px]">Lỗi kết nối</span>
+                     <span className="text-white font-bold text-[11px]">{t("share.weatherError")}</span>
+                     <span className="text-white/70 text-[10px]">{t("share.connectionError")}</span>
                    </div>
                  </div>
               ) : (
@@ -958,27 +960,27 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   className="flex flex-col items-stretch justify-center bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-3 gap-2 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
                 >
                   {/* Weather Info Block */}
-                  <div className="flex items-center justify-between gap-2 w-full">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-3xl min-[390px]:text-4xl font-black text-white drop-shadow-sm tracking-tighter">
+                  <div className="flex items-center justify-between gap-2 w-full min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0 shrink">
+                      <span className="text-3xl min-[360px]:text-4xl font-black text-white drop-shadow-sm tracking-tighter shrink-0">
                         {Math.round(forecast.current?.temperature || 20)}°
                       </span>
-                      <div className="flex flex-col ml-1 flex-shrink-0">
-                        <span className="mb-[-4px] flex items-center justify-center h-8">
+                      <div className="flex flex-col ml-1 min-w-0 shrink">
+                        <span className="mb-[-4px] flex items-center justify-center h-8 shrink-0">
                           {getWeatherIcon(forecast.current?.weathercode || 0, "w-7 h-7 drop-shadow-md")}
                         </span>
-                        <span className="text-[10.5px] min-[390px]:text-[11.5px] font-extrabold text-white/95 uppercase tracking-wide whitespace-nowrap mt-1 drop-shadow-sm">
+                        <span className="text-[10px] min-[360px]:text-[11px] font-extrabold text-white/95 uppercase tracking-normal mt-1 drop-shadow-sm truncate text-center">
                           {getWeatherText(forecast.current?.weathercode || 0)}
                         </span>
                       </div>
                     </div>
                     <div className="w-px h-10 bg-white/30 mx-0.5 shrink-0" />
-                    <div className="flex flex-col text-right whitespace-nowrap">
+                    <div className="flex flex-col text-right whitespace-nowrap shrink-0">
                       <span className="text-[11px] min-[360px]:text-[11.5px] font-extrabold text-white/95">
-                        Cao: {Math.round(forecast.temperature_2m_max[0])}°
+                        {t("weather.high")}: {Math.round(forecast.temperature_2m_max[0])}°
                       </span>
                       <span className="text-[11px] min-[360px]:text-[11.5px] font-bold text-white/70">
-                        Thấp: {Math.round(forecast.temperature_2m_min[0])}°
+                        {t("weather.low")}: {Math.round(forecast.temperature_2m_min[0])}°
                       </span>
                     </div>
                   </div>
@@ -1180,7 +1182,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                         <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
                         Địa điểm
                       </span>
-                      <span className="font-black text-kat-dark">{trip.destination || trip.location || "Chưa xác định"}</span>
+                      <span className="font-black text-kat-dark">{trip.destination || trip.location || t("common.unknownLocation")}</span>
                     </div>
                     <div className="flex items-center justify-between border-b border-slate-100/40 dark:border-slate-800/20 pb-2.5">
                       <span className="flex items-center gap-2">

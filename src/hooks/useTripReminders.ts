@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChecklistItem, EventItem, Trip, BackupPlan, TravelDocument } from '../db';
 
 export interface TripReminder {
@@ -19,6 +20,7 @@ interface UseTripRemindersProps {
 }
 
 export function useTripReminders({ trip, checklist, travelDocuments, events, backupPlans, pendingRequestsCount }: UseTripRemindersProps) {
+  const { t } = useTranslation();
   return useMemo(() => {
     const reminders: TripReminder[] = [];
     
@@ -40,8 +42,8 @@ export function useTripReminders({ trip, checklist, travelDocuments, events, bac
     if (pendingRequestsCount && pendingRequestsCount > 0) {
       reminders.push({
         id: 'share_requests',
-        text: `Có ${pendingRequestsCount} yêu cầu chỉnh sửa đang chờ duyệt.`,
-        cta: 'Xem yêu cầu',
+        text: t('reminders.pendingRequests', { count: pendingRequestsCount }),
+        cta: t('reminders.viewRequests'),
         tab: 'share_requests' as any,
         isImportant: true
       });
@@ -51,8 +53,8 @@ export function useTripReminders({ trip, checklist, travelDocuments, events, bac
     if (diffDays >= 1 && diffDays <= 3) {
       reminders.push({
         id: 'upcoming_trip',
-        text: 'Chuyến đi sắp bắt đầu. Kiểm tra lại giấy tờ và hành lý.',
-        cta: 'Xem chuẩn bị',
+        text: t('reminders.upcomingTrip'),
+        cta: t('reminders.viewPrep'),
         tab: 'checklist',
         isImportant: true
       });
@@ -62,8 +64,8 @@ export function useTripReminders({ trip, checklist, travelDocuments, events, bac
     if (today.getTime() >= start.getTime() && today.getTime() <= end.getTime()) {
       reminders.push({
         id: 'ongoing_trip',
-        text: 'Hôm nay là một ngày trong chuyến đi. Kiểm tra lịch trình và phương án dự phòng.',
-        cta: 'Xem lịch trình',
+        text: t('reminders.ongoingTrip'),
+        cta: t('reminders.viewTimeline'),
         tab: 'timeline',
         isImportant: true
       });
@@ -74,8 +76,8 @@ export function useTripReminders({ trip, checklist, travelDocuments, events, bac
     if (uncompletedChecklist > 0) {
       reminders.push({
         id: 'checklist_pending',
-        text: `Bạn còn ${uncompletedChecklist} việc chuẩn bị chưa hoàn thành.`,
-        cta: 'Xem chuẩn bị',
+        text: t('reminders.checklistPending', { count: uncompletedChecklist }),
+        cta: t('reminders.viewPrep'),
         tab: 'checklist'
       });
     }
@@ -84,8 +86,8 @@ export function useTripReminders({ trip, checklist, travelDocuments, events, bac
     if (diffDays > 0 && travelDocuments.length === 0) {
       reminders.push({
         id: 'missing_docs',
-        text: 'Chưa có giấy tờ hoặc thông tin đặt chỗ nào cho chuyến đi này.',
-        cta: 'Xem giấy tờ',
+        text: t('reminders.missingDocs'),
+        cta: t('reminders.viewDocs'),
         tab: 'documents'
       });
     }
@@ -94,8 +96,8 @@ export function useTripReminders({ trip, checklist, travelDocuments, events, bac
     if (events.length > 0 && backupPlans.length === 0) {
       reminders.push({
         id: 'missing_backups',
-        text: 'Bạn có thể thêm phương án dự phòng cho các hoạt động quan trọng.',
-        cta: 'Thêm dự phòng',
+        text: t('reminders.missingBackups'),
+        cta: t('reminders.addBackup'),
         tab: 'timeline'
       });
     }
@@ -108,5 +110,5 @@ export function useTripReminders({ trip, checklist, travelDocuments, events, bac
     });
 
     return reminders.slice(0, 4);
-  }, [trip?.startDate, trip?.endDate, checklist, travelDocuments, events, backupPlans, pendingRequestsCount]);
+  }, [trip?.startDate, trip?.endDate, checklist, travelDocuments, events, backupPlans, pendingRequestsCount, t]);
 }

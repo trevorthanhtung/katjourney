@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 /**
  * Tính gợi ý đồ đạc dựa trên so sánh thời tiết điểm đến vs vị trí hiện tại.
  */
@@ -26,6 +27,7 @@ export function usePackingTip(
   forecast: WeatherForecast | null | undefined,
   myForecast: WeatherForecast | null | undefined
 ): PackingTip | null {
+  const { t } = useTranslation();
   if (!forecast) return null;
 
   const destCode =
@@ -35,7 +37,7 @@ export function usePackingTip(
   if (isRainy(destCode)) {
     return {
       emoji: "🌧️",
-      message: `Điểm đến đang có mưa, đừng quên bỏ ô vào vali!`,
+      message: t("weather.packingRainShort"),
       color: "bg-sky-500/15 border-sky-400/30 text-white",
     };
   }
@@ -59,25 +61,25 @@ export function usePackingTip(
   if (diff <= -7)
     return {
       emoji: "🧥",
-      message: `Lạnh hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Nhớ mang áo ấm!`,
+      message: t("weather.colderShort", { diff: Math.abs(Math.round(diff)) }),
       color: "bg-white/15 border-white/25 text-white",
     };
   if (diff <= -4)
     return {
       emoji: "🧣",
-      message: `Mát hơn nơi bạn ${Math.abs(Math.round(diff))}°C. Mang áo khoác mỏng nhé.`,
+      message: t("weather.coolerShort", { diff: Math.abs(Math.round(diff)) }),
       color: "bg-white/15 border-white/25 text-white",
     };
   if (diff >= 7)
     return {
       emoji: "☀️",
-      message: `Nóng hơn nơi bạn ${Math.round(diff)}°C. Chuẩn bị kem chống nắng!`,
+      message: t("weather.hotterShort", { diff: Math.round(diff) }),
       color: "bg-amber-500/15 border-amber-400/30 text-white",
     };
   if (diff >= 4)
     return {
       emoji: "🕶️",
-      message: `Ấm hơn nơi bạn ${Math.round(diff)}°C. Đừng quên kính mát.`,
+      message: t("weather.warmerShort", { diff: Math.round(diff) }),
       color: "bg-orange-500/15 border-orange-400/30 text-white",
     };
 

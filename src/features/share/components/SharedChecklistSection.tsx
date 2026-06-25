@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from "react-i18next";
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../../db';
 import { createPortal } from 'react-dom';
@@ -54,6 +55,8 @@ export function SharedChecklistSection({
   members?: Member[];
   guestName?: string;
 }) {
+  const { t } = useTranslation();
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
@@ -176,7 +179,7 @@ export function SharedChecklistSection({
       try {
         await db.checklist.update(Number(item.id), { completed: !item.completed });
       } catch (e: any) {
-        showToast("Lỗi: " + e.message, "error");
+        showToast(t("toast.errorMsg", { message: e.message }), "error");
       }
       return;
     }
@@ -184,8 +187,8 @@ export function SharedChecklistSection({
     try {
       const status = isDirectEdit ? 'auto_approved' : undefined;
       await submitChangeRequest(token, { section: 'checklist', action: 'update', targetId: String(item.id), before: item as any, after: { completed: !item.completed }, status, requesterName: guestName });
-      showToast(isDirectEdit ? 'Đã cập nhật trạng thái!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
-    } catch (e: any) { showToast('Lỗi: ' + e.message, 'error'); }
+      showToast(isDirectEdit ? t("toast.statusUpdated") : t("toast.requestSent"));
+    } catch (e: any) { showToast(t("toast.errorMsg", { message: e.message }), 'error'); }
   }
 
   async function handleSave() {
@@ -196,7 +199,7 @@ export function SharedChecklistSection({
     
     if (activeSubTab === 'private') {
       if (!tripId) {
-        showToast("Lỗi: Không xác định được chuyến đi", "error");
+        showToast(t("toast.tripNotFound"), "error");
         return;
       }
       const targetTripId = typeof tripId === 'number' ? tripId : (isNaN(Number(tripId)) ? tripId : Number(tripId));
@@ -211,7 +214,7 @@ export function SharedChecklistSection({
             createdBy: guestName || 'guest',
             updatedAt: new Date().toISOString()
           });
-          showToast("Đã cập nhật chuẩn bị cá nhân!");
+          showToast(t("toast.personalPreparationUpdated"));
         } else {
           await db.checklist.add({
             tripId: targetTripId as any,
@@ -227,12 +230,12 @@ export function SharedChecklistSection({
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           });
-          showToast("Đã thêm chuẩn bị cá nhân!");
+          showToast(t("toast.personalPreparationAdded"));
         }
         setIsFormOpen(false);
         setEditingId(null);
       } catch (e: any) {
-        showToast("Lỗi khi lưu: " + e.message, "error");
+        showToast(t("toast.saveError", { message: e.message }), "error");
       }
       return;
     }
@@ -262,7 +265,7 @@ export function SharedChecklistSection({
         setIsFormOpen(false);
         showToast(successMessage);
       }
-    } catch (e: any) { showToast((isDirectEdit ? 'Lỗi cập nhật: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); }
+    } catch (e: any) { showToast(isDirectEdit ? t("toast.updateError", { message: e.message }) : t("toast.submitRequestError", { message: e.message }), 'error'); }
   }
 
   async function handleDelete(id: string) {
@@ -280,8 +283,8 @@ export function SharedChecklistSection({
         status: isDirectEdit ? 'auto_approved' : undefined,
         requesterName: guestName 
       });
-      showToast(isDirectEdit ? 'Đã xóa trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
-    } catch (e: any) { showToast((isDirectEdit ? 'Lỗi xóa: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error'); }
+      showToast(isDirectEdit ? t("toast.directDelete") : t("toast.requestSent"));
+    } catch (e: any) { showToast(isDirectEdit ? t("toast.deleteError", { message: e.message }) : t("toast.submitRequestError", { message: e.message }), 'error'); }
   }
 
   return (

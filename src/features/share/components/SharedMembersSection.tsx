@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from "react-i18next";
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../../db';
 import { createPortal } from 'react-dom';
@@ -61,6 +62,8 @@ export function SharedMembersSection({
   changeRequests?: any[]; 
   guestName?: string; 
 }) {
+  const { t } = useTranslation();
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
@@ -153,7 +156,7 @@ export function SharedMembersSection({
 
     const finalRole = selectedRoles.join(", ");
     if (!finalRole) {
-      showToast('Vui lòng chọn vai trò mới.', 'error');
+      showToast(t("toast.requireRole"), 'error');
       return;
     }
 
@@ -179,9 +182,9 @@ export function SharedMembersSection({
     try {
       await submitChangeRequest(token, payload);
       setRoleChangeMemberId(null);
-      showToast('Đã gửi đề xuất thay đổi vai trò. Chủ nhóm sẽ duyệt.');
+      showToast(t("toast.roleRequestSent"));
     } catch (e: any) {
-      showToast('Lỗi: ' + e.message, 'error');
+      showToast(t("toast.errorMsg", { message: e.message }), 'error');
     }
   }
 
@@ -215,9 +218,9 @@ export function SharedMembersSection({
         requesterName: guestName
       });
       setIsFormOpen(false);
-      showToast('Đã gửi đề xuất thêm thành viên. Chủ nhóm sẽ duyệt.');
+      showToast(t("toast.memberAddRequestSent"));
     } catch (e: any) {
-      showToast('Lỗi: ' + e.message, 'error');
+      showToast(t("toast.errorMsg", { message: e.message }), 'error');
     }
   }
 
@@ -235,9 +238,9 @@ export function SharedMembersSection({
         before: before as any,
         requesterName: guestName
       });
-      showToast('Đã gửi đề xuất xóa thành viên.');
+      showToast(t("toast.memberDeleteRequestSent"));
     } catch (e: any) {
-      showToast('Lỗi: ' + e.message, 'error');
+      showToast(t("toast.errorMsg", { message: e.message }), 'error');
     }
   }
 
@@ -328,28 +331,28 @@ export function SharedMembersSection({
                   const rLower = r.toLowerCase();
                   if (rLower.includes("trưởng nhóm") || rLower.includes("trưởng đoàn") || rLower.includes("leader")) {
                     return (
-                      <span key={idx} title="Trưởng nhóm" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title={t("roles.leader")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={CrownIcon} className="w-4 h-4 text-amber-500 fill-amber-500/10" />
                       </span>
                     );
                   }
                   if (rLower.includes("quản lý chi phí")) {
                     return (
-                      <span key={idx} title="Quản lý chi phí" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title={t("roles.costManager")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={Wallet01Icon} className="w-4 h-4 text-emerald-500" />
                       </span>
                     );
                   }
                   if (rLower.includes("tài xế")) {
                     return (
-                      <span key={idx} title="Tài xế" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title={t("roles.driver")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={Car01Icon} className="w-4 h-4 text-blue-500" />
                       </span>
                     );
                   }
                   if (rLower.includes("dẫn đường")) {
                     return (
-                      <span key={idx} title="Dẫn đường" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-700 dark:text-sky-400 border border-sky-200/50 dark:border-sky-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title={t("roles.navigator")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-700 dark:text-sky-400 border border-sky-200/50 dark:border-sky-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={CompassIcon} className="w-4 h-4 text-sky-500" />
                       </span>
                     );

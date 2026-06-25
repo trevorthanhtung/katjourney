@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -70,6 +71,8 @@ export function SharedBackupPlansSheet({
   mode,
   guestName
 }: SharedBackupPlansSheetProps) {
+  const { t } = useTranslation();
+
   useBodyScrollLock(isOpen);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<BackupPlan | null>(null);
@@ -183,7 +186,7 @@ export function SharedBackupPlansSheet({
 
   async function handleSave() {
     if (!title.trim()) {
-      showToast("Vui lòng nhập tên phương án", "error");
+      showToast(t("toast.backupRequireName"), "error");
       return;
     }
 
@@ -231,7 +234,7 @@ export function SharedBackupPlansSheet({
       resetForm();
       showToast(successMessage);
     } catch (e: any) {
-      showToast((isDirectEdit ? 'Lỗi cập nhật: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error');
+      showToast(isDirectEdit ? t("toast.updateError", { message: e.message }) : t("toast.submitRequestError", { message: e.message }), 'error');
     }
   }
 
@@ -246,9 +249,9 @@ export function SharedBackupPlansSheet({
           status: isDirectEdit ? 'auto_approved' : undefined,
           requesterName: guestName
         });
-        showToast(isDirectEdit ? 'Đã xóa trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.');
+        showToast(isDirectEdit ? t("toast.directDelete") : t("toast.requestSent"));
       } catch (e: any) {
-        showToast((isDirectEdit ? 'Lỗi xóa: ' : 'Lỗi khi gửi đề xuất: ') + e.message, 'error');
+        showToast(isDirectEdit ? t("toast.deleteError", { message: e.message }) : t("toast.submitRequestError", { message: e.message }), 'error');
       }
     }
     setIsDeleteConfirmOpen(false);
