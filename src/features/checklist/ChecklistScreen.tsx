@@ -36,13 +36,13 @@ import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
 
 
 const categoryI18nMap: Record<string, string> = {
-  "Giấy tờ": "packing.catGiayTo",
-  "Quần áo": "packing.catQuanAo",
-  "Đồ cá nhân": "packing.catDoCaNhan",
-  "Thiết bị điện tử": "packing.catDienTu",
-  "Thuốc & y tế": "packing.catYTe",
-  "Tiền & ví": "packing.catTien",
-  "Đồ ăn nhẹ": "packing.catAnNhe",
+  "Giấy tờ": "packing.catDocuments",
+  "Quần áo": "packing.catClothing",
+  "Đồ cá nhân": "packing.catPersonal",
+  "Thiết bị điện tử": "packing.catElectronics",
+  "Thuốc & y tế": "packing.catMedical",
+  "Tiền & ví": "packing.catMoney",
+  "Đồ ăn nhẹ": "packing.catSnacks",
   "Khác": "packing.catOther"
 };
 
@@ -80,14 +80,14 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 };
 
 const QUICK_SUGGESTIONS = [
-  { labelKey: "packing.catGiayTo", titleKey: "packing.sugPassport", category: "Giấy tờ" },
-  { labelKey: "packing.catQuanAo", titleKey: "packing.sugClothes", category: "Quần áo" },
-  { labelKey: "packing.catDienTu", titleKey: "packing.sugPowerBank", category: "Thiết bị điện tử" },
-  { labelKey: "packing.catYTe", titleKey: "packing.sugMeds", category: "Thuốc & y tế" },
-  { labelKey: "packing.catDoCaNhan", titleKey: "packing.sugToothbrush", category: "Đồ cá nhân" },
-  { labelKey: "packing.catTien", titleKey: "packing.sugMoney", category: "Tiền & ví" },
-  { labelKey: "packing.catDoCaNhan", titleKey: "packing.sugTowel", category: "Đồ cá nhân" },
-  { labelKey: "packing.catAnNhe", titleKey: "packing.sugSnacks", category: "Đồ ăn nhẹ" }
+  { labelKey: "packing.catDocuments", titleKey: "packing.sugPassport", category: "Giấy tờ" },
+  { labelKey: "packing.catClothing", titleKey: "packing.sugClothes", category: "Quần áo" },
+  { labelKey: "packing.catElectronics", titleKey: "packing.sugPowerBank", category: "Thiết bị điện tử" },
+  { labelKey: "packing.catMedical", titleKey: "packing.sugMeds", category: "Thuốc & y tế" },
+  { labelKey: "packing.catPersonal", titleKey: "packing.sugToothbrush", category: "Đồ cá nhân" },
+  { labelKey: "packing.catMoney", titleKey: "packing.sugMoney", category: "Tiền & ví" },
+  { labelKey: "packing.catPersonal", titleKey: "packing.sugTowel", category: "Đồ cá nhân" },
+  { labelKey: "packing.catSnacks", titleKey: "packing.sugSnacks", category: "Đồ ăn nhẹ" }
 ];
 
 function ChecklistItemRow({
@@ -546,7 +546,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             <div>
               <h3 className="text-[16px] font-semibold text-slate-800 dark:text-slate-200 leading-snug">{t("packing.progressTitle")}</h3>
               <p className="text-[13.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
-                Đã xếp {stats.completed} / {stats.total} món
+                {t("packing.progressStatus", { completed: stats.completed, total: stats.total })}
               </p>
             </div>
           </div>
@@ -572,9 +572,9 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <HugeiconsIcon icon={SparklesIcon} className="h-4.5 w-4.5 text-amber-500" />
-              <h3 className="text-[14.5px] font-black text-kat-text">Gợi ý nhanh cho hành lý</h3>
+              <h3 className="text-[14.5px] font-black text-kat-text">{t("packing.quickSuggestionsTitle")}</h3>
             </div>
-            <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 md:hidden">Cuộn ngang ›</span>
+            <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 md:hidden">{t("packing.scrollRight")}</span>
           </div>
           <div className="flex flex-nowrap gap-2 overflow-x-auto pb-1 -mx-2 px-2 touch-pan-x scrollbar-none md:flex-wrap md:overflow-visible md:pb-0 md:mx-0 md:px-0">
             {QUICK_SUGGESTIONS.map((sug) => {
@@ -617,7 +617,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-3.5 ring-4 ring-kat-primary/5">
               <HugeiconsIcon icon={Luggage01Icon} className="h-5.5 w-5.5" />
             </div>
-            <h3 className="text-[17px] font-bold text-kat-text">Chưa có món đồ nào trong hành lý</h3>
+            <h3 className="text-[17px] font-bold text-kat-text">{t("packing.emptyStateTitle")}</h3>
             <p className="mt-1 text-[13.5px] text-kat-muted max-w-xs">
               Thêm giấy tờ, quần áo, thiết bị hoặc thuốc men để chuyến đi sẵn sàng hơn.
             </p>

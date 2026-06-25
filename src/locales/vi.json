@@ -911,8 +911,8 @@
     "sugMeds": "Thuốc hạ sốt, băng cá nhân",
     "sugToothbrush": "Bàn chải & Kem đánh răng",
     "sugMoney": "Tiền mặt & thẻ",
-    "sugTowel": "Khăn mặt & Bộ vệ sinh",
-    "sugSnacks": "Nước uống & bánh kẹo",
+    "sugTowel": "Khăn tắm",
+    "sugSnacks": "Đồ ăn nhẹ",
     "progressStatus": "Đã xếp {{completed}} / {{total}} món",
     "progressPerfect": "Tuyệt vời! Hành lý đã sẵn sàng.",
     "progressEmpty": "Thêm món đồ đầu tiên để bắt đầu chuẩn bị.",
@@ -961,7 +961,12 @@
     "deletePrivateTitle": "Xóa mục chuẩn bị cá nhân?",
     "deletePrivateDesc": "Hành động này sẽ xóa vĩnh viễn mục chuẩn bị cá nhân của bạn và không thể hoàn tác.",
     "proposeDeleteDesc": "Bạn đang gửi đề xuất xóa mục chuẩn bị này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn.",
-    "saveChanges": "Lưu thay đổi"
+    "saveChanges": "Lưu thay đổi",
+    "emptyStateTitle": "Chưa có món đồ nào trong hành lý",
+    "emptyStateDesc": "Thêm giấy tờ, quần áo, thiết bị hoặc thuốc men để chuyến đi sẵn sàng hơn.",
+    "quickSuggestionsTitle": "Gợi ý nhanh cho hành lý",
+    "quickSuggestions": "Gợi ý nhanh",
+    "scrollRight": "Cuộn ngang ›"
   },
   "expenses": {
     "pageTitle": "Chi phí",
