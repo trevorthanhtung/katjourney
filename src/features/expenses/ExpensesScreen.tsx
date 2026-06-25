@@ -249,7 +249,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
       <div className="min-w-0 flex-1">
         {/* Description */}
         <h4 className="text-base font-semibold text-kat-dark dark:text-white truncate">
-          {item.description || t("expenses.unnamed")}
+          {(!item.description || item.description === item.category) ? (catMap[item.category] || item.category) : item.description}
         </h4>
 
         {/* Category & Badge */}
@@ -553,7 +553,7 @@ function ExpenseForm({
     }
 
     const payload = { 
-      description: form.description.trim() || `${finalCategory}`, 
+      description: form.description.trim(), 
       amount: vndAmount,
       originalAmount: form.currency === "VND" ? undefined : amountVal,
       currency: form.currency === "VND" ? undefined : form.currency,
@@ -1059,6 +1059,18 @@ export function ExpensesScreen({
   isReadOnly?: boolean;
 }) {
   const { t } = useTranslation();
+  const catMap: Record<string, string> = React.useMemo(() => ({
+    "Di chuyển": t("expenses.catTransport"),
+    "Vé máy bay": t("expenses.catFlights"),
+    "Ăn uống": t("expenses.catFood"),
+    "Lưu trú": t("expenses.catAccommodation"),
+    "Vé tham quan": t("expenses.catTickets"),
+    "Mua sắm": t("expenses.catShopping"),
+    "Vui chơi & Giải trí": t("expenses.catEntertainment"),
+    "Chuẩn bị hành lý": t("expenses.catPreparation"),
+    "Khác": t("expenses.catOther"),
+    "Khác...": t("expenses.catCustom"),
+  }), [t]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
@@ -1309,7 +1321,7 @@ export function ExpensesScreen({
         onClose={() => setExpenseToDelete(null)}
         onConfirm={executeDelete}
         title={t("expenses.deleteTitle")}
-        itemName={expenseToDelete?.description || expenseToDelete?.category}
+        itemName={expenseToDelete?.description === expenseToDelete?.category ? (catMap[expenseToDelete?.category || ""] || expenseToDelete?.category) : (expenseToDelete?.description || catMap[expenseToDelete?.category || ""] || expenseToDelete?.category)}
         description={t("expenses.deleteDesc")}
         confirmLabel={t("expenses.deleteConfirm")}
       />

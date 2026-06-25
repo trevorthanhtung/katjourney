@@ -381,7 +381,7 @@ export function SharedExpensesSection({
     }
 
     const payload = { 
-      description: form.description.trim() || ("" + finalCategory), 
+      description: form.description.trim(), 
       amount: vndAmount, 
       payer: form.splitType === "personal" ? (form.payer || "") : form.payer, 
       category: finalCategory, 
@@ -627,7 +627,7 @@ export function SharedExpensesSection({
                           "text-[14px] font-bold text-kat-dark dark:text-slate-200 break-words line-clamp-1",
                           e.isPendingDelete ? "line-through text-slate-400/60 dark:text-slate-600/60" : ""
                         )}>
-                          {e.description || e.category}
+                          {(!e.description || e.description === e.category) ? (catMap[e.category] || e.category) : e.description}
                         </span>
 
                         {/* Pending Request Badges */}
@@ -1219,7 +1219,7 @@ export function SharedExpensesSection({
         title={isDirectEdit ? "Xóa khoản chi?" : "Đề xuất xóa khoản chi?"}
         description={isDirectEdit ? "Bạn có chắc chắn muốn xóa khoản chi này? Hành động này không thể hoàn tác." : "Bạn đang gửi đề xuất xóa khoản chi này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."}
         confirmLabel={isDirectEdit ? "Xóa" : "Đề xuất xóa"}
-        itemName={expenses.find(e => String(e.id) === deleteTargetId)?.description}
+        itemName={(() => { const e = expenses.find(e => String(e.id) === deleteTargetId); return e ? ((!e.description || e.description === e.category) ? (catMap[e.category] || e.category) : e.description) : ""; })()}
       />
       </section>
     </div>
