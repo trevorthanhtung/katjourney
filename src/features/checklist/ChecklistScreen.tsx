@@ -104,6 +104,16 @@ function ChecklistItemRow({
   isReadOnly?: boolean;
 }) {
   const { t } = useTranslation();
+  const catMap: Record<string, string> = React.useMemo(() => ({
+    "Giấy tờ": t("packing.catDocuments"),
+    "Quần áo": t("packing.catClothing"),
+    "Đồ cá nhân": t("packing.catPersonal"),
+    "Thiết bị điện tử": t("packing.catElectronics"),
+    "Thuốc & y tế": t("packing.catMedical"),
+    "Tiền & ví": t("packing.catMoney"),
+    "Đồ ăn nhẹ": t("packing.catSnacks"),
+    "Khác": t("packing.catOther"),
+  }), [t]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -174,7 +184,7 @@ function ChecklistItemRow({
                   : "bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-450 border-amber-100 dark:border-amber-900/30"
               }`}
             >
-              {item.priority === "required" ? "Bắt buộc" : "Quan trọng"}
+              {item.priority === "required" ? t("packing.priorityRequired") : t("packing.priorityImportant")}
             </span>
           )}
 
@@ -251,6 +261,16 @@ function ChecklistItemRow({
 
 export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: ChecklistItem[]; tripId: number; isReadOnly?: boolean }) {
   const { t } = useTranslation();
+  const catMap: Record<string, string> = React.useMemo(() => ({
+    "Giấy tờ": t("packing.catDocuments"),
+    "Quần áo": t("packing.catClothing"),
+    "Đồ cá nhân": t("packing.catPersonal"),
+    "Thiết bị điện tử": t("packing.catElectronics"),
+    "Thuốc & y tế": t("packing.catMedical"),
+    "Tiền & ví": t("packing.catMoney"),
+    "Đồ ăn nhẹ": t("packing.catSnacks"),
+    "Khác": t("packing.catOther"),
+  }), [t]);
   // Modal & Form State
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -425,7 +445,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
   let statusText = "Chưa có món cần chuẩn bị.";
   if (checklist.length > 0) {
     if (stats.percent === 100) {
-      statusText = "Tuyệt vời! Hành lý đã sẵn sàng.";
+      statusText = t("packing.progressPerfect");
     } else {
       statusText = `Còn ${stats.total - stats.completed} món cần chuẩn bị.`;
     }
@@ -524,7 +544,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
             
             {/* Text Hierarchy */}
             <div>
-              <h3 className="text-[16px] font-semibold text-slate-800 dark:text-slate-200 leading-snug">Tiến độ chuẩn bị</h3>
+              <h3 className="text-[16px] font-semibold text-slate-800 dark:text-slate-200 leading-snug">{t("packing.progressTitle")}</h3>
               <p className="text-[13.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
                 Đã xếp {stats.completed} / {stats.total} món
               </p>
@@ -720,7 +740,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                 {showValidationError && (
                   <p className="text-rose-500 text-[12.5px] font-bold mt-1.5 pl-1 flex items-center gap-1 motion-error-enter">
                     <HugeiconsIcon icon={AlertCircleIcon} className="h-3.5 w-3.5" />
-                    <span>Vui lòng nhập tên món cần mang.</span>
+                    <span>{t("packing.itemNameError")}</span>
                   </p>
                 )}
               </div>
@@ -737,7 +757,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                     const isSelected = category === cat;
                     return (
                       <button
-                        key={cat}
+                        key={catMap[cat] || cat}
                         type="button"
                         onClick={() => setCategory(cat)}
                         className={`flex flex-col items-center justify-center min-h-[76px] p-2 rounded-[18px] border-2 transition-all duration-200 active:scale-95 cursor-pointer ${
@@ -753,7 +773,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                         }`}>
                            <HugeiconsIcon icon={IconComponent} className="w-4.5 h-4.5" />
                         </div>
-                        <span className="text-[12px] font-bold tracking-tight">{cat}</span>
+                        <span className="text-[12px] font-bold tracking-tight">{catMap[cat] || cat}</span>
                       </button>
                     );
                   })}
@@ -763,8 +783,8 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
               {/* Quantity Counter */}
               <div className="flex items-center justify-between py-2 border-y border-slate-200/60 dark:border-slate-800">
                 <div>
-                  <label className="text-[13px] font-bold text-kat-text">Số lượng</label>
-                  <p className="text-[11.5px] text-kat-muted font-bold">Số lượng cần mang theo</p>
+                  <label className="text-[13px] font-bold text-kat-text">{t("packing.quantityLabel")}</label>
+                  <p className="text-[11.5px] text-kat-muted font-bold">{t("packing.quantityDesc")}</p>
                 </div>
                 <div className="flex items-center gap-3.5 bg-slate-50 dark:bg-slate-800/50 rounded-[16px] p-1 border border-kat-border/60 dark:border-slate-700/60">
                   <button
@@ -872,8 +892,8 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                     <HugeiconsIcon icon={Luggage01Icon} className="h-4.5 w-4.5" />
                   </div>
                   <div className="text-left">
-                    <span className="text-[13px] font-bold text-slate-800 dark:text-slate-200 block">Vật dụng cá nhân</span>
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold block mt-0.5">Không chia sẻ với đoàn khi ghép nhóm</span>
+                    <span className="text-[13px] font-bold text-slate-800 dark:text-slate-200 block">{t("packing.privateItem")}</span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold block mt-0.5">{t("packing.privateItemDesc")}</span>
                   </div>
                 </div>
                 <button

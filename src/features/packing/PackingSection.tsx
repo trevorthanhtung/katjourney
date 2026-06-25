@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useRef, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { CheckIcon, Delete01Icon, Luggage01Icon, MoreHorizontalIcon, PencilEdit01Icon } from "@hugeicons/core-free-icons";
@@ -84,6 +85,17 @@ function PackingItemRow({ item, onEdit, onDelete }: { item: PackingItem; onEdit:
 }
 
 export function PackingSection({ tripId, packingItems }: { tripId: number; packingItems: PackingItem[] }) {
+  const { t } = useTranslation();
+  const catMap: Record<string, string> = React.useMemo(() => ({
+    "Giấy tờ": t("packing.catDocuments"),
+    "Quần áo": t("packing.catClothing"),
+    "Đồ cá nhân": t("packing.catPersonal"),
+    "Thiết bị điện tử": t("packing.catElectronics"),
+    "Thuốc & y tế": t("packing.catMedical"),
+    "Tiền & ví": t("packing.catMoney"),
+    "Đồ ăn nhẹ": t("packing.catSnacks"),
+    "Khác": t("packing.catOther"),
+  }), [t]);
   const [tripType, setTripType] = useState<PackingTripType>("Biển");
   const [title, setTitle] = useState("");
   const [editing, setEditing] = useState<PackingItem | null>(null);
@@ -157,23 +169,23 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
   return (
     <div className="mx-auto max-w-4xl">
       <div className="space-y-6 pb-0 md:pb-8">
-        <ScreenTitle title="Hành lý" subtitle="Gợi ý thông minh, không lo bỏ sót." />
+        <ScreenTitle title={t("packing.pageTitle")} subtitle={t("packing.pageSubtitle")} />
         
         {/* Progress Card Hero */}
         <section className="flex flex-col items-center justify-center rounded-[24px] bg-kat-surface p-8 shadow-soft border border-kat-border/60">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5">
             <HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />
           </div>
-          <h3 className="text-[18px] font-bold text-kat-text mb-1">Chuẩn bị hành lý</h3>
+          <h3 className="text-[18px] font-bold text-kat-text mb-1">{t("packing.pageTitle")}</h3>
           <p className="text-[13px] font-bold text-kat-primary bg-kat-primary/10 px-4 py-1.5 rounded-full mb-3 shadow-sm">
-            {stats.completed} / {stats.total} món đã sẵn sàng
+            {t("packing.progressStatus", { completed: stats.completed, total: stats.total })}
           </p>
           <p className="text-[13.5px] font-medium text-kat-muted text-center">
             {stats.completed === stats.total && stats.total > 0 
-              ? "Tuyệt vời! Hành lý đã sẵn sàng."
+              ? t("packing.progressPerfect")
               : stats.total === 0 
-                ? "Thêm món đồ đầu tiên để bắt đầu chuẩn bị."
-                : `Còn ${stats.total - stats.completed} món nữa để chuyến đi hoàn hảo.`}
+                ? t("packing.progressEmpty")
+                : t("packing.progressRemaining", { remaining: stats.total - stats.completed })}
           </p>
         </section>
 
@@ -183,10 +195,10 @@ export function PackingSection({ tripId, packingItems }: { tripId: number; packi
           {packingItems.length ? (
             <div className="space-y-6">
               {Object.entries(groupedItems).sort(([a], [b]) => a.localeCompare(b)).map(([type, items]) => (
-                <div key={type} className="space-y-3">
+                <div key={catMap[type] || type} className="space-y-3">
                   <h3 className="px-1 text-[16px] font-bold text-slate-900 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    {type}
+                    {catMap[type] || type}
                   </h3>
                     <div className="grid gap-3 md:grid-cols-2">
                     {items.sort((a, b) => a.title.localeCompare(b.title)).map((item) => (

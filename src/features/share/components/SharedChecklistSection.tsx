@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from "react-i18next";
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../../db';
@@ -56,6 +56,16 @@ export function SharedChecklistSection({
   guestName?: string;
 }) {
   const { t } = useTranslation();
+  const catMap: Record<string, string> = useMemo(() => ({
+    "Giấy tờ": t("packing.catDocuments"),
+    "Quần áo": t("packing.catClothing"),
+    "Đồ cá nhân": t("packing.catPersonal"),
+    "Thiết bị điện tử": t("packing.catElectronics"),
+    "Thuốc & y tế": t("packing.catMedical"),
+    "Tiền & ví": t("packing.catMoney"),
+    "Đồ ăn nhẹ": t("packing.catSnacks"),
+    "Khác": t("packing.catOther"),
+  }), [t]);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -69,7 +79,7 @@ export function SharedChecklistSection({
     const targetTripId = typeof tripId === 'number' ? tripId : (isNaN(Number(tripId)) ? tripId : Number(tripId));
     try {
       const items = await db.checklist.where('tripId').equals(targetTripId).toArray();
-      return items.filter(c => c.isPrivate && !c.isDeleted && (c.createdBy === guestName || (!c.createdBy && !guestName)));
+      return items.filter((c: ChecklistItem) => c.isPrivate && !c.isDeleted && (c.createdBy === guestName || (!c.createdBy && !guestName)));
     } catch (e) {
       console.error("Error loading local private checklist items:", e);
       return [];
@@ -136,7 +146,7 @@ export function SharedChecklistSection({
   function startEdit(item: ChecklistItem) { setEditingId(String(item.id)); setIsFormOpen(true); }
 
   // Merge pending change requests into checklist for visual diffs
-  const mergedChecklist = React.useMemo(() => {
+  const mergedChecklist = useMemo(() => {
     const list = checklist.filter((c: any) => !c.isDeleted).map(item => {
       const pendingDelete = changeRequests.some(r => r.section === 'checklist' && r.action === 'delete' && String(r.targetId) === String(item.id));
       const updateReq = changeRequests.find(r => r.section === 'checklist' && r.action === 'update' && String(r.targetId) === String(item.id));
