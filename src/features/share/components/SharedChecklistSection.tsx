@@ -510,7 +510,7 @@ export function SharedChecklistSection({
             <HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />
           </div>
           <h4 className="text-[14px] font-bold text-kat-dark dark:text-slate-200">
-            {activeSubTab === 'private' ? "Chưa có chuẩn bị cá nhân" : "Chưa có chuẩn bị nào"}
+            {activeSubTab === 'private' ? t("packing.emptyPrivate") : t("packing.emptyShared")}
           </h4>
           <p className="text-[11.5px] text-slate-400 dark:text-slate-500 mt-1 font-bold max-w-[220px]">
             {activeSubTab === 'private' 
@@ -545,7 +545,7 @@ export function SharedChecklistSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
             >
-              {activeSubTab === 'private' ? "Sửa" : (isDirectEdit ? "Sửa" : "Đề xuất sửa")}
+              {activeSubTab === 'private' ? t("packing.edit") : (isDirectEdit ? t("packing.edit") : t("packing.proposeEdit"))}
             </button>
             <button
               onClick={() => {
@@ -556,7 +556,7 @@ export function SharedChecklistSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-455 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
             >
-              {activeSubTab === 'private' ? "Xóa" : (isDirectEdit ? "Xóa" : "Đề xuất xóa")}
+              {activeSubTab === 'private' ? t("packing.deleteAction") : (isDirectEdit ? t("packing.deleteAction") : t("packing.proposeDelete"))}
             </button>
           </div>
         </>,
@@ -571,10 +571,10 @@ export function SharedChecklistSection({
             "mt-4 items-center justify-center gap-2 text-[13.5px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/25 hover:bg-purple-100/80 dark:hover:bg-purple-900/30 active:scale-[0.99] rounded-xl transition-all shadow-sm shadow-purple-100/30 dark:shadow-none h-11 w-full",
             displayedChecklist.length > 0 ? "hidden lg:flex" : "flex"
           )}
-          title={activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : (isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm")}
+          title={activeSubTab === 'private' ? t("packing.addPrivate") : (isDirectEdit ? t("packing.addToList") : t("packing.proposeAdd"))}
         >
           <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" /> 
-          {activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : (isDirectEdit ? "Thêm chuẩn bị" : "Đề xuất thêm")}
+          {activeSubTab === 'private' ? t("packing.addPrivate") : (isDirectEdit ? t("packing.addToList") : t("packing.proposeAdd"))}
         </button>
       )}
 
@@ -585,8 +585,8 @@ export function SharedChecklistSection({
           setEditingId(null);
         }}
         title={activeSubTab === 'private' 
-          ? (editingId ? "Sửa chuẩn bị cá nhân" : "Thêm chuẩn bị cá nhân")
-          : (isDirectEdit ? (editingId ? "Sửa chuẩn bị" : "Thêm chuẩn bị") : (editingId ? "Đề xuất sửa chuẩn bị" : "Đề xuất thêm chuẩn bị"))}
+          ? (editingId ? t("packing.editPrivate") : t("packing.addPrivate"))
+          : (isDirectEdit ? (editingId ? t("packing.edit") : t("packing.addToList")) : (editingId ? t("packing.proposeEdit") : t("packing.proposeAdd")))}
       >
         <div className="flex flex-col gap-3.5 py-1">
           {/* Item Name */}
@@ -678,7 +678,7 @@ export function SharedChecklistSection({
               <div className="flex p-0.5 bg-slate-100 dark:bg-slate-800/50 border border-transparent dark:border-slate-700/60 rounded-[12px] h-11 items-center">
                 {(["normal", "important", "required"] as const).map((prio) => {
                   const isSelected = form.priority === prio;
-                  const labels = { normal: "Thường", important: "Quan trọng", required: "Bắt buộc" };
+                  const labels = { normal: t("packing.priorityNormal"), important: t("packing.priorityImportant"), required: t("packing.priorityRequired") };
                   return (
                     <button
                       key={prio}
@@ -722,7 +722,7 @@ export function SharedChecklistSection({
                   ...(form.assignedTo && !members.some(m => m.name === form.assignedTo) ? [form.assignedTo] : []),
                   ...members.map(m => m.name)
                 ]}
-                placeholder="Chọn người đồng hành"
+                placeholder={t("packing.companionSelect")}
                 buttonClassName="w-full flex items-center justify-between rounded-[12px] border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50 px-3.5 h-11 text-[14px] font-semibold text-slate-800 dark:text-slate-200 outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-teal"
               />
             )}
@@ -748,8 +748,8 @@ export function SharedChecklistSection({
             className="mt-1 w-full h-11 rounded-[12px] bg-kat-dark dark:bg-kat-primary font-black text-[14px] text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed border border-transparent"
           >
             {activeSubTab === 'private' 
-              ? (editingId ? "Lưu thay đổi" : "Thêm vào hành lý") 
-              : (isDirectEdit ? (editingId ? "Lưu thay đổi" : "Thêm chuẩn bị") : (editingId ? "Gửi đề xuất sửa" : "Gửi đề xuất thêm"))}
+              ? (editingId ? t("packing.saveChanges") : t("packing.addToList")) 
+              : (isDirectEdit ? (editingId ? t("packing.saveChanges") : t("packing.addToList")) : (editingId ? t("packing.proposeEdit") : t("packing.proposeAdd")))}
           </button>
         </div>
       </BottomSheet>
@@ -762,9 +762,9 @@ export function SharedChecklistSection({
           await executeDelete(deleteTargetId);
           setDeleteTargetId(null);
         }}
-        title={activeSubTab === 'private' ? "Xóa mục chuẩn bị cá nhân?" : "Đề xuất xóa mục này?"}
-        description={activeSubTab === 'private' ? "Hành động này sẽ xóa vĩnh viễn mục chuẩn bị cá nhân của bạn và không thể hoàn tác." : "Bạn đang gửi đề xuất xóa mục chuẩn bị này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."}
-        confirmLabel={activeSubTab === 'private' ? "Xóa" : "Đề xuất xóa"}
+        title={activeSubTab === 'private' ? t("packing.deletePrivateTitle") : t("packing.proposeDeleteTitle")}
+        description={activeSubTab === 'private' ? t("packing.deletePrivateDesc") : t("packing.proposeDeleteDesc")}
+        confirmLabel={activeSubTab === 'private' ? t("packing.deleteAction") : t("packing.proposeDelete")}
         itemName={
           activeSubTab === 'private' 
             ? localPrivateItems.find(c => String(c.id) === deleteTargetId)?.title
@@ -780,8 +780,8 @@ export function SharedChecklistSection({
           onClick={startAdd}
           className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
           style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
-          aria-label={activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : "Đề xuất thêm"}
-          title={activeSubTab === 'private' ? "Thêm chuẩn bị cá nhân" : "Đề xuất thêm"}
+          aria-label={activeSubTab === 'private' ? t("packing.addPrivate") : t("packing.proposeAdd")}
+          title={activeSubTab === 'private' ? t("packing.addPrivate") : t("packing.proposeAdd")}
         >
           <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
         </button>

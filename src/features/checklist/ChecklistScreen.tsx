@@ -837,7 +837,7 @@ export function ChecklistScreen({ checklist, tripId, isReadOnly }: { checklist: 
                       ...members.map((m) => m.name)
                     ]}
                     labels={members.reduce((acc, m) => ({ ...acc, [m.name]: `${m.name} (${m.role || t("members.roleCompanion")})` }), {} as Record<string, string>)}
-                    placeholder="Chọn người đồng hành"
+                    placeholder={t("packing.companionSelect")}
                     buttonClassName="w-full flex items-center justify-between rounded-[12px] border border-kat-border dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50 px-3.5 h-11 text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-primary"
                   />
                 )}
