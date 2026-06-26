@@ -1181,7 +1181,10 @@
     "itemNameLabel": "Artikelname *",
     "emptyStateDetailed": "Keine Artikel. Holen Sie sich Vorschläge zum Starten!",
     "editItem": "Artikel bearbeiten",
-    "itemPlaceholder": "Z.B. Elektrische Zahnbürste"
+    "itemPlaceholder": "Z.B. Elektrische Zahnbürste",
+    "sharedTab": "Geteilt",
+    "personalTab": "Persönlich",
+    "emptyPrivateDesc": "Fügen Sie hier Ihre persönlichen Gegenstände (nur für Sie sichtbar) hinzu"
   },
   "expenses": {
     "pageTitle": "Ausgaben",

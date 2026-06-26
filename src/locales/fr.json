@@ -1181,7 +1181,10 @@
     "itemNameLabel": "Nom de l'article *",
     "emptyStateDetailed": "Aucun article. Obtenez des suggestions pour commencer !",
     "editItem": "Modifier l'article",
-    "itemPlaceholder": "Ex : Brosse à dents électrique"
+    "itemPlaceholder": "Ex : Brosse à dents électrique",
+    "sharedTab": "Partagé",
+    "personalTab": "Personnel",
+    "emptyPrivateDesc": "Ajoutez vos articles personnels (seulement visibles par vous) ici"
   },
   "expenses": {
     "pageTitle": "Dépenses",

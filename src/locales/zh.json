@@ -1181,7 +1181,10 @@
     "itemNameLabel": "物品名称 *",
     "emptyStateDetailed": "暂无物品，获取建议开始准备吧！",
     "editItem": "编辑物品",
-    "itemPlaceholder": "例：电动牙刷"
+    "itemPlaceholder": "例：电动牙刷",
+    "sharedTab": "共享",
+    "personalTab": "个人",
+    "emptyPrivateDesc": "在此处添加您的个人物品（仅自己可见）"
   },
   "expenses": {
     "pageTitle": "费用",

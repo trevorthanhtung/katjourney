@@ -1164,7 +1164,10 @@
     "itemNameLabel": "Tên món cần mang *",
     "emptyStateDetailed": "Chưa có món đồ nào. Nhận gợi ý để bắt đầu chuẩn bị nhé!",
     "editItem": "Sửa món đồ",
-    "itemPlaceholder": "VD: Bàn chải điện"
+    "itemPlaceholder": "VD: Bàn chải điện",
+    "sharedTab": "Chung",
+    "personalTab": "Cá nhân",
+    "emptyPrivateDesc": "Thêm đồ dùng của riêng bạn (chỉ mình bạn thấy) tại đây"
   },
   "expenses": {
     "pageTitle": "Chi phí",

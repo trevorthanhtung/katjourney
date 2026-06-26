@@ -1163,7 +1163,10 @@
     "itemNameLabel": "Nome articolo *",
     "emptyStateDetailed": "Nessun articolo. Ottieni suggerimenti per iniziare!",
     "editItem": "Modifica articolo",
-    "itemPlaceholder": "Es: Spazzolino elettrico"
+    "itemPlaceholder": "Es: Spazzolino elettrico",
+    "sharedTab": "Condiviso",
+    "personalTab": "Personale",
+    "emptyPrivateDesc": "Aggiungi qui i tuoi articoli personali (visibili solo a te)"
   },
   "expenses": {
     "pageTitle": "Spese",

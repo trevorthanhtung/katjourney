@@ -1181,7 +1181,10 @@
     "itemNameLabel": "ชื่อสิ่งของ *",
     "emptyStateDetailed": "ยังไม่มีสิ่งของ รับคำแนะนำเพื่อเริ่มจัดกระเป๋า!",
     "editItem": "แก้ไขสิ่งของ",
-    "itemPlaceholder": "เช่น แปรงสีฟันไฟฟ้า"
+    "itemPlaceholder": "เช่น แปรงสีฟันไฟฟ้า",
+    "sharedTab": "แชร์",
+    "personalTab": "ส่วนตัว",
+    "emptyPrivateDesc": "เพิ่มของใช้ส่วนตัวของคุณ (เห็นได้เฉพาะคุณ) ที่นี่"
   },
   "expenses": {
     "pageTitle": "ค่าใช้จ่าย",

@@ -1181,7 +1181,10 @@
     "itemNameLabel": "Nombre del artículo *",
     "emptyStateDetailed": "No hay artículos. ¡Obtén sugerencias para empezar!",
     "editItem": "Editar artículo",
-    "itemPlaceholder": "Ej: Cepillo eléctrico"
+    "itemPlaceholder": "Ej: Cepillo eléctrico",
+    "sharedTab": "Compartido",
+    "personalTab": "Personal",
+    "emptyPrivateDesc": "Añade tus artículos personales (solo tú puedes verlos) aquí"
   },
   "expenses": {
     "pageTitle": "Gastos",

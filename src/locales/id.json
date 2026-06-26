@@ -1163,7 +1163,10 @@
     "itemNameLabel": "Nama Barang *",
     "emptyStateDetailed": "Belum ada barang. Dapatkan saran untuk mulai berkemas!",
     "editItem": "Edit barang",
-    "itemPlaceholder": "Contoh: Sikat gigi elektrik"
+    "itemPlaceholder": "Contoh: Sikat gigi elektrik",
+    "sharedTab": "Bersama",
+    "personalTab": "Pribadi",
+    "emptyPrivateDesc": "Tambahkan barang pribadi Anda (hanya Anda yang dapat melihat) di sini"
   },
   "expenses": {
     "pageTitle": "Pengeluaran",

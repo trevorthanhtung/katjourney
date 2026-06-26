@@ -1181,7 +1181,10 @@
     "itemNameLabel": "アイテム名 *",
     "emptyStateDetailed": "アイテムがありません。提案を受けて準備を始めましょう！",
     "editItem": "アイテムを編集",
-    "itemPlaceholder": "例：電動歯ブラシ"
+    "itemPlaceholder": "例：電動歯ブラシ",
+    "sharedTab": "共有",
+    "personalTab": "個人用",
+    "emptyPrivateDesc": "個人の持ち物（自分のみ表示）をここに追加します"
   },
   "expenses": {
     "pageTitle": "費用",

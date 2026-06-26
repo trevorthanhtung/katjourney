@@ -1181,7 +1181,10 @@
     "itemNameLabel": "Nome do item *",
     "emptyStateDetailed": "Nenhum item. Obtenha sugestões para começar!",
     "editItem": "Editar item",
-    "itemPlaceholder": "Ex: Escova elétrica"
+    "itemPlaceholder": "Ex: Escova elétrica",
+    "sharedTab": "Compartilhado",
+    "personalTab": "Pessoal",
+    "emptyPrivateDesc": "Adicione seus itens pessoais (apenas você pode ver) aqui"
   },
   "expenses": {
     "pageTitle": "Despesas",

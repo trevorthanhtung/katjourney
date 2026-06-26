@@ -1166,7 +1166,10 @@
     "itemNameLabel": "Item Name *",
     "emptyStateDetailed": "No items yet. Get suggestions to start packing!",
     "editItem": "Edit item",
-    "itemPlaceholder": "e.g. Electric toothbrush"
+    "itemPlaceholder": "e.g. Electric toothbrush",
+    "sharedTab": "Shared",
+    "personalTab": "Personal",
+    "emptyPrivateDesc": "Add your personal items (only you can see) here"
   },
   "expenses": {
     "pageTitle": "Expenses",

@@ -1166,7 +1166,10 @@
     "itemNameLabel": "항목 이름 *",
     "emptyStateDetailed": "항목이 없습니다. 제안을 받아 준비를 시작하세요!",
     "editItem": "항목 편집",
-    "itemPlaceholder": "예: 전동 칫솔"
+    "itemPlaceholder": "예: 전동 칫솔",
+    "sharedTab": "공유",
+    "personalTab": "개인용",
+    "emptyPrivateDesc": "개인 물품(본인만 볼 수 있음)을 여기에 추가하세요"
   },
   "expenses": {
     "pageTitle": "비용",

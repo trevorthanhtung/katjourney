@@ -307,7 +307,7 @@ export function SharedChecklistSection({
             <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-[16px] font-black text-kat-dark dark:text-slate-200">Danh sách chuẩn bị</h3>
+            <h3 className="text-[16px] font-black text-kat-dark dark:text-slate-200">{t("packing.pageTitle")}</h3>
             <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
               Chuẩn bị hành lý và đồ dùng trước chuyến đi
             </p>
@@ -315,7 +315,7 @@ export function SharedChecklistSection({
         </div>
         {displayedChecklist.length > 0 && (
           <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400 border border-purple-100/50 dark:border-purple-900/30">
-            Đã xong {displayedChecklist.filter(c => c.completed).length}/{displayedChecklist.length}
+            {t("packing.progressStatus", { completed: displayedChecklist.filter(c => c.completed).length, total: displayedChecklist.length })}
           </span>
         )}
       </div>
@@ -332,7 +332,7 @@ export function SharedChecklistSection({
               : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
           )}
         >
-          Chung
+          {t("packing.sharedTab")}
         </button>
         <button
           type="button"
@@ -344,7 +344,7 @@ export function SharedChecklistSection({
               : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
           )}
         >
-          Cá nhân
+          {t("packing.personalTab")}
           {localPrivateItems.length > 0 && (
             <span className="flex items-center justify-center min-w-4.5 h-4.5 text-[9.5px] font-black px-1 rounded-full bg-purple-600 text-white">
               {localPrivateItems.length}
@@ -437,7 +437,7 @@ export function SharedChecklistSection({
                           const CatIcon = CATEGORY_ICONS[c.category] || PackageIcon;
                           return <HugeiconsIcon icon={CatIcon} className="h-3 w-3 text-slate-400 dark:text-slate-500" />;
                         })()}
-                        {c.category}
+                        {catMap[c.category] || c.category}
                       </span>
                     )}
 
@@ -514,7 +514,7 @@ export function SharedChecklistSection({
           </h4>
           <p className="text-[11.5px] text-slate-400 dark:text-slate-500 mt-1 font-bold max-w-[220px]">
             {activeSubTab === 'private' 
-              ? "Thêm đồ dùng của riêng bạn (chỉ mình bạn thấy) tại đây"
+              ? t("packing.emptyPrivateDesc")
               : "Hãy thêm các vật dụng cần thiết để chuẩn bị cho chuyến đi"}
           </p>
         </div>
