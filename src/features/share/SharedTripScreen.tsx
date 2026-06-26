@@ -131,10 +131,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
             return <span key={i} title={t("roles.roleNavigator")} className="shrink-0"><HugeiconsIcon icon={CompassIcon} className="h-3.5 w-3.5 text-sky-500" /></span>;
           }
           if (roleLower === "hành lý") {
-            return <span key={i} title={t("roles.roleLuggage")} className="shrink-0"><HugeiconsIcon icon={Briefcase02Icon} className="h-3.5 w-3.5 text-orange-500" /></span>;
+            return <span key={i} title={t("roles.roleLuggage")} className="shrink-0"><HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 text-indigo-500" /></span>;
           }
           if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
-            return <span key={i} title={t("roles.roleCompanion")} className="shrink-0"><HugeiconsIcon icon={UserMultiple02Icon} className="h-3.5 w-3.5 text-slate-500" /></span>;
+            return <span key={i} title={t("roles.roleCompanion")} className="shrink-0"><HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5 text-slate-400" /></span>;
           }
           return <span key={i} title={roleLower} className="shrink-0"><HugeiconsIcon icon={BadgeCheckIcon} className="h-3.5 w-3.5 text-teal-500" /></span>;
         })}
@@ -1191,32 +1191,26 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-dark/5 dark:bg-slate-800/80 text-kat-dark">
                       <HugeiconsIcon icon={RouteIcon} className="h-4 w-4" />
                     </span>
-                    <h4 className="text-[15px] font-extrabold text-kat-dark">Thông tin hành trình</h4>
+                    <h4 className="text-[15px] font-extrabold text-kat-dark">{t("share.tripInfo")}</h4>
                   </div>
                   
                   <div className="space-y-3 text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/50 pt-3">
                     <div className="flex items-center justify-between border-b border-slate-100/40 dark:border-slate-800/20 pb-2.5">
                       <span className="flex items-center gap-2">
-                        <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
-                        Địa điểm
-                      </span>
+                        <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />{t("share.location")}</span>
                       <span className="font-black text-kat-dark">{trip.destination || trip.location || t("common.unknownLocation")}</span>
                     </div>
                     <div className="flex items-center justify-between border-b border-slate-100/40 dark:border-slate-800/20 pb-2.5">
                       <span className="flex items-center gap-2">
-                        <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-400" />
-                        Thời gian
-                      </span>
+                        <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-400" />{t("share.time")}</span>
                       <span className="font-black text-kat-dark">
                         {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
                       </span>
                     </div>
                     <div className="flex items-center justify-between pb-0.5">
                       <span className="flex items-center gap-2">
-                        <HugeiconsIcon icon={RouteIcon} className="h-4 w-4 text-slate-400" />
-                        Mục lịch trình
-                      </span>
-                      <span className="font-black text-kat-dark">{activities.length} mục</span>
+                        <HugeiconsIcon icon={RouteIcon} className="h-4 w-4 text-slate-400" />{t("share.roadmapItems")}</span>
+                      <span className="font-black text-kat-dark">{activities.length} {t("share.itemsCount")}</span>
                     </div>
                   </div>
                 </div>
@@ -1239,8 +1233,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
                           <HugeiconsIcon icon={GitBranchIcon} className="h-4 w-4" />
                         </span>
                         <div>
-                          <h4 className="text-[15px] font-extrabold text-kat-dark">Dự phòng chung</h4>
-                          <p className="text-[11px] text-slate-500/80 dark:text-slate-400 font-medium">Áp dụng cho toàn bộ chuyến đi</p>
+                          <h4 className="text-[15px] font-extrabold text-kat-dark">{t("share.generalBackup")}</h4>
+                          <p className="text-[11px] text-slate-500/80 dark:text-slate-400 font-medium">{t("share.applyToWholeTrip")}</p>
                         </div>
                       </div>
                       
@@ -1249,7 +1243,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                           onClick={() => setIsGlobalBackupOpen(true)}
                           className="px-2.5 py-1 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 text-slate-600 dark:text-slate-400 font-bold text-[12px] hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                         >
-                          Xem ({backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length})
+                          {t("share.view")} ({backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length})
                         </button>
                       )}
                     </div>
@@ -1263,15 +1257,15 @@ export default function SharedTripScreen({ token }: { token: string }) {
                               onClick={() => setIsGlobalBackupOpen(true)}
                               className="text-indigo-650 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 shrink-0 text-[12px] font-bold"
                             >
-                              Chi tiết &rarr;
+                              {t("share.details")} &rarr;
                             </button>
                           </div>
                         ))}
                       </div>
                     ) : (
                       <div className="text-center py-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl border border-dashed border-slate-200/60 dark:border-slate-700/40">
-                        <p className="text-[12.5px] font-bold text-slate-400 dark:text-slate-500">Chưa có dự phòng chung</p>
-                        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Các phương án áp dụng cho toàn bộ chuyến đi.</p>
+                        <p className="text-[12.5px] font-bold text-slate-400 dark:text-slate-500">{t("share.noBackupPlans")}</p>
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{t("share.backupPlansDesc")}</p>
                       </div>
                     )}
 
@@ -1281,7 +1275,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                         className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-indigo-200/80 dark:border-indigo-500/35 text-indigo-600 dark:text-indigo-400 font-bold text-[13px] hover:bg-indigo-50 dark:hover:bg-indigo-950/25 transition-colors motion-press cursor-pointer"
                       >
                         <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
-                        {backupPlansMode === 'edit' ? 'Thêm phương án' : 'Đề xuất phương án'}
+                        {backupPlansMode === 'edit' ? t("share.addPlan") : t("share.suggestPlan")}
                       </button>
                     )}
                   </div>
@@ -1294,7 +1288,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400">
                         <HugeiconsIcon icon={RouteIcon} className="h-4 w-4" />
                       </span>
-                      <h4 className="text-[15px] font-extrabold text-kat-dark">Lộ trình di chuyển</h4>
+                      <h4 className="text-[15px] font-extrabold text-kat-dark">{t("share.travelRoadmap")}</h4>
                     </div>
 
                     {/* Day selector custom pill */}
@@ -1311,10 +1305,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
                             </div>
                             <div className="text-left">
                               <div className="text-[10.5px] font-bold text-emerald-600/70 dark:text-emerald-400/80 uppercase tracking-wide mb-0.5">
-                                Ngày đang xem
+                                {t("share.viewingDay")}
                               </div>
                               <div className="text-[14.5px] font-extrabold text-kat-dark dark:text-slate-100">
-                                {selectedRoadmapDay ? `Ngày ${days.indexOf(selectedRoadmapDay) + 1} (${formatDateShort(selectedRoadmapDay)})` : "Chọn ngày"}
+                                {selectedRoadmapDay ? `${t("share.day")} ${days.indexOf(selectedRoadmapDay) + 1} (${formatDateShort(selectedRoadmapDay)})` : t("share.selectDay")}
                               </div>
                             </div>
                           </div>
@@ -1357,7 +1351,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                 className="text-kat-teal hover:opacity-85 font-bold flex items-center gap-1 cursor-pointer"
                               >
                                 {mapUrl && <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />}
-                                {mapUrl ? "Sửa" : "Thêm"}
+                                {mapUrl ? t("share.edit") : t("share.add")}
                               </button>
                             )}
                           </div>
@@ -1365,10 +1359,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
                           {mapUrl ? (
                             <div className="space-y-2.5">
                               <p className="text-[13px] font-medium text-slate-600 dark:text-slate-350 flex items-center gap-1.5 flex-wrap">
-                                {isRoute ? "Đã có link lộ trình cho ngày này." : "Đã liên kết bản đồ cho ngày này."}
+                                {isRoute ? t("share.roadmapLinkExist") : t("share.mapLinked")}
                                 {isAutoMap && (
                                   <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-sky-50 dark:bg-sky-950/30 border border-sky-100 dark:border-sky-900/30 text-[10.5px] font-bold text-sky-500 dark:text-sky-400">
-                                    Từ lịch trình
+                                    {t("share.fromTimeline")}
                                   </span>
                                 )}
                               </p>
@@ -1379,12 +1373,12 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
                               >
                                 <HugeiconsIcon icon={RouteIcon} className="w-4 h-4" />
-                                Mở lộ trình &rarr;
+                                {t("share.openRoadmap")} &rarr;
                               </a>
                             </div>
                           ) : (
                             <div className="space-y-2 text-center py-2">
-                              <p className="text-[12.5px] font-semibold text-slate-400 dark:text-slate-500">Chưa có lộ trình ngày này</p>
+                              <p className="text-[12.5px] font-semibold text-slate-400 dark:text-slate-500">{t("share.noRoadmap")}</p>
                               {activitiesMode === "edit" && (
                                 <button
                                   type="button"
@@ -1396,7 +1390,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                   className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-750 text-[12px] font-bold text-slate-655 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white shadow-sm transition-all cursor-pointer"
                                 >
                                   <HugeiconsIcon icon={Add01Icon} className="w-3.5 h-3.5" />
-                                  Gắn link lộ trình
+                                  {t("share.attachRoadmap")}
                                 </button>
                               )}
                             </div>
@@ -1532,7 +1526,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       <BottomSheet
         isOpen={isRoadmapFormOpen}
         onClose={() => setIsRoadmapFormOpen(false)}
-        title={`Lộ trình di chuyển - Ngày ${days.indexOf(roadmapEditDay) + 1}`}
+        title={`${t("share.travelRoadmap")} - ${t("share.day")} ${days.indexOf(roadmapEditDay) + 1}`}
       >
         <div className="space-y-5 pb-4">
           
@@ -1673,7 +1667,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       <WeatherDetailsModal
         isOpen={weatherModalOpen}
         onClose={() => setWeatherModalOpen(false)}
-        destination={trip.destination || trip.location || "Địa điểm"}
+        destination={trip.destination || trip.location || t("share.location")}
         forecast={forecast}
         currentLocationForecast={myForecast}
         currentLocationName={myLocationName}
