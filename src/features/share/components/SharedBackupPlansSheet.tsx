@@ -39,13 +39,13 @@ interface SharedBackupPlansSheetProps {
 }
 
 const typeLabels: Record<BackupPlanType, string> = {
-  food: "Ăn uống",
-  place: "Địa điểm thay thế",
-  transport: "Di chuyển",
-  hotel: "Lưu trú",
-  indoor: "Trong nhà",
-  weather: "Thời tiết xấu",
-  other: "Khác"
+  food: "share.typeFood",
+  place: "share.typePlace",
+  transport: "share.typeTransport",
+  hotel: "share.typeHotel",
+  indoor: "share.typeIndoor",
+  weather: "share.typeBadWeather",
+  other: "share.typeOther"
 };
 
 const typeColors: Record<BackupPlanType, string> = {
@@ -207,7 +207,7 @@ export function SharedBackupPlansSheet({
 
     try {
       const status = isDirectEdit ? 'auto_approved' : undefined;
-      const successMessage = isDirectEdit ? 'Đã cập nhật trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.';
+      const successMessage = isDirectEdit ? t("share.updatedDirectly") : t("share.proposalSent");
 
       if (!editingPlan) {
         await submitChangeRequest(token, {
@@ -270,9 +270,9 @@ export function SharedBackupPlansSheet({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-kat-surface sticky top-0 z-10 gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="text-[18px] font-extrabold text-kat-dark truncate">Phương án dự phòng</h3>
+            <h3 className="text-[18px] font-extrabold text-kat-dark truncate">{t("share.backupPlanTitle")}</h3>
             <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 truncate">
-              {activityTitle ? `Cho hoạt động: ${activityTitle}` : "Kế hoạch B cho những tình huống phát sinh"}
+              {activityTitle ? `{t("share.forActivity")}: ${activityTitle}` : t("share.backupPlanSubtitle")}
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -288,8 +288,8 @@ export function SharedBackupPlansSheet({
             <button 
               onClick={onClose} 
               className="flex shrink-0 h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none"
-              title="Đóng"
-              aria-label="Đóng"
+              title={t("share.close")}
+              aria-label={t("share.close")}
             >
               <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5" />
             </button>
@@ -301,30 +301,31 @@ export function SharedBackupPlansSheet({
           {isFormOpen ? (
             <div className="space-y-5">
               <div>
-                <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-350 mb-1.5">Tên phương án *</label>
+                <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-350 mb-1.5">{t("share.planName")}</label>
                 <input
                   type="text"
                   value={title}
                   onChange={e => setTitle(e.target.value)}
-                  placeholder="VD: Quán ăn gần khách sạn, điểm tham quan trong nhà..."
+                  placeholder={t("share.planNamePlaceholder")}
                   className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-[14.5px] font-bold text-kat-dark focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-1 focus:ring-indigo-500/30 dark:focus:ring-indigo-400/20 transition-all placeholder:font-semibold placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:placeholder:text-slate-500 dark:placeholder:text-slate-505"
                 />
               </div>
 
               <div>
-                <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-350 mb-1.5">Loại phương án</label>
+                <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-350 mb-1.5">{t("share.planType")}</label>
                 <div className="flex flex-wrap gap-2">
-                  {(Object.keys(typeLabels) as BackupPlanType[]).map(t => (
+                  {(Object.keys(typeLabels) as BackupPlanType[]).map(typeKey => (
                     <button
-                      key={t}
-                      onClick={() => setType(t)}
-                      className={`px-3 py-1.5 rounded-full text-[13px] font-bold border transition-colors motion-press ${
-                        type === t 
-                          ? typeColors[t] + " border-opacity-100" 
-                          : "bg-white dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/60 text-slate-600 dark:text-slate-350 hover:border-slate-300 dark:hover:border-slate-600"
+                      key={typeKey}
+                      type="button"
+                      onClick={() => setType(typeKey)}
+                      className={`px-3.5 py-2 rounded-full text-[12.5px] font-bold border transition-all ${
+                        type === typeKey
+                          ? typeColors[typeKey] + " border-opacity-100"
+                          : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                       }`}
                     >
-                      {typeLabels[t]}
+                      {t(typeLabels[typeKey])}
                     </button>
                   ))}
                 </div>
@@ -338,7 +339,7 @@ export function SharedBackupPlansSheet({
                   type="text"
                   value={reason}
                   onChange={e => setReason(e.target.value)}
-                  placeholder="VD: Khi trời mưa, quán đóng cửa, quá đông..."
+                  placeholder={t("share.whenToUsePlaceholder")}
                   className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-1 focus:ring-indigo-500/30 dark:focus:ring-indigo-400/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:placeholder:text-slate-500"
                 />
               </div>
@@ -349,7 +350,7 @@ export function SharedBackupPlansSheet({
                   onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
                   className="w-full flex items-center justify-between text-[13.5px] font-extrabold text-slate-700 dark:text-slate-300 hover:text-kat-dark dark:hover:text-white focus:outline-none transition-colors"
                 >
-                  <span>Thông tin bổ sung</span>
+                  <span>{t("share.additionalInfo")}</span>
                   <HugeiconsIcon icon={ChevronRightIcon} className={`h-4.5 w-4.5 text-slate-400 transition-transform duration-200 ${showAdditionalInfo ? "rotate-90" : ""}`} />
                 </button>
 
@@ -363,7 +364,7 @@ export function SharedBackupPlansSheet({
                         type="text"
                         value={location}
                         onChange={e => setLocation(e.target.value)}
-                        placeholder="VD: Quán B gần khách sạn"
+                        placeholder={t("share.locationPlaceholder")}
                         className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-1 focus:ring-indigo-500/30 dark:focus:ring-indigo-400/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:placeholder:text-slate-500"
                       />
                     </div>
@@ -378,7 +379,7 @@ export function SharedBackupPlansSheet({
                             rel="noopener noreferrer"
                             className="text-xs text-emerald-600 hover:text-emerald-700 font-bold hover:underline"
                           >
-                            Mở link kiểm tra &rarr;
+                            {t("share.openLinkTest")} &rarr;
                           </a>
                         )}
                       </label>
@@ -386,7 +387,7 @@ export function SharedBackupPlansSheet({
                         type="url"
                         value={mapLink}
                         onChange={e => setMapLink(e.target.value)}
-                        placeholder="VD: https://www.google.com/maps/dir/..."
+                        placeholder={t("share.googleMapsPlaceholder")}
                         className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-1 focus:ring-indigo-500/30 dark:focus:ring-indigo-400/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:placeholder:text-slate-500"
                       />
                     </div>
@@ -399,7 +400,7 @@ export function SharedBackupPlansSheet({
                         type="number"
                         value={estimatedCost}
                         onChange={e => setEstimatedCost(e.target.value)}
-                        placeholder="VD: 200000"
+                        placeholder={t("share.estimatedCostPlaceholder")}
                         className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-1 focus:ring-indigo-500/30 dark:focus:ring-indigo-400/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:placeholder:text-slate-500"
                       />
                     </div>
@@ -411,7 +412,7 @@ export function SharedBackupPlansSheet({
                       <textarea
                         value={note}
                         onChange={e => setNote(e.target.value)}
-                        placeholder="VD: Gọi trước khi đến, nên đi taxi..."
+                        placeholder={t("share.notesPlaceholder")}
                         rows={3}
                         className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-[14.5px] font-semibold text-kat-dark focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-1 focus:ring-indigo-500/30 dark:focus:ring-indigo-400/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:placeholder:text-slate-500 resize-none"
                       />
@@ -431,7 +432,7 @@ export function SharedBackupPlansSheet({
                   onClick={handleSave}
                   className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-white dark:text-slate-950 bg-indigo-600 dark:bg-kat-primary hover:bg-indigo-700 dark:hover:brightness-110 transition-colors motion-press focus:outline-none"
                 >
-                  {isDirectEdit ? "Lưu phương án" : "Gửi đề xuất"}
+                  {isDirectEdit ? t("share.savePlan") : t("share.sendProposal")}
                 </button>
               </div>
             </div>
@@ -440,7 +441,7 @@ export function SharedBackupPlansSheet({
               <div className="w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-950/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-4">
                 <HugeiconsIcon icon={Route01Icon} className="w-8 h-8" />
               </div>
-              <h4 className="text-[16px] font-extrabold text-kat-dark mb-2">Chưa có phương án dự phòng</h4>
+              <h4 className="text-[16px] font-extrabold text-kat-dark mb-2">{t("share.noBackupPlanTitle")}</h4>
               <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 mb-6 max-w-[260px]">
                 Thêm một lựa chọn thay thế để chuyến đi linh hoạt hơn khi có thay đổi.
               </p>
@@ -450,7 +451,7 @@ export function SharedBackupPlansSheet({
                   className="flex items-center gap-2 px-6 py-3.5 bg-indigo-600 dark:bg-kat-primary text-white dark:text-slate-950 rounded-xl text-[14.5px] font-bold hover:bg-indigo-700 dark:hover:brightness-110 transition-colors motion-press"
                 >
                   <HugeiconsIcon icon={Add01Icon} className="w-5 h-5" />
-                  <span>{isDirectEdit ? "Thêm phương án đầu tiên" : "Đề xuất phương án đầu tiên"}</span>
+                  <span>{isDirectEdit ? t("share.addFirstPlan") : t("share.proposeFirstPlan")}</span>
                 </button>
               )}
             </div>
@@ -476,7 +477,7 @@ export function SharedBackupPlansSheet({
                           {/* Type Badge */}
                           <div className="mb-2 flex items-center justify-between">
                             <span className={`px-2 py-0.5 rounded-md text-[11px] font-extrabold border ${typeColors[(plan.type as BackupPlanType) || "other"]}`}>
-                              {typeLabels[(plan.type as BackupPlanType) || "other"]}
+                              {t(typeLabels[(plan.type as BackupPlanType) || "other"])}
                             </span>
                             
                             {plan.isPendingCreate && (
@@ -537,7 +538,7 @@ export function SharedBackupPlansSheet({
                               {getEmbedMapUrl(plan.mapLink || plan.location || "", plan.location) && (
                                 <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm bg-slate-100 relative min-h-[140px]">
                                   <div className="absolute inset-0 flex items-center justify-center text-slate-400">
-                                    <span className="text-[12px] font-medium animate-pulse">Đang tải bản đồ...</span>
+                                    <span className="text-[12px] font-medium animate-pulse">{t("share.loadingMap")}</span>
                                   </div>
                                   <iframe
                                     title="Google Maps Embed"
@@ -560,7 +561,7 @@ export function SharedBackupPlansSheet({
                                     rel="noopener noreferrer"
                                   >
                                     {isRoute ? <HugeiconsIcon icon={Route01Icon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />}
-                                    {isRoute ? "Xem lộ trình di chuyển " : "Mở bằng ứng dụng Google Maps "}
+                                    {isRoute ? t("share.viewTravelRoute") + " " : t("share.openWithGoogleMaps") + " "}
                                     &rarr;
                                   </a>
                                 );
@@ -589,10 +590,10 @@ export function SharedBackupPlansSheet({
                               <button
                                 onClick={() => handleOpenEdit(plan)}
                                 className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-slate-650 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-white active:scale-95 transition-all border border-slate-200/40 dark:border-slate-700/50 motion-press focus:outline-none"
-                                title="Sửa phương án"
+                                title={t("share.editPlan")}
                               >
                                 <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />
-                                <span>{isDirectEdit ? "Sửa" : "Đề xuất sửa"}</span>
+                                <span>{isDirectEdit ? t("share.edit") : t("share.editProposal")}</span>
                               </button>
                               <button
                                 onClick={() => {
@@ -600,10 +601,10 @@ export function SharedBackupPlansSheet({
                                   setIsDeleteConfirmOpen(true);
                                 }}
                                 className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-900/20 active:scale-95 transition-all border border-rose-200/40 dark:border-rose-900/30 motion-press focus:outline-none"
-                                title="Xóa phương án"
+                                title={t("share.deletePlan")}
                               >
                                 <HugeiconsIcon icon={Delete01Icon} className="w-3.5 h-3.5" />
-                                <span>{isDirectEdit ? "Xóa" : "Đề xuất xóa"}</span>
+                                <span>{isDirectEdit ? t("share.delete") : t("share.deleteProposal")}</span>
                               </button>
                             </div>
                           </div>
@@ -622,10 +623,10 @@ export function SharedBackupPlansSheet({
         isOpen={isDeleteConfirmOpen}
         onClose={() => setIsDeleteConfirmOpen(false)}
         onConfirm={handleDeleteConfirm}
-        title={isDirectEdit ? "Xóa phương án dự phòng này?" : "Đề xuất xóa phương án dự phòng này?"}
+        title={isDirectEdit ? t("share.deletePlanConfirmTitle") : t("share.proposeDeletePlanTitle")}
         itemName={planToDelete?.title}
-        description={isDirectEdit ? "Phương án này sẽ không còn xuất hiện trong chuyến đi. Sau khi xóa, không thể hoàn tác." : "Đề xuất xóa phương án này sẽ được gửi tới chủ chuyến đi để xét duyệt."}
-        confirmLabel={isDirectEdit ? "Xóa" : "Đề xuất xóa"}
+        description={isDirectEdit ? t("share.deletePlanConfirmDesc") : t("share.proposeDeletePlanDesc")}
+        confirmLabel={isDirectEdit ? t("share.delete") : t("share.deleteProposal")}
       />
     </div>,
     document.body
