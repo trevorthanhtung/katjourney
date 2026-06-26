@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
@@ -78,6 +79,7 @@ function JournalForm({
   onClearPrefilled: () => void;
   onShowToast?: (msg: string) => void;
 }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({ 
     date: today, 
     title: "", 
@@ -194,11 +196,11 @@ function JournalForm({
   }
 
   const promptSuggestions = [
-    "Điều muốn nhớ nhất",
-    "Món ăn đáng nhớ",
-    "Người bạn đã gặp",
-    "Khoảnh khắc vui",
-    "Điều muốn nhớ mãi"
+    t("journal.promptSugg1"),
+    t("journal.promptSugg2"),
+    t("journal.promptSugg3"),
+    t("journal.promptSugg4"),
+    t("journal.promptSugg5")
   ];
 
   function handlePromptClick(prompt: string) {
@@ -216,7 +218,7 @@ function JournalForm({
         onClearPrefilled();
         onClose();
       }} 
-      title={editing ? "Sửa bài viết bản tin" : "Đăng bài viết bản tin"}
+      title={editing ? t("journal.formTitleEdit") : t("journal.formTitleAdd")}
       footer={
         <div className="flex items-center gap-2.5 w-full">
           <button
@@ -227,7 +229,7 @@ function JournalForm({
             }}
             className="flex h-[52px] shrink-0 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.96] transition-all border border-transparent dark:border-slate-700 motion-press"
           >
-            Hủy
+            {t("journal.cancel")}
           </button>
           <button
             type="button"
@@ -236,7 +238,7 @@ function JournalForm({
             className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
           >
             <HugeiconsIcon icon={FloppyDiskIcon} className="h-5 w-5" />
-            Đăng bài viết
+            {t("journal.submit")}
           </button>
         </div>
       }
@@ -248,7 +250,7 @@ function JournalForm({
               label={
                 <span className="flex items-center gap-1.5">
                   <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
-                  Ngày ghi lại
+                  {t("journal.dateLabel")}
                 </span>
               } 
               value={form.date} 
@@ -261,12 +263,12 @@ function JournalForm({
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-slate-500" />
-                Tiêu đề bài viết *
+                {t("journal.titleLabel")}
               </span>
             } 
             value={form.title} 
             onChange={(title) => { setForm({ ...form, title }); setDirty(true); }} 
-            placeholder="VD: Một ngày đáng nhớ ở Vũng Tàu" 
+            placeholder={t("journal.titlePlaceholder")} 
           />
           {(dirty || submitAttempted) && titleError && (
             <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{titleError}</p>
@@ -275,19 +277,19 @@ function JournalForm({
           {isLocating ? (
             <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
               <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5" />
-              <span className="flex items-center gap-1.5 text-slate-400"><HugeiconsIcon icon={Loading01Icon} className="h-3.5 w-3.5 animate-spin" /> Đang lấy vị trí...</span>
+              <span className="flex items-center gap-1.5 text-slate-400"><HugeiconsIcon icon={Loading01Icon} className="h-3.5 w-3.5 animate-spin" /> {t("journal.locLoading")}</span>
             </div>
           ) : form.locationName ? (
             <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
               <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
-              <span>Đang ở <span className="font-bold text-kat-primary">{form.locationName}</span></span>
-              <button type="button" onClick={() => setForm({...form, locationName: "", latitude: undefined, longitude: undefined})} className="ml-1 px-1 text-slate-300 hover:text-rose-500 transition-colors font-bold text-[14px] leading-none" title="Xóa vị trí">×</button>
+              <span>{t("journal.locCurrent")} <span className="font-bold text-kat-primary">{form.locationName}</span></span>
+              <button type="button" onClick={() => setForm({...form, locationName: "", latitude: undefined, longitude: undefined})} className="ml-1 px-1 text-slate-300 hover:text-rose-500 transition-colors font-bold text-[14px] leading-none" title={t("journal.locRemove")}>×</button>
             </div>
           ) : (
             <div className="mt-2 flex items-center gap-1.5 px-1 animate-fadeIn">
               <button type="button" onClick={fetchLocation} className="flex items-center gap-1.5 text-[12.5px] font-bold text-slate-400 hover:text-kat-primary transition-colors focus:outline-none">
                 <HugeiconsIcon icon={Cancel01Icon} className="h-3.5 w-3.5" />
-                <span>Nhấn để đính kèm vị trí</span>
+                <span>{t("journal.locAttach")}</span>
               </button>
             </div>
           )}
@@ -297,7 +299,7 @@ function JournalForm({
         <div>
           <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
             <HugeiconsIcon icon={SmilePlusIcon} className="h-4 w-4 text-slate-500" />
-            Cảm xúc hôm nay
+            {t("journal.moodLabel")}
           </span>
           <div className="flex flex-wrap gap-2">
             {moodOptionList.map((opt) => {
@@ -315,7 +317,7 @@ function JournalForm({
                   }`}
                 >
                   <span className={`h-2.5 w-2.5 rounded-full ${colorDot}`} />
-                  {opt.label}
+                  {t(`journal.mood_${opt.value}`)}
                 </button>
               );
             })}
@@ -328,12 +330,12 @@ function JournalForm({
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={Note01Icon} className="h-4 w-4 text-slate-500" />
-                Câu chuyện của bạn *
+                {t("journal.contentLabel")}
               </span>
             } 
             value={form.content} 
             onChange={(content) => { setForm({ ...form, content }); setDirty(true); }} 
-            placeholder="Ghi lại cảm xúc, câu chuyện, món ăn ngon hoặc khoảnh khắc đáng nhớ..." 
+            placeholder={t("journal.contentPlaceholder")} 
           />
           {(dirty || submitAttempted) && contentError && (
             <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{contentError}</p>
@@ -368,9 +370,9 @@ function JournalForm({
                 className="w-full h-12 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 font-bold text-[14px] hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-kat-teal dark:hover:text-kat-primary transition-colors flex items-center justify-center gap-2"
               >
                 {uploading ? (
-                  <><HugeiconsIcon icon={Loading01Icon} className="h-5 w-5 animate-spin" /> Đang tải ảnh...</>
+                  <><HugeiconsIcon icon={Loading01Icon} className="h-5 w-5 animate-spin" /> {t("journal.imgUploading")}</>
                 ) : (
-                  <><HugeiconsIcon icon={Image01Icon} className="h-5 w-5" /> Đính kèm hình ảnh</>
+                  <><HugeiconsIcon icon={Image01Icon} className="h-5 w-5" /> {t("journal.imgAttach")}</>
                 )}
               </button>
             </div>
@@ -381,7 +383,7 @@ function JournalForm({
         <div className="pt-1">
           <span className="mb-2 block text-[12.5px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
             <HugeiconsIcon icon={SparklesIcon} className="h-4 w-4 text-slate-500" />
-            Gợi ý viết nhanh
+            {t("journal.promptTitle")}
           </span>
           <div className="flex flex-wrap gap-1.5">
             {promptSuggestions.map((prompt) => (
@@ -402,6 +404,7 @@ function JournalForm({
 }
 
 function JournalEntryMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) {
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -445,7 +448,7 @@ function JournalEntryMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: 
             className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 active:bg-slate-100 dark:active:bg-slate-700 transition-colors"
           >
             <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-            Sửa
+            {t("journal.menuEdit")}
           </button>
           <button
             type="button"
@@ -457,7 +460,7 @@ function JournalEntryMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: 
             className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
           >
             <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
-            Xóa
+            {t("journal.menuDelete")}
           </button>
         </div>
       )}
@@ -474,24 +477,26 @@ function DeleteJournalConfirmModal({
   onClose: () => void;
   onConfirm: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <DeleteConfirmModal
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={onConfirm}
-      title="Xóa bài viết này?"
-      description="Bài viết sẽ không còn xuất hiện trên bản tin. Sau khi xóa, không thể hoàn tác."
-      confirmLabel="Xóa bài viết"
+      title={t("journal.delConfirmTitle")}
+      description={t("journal.delConfirmDesc")}
+      confirmLabel={t("journal.delConfirmBtn")}
     />
   );
 }
 
 function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptText: string) => void; onWrite: () => void }) {
+  const { t } = useTranslation();
   const prompts = [
-    "Hôm nay bạn muốn nhớ nhất điều gì?",
-    "Có khoảnh khắc nào bạn muốn lưu lại không?",
-    "Một món ăn, một điểm đến hoặc một người bạn đã gặp?",
-    "Điều gì làm hành trình này trở nên khác biệt?"
+    t("journal.promptEmpty1"),
+    t("journal.promptEmpty2"),
+    t("journal.promptEmpty3"),
+    t("journal.promptEmpty4")
   ];
 
   return (
@@ -501,17 +506,17 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
           <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
         </div>
-        <h3 className="text-[16px] font-bold text-kat-dark">Chưa có bài viết nào</h3>
+        <h3 className="text-[16px] font-bold text-kat-dark">{t("journal.emptyTitle")}</h3>
         <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
-          Bắt đầu bằng một cảm xúc, một nơi đã ghé qua hoặc một khoảnh khắc bạn muốn nhớ.
+          {t("journal.emptySubtitle")}
         </p>
       </div>
 
       {/* Prompts Section */}
       <div className="w-full max-w-xl md:max-w-none mx-auto space-y-3">
         <div className="flex items-center justify-between pl-1">
-          <p className="text-[12.5px] font-extrabold uppercase tracking-wider text-slate-400">Gợi ý viết nhanh</p>
-          <span className="text-[11px] font-bold text-slate-400 md:hidden">Vuốt ngang ›</span>
+          <p className="text-[12.5px] font-extrabold uppercase tracking-wider text-slate-400">{t("journal.promptTitle")}</p>
+          <span className="text-[11px] font-bold text-slate-400 md:hidden">{t("journal.swipe")}</span>
         </div>
         <div className="flex flex-nowrap gap-3 overflow-x-auto pb-1.5 -mx-2 px-2 touch-pan-x snap-x snap-mandatory scrollbar-none md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0">
           {prompts.map((prompt, idx) => {
@@ -535,7 +540,7 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
                   </p>
                 </div>
                 <span className="text-[11px] font-bold text-kat-teal uppercase tracking-wider mt-2 block opacity-80 group-hover:opacity-100 transition-opacity pl-9">
-                  Ghi lại ngay →
+                  {t("journal.writeNow")}
                 </span>
               </button>
             );
@@ -561,6 +566,7 @@ export function JournalSection({
   isReadOnly?: boolean;
   renderChatBox?: () => React.ReactNode;
 }) {
+  const { t } = useTranslation();
   const members = useLiveQuery(async () => {
     return (await db.members.where("tripId").equals(tripId).toArray()).filter(m => !m.isDeleted);
   }, [tripId]) || [];
@@ -630,12 +636,12 @@ export function JournalSection({
   let lastWriteDate = "";
   if (journalCount > 0) {
     const sortedDesc = [...journals].sort((a, b) => b.date.localeCompare(a.date));
-    lastMood = moodLabels[sortedDesc[0].mood] || "Đáng nhớ";
+    lastMood = t(`journal.mood_${sortedDesc[0].mood}`);
     lastWriteDate = formatDate(sortedDesc[0].date);
   }
 
   function handlePromptClick(promptText: string) {
-    setPrefilledContent(`Gợi ý: ${promptText}\n\n`);
+    setPrefilledContent(`${t("journal.promptPrefix")}${promptText}\n\n`);
     setEditing(null);
     setIsFormOpen(true);
   }
@@ -681,8 +687,8 @@ export function JournalSection({
             </button>
           )}
           <div>
-            <h1 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">Bản tin hành trình</h1>
-            <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">Lưu lại cảm xúc, câu chuyện và những khoảnh khắc đáng nhớ.</p>
+            <h1 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">{t("journal.title")}</h1>
+            <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">{t("journal.subtitle")}</p>
           </div>
         </div>
       </div>
@@ -698,7 +704,7 @@ export function JournalSection({
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
               }`}
             >
-              <HugeiconsIcon icon={GlobeIcon} className="w-4 h-4" /> Bản tin
+              <HugeiconsIcon icon={GlobeIcon} className="w-4 h-4" /> {t("journal.tabPosts")}
             </button>
             <button
               onClick={() => setJournalMode("chat")}
@@ -708,7 +714,7 @@ export function JournalSection({
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
               }`}
             >
-              <HugeiconsIcon icon={BubbleChatIcon} className="w-4 h-4" /> Trò chuyện
+              <HugeiconsIcon icon={BubbleChatIcon} className="w-4 h-4" /> {t("journal.tabChat")}
             </button>
           </div>
         ) : (
@@ -721,7 +727,7 @@ export function JournalSection({
               className="hidden md:flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 text-[14px] font-black text-white dark:text-slate-950 transition-all hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 shadow-sm shrink-0 motion-press border border-transparent dark:border-kat-primary"
             >
               <HugeiconsIcon icon={PenTool01Icon} className="w-4.5 h-4.5" />
-              Đăng bài viết
+              {t("journal.postBtn")}
             </button>
         )}
       </div>
@@ -738,16 +744,16 @@ export function JournalSection({
             <div className="pb-3 sm:pb-0 sm:pr-4 md:pr-6">
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <HugeiconsIcon icon={BookOpen01Icon} className="h-3.5 w-3.5 text-kat-primary shrink-0" />
-                Bài viết đã đăng
+                {t("journal.statPosts")}
               </span>
               <span className="text-[15px] md:text-[17px] font-black text-kat-dark dark:text-slate-200 mt-1 block truncate">
-                {journalCount > 0 ? `${journalCount} bài viết` : "Chưa có bài viết nào"}
+                {journalCount > 0 ? `${journalCount} ${t("journal.statPostsCount")}` : t("journal.statPostsEmpty")}
               </span>
             </div>
             <div className="py-3 sm:py-0 sm:px-4 md:px-6">
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <HugeiconsIcon icon={SmilePlusIcon} className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                Cảm xúc mới nhất
+                {t("journal.statMood")}
               </span>
               <span className="text-[15px] md:text-[17px] font-black text-kat-dark dark:text-slate-200 mt-1 block truncate">
                 {lastMood || "—"}
@@ -756,7 +762,7 @@ export function JournalSection({
             <div className="pt-3 sm:pt-0 sm:pl-4 md:pl-6">
               <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                Lần ghi gần nhất
+                {t("journal.statLastWrite")}
               </span>
               <span className="text-[15px] md:text-[17px] font-black text-kat-dark dark:text-slate-200 mt-1 block truncate">
                 {lastWriteDate || "—"}
@@ -766,7 +772,7 @@ export function JournalSection({
         </div>
         {journalCount === 0 && (
           <p className="mt-3.5 pt-3.5 border-t border-slate-100 dark:border-slate-800 text-[13px] font-medium text-slate-500 dark:text-slate-400">
-            Ghi lại một khoảnh khắc để chuyến đi có câu chuyện riêng.
+            {t("journal.emptyDesc")}
           </p>
         )}
       </div>
@@ -830,7 +836,7 @@ export function JournalSection({
                             <span className="text-[14px] font-extrabold text-slate-800 dark:text-slate-200">{entry.authorName || "Trưởng nhóm"}</span>
                             <div className="flex items-center gap-1.5 mt-0.5">
                               <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider ${moodBadge}`}>
-                                {moodLabels[entry.mood] || "Đáng nhớ"}
+                                {t(`journal.mood_${entry.mood || 'default'}`)}
                               </span>
                               {entry.postedAt && (
                                 <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 flex items-center gap-0.5">
@@ -902,7 +908,7 @@ export function JournalSection({
                             onClick={() => setActiveReactionPopover(activeReactionPopover === entry.id ? null : (entry.id || null))}
                             className="flex h-7 px-2.5 items-center justify-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-350 transition-colors text-[11.5px] font-bold"
                           >
-                            <span>+ Thả cảm xúc</span>
+                            <span>+ {t("journal.reactionBtn")}</span>
                           </button>
                           
                           {activeReactionPopover === entry.id && (

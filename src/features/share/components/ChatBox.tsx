@@ -182,8 +182,8 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
               <div className="w-16 h-16 rounded-full bg-kat-primary-soft flex items-center justify-center mb-3">
                 <HugeiconsIcon icon={BubbleChatIcon} className="w-8 h-8 text-kat-primary-usable" />
               </div>
-              <h4 className="font-bold text-kat-text text-sm mb-1">Chưa có tin nhắn nào</h4>
-              <p className="text-xs text-kat-muted max-w-[200px]">Hãy là người đầu tiên gửi lời chào trong nhóm trò chuyện!</p>
+              <h4 className="font-bold text-kat-text text-sm mb-1">{t("chat.emptyTitle")}</h4>
+              <p className="text-xs text-kat-muted max-w-[200px]">{t("chat.emptySubtitle")}</p>
             </div>
           ) : (
             messages.map((msg, index) => {
@@ -299,7 +299,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="Nhập tin nhắn..."
+              placeholder={t("chat.inputPlaceholder")}
               className="flex-1 bg-transparent border-0 rounded-full px-3 py-1.5 text-xs text-kat-text placeholder-kat-muted/65 focus:outline-none transition-all duration-200"
             />
             <button
@@ -345,15 +345,15 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                 <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
               </span>
             </div>
-            <h4 className="font-bold text-kat-text text-base tracking-wide">Trò Chuyện Nhóm</h4>
+            <h4 className="font-bold text-kat-text text-base tracking-wide">{t("chat.title")}</h4>
             <p className="text-xs text-kat-muted mt-1 mb-5 leading-relaxed">
-              Bạn đang kết nối dưới tên: <strong className="text-kat-text font-semibold">{currentUser.name}</strong>
+              {t("chat.connectedAs")} <strong className="text-kat-text font-semibold">{currentUser.name}</strong>
             </p>
             <button
               onClick={() => setIsMobileModalOpen(true)}
               className="bg-gradient-to-r from-kat-primary to-kat-primary-usable text-white px-8 py-3 rounded-full font-bold shadow-md hover:scale-105 active:scale-95 transition-all text-xs tracking-wider uppercase"
             >
-              Mở cuộc trò chuyện
+              {t("chat.openBtn")}
             </button>
           </div>
 

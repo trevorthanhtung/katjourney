@@ -895,7 +895,7 @@ function MemberForm({
           {(dirty || submitAttempted) && phoneError ? (
             <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{phoneError}</p>
           ) : (
-            <p className="mt-1.5 px-1 text-[11.5px] font-bold text-kat-muted">Dùng để liên hệ nhanh trong chuyến đi khi cần.</p>
+            <p className="mt-1.5 px-1 text-[11.5px] font-bold text-kat-muted">{t("members.phoneHelp")}</p>
           )}
         </div>
 
@@ -2002,15 +2002,15 @@ export function MoreScreen({
         renderChatBox={trip.shareToken ? () => {
           const leader = members?.find(m => m.role?.toLowerCase().includes("trưởng nhóm") || m.role?.toLowerCase().includes("leader"));
           
-          let chatName = "Người tạo chuyến đi";
-          let chatRole = "Người tạo chuyến đi";
+          let chatName = t("chat.tripCreator");
+          let chatRole = t("chat.tripCreator");
 
           if (leader) {
             chatName = leader.name;
             chatRole = "Trưởng nhóm";
           } else if (authName) {
             chatName = authName;
-            chatRole = "Người tạo chuyến đi";
+            chatRole = t("chat.tripCreator");
           }
 
           return (
