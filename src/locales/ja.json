@@ -1366,6 +1366,10 @@
     "connectedAs": "接続名:",
     "openBtn": "チャットを開く",
     "tripCreator": "旅の作成者",
-    "loading": "メッセージを読み込んでいます..."
+    "loading": "メッセージを読み込んでいます...",
+    "headerTitle": "旅行チャット",
+    "chattingAs": "チャット中:",
+    "today": "今日",
+    "yesterday": "昨日"
   }
 }

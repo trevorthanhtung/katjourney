@@ -1366,6 +1366,10 @@
     "connectedAs": "Você está conectado como:",
     "openBtn": "Abrir chat",
     "tripCreator": "Criador da Viagem",
-    "loading": "Carregando mensagens..."
+    "loading": "Carregando mensagens...",
+    "headerTitle": "Chat da Viagem",
+    "chattingAs": "Conversando como:",
+    "today": "Hoje",
+    "yesterday": "Ontem"
   }
 }

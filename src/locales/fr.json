@@ -1366,6 +1366,10 @@
     "connectedAs": "Vous êtes connecté en tant que :",
     "openBtn": "Ouvrir la discussion",
     "tripCreator": "Créateur du voyage",
-    "loading": "Chargement des messages..."
+    "loading": "Chargement des messages...",
+    "headerTitle": "Discussion de voyage",
+    "chattingAs": "En discussion :",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier"
   }
 }

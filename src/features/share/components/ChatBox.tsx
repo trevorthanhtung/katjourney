@@ -118,9 +118,9 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
       yesterday.setDate(today.getDate() - 1);
 
       if (d.toDateString() === today.toDateString()) {
-        return "Hôm nay";
+        return t("chat.today");
       } else if (d.toDateString() === yesterday.toDateString()) {
-        return "Hôm qua";
+        return t("chat.yesterday");
       } else {
         return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
       }
@@ -149,14 +149,14 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
             </div>
             <div className="min-w-0">
               <h3 className="font-bold text-[14px] sm:text-[15px] tracking-wide text-white flex items-center gap-1.5">
-                Hộp Thoại Chuyến Đi
+                {t("chat.headerTitle")}
                 <span className="flex h-2 w-2 relative">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_#10B981]"></span>
                 </span>
               </h3>
               <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-slate-300 truncate">
-                <span className="truncate">Đang chat: <span className="font-semibold text-white">{currentUser.name}</span></span>
+                <span className="truncate">{t("chat.chattingAs")} <span className="font-semibold text-white">{currentUser.name}</span></span>
               </div>
             </div>
           </div>

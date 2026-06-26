@@ -1366,6 +1366,10 @@
     "connectedAs": "您的连接身份是:",
     "openBtn": "打开聊天",
     "tripCreator": "行程创建者",
-    "loading": "正在加载消息..."
+    "loading": "正在加载消息...",
+    "headerTitle": "行程对话框",
+    "chattingAs": "当前聊天身份:",
+    "today": "今天",
+    "yesterday": "昨天"
   }
 }

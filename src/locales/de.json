@@ -1366,6 +1366,10 @@
     "connectedAs": "Verbunden als:",
     "openBtn": "Chat öffnen",
     "tripCreator": "Reiseersteller",
-    "loading": "Nachrichten werden geladen..."
+    "loading": "Nachrichten werden geladen...",
+    "headerTitle": "Reisechat",
+    "chattingAs": "Chatten als:",
+    "today": "Heute",
+    "yesterday": "Gestern"
   }
 }

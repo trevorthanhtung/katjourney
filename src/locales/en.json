@@ -1346,6 +1346,10 @@
     "connectedAs": "You are connected as:",
     "openBtn": "Open chat",
     "tripCreator": "Trip Creator",
-    "loading": "Loading messages..."
+    "loading": "Loading messages...",
+    "headerTitle": "Trip Chat",
+    "chattingAs": "Chatting as:",
+    "today": "Today",
+    "yesterday": "Yesterday"
   }
 }

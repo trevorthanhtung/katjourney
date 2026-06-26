@@ -1344,6 +1344,10 @@
     "connectedAs": "Bạn đang kết nối dưới tên:",
     "openBtn": "Mở cuộc trò chuyện",
     "tripCreator": "Người tạo chuyến đi",
-    "loading": "Đang tải tin nhắn..."
+    "loading": "Đang tải tin nhắn...",
+    "headerTitle": "Hộp Thoại Chuyến Đi",
+    "chattingAs": "Đang chat:",
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua"
   }
 }
