@@ -566,7 +566,7 @@ export function SharedExpensesSection({
             </span>
             <h3 className="text-[14px] font-extrabold text-kat-dark dark:text-white">{t("expenses.byCategory")}</h3>
           </div>
-          <BreakdownSection items={categoryBreakdown} total={totalExpense} emptyText={t("expenses.noExpenseAnalysis")} />
+          <BreakdownSection items={categoryBreakdown} total={totalExpense} emptyText={t("expenses.noExpenseAnalysis")} currency={trip.defaultCurrency || "VND"} />
         </section>
 
         <section className="rounded-3xl border border-slate-100 dark:border-kat-border/40 bg-kat-surface p-6 shadow-sm">
@@ -577,7 +577,7 @@ export function SharedExpensesSection({
             <h3 className="text-[14px] font-extrabold text-kat-dark dark:text-white">{t("expenses.sharePerMember")}</h3>
           </div>
           {members.length > 0 ? (
-            <BreakdownSection items={exactSharesByMember} total={totalShared} emptyText={t("expenses.noSharedAnalysis")} />
+            <BreakdownSection items={exactSharesByMember} total={totalShared} emptyText={t("expenses.noSharedAnalysis")} currency={trip.defaultCurrency || "VND"} />
           ) : (
             <div className="flex flex-col items-center justify-center py-6 text-center">
               <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">{t("expenses.addCompanionShare")}</p>
@@ -586,7 +586,7 @@ export function SharedExpensesSection({
         </section>
       </div>
 
-      <SettlementCard members={members} expenses={activeExpenses} settlements={settlements} />
+      <SettlementCard members={members} expenses={activeExpenses} settlements={settlements} currency={trip.defaultCurrency || "VND"} />
 
       {/* Expenses List */}
       <section className="bg-kat-surface rounded-3xl border border-slate-200/60 dark:border-kat-border/40 p-5 shadow-sm mt-6 animate-fadeIn">

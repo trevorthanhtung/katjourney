@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -50,11 +51,7 @@ export function BreakdownSection({
   items, 
   total, 
   emptyText 
-}: { 
-  items: Record<string, number>; 
-  total: number; 
-  emptyText: string 
-  }) {
+, currency}: { items: Record<string, number>; total: number; emptyText: string; currency?: string }) {
   const { t } = useTranslation();
   const catMap: Record<string, string> = {
     "Di chuyển": t("expenses.catTransport"),
@@ -96,7 +93,7 @@ export function BreakdownSection({
           <div key={label} className="group">
             <div className="flex items-center justify-between text-[14px] font-bold">
               <p className="text-slate-700 dark:text-slate-300 group-hover:text-kat-dark group-hover:dark:text-white transition-colors">{catMap[label] || label}</p>
-              <p className="text-kat-dark dark:text-white">{formatMoney(amount)}</p>
+              <p className="text-kat-dark dark:text-white">{formatMoney(amount, currency)}</p>
             </div>
             <div className="mt-2 flex items-center gap-3">
               <CategoryBar percent={percent} colorClass={colorClass} />
@@ -113,11 +110,7 @@ export function SettlementCard({
   members, 
   expenses, 
   settlements 
-}: { 
-  members: Member[]; 
-  expenses: Expense[]; 
-  settlements: Array<{ from: string; to: string; amount: number }> 
-}) {
+, currency}: { members: Member[]; expenses: Expense[]; settlements: Array<{ from: string; to: string; amount: number }>; currency?: string }) {
   const { t } = useTranslation();
   let emptyText = t("expenses.settlementBalanced");
   if (!members.length) {
@@ -154,7 +147,7 @@ export function SettlementCard({
                   </div>
                   
                   <div className="flex flex-col items-center justify-center flex-[1.5] px-2 shrink-0">
-                    <span className="font-black text-rose-600 text-[14.5px] mb-1 whitespace-nowrap">{formatMoney(s.amount)}</span>
+                    <span className="font-black text-rose-600 text-[14.5px] mb-1 whitespace-nowrap">{formatMoney(s.amount, currency)}</span>
                     <div className="w-full h-[2px] bg-slate-200 dark:bg-slate-700 relative flex items-center justify-center">
                       <div className="absolute right-[-4px] top-1/2 -translate-y-1/2 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-slate-200 dark:border-l-slate-700" />
                     </div>
@@ -186,13 +179,15 @@ const ExpenseCard = React.memo(function ExpenseCard({
   onEdit, 
   onDelete,
   idx = 0,
-  isReadOnly
+  isReadOnly,
+  currency
 }: { 
   item: Expense; 
   onEdit: () => void; 
   onDelete: () => void;
   idx?: number;
   isReadOnly?: boolean;
+  currency?: string;
 }) {
     const { t } = useTranslation();
   const catMap: Record<string, string> = {
@@ -286,7 +281,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
         <p className="font-bold text-kat-dark dark:text-white text-lg">
           {formatMoney(item.amount)}
         </p>
-        {item.originalAmount && item.currency && item.currency !== "VND" && (
+        {item.originalAmount && item.currency && item.currency !== (currency || "VND") && (
           <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
             {new Intl.NumberFormat('en-US').format(item.originalAmount)} {item.currency}
           </p>
@@ -352,9 +347,7 @@ function ExpenseForm({
   onClose,
   onSaved,
   onShowToast
-}: { 
-  tripId: number; 
-  members: Member[]; 
+, currency}: { tripId: number; members: Member[];  
   expenses: Expense[]; 
   events: EventItem[];
   editing: Expense | null; 
@@ -362,6 +355,7 @@ function ExpenseForm({
   onClose: () => void;
   onSaved: (msg: string) => void;
   onShowToast?: (msg: string) => void;
+  currency?: string;
 }) {
     const { t } = useTranslation();
   const catMap: Record<string, string> = React.useMemo(() => ({
@@ -420,7 +414,7 @@ function ExpenseForm({
     splitAmong: [],
     date: new Date().toISOString().split('T')[0],
     eventId: "",
-    currency: "VND",
+    currency: currency || "VND",
     exchangeRate: 1
   });
 
@@ -452,7 +446,7 @@ function ExpenseForm({
           splitAmong: editing.splitAmong ?? [],
           date: editing.date || new Date().toISOString().split('T')[0],
           eventId: editing.eventId ? String(editing.eventId) : "",
-          currency: editing.currency || "VND",
+          currency: editing.currency || currency || "VND",
           exchangeRate: editing.exchangeRate || 1
         });
         if (editing.date || editing.splitType === "personal" || editing.splitMode === "perGroup" || (editing.splitAmong && editing.splitAmong.length > 0) || editing.eventId) {
@@ -470,7 +464,7 @@ function ExpenseForm({
           splitAmong: [],
           date: new Date().toISOString().split('T')[0],
           eventId: "",
-          currency: "VND",
+          currency: currency || "VND",
           exchangeRate: 1
         });
       }
@@ -482,13 +476,7 @@ function ExpenseForm({
   useEffect(() => {
     if (isOpen && !editing && exchangeRates.length > 0) {
       db.trips.get(tripId).then(trip => {
-        if (trip?.defaultCurrency && trip.defaultCurrency !== "VND") {
-          const matchedRate = exchangeRates.find(r => r.currencyCode === trip.defaultCurrency);
-          if (matchedRate) {
-            setForm(prev => ({ ...prev, currency: trip.defaultCurrency!, exchangeRate: matchedRate.transfer }));
-            return; // Skip GPS if defaultCurrency is available
-          }
-        }
+        if (!trip) return;
         
         // Fallback to GPS
         getCurrentPosition()
@@ -531,7 +519,7 @@ function ExpenseForm({
       newErrors.amount = t("expenses.errAmount");
     }
 
-    const vndAmount = form.currency === "VND" ? amountVal : Math.round(amountVal * form.exchangeRate);
+    const vndAmount = form.currency === (currency || "VND") ? amountVal : Math.round(amountVal * form.exchangeRate);
 
     let finalCategory = form.category;
     if (form.category === "Khác...") {
@@ -555,9 +543,9 @@ function ExpenseForm({
     const payload = { 
       description: form.description.trim(), 
       amount: vndAmount,
-      originalAmount: form.currency === "VND" ? undefined : amountVal,
-      currency: form.currency === "VND" ? undefined : form.currency,
-      exchangeRate: form.currency === "VND" ? undefined : form.exchangeRate,
+      originalAmount: form.currency === (currency || "VND") ? undefined : amountVal,
+      currency: form.currency === (currency || "VND") ? undefined : form.currency,
+      exchangeRate: form.currency === (currency || "VND") ? undefined : form.exchangeRate,
       payer: form.splitType === "personal" ? (form.payer || "") : form.payer, 
       category: finalCategory, 
       splitType: form.splitType,
@@ -624,19 +612,19 @@ function ExpenseForm({
                   <button
                     type="button"
                     onClick={() => {
-                      setForm({ ...form, currency: "VND", exchangeRate: 1 });
+                      setForm({ ...form, currency: currency || "VND", exchangeRate: 1 });
                       setIsCurrencyDropdownOpen(false);
                     }}
                     className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
-                      form.currency === "VND"
+                      form.currency === (currency || "VND")
                         ? "bg-kat-primary-soft text-kat-primary dark:bg-kat-primary/10"
                         : "hover:bg-slate-50 dark:hover:bg-slate-800 text-kat-dark dark:text-slate-200"
                     }`}
                   >
-                    <span className={`text-[15px] ${form.currency === "VND" ? 'font-extrabold' : 'font-semibold'}`}>
+                    <span className={`text-[15px] ${form.currency === (currency || "VND") ? 'font-extrabold' : 'font-semibold'}`}>
                       {t("expenses.vnd")}
                     </span>
-                    {form.currency === "VND" && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
+                    {form.currency === (currency || "VND") && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
                   </button>
                   {exchangeRates.map((r) => {
                     const isSelected = form.currency === r.currencyCode;
@@ -680,10 +668,10 @@ function ExpenseForm({
               className="w-full text-center text-3xl font-black text-kat-dark dark:text-white bg-transparent border-none outline-none placeholder-slate-300 focus:ring-0"
             />
           </div>
-          {form.currency !== "VND" && form.amount && (
+          {form.currency !== (currency || "VND") && form.amount && (
             <div className="mt-3 flex flex-col items-center">
               <span className="text-[14px] font-bold text-slate-600 dark:text-slate-300">
-                ≈ {formatMoney(Math.round(Number(form.amount) * form.exchangeRate))}
+                ≈ {formatMoney(Math.round(Number(form.amount) * form.exchangeRate), currency || "VND")}
               </span>
               <span className="text-[11px] font-medium text-slate-400 mt-1">
                 {t("expenses.exchangeRate", { currency: form.currency, rate: new Intl.NumberFormat("vi-VN").format(form.exchangeRate) })}
@@ -1059,6 +1047,8 @@ export function ExpensesScreen({
   isReadOnly?: boolean;
 }) {
   const { t } = useTranslation();
+  const trip = useLiveQuery(async () => await db.trips.get(tripId), [tripId]);
+  const baseCurrency = trip?.defaultCurrency || "VND";
   const catMap: Record<string, string> = React.useMemo(() => ({
     "Di chuyển": t("expenses.catTransport"),
     "Vé máy bay": t("expenses.catFlights"),
@@ -1190,21 +1180,21 @@ export function ExpensesScreen({
                   <HugeiconsIcon icon={ReceiptTextIcon} className="h-4.5 w-4.5" />
                   <p className="text-[13px] font-bold uppercase tracking-wider">{t("expenses.totalTrip")}</p>
                 </div>
-                <p className="mt-1 break-words text-[36px] md:text-[44px] font-black leading-none tracking-tight text-kat-dark dark:text-white">{formatMoney(totalExpense)}</p>
+                <p className="mt-1 break-words text-[36px] md:text-[44px] font-black leading-none tracking-tight text-kat-dark dark:text-white">{formatMoney(totalExpense, baseCurrency)}</p>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
                 <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
                     <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{t("expenses.sharedTrip")}</p>
-                    <p className="text-[18px] font-black text-[#00AFA8] dark:text-[#00BFB7] mt-0.5">{formatMoney(totalSharedExpense)}</p>
+                    <p className="text-[18px] font-black text-[#00AFA8] dark:text-[#00BFB7] mt-0.5">{formatMoney(totalSharedExpense, baseCurrency)}</p>
                   </div>
                   <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-[#00AFA8]/60 dark:text-[#00BFB7]/60 shrink-0 mt-0.5" />
                 </div>
                 <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
                     <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{t("expenses.personalExpense")}</p>
-                    <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(totalPersonalExpense)}</p>
+                    <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(totalPersonalExpense, baseCurrency)}</p>
                   </div>
                   <HugeiconsIcon icon={UserIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500 shrink-0 mt-0.5" />
                 </div>
@@ -1214,7 +1204,7 @@ export function ExpensesScreen({
                       {hasGroups ? t("expenses.avgPerGroup") : t("expenses.avgPerPerson")}
                     </p>
                     {members.length > 0 ? (
-                      <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(hasGroups ? perGroup : perPerson)}</p>
+                      <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(hasGroups ? perGroup : perPerson, baseCurrency)}</p>
                     ) : (
                       <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-lg border border-amber-100 dark:border-amber-900/30 mt-1.5 inline-block">{t("expenses.noCompanion")}</span>
                     )}
@@ -1271,7 +1261,7 @@ export function ExpensesScreen({
             </section>
 
             {/* Settlements */}
-            <SettlementCard members={members} expenses={expenses} settlements={settlements} />
+            <SettlementCard members={members} expenses={expenses} settlements={settlements} currency={baseCurrency} />
           </>
         )}
 
@@ -1305,6 +1295,7 @@ export function ExpensesScreen({
                 <ExpenseCard
                   key={item.id}
                   item={item}
+                  currency={baseCurrency}
                   onEdit={() => openEditForm(item)}
                   onDelete={() => setExpenseToDelete(item)}
                   idx={idx}

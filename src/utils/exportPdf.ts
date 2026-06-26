@@ -255,9 +255,9 @@ export function exportTripPdf(data: TripData) {
   const grandTotal = sharedTotal + personalTotal;
 
   const finRows: [string, string, boolean, boolean][] = [
-    ["Chi chung (nhóm)",   formatMoney(sharedTotal),   false, false],
-    ["Chi cá nhân",        formatMoney(personalTotal), false, false],
-    ["TỔNG CỘNG",          formatMoney(grandTotal),    true,  true],
+    ["Chi chung (nhóm)",   formatMoney(sharedTotal, trip.defaultCurrency),   false, false],
+    ["Chi cá nhân",        formatMoney(personalTotal, trip.defaultCurrency), false, false],
+    ["TỔNG CỘNG",          formatMoney(grandTotal, trip.defaultCurrency),    true,  true],
   ];
 
   const finColW = [CONTENT_W * 0.55, CONTENT_W * 0.45];

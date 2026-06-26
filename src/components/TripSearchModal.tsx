@@ -39,6 +39,7 @@ export function TripSearchModal({
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Live query all trip data
+  const trip = useLiveQuery(async () => await db.trips.get(tripId), [tripId]);
   const events = useLiveQuery(async () => (await db.events.where("tripId").equals(tripId).toArray()).filter(e => !e.isDeleted), [tripId]) ?? [];
   const expenses = useLiveQuery(async () => (await db.expenses.where("tripId").equals(tripId).toArray()).filter(e => !e.isDeleted), [tripId]) ?? [];
   const checklist = useLiveQuery(async () => (await db.checklist.where("tripId").equals(tripId).toArray()).filter(c => !c.isDeleted), [tripId]) ?? [];
@@ -242,7 +243,7 @@ export function TripSearchModal({
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="text-[14.5px] font-black text-rose-500 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 border border-rose-100/50 dark:border-rose-900/30 px-2.5 py-0.5 rounded-full">
-                            {formatMoney(item.amount)}
+                            {formatMoney(item.amount, trip?.defaultCurrency || "VND")}
                           </span>
                           <HugeiconsIcon icon={ArrowRight01Icon} className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-kat-primary group-hover:translate-x-0.5 transition-all" />
                         </div>

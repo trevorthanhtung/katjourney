@@ -46,21 +46,27 @@ export function toDateInputValue(date: Date) {
 
 export const today = toDateInputValue(new Date());
 
-export function formatMoney(value: number) {
-  return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" })
-    .format(value)
-    .replace(/\s+/g, "")
-    .replace(/[đĐVNDvnd]/g, "₫");
+export function formatMoney(value: number, currency: string = "VND") {
+  if (currency === "VND") {
+    return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" })
+      .format(value)
+      .replace(/\s+/g, "")
+      .replace(/[đĐVNDvnd]/g, "₫");
+  }
+  return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(value);
 }
 
-export function formatMoneyCompact(value: number) {
-  if (value >= 1e9) {
-    return `${(value / 1e9).toLocaleString("vi-VN", { maximumFractionDigits: 2 }).replace(/\s+/g, "")} tỷ`;
+export function formatMoneyCompact(value: number, currency: string = "VND") {
+  if (currency === "VND") {
+    if (value >= 1e9) {
+      return `${(value / 1e9).toLocaleString("vi-VN", { maximumFractionDigits: 2 }).replace(/\s+/g, "")} tỷ`;
+    }
+    if (value >= 1e6) {
+      return `${(value / 1e6).toLocaleString("vi-VN", { maximumFractionDigits: 2 }).replace(/\s+/g, "")} tr`;
+    }
+    return formatMoney(value, currency);
   }
-  if (value >= 1e6) {
-    return `${(value / 1e6).toLocaleString("vi-VN", { maximumFractionDigits: 2 }).replace(/\s+/g, "")} tr`;
-  }
-  return formatMoney(value);
+  return new Intl.NumberFormat(undefined, { style: "currency", currency, notation: "compact" }).format(value);
 }
 
 export function formatDate(value: string) {
