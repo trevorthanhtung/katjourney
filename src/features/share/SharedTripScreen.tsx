@@ -1157,9 +1157,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
           {!activeTab && (
             <div className="text-center py-12 bg-white dark:bg-kat-surface rounded-3xl border border-slate-100 dark:border-kat-border/40 shadow-[0_2px_12px_rgba(3,13,46,0.02)] p-6 max-w-md mx-auto animate-fadeIn mt-4 flex flex-col items-center justify-center">
               <HugeiconsIcon icon={CompassIcon} className="w-12 h-12 text-slate-350 mb-3 animate-bounce" />
-              <h4 className="text-[16px] font-black text-kat-dark">Sẵn sàng khám phá chuyến đi!</h4>
+              <h4 className="text-[16px] font-black text-kat-dark">{t("share.readyToExplore")}</h4>
               <p className="text-[12.5px] text-slate-400 dark:text-kat-muted font-bold mt-1.5 leading-relaxed">
-                Hãy chọn một danh mục ở thanh điều hướng hoặc nhấp vào các thẻ thống kê để xem chi tiết hành trình nhé.
+                {t("share.exploreDesc")}
               </p>
             </div>
           )}
@@ -1339,7 +1339,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       return (
                         <div className="bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 rounded-2xl p-3.5 space-y-3">
                           <div className="flex items-center justify-between text-[12px] font-semibold text-slate-400">
-                            <span>Ngày {dayIndex + 1} ({dateLabel})</span>
+                            <span>{t("share.dayN", { n: dayIndex + 1 })} ({dateLabel})</span>
                             {activitiesMode === "edit" && (
                               <button
                                 type="button"
@@ -1445,7 +1445,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                           : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                       )}
                     >
-                      Chuẩn bị hành lý
+                      {t("share.packing")}
                     </button>
                     <button
                       onClick={() => setChecklistSubTab("documents")}
@@ -1456,7 +1456,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                           : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                       )}
                     >
-                      Giấy tờ du lịch
+                      {t("share.documents")}
                     </button>
                   </div>
                 </div>
@@ -1526,7 +1526,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       <BottomSheet
         isOpen={isRoadmapFormOpen}
         onClose={() => setIsRoadmapFormOpen(false)}
-        title={`${t("share.travelRoadmap")} - ${t("share.day")} ${days.indexOf(roadmapEditDay) + 1}`}
+        title={`${t("share.travelRoadmap")} - ${t("share.dayN", { n: days.indexOf(roadmapEditDay) + 1 })}`}
       >
         <div className="space-y-5 pb-4">
           
@@ -1534,10 +1534,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
           <div className="flex items-start gap-3 bg-kat-primary-soft border border-kat-teal border-opacity-20 rounded-2xl px-4 py-3">
             <HugeiconsIcon icon={RouteIcon} className="h-5 w-5 text-kat-teal shrink-0 mt-0.5" />
             <div>
-              <p className="text-[13px] font-bold text-kat-dark">Dán link lộ trình Google Maps</p>
-              <p className="text-[12px] text-slate-500 font-medium mt-0.5 leading-relaxed">
-                Vào Google Maps → chọn điểm đầu/cuối → nhấn <strong>Đường đi</strong> → sao chép link trên thanh địa chỉ.
-              </p>
+              <p className="text-[13px] font-bold text-kat-dark">{t("share.pasteMapLink")}</p>
+              <p className="text-[12px] text-slate-500 font-medium mt-0.5 leading-relaxed" dangerouslySetInnerHTML={{ __html: t("share.mapInstruction") }} />
             </div>
           </div>
 
@@ -1585,14 +1583,14 @@ export default function SharedTripScreen({ token }: { token: string }) {
               className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 text-[13.5px] font-bold text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-colors"
             >
               <HugeiconsIcon icon={MapsIcon} className="w-4 h-4" />
-              Mở link kiểm tra &rarr;
+              {t("share.openLinkTest")} &rarr;
             </a>
           )}
 
           <FormActions
             onCancel={() => setIsRoadmapFormOpen(false)}
             onSave={handleSaveRoadmap}
-            saveLabel="Lưu lộ trình"
+            saveLabel={t("share.saveRoadmap")}
           />
         </div>
       </BottomSheet>
@@ -1601,7 +1599,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       <BottomSheet
         isOpen={isRoadmapDayPickerOpen}
         onClose={() => setIsRoadmapDayPickerOpen(false)}
-        title="Chọn ngày lộ trình"
+        title={t("share.selectRoadmapDay")}
       >
         <div className="space-y-2 pb-4 max-h-[60vh] overflow-y-auto pr-1 scrollbar-none">
           {days.map((day, idx) => {
@@ -1633,7 +1631,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       "text-[15px] font-extrabold",
                       isSelected ? "text-emerald-900 dark:text-emerald-300" : "text-kat-dark dark:text-slate-100"
                     )}>
-                      Ngày {idx + 1}
+                      {t("share.dayN", { n: idx + 1 })}
                     </div>
                     <div className="text-[12.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
                       {formatDate(day)}
