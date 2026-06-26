@@ -903,7 +903,7 @@ function MemberForm({
           <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center justify-between">
             <span className="flex items-center gap-1.5">
               <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-4 w-4 text-slate-500" />
-              {t("members.roleLabel")}
+              {t("roles.roleLabel")}
             </span>
             <button
               type="button"
@@ -1660,13 +1660,13 @@ function MemberCardRow({
             {assignedTasksCount} {t("members.taskCount")}
           </span>
           <span className={classNames(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
-            totalSpent === 0 
-              ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700/30 text-slate-400 dark:text-slate-500 font-semibold" 
-              : "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-bold"
+            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-extrabold shadow-sm border",
+            totalSpent > 0
+              ? "bg-kat-teal-soft/30 dark:bg-kat-teal-soft/10 text-kat-teal dark:text-kat-primary-usable border-kat-teal/20"
+              : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700"
           )}>
             <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5 shrink-0" />
-            {t("members.paidPrefix")}{formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} {t("members.paidTimes")})`}
+            {t("members.paidPrefix")}{formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} ${t("members.paidTimes")})`}
           </span>
         </div>
       </div>
