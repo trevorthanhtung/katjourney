@@ -148,7 +148,10 @@
         "replaceWarning": "ADVERTENCIA DE PELIGRO",
         "replaceDesc": "Borrar todos los datos de este dispositivo y sobrescribir con la copia de seguridad en la nube.",
         "cancel": "Cancelar",
-        "continue": "Continuar"
+        "continue": "Continuar",
+        "restoreSuccessMerge": "¡Datos restaurados (combinados) correctamente!",
+        "restoreSuccessReplace": "¡Datos restaurados (reemplazados) correctamente!",
+        "restoreFailed": "Error al restaurar: "
       },
       "fileRestore": {
         "title": "¿Restaurar itinerario?",
@@ -198,7 +201,8 @@
         "notice": "Los datos se agregarán a este dispositivo. Los viajes existentes no se verán afectados.",
         "cancel": "Cancelar",
         "importing": "Importando...",
-        "importNow": "Importar ahora"
+        "importNow": "Importar ahora",
+        "untitledTrip": "Viaje sin título"
       }
     },
     "privacyView": {

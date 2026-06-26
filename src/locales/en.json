@@ -148,7 +148,10 @@
         "replaceWarning": "DANGER WARNING",
         "replaceDesc": "Wipe out all data on this device and overwrite with the backup on the Cloud.",
         "cancel": "Cancel",
-        "continue": "Continue"
+        "continue": "Continue",
+        "restoreSuccessMerge": "Data restored (merged) successfully!",
+        "restoreSuccessReplace": "Data restored (replaced) successfully!",
+        "restoreFailed": "Restore failed: "
       },
       "fileRestore": {
         "title": "Restore itinerary?",
@@ -198,7 +201,8 @@
         "notice": "Data will be added to this device. Existing trips will not be affected.",
         "cancel": "Cancel",
         "importing": "Importing...",
-        "importNow": "Import now"
+        "importNow": "Import now",
+        "untitledTrip": "Untitled trip"
       }
     },
     "privacyView": {

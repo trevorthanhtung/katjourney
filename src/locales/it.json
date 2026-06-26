@@ -148,7 +148,10 @@
         "replaceWarning": "AVVISO DI PERICOLO",
         "replaceDesc": "Cancella tutti i dati su questo dispositivo e sovrascrivi con il backup nel Cloud.",
         "cancel": "Annulla",
-        "continue": "Continua"
+        "continue": "Continua",
+        "restoreSuccessMerge": "Dati ripristinati (uniti) con successo!",
+        "restoreSuccessReplace": "Dati ripristinati (sostituiti) con successo!",
+        "restoreFailed": "Ripristino non riuscito: "
       },
       "fileRestore": {
         "title": "Ripristinare l'itinerario?",
@@ -198,7 +201,8 @@
         "notice": "I dati verranno aggiunti a questo dispositivo. I viaggi esistenti non verranno interessati.",
         "cancel": "Annulla",
         "importing": "Importazione in corso...",
-        "importNow": "Importa ora"
+        "importNow": "Importa ora",
+        "untitledTrip": "Viaggio senza titolo"
       }
     },
     "privacyView": {

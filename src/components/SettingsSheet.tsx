@@ -337,10 +337,10 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
     setSyncSuccess(null);
     try {
       await restoreNow(restoreMode);
-      setSyncSuccess(`Khôi phục dữ liệu (${restoreMode === "merge" ? "hợp nhất" : "thay thế"}) thành công!`);
+      setSyncSuccess(restoreMode === "merge" ? t("settings.dialogs.cloudRestore.restoreSuccessMerge") : t("settings.dialogs.cloudRestore.restoreSuccessReplace"));
     } catch (err: any) {
       console.error("Restore failed:", err);
-      setSyncError("Khôi phục thất bại: " + (err.message || err));
+      setSyncError(t("settings.dialogs.cloudRestore.restoreFailed") + (err.message || err));
     }
   };
 
@@ -355,7 +355,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
       }
       setImportPreview({
         parsed,
-        tripName: parsed.trip.title ?? "Không có tên",
+        tripName: parsed.trip.title ?? t("settings.dialogs.importPreview.untitledTrip"),
         exportedAt: parsed.exportedAt ?? "",
         memberCount: (parsed.members ?? []).length,
         eventCount: (parsed.events ?? []).length,

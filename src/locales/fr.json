@@ -148,7 +148,10 @@
         "replaceWarning": "AVERTISSEMENT DE DANGER",
         "replaceDesc": "Effacer toutes les données de cet appareil et remplacer par la sauvegarde sur le Cloud.",
         "cancel": "Annuler",
-        "continue": "Continuer"
+        "continue": "Continuer",
+        "restoreSuccessMerge": "Données restaurées (fusionnées) avec succès !",
+        "restoreSuccessReplace": "Données restaurées (remplacées) avec succès !",
+        "restoreFailed": "Échec de la restauration : "
       },
       "fileRestore": {
         "title": "Restaurer l'itinéraire ?",
@@ -198,7 +201,8 @@
         "notice": "Les données seront ajoutées à cet appareil. Les voyages existants ne seront pas affectés.",
         "cancel": "Annuler",
         "importing": "Importation...",
-        "importNow": "Importer maintenant"
+        "importNow": "Importer maintenant",
+        "untitledTrip": "Voyage sans titre"
       }
     },
     "privacyView": {

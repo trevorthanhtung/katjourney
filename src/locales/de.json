@@ -148,7 +148,10 @@
         "replaceWarning": "GEFAHRENWARNUNG",
         "replaceDesc": "Alle Daten auf diesem Gerät löschen und mit dem Backup in der Cloud überschreiben.",
         "cancel": "Abbrechen",
-        "continue": "Weiter"
+        "continue": "Weiter",
+        "restoreSuccessMerge": "Daten erfolgreich wiederhergestellt (zusammengeführt)!",
+        "restoreSuccessReplace": "Daten erfolgreich wiederhergestellt (ersetzt)!",
+        "restoreFailed": "Wiederherstellung fehlgeschlagen: "
       },
       "fileRestore": {
         "title": "Reiseroute wiederherstellen?",
@@ -198,7 +201,8 @@
         "notice": "Die Daten werden diesem Gerät hinzugefügt. Bestehende Reisen sind nicht betroffen.",
         "cancel": "Abbrechen",
         "importing": "Importieren...",
-        "importNow": "Jetzt importieren"
+        "importNow": "Jetzt importieren",
+        "untitledTrip": "Unbenannte Reise"
       }
     },
     "privacyView": {

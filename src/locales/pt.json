@@ -148,7 +148,10 @@
         "replaceWarning": "AVISO DE PERIGO",
         "replaceDesc": "Apague todos os dados deste dispositivo e substitua pelo backup na nuvem.",
         "cancel": "Cancelar",
-        "continue": "Continuar"
+        "continue": "Continuar",
+        "restoreSuccessMerge": "Dados restaurados (mesclados) com sucesso!",
+        "restoreSuccessReplace": "Dados restaurados (substituídos) com sucesso!",
+        "restoreFailed": "Falha na restauração: "
       },
       "fileRestore": {
         "title": "Restaurar roteiro?",
@@ -198,7 +201,8 @@
         "notice": "Os dados serão adicionados a este dispositivo. Viagens existentes não serão afetadas.",
         "cancel": "Cancelar",
         "importing": "Importando...",
-        "importNow": "Importar agora"
+        "importNow": "Importar agora",
+        "untitledTrip": "Viagem sem título"
       }
     },
     "privacyView": {

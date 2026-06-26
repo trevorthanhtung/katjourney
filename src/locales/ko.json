@@ -148,7 +148,10 @@
         "replaceWarning": "위험 경고",
         "replaceDesc": "이 기기의 모든 데이터를 지우고 클라우드 백업으로 덮어씁니다.",
         "cancel": "취소",
-        "continue": "계속"
+        "continue": "계속",
+        "restoreSuccessMerge": "데이터가 성공적으로 복원(병합)되었습니다!",
+        "restoreSuccessReplace": "데이터가 성공적으로 복원(교체)되었습니다!",
+        "restoreFailed": "복원 실패: "
       },
       "fileRestore": {
         "title": "여정을 복원하시겠습니까?",
@@ -198,7 +201,8 @@
         "notice": "데이터가 이 기기에 추가됩니다. 기존 여행은 영향을 받지 않습니다.",
         "cancel": "취소",
         "importing": "가져오는 중...",
-        "importNow": "지금 가져오기"
+        "importNow": "지금 가져오기",
+        "untitledTrip": "제목 없는 여행"
       }
     },
     "privacyView": {

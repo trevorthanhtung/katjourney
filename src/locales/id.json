@@ -148,7 +148,10 @@
         "replaceWarning": "PERINGATAN BAHAYA",
         "replaceDesc": "Hapus semua data di perangkat ini dan timpa dengan cadangan di Cloud.",
         "cancel": "Batal",
-        "continue": "Lanjutkan"
+        "continue": "Lanjutkan",
+        "restoreSuccessMerge": "Data berhasil dipulihkan (digabungkan)!",
+        "restoreSuccessReplace": "Data berhasil dipulihkan (diganti)!",
+        "restoreFailed": "Gagal memulihkan: "
       },
       "fileRestore": {
         "title": "Pulihkan jadwal perjalanan?",
@@ -198,7 +201,8 @@
         "notice": "Data akan ditambahkan ke perangkat ini. Perjalanan yang sudah ada tidak akan terpengaruh.",
         "cancel": "Batal",
         "importing": "Mengimpor...",
-        "importNow": "Impor sekarang"
+        "importNow": "Impor sekarang",
+        "untitledTrip": "Perjalanan tanpa judul"
       }
     },
     "privacyView": {

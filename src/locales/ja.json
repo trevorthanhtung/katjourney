@@ -148,7 +148,10 @@
         "replaceWarning": "危険警告",
         "replaceDesc": "このデバイスのすべてのデータを消去し、クラウドのバックアップで上書きします。",
         "cancel": "キャンセル",
-        "continue": "続行"
+        "continue": "続行",
+        "restoreSuccessMerge": "データが正常に復元（マージ）されました！",
+        "restoreSuccessReplace": "データが正常に復元（置換）されました！",
+        "restoreFailed": "復元に失敗しました: "
       },
       "fileRestore": {
         "title": "旅程を復元しますか？",
@@ -198,7 +201,8 @@
         "notice": "データはこのデバイスに追加されます。既存の旅行は影響を受けません。",
         "cancel": "キャンセル",
         "importing": "インポート中...",
-        "importNow": "今すぐインポート"
+        "importNow": "今すぐインポート",
+        "untitledTrip": "無題の旅行"
       }
     },
     "privacyView": {

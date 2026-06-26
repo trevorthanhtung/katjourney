@@ -146,7 +146,10 @@
         "replaceWarning": "CẢNH BÁO NGUY HIỂM",
         "replaceDesc": "Xóa sạch toàn bộ dữ liệu trên thiết bị này và ghi đè bằng bản sao lưu trên Cloud.",
         "cancel": "Hủy",
-        "continue": "Tiếp tục"
+        "continue": "Tiếp tục",
+        "restoreSuccessMerge": "Khôi phục dữ liệu (hợp nhất) thành công!",
+        "restoreSuccessReplace": "Khôi phục dữ liệu (thay thế) thành công!",
+        "restoreFailed": "Khôi phục thất bại: "
       },
       "fileRestore": {
         "title": "Khôi phục hành trình?",
@@ -196,7 +199,8 @@
         "notice": "Dữ liệu sẽ được thêm vào thiết bị này. Chuyến đi hiện có sẽ không bị ảnh hưởng.",
         "cancel": "Hủy",
         "importing": "Đang nhập...",
-        "importNow": "Nhập ngay"
+        "importNow": "Nhập ngay",
+        "untitledTrip": "Không có tên"
       }
     },
     "privacyView": {

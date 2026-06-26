@@ -148,7 +148,10 @@
         "replaceWarning": "危险警告",
         "replaceDesc": "清除此设备上的所有数据并使用云端备份覆盖。",
         "cancel": "取消",
-        "continue": "继续"
+        "continue": "继续",
+        "restoreSuccessMerge": "数据已成功恢复（合并）！",
+        "restoreSuccessReplace": "数据已成功恢复（替换）！",
+        "restoreFailed": "恢复失败："
       },
       "fileRestore": {
         "title": "恢复行程？",
@@ -198,7 +201,8 @@
         "notice": "数据将添加到此设备。现有行程不会受到影响。",
         "cancel": "取消",
         "importing": "导入中...",
-        "importNow": "立即导入"
+        "importNow": "立即导入",
+        "untitledTrip": "无标题行程"
       }
     },
     "privacyView": {
