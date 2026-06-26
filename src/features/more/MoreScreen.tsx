@@ -588,7 +588,7 @@ const [form, setForm] = useState<{
             onChange={(val) => setForm(f => ({ ...f, defaultCurrency: val }))}
             options={CURRENCY_OPTIONS}
             labels={CURRENCY_LABELS}
-            buttonClassName="!rounded-2xl !py-3.5 !border-2 !border-slate-200 dark:!border-slate-700/50"
+            buttonClassName="w-full !rounded-2xl !py-3.5 !border-2 !border-slate-200 dark:!border-slate-700/50"
           />
         </div>
 

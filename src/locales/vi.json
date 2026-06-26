@@ -398,7 +398,8 @@
       "Tháng 11",
       "Tháng 12"
     ],
-    "dateFmt": "{{day}} thg {{month}}, {{year}}"
+    "dateFmt": "{{day}} thg {{month}}, {{year}}",
+    "currencyLabel": "Đơn vị tiền tệ (Base Currency)"
   },
   "toast": {
     "invalidFileFormat": "Định dạng file KAT Journey không hợp lệ.",
