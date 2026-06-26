@@ -740,7 +740,7 @@ function MemberForm({
     <BottomSheet 
       isOpen={isOpen} 
       onClose={onClose} 
-      title={editing ? "Sửa thành viên" : "Thêm thành viên"}
+      title={editing ? t("members.formEditTitle") : t("members.formAddTitle")}
       footer={
         <div className="flex items-center gap-2.5 w-full">
           <button
@@ -761,7 +761,7 @@ function MemberForm({
             ) : (
               <HugeiconsIcon icon={UserAdd01Icon} className="h-5 w-5" />
             )}
-            {editing ? "Lưu thông tin" : "Thêm thành viên"}
+            {editing ? t("members.btnSave") : t("members.btnAdd")}
           </button>
         </div>
       }
@@ -772,7 +772,7 @@ function MemberForm({
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={UserIcon} className="h-4 w-4 text-slate-500" />
-                Tên thành viên *
+                {t("members.nameLabel")}
               </span>
             } 
             value={name} 
@@ -787,13 +787,13 @@ function MemberForm({
         <div>
           <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
             <HugeiconsIcon icon={UserIcon} className="h-4 w-4 text-slate-500" />
-            Giới tính *
+            {t("members.genderLabel")}
           </span>
           <div className="flex gap-2">
             {[
-              { value: "male", label: "Nam" },
-              { value: "female", label: "Nữ" },
-              { value: "other", label: "Khác" }
+              { value: "male", label: t("members.genderMale") },
+              { value: "female", label: t("members.genderFemale") },
+              { value: "other", label: t("members.genderOther") }
             ].map((g) => (
               <button
                 key={g.value}
@@ -820,7 +820,7 @@ function MemberForm({
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-4 w-4 text-slate-500" />
-                Nhóm / Gia đình (Tuỳ chọn)
+                {t("members.groupLabel")}
               </span>
             } 
             value={group} 
@@ -852,7 +852,7 @@ function MemberForm({
             return group.trim() !== "" && (
               <div className="mt-3 flex items-center justify-between px-1">
                 <div className="flex flex-col">
-                  <span className="text-[13.5px] font-bold text-slate-600 dark:text-slate-400">Là đại diện nhóm</span>
+                  <span className="text-[13.5px] font-bold text-slate-600 dark:text-slate-400">{t("members.isGroupLeader")}</span>
                   {existingLeader && (
                     <span className="text-[11px] text-slate-400 mt-0.5">
                       {isGroupLeader ? t("members.willReplace", { name: existingLeader.name }) : t("members.currentLeaderIs", { name: existingLeader.name })}
@@ -903,7 +903,7 @@ function MemberForm({
           <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center justify-between">
             <span className="flex items-center gap-1.5">
               <HugeiconsIcon icon={CheckmarkBadge01Icon} className="h-4 w-4 text-slate-500" />
-              Vai trò trong chuyến đi
+              {t("members.roleLabel")}
             </span>
             <button
               type="button"
@@ -935,7 +935,7 @@ function MemberForm({
           </div>
 
           <p className="mt-1.5 px-1 text-[11.5px] font-bold text-kat-muted">
-            Vai trò giúp chia chi phí, chuẩn bị hành lý và ghi chú rõ ràng hơn.
+            {t("members.roleHelpDesc")}
           </p>
         </div>
 
@@ -943,13 +943,13 @@ function MemberForm({
           <label className="block">
             <span className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">
               <HugeiconsIcon icon={Note01Icon} className="h-4 w-4 text-slate-500" />
-              Ghi chú
+              {t("members.noteLabelShort")}
             </span>
             <textarea
               className="mt-1.5 min-h-[90px] w-full rounded-2xl border-0 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/50 transition-shadow focus:bg-white dark:focus:bg-slate-700 focus:ring-2 focus:ring-kat-teal placeholder-slate-400 dark:placeholder-slate-500"
               value={note}
               onChange={(event) => { setNote(event.target.value); setDirty(true); }}
-              placeholder="VD: Ăn chay, dễ say xe, phụ trách đặt phòng..."
+              placeholder={t("members.notePlaceholderDetailed")}
             />
           </label>
         </div>
@@ -974,24 +974,25 @@ function DeleteMemberConfirmModal({
   hasExpenses: boolean;
   hasChecklist: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <TypedDeleteConfirmModal
       isOpen={isOpen}
       onClose={onClose}
       onConfirm={onConfirm}
-      title="Xóa thành viên này?"
+      title={t("members.deleteConfirmTitle")}
       itemName={memberName}
       warning={
         hasExpenses || hasChecklist
-          ? "Thành viên này đang liên quan đến chi phí hoặc checklist. Hãy kiểm tra trước khi xóa."
+          ? t("members.deleteConfirmWarning")
           : undefined
       }
       description={
         <>
-          Thành viên <span className="font-extrabold text-kat-dark">{memberName}</span> sẽ không còn xuất hiện trong danh sách chuyến đi. Các dữ liệu liên quan như chi phí hoặc phân công có thể cần được kiểm tra lại.
+          Thành viên <span className="font-extrabold text-kat-dark">{memberName}</span> {t("members.deleteConfirmDesc1")}
         </>
       }
-      confirmLabel="Xóa thành viên"
+      confirmLabel={t("members.menuDelete")}
     />
   );
 }
@@ -1625,7 +1626,7 @@ function MemberCardRow({
                   className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 active:bg-slate-100 dark:active:bg-slate-600 transition-colors"
                 >
                   <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                  Sửa
+                  {t("members.menuEdit")}
                 </button>
                 <button
                   type="button"
@@ -1637,7 +1638,7 @@ function MemberCardRow({
                   className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
                 >
                   <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
-                  Xóa
+                  {t("members.menuDelete")}
                 </button>
               </div>
             </>
@@ -1927,7 +1928,7 @@ export function MoreScreen({
   async function executeDeleteMember() {
     if (!memberToDelete?.id) return;
     await db.members.delete(memberToDelete.id);
-    onShowToast?.("Đã xóa thành viên");
+    onShowToast?.(t("members.toastDeletedMember"));
     setIsDeleteMemberConfirmOpen(false);
     setMemberToDelete(null);
   }
