@@ -590,7 +590,17 @@
     "mapInstruction": "Go to Google Maps → select start/end points → click <strong>Directions</strong> → copy link from address bar.",
     "openLinkTest": "Test link",
     "saveRoadmap": "Save roadmap",
-    "selectRoadmapDay": "Select roadmap day"
+    "selectRoadmapDay": "Select roadmap day",
+    "detailedSchedule": "Detailed Schedule",
+    "allDays": "All days",
+    "quickSelectDay": "Quick select day",
+    "quickSelectDesc": "Select a specific day below to filter activity details or select \"All days\".",
+    "noActivitiesThisDay": "No activities on this day",
+    "suggestAdd": "Suggest add",
+    "suggestEdit": "Suggest edit",
+    "sendSuggestion": "Send suggestion",
+    "suggestAddActivity": "Suggest add activity",
+    "suggestEditActivity": "Suggest edit activity"
   },
   "home": {
     "countdown": "Countdown",

@@ -743,7 +743,17 @@
     "mapInstruction": "ไปที่ Google Maps → เลือกจุดเริ่มต้น/สิ้นสุด → คลิก <strong>เส้นทาง</strong> → คัดลอกลิงก์",
     "openLinkTest": "ทดสอบลิงก์",
     "saveRoadmap": "บันทึกแผนการเดินทาง",
-    "selectRoadmapDay": "เลือกวันแผนการเดินทาง"
+    "selectRoadmapDay": "เลือกวันแผนการเดินทาง",
+    "detailedSchedule": "ตารางรายละเอียด",
+    "allDays": "ทุกวัน",
+    "quickSelectDay": "เลือกวันอย่างรวดเร็ว",
+    "quickSelectDesc": "เลือกวันที่ระบุด้านล่างเพื่อกรองรายละเอียดกิจกรรม หรือเลือก \"ทุกวัน\"",
+    "noActivitiesThisDay": "ไม่มีกิจกรรมในวันนี้",
+    "suggestAdd": "เสนอเพิ่ม",
+    "suggestEdit": "เสนอแก้ไข",
+    "sendSuggestion": "ส่งข้อเสนอ",
+    "suggestAddActivity": "เสนอเพิ่มกิจกรรม",
+    "suggestEditActivity": "เสนอแก้ไขกิจกรรม"
   },
   "weather": {
     "packingRain": "จุดหมายกำลังมีฝนตก อย่าลืมร่ม！",

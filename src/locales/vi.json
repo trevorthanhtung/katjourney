@@ -588,7 +588,17 @@
     "mapInstruction": "Vào Google Maps → chọn điểm đầu/cuối → nhấn <strong>Đường đi</strong> → sao chép link trên thanh địa chỉ.",
     "openLinkTest": "Mở link kiểm tra",
     "saveRoadmap": "Lưu lộ trình",
-    "selectRoadmapDay": "Chọn ngày lộ trình"
+    "selectRoadmapDay": "Chọn ngày lộ trình",
+    "detailedSchedule": "Lịch trình chi tiết",
+    "allDays": "Tất cả các ngày",
+    "quickSelectDay": "Chọn nhanh ngày lịch trình",
+    "quickSelectDesc": "Chọn một ngày cụ thể dưới đây để lọc xem chi tiết hoạt động hoặc chọn \"Tất cả các ngày\".",
+    "noActivitiesThisDay": "Không có hoạt động nào ngày này",
+    "suggestAdd": "Đề xuất thêm",
+    "suggestEdit": "Đề xuất sửa",
+    "sendSuggestion": "Gửi đề xuất",
+    "suggestAddActivity": "Đề xuất thêm hoạt động",
+    "suggestEditActivity": "Đề xuất sửa hoạt động"
   },
   "home": {
     "countdown": "Đếm ngược",

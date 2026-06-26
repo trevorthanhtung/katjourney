@@ -743,7 +743,17 @@
     "mapInstruction": "Googleマップに移動 → 出発地/目的地を選択 → <strong>ルート</strong> をクリック → リンクをコピーします。",
     "openLinkTest": "リンクをテスト",
     "saveRoadmap": "ロードマップを保存",
-    "selectRoadmapDay": "ロードマップの日を選択"
+    "selectRoadmapDay": "ロードマップの日を選択",
+    "detailedSchedule": "詳細なスケジュール",
+    "allDays": "すべての日",
+    "quickSelectDay": "日付のクイック選択",
+    "quickSelectDesc": "下から特定の日を選択してアクティビティの詳細をフィルタリングするか、「すべての日」を選択します。",
+    "noActivitiesThisDay": "この日のアクティビティはありません",
+    "suggestAdd": "追加を提案",
+    "suggestEdit": "編集を提案",
+    "sendSuggestion": "提案を送信",
+    "suggestAddActivity": "アクティビティの追加を提案",
+    "suggestEditActivity": "アクティビティの編集を提案"
   },
   "weather": {
     "packingRain": "目的地で雨が降っています。傘を忘れずに！",

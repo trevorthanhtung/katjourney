@@ -743,7 +743,17 @@
     "mapInstruction": "Vá ao Google Maps → selecione início/fim → clique em <strong>Rotas</strong> → copie o link.",
     "openLinkTest": "Testar link",
     "saveRoadmap": "Salvar roteiro",
-    "selectRoadmapDay": "Selecionar dia do roteiro"
+    "selectRoadmapDay": "Selecionar dia do roteiro",
+    "detailedSchedule": "Cronograma detalhado",
+    "allDays": "Todos os dias",
+    "quickSelectDay": "Seleção rápida de dia",
+    "quickSelectDesc": "Selecione um dia específico abaixo para filtrar os detalhes da atividade ou selecione \"Todos os dias\".",
+    "noActivitiesThisDay": "Nenhuma atividade neste dia",
+    "suggestAdd": "Sugerir adição",
+    "suggestEdit": "Sugerir edição",
+    "sendSuggestion": "Enviar sugestão",
+    "suggestAddActivity": "Sugerir adição de atividade",
+    "suggestEditActivity": "Sugerir edição de atividade"
   },
   "weather": {
     "packingRain": "Está chovendo no seu destino, não esqueça o guarda-chuva!",

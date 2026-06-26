@@ -743,7 +743,17 @@
     "mapInstruction": "转到 Google 地图 → 选择起点/终点 → 单击<strong>路线</strong> → 复制链接。",
     "openLinkTest": "测试链接",
     "saveRoadmap": "保存路线图",
-    "selectRoadmapDay": "选择路线图日期"
+    "selectRoadmapDay": "选择路线图日期",
+    "detailedSchedule": "详细时间表",
+    "allDays": "所有日期",
+    "quickSelectDay": "快速选择日期",
+    "quickSelectDesc": "在下面选择特定日期以筛选活动详情，或选择“所有日期”。",
+    "noActivitiesThisDay": "这一天没有活动",
+    "suggestAdd": "建议添加",
+    "suggestEdit": "建议编辑",
+    "sendSuggestion": "发送建议",
+    "suggestAddActivity": "建议添加活动",
+    "suggestEditActivity": "建议编辑活动"
   },
   "weather": {
     "packingRain": "目的地正在下雨，别忘了带伞！",

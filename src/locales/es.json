@@ -743,7 +743,17 @@
     "mapInstruction": "Ve a Google Maps → selecciona los puntos de inicio/fin → haz clic en <strong>Indicaciones</strong> → copia el enlace.",
     "openLinkTest": "Probar enlace",
     "saveRoadmap": "Guardar ruta",
-    "selectRoadmapDay": "Seleccionar día de la ruta"
+    "selectRoadmapDay": "Seleccionar día de la ruta",
+    "detailedSchedule": "Horario detallado",
+    "allDays": "Todos los días",
+    "quickSelectDay": "Selección rápida de día",
+    "quickSelectDesc": "Seleccione un día específico a continuación para filtrar los detalles de la actividad o seleccione \"Todos los días\".",
+    "noActivitiesThisDay": "No hay actividades este día",
+    "suggestAdd": "Sugerir añadir",
+    "suggestEdit": "Sugerir edición",
+    "sendSuggestion": "Enviar sugerencia",
+    "suggestAddActivity": "Sugerir añadir actividad",
+    "suggestEditActivity": "Sugerir editar actividad"
   },
   "weather": {
     "packingRain": "Está lloviendo en tu destino, ¡no olvides el paraguas!",

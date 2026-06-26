@@ -82,7 +82,7 @@ export function SharedActivitiesSection({
 
   const dateLabels = React.useMemo(() => {
     return tripDays.reduce((acc, date, idx) => {
-      acc[date] = `Ngày ${idx + 1} (${formatDate(date)})`;
+      acc[date] = `${t("timeline.dayN", { n: idx + 1 })} (${formatDate(date)})`;
       return acc;
     }, {} as Record<string, string>);
   }, [tripDays]);
@@ -521,7 +521,7 @@ export function SharedActivitiesSection({
                       )}
                     >
                       <HugeiconsIcon icon={GitBranchIcon} className="w-3.5 h-3.5" />
-                      <span>{backupCount > 0 ? `${backupCount} phương án dự phòng` : (isBackupPlansDirectEdit ? "Thêm phương án dự phòng" : "Đề xuất phương án dự phòng")}</span>
+                      <span>{backupCount > 0 ? `${backupCount} phương án dự phòng` : (isBackupPlansDirectEdit ? `${t("share.addBtn")} phương án dự phòng` : "Đề xuất phương án dự phòng")}</span>
                     </button>
                   </div>
                 )}
@@ -539,7 +539,7 @@ export function SharedActivitiesSection({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={Route01Icon} className="w-5 h-5 text-[#00A19D]" />
-          <h3 className="text-[18px] font-black text-kat-dark tracking-tight">Lịch trình chi tiết</h3>
+          <h3 className="text-[18px] font-black text-kat-dark tracking-tight">{t("share.detailedSchedule")}</h3>
         </div>
         <div className="flex items-center justify-center sm:justify-start gap-2.5 shrink-0 select-none w-full sm:w-auto">
           <div className="flex bg-[#E2E8F0]/40 dark:bg-slate-900/60 border border-transparent dark:border-slate-800/40 p-1 rounded-xl">
@@ -553,7 +553,7 @@ export function SharedActivitiesSection({
                   : "text-slate-500 hover:text-kat-dark dark:text-slate-400 dark:hover:text-slate-200"
               )}
             >
-              Danh sách
+              {t("share.listView")}
             </button>
             <button 
               type="button"
@@ -575,10 +575,10 @@ export function SharedActivitiesSection({
               type="button"
               onClick={startAdd} 
               className="hidden lg:flex items-center justify-center gap-1.5 rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-3.5 py-2 text-[12.5px] font-extrabold shadow-sm hover:bg-kat-dark dark:hover:bg-kat-primary-light bg-opacity-90 active:scale-95 transition-all h-9 motion-press cursor-pointer border-transparent"
-              title={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
+              title={isDirectEdit ? t("share.addActivity") : t("share.suggestAdd")}
             >
               <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5" />
-              <span className="hidden min-[380px]:inline">{isDirectEdit ? "Thêm" : "Đề xuất"}</span>
+              <span className="hidden min-[380px]:inline">{isDirectEdit ? t("share.addBtn") : "Đề xuất"}</span>
             </button>
           )}
         </div>
@@ -590,7 +590,7 @@ export function SharedActivitiesSection({
             const groups = days.map(day => ({
                id: day,
                index: days.indexOf(day),
-               title: `Ngày ${days.indexOf(day) + 1}`,
+               title: t("timeline.dayN", { n: days.indexOf(day) + 1 }),
                subtitle: formatDate(day),
                icon: days.indexOf(day) + 1 as string | number,
                activities: mergedActivities.filter(a => a.date === day)
@@ -601,8 +601,8 @@ export function SharedActivitiesSection({
               groups.push({
                 id: "undated",
                 index: -1,
-                title: "Chưa phân ngày",
-                subtitle: "Các hoạt động chưa có ngày",
+                title: t("share.unscheduled"),
+                subtitle: t("share.unscheduledDesc"),
                 icon: "?",
                 activities: undated
               });
@@ -650,7 +650,7 @@ export function SharedActivitiesSection({
                         </div>
                       </div>
                       <div className="flex-1 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/20 dark:bg-slate-900/10 p-4 flex items-center justify-between">
-                        <span className="text-[13px] font-bold text-slate-400 dark:text-slate-500">Không có hoạt động nào ngày này</span>
+                        <span className="text-[13px] font-bold text-slate-400 dark:text-slate-500">{t("share.noActivitiesThisDay")}</span>
                         {isRequestEdit && (
                           <button 
                             type="button"
@@ -708,8 +708,8 @@ export function SharedActivitiesSection({
           onClick={startAdd}
           className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-800/40 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 dark:hover:bg-slate-800/60 duration-200 cursor-pointer"
           style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
-          aria-label={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
-          title={isDirectEdit ? "Thêm hoạt động" : "Đề xuất thêm"}
+          aria-label={isDirectEdit ? t("share.addActivity") : t("share.suggestAdd")}
+          title={isDirectEdit ? t("share.addActivity") : t("share.suggestAdd")}
         >
           <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
         </button>
@@ -760,7 +760,7 @@ export function SharedActivitiesSection({
           setIsFormOpen(false);
           setEditingId(null);
         }}
-        title={isDirectEdit ? (editingId ? "Sửa hoạt động" : "Thêm hoạt động") : (editingId ? "Đề xuất sửa hoạt động" : "Đề xuất thêm hoạt động")}
+        title={isDirectEdit ? (editingId ? t("share.editActivity") : t("share.addActivity")) : (editingId ? t("share.suggestEditActivity") : t("share.suggestAddActivity"))}
         footer={
           <div className="flex items-center gap-2.5 w-full">
             {editingId && (
@@ -785,7 +785,7 @@ export function SharedActivitiesSection({
               }}
               className="flex h-[52px] shrink-0 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.96] transition-all border border-transparent dark:border-slate-700 motion-press"
             >
-              Hủy
+              {t("share.cancel")}
             </button>
 
             <button
@@ -795,7 +795,7 @@ export function SharedActivitiesSection({
               className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
             >
               <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" />
-              {isDirectEdit ? (editingId ? "Lưu thay đổi" : "Thêm hoạt động") : "Gửi đề xuất"}
+              {isDirectEdit ? (editingId ? t("share.saveChanges") : t("share.addActivity")) : t("share.sendSuggestion")}
             </button>
           </div>
         }
@@ -806,17 +806,17 @@ export function SharedActivitiesSection({
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-slate-500" />
-                Tiêu đề *
+                {t("share.titleLabel")}
               </span>
             }
             value={form.title}
             onChange={val => setForm({ ...form, title: val })}
-            placeholder="VD: Ăn trưa tại quán ngon..."
+            placeholder={t("share.titlePlaceholder")}
           />
 
           {/* Category Selector Grid */}
           <div className="space-y-2">
-            <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">Loại hoạt động</span>
+            <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t("share.activityType")}</span>
             <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
               {ACTIVITY_CATEGORIES.map(cat => {
                 const Icon = cat.icon;
@@ -848,7 +848,7 @@ export function SharedActivitiesSection({
                   label={
                     <span className="flex items-center gap-1.5">
                       <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
-                      Chọn ngày *
+                      {t("share.selectDate")} *
                     </span>
                   }
                   value={form.date}
@@ -861,7 +861,7 @@ export function SharedActivitiesSection({
                   label={
                     <span className="flex items-center gap-1.5">
                       <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
-                      Ngày thực hiện *
+                      {t("share.selectDate")} *
                     </span>
                   }
                   value={form.date}
@@ -872,7 +872,7 @@ export function SharedActivitiesSection({
               label={
                 <span className="flex items-center gap-1.5">
                   <HugeiconsIcon icon={Clock01Icon} className="h-4 w-4 text-slate-500" />
-                  Giờ (không bắt buộc)
+                  {t("share.timeLabel")}
                 </span>
               }
               value={form.time}
@@ -887,26 +887,26 @@ export function SharedActivitiesSection({
                 <span className="flex flex-col gap-1">
                   <span className="flex items-center gap-1.5">
                     <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-500" />
-                    Địa điểm
+                    {t("share.locationLabel")}
                   </span>
                   <span className="text-xs font-normal text-slate-400">
-                    Nhập tên địa điểm, hệ thống sẽ tự động tìm kiếm trên Google Maps.
+                    {t("share.locationHelper")}
                   </span>
                 </span>
               }
               value={form.location}
               onChange={val => setForm({ ...form, location: val })}
-              placeholder="Ví dụ: Bãi Trước, Vũng Tàu"
+              placeholder={t("share.locationPlaceholder")}
             />
             <Input
               label={
                 <span className="flex flex-col gap-1">
                   <span className="flex items-center gap-1.5">
                     <HugeiconsIcon icon={MapsIcon} className="h-4 w-4 text-slate-500" />
-                    Link Google Maps
+                    Google Maps
                   </span>
                   <span className="text-xs font-normal text-slate-400">
-                    Dán link địa điểm từ Google Maps. Dùng để hiển thị vị trí chính xác nếu tên địa điểm không tự tìm được.
+                    {t("share.pasteMapLink")}
                   </span>
                 </span>
               }
@@ -934,12 +934,12 @@ export function SharedActivitiesSection({
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={StickyNoteIcon} className="h-4 w-4 text-slate-500" />
-                Ghi chú thêm
+                {t("share.notesLabel")}
               </span>
             }
             value={form.notes}
             onChange={(notes) => setForm({ ...form, notes })}
-            placeholder="Mô tả chi tiết hoặc lưu ý cho hoạt động này..."
+            placeholder={t("share.notesPlaceholder")}
           />
         </div>
       </BottomSheet>
@@ -977,11 +977,11 @@ export function SharedActivitiesSection({
       <BottomSheet
         isOpen={isDayPickerOpen}
         onClose={() => setIsDayPickerOpen(false)}
-        title="Chọn nhanh ngày lịch trình"
+        title={t("share.quickSelectDay")}
       >
         <div className="space-y-4">
           <p className="text-[13.5px] font-semibold text-slate-500 pb-1">
-            Chọn một ngày cụ thể dưới đây để lọc xem chi tiết hoạt động hoặc chọn "Tất cả các ngày".
+            Chọn một ngày cụ thể dưới đây để lọc xem chi tiết hoạt động hoặc chọn "{t("share.allDays")}".
           </p>
           
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[60vh] overflow-y-auto pr-1 scrollbar-none pb-4">
@@ -998,7 +998,7 @@ export function SharedActivitiesSection({
                   : "bg-white dark:bg-kat-surface border-slate-200 dark:border-kat-border text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/40"
               )}
             >
-              <span className="text-[13.5px] font-extrabold">Tất cả các ngày</span>
+              <span className="text-[13.5px] font-extrabold">{t("share.allDays")}</span>
               <span className={classNames(
                 "text-[10px] font-bold mt-1 px-1.5 py-0.5 rounded-full",
                 filterDay === "all" 

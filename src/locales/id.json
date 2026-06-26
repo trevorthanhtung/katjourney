@@ -725,7 +725,17 @@
     "mapInstruction": "Buka Google Maps → pilih titik awal/akhir → klik <strong>Rute</strong> → salin tautan.",
     "openLinkTest": "Uji tautan",
     "saveRoadmap": "Simpan peta jalan",
-    "selectRoadmapDay": "Pilih hari peta jalan"
+    "selectRoadmapDay": "Pilih hari peta jalan",
+    "detailedSchedule": "Jadwal Detail",
+    "allDays": "Semua hari",
+    "quickSelectDay": "Pilih hari cepat",
+    "quickSelectDesc": "Pilih hari tertentu di bawah untuk memfilter detail aktivitas atau pilih \"Semua hari\".",
+    "noActivitiesThisDay": "Tidak ada aktivitas pada hari ini",
+    "suggestAdd": "Sarankan tambah",
+    "suggestEdit": "Sarankan edit",
+    "sendSuggestion": "Kirim saran",
+    "suggestAddActivity": "Sarankan tambah aktivitas",
+    "suggestEditActivity": "Sarankan edit aktivitas"
   },
   "weather": {
     "packingRain": "Hujan di tujuan Anda, jangan lupa payung!",

@@ -725,7 +725,17 @@
     "mapInstruction": "Vai su Google Maps → seleziona inizio/fine → clicca su <strong>Indicazioni stradali</strong> → copia il link.",
     "openLinkTest": "Testa link",
     "saveRoadmap": "Salva itinerario",
-    "selectRoadmapDay": "Seleziona giorno itinerario"
+    "selectRoadmapDay": "Seleziona giorno itinerario",
+    "detailedSchedule": "Programma dettagliato",
+    "allDays": "Tutti i giorni",
+    "quickSelectDay": "Selezione rapida del giorno",
+    "quickSelectDesc": "Seleziona un giorno specifico di seguito per filtrare i dettagli dell'attività o seleziona \"Tutti i giorni\".",
+    "noActivitiesThisDay": "Nessuna attività in questo giorno",
+    "suggestAdd": "Suggerisci aggiunta",
+    "suggestEdit": "Suggerisci modifica",
+    "sendSuggestion": "Invia suggerimento",
+    "suggestAddActivity": "Suggerisci aggiunta attività",
+    "suggestEditActivity": "Suggerisci modifica attività"
   },
   "weather": {
     "packingRain": "Piove alla tua destinazione, non dimenticare l'ombrello!",

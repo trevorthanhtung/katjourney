@@ -743,7 +743,17 @@
     "mapInstruction": "Gehen Sie zu Google Maps → Start/Ziel auswählen → auf <strong>Routen</strong> klicken → Link kopieren.",
     "openLinkTest": "Link testen",
     "saveRoadmap": "Route speichern",
-    "selectRoadmapDay": "Routentag auswählen"
+    "selectRoadmapDay": "Routentag auswählen",
+    "detailedSchedule": "Detaillierter Zeitplan",
+    "allDays": "Alle Tage",
+    "quickSelectDay": "Schnellauswahl Tag",
+    "quickSelectDesc": "Wählen Sie unten einen bestimmten Tag aus, um Aktivitätsdetails zu filtern, oder wählen Sie \"Alle Tage\".",
+    "noActivitiesThisDay": "Keine Aktivitäten an diesem Tag",
+    "suggestAdd": "Hinzufügen vorschlagen",
+    "suggestEdit": "Bearbeiten vorschlagen",
+    "sendSuggestion": "Vorschlag senden",
+    "suggestAddActivity": "Aktivität hinzufügen vorschlagen",
+    "suggestEditActivity": "Aktivität bearbeiten vorschlagen"
   },
   "weather": {
     "packingRain": "Es regnet an Ihrem Ziel, vergessen Sie den Regenschirm nicht!",

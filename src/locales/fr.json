@@ -743,7 +743,17 @@
     "mapInstruction": "Allez sur Google Maps → sélectionnez les points de départ/arrivée → cliquez sur <strong>Itinéraires</strong> → copiez le lien.",
     "openLinkTest": "Tester le lien",
     "saveRoadmap": "Enregistrer l'itinéraire",
-    "selectRoadmapDay": "Sélectionner le jour de l'itinéraire"
+    "selectRoadmapDay": "Sélectionner le jour de l'itinéraire",
+    "detailedSchedule": "Calendrier détaillé",
+    "allDays": "Tous les jours",
+    "quickSelectDay": "Sélection rapide du jour",
+    "quickSelectDesc": "Sélectionnez un jour spécifique ci-dessous pour filtrer les détails de l'activité ou sélectionnez \"Tous les jours\".",
+    "noActivitiesThisDay": "Aucune activité ce jour-là",
+    "suggestAdd": "Suggérer un ajout",
+    "suggestEdit": "Suggérer une modification",
+    "sendSuggestion": "Envoyer la suggestion",
+    "suggestAddActivity": "Suggérer l'ajout d'une activité",
+    "suggestEditActivity": "Suggérer la modification d'une activité"
   },
   "weather": {
     "packingRain": "Il pleut à votre destination, n'oubliez pas le parapluie !",

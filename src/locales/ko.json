@@ -590,7 +590,17 @@
     "mapInstruction": "Google 지도로 이동 → 출발/도착 지점 선택 → <strong>길찾기</strong> 클릭 → 링크 복사.",
     "openLinkTest": "링크 테스트",
     "saveRoadmap": "로드맵 저장",
-    "selectRoadmapDay": "로드맵 날짜 선택"
+    "selectRoadmapDay": "로드맵 날짜 선택",
+    "detailedSchedule": "상세 일정",
+    "allDays": "모든 날짜",
+    "quickSelectDay": "날짜 빠른 선택",
+    "quickSelectDesc": "아래에서 특정 날짜를 선택하여 활동 세부 정보를 필터링하거나 \"모든 날짜\"를 선택하세요.",
+    "noActivitiesThisDay": "이 날에는 활동이 없습니다",
+    "suggestAdd": "추가 제안",
+    "suggestEdit": "편집 제안",
+    "sendSuggestion": "제안 보내기",
+    "suggestAddActivity": "활동 추가 제안",
+    "suggestEditActivity": "활동 편집 제안"
   },
   "home": {
     "countdown": "카운트다운",
