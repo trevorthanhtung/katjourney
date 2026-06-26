@@ -1556,5 +1556,13 @@
     "status": "Statut",
     "journey": "Voyage",
     "completed": "Achevé"
+  },
+  "pwa": {
+    "newVersion": "Nouvelle version disponible !",
+    "offlineReady": "Prêt pour une utilisation hors ligne",
+    "newVersionDesc": "KAT Journey a une nouvelle mise à jour. Voulez-vous télécharger et rafraîchir l'application maintenant ?",
+    "offlineReadyDesc": "L'application a été enregistrée avec succès hors ligne. Vous pouvez y accéder sans connexion réseau.",
+    "later": "Plus tard",
+    "updateNow": "Mettre à jour"
   }
 }

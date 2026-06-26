@@ -1541,5 +1541,13 @@
     "status": "상태",
     "journey": "여정",
     "completed": "완료"
+  },
+  "pwa": {
+    "newVersion": "새 버전을 사용할 수 있습니다!",
+    "offlineReady": "오프라인으로 사용할 준비가 되었습니다",
+    "newVersionDesc": "KAT Journey의 새로운 업데이트가 있습니다. 지금 앱을 다운로드하고 새로 고치시겠습니까?",
+    "offlineReadyDesc": "앱이 오프라인용으로 성공적으로 저장되었습니다. 네트워크 연결 없이 액세스할 수 있습니다.",
+    "later": "나중에",
+    "updateNow": "지금 업데이트"
   }
 }

@@ -1460,5 +1460,13 @@
     "titleError": "Silakan masukkan judul.",
     "contentError": "Silakan masukkan konten.",
     "defaultTitle": "Jurnal perjalanan"
+  },
+  "pwa": {
+    "newVersion": "Versi baru tersedia!",
+    "offlineReady": "Siap bekerja offline",
+    "newVersionDesc": "KAT Journey memiliki pembaruan baru. Apakah Anda ingin mengunduh dan menyegarkan aplikasi sekarang?",
+    "offlineReadyDesc": "Aplikasi telah berhasil disimpan offline. Anda dapat mengaksesnya tanpa koneksi jaringan.",
+    "later": "Nanti",
+    "updateNow": "Perbarui sekarang"
   }
 }

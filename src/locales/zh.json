@@ -1556,5 +1556,13 @@
     "status": "状态",
     "journey": "旅程",
     "completed": "已完成"
+  },
+  "pwa": {
+    "newVersion": "有新版本可用！",
+    "offlineReady": "已准备好离线使用",
+    "newVersionDesc": "KAT Journey 有新更新。您现在要下载并刷新应用程序吗？",
+    "offlineReadyDesc": "应用程序已成功保存以供离线使用。您可以在没有网络连接的情况下访问它。",
+    "later": "稍后",
+    "updateNow": "立即更新"
   }
 }

@@ -1540,5 +1540,13 @@
     "status": "Trạng thái",
     "journey": "Hành trình",
     "completed": "Hoàn thành"
+  },
+  "pwa": {
+    "newVersion": "Có phiên bản mới!",
+    "offlineReady": "Sẵn sàng chạy ngoại tuyến",
+    "newVersionDesc": "Ứng dụng KAT Journey đã có bản cập nhật mới nhất. Bạn có muốn tải về và làm mới ứng dụng ngay không?",
+    "offlineReadyDesc": "Ứng dụng đã được lưu ngoại tuyến thành công, bạn có thể truy cập mà không cần mạng.",
+    "later": "Để sau",
+    "updateNow": "Cập nhật ngay"
   }
 }

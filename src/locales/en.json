@@ -1542,5 +1542,13 @@
     "status": "Status",
     "journey": "Journey",
     "completed": "Completed"
+  },
+  "pwa": {
+    "newVersion": "New version available!",
+    "offlineReady": "Ready to work offline",
+    "newVersionDesc": "KAT Journey has a new update. Do you want to download and refresh the app now?",
+    "offlineReadyDesc": "The app has been successfully saved offline. You can access it without a network connection.",
+    "later": "Later",
+    "updateNow": "Update now"
   }
 }

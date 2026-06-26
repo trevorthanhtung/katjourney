@@ -1460,5 +1460,13 @@
     "titleError": "Inserisci un titolo.",
     "contentError": "Inserisci il contenuto.",
     "defaultTitle": "Diario di viaggio"
+  },
+  "pwa": {
+    "newVersion": "Nuova versione disponibile!",
+    "offlineReady": "Pronto per l'uso offline",
+    "newVersionDesc": "KAT Journey ha un nuovo aggiornamento. Vuoi scaricare e aggiornare l'app ora?",
+    "offlineReadyDesc": "L'app è stata salvata con successo offline. Puoi accedervi senza connessione di rete.",
+    "later": "Più tardi",
+    "updateNow": "Aggiorna ora"
   }
 }

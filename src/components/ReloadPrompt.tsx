@@ -1,9 +1,11 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { SystemUpdate01Icon, Download01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
 
 export function ReloadPrompt() {
+  const { t } = useTranslation();
   const [registration, setRegistration] = React.useState<ServiceWorkerRegistration | null>(null);
 
   const {
@@ -97,12 +99,12 @@ export function ReloadPrompt() {
           </div>
           <div className="flex-1 min-w-0">
             <h4 className="font-display text-[16px] font-black text-kat-dark dark:text-white tracking-tight leading-snug">
-              {needRefresh ? "Có phiên bản mới!" : "Sẵn sàng chạy ngoại tuyến"}
+              {needRefresh ? t("pwa.newVersion") : t("pwa.offlineReady")}
             </h4>
             <p className="text-[12.5px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed font-medium">
               {needRefresh
-                ? "Ứng dụng KAT Journey đã có bản cập nhật mới nhất. Bạn có muốn tải về và làm mới ứng dụng ngay không?"
-                : "Ứng dụng đã được lưu ngoại tuyến thành công, bạn có thể truy cập mà không cần mạng."}
+                ? t("pwa.newVersionDesc")
+                : t("pwa.offlineReadyDesc")}
             </p>
           </div>
         </div>
@@ -112,14 +114,14 @@ export function ReloadPrompt() {
             onClick={close}
             className="px-4 py-2.5 text-xs font-black text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-50 hover:bg-slate-100/80 dark:bg-slate-800/30 dark:hover:bg-slate-800/60 border border-slate-200/30 dark:border-slate-700/30 rounded-xl transition-all duration-200 active:scale-[0.97] hover:scale-[1.01]"
           >
-            Để sau
+            {t("pwa.later")}
           </button>
           {needRefresh && (
             <button
               onClick={() => updateServiceWorker(true)}
               className="px-5 py-2.5 text-xs font-black text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl shadow-md shadow-teal-500/10 hover:shadow-teal-500/25 hover:shadow-lg transition-all duration-200 active:scale-[0.97] hover:scale-[1.01]"
             >
-              Cập nhật ngay
+              {t("pwa.updateNow")}
             </button>
           )}
         </div>
