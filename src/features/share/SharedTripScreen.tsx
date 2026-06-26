@@ -1339,7 +1339,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       return (
                         <div className="bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 rounded-2xl p-3.5 space-y-3">
                           <div className="flex items-center justify-between text-[12px] font-semibold text-slate-400">
-                            <span>{t("share.dayN", { n: dayIndex + 1 })} ({dateLabel})</span>
+                            <span>{t("timeline.dayN", { n: dayIndex + 1 })} ({dateLabel})</span>
                             {activitiesMode === "edit" && (
                               <button
                                 type="button"
@@ -1526,7 +1526,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       <BottomSheet
         isOpen={isRoadmapFormOpen}
         onClose={() => setIsRoadmapFormOpen(false)}
-        title={`${t("share.travelRoadmap")} - ${t("share.dayN", { n: days.indexOf(roadmapEditDay) + 1 })}`}
+        title={`${t("share.travelRoadmap")} - ${t("timeline.dayN", { n: days.indexOf(roadmapEditDay) + 1 })}`}
       >
         <div className="space-y-5 pb-4">
           
@@ -1631,7 +1631,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       "text-[15px] font-extrabold",
                       isSelected ? "text-emerald-900 dark:text-emerald-300" : "text-kat-dark dark:text-slate-100"
                     )}>
-                      {t("share.dayN", { n: idx + 1 })}
+                      {t("timeline.dayN", { n: idx + 1 })}
                     </div>
                     <div className="text-[12.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
                       {formatDate(day)}
