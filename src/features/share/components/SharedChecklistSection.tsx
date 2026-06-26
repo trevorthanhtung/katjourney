@@ -617,7 +617,7 @@ export function SharedChecklistSection({
           <div className="space-y-2">
             <label className="text-[12.5px] font-bold text-slate-700 dark:text-slate-300 block flex items-center gap-1.5">
               <HugeiconsIcon icon={PackageIcon} className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-              Nhóm hành lý
+              {t("packing.categoryLabel")}
             </label>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
               {CATEGORIES.map((cat) => {
@@ -641,7 +641,7 @@ export function SharedChecklistSection({
                     }`}>
                        <HugeiconsIcon icon={IconComponent} className="w-4.5 h-4.5" />
                     </div>
-                    <span className="text-[12px] font-bold tracking-tight">{cat}</span>
+                    <span className="text-[12px] font-bold tracking-tight">{catMap[cat] || cat}</span>
                   </button>
                 );
               })}
@@ -652,7 +652,7 @@ export function SharedChecklistSection({
           <div className="grid grid-cols-2 gap-3.5">
             {/* Quantity Counter */}
             <div className="flex flex-col gap-1">
-              <label className="text-[12.5px] font-bold text-slate-700 dark:text-slate-300">Số lượng</label>
+              <label className="text-[12.5px] font-bold text-slate-700 dark:text-slate-300">{t("packing.quantityLabel")}</label>
               <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-800/40 rounded-[12px] p-1 border border-slate-200/60 dark:border-slate-700/60 h-11">
                 <button
                   type="button"
