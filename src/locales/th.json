@@ -761,7 +761,16 @@
     "proposeDeleteActivityTitle": "เสนอให้ลบกิจกรรม?",
     "proposeDeleteActivityDesc": "คุณกำลังเสนอให้ลบกิจกรรมนี้ เจ้าของการเดินทางจะตรวจสอบข้อเสนอของคุณ",
     "deleting": "กำลังลบ...",
-    "saving": "กำลังบันทึก..."
+    "saving": "กำลังบันทึก...",
+    "suggestDeleteJournal": "เสนอให้ลบโพสต์",
+    "suggestDeleteJournalTitle": "เสนอให้ลบโพสต์?",
+    "suggestDeleteJournalDesc": "คุณกำลังเสนอให้ลบโพสต์นี้ เจ้าของการเดินทางจะตรวจสอบข้อเสนอของคุณ",
+    "suggestEditExpenseTitle": "เสนอแก้ไขค่าใช้จ่าย",
+    "suggestAddExpenseTitle": "เสนอเพิ่มค่าใช้จ่าย",
+    "suggestDeleteExpenseTitle": "เสนอให้ลบค่าใช้จ่าย?",
+    "suggestDeleteExpenseDesc": "คุณกำลังเสนอให้ลบค่าใช้จ่ายนี้ เจ้าของการเดินทางจะตรวจสอบข้อเสนอของคุณ",
+    "suggestLabel": "เสนอ",
+    "suggestSent": "ส่งข้อเสนอแล้ว เจ้าของการเดินทางจะตรวจสอบ"
   },
   "weather": {
     "packingRain": "จุดหมายกำลังมีฝนตก อย่าลืมร่ม！",
@@ -1476,7 +1485,10 @@
     "promptSugg4": "ช่วงเวลาที่มีความสุข",
     "promptSugg5": "สิ่งที่ต้องจำตลอดไป",
     "promptPrefix": "คำใบ้: ",
-    "swipe": "ปัด ›"
+    "swipe": "ปัด ›",
+    "titleError": "กรุณาใส่ชื่อเรื่อง",
+    "contentError": "กรุณาใส่เนื้อหา",
+    "defaultTitle": "บันทึกการเดินทาง"
   },
   "chat": {
     "title": "แชทกลุ่ม",

@@ -761,7 +761,16 @@
     "proposeDeleteActivityTitle": "アクティビティの削除を提案しますか？",
     "proposeDeleteActivityDesc": "このアクティビティの削除を提案しています。旅行のオーナーがあなたの提案を確認します。",
     "deleting": "削除中...",
-    "saving": "保存中..."
+    "saving": "保存中...",
+    "suggestDeleteJournal": "削除を提案",
+    "suggestDeleteJournalTitle": "投稿の削除を提案しますか？",
+    "suggestDeleteJournalDesc": "この投稿の削除を提案しています。旅行のオーナーがあなたの提案を確認します。",
+    "suggestEditExpenseTitle": "費用の編集を提案",
+    "suggestAddExpenseTitle": "費用の追加を提案",
+    "suggestDeleteExpenseTitle": "費用の削除を提案しますか？",
+    "suggestDeleteExpenseDesc": "この費用の削除を提案しています。旅行のオーナーがあなたの提案を確認します。",
+    "suggestLabel": "提案",
+    "suggestSent": "提案を送信しました。旅行のオーナーが確認します。"
   },
   "weather": {
     "packingRain": "目的地で雨が降っています。傘を忘れずに！",
@@ -1476,7 +1485,10 @@
     "promptSugg4": "幸せな瞬間",
     "promptSugg5": "永遠に覚えておきたいこと",
     "promptPrefix": "ヒント: ",
-    "swipe": "スワイプ ›"
+    "swipe": "スワイプ ›",
+    "titleError": "タイトルを入力してください。",
+    "contentError": "内容を入力してください。",
+    "defaultTitle": "旅行記"
   },
   "chat": {
     "title": "グループチャット",

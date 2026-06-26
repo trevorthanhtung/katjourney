@@ -606,7 +606,16 @@
     "proposeDeleteActivityTitle": "Đề xuất xóa hoạt động?",
     "proposeDeleteActivityDesc": "Bạn đang gửi đề xuất xóa hoạt động này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn.",
     "deleting": "Đang xóa...",
-    "saving": "Đang lưu..."
+    "saving": "Đang lưu...",
+    "suggestDeleteJournal": "Đề xuất xóa bài viết",
+    "suggestDeleteJournalTitle": "Đề xuất xóa bài viết?",
+    "suggestDeleteJournalDesc": "Bạn đang gửi đề xuất xóa bài viết này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn.",
+    "suggestEditExpenseTitle": "Đề xuất sửa chi phí",
+    "suggestAddExpenseTitle": "Đề xuất thêm chi phí",
+    "suggestDeleteExpenseTitle": "Đề xuất xóa khoản chi?",
+    "suggestDeleteExpenseDesc": "Bạn đang gửi đề xuất xóa khoản chi này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn.",
+    "suggestLabel": "Đề xuất",
+    "suggestSent": "Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi."
   },
   "home": {
     "countdown": "Đếm ngược",
@@ -1459,7 +1468,10 @@
     "promptSugg4": "Khoảnh khắc vui",
     "promptSugg5": "Điều muốn nhớ mãi",
     "promptPrefix": "Gợi ý: ",
-    "swipe": "Vuốt ngang ›"
+    "swipe": "Vuốt ngang ›",
+    "titleError": "Vui lòng nhập tiêu đề.",
+    "contentError": "Vui lòng nhập nội dung bài viết.",
+    "defaultTitle": "Bản tin chuyến đi"
   },
   "chat": {
     "title": "Trò Chuyện Nhóm",

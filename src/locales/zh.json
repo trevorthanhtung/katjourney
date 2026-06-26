@@ -761,7 +761,16 @@
     "proposeDeleteActivityTitle": "建议删除活动？",
     "proposeDeleteActivityDesc": "您正在建议删除此活动。行程创建者将审核您的建议。",
     "deleting": "正在删除...",
-    "saving": "正在保存..."
+    "saving": "正在保存...",
+    "suggestDeleteJournal": "建议删除帖子",
+    "suggestDeleteJournalTitle": "建议删除帖子？",
+    "suggestDeleteJournalDesc": "您正在建议删除此帖子。行程创建者将审核您的建议。",
+    "suggestEditExpenseTitle": "建议编辑费用",
+    "suggestAddExpenseTitle": "建议添加费用",
+    "suggestDeleteExpenseTitle": "建议删除费用？",
+    "suggestDeleteExpenseDesc": "您正在建议删除此费用。行程创建者将审核您的建议。",
+    "suggestLabel": "建议",
+    "suggestSent": "建议已发送。行程创建者将进行审核。"
   },
   "weather": {
     "packingRain": "目的地正在下雨，别忘了带伞！",
@@ -1476,7 +1485,10 @@
     "promptSugg4": "快乐时刻",
     "promptSugg5": "永远记住的事",
     "promptPrefix": "提示: ",
-    "swipe": "滑动 ›"
+    "swipe": "滑动 ›",
+    "titleError": "请输入标题。",
+    "contentError": "请输入内容。",
+    "defaultTitle": "旅行日记"
   },
   "chat": {
     "title": "群聊",

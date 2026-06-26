@@ -761,7 +761,16 @@
     "proposeDeleteActivityTitle": "Propor a exclusão da atividade?",
     "proposeDeleteActivityDesc": "Você está propondo excluir esta atividade. O proprietário da viagem analisará sua proposta.",
     "deleting": "Excluindo...",
-    "saving": "Salvando..."
+    "saving": "Salvando...",
+    "suggestDeleteJournal": "Sugerir exclusão",
+    "suggestDeleteJournalTitle": "Sugerir exclusão da postagem?",
+    "suggestDeleteJournalDesc": "Você está propondo excluir esta postagem. O organizador da viagem analisará sua proposta.",
+    "suggestEditExpenseTitle": "Sugerir edição de despesa",
+    "suggestAddExpenseTitle": "Sugerir adição de despesa",
+    "suggestDeleteExpenseTitle": "Sugerir exclusão de despesa?",
+    "suggestDeleteExpenseDesc": "Você está propondo excluir esta despesa. O organizador da viagem analisará sua proposta.",
+    "suggestLabel": "Sugerir",
+    "suggestSent": "Sugestão enviada. O organizador irá analisá-la."
   },
   "weather": {
     "packingRain": "Está chovendo no seu destino, não esqueça o guarda-chuva!",
@@ -1476,7 +1485,10 @@
     "promptSugg4": "Momento feliz",
     "promptSugg5": "Algo para lembrar para sempre",
     "promptPrefix": "Dica: ",
-    "swipe": "Deslizar ›"
+    "swipe": "Deslizar ›",
+    "titleError": "Por favor, insira um título.",
+    "contentError": "Por favor, insira o conteúdo.",
+    "defaultTitle": "Diário de viagem"
   },
   "chat": {
     "title": "Chat de Grupo",

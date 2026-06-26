@@ -608,7 +608,16 @@
     "proposeDeleteActivityTitle": "활동 삭제를 제안하시겠습니까?",
     "proposeDeleteActivityDesc": "이 활동을 삭제하도록 제안하고 있습니다. 여행 주최자가 제안을 검토합니다.",
     "deleting": "삭제 중...",
-    "saving": "저장 중..."
+    "saving": "저장 중...",
+    "suggestDeleteJournal": "삭제 제안",
+    "suggestDeleteJournalTitle": "게시물 삭제를 제안하시겠습니까?",
+    "suggestDeleteJournalDesc": "이 게시물을 삭제하도록 제안하고 있습니다. 여행 주최자가 제안을 검토합니다.",
+    "suggestEditExpenseTitle": "비용 편집 제안",
+    "suggestAddExpenseTitle": "비용 추가 제안",
+    "suggestDeleteExpenseTitle": "비용 삭제를 제안하시겠습니까?",
+    "suggestDeleteExpenseDesc": "이 비용을 삭제하도록 제안하고 있습니다. 여행 주최자가 제안을 검토합니다.",
+    "suggestLabel": "제안",
+    "suggestSent": "제안이 전송되었습니다. 여행 주최자가 검토합니다."
   },
   "home": {
     "countdown": "카운트다운",
@@ -1461,7 +1470,10 @@
     "promptSugg4": "행복한 순간",
     "promptSugg5": "영원히 기억할 것",
     "promptPrefix": "힌트: ",
-    "swipe": "스와이프 ›"
+    "swipe": "스와이프 ›",
+    "titleError": "제목을 입력하세요.",
+    "contentError": "내용을 입력하세요.",
+    "defaultTitle": "여행 일지"
   },
   "chat": {
     "title": "그룹 채팅",

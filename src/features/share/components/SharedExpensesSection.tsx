@@ -398,7 +398,7 @@ export function SharedExpensesSection({
     try {
       setIsSubmitting(true);
       const status = isDirectEdit ? 'auto_approved' : undefined;
-      const successMessage = isDirectEdit ? 'Đã cập nhật trực tiếp!' : 'Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.';
+      const successMessage = isDirectEdit ? t("share.updatedDirectly") : t("share.suggestSent");
       if (!editingId) {
         await submitChangeRequest(token, { section: 'expenses', action: 'create', after: payload, status, requesterName: guestName });
         setIsFormOpen(false);
@@ -494,7 +494,7 @@ export function SharedExpensesSection({
               className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary hover:bg-opacity-95 dark:hover:brightness-110 text-white dark:text-slate-950 px-5 text-[14px] font-bold shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] motion-press h-[48px]"
             >
               <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
-              {isDirectEdit ? "Thêm khoản chi" : "Đề xuất thêm"}
+              {isDirectEdit ? t("expenses.addExpense") : t("share.suggestAdd")}
             </button>
           </div>
         )}
@@ -551,7 +551,7 @@ export function SharedExpensesSection({
                 className="flex w-full items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary hover:bg-opacity-95 dark:hover:brightness-110 text-white dark:text-slate-950 px-6 py-3 text-[14px] font-bold shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] motion-press h-[48px]"
               >
                 <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
-                {isDirectEdit ? "Thêm khoản chi" : "Đề xuất thêm"}
+                {isDirectEdit ? t("expenses.addExpense") : t("share.suggestAdd")}
               </button>
             </div>
           )}
@@ -744,7 +744,7 @@ export function SharedExpensesSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
             >
-              {isDirectEdit ? "Sửa chi phí" : "Đề xuất sửa"}
+              {isDirectEdit ? t("expenses.editExpense") : t("share.suggestEdit")}
             </button>
             <button
               onClick={() => {
@@ -755,7 +755,7 @@ export function SharedExpensesSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
             >
-              {isDirectEdit ? "Xóa chi phí" : "Đề xuất xóa"}
+              {isDirectEdit ? t("expenses.deleteConfirm") : t("share.suggestDelete")}
             </button>
           </div>
         </>,
@@ -769,7 +769,7 @@ export function SharedExpensesSection({
           setIsFormOpen(false);
           setEditingId(null);
         }}
-        title={isDirectEdit ? (editingId ? "Sửa chi phí" : "Thêm chi phí") : (editingId ? "Đề xuất sửa chi phí" : "Đề xuất thêm chi phí")}
+        title={isDirectEdit ? (editingId ? t("expenses.editExpense") : t("expenses.addExpense")) : (editingId ? t("share.suggestEditExpenseTitle") : t("share.suggestAddExpenseTitle"))}
         headerAction={
           <button
             type="button"
@@ -777,7 +777,7 @@ export function SharedExpensesSection({
             disabled={isSaveDisabled || isSubmitting}
             className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 text-white dark:text-slate-950 px-4 text-[13.5px] font-bold shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] transition-all active:scale-[0.97] disabled:bg-slate-100 dark:disabled:bg-slate-800/40 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed cursor-pointer"
           >
-            {isSubmitting ? "Đang lưu..." : isDirectEdit ? (editingId ? "Lưu" : "Thêm") : "Đề xuất"}
+            {isSubmitting ? t("expenses.savingNew") : isDirectEdit ? (editingId ? t("expenses.save") : t("expenses.add")) : t("share.suggestLabel")}
           </button>
         }
       >
@@ -1075,7 +1075,7 @@ export function SharedExpensesSection({
                         <div className="p-3 rounded-xl border border-kat-teal/20 bg-teal-50/30 dark:bg-teal-900/10">
                           <div className="flex items-center justify-between mb-3">
                             <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                              Tham gia ({!form.splitAmong || form.splitAmong.length === 0 ? t("expenses.participateAll") : t("expenses.participateN", { count: form.splitAmong.length })})
+                              {t("expenses.participate")} ({!form.splitAmong || form.splitAmong.length === 0 ? t("expenses.participateAll") : t("expenses.participateN", { count: form.splitAmong.length })})
                             </span>
                             
                             <div className="flex bg-slate-100 dark:bg-slate-800/80 rounded-lg p-0.5 border border-slate-200 dark:border-slate-700">
@@ -1216,9 +1216,9 @@ export function SharedExpensesSection({
           await executeDelete(deleteTargetId);
           setDeleteTargetId(null);
         }}
-        title={isDirectEdit ? "Xóa khoản chi?" : "Đề xuất xóa khoản chi?"}
-        description={isDirectEdit ? "Bạn có chắc chắn muốn xóa khoản chi này? Hành động này không thể hoàn tác." : "Bạn đang gửi đề xuất xóa khoản chi này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."}
-        confirmLabel={isDirectEdit ? "Xóa" : "Đề xuất xóa"}
+        title={isDirectEdit ? t("expenses.deleteTitle") : t("share.suggestDeleteExpenseTitle")}
+        description={isDirectEdit ? t("expenses.deleteDesc") : t("share.suggestDeleteExpenseDesc")}
+        confirmLabel={isDirectEdit ? t("expenses.delete") : t("share.suggestDelete")}
         itemName={(() => { const e = expenses.find(e => String(e.id) === deleteTargetId); return e ? ((!e.description || e.description === e.category) ? (catMap[e.category] || e.category) : e.description) : ""; })()}
       />
       </section>

@@ -761,7 +761,16 @@
     "proposeDeleteActivityTitle": "Löschen der Aktivität vorschlagen?",
     "proposeDeleteActivityDesc": "Du schlägst vor, diese Aktivität zu löschen. Der Reiseveranstalter wird deinen Vorschlag überprüfen.",
     "deleting": "Wird gelöscht...",
-    "saving": "Wird gespeichert..."
+    "saving": "Wird gespeichert...",
+    "suggestDeleteJournal": "Löschen vorschlagen",
+    "suggestDeleteJournalTitle": "Löschen des Beitrags vorschlagen?",
+    "suggestDeleteJournalDesc": "Sie schlagen vor, diesen Beitrag zu löschen. Der Reiseveranstalter wird Ihren Vorschlag prüfen.",
+    "suggestEditExpenseTitle": "Ausgabenbearbeitung vorschlagen",
+    "suggestAddExpenseTitle": "Ausgabenzusatz vorschlagen",
+    "suggestDeleteExpenseTitle": "Ausgabenlöschung vorschlagen?",
+    "suggestDeleteExpenseDesc": "Sie schlagen vor, diese Ausgabe zu löschen. Der Reiseveranstalter wird Ihren Vorschlag prüfen.",
+    "suggestLabel": "Vorschlagen",
+    "suggestSent": "Vorschlag gesendet. Der Reiseveranstalter wird ihn prüfen."
   },
   "weather": {
     "packingRain": "Es regnet an Ihrem Ziel, vergessen Sie den Regenschirm nicht!",
@@ -1476,7 +1485,10 @@
     "promptSugg4": "Glücklicher Moment",
     "promptSugg5": "Etwas, das man für immer erinnern sollte",
     "promptPrefix": "Tipp: ",
-    "swipe": "Wischen ›"
+    "swipe": "Wischen ›",
+    "titleError": "Bitte geben Sie einen Titel ein.",
+    "contentError": "Bitte geben Sie den Inhalt ein.",
+    "defaultTitle": "Reisetagebuch"
   },
   "chat": {
     "title": "Gruppenchat",

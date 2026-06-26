@@ -743,7 +743,16 @@
     "proposeDeleteActivityTitle": "Proporre l'eliminazione dell'attività?",
     "proposeDeleteActivityDesc": "Stai proponendo di eliminare questa attività. Il proprietario del viaggio esaminerà la tua proposta.",
     "deleting": "Eliminazione in corso...",
-    "saving": "Salvataggio in corso..."
+    "saving": "Salvataggio in corso...",
+    "suggestDeleteJournal": "Suggerisci eliminazione",
+    "suggestDeleteJournalTitle": "Suggerire eliminazione del post?",
+    "suggestDeleteJournalDesc": "Stai proponendo di eliminare questo post. L'organizzatore esaminerà la tua proposta.",
+    "suggestEditExpenseTitle": "Suggerisci modifica spesa",
+    "suggestAddExpenseTitle": "Suggerisci aggiunta spesa",
+    "suggestDeleteExpenseTitle": "Suggerire eliminazione spesa?",
+    "suggestDeleteExpenseDesc": "Stai proponendo di eliminare questa spesa. L'organizzatore esaminerà la tua proposta.",
+    "suggestLabel": "Suggerisci",
+    "suggestSent": "Suggerimento inviato. L'organizzatore lo esaminerà."
   },
   "weather": {
     "packingRain": "Piove alla tua destinazione, non dimenticare l'ombrello!",
@@ -1416,5 +1425,10 @@
     "status": "Stato",
     "journey": "Viaggio",
     "completed": "Completato"
+  },
+  "journal": {
+    "titleError": "Inserisci un titolo.",
+    "contentError": "Inserisci il contenuto.",
+    "defaultTitle": "Diario di viaggio"
   }
 }

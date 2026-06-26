@@ -743,7 +743,16 @@
     "proposeDeleteActivityTitle": "Usulkan penghapusan aktivitas?",
     "proposeDeleteActivityDesc": "Anda mengusulkan untuk menghapus aktivitas ini. Pemilik perjalanan akan meninjau usulan Anda.",
     "deleting": "Menghapus...",
-    "saving": "Menyimpan..."
+    "saving": "Menyimpan...",
+    "suggestDeleteJournal": "Sarankan penghapusan",
+    "suggestDeleteJournalTitle": "Sarankan penghapusan postingan?",
+    "suggestDeleteJournalDesc": "Anda mengusulkan untuk menghapus postingan ini. Pemilik perjalanan akan meninjau usulan Anda.",
+    "suggestEditExpenseTitle": "Sarankan Edit Pengeluaran",
+    "suggestAddExpenseTitle": "Sarankan Tambah Pengeluaran",
+    "suggestDeleteExpenseTitle": "Sarankan Hapus Pengeluaran?",
+    "suggestDeleteExpenseDesc": "Anda mengusulkan untuk menghapus pengeluaran ini. Pemilik perjalanan akan meninjau usulan Anda.",
+    "suggestLabel": "Sarankan",
+    "suggestSent": "Saran dikirim. Pemilik perjalanan akan meninjaunya."
   },
   "weather": {
     "packingRain": "Hujan di tujuan Anda, jangan lupa payung!",
@@ -1416,5 +1425,10 @@
     "status": "Status",
     "journey": "Perjalanan",
     "completed": "Selesai"
+  },
+  "journal": {
+    "titleError": "Silakan masukkan judul.",
+    "contentError": "Silakan masukkan konten.",
+    "defaultTitle": "Jurnal perjalanan"
   }
 }

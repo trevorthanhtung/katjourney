@@ -608,7 +608,16 @@
     "proposeDeleteActivityTitle": "Propose deleting activity?",
     "proposeDeleteActivityDesc": "You are proposing to delete this activity. The trip owner will review your proposal.",
     "deleting": "Deleting...",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "suggestDeleteJournal": "Suggest deleting post",
+    "suggestDeleteJournalTitle": "Suggest deleting post?",
+    "suggestDeleteJournalDesc": "You are proposing to delete this post. The trip owner will review your proposal.",
+    "suggestEditExpenseTitle": "Suggest Editing Expense",
+    "suggestAddExpenseTitle": "Suggest Adding Expense",
+    "suggestDeleteExpenseTitle": "Suggest Deleting Expense?",
+    "suggestDeleteExpenseDesc": "You are proposing to delete this expense. The trip owner will review your proposal.",
+    "suggestLabel": "Suggest",
+    "suggestSent": "Suggestion sent. The trip owner will review it."
   },
   "home": {
     "countdown": "Countdown",
@@ -1461,7 +1470,10 @@
     "promptSugg4": "Happy moment",
     "promptSugg5": "Thing to remember forever",
     "promptPrefix": "Prompt: ",
-    "swipe": "Swipe ›"
+    "swipe": "Swipe ›",
+    "titleError": "Please enter a title.",
+    "contentError": "Please enter the content.",
+    "defaultTitle": "Trip journal"
   },
   "chat": {
     "title": "Group Chat",

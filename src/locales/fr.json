@@ -761,7 +761,16 @@
     "proposeDeleteActivityTitle": "Proposer de supprimer l'activité ?",
     "proposeDeleteActivityDesc": "Vous proposez de supprimer cette activité. Le propriétaire du voyage examinera votre proposition.",
     "deleting": "Suppression en cours...",
-    "saving": "Enregistrement en cours..."
+    "saving": "Enregistrement en cours...",
+    "suggestDeleteJournal": "Proposer la suppression",
+    "suggestDeleteJournalTitle": "Proposer de supprimer l'article ?",
+    "suggestDeleteJournalDesc": "Vous proposez de supprimer cet article. L'organisateur examinera votre proposition.",
+    "suggestEditExpenseTitle": "Suggérer la modification de la dépense",
+    "suggestAddExpenseTitle": "Suggérer l'ajout d'une dépense",
+    "suggestDeleteExpenseTitle": "Suggérer la suppression de la dépense ?",
+    "suggestDeleteExpenseDesc": "Vous proposez de supprimer cette dépense. L'organisateur examinera votre proposition.",
+    "suggestLabel": "Suggérer",
+    "suggestSent": "Suggestion envoyée. L'organisateur l'examinera."
   },
   "weather": {
     "packingRain": "Il pleut à votre destination, n'oubliez pas le parapluie !",
@@ -1476,7 +1485,10 @@
     "promptSugg4": "Moment de bonheur",
     "promptSugg5": "Chose à retenir pour toujours",
     "promptPrefix": "Indice: ",
-    "swipe": "Glisser ›"
+    "swipe": "Glisser ›",
+    "titleError": "Veuillez entrer un titre.",
+    "contentError": "Veuillez entrer le contenu de l'article.",
+    "defaultTitle": "Journal de voyage"
   },
   "chat": {
     "title": "Discussion de groupe",
