@@ -400,7 +400,8 @@
       "November",
       "Desember"
     ],
-    "dateFmt": "{{day}} {{month}} {{year}}"
+    "dateFmt": "{{day}} {{month}} {{year}}",
+    "currencyLabel": "Mata Uang Dasar"
   },
   "toast": {
     "invalidFileFormat": "Format file KAT Journey tidak valid.",

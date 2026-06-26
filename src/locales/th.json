@@ -400,7 +400,8 @@
       "พฤศจิกายน",
       "ธันวาคม"
     ],
-    "dateFmt": "{{day}} {{month}} {{year}}"
+    "dateFmt": "{{day}} {{month}} {{year}}",
+    "currencyLabel": "สกุลเงินหลัก"
   },
   "toast": {
     "invalidFileFormat": "รูปแบบไฟล์ KAT Journey ไม่ถูกต้อง",

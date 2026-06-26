@@ -400,7 +400,8 @@
       "11월",
       "12월"
     ],
-    "dateFmt": "{{year}}년 {{month}}월 {{day}}일"
+    "dateFmt": "{{year}}년 {{month}}월 {{day}}일",
+    "currencyLabel": "기본 통화"
   },
   "toast": {
     "invalidFileFormat": "잘못된 KAT Journey 파일 형식입니다.",

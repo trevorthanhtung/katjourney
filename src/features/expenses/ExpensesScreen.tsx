@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
+import { CURRENCY_LABELS } from "../../constants/currencies";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -626,7 +627,7 @@ function ExpenseForm({
                     }`}
                   >
                     <span className={`text-[15px] ${form.currency === (currency || "VND") ? 'font-extrabold' : 'font-semibold'}`}>
-                      {currency || "VND"} (Đồng tiền gốc)
+                      {CURRENCY_LABELS[currency || "VND"] || (currency || "VND")} (Đồng tiền gốc)
                     </span>
                     {form.currency === (currency || "VND") && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
                   </button>
@@ -647,7 +648,7 @@ function ExpenseForm({
                       }`}
                     >
                       <span className={`text-[15px] ${form.currency === "VND" ? 'font-extrabold' : 'font-semibold'}`}>
-                        VND (Việt Nam Đồng)
+                        {CURRENCY_LABELS["VND"]}
                       </span>
                       {form.currency === "VND" && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
                     </button>
@@ -673,7 +674,7 @@ function ExpenseForm({
                         }`}
                       >
                         <span className={`text-[15px] ${isSelected ? 'font-extrabold' : 'font-semibold'}`}>
-                          {r.currencyCode} {r.currencyName ? `(${r.currencyName})` : ""}
+                          {CURRENCY_LABELS[r.currencyCode] || `${r.currencyCode} ${r.currencyName ? `(${r.currencyName})` : ""}`}
                         </span>
                         {isSelected && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
                       </button>

@@ -400,7 +400,8 @@
       "Novembre",
       "Dicembre"
     ],
-    "dateFmt": "{{day}} {{month}} {{year}}"
+    "dateFmt": "{{day}} {{month}} {{year}}",
+    "currencyLabel": "Valuta di base"
   },
   "toast": {
     "invalidFileFormat": "Formato file KAT Journey non valido.",

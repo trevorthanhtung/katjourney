@@ -400,7 +400,8 @@
       "11月",
       "12月"
     ],
-    "dateFmt": "{{year}}年{{month}}月{{day}}日"
+    "dateFmt": "{{year}}年{{month}}月{{day}}日",
+    "currencyLabel": "基础货币"
   },
   "toast": {
     "invalidFileFormat": "KAT Journey 文件格式无效。",

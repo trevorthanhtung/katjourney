@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { useLiveQuery } from "dexie-react-hooks";
+import { CURRENCY_OPTIONS, CURRENCY_LABELS } from "../../constants/currencies";
 import { showToast } from "../../components/ui/ToastManager";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -427,36 +428,9 @@ const todayDate = new Date();
 }
 // --- End CalendarRangePicker ---
 
-const CURRENCY_OPTIONS = [
-  "VND", "USD", "EUR", "GBP", "JPY", "AUD", "SGD", 
-  "THB", "CAD", "CHF", "HKD", "NZD", "SEK", "NOK", 
-  "DKK", "RUB", "KWD", "SAR", "INR", "KRW", "CNY", "MYR"
-];
 
-const CURRENCY_LABELS: Record<string, string> = {
-  VND: "VND - Việt Nam Đồng",
-  USD: "USD - Đô la Mỹ",
-  EUR: "EUR - Euro",
-  GBP: "GBP - Bảng Anh",
-  JPY: "JPY - Yên Nhật",
-  AUD: "AUD - Đô la Úc",
-  SGD: "SGD - Đô la Singapore",
-  THB: "THB - Baht Thái",
-  CAD: "CAD - Đô la Canada",
-  CHF: "CHF - Franc Thụy Sĩ",
-  HKD: "HKD - Đô la Hồng Kông",
-  NZD: "NZD - Đô la New Zealand",
-  SEK: "SEK - Krona Thụy Điển",
-  NOK: "NOK - Krone Na Uy",
-  DKK: "DKK - Krone Đan Mạch",
-  RUB: "RUB - Rúp Nga",
-  KWD: "KWD - Dinar Kuwait",
-  SAR: "SAR - Riyal Ả Rập Xê Út",
-  INR: "INR - Rupee Ấn Độ",
-  KRW: "KRW - Won Hàn Quốc",
-  CNY: "CNY - Nhân dân tệ",
-  MYR: "MYR - Ringgit Malaysia",
-};
+
+
 
 function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boolean; onClose: () => void; onSaved: (id: number) => void }) {
   
@@ -589,7 +563,7 @@ const [form, setForm] = useState<{
         <div>
           <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
             <HugeiconsIcon icon={Coins01Icon} size={16} className="text-slate-500" />
-            {t("tripForm.currencyLabel") || "Đơn vị tiền tệ (Base Currency)"}
+            {t("tripForm.currencyLabel")}
           </span>
           <Select
             value={form.defaultCurrency || "VND"}

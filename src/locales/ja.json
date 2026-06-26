@@ -400,7 +400,8 @@
       "11月",
       "12月"
     ],
-    "dateFmt": "{{year}}年{{month}}月{{day}}日"
+    "dateFmt": "{{year}}年{{month}}月{{day}}日",
+    "currencyLabel": "基本通貨"
   },
   "toast": {
     "invalidFileFormat": "無効なKAT Journeyファイル形式です。",
