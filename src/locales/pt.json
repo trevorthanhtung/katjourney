@@ -756,7 +756,12 @@
     "suggestEditActivity": "Sugerir edição de atividade",
     "suggestAddBackupPlan": "Sugerir adição de plano de backup",
     "openGoogleMaps": "Abrir com o aplicativo Google Maps",
-    "viewCalendar": "Exibir como calendário"
+    "viewCalendar": "Exibir como calendário",
+    "suggestDelete": "Sugerir exclusão",
+    "proposeDeleteActivityTitle": "Propor a exclusão da atividade?",
+    "proposeDeleteActivityDesc": "Você está propondo excluir esta atividade. O proprietário da viagem analisará sua proposta.",
+    "deleting": "Excluindo...",
+    "saving": "Salvando..."
   },
   "weather": {
     "packingRain": "Está chovendo no seu destino, não esqueça o guarda-chuva!",

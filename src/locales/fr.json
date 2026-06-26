@@ -756,7 +756,12 @@
     "suggestEditActivity": "Suggérer la modification d'une activité",
     "suggestAddBackupPlan": "Suggérer d'ajouter un plan de secours",
     "openGoogleMaps": "Ouvrir avec l'application Google Maps",
-    "viewCalendar": "Afficher sous forme de calendrier"
+    "viewCalendar": "Afficher sous forme de calendrier",
+    "suggestDelete": "Suggérer de supprimer",
+    "proposeDeleteActivityTitle": "Proposer de supprimer l'activité ?",
+    "proposeDeleteActivityDesc": "Vous proposez de supprimer cette activité. Le propriétaire du voyage examinera votre proposition.",
+    "deleting": "Suppression en cours...",
+    "saving": "Enregistrement en cours..."
   },
   "weather": {
     "packingRain": "Il pleut à votre destination, n'oubliez pas le parapluie !",

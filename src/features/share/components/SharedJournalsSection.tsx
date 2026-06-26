@@ -39,13 +39,7 @@ const CATEGORY_ICONS: Record<string, any> = {
 
 
 
-const moodOptionList: Array<{ value: "good" | "okay" | "great" | "very_bad" | "bad"; label: string }> = [
-  { value: "good", label: "Vui" },
-  { value: "okay", label: "Bình yên" },
-  { value: "great", label: "Hào hứng" },
-  { value: "very_bad", label: "Mệt" },
-  { value: "bad", label: "Bất ngờ" }
-];
+
 
 const moodBadgeClasses: Record<string, string> = {
   good: "bg-amber-50 dark:bg-amber-950/25 text-amber-800 dark:text-amber-400 border-amber-200 dark:border-amber-900/35",
@@ -63,13 +57,7 @@ const moodColorClasses: Record<string, string> = {
   bad: "bg-blue-500"
 };
 
-const promptSuggestions = [
-  "Điều muốn nhớ nhất",
-  "Món ăn đáng nhớ",
-  "Người bạn đã gặp",
-  "Khoảnh khắc vui",
-  "Điều muốn nhớ mãi"
-];
+
 export function SharedJournalsSection({ 
   tripId,
   token, 
@@ -90,6 +78,20 @@ export function SharedJournalsSection({
   renderChatBox?: () => React.ReactNode;
 }) {
   const { t } = useTranslation();
+  const moodOptionList: Array<{ value: "good" | "okay" | "great" | "very_bad" | "bad"; label: string }> = [
+    { value: "good", label: t("journal.mood_good") },
+    { value: "okay", label: t("journal.mood_okay") },
+    { value: "great", label: t("journal.mood_great") },
+    { value: "very_bad", label: t("journal.mood_very_bad") },
+    { value: "bad", label: t("journal.mood_bad") }
+  ];
+  const promptSuggestions = [
+    t("journal.promptSugg1"),
+    t("journal.promptSugg2"),
+    t("journal.promptSugg3"),
+    t("journal.promptSugg4"),
+    t("journal.promptSugg5")
+  ];
   const isRequestEdit = mode === 'request_edit' || mode === 'edit';
   const isDirectEdit = mode === 'edit';
   const [isFormOpen, setIsFormOpen] = React.useState(false);
@@ -205,8 +207,8 @@ export function SharedJournalsSection({
     }).filter(Boolean) as any[];
   }, [journals, changeRequests]);
 
-  const titleError = !form.title.trim() ? "Vui lòng nhập tiêu đề." : "";
-  const contentError = !form.content.trim() ? "Vui lòng nhập nội dung bài viết." : "";
+  const titleError = !form.title.trim() ? t("journal.titleError") : "";
+  const contentError = !form.content.trim() ? t("journal.contentError") : "";
   const hasError = !!titleError || !!contentError;
 
   async function handleCreate() {
@@ -269,7 +271,7 @@ export function SharedJournalsSection({
       <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={GlobeIcon} className="h-5 w-5 text-sky-500" />
-          <h3 className="text-[16px] font-black text-kat-dark dark:text-slate-200">Bản tin chuyến đi</h3>
+          <h3 className="text-[16px] font-black text-kat-dark dark:text-slate-200">{t("journal.title")}</h3>
         </div>
       </div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
@@ -283,7 +285,7 @@ export function SharedJournalsSection({
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
               }`}
             >
-              <HugeiconsIcon icon={GlobeIcon} className="w-4 h-4" /> Bản tin
+              <HugeiconsIcon icon={GlobeIcon} className="w-4 h-4" /> {t("journal.tabPosts")}
             </button>
             <button
               onClick={() => setJournalMode("chat")}
@@ -293,7 +295,7 @@ export function SharedJournalsSection({
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
               }`}
             >
-              <HugeiconsIcon icon={BubbleChatIcon} className="w-4 h-4" /> Trò chuyện
+              <HugeiconsIcon icon={BubbleChatIcon} className="w-4 h-4" /> {t("journal.tabChat")}
             </button>
           </div>
         ) : (
@@ -308,7 +310,7 @@ export function SharedJournalsSection({
               mergedJournals.length > 0 ? "hidden lg:flex" : "flex"
             )}
           >
-            <HugeiconsIcon icon={PenTool01Icon} className="h-4 w-4" /> Đăng bài viết
+            <HugeiconsIcon icon={PenTool01Icon} className="h-4 w-4" /> {t("journal.postBtn")}
           </button>
         )}
       </div>
@@ -380,7 +382,7 @@ export function SharedJournalsSection({
                             <div className="flex flex-col">
                               <span className="text-[14px] font-extrabold text-slate-800 dark:text-slate-200">{j.authorName || "Trưởng nhóm"}</span>
                               {j.isPendingDelete ? (
-                                <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wide">Đề xuất xóa</span>
+                                <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wide">{t("share.suggestDelete")}</span>
                               ) : (
                                 <div className="flex items-center gap-1.5 mt-0.5">
                                   <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider border ${moodBadge}`}>
@@ -401,7 +403,7 @@ export function SharedJournalsSection({
                             <button 
                               onClick={() => handleDelete(j as JournalEntry)} 
                               className="flex h-8 w-8 items-center justify-center rounded-full text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all motion-press"
-                              title={isDirectEdit || j.authorName === resolvedGuestName ? "Xóa bài viết" : "Đề xuất xóa bài viết"}
+                              title={isDirectEdit || j.authorName === resolvedGuestName ? t("journal.menuDelete") : t("share.suggestDeleteJournal")}
                             >
                               <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
                             </button>
@@ -416,7 +418,7 @@ export function SharedJournalsSection({
 
                         <div className="p-4 pt-3">
                           <h4 className="text-[17px] font-black text-kat-dark dark:text-slate-200 leading-snug break-words">
-                            {j.title || "Bản tin chuyến đi"}
+                            {j.title || t("journal.defaultTitle")}
                           </h4>
                           {j.locationName && (
                             <div className="mt-1 flex items-center gap-1.5 text-[13px] font-medium text-slate-500 dark:text-slate-400">
@@ -463,7 +465,7 @@ export function SharedJournalsSection({
                               onClick={() => setActiveReactionPopover(activeReactionPopover === j.id ? null : (j.id || null))}
                               className="flex h-7 px-2.5 items-center justify-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 text-slate-400 dark:text-slate-500 hover:text-slate-655 dark:hover:text-slate-300 transition-colors text-[11.5px] font-bold"
                             >
-                              <span>+ Thả cảm xúc</span>
+                              <span>+ {t("journal.reactionBtn")}</span>
                             </button>
                             
                             {activeReactionPopover === j.id && (
@@ -510,7 +512,7 @@ export function SharedJournalsSection({
         onClose={() => {
           setIsFormOpen(false);
         }} 
-        title="Đăng bài viết bản tin"
+        title={t("journal.formTitleAdd")}
         footer={
           <div className="flex items-center gap-2.5 w-full">
             <button
@@ -520,7 +522,7 @@ export function SharedJournalsSection({
               }}
               className="flex h-[52px] shrink-0 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.96] transition-all border border-transparent dark:border-slate-700 motion-press"
             >
-              Hủy
+              {t("journal.cancel")}
             </button>
             <button
               type="button"
@@ -529,7 +531,7 @@ export function SharedJournalsSection({
               className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
             >
               <HugeiconsIcon icon={SaveIcon} className="h-4.5 w-4.5" strokeWidth={2.5} />
-              Đăng bài viết
+              {t("journal.submit")}
             </button>
           </div>
         }
@@ -541,7 +543,7 @@ export function SharedJournalsSection({
               label={
                 <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-350">
                   <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
-                  Ngày ghi lại
+                  {t("journal.dateLabel")}
                 </span>
               } 
               value={form.date} 
@@ -555,12 +557,12 @@ export function SharedJournalsSection({
               label={
                 <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-350">
                   <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-slate-500" />
-                  Tiêu đề bài viết *
+                  {t("journal.titleLabel")}
                 </span>
               } 
               value={form.title} 
               onChange={(title) => { setForm({ ...form, title }); setDirty(true); }} 
-              placeholder="VD: Một ngày đáng nhớ ở Vũng Tàu" 
+              placeholder={t("journal.titlePlaceholder")} 
             />
             {(dirty || submitAttempted) && titleError && (
               <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{titleError}</p>
@@ -569,13 +571,13 @@ export function SharedJournalsSection({
             {isLocating ? (
               <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
                 <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5" />
-                <span className="flex items-center gap-1.5 text-slate-400"><HugeiconsIcon icon={Loading01Icon} className="h-3.5 w-3.5 animate-spin" /> Đang lấy vị trí...</span>
+                <span className="flex items-center gap-1.5 text-slate-400"><HugeiconsIcon icon={Loading01Icon} className="h-3.5 w-3.5 animate-spin" /> {t("journal.locLoading")}</span>
               </div>
             ) : form.locationName ? (
               <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
                 <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 <span>Đang ở <span className="font-bold text-kat-primary">{form.locationName}</span></span>
-                <button type="button" onClick={() => setForm({...form, locationName: "", latitude: undefined, longitude: undefined})} className="ml-1 px-1 text-slate-300 hover:text-rose-500 transition-colors font-bold text-[14px] leading-none" title="Xóa vị trí">×</button>
+                <button type="button" onClick={() => setForm({...form, locationName: "", latitude: undefined, longitude: undefined})} className="ml-1 px-1 text-slate-300 hover:text-rose-500 transition-colors font-bold text-[14px] leading-none" title={t("journal.locRemove")}>×</button>
               </div>
             ) : (
               <div className="mt-2 flex items-center gap-1.5 px-1 animate-fadeIn">
@@ -591,7 +593,7 @@ export function SharedJournalsSection({
           <div>
             <span className="mb-2 block text-sm font-semibold text-slate-600 dark:text-slate-350 flex items-center gap-1.5">
               <HugeiconsIcon icon={SmileIcon} className="h-4 w-4 text-slate-500" />
-              Cảm xúc hôm nay
+              {t("journal.moodLabel")}
             </span>
             <div className="flex flex-wrap gap-2">
               {moodOptionList.map((opt) => {
@@ -622,12 +624,12 @@ export function SharedJournalsSection({
               label={
                 <span className="flex items-center gap-1.5 text-slate-600 dark:text-slate-350">
                   <HugeiconsIcon icon={NotebookIcon} className="h-4 w-4 text-slate-500" />
-                  Câu chuyện của bạn *
+                  {t("journal.contentLabel")}
                 </span>
               } 
               value={form.content} 
               onChange={(content) => { setForm({ ...form, content }); setDirty(true); }} 
-              placeholder="Ghi lại cảm xúc, câu chuyện, món ăn ngon hoặc khoảnh khắc đáng nhớ..." 
+              placeholder={t("journal.contentPlaceholder")} 
             />
             {(dirty || submitAttempted) && contentError && (
               <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{contentError}</p>
@@ -664,7 +666,7 @@ export function SharedJournalsSection({
                   {uploading ? (
                     <><HugeiconsIcon icon={Loading01Icon} className="h-5 w-5 animate-spin" /> Đang tải ảnh...</>
                   ) : (
-                    <><HugeiconsIcon icon={Image01Icon} className="h-5 w-5" /> Đính kèm hình ảnh</>
+                    <><HugeiconsIcon icon={Image01Icon} className="h-5 w-5" /> {t("journal.imgAttach")}</>
                   )}
                 </button>
               </div>
@@ -703,18 +705,18 @@ export function SharedJournalsSection({
         }}
         title={
           deleteTargetId && (isDirectEdit || deleteTargetId.authorName === resolvedGuestName)
-            ? "Xóa bài viết?"
-            : "Đề xuất xóa bài viết?"
+            ? t("journal.delConfirmTitle")
+            : t("share.suggestDeleteJournalTitle")
         }
         description={
           deleteTargetId && (isDirectEdit || deleteTargetId.authorName === resolvedGuestName)
-            ? "Bạn có chắc chắn muốn xóa bài viết này? Hành động này không thể hoàn tác."
-            : "Bạn đang gửi đề xuất xóa bài viết này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
+            ? t("journal.delConfirmDesc")
+            : t("share.suggestDeleteJournalDesc")
         }
         confirmLabel={
           deleteTargetId && (isDirectEdit || deleteTargetId.authorName === resolvedGuestName)
-            ? "Xóa"
-            : "Đề xuất xóa"
+            ? t("journal.delConfirmBtn")
+            : t("share.suggestDelete")
         }
         itemName={deleteTargetId?.title}
       />
@@ -727,8 +729,8 @@ export function SharedJournalsSection({
           onClick={() => setIsFormOpen(true)}
           className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-kat-dark shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
           style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
-          aria-label="Đăng bài viết"
-          title="Đăng bài viết"
+          aria-label={t("journal.postBtn")}
+          title={t("journal.postBtn")}
         >
           <HugeiconsIcon icon={PenTool01Icon} className="h-6 w-6" />
         </button>

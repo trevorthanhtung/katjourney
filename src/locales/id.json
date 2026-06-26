@@ -738,7 +738,12 @@
     "suggestEditActivity": "Sarankan edit aktivitas",
     "suggestAddBackupPlan": "Sarankan tambah rencana cadangan",
     "openGoogleMaps": "Buka dengan aplikasi Google Maps",
-    "viewCalendar": "Lihat sebagai kalender"
+    "viewCalendar": "Lihat sebagai kalender",
+    "suggestDelete": "Sarankan hapus",
+    "proposeDeleteActivityTitle": "Usulkan penghapusan aktivitas?",
+    "proposeDeleteActivityDesc": "Anda mengusulkan untuk menghapus aktivitas ini. Pemilik perjalanan akan meninjau usulan Anda.",
+    "deleting": "Menghapus...",
+    "saving": "Menyimpan..."
   },
   "weather": {
     "packingRain": "Hujan di tujuan Anda, jangan lupa payung!",

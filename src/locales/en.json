@@ -603,7 +603,12 @@
     "suggestEditActivity": "Suggest edit activity",
     "suggestAddBackupPlan": "Suggest add backup plan",
     "openGoogleMaps": "Open with Google Maps app",
-    "viewCalendar": "View as calendar"
+    "viewCalendar": "View as calendar",
+    "suggestDelete": "Suggest delete",
+    "proposeDeleteActivityTitle": "Propose deleting activity?",
+    "proposeDeleteActivityDesc": "You are proposing to delete this activity. The trip owner will review your proposal.",
+    "deleting": "Deleting...",
+    "saving": "Saving..."
   },
   "home": {
     "countdown": "Countdown",

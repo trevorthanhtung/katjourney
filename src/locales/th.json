@@ -756,7 +756,12 @@
     "suggestEditActivity": "เสนอแก้ไขกิจกรรม",
     "suggestAddBackupPlan": "เสนอเพิ่มแผนสำรอง",
     "openGoogleMaps": "เปิดด้วยแอป Google Maps",
-    "viewCalendar": "ดูเป็นปฏิทิน"
+    "viewCalendar": "ดูเป็นปฏิทิน",
+    "suggestDelete": "เสนอให้ลบ",
+    "proposeDeleteActivityTitle": "เสนอให้ลบกิจกรรม?",
+    "proposeDeleteActivityDesc": "คุณกำลังเสนอให้ลบกิจกรรมนี้ เจ้าของการเดินทางจะตรวจสอบข้อเสนอของคุณ",
+    "deleting": "กำลังลบ...",
+    "saving": "กำลังบันทึก..."
   },
   "weather": {
     "packingRain": "จุดหมายกำลังมีฝนตก อย่าลืมร่ม！",

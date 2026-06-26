@@ -487,12 +487,12 @@ export function SharedBackupPlansSheet({
                             )}
                             {plan.isPendingUpdate && (
                               <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 select-none animate-fadeIn">
-                                Đề xuất sửa
+                                {t("share.suggestEdit")}
                               </span>
                             )}
                             {plan.isPendingDelete && (
                               <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 select-none animate-fadeIn">
-                                Đề xuất xóa
+                                {t("share.suggestDelete")}
                               </span>
                             )}
                           </div>

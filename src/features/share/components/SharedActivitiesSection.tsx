@@ -360,7 +360,7 @@ export function SharedActivitiesSection({
               
               {item.isPendingDelete && (
                 <span className="inline-flex items-center rounded-full bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 px-2 py-0.5 text-[10px] font-bold text-rose-600 dark:text-rose-400 shrink-0 select-none animate-fadeIn">
-                  {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? 'Đang xóa...' : 'Đề xuất xóa'}
+                  {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? t('share.deleting') : t('share.suggestDelete')}
                 </span>
               )}
               {item.isPendingCreate && (
@@ -370,7 +370,7 @@ export function SharedActivitiesSection({
               )}
               {item.isPendingUpdate && (
                 <span className="inline-flex items-center rounded-full bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 shrink-0 select-none animate-fadeIn">
-                  {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
+                  {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? t('share.saving') : t('share.suggestEdit')}
                 </span>
               )}
             </div>
@@ -736,7 +736,7 @@ export function SharedActivitiesSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-colors"
             >
-              {isDirectEdit ? "Sửa" : "Đề xuất sửa"}
+              {isDirectEdit ? t("timeline.editBtn") : t("share.suggestEdit")}
             </button>
             <button
               onClick={() => {
@@ -747,7 +747,7 @@ export function SharedActivitiesSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
             >
-              {isDirectEdit ? "Xóa" : "Đề xuất xóa"}
+              {isDirectEdit ? t("share.delete") : t("share.suggestDelete")}
             </button>
           </div>
         </>,
@@ -770,7 +770,7 @@ export function SharedActivitiesSection({
                   const item = activities.find(a => String(a.id) === editingId);
                   if (item) handleDelete(editingId);
                 }}
-                title="Xóa hoạt động này"
+                title={t("timeline.deleteThisActivity")}
                 className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-2xl bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30 transition-all hover:bg-rose-100/50 dark:hover:bg-rose-900/30 active:scale-[0.96] motion-press"
               >
                 <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5" />
@@ -952,9 +952,9 @@ export function SharedActivitiesSection({
           await executeDelete(deleteTargetId);
           setDeleteTargetId(null);
         }}
-        title={isDirectEdit ? "Xóa hoạt động?" : "Đề xuất xóa hoạt động?"}
-        description={isDirectEdit ? "Bạn có chắc chắn muốn xóa hoạt động này? Hành động này không thể hoàn tác." : "Bạn đang gửi đề xuất xóa hoạt động này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."}
-        confirmLabel={isDirectEdit ? "Xóa" : "Đề xuất xóa"}
+        title={isDirectEdit ? t("timeline.deleteActivityTitle") : t("share.proposeDeleteActivityTitle")}
+        description={isDirectEdit ? t("timeline.deleteActivityDesc") : t("share.proposeDeleteActivityDesc")}
+        confirmLabel={isDirectEdit ? t("share.delete") : t("share.suggestDelete")}
         itemName={activities.find(a => String(a.id) === deleteTargetId)?.title}
       />
 

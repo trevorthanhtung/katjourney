@@ -601,7 +601,12 @@
     "suggestEditActivity": "Đề xuất sửa hoạt động",
     "suggestAddBackupPlan": "Đề xuất phương án dự phòng",
     "openGoogleMaps": "Mở bằng ứng dụng Google Maps",
-    "viewCalendar": "Xem dạng lịch"
+    "viewCalendar": "Xem dạng lịch",
+    "suggestDelete": "Đề xuất xóa",
+    "proposeDeleteActivityTitle": "Đề xuất xóa hoạt động?",
+    "proposeDeleteActivityDesc": "Bạn đang gửi đề xuất xóa hoạt động này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn.",
+    "deleting": "Đang xóa...",
+    "saving": "Đang lưu..."
   },
   "home": {
     "countdown": "Đếm ngược",

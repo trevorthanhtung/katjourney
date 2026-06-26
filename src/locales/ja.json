@@ -756,7 +756,12 @@
     "suggestEditActivity": "アクティビティの編集を提案",
     "suggestAddBackupPlan": "バックアッププランの追加を提案",
     "openGoogleMaps": "Googleマップアプリで開く",
-    "viewCalendar": "カレンダーとして表示"
+    "viewCalendar": "カレンダーとして表示",
+    "suggestDelete": "削除を提案",
+    "proposeDeleteActivityTitle": "アクティビティの削除を提案しますか？",
+    "proposeDeleteActivityDesc": "このアクティビティの削除を提案しています。旅行のオーナーがあなたの提案を確認します。",
+    "deleting": "削除中...",
+    "saving": "保存中..."
   },
   "weather": {
     "packingRain": "目的地で雨が降っています。傘を忘れずに！",

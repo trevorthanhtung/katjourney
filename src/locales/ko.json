@@ -603,7 +603,12 @@
     "suggestEditActivity": "활동 편집 제안",
     "suggestAddBackupPlan": "백업 계획 추가 제안",
     "openGoogleMaps": "Google 지도 앱으로 열기",
-    "viewCalendar": "달력으로 보기"
+    "viewCalendar": "달력으로 보기",
+    "suggestDelete": "삭제 제안",
+    "proposeDeleteActivityTitle": "활동 삭제를 제안하시겠습니까?",
+    "proposeDeleteActivityDesc": "이 활동을 삭제하도록 제안하고 있습니다. 여행 주최자가 제안을 검토합니다.",
+    "deleting": "삭제 중...",
+    "saving": "저장 중..."
   },
   "home": {
     "countdown": "카운트다운",

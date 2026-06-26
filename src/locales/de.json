@@ -756,7 +756,12 @@
     "suggestEditActivity": "Aktivität bearbeiten vorschlagen",
     "suggestAddBackupPlan": "Notfallplan hinzufügen vorschlagen",
     "openGoogleMaps": "Mit Google Maps-App öffnen",
-    "viewCalendar": "Als Kalender anzeigen"
+    "viewCalendar": "Als Kalender anzeigen",
+    "suggestDelete": "Löschen vorschlagen",
+    "proposeDeleteActivityTitle": "Löschen der Aktivität vorschlagen?",
+    "proposeDeleteActivityDesc": "Du schlägst vor, diese Aktivität zu löschen. Der Reiseveranstalter wird deinen Vorschlag überprüfen.",
+    "deleting": "Wird gelöscht...",
+    "saving": "Wird gespeichert..."
   },
   "weather": {
     "packingRain": "Es regnet an Ihrem Ziel, vergessen Sie den Regenschirm nicht!",

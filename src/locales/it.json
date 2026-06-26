@@ -738,7 +738,12 @@
     "suggestEditActivity": "Suggerisci modifica attività",
     "suggestAddBackupPlan": "Suggerisci aggiunta piano di riserva",
     "openGoogleMaps": "Apri con l'app Google Maps",
-    "viewCalendar": "Visualizza come calendario"
+    "viewCalendar": "Visualizza come calendario",
+    "suggestDelete": "Suggerisci eliminazione",
+    "proposeDeleteActivityTitle": "Proporre l'eliminazione dell'attività?",
+    "proposeDeleteActivityDesc": "Stai proponendo di eliminare questa attività. Il proprietario del viaggio esaminerà la tua proposta.",
+    "deleting": "Eliminazione in corso...",
+    "saving": "Salvataggio in corso..."
   },
   "weather": {
     "packingRain": "Piove alla tua destinazione, non dimenticare l'ombrello!",
