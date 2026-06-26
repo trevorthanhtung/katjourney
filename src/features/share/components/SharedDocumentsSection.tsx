@@ -238,7 +238,7 @@ export function SharedDocumentsSection({
       disabled={isSaveDisabled}
       className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 px-4 text-[13.5px] font-extrabold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed"
     >
-      {isUploading ? <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin text-slate-400" /> : "Lưu"}
+      {isUploading ? <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin text-slate-400" /> : t("documents.saveBtn")}
     </button>
   );
 
@@ -247,7 +247,7 @@ export function SharedDocumentsSection({
       {/* Header */}
       <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
         <HugeiconsIcon icon={File01Icon} className="h-5 w-5 text-rose-500" />
-        <h3 className="text-[16px] font-black text-kat-dark">Giấy tờ & đặt chỗ</h3>
+        <h3 className="text-[16px] font-black text-kat-dark">{t("documents.featureTitle")}</h3>
       </div>
 
       {/* Sub Tabs */}
@@ -262,7 +262,7 @@ export function SharedDocumentsSection({
               : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
           )}
         >
-          Chung
+          {t("packing.sharedTab")}
         </button>
         <button
           type="button"
@@ -274,7 +274,7 @@ export function SharedDocumentsSection({
               : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
           )}
         >
-          Cá nhân
+          {t("packing.personalTab")}
           {localPrivateDocs.length > 0 && (
             <span className="flex items-center justify-center min-w-4.5 h-4.5 text-[9.5px] font-black px-1 rounded-full bg-purple-600 text-white">
               {localPrivateDocs.length}
@@ -306,7 +306,7 @@ export function SharedDocumentsSection({
                   </span>
                   {d.isPendingDelete && (
                     <span className="inline-flex items-center rounded-full bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 px-2 py-0.5 text-[10px] font-bold text-rose-600 dark:text-rose-450 select-none animate-fadeIn">
-                      Đề xuất xóa
+                      {t("share.suggestDelete")}
                     </span>
                   )}
                 </div>
@@ -337,7 +337,7 @@ export function SharedDocumentsSection({
                     <button 
                       onClick={() => handleDelete(d)} 
                       className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/20 border border-slate-200/60 dark:border-slate-700/60 transition-all active:scale-95 shadow-sm bg-white dark:bg-slate-800 shrink-0"
-                      title="Đề xuất xóa"
+                      title={t("share.suggestDelete")}
                     >
                       <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
                     </button>
@@ -379,7 +379,7 @@ export function SharedDocumentsSection({
               {/* Attachment Image Display */}
               {d.attachmentUrl && (
                 <div className="mt-3">
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">Ảnh đính kèm</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">{t("documents.attachmentLabel")}</p>
                   <div 
                     className={classNames(
                       "relative w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/50 cursor-pointer group bg-[#F8F9FA] dark:bg-slate-800/40 flex justify-center items-center",
@@ -413,12 +413,11 @@ export function SharedDocumentsSection({
             <HugeiconsIcon icon={File01Icon} className="h-6 w-6" />
           </div>
           <h4 className="text-[14px] font-bold text-slate-800 dark:text-slate-200">
-            {activeSubTab === 'private' ? "Chưa có giấy tờ cá nhân" : "Chưa có giấy tờ nào"}
+            {activeSubTab === 'private' ? t("documents.emptyPrivate") : t("documents.emptyAllTitle")}
           </h4>
           <p className="text-[11.5px] text-slate-400 dark:text-slate-500 mt-1 font-bold max-w-[240px]">
             {activeSubTab === 'private' 
-              ? "Thêm các thông tin vé, đặt phòng của riêng bạn tại đây"
-              : "Các thông tin vé, đặt phòng chung cho chuyến đi sẽ hiển thị ở đây"}
+              ? t("documents.emptyAllDesc") : t("documents.emptyAllDesc")}
           </p>
         </div>
       )}
@@ -430,7 +429,7 @@ export function SharedDocumentsSection({
           className="mt-4 flex items-center justify-center gap-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100/80 dark:hover:bg-rose-950/30 active:scale-[0.99] rounded-xl transition-all shadow-sm shadow-rose-100/30 dark:shadow-none h-11 w-full"
         >
           <HugeiconsIcon icon={Add01Icon} className="w-4.5 h-4.5" />
-          Thêm giấy tờ cá nhân
+          {t("documents.addPrivate")}
         </button>
       )}
 
@@ -438,41 +437,41 @@ export function SharedDocumentsSection({
       <BottomSheet 
         isOpen={isFormOpen} 
         onClose={() => setIsFormOpen(false)} 
-        title={editingDoc ? "Sửa giấy tờ cá nhân" : "Thêm giấy tờ cá nhân"}
+        title={editingDoc ? t("documents.editPrivate") : t("documents.addPrivate")}
         headerAction={headerAction}
       >
         <div className="space-y-4">
           {/* Title */}
           <div>
             <Input 
-              label="Tên mục *" 
+              label={t("documents.inputTitleLabel")} 
               value={form.title} 
               onChange={(title) => { setForm({ ...form, title }); setShowValidationError(false); }} 
               placeholder="VD: Vé máy bay khứ hồi, mã đặt phòng khách sạn..." 
             />
             {showValidationError && !form.title.trim() && (
-              <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">Vui lòng nhập tên mục</p>
+              <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{t("documents.titleRequired")}</p>
             )}
           </div>
 
           {/* Phân loại & Mã đặt chỗ */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Select 
-              label="Phân loại" 
+              label={t("documents.inputTypeLabel")} 
               value={form.type || "ticket"} 
               onChange={(type) => setForm({ ...form, type: type as any })}
               options={["ticket", "hotel", "booking", "contact", "map", "other"]}
               labels={{
-                ticket: "Vé di chuyển",
-                hotel: "Đặt phòng",
-                booking: "Mã đặt chỗ",
-                contact: "Liên hệ",
-                map: "Bản đồ",
-                other: "Khác"
+                ticket: t("documents.typeTicket"),
+                hotel: t("documents.typeHotel"),
+                booking: t("documents.typeBooking"),
+                contact: t("documents.typeContact"),
+                map: t("documents.typeMap"),
+                other: t("documents.typeOther")
               }}
             />
             <Input 
-              label="Mã / thông tin đặt chỗ" 
+              label={t("documents.inputCodeLabel")} 
               value={form.code} 
               onChange={(code) => setForm({ ...form, code })} 
               placeholder="VD: PNR ABC123, mã phòng, số vé..." 
@@ -488,7 +487,7 @@ export function SharedDocumentsSection({
             >
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={Add01Icon} className="h-4 w-4 text-slate-400" />
-                Thông tin bổ sung
+                {t("documents.advancedInfoLabel")}
               </span>
               <HugeiconsIcon icon={ChevronRightIcon} className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
             </button>
@@ -519,7 +518,7 @@ export function SharedDocumentsSection({
                 
                 {/* Image Upload Area */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-kat-dark">Ảnh đính kèm (Vé/CCCD/...)</label>
+                  <label className="block text-sm font-semibold text-kat-dark">{t("documents.inputAttachmentLabel")}</label>
                   {(previewUrl || form.attachmentUrl) ? (
                     <div className="relative w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/40 flex items-center justify-center">
                       <img 
@@ -608,7 +607,7 @@ export function SharedDocumentsSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
             >
-              Sửa
+              {t("documents.editBtn")}
             </button>
             <button
               onClick={() => {
@@ -622,7 +621,7 @@ export function SharedDocumentsSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/35 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
             >
-              Xóa
+              {t("documents.deleteBtn")}
             </button>
           </div>
         </>,
@@ -637,9 +636,9 @@ export function SharedDocumentsSection({
           await executeDelete(deleteTargetId);
           setDeleteTargetId(null);
         }}
-        title={activeSubTab === 'private' ? "Xóa tài liệu?" : "Đề xuất xóa tài liệu?"}
-        description={activeSubTab === 'private' ? "Hành động này sẽ xóa vĩnh viễn tài liệu cá nhân này khỏi thiết bị." : "Bạn đang gửi đề xuất xóa tài liệu này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."}
-        confirmLabel={activeSubTab === 'private' ? "Xóa" : "Đề xuất xóa"}
+        title={activeSubTab === 'private' ? t("documents.deleteModalTitle") : t("documents.suggestDeleteTitle")}
+        description={activeSubTab === 'private' ? t("documents.deleteModalDesc") : t("documents.suggestDeleteDesc")}
+        confirmLabel={activeSubTab === 'private' ? t("documents.deleteBtn") : t("share.suggestDelete")}
         itemName={deleteTargetId?.title}
       />
     </section>
