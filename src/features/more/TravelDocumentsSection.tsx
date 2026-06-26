@@ -26,6 +26,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { db, TravelDocument } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useTranslation } from "react-i18next";
 import { BottomSheet, Input, Textarea, Select, DatePicker, DeleteConfirmModal, classNames } from "../../components/ui";
 import { uploadDocumentImage } from "../../services/storageService";
 import { useModalHistory } from "../../hooks/useModalHistory";
@@ -78,6 +79,7 @@ interface DocumentFormProps {
 }
 
 function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: DocumentFormProps) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     title: "",
     type: "ticket" as NonNullable<TravelDocument["type"]>,
@@ -144,7 +146,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
     setDirty(true);
   };
 
-  const titleError = !form.title.trim() ? "Vui lòng nhập tiêu đề." : "";
+  const titleError = !form.title.trim() ? t("documents.titleRequired") : "";
   const hasError = !!titleError;
 
   async function save() {
@@ -166,7 +168,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           createdBy: 'owner',
           updatedAt: new Date().toISOString()
         });
-        onShowToast?.("Đã cập nhật giấy tờ");
+        onShowToast?.(t("documents.toastUpdated"));
       } else {
         await db.travelDocuments.add({
           ...form,
@@ -176,12 +178,12 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         });
-        onShowToast?.("Đã lưu giấy tờ mới");
+        onShowToast?.(t("documents.toastSaved"));
       }
       onClose();
     } catch (e) {
       console.error("Lỗi khi lưu tài liệu:", e);
-      onShowToast?.("Có lỗi xảy ra khi lưu tài liệu");
+      onShowToast?.(t("documents.toastError"));
     } finally {
       setIsUploading(false);
     }
@@ -196,7 +198,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
       disabled={isSaveDisabled}
       className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 px-4 text-[13.5px] font-extrabold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed"
     >
-      {isUploading ? <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin text-slate-400" /> : "Lưu"}
+      {isUploading ? <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin text-slate-400" /> : t("documents.saveBtn")}
     </button>
   );
 
@@ -204,17 +206,17 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
     <BottomSheet 
       isOpen={isOpen} 
       onClose={onClose} 
-      title={editing ? "Sửa giấy tờ & đặt chỗ" : "Thêm giấy tờ & đặt chỗ"}
+      title={editing ? t("documents.editDocumentTitle") : t("documents.addDocumentTitle")}
       headerAction={headerAction}
     >
       <div className="space-y-4">
         {/* Title */}
         <div>
           <Input 
-            label="Tên mục *" 
+            label={t("documents.inputTitleLabel")} 
             value={form.title} 
             onChange={(title) => { setForm({ ...form, title }); setDirty(true); }} 
-            placeholder="VD: Vé máy bay khứ hồi, mã đặt phòng khách sạn..." 
+            placeholder={t("documents.inputTitlePlaceholder")} 
           />
           {(dirty || submitAttempted) && titleError && (
             <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{titleError}</p>
@@ -224,24 +226,24 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
         {/* Type & Code & Privacy */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Select 
-            label="Phân loại" 
+            label={t("documents.inputTypeLabel")} 
             value={form.type} 
             onChange={(type) => { setForm({ ...form, type: type as NonNullable<TravelDocument["type"]> }); setDirty(true); }}
             options={typeOptions.map(t => t.value)}
-            labels={typeLabels}
+            labels={{ ticket: t("documents.typeTicket"), hotel: t("documents.typeHotel"), booking: t("documents.typeBooking"), document: t("documents.typeOther"), contact: t("documents.typeContact"), map: t("documents.typeMap"), other: t("documents.typeOther") }}
           />
           <Select 
-            label="Quyền chia sẻ" 
-            value={form.isPrivate ? "Riêng tư (Chỉ mình tôi)" : "Chia sẻ với nhóm"} 
-            onChange={(val) => { setForm({ ...form, isPrivate: val === "Riêng tư (Chỉ mình tôi)" }); setDirty(true); }}
-            options={["Chia sẻ với nhóm", "Riêng tư (Chỉ mình tôi)"]}
+            label={t("documents.inputPrivacyLabel")} 
+            value={form.isPrivate ? t("documents.privacyPrivate") : t("documents.privacyGroup")} 
+            onChange={(val) => { setForm({ ...form, isPrivate: val === t("documents.privacyPrivate") }); setDirty(true); }}
+            options={[t("documents.privacyGroup"), t("documents.privacyPrivate")]}
           />
         </div>
         <Input 
-          label="Mã / thông tin đặt chỗ" 
+          label={t("documents.inputCodeLabel")} 
           value={form.code} 
           onChange={(code) => { setForm({ ...form, code }); setDirty(true); }} 
-          placeholder="VD: PNR ABC123, mã phòng, số vé..." 
+          placeholder={t("documents.inputCodePlaceholder")} 
         />
 
         {/* Collapsible Info Section */}
@@ -253,7 +255,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           >
             <span className="flex items-center gap-1.5">
               <HugeiconsIcon icon={Add01Icon} className="h-4 w-4 text-slate-400" />
-              Thông tin bổ sung
+              {t("documents.advancedInfoLabel")}
             </span>
             <HugeiconsIcon icon={ChevronRightIcon} className={classNames("h-4 w-4 transition-transform duration-200 text-slate-400", showAdvanced ? "rotate-90" : "")} />
           </button>
@@ -262,29 +264,29 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
             <div className="mt-3 space-y-4 animate-fadeIn">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <DatePicker 
-                  label="Ngày liên quan" 
+                  label={t("documents.inputDateLabel")} 
                   value={form.date} 
                   onChange={(date) => { setForm({ ...form, date }); setDirty(true); }} 
                 />
                 <Input 
-                  label="Đường dẫn liên quan" 
+                  label={t("documents.inputLinkLabel")} 
                   value={form.link} 
                   onChange={(link) => { setForm({ ...form, link }); setDirty(true); }} 
-                  placeholder="VD: Link vé điện tử, bản đồ, tệp đặt phòng..." 
+                  placeholder={t("documents.inputLinkPlaceholder")} 
                 />
               </div>
               <div>
                 <Textarea 
-                  label="Ghi chú" 
+                  label={t("documents.inputNoteLabel")} 
                   value={form.note} 
                   onChange={(note) => { setForm({ ...form, note }); setDirty(true); }} 
-                  placeholder="VD: Giờ nhận phòng, hành lý, số điện thoại liên hệ..." 
+                  placeholder={t("documents.inputNotePlaceholder")} 
                 />
               </div>
               
               {/* Image Upload Area */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-kat-dark">Ảnh đính kèm (Vé/CCCD/...)</label>
+                <label className="block text-sm font-semibold text-kat-dark">{t("documents.inputAttachmentLabel")}</label>
                 {(previewUrl || form.attachmentUrl) ? (
                   <div className="relative w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/40 flex items-center justify-center">
                     <img 
@@ -309,8 +311,8 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
                   <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-200 dark:border-slate-700/50 rounded-xl bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors cursor-pointer text-slate-500 dark:text-slate-400">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <HugeiconsIcon icon={ImageAdd01Icon} className="w-6 h-6 mb-2 text-slate-400" />
-                      <p className="text-[13px]"><span className="font-semibold text-kat-primary-usable">Nhấn để tải ảnh lên</span></p>
-                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">Chấp nhận PNG, JPG, WEBP</p>
+                      <p className="text-[13px]"><span className="font-semibold text-kat-primary-usable">{t("documents.uploadBtn")}</span></p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">{t("documents.uploadAcceptedFormats")}</p>
                     </div>
                     <input type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
                   </label>
@@ -337,6 +339,7 @@ function DocumentCard({
   idx?: number;
   isReadOnly?: boolean;
 }) {
+  const { t } = useTranslation();
   const colors = typeColors[doc.type || "other"];
   const Icon = typeIcons[doc.type || "other"];
   const formattedDate = doc.date ? new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(doc.date)) : null;
@@ -371,7 +374,7 @@ function DocumentCard({
         <div className="flex items-start justify-between gap-4 mb-3">
           <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold border ${colors.bg} ${colors.text} ${colors.border}`}>
             <HugeiconsIcon icon={Icon} className="w-3.5 h-3.5" />
-            {typeLabels[doc.type || "other"].split(" / ")[0]}
+            {t("documents.type" + ((doc.type || "other").charAt(0).toUpperCase() + (doc.type || "other").slice(1))).split(" / ")[0]}
           </span>
 
           {/* ... menu */}
@@ -384,7 +387,7 @@ function DocumentCard({
                   e.stopPropagation();
                   setIsMenuOpen(!isMenuOpen);
                 }}
-                title="Tùy chọn"
+                title={t("documents.optionsBtn")}
               >
                 <HugeiconsIcon icon={MoreHorizontalIcon} className="h-5 w-5" />
               </button>
@@ -401,7 +404,7 @@ function DocumentCard({
                     className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 active:bg-slate-100 dark:active:bg-slate-600 transition-colors"
                   >
                     <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                    Sửa
+                    {t("documents.editBtn")}
                   </button>
                   <button
                     type="button"
@@ -413,7 +416,7 @@ function DocumentCard({
                     className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
                   >
                     <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
-                    Xóa
+                    {t("documents.deleteBtn")}
                   </button>
                 </div>
               )}
@@ -431,13 +434,13 @@ function DocumentCard({
             className="group/code flex items-center justify-between bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100/80 dark:hover:bg-slate-800/70 border border-slate-200/50 dark:border-slate-700/40 rounded-xl p-3 mt-2.5 transition-all active:scale-[0.99] cursor-pointer"
           >
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Mã xác nhận / Code</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">{t("documents.codeLabel")}</p>
               <p className="text-[14px] font-extrabold text-kat-dark truncate mt-0.5">{doc.code}</p>
             </div>
             <button
               type="button"
               className="ml-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-slate-200 transition-all shadow-sm shrink-0"
-              title="Sao chép mã"
+              title={t("documents.copyCodeBtn")}
             >
               {copied ? (
                 <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 text-emerald-500" />
@@ -451,7 +454,7 @@ function DocumentCard({
         {/* Date & Note */}
         {formattedDate && (
           <p className="text-[13px] font-semibold text-slate-500 mt-3.5">
-            Ngày liên quan: <span className="font-extrabold text-slate-700 dark:text-slate-200">{formattedDate}</span>
+            {t("documents.relatedDateLabel")} <span className="font-extrabold text-slate-700 dark:text-slate-200">{formattedDate}</span>
           </p>
         )}
 
@@ -463,7 +466,7 @@ function DocumentCard({
 
         {doc.attachmentUrl && (
           <div className="mt-4">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Ảnh đính kèm</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">{t("documents.attachmentLabel")}</p>
             <div 
               className="relative w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700/50 cursor-pointer group bg-[#F8F9FA] dark:bg-slate-800/40 flex justify-center items-center"
               onClick={(e) => {
@@ -496,7 +499,7 @@ function DocumentCard({
             className="inline-flex items-center gap-1.5 text-[13.5px] font-bold text-kat-primary hover:text-kat-primary-dark transition-colors"
           >
             <HugeiconsIcon icon={Link02Icon} className="w-3.5 h-3.5" />
-            <span>Mở liên kết trực tuyến</span>
+            <span>{t("documents.openLinkBtn")}</span>
           </a>
         </div>
       )}
@@ -541,6 +544,7 @@ export function TravelDocumentsSection({
   onShowToast?: (msg: string) => void; 
   isReadOnly?: boolean;
 }) {
+  const { t } = useTranslation();
   const documents = useLiveQuery(async () => (await db.travelDocuments.where("tripId").equals(tripId).toArray()).filter(d => !d.isDeleted), [tripId]) ?? [];
   const [selectedTypeFilter, setSelectedTypeFilter] = useState<string>("all");
   const [formOpen, setFormOpen] = useState(false);
@@ -561,7 +565,7 @@ export function TravelDocumentsSection({
   async function executeDelete() {
     if (!docToDelete?.id) return;
     await db.travelDocuments.update(docToDelete.id, { isDeleted: true });
-    onShowToast?.("Đã xóa thành công");
+    onShowToast?.(t("documents.toastDeleted"));
     setDocToDelete(null);
   }
 
@@ -588,8 +592,8 @@ export function TravelDocumentsSection({
             <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
           </button>
           <div className="min-w-0">
-            <h2 className="text-[28px] font-extrabold text-kat-dark dark:text-slate-200 leading-tight">Giấy tờ & đặt chỗ</h2>
-            <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">Lưu vé, mã đặt chỗ và thông tin quan trọng để tra cứu nhanh khi cần.</p>
+            <h2 className="text-[28px] font-extrabold text-kat-dark dark:text-slate-200 leading-tight">{t("documents.featureTitle")}</h2>
+            <p className="text-[14px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t("documents.featureDesc")}</p>
           </div>
         </div>
         {!isReadOnly && (
@@ -598,7 +602,7 @@ export function TravelDocumentsSection({
             className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-5 text-[13.5px] font-bold hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center border border-transparent dark:border-kat-primary"
           >
             <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
-            <span>Thêm giấy tờ</span>
+            <span>{t("documents.addBtn")}</span>
           </button>
         )}
       </div>
@@ -614,7 +618,7 @@ export function TravelDocumentsSection({
                 : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/80"
             }`}
           >
-            Tất cả ({documents.length})
+            {t("documents.filterAll")} ({documents.length})
           </button>
           {typeOptions.map(opt => {
             const count = documents.filter(doc => doc.type === opt.value).length;
@@ -629,7 +633,7 @@ export function TravelDocumentsSection({
                     : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700/50 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/80"
                 }`}
               >
-                {opt.label} ({count})
+                {t("documents.type" + (opt.value.charAt(0).toUpperCase() + opt.value.slice(1)))} ({count})
               </button>
             );
           })}
@@ -643,12 +647,12 @@ export function TravelDocumentsSection({
             <HugeiconsIcon icon={File01Icon} className="h-8 w-8" />
           </div>
           <h4 className="text-[16px] font-extrabold text-kat-dark mb-1">
-            {selectedTypeFilter === "all" ? "Chưa có giấy tờ nào" : "Không tìm thấy mục lưu trữ"}
+            {selectedTypeFilter === "all" ? t("documents.emptyAllTitle") : t("documents.emptyFilterTitle")}
           </h4>
           <p className="text-[13.5px] font-semibold text-slate-400 dark:text-slate-450 mb-0 max-w-[280px]">
             {selectedTypeFilter === "all" 
-              ? "Lưu vé, mã đặt chỗ, liên hệ quan trọng hoặc link bản đồ để tra cứu nhanh khi cần."
-              : "Chọn bộ lọc khác hoặc thêm mới giấy tờ & đặt chỗ thuộc nhóm này."}
+              ? t("documents.emptyAllDesc")
+              : t("documents.emptyFilterDesc")}
           </p>
         </div>
       ) : (
@@ -669,10 +673,10 @@ export function TravelDocumentsSection({
         isOpen={Boolean(docToDelete)}
         onClose={() => setDocToDelete(null)}
         onConfirm={executeDelete}
-        title="Xóa giấy tờ này?"
+        title={t("documents.deleteModalTitle")}
         itemName={docToDelete?.title}
-        description="Mục giấy tờ hoặc đặt chỗ này sẽ bị xóa khỏi chuyến đi. Sau khi xóa, không thể hoàn tác."
-        confirmLabel="Xóa giấy tờ"
+        description={t("documents.deleteModalDesc")}
+        confirmLabel={t("documents.deleteModalConfirm")}
       />
 
       {/* Document Form Bottom Sheet */}
