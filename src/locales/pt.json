@@ -1405,5 +1405,13 @@
     "bannerSuggestMode": "Modo de Sugestão",
     "bannerDirectEditDesc": "Função \"{{role}}\": Você tem permissão para editar diretamente as partes atribuídas.",
     "bannerSuggestModeDesc": "Suas alterações serão enviadas ao proprietário da viagem para revisão."
+  },
+  "trip": {
+    "upcoming": "Próximo",
+    "ongoing": "Em andamento",
+    "past": "Passado",
+    "status": "Status",
+    "journey": "Jornada",
+    "completed": "Concluído"
   }
 }

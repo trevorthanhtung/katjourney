@@ -1405,5 +1405,13 @@
     "bannerSuggestMode": "Vorschlagsmodus",
     "bannerDirectEditDesc": "Rolle \"{{role}}\": Sie haben die Berechtigung, Ihre zugewiesenen Teile direkt zu bearbeiten.",
     "bannerSuggestModeDesc": "Ihre Änderungen werden dem Reiseinhaber zur Überprüfung gesendet."
+  },
+  "trip": {
+    "upcoming": "Bevorstehend",
+    "ongoing": "Laufend",
+    "past": "Vergangen",
+    "status": "Status",
+    "journey": "Reise",
+    "completed": "Abgeschlossen"
   }
 }

@@ -1405,5 +1405,13 @@
     "bannerSuggestMode": "建议模式",
     "bannerDirectEditDesc": "角色 \"{{role}}\"：您有权限直接编辑分配给您的部分。",
     "bannerSuggestModeDesc": "您的更改将发送给行程所有者进行审核。"
+  },
+  "trip": {
+    "upcoming": "即将到来",
+    "ongoing": "进行中",
+    "past": "过去",
+    "status": "状态",
+    "journey": "旅程",
+    "completed": "已完成"
   }
 }

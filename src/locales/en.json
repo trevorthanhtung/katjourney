@@ -1391,5 +1391,13 @@
     "bannerDirectEditDesc": "Role \"{{role}}\": You have permission to directly edit your assigned parts.",
     "bannerSuggestModeDesc": "Your changes will be sent to the trip owner for review.",
     "closeBanner": "Close notification"
+  },
+  "trip": {
+    "upcoming": "Upcoming",
+    "ongoing": "Ongoing",
+    "past": "Past trip",
+    "status": "Status",
+    "journey": "Journey",
+    "completed": "Completed"
   }
 }

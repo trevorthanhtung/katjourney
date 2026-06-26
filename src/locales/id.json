@@ -1306,5 +1306,13 @@
     "bannerSuggestMode": "Mode Saran",
     "bannerDirectEditDesc": "Peran \"{{role}}\": Anda memiliki izin untuk mengedit langsung bagian yang ditugaskan.",
     "bannerSuggestModeDesc": "Perubahan Anda akan dikirim ke pemilik perjalanan untuk ditinjau."
+  },
+  "trip": {
+    "upcoming": "Akan datang",
+    "ongoing": "Berlangsung",
+    "past": "Berlalu",
+    "status": "Status",
+    "journey": "Perjalanan",
+    "completed": "Selesai"
   }
 }

@@ -1405,5 +1405,13 @@
     "bannerSuggestMode": "提案モード",
     "bannerDirectEditDesc": "役割「{{role}}」：割り当てられた部分を直接編集する権限があります。",
     "bannerSuggestModeDesc": "変更内容は旅行の所有者に送信され、確認されます。"
+  },
+  "trip": {
+    "upcoming": "予定",
+    "ongoing": "進行中",
+    "past": "過去",
+    "status": "ステータス",
+    "journey": "旅程",
+    "completed": "完了"
   }
 }
