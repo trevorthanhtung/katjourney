@@ -282,7 +282,7 @@ export function SharedBackupPlansSheet({
                 className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-indigo-600 text-white px-3.5 text-[13px] font-extrabold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" strokeWidth={2.5} />
-                <span>Thêm</span>
+                <span>{t("share.add")}</span>
               </button>
             )}
             <button 
@@ -333,7 +333,7 @@ export function SharedBackupPlansSheet({
 
               <div>
                 <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-350 mb-1.5 flex items-center gap-1.5">
-                  <HugeiconsIcon icon={HelpCircleIcon} className="w-4 h-4 text-slate-400" /> Dùng khi nào?
+                  <HugeiconsIcon icon={HelpCircleIcon} className="w-4 h-4 text-slate-400" /> {t("share.whenToUse")}
                 </label>
                 <input
                   type="text"
@@ -358,7 +358,7 @@ export function SharedBackupPlansSheet({
                   <div className="space-y-4 mt-4 animate-fadeIn">
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-350 mb-1.5 flex items-center gap-1.5">
-                        <HugeiconsIcon icon={Location01Icon} className="w-4 h-4 text-slate-400" /> Địa điểm
+                        <HugeiconsIcon icon={Location01Icon} className="w-4 h-4 text-slate-400" /> {t("share.location")}
                       </label>
                       <input
                         type="text"
@@ -371,7 +371,7 @@ export function SharedBackupPlansSheet({
 
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-350 mb-1.5 flex items-center justify-between">
-                        <span>Link Google Maps</span>
+                        <span>{t("share.googleMapsLink")}</span>
                         {mapLink && (
                           <a
                             href={ensureAbsoluteUrl(mapLink)}
@@ -394,7 +394,7 @@ export function SharedBackupPlansSheet({
 
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-350 mb-1.5 flex items-center gap-1.5">
-                        <HugeiconsIcon icon={Dollar01Icon} className="w-4 h-4 text-slate-400" /> Chi phí dự kiến
+                        <HugeiconsIcon icon={Dollar01Icon} className="w-4 h-4 text-slate-400" /> {t("share.estimatedCost")}
                       </label>
                       <input
                         type="number"
@@ -407,7 +407,7 @@ export function SharedBackupPlansSheet({
 
                     <div>
                       <label className="block text-[13px] font-bold text-slate-700 dark:text-slate-350 mb-1.5 flex items-center gap-1.5">
-                        <HugeiconsIcon icon={AlignLeftIcon} className="w-4 h-4 text-slate-400" /> Ghi chú
+                        <HugeiconsIcon icon={AlignLeftIcon} className="w-4 h-4 text-slate-400" /> {t("share.notes")}
                       </label>
                       <textarea
                         value={note}
@@ -426,7 +426,7 @@ export function SharedBackupPlansSheet({
                   onClick={() => setIsFormOpen(false)}
                   className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-slate-655 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors motion-press focus:outline-none"
                 >
-                  Hủy
+                  {t("share.cancel")}
                 </button>
                 <button
                   onClick={handleSave}
@@ -443,7 +443,7 @@ export function SharedBackupPlansSheet({
               </div>
               <h4 className="text-[16px] font-extrabold text-kat-dark mb-2">{t("share.noBackupPlanTitle")}</h4>
               <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 mb-6 max-w-[260px]">
-                Thêm một lựa chọn thay thế để chuyến đi linh hoạt hơn khi có thay đổi.
+                {t("share.noBackupPlanDesc")}
               </p>
               {isRequestEdit && (
                 <button
