@@ -483,7 +483,31 @@
     "addDestinationForWeather": "Add a destination to see weather",
     "sameDay": "Same day",
     "multiDay": "Multi-day",
-    "shareBtn": "Share"
+    "shareBtn": "Share",
+    "shareSubtitle": "Create a link for others to view the itinerary and trip information.",
+    "includeExpenses": "Include expenses",
+    "includeJournals": "Include journals",
+    "includeChecklist": "Include checklist",
+    "includeBackup": "Include backup plans",
+    "includeDocs": "Include documents & bookings",
+    "docWarning": "Documents may contain booking codes, tickets, phone numbers, or private links. Only enable if you truly trust the recipient.",
+    "pinProtect": "Protect with PIN",
+    "pinDesc": "Viewers must enter the correct PIN to open",
+    "enterPin": "Enter 4-digit PIN:",
+    "pinReady": "PIN is ready",
+    "pinError": "Please enter exactly 4 digits",
+    "close": "Close",
+    "creatingLink": "Creating link...",
+    "createLink": "Create share link",
+    "linkCreated": "Share link created",
+    "joinTrip": "Join the trip \"{{trip}}\" with me on KAT Journey!",
+    "syncingChanges": "Auto-syncing latest changes...",
+    "autoSyncLast": "Auto-syncs when changed. Last:",
+    "justNow": "Just now",
+    "syncing": "Syncing...",
+    "syncData": "Sync data",
+    "turningOff": "Turning off...",
+    "turnOff": "Turn off sharing"
   },
   "home": {
     "countdown": "Countdown",
@@ -1351,5 +1375,9 @@
     "chattingAs": "Chatting as:",
     "today": "Today",
     "yesterday": "Yesterday"
+  },
+  "offline": {
+    "title": "You are offline",
+    "subtitle": " - Some features require an internet connection"
   }
 }

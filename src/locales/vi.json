@@ -481,7 +481,31 @@
     "addDestinationForWeather": "Thêm điểm đến để xem thời tiết",
     "sameDay": "Trong ngày",
     "multiDay": "Dài ngày",
-    "shareBtn": "Chia sẻ"
+    "shareBtn": "Chia sẻ",
+    "shareSubtitle": "Tạo link để người khác xem lịch trình và thông tin chuyến đi.",
+    "includeExpenses": "Bao gồm chi phí",
+    "includeJournals": "Bao gồm bản tin",
+    "includeChecklist": "Bao gồm danh sách chuẩn bị",
+    "includeBackup": "Bao gồm phương án dự phòng",
+    "includeDocs": "Bao gồm giấy tờ & đặt chỗ",
+    "docWarning": "Giấy tờ có thể chứa mã đặt chỗ, vé, số điện thoại hoặc liên kết riêng tư. Chỉ bật nếu bạn thực sự tin tưởng người nhận link.",
+    "pinProtect": "Bảo vệ bằng mã PIN",
+    "pinDesc": "Người xem cần nhập đúng PIN để mở",
+    "enterPin": "Nhập mã PIN 4 chữ số:",
+    "pinReady": "Mã PIN đã sẵn sàng",
+    "pinError": "Vui lòng nhập đủ 4 chữ số",
+    "close": "Đóng",
+    "creatingLink": "Đang tạo link...",
+    "createLink": "Tạo link chia sẻ",
+    "linkCreated": "Đã tạo link chia sẻ",
+    "joinTrip": "Tham gia chuyến đi \"{{trip}}\" cùng tôi trên KAT Journey!",
+    "syncingChanges": "Đang tự động đồng bộ các thay đổi mới nhất...",
+    "autoSyncLast": "Tự động đồng bộ khi có thay đổi. Lần cuối:",
+    "justNow": "Vừa xong",
+    "syncing": "Đang đồng bộ...",
+    "syncData": "Đồng bộ dữ liệu",
+    "turningOff": "Đang tắt...",
+    "turnOff": "Tắt chia sẻ"
   },
   "home": {
     "countdown": "Đếm ngược",
@@ -1349,5 +1373,9 @@
     "chattingAs": "Đang chat:",
     "today": "Hôm nay",
     "yesterday": "Hôm qua"
+  },
+  "offline": {
+    "title": "Bạn đang offline",
+    "subtitle": " - Một số tính năng cần kết nối mạng"
   }
 }

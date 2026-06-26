@@ -1062,7 +1062,7 @@ function App() {
         <div className="bg-amber-500 text-white px-4 py-2 flex items-center justify-center gap-2 shadow-sm animate-fadeIn z-40 relative">
           <HugeiconsIcon icon={WifiOffIcon} className="w-4 h-4 shrink-0" />
           <div className="text-[13px] font-bold">
-            Bạn đang offline <span className="hidden sm:inline font-medium"> - Một số tính năng cần kết nối mạng</span>
+            {t("offline.title")} <span className="hidden sm:inline font-medium">{t("offline.subtitle")}</span>
           </div>
         </div>
       )}
