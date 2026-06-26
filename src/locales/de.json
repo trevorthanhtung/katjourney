@@ -770,7 +770,27 @@
     "suggestDeleteExpenseTitle": "Ausgabenlöschung vorschlagen?",
     "suggestDeleteExpenseDesc": "Sie schlagen vor, diese Ausgabe zu löschen. Der Reiseveranstalter wird Ihren Vorschlag prüfen.",
     "suggestLabel": "Vorschlagen",
-    "suggestSent": "Vorschlag gesendet. Der Reiseveranstalter wird ihn prüfen."
+    "suggestSent": "Vorschlag gesendet. Der Reiseveranstalter wird ihn prüfen.",
+    "requestsTitle": "Bearbeitungsanfragen",
+    "pendingRequests": "{{count}} ausstehende Anfragen.",
+    "noRequests": "Noch keine Anfragen.",
+    "declineAll": "Alle ablehnen",
+    "approveAll": "Alle genehmigen",
+    "processing": "Wird bearbeitet...",
+    "noRequestsDetailed": "Noch keine Bearbeitungsanfragen.",
+    "declineBtn": "Ablehnen",
+    "approveBtn": "Genehmigen & anwenden",
+    "declineTitle": "Anfrage ablehnen?",
+    "declineDesc": "Sind Sie sicher, dass Sie diese Bearbeitungsanfrage ablehnen möchten? Die Änderungen des Mitglieds werden nicht auf Ihre Reise angewendet.",
+    "declineBtnSubmit": "Anfrage ablehnen",
+    "approveAllConfirmTitle": "Alle genehmigen?",
+    "approveAllConfirmDesc": "Sind Sie sicher, dass Sie alle {{count}} Bearbeitungsanfragen für Ihre Reise genehmigen und anwenden möchten?",
+    "declineAllTitle": "Alle ablehnen?",
+    "declineAllDesc": "Sind Sie sicher, dass Sie alle {{count}} Bearbeitungsanfragen ablehnen möchten? Es werden keine Änderungen an Ihrer Reise vorgenommen.",
+    "sectionLabelRole": "Bereich: {{sectionName}} • Rolle ändern",
+    "sectionLabelAction": "Bereich: {{sectionName}} • {{actionName}}",
+    "statusCompleted": "Erledigt",
+    "statusPending": "Nicht erledigt"
   },
   "weather": {
     "packingRain": "Es regnet an Ihrem Ziel, vergessen Sie den Regenschirm nicht!",
@@ -1410,7 +1430,12 @@
     "deleteModalTitle": "Dokument löschen?",
     "deleteModalDesc": "Dieses Dokument wird aus der Reise entfernt.",
     "deleteModalConfirm": "Löschen",
-    "toastDeleted": "Erfolgreich gelöscht"
+    "toastDeleted": "Erfolgreich gelöscht",
+    "emptyPrivate": "Noch keine persönlichen Dokumente",
+    "addPrivate": "Persönliches Dokument hinzufügen",
+    "editPrivate": "Persönliches Dokument bearbeiten",
+    "suggestDeleteTitle": "Löschen des Dokuments vorschlagen?",
+    "suggestDeleteDesc": "Sie schlagen vor, dieses Dokument zu löschen. Der Reiseveranstalter wird Ihren Vorschlag prüfen."
   },
   "roles": {
     "roleLeader": "Leiter",

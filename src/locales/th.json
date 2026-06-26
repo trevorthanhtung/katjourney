@@ -770,7 +770,27 @@
     "suggestDeleteExpenseTitle": "เสนอให้ลบค่าใช้จ่าย?",
     "suggestDeleteExpenseDesc": "คุณกำลังเสนอให้ลบค่าใช้จ่ายนี้ เจ้าของการเดินทางจะตรวจสอบข้อเสนอของคุณ",
     "suggestLabel": "เสนอ",
-    "suggestSent": "ส่งข้อเสนอแล้ว เจ้าของการเดินทางจะตรวจสอบ"
+    "suggestSent": "ส่งข้อเสนอแล้ว เจ้าของการเดินทางจะตรวจสอบ",
+    "requestsTitle": "คำขอแก้ไข",
+    "pendingRequests": "{{count}} คำขอที่รอดำเนินการ",
+    "noRequests": "ยังไม่มีคำขอ",
+    "declineAll": "ปฏิเสธทั้งหมด",
+    "approveAll": "อนุมัติทั้งหมด",
+    "processing": "กำลังประมวลผล...",
+    "noRequestsDetailed": "ยังไม่มีคำขอแก้ไข",
+    "declineBtn": "ปฏิเสธ",
+    "approveBtn": "อนุมัติและนำไปใช้",
+    "declineTitle": "ปฏิเสธคำขอ?",
+    "declineDesc": "คุณแน่ใจหรือไม่ว่าต้องการปฏิเสธคำขอแก้ไขนี้ การเปลี่ยนแปลงของสมาชิกจะไม่ถูกนำไปใช้กับการเดินทางของคุณ",
+    "declineBtnSubmit": "ปฏิเสธคำขอ",
+    "approveAllConfirmTitle": "อนุมัติทั้งหมด?",
+    "approveAllConfirmDesc": "คุณแน่ใจหรือไม่ว่าต้องการอนุมัติและนำคำขอแก้ไขทั้ง {{count}} รายการไปใช้กับการเดินทางของคุณ?",
+    "declineAllTitle": "ปฏิเสธทั้งหมด?",
+    "declineAllDesc": "คุณแน่ใจหรือไม่ว่าต้องการปฏิเสธคำขอแก้ไขทั้ง {{count}} รายการ จะไม่มีการเปลี่ยนแปลงใดๆ นำไปใช้กับการเดินทางของคุณ",
+    "sectionLabelRole": "ส่วน: {{sectionName}} • เปลี่ยนบทบาท",
+    "sectionLabelAction": "ส่วน: {{sectionName}} • {{actionName}}",
+    "statusCompleted": "เสร็จสิ้น",
+    "statusPending": "ยังไม่เสร็จ"
   },
   "weather": {
     "packingRain": "จุดหมายกำลังมีฝนตก อย่าลืมร่ม！",
@@ -1410,7 +1430,12 @@
     "deleteModalTitle": "ลบเอกสารนี้หรือไม่?",
     "deleteModalDesc": "การกระทำนี้ไม่สามารถยกเลิกได้",
     "deleteModalConfirm": "ลบเอกสาร",
-    "toastDeleted": "ลบสำเร็จแล้ว"
+    "toastDeleted": "ลบสำเร็จแล้ว",
+    "emptyPrivate": "ยังไม่มีเอกสารส่วนตัว",
+    "addPrivate": "เพิ่มเอกสารส่วนตัว",
+    "editPrivate": "แก้ไขเอกสารส่วนตัว",
+    "suggestDeleteTitle": "เสนอให้ลบเอกสาร?",
+    "suggestDeleteDesc": "คุณกำลังเสนอให้ลบเอกสารนี้ เจ้าของการเดินทางจะตรวจสอบข้อเสนอของคุณ"
   },
   "roles": {
     "roleLeader": "หัวหน้า",

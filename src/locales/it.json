@@ -752,7 +752,27 @@
     "suggestDeleteExpenseTitle": "Suggerire eliminazione spesa?",
     "suggestDeleteExpenseDesc": "Stai proponendo di eliminare questa spesa. L'organizzatore esaminerà la tua proposta.",
     "suggestLabel": "Suggerisci",
-    "suggestSent": "Suggerimento inviato. L'organizzatore lo esaminerà."
+    "suggestSent": "Suggerimento inviato. L'organizzatore lo esaminerà.",
+    "requestsTitle": "Richieste di modifica",
+    "pendingRequests": "{{count}} richieste in sospeso.",
+    "noRequests": "Nessuna richiesta per ora.",
+    "declineAll": "Rifiuta tutto",
+    "approveAll": "Approva tutto",
+    "processing": "Elaborazione...",
+    "noRequestsDetailed": "Nessuna richiesta di modifica per ora.",
+    "declineBtn": "Rifiuta",
+    "approveBtn": "Approva e applica",
+    "declineTitle": "Rifiutare la richiesta?",
+    "declineDesc": "Sei sicuro di voler rifiutare questa richiesta di modifica? Le modifiche del membro non verranno applicate al tuo viaggio.",
+    "declineBtnSubmit": "Rifiuta richiesta",
+    "approveAllConfirmTitle": "Approvare tutto?",
+    "approveAllConfirmDesc": "Sei sicuro di voler approvare e applicare tutte le {{count}} richieste di modifica al tuo viaggio?",
+    "declineAllTitle": "Rifiutare tutto?",
+    "declineAllDesc": "Sei sicuro di voler rifiutare tutte le {{count}} richieste di modifica? Nessuna modifica verrà applicata al tuo viaggio.",
+    "sectionLabelRole": "Sezione: {{sectionName}} • Cambia ruolo",
+    "sectionLabelAction": "Sezione: {{sectionName}} • {{actionName}}",
+    "statusCompleted": "Completato",
+    "statusPending": "Non completato"
   },
   "weather": {
     "packingRain": "Piove alla tua destinazione, non dimenticare l'ombrello!",
@@ -1392,7 +1412,12 @@
     "deleteModalTitle": "Eliminare questo documento?",
     "deleteModalDesc": "Questo documento verrà rimosso dal viaggio.",
     "deleteModalConfirm": "Elimina",
-    "toastDeleted": "Eliminato con successo"
+    "toastDeleted": "Eliminato con successo",
+    "emptyPrivate": "Nessun documento personale ancora",
+    "addPrivate": "Aggiungi documento personale",
+    "editPrivate": "Modifica documento personale",
+    "suggestDeleteTitle": "Suggerire l'eliminazione del documento?",
+    "suggestDeleteDesc": "Stai proponendo di eliminare questo documento. L'organizzatore esaminerà la tua proposta."
   },
   "roles": {
     "roleLeader": "Leader",

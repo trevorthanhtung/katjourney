@@ -615,7 +615,27 @@
     "suggestDeleteExpenseTitle": "Đề xuất xóa khoản chi?",
     "suggestDeleteExpenseDesc": "Bạn đang gửi đề xuất xóa khoản chi này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn.",
     "suggestLabel": "Đề xuất",
-    "suggestSent": "Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi."
+    "suggestSent": "Đã gửi đề xuất. Chủ chuyến đi sẽ xem và phản hồi.",
+    "requestsTitle": "Yêu cầu chỉnh sửa",
+    "pendingRequests": "{{count}} yêu cầu đang chờ duyệt.",
+    "noRequests": "Chưa có yêu cầu nào.",
+    "declineAll": "Từ chối tất cả",
+    "approveAll": "Đồng ý tất cả",
+    "processing": "Đang xử lý...",
+    "noRequestsDetailed": "Chưa có yêu cầu chỉnh sửa nào.",
+    "declineBtn": "Từ chối",
+    "approveBtn": "Đồng ý áp dụng",
+    "declineTitle": "Từ chối đề xuất?",
+    "declineDesc": "Bạn có chắc chắn muốn từ chối đề xuất chỉnh sửa này? Thao tác này sẽ không áp dụng các chỉnh sửa của thành viên vào chuyến đi của bạn.",
+    "declineBtnSubmit": "Từ chối đề xuất",
+    "approveAllConfirmTitle": "Đồng ý tất cả?",
+    "approveAllConfirmDesc": "Bạn có chắc chắn muốn đồng ý áp dụng tất cả {{count}} yêu cầu chỉnh sửa này vào chuyến đi của bạn?",
+    "declineAllTitle": "Từ chối tất cả?",
+    "declineAllDesc": "Bạn có chắc chắn muốn từ chối tất cả {{count}} đề xuất chỉnh sửa này? Thao tác này sẽ không áp dụng bất kỳ thay đổi nào vào chuyến đi của bạn.",
+    "sectionLabelRole": "Mục: {{sectionName}} • Đổi vai trò",
+    "sectionLabelAction": "Mục: {{sectionName}} • {{actionName}}",
+    "statusCompleted": "Hoàn thành",
+    "statusPending": "Chưa hoàn thành"
   },
   "home": {
     "countdown": "Đếm ngược",
@@ -1393,7 +1413,12 @@
     "deleteModalTitle": "Xóa giấy tờ này?",
     "deleteModalDesc": "Mục giấy tờ hoặc đặt chỗ này sẽ bị xóa khỏi chuyến đi. Sau khi xóa, không thể hoàn tác.",
     "deleteModalConfirm": "Xóa giấy tờ",
-    "toastDeleted": "Đã xóa thành công"
+    "toastDeleted": "Đã xóa thành công",
+    "emptyPrivate": "Chưa có giấy tờ cá nhân",
+    "addPrivate": "Thêm giấy tờ cá nhân",
+    "editPrivate": "Sửa giấy tờ cá nhân",
+    "suggestDeleteTitle": "Đề xuất xóa tài liệu?",
+    "suggestDeleteDesc": "Bạn đang gửi đề xuất xóa tài liệu này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
   },
   "roles": {
     "roleLeader": "Trưởng nhóm",

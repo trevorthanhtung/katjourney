@@ -770,7 +770,27 @@
     "suggestDeleteExpenseTitle": "Sugerir exclusão de despesa?",
     "suggestDeleteExpenseDesc": "Você está propondo excluir esta despesa. O organizador da viagem analisará sua proposta.",
     "suggestLabel": "Sugerir",
-    "suggestSent": "Sugestão enviada. O organizador irá analisá-la."
+    "suggestSent": "Sugestão enviada. O organizador irá analisá-la.",
+    "requestsTitle": "Solicitações de edição",
+    "pendingRequests": "{{count}} solicitações pendentes.",
+    "noRequests": "Ainda sem solicitações.",
+    "declineAll": "Recusar tudo",
+    "approveAll": "Aprovar tudo",
+    "processing": "Processando...",
+    "noRequestsDetailed": "Ainda sem solicitações de edição.",
+    "declineBtn": "Recusar",
+    "approveBtn": "Aprovar e aplicar",
+    "declineTitle": "Recusar solicitação?",
+    "declineDesc": "Tem certeza de que deseja recusar esta solicitação de edição? As alterações do membro não serão aplicadas à sua viagem.",
+    "declineBtnSubmit": "Recusar solicitação",
+    "approveAllConfirmTitle": "Aprovar tudo?",
+    "approveAllConfirmDesc": "Tem certeza de que deseja aprovar e aplicar todas as {{count}} solicitações de edição à sua viagem?",
+    "declineAllTitle": "Recusar tudo?",
+    "declineAllDesc": "Tem certeza de que deseja recusar todas as {{count}} solicitações de edição? Nenhuma alteração será aplicada à sua viagem.",
+    "sectionLabelRole": "Seção: {{sectionName}} • Alterar função",
+    "sectionLabelAction": "Seção: {{sectionName}} • {{actionName}}",
+    "statusCompleted": "Concluído",
+    "statusPending": "Não concluído"
   },
   "weather": {
     "packingRain": "Está chovendo no seu destino, não esqueça o guarda-chuva!",
@@ -1410,7 +1430,12 @@
     "deleteModalTitle": "Excluir este documento?",
     "deleteModalDesc": "Este documento será removido da viagem.",
     "deleteModalConfirm": "Excluir",
-    "toastDeleted": "Excluído com sucesso"
+    "toastDeleted": "Excluído com sucesso",
+    "emptyPrivate": "Ainda não há documentos pessoais",
+    "addPrivate": "Adicionar documento pessoal",
+    "editPrivate": "Editar documento pessoal",
+    "suggestDeleteTitle": "Sugerir exclusão do documento?",
+    "suggestDeleteDesc": "Você está propondo excluir este documento. O organizador da viagem analisará sua proposta."
   },
   "roles": {
     "roleLeader": "Líder",

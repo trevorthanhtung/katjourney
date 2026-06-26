@@ -617,7 +617,27 @@
     "suggestDeleteExpenseTitle": "비용 삭제를 제안하시겠습니까?",
     "suggestDeleteExpenseDesc": "이 비용을 삭제하도록 제안하고 있습니다. 여행 주최자가 제안을 검토합니다.",
     "suggestLabel": "제안",
-    "suggestSent": "제안이 전송되었습니다. 여행 주최자가 검토합니다."
+    "suggestSent": "제안이 전송되었습니다. 여행 주최자가 검토합니다.",
+    "requestsTitle": "편집 요청",
+    "pendingRequests": "{{count}}개의 대기 중인 요청",
+    "noRequests": "아직 요청이 없습니다",
+    "declineAll": "모두 거절",
+    "approveAll": "모두 승인",
+    "processing": "처리 중...",
+    "noRequestsDetailed": "아직 편집 요청이 없습니다",
+    "declineBtn": "거절",
+    "approveBtn": "승인 및 적용",
+    "declineTitle": "요청을 거절하시겠습니까?",
+    "declineDesc": "이 편집 요청을 거절하시겠습니까? 멤버의 변경 사항이 여행에 적용되지 않습니다.",
+    "declineBtnSubmit": "요청 거절",
+    "approveAllConfirmTitle": "모두 승인하시겠습니까?",
+    "approveAllConfirmDesc": "{{count}}개의 편집 요청을 모두 승인하고 여행에 적용하시겠습니까?",
+    "declineAllTitle": "모두 거절하시겠습니까?",
+    "declineAllDesc": "{{count}}개의 편집 요청을 모두 거절하시겠습니까? 여행에 변경 사항이 적용되지 않습니다.",
+    "sectionLabelRole": "섹션: {{sectionName}} • 역할 변경",
+    "sectionLabelAction": "섹션: {{sectionName}} • {{actionName}}",
+    "statusCompleted": "완료",
+    "statusPending": "미완료"
   },
   "home": {
     "countdown": "카운트다운",
@@ -1395,7 +1415,12 @@
     "deleteModalTitle": "이 문서를 삭제하시겠습니까?",
     "deleteModalDesc": "이 문서는 여행에서 삭제됩니다.",
     "deleteModalConfirm": "문서 삭제",
-    "toastDeleted": "성공적으로 삭제되었습니다"
+    "toastDeleted": "성공적으로 삭제되었습니다",
+    "emptyPrivate": "아직 개인 문서가 없습니다",
+    "addPrivate": "개인 문서 추가",
+    "editPrivate": "개인 문서 편집",
+    "suggestDeleteTitle": "문서 삭제를 제안하시겠습니까?",
+    "suggestDeleteDesc": "이 문서 삭제를 제안하고 있습니다. 여행 주최자가 제안을 검토합니다."
   },
   "roles": {
     "roleLeader": "리더",

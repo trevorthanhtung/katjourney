@@ -617,7 +617,27 @@
     "suggestDeleteExpenseTitle": "Suggest Deleting Expense?",
     "suggestDeleteExpenseDesc": "You are proposing to delete this expense. The trip owner will review your proposal.",
     "suggestLabel": "Suggest",
-    "suggestSent": "Suggestion sent. The trip owner will review it."
+    "suggestSent": "Suggestion sent. The trip owner will review it.",
+    "requestsTitle": "Edit requests",
+    "pendingRequests": "{{count}} pending requests.",
+    "noRequests": "No requests yet.",
+    "declineAll": "Decline all",
+    "approveAll": "Approve all",
+    "processing": "Processing...",
+    "noRequestsDetailed": "No edit requests yet.",
+    "declineBtn": "Decline",
+    "approveBtn": "Approve & apply",
+    "declineTitle": "Decline request?",
+    "declineDesc": "Are you sure you want to decline this edit request? This will not apply member's changes to your trip.",
+    "declineBtnSubmit": "Decline request",
+    "approveAllConfirmTitle": "Approve all?",
+    "approveAllConfirmDesc": "Are you sure you want to approve and apply all {{count}} edit requests to your trip?",
+    "declineAllTitle": "Decline all?",
+    "declineAllDesc": "Are you sure you want to decline all {{count}} edit requests? This will not apply any changes to your trip.",
+    "sectionLabelRole": "Section: {{sectionName}} • Change role",
+    "sectionLabelAction": "Section: {{sectionName}} • {{actionName}}",
+    "statusCompleted": "Done",
+    "statusPending": "Not done"
   },
   "home": {
     "countdown": "Countdown",
@@ -1395,7 +1415,12 @@
     "deleteModalTitle": "Delete this document?",
     "deleteModalDesc": "This document will be removed from the trip.",
     "deleteModalConfirm": "Delete document",
-    "toastDeleted": "Deleted successfully"
+    "toastDeleted": "Deleted successfully",
+    "emptyPrivate": "No personal documents yet",
+    "addPrivate": "Add personal document",
+    "editPrivate": "Edit personal document",
+    "suggestDeleteTitle": "Suggest deleting document?",
+    "suggestDeleteDesc": "You are proposing to delete this document. The trip owner will review your proposal."
   },
   "roles": {
     "roleLeader": "Leader",

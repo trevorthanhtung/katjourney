@@ -770,7 +770,27 @@
     "suggestDeleteExpenseTitle": "建议删除费用？",
     "suggestDeleteExpenseDesc": "您正在建议删除此费用。行程创建者将审核您的建议。",
     "suggestLabel": "建议",
-    "suggestSent": "建议已发送。行程创建者将进行审核。"
+    "suggestSent": "建议已发送。行程创建者将进行审核。",
+    "requestsTitle": "编辑请求",
+    "pendingRequests": "{{count}} 个待处理请求",
+    "noRequests": "暂无请求",
+    "declineAll": "全部拒绝",
+    "approveAll": "全部批准",
+    "processing": "处理中...",
+    "noRequestsDetailed": "暂无编辑请求",
+    "declineBtn": "拒绝",
+    "approveBtn": "批准并应用",
+    "declineTitle": "拒绝请求？",
+    "declineDesc": "您确定要拒绝此编辑请求吗？成员的更改将不会应用到您的行程中。",
+    "declineBtnSubmit": "拒绝请求",
+    "approveAllConfirmTitle": "全部批准？",
+    "approveAllConfirmDesc": "您确定要批准并将所有 {{count}} 个编辑请求应用到您的行程中吗？",
+    "declineAllTitle": "全部拒绝？",
+    "declineAllDesc": "您确定要拒绝所有 {{count}} 个编辑请求吗？这不会对您的行程应用任何更改。",
+    "sectionLabelRole": "部分：{{sectionName}} • 更改角色",
+    "sectionLabelAction": "部分：{{sectionName}} • {{actionName}}",
+    "statusCompleted": "已完成",
+    "statusPending": "未完成"
   },
   "weather": {
     "packingRain": "目的地正在下雨，别忘了带伞！",
@@ -1410,7 +1430,12 @@
     "deleteModalTitle": "确定删除此文件吗？",
     "deleteModalDesc": "此文件将从旅行中删除。",
     "deleteModalConfirm": "删除文件",
-    "toastDeleted": "已成功删除"
+    "toastDeleted": "已成功删除",
+    "emptyPrivate": "还没有个人文档",
+    "addPrivate": "添加个人文档",
+    "editPrivate": "编辑个人文档",
+    "suggestDeleteTitle": "建议删除文档？",
+    "suggestDeleteDesc": "您正在建议删除此文档。行程创建者将审核您的建议。"
   },
   "roles": {
     "roleLeader": "领队",

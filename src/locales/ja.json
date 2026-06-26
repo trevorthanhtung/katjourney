@@ -770,7 +770,27 @@
     "suggestDeleteExpenseTitle": "費用の削除を提案しますか？",
     "suggestDeleteExpenseDesc": "この費用の削除を提案しています。旅行のオーナーがあなたの提案を確認します。",
     "suggestLabel": "提案",
-    "suggestSent": "提案を送信しました。旅行のオーナーが確認します。"
+    "suggestSent": "提案を送信しました。旅行のオーナーが確認します。",
+    "requestsTitle": "編集リクエスト",
+    "pendingRequests": "{{count}}件の保留中のリクエスト",
+    "noRequests": "まだリクエストはありません",
+    "declineAll": "すべて拒否",
+    "approveAll": "すべて承認",
+    "processing": "処理中...",
+    "noRequestsDetailed": "まだ編集リクエストはありません",
+    "declineBtn": "拒否",
+    "approveBtn": "承認して適用",
+    "declineTitle": "リクエストを拒否しますか？",
+    "declineDesc": "この編集リクエストを拒否してもよろしいですか？メンバーの変更は旅行に適用されません。",
+    "declineBtnSubmit": "リクエストを拒否",
+    "approveAllConfirmTitle": "すべて承認しますか？",
+    "approveAllConfirmDesc": "{{count}}件の編集リクエストをすべて承認して旅行に適用してもよろしいですか？",
+    "declineAllTitle": "すべて拒否しますか？",
+    "declineAllDesc": "{{count}}件の編集リクエストをすべて拒否してもよろしいですか？変更は旅行に適用されません。",
+    "sectionLabelRole": "セクション: {{sectionName}} • 役割の変更",
+    "sectionLabelAction": "セクション: {{sectionName}} • {{actionName}}",
+    "statusCompleted": "完了",
+    "statusPending": "未完了"
   },
   "weather": {
     "packingRain": "目的地で雨が降っています。傘を忘れずに！",
@@ -1410,7 +1430,12 @@
     "deleteModalTitle": "削除しますか？",
     "deleteModalDesc": "このドキュメントは削除されます。",
     "deleteModalConfirm": "削除",
-    "toastDeleted": "削除されました"
+    "toastDeleted": "削除されました",
+    "emptyPrivate": "個人のドキュメントはまだありません",
+    "addPrivate": "個人のドキュメントを追加",
+    "editPrivate": "個人のドキュメントを編集",
+    "suggestDeleteTitle": "ドキュメントの削除を提案しますか？",
+    "suggestDeleteDesc": "このドキュメントの削除を提案しています。旅行のオーナーがあなたの提案を確認します。"
   },
   "roles": {
     "roleLeader": "リーダー",

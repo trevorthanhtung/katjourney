@@ -752,7 +752,27 @@
     "suggestDeleteExpenseTitle": "Sarankan Hapus Pengeluaran?",
     "suggestDeleteExpenseDesc": "Anda mengusulkan untuk menghapus pengeluaran ini. Pemilik perjalanan akan meninjau usulan Anda.",
     "suggestLabel": "Sarankan",
-    "suggestSent": "Saran dikirim. Pemilik perjalanan akan meninjaunya."
+    "suggestSent": "Saran dikirim. Pemilik perjalanan akan meninjaunya.",
+    "requestsTitle": "Permintaan edit",
+    "pendingRequests": "{{count}} permintaan tertunda.",
+    "noRequests": "Belum ada permintaan.",
+    "declineAll": "Tolak semua",
+    "approveAll": "Setujui semua",
+    "processing": "Memproses...",
+    "noRequestsDetailed": "Belum ada permintaan edit.",
+    "declineBtn": "Tolak",
+    "approveBtn": "Setujui & terapkan",
+    "declineTitle": "Tolak permintaan?",
+    "declineDesc": "Yakin ingin menolak permintaan edit ini? Perubahan anggota tidak akan diterapkan ke perjalanan Anda.",
+    "declineBtnSubmit": "Tolak permintaan",
+    "approveAllConfirmTitle": "Setujui semua?",
+    "approveAllConfirmDesc": "Yakin ingin menyetujui dan menerapkan semua {{count}} permintaan edit ke perjalanan Anda?",
+    "declineAllTitle": "Tolak semua?",
+    "declineAllDesc": "Yakin ingin menolak semua {{count}} permintaan edit? Tidak ada perubahan yang akan diterapkan ke perjalanan Anda.",
+    "sectionLabelRole": "Bagian: {{sectionName}} • Ubah peran",
+    "sectionLabelAction": "Bagian: {{sectionName}} • {{actionName}}",
+    "statusCompleted": "Selesai",
+    "statusPending": "Belum selesai"
   },
   "weather": {
     "packingRain": "Hujan di tujuan Anda, jangan lupa payung!",
@@ -1392,7 +1412,12 @@
     "deleteModalTitle": "Hapus dokumen ini?",
     "deleteModalDesc": "Dokumen ini akan dihapus dari perjalanan.",
     "deleteModalConfirm": "Hapus",
-    "toastDeleted": "Berhasil dihapus"
+    "toastDeleted": "Berhasil dihapus",
+    "emptyPrivate": "Belum ada dokumen pribadi",
+    "addPrivate": "Tambah dokumen pribadi",
+    "editPrivate": "Edit dokumen pribadi",
+    "suggestDeleteTitle": "Sarankan penghapusan dokumen?",
+    "suggestDeleteDesc": "Anda mengusulkan untuk menghapus dokumen ini. Pemilik perjalanan akan meninjau usulan Anda."
   },
   "roles": {
     "roleLeader": "Pemimpin",

@@ -157,7 +157,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
       if (o.description) return o.description;
       // Xử lý field "completed" đơn lẻ (checklist)
       if ('completed' in o && Object.keys(o).length === 1) {
-        return o.completed ? 'Hoàn thành' : 'Chưa hoàn thành';
+        return o.completed ? t("share.statusCompleted") : t("share.statusPending");
       }
       // Fallback: lọc bỏ các giá trị null/undefined, hiển thị gọn
       const entries = Object.entries(o).filter(([, v]) => v !== null && v !== undefined && v !== '');
@@ -176,7 +176,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
       const newRole = (after as any)?.role || 'Người đồng hành';
       return (
         <div className="mt-2 space-y-1">
-          <p className="text-[13px] font-bold text-slate-700 dark:text-slate-400">Mục: {sectionName} • Đổi vai trò</p>
+          <p className="text-[13px] font-bold text-slate-700 dark:text-slate-400">{t("share.sectionLabelRole", { sectionName })}</p>
           <div className="text-[13px] mt-1 font-medium text-slate-800 dark:text-slate-200">
             Xin đổi vai trò cho <span className="font-bold">{memberName}</span>:
             <div className="flex items-center gap-2 mt-1 pl-2 border-l-2 border-slate-200 dark:border-slate-800">
@@ -200,7 +200,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
 
     return (
       <div className="mt-2 space-y-1">
-        <p className="text-[13px] font-bold text-slate-700 dark:text-slate-400">Mục: {sectionName} • {actionName}</p>
+        <p className="text-[13px] font-bold text-slate-700 dark:text-slate-400">{t("share.sectionLabelAction", { sectionName, actionName })}</p>
         {action === 'update' && (
           <div className="flex items-center gap-2 text-[13px] mt-1">
             <span className="text-slate-400 dark:text-slate-500 line-through">{beforeText}</span>
@@ -223,8 +223,8 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
       <BottomSheet
         isOpen={isOpen}
         onClose={onClose}
-        title="Yêu cầu chỉnh sửa"
-        subtitle={requests.length > 0 ? `${requests.length} yêu cầu đang chờ duyệt.` : "Chưa có yêu cầu nào."}
+        title={t("share.requestsTitle")}
+        subtitle={requests.length > 0 ? t("share.pendingRequests", { count: requests.length }) : t("share.noRequests")}
         footer={
           requests.length > 1 ? (
             <div className="flex gap-3">
@@ -233,14 +233,14 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
                 disabled={isApproving !== null}
                 className="flex-1 rounded-[16px] bg-slate-100 dark:bg-slate-800 py-3.5 text-[13.5px] font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700/80 transition-all active:scale-[0.98] disabled:opacity-50 border-transparent"
               >
-                {isApproving === 'all' ? 'Đang xử lý...' : 'Từ chối tất cả'}
+                {isApproving === 'all' ? t("share.processing") : t("share.declineAll")}
               </button>
               <button
                 onClick={() => setIsConfirmApproveAllOpen(true)}
                 disabled={isApproving !== null}
                 className="flex-1 rounded-[16px] bg-kat-primary py-3.5 text-[13.5px] font-bold text-white dark:text-slate-950 hover:brightness-105 transition-all active:scale-[0.98] disabled:opacity-50 shadow-[0_4px_16px_rgba(0,191,183,0.25)] border-transparent"
               >
-                {isApproving === 'all' ? 'Đang xử lý...' : 'Đồng ý tất cả'}
+                {isApproving === 'all' ? t("share.processing") : t("share.approveAll")}
               </button>
             </div>
           ) : undefined
@@ -251,7 +251,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
           {requests.length === 0 ? (
             <div className="text-center py-8">
               <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-12 h-12 text-slate-200 mx-auto mb-3" />
-              <p className="text-[14px] font-bold text-slate-500">Chưa có yêu cầu chỉnh sửa nào.</p>
+              <p className="text-[14px] font-bold text-slate-500">{t("share.noRequestsDetailed")}</p>
             </div>
           ) : (
             requests.map(req => {
@@ -310,14 +310,14 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
                       disabled={isApproving !== null}
                       className="flex-1 rounded-xl bg-slate-100 dark:bg-slate-800 py-2 text-[13px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 border-transparent"
                     >
-                      {isApproving === req.id ? 'Đang xử lý...' : 'Từ chối'}
+                      {isApproving === req.id ? t("share.processing") : t("share.declineBtn")}
                     </button>
                     <button
                       onClick={() => handleApprove(req.id)}
                       disabled={isApproving !== null}
                       className="flex-1 rounded-xl bg-kat-primary py-2 text-[13px] font-bold text-white dark:text-slate-950 hover:brightness-105 transition-colors disabled:opacity-50 border-transparent"
                     >
-                      {isApproving === req.id ? 'Đang xử lý...' : 'Đồng ý áp dụng'}
+                      {isApproving === req.id ? t("share.processing") : t("share.approveBtn")}
                     </button>
                   </div>
                 </div>
@@ -330,7 +330,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
       <BottomSheet
         isOpen={rejectId !== null}
         onClose={() => setRejectId(null)}
-        title="Từ chối đề xuất?"
+        title={t("share.declineTitle")}
       >
         <div className="space-y-5">
           <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed">
@@ -354,7 +354,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
               }}
               className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 transition-all active:scale-[0.98] motion-press"
             >
-              Từ chối đề xuất
+              {t("share.declineBtnSubmit")}
             </button>
           </div>
         </div>
@@ -363,11 +363,11 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
       <BottomSheet
         isOpen={isConfirmApproveAllOpen}
         onClose={() => setIsConfirmApproveAllOpen(false)}
-        title="Đồng ý tất cả?"
+        title={t("share.approveAllConfirmTitle")}
       >
         <div className="space-y-5">
           <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 text-[13.5px] text-emerald-800 font-semibold leading-relaxed">
-            Bạn có chắc chắn muốn đồng ý áp dụng tất cả {requests.length} yêu cầu chỉnh sửa này vào chuyến đi của bạn?
+            {t("share.approveAllConfirmDesc", { count: requests.length })}
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
@@ -383,7 +383,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
               onClick={confirmApproveAll}
               className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-kat-primary border border-transparent px-6 font-bold text-white hover:brightness-105 transition-all active:scale-[0.98] motion-press"
             >
-              Đồng ý tất cả
+              {t("share.approveAll")}
             </button>
           </div>
         </div>
@@ -392,11 +392,11 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
       <BottomSheet
         isOpen={isConfirmRejectAllOpen}
         onClose={() => setIsConfirmRejectAllOpen(false)}
-        title="Từ chối tất cả?"
+        title={t("share.declineAllTitle")}
       >
         <div className="space-y-5">
           <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed">
-            Bạn có chắc chắn muốn từ chối tất cả {requests.length} đề xuất chỉnh sửa này? Thao tác này sẽ không áp dụng bất kỳ thay đổi nào vào chuyến đi của bạn.
+            {t("share.declineAllDesc", { count: requests.length })}
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
@@ -412,7 +412,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
               onClick={confirmRejectAll}
               className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 transition-all active:scale-[0.98] motion-press"
             >
-              Từ chối tất cả
+              {t("share.declineAll")}
             </button>
           </div>
         </div>
