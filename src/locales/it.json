@@ -735,7 +735,10 @@
     "suggestEdit": "Suggerisci modifica",
     "sendSuggestion": "Invia suggerimento",
     "suggestAddActivity": "Suggerisci aggiunta attività",
-    "suggestEditActivity": "Suggerisci modifica attività"
+    "suggestEditActivity": "Suggerisci modifica attività",
+    "suggestAddBackupPlan": "Suggerisci aggiunta piano di riserva",
+    "openGoogleMaps": "Apri con l'app Google Maps",
+    "viewCalendar": "Visualizza come calendario"
   },
   "weather": {
     "packingRain": "Piove alla tua destinazione, non dimenticare l'ombrello!",

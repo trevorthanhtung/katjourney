@@ -753,7 +753,10 @@
     "suggestEdit": "建议编辑",
     "sendSuggestion": "发送建议",
     "suggestAddActivity": "建议添加活动",
-    "suggestEditActivity": "建议编辑活动"
+    "suggestEditActivity": "建议编辑活动",
+    "suggestAddBackupPlan": "建议添加备用计划",
+    "openGoogleMaps": "使用 Google 地图应用打开",
+    "viewCalendar": "以日历查看"
   },
   "weather": {
     "packingRain": "目的地正在下雨，别忘了带伞！",

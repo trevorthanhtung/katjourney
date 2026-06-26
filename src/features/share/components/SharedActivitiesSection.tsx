@@ -414,7 +414,7 @@ export function SharedActivitiesSection({
             <span className={classNames("bg-slate-50 dark:bg-slate-800/40 px-2 py-0.5 rounded-lg border border-slate-100/60 dark:border-slate-700/40 dark:text-slate-400", item.isPendingDelete ? "line-through" : "")}>{formatDate(item.date)}</span>
             
             <span className={classNames("text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-slate-100", category.bgColor)}>
-              {category.label}
+              {t(`timeline.cat${category.id.charAt(0).toUpperCase() + category.id.slice(1)}`)}
             </span>
 
             {item.assignee && (
@@ -480,7 +480,7 @@ export function SharedActivitiesSection({
                     rel="noreferrer"
                   >
                     {isRoute ? <HugeiconsIcon icon={Route01Icon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />}
-                    {isRoute ? "Xem lộ trình di chuyển " : "Mở bằng ứng dụng Google Maps "}
+                    {isRoute ? t("timeline.viewRoute") + " " : t("share.openGoogleMaps") + " "}
                     &rarr;
                   </a>
                 );
@@ -521,7 +521,7 @@ export function SharedActivitiesSection({
                       )}
                     >
                       <HugeiconsIcon icon={GitBranchIcon} className="w-3.5 h-3.5" />
-                      <span>{backupCount > 0 ? `${backupCount} phương án dự phòng` : (isBackupPlansDirectEdit ? `${t("timeline.addBtn")} phương án dự phòng` : "Đề xuất phương án dự phòng")}</span>
+                      <span>{backupCount > 0 ? t("timeline.backupPlansCount", { count: backupCount }) : (isBackupPlansDirectEdit ? t("timeline.addBackupPlan") : t("share.suggestAddBackupPlan"))}</span>
                     </button>
                   </div>
                 )}
@@ -564,7 +564,7 @@ export function SharedActivitiesSection({
                   ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-slate-200 shadow-sm animate-scaleIn" 
                   : "text-slate-500 hover:text-kat-dark dark:text-slate-400 dark:hover:text-slate-200"
               )}
-              aria-label="Xem dạng lịch"
+              aria-label={t("share.viewCalendar")}
             >
               <HugeiconsIcon icon={Calendar01Icon} className="h-4.5 w-4.5" />
             </button>
@@ -834,7 +834,7 @@ export function SharedActivitiesSection({
                     )}
                   >
                     <HugeiconsIcon icon={Icon} className="h-5 w-5" />
-                    <span className="text-[10px] font-bold leading-none">{cat.label}</span>
+                    <span className="text-[10px] font-bold leading-none">{t(`timeline.cat${cat.id.charAt(0).toUpperCase() + cat.id.slice(1)}`)}</span>
                   </button>
                 );
               })}

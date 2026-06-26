@@ -753,7 +753,10 @@
     "suggestEdit": "Bearbeiten vorschlagen",
     "sendSuggestion": "Vorschlag senden",
     "suggestAddActivity": "Aktivität hinzufügen vorschlagen",
-    "suggestEditActivity": "Aktivität bearbeiten vorschlagen"
+    "suggestEditActivity": "Aktivität bearbeiten vorschlagen",
+    "suggestAddBackupPlan": "Notfallplan hinzufügen vorschlagen",
+    "openGoogleMaps": "Mit Google Maps-App öffnen",
+    "viewCalendar": "Als Kalender anzeigen"
   },
   "weather": {
     "packingRain": "Es regnet an Ihrem Ziel, vergessen Sie den Regenschirm nicht!",

@@ -753,7 +753,10 @@
     "suggestEdit": "Sugerir edición",
     "sendSuggestion": "Enviar sugerencia",
     "suggestAddActivity": "Sugerir añadir actividad",
-    "suggestEditActivity": "Sugerir editar actividad"
+    "suggestEditActivity": "Sugerir editar actividad",
+    "suggestAddBackupPlan": "Sugerir añadir plan de respaldo",
+    "openGoogleMaps": "Abrir con la aplicación Google Maps",
+    "viewCalendar": "Ver como calendario"
   },
   "weather": {
     "packingRain": "Está lloviendo en tu destino, ¡no olvides el paraguas!",

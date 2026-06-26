@@ -753,7 +753,10 @@
     "suggestEdit": "เสนอแก้ไข",
     "sendSuggestion": "ส่งข้อเสนอ",
     "suggestAddActivity": "เสนอเพิ่มกิจกรรม",
-    "suggestEditActivity": "เสนอแก้ไขกิจกรรม"
+    "suggestEditActivity": "เสนอแก้ไขกิจกรรม",
+    "suggestAddBackupPlan": "เสนอเพิ่มแผนสำรอง",
+    "openGoogleMaps": "เปิดด้วยแอป Google Maps",
+    "viewCalendar": "ดูเป็นปฏิทิน"
   },
   "weather": {
     "packingRain": "จุดหมายกำลังมีฝนตก อย่าลืมร่ม！",

@@ -598,7 +598,10 @@
     "suggestEdit": "Đề xuất sửa",
     "sendSuggestion": "Gửi đề xuất",
     "suggestAddActivity": "Đề xuất thêm hoạt động",
-    "suggestEditActivity": "Đề xuất sửa hoạt động"
+    "suggestEditActivity": "Đề xuất sửa hoạt động",
+    "suggestAddBackupPlan": "Đề xuất phương án dự phòng",
+    "openGoogleMaps": "Mở bằng ứng dụng Google Maps",
+    "viewCalendar": "Xem dạng lịch"
   },
   "home": {
     "countdown": "Đếm ngược",

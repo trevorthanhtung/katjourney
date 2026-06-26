@@ -600,7 +600,10 @@
     "suggestEdit": "편집 제안",
     "sendSuggestion": "제안 보내기",
     "suggestAddActivity": "활동 추가 제안",
-    "suggestEditActivity": "활동 편집 제안"
+    "suggestEditActivity": "활동 편집 제안",
+    "suggestAddBackupPlan": "백업 계획 추가 제안",
+    "openGoogleMaps": "Google 지도 앱으로 열기",
+    "viewCalendar": "달력으로 보기"
   },
   "home": {
     "countdown": "카운트다운",
