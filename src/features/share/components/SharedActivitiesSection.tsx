@@ -521,7 +521,7 @@ export function SharedActivitiesSection({
                       )}
                     >
                       <HugeiconsIcon icon={GitBranchIcon} className="w-3.5 h-3.5" />
-                      <span>{backupCount > 0 ? `${backupCount} phương án dự phòng` : (isBackupPlansDirectEdit ? `${t("share.addBtn")} phương án dự phòng` : "Đề xuất phương án dự phòng")}</span>
+                      <span>{backupCount > 0 ? `${backupCount} phương án dự phòng` : (isBackupPlansDirectEdit ? `${t("timeline.addBtn")} phương án dự phòng` : "Đề xuất phương án dự phòng")}</span>
                     </button>
                   </div>
                 )}
@@ -553,7 +553,7 @@ export function SharedActivitiesSection({
                   : "text-slate-500 hover:text-kat-dark dark:text-slate-400 dark:hover:text-slate-200"
               )}
             >
-              {t("share.listView")}
+              {t("timeline.listView")}
             </button>
             <button 
               type="button"
@@ -575,10 +575,10 @@ export function SharedActivitiesSection({
               type="button"
               onClick={startAdd} 
               className="hidden lg:flex items-center justify-center gap-1.5 rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-3.5 py-2 text-[12.5px] font-extrabold shadow-sm hover:bg-kat-dark dark:hover:bg-kat-primary-light bg-opacity-90 active:scale-95 transition-all h-9 motion-press cursor-pointer border-transparent"
-              title={isDirectEdit ? t("share.addActivity") : t("share.suggestAdd")}
+              title={isDirectEdit ? t("timeline.addActivity") : t("share.suggestAdd")}
             >
               <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5" />
-              <span className="hidden min-[380px]:inline">{isDirectEdit ? t("share.addBtn") : "Đề xuất"}</span>
+              <span className="hidden min-[380px]:inline">{isDirectEdit ? t("timeline.addBtn") : "Đề xuất"}</span>
             </button>
           )}
         </div>
@@ -601,8 +601,8 @@ export function SharedActivitiesSection({
               groups.push({
                 id: "undated",
                 index: -1,
-                title: t("share.unscheduled"),
-                subtitle: t("share.unscheduledDesc"),
+                title: t("timeline.unscheduled"),
+                subtitle: t("timeline.unscheduledDesc"),
                 icon: "?",
                 activities: undated
               });
@@ -708,8 +708,8 @@ export function SharedActivitiesSection({
           onClick={startAdd}
           className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-800/40 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 dark:hover:bg-slate-800/60 duration-200 cursor-pointer"
           style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
-          aria-label={isDirectEdit ? t("share.addActivity") : t("share.suggestAdd")}
-          title={isDirectEdit ? t("share.addActivity") : t("share.suggestAdd")}
+          aria-label={isDirectEdit ? t("timeline.addActivity") : t("share.suggestAdd")}
+          title={isDirectEdit ? t("timeline.addActivity") : t("share.suggestAdd")}
         >
           <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
         </button>
@@ -760,7 +760,7 @@ export function SharedActivitiesSection({
           setIsFormOpen(false);
           setEditingId(null);
         }}
-        title={isDirectEdit ? (editingId ? t("share.editActivity") : t("share.addActivity")) : (editingId ? t("share.suggestEditActivity") : t("share.suggestAddActivity"))}
+        title={isDirectEdit ? (editingId ? t("timeline.editActivity") : t("timeline.addActivity")) : (editingId ? t("share.suggestEditActivity") : t("share.suggestAddActivity"))}
         footer={
           <div className="flex items-center gap-2.5 w-full">
             {editingId && (
@@ -785,7 +785,7 @@ export function SharedActivitiesSection({
               }}
               className="flex h-[52px] shrink-0 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.96] transition-all border border-transparent dark:border-slate-700 motion-press"
             >
-              {t("share.cancel")}
+              {t("timeline.cancel")}
             </button>
 
             <button
@@ -795,7 +795,7 @@ export function SharedActivitiesSection({
               className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
             >
               <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" />
-              {isDirectEdit ? (editingId ? t("share.saveChanges") : t("share.addActivity")) : t("share.sendSuggestion")}
+              {isDirectEdit ? (editingId ? t("timeline.saveChanges") : t("timeline.addActivity")) : t("share.sendSuggestion")}
             </button>
           </div>
         }
@@ -806,17 +806,17 @@ export function SharedActivitiesSection({
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-slate-500" />
-                {t("share.titleLabel")}
+                {t("timeline.titleLabel")}
               </span>
             }
             value={form.title}
             onChange={val => setForm({ ...form, title: val })}
-            placeholder={t("share.titlePlaceholder")}
+            placeholder={t("timeline.titlePlaceholder")}
           />
 
           {/* Category Selector Grid */}
           <div className="space-y-2">
-            <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t("share.activityType")}</span>
+            <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t("timeline.activityType")}</span>
             <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
               {ACTIVITY_CATEGORIES.map(cat => {
                 const Icon = cat.icon;
@@ -848,7 +848,7 @@ export function SharedActivitiesSection({
                   label={
                     <span className="flex items-center gap-1.5">
                       <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
-                      {t("share.selectDate")} *
+                      {t("timeline.selectDate")} *
                     </span>
                   }
                   value={form.date}
@@ -861,7 +861,7 @@ export function SharedActivitiesSection({
                   label={
                     <span className="flex items-center gap-1.5">
                       <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
-                      {t("share.selectDate")} *
+                      {t("timeline.selectDate")} *
                     </span>
                   }
                   value={form.date}
@@ -872,7 +872,7 @@ export function SharedActivitiesSection({
               label={
                 <span className="flex items-center gap-1.5">
                   <HugeiconsIcon icon={Clock01Icon} className="h-4 w-4 text-slate-500" />
-                  {t("share.timeLabel")}
+                  {t("timeline.timeLabel")}
                 </span>
               }
               value={form.time}
@@ -887,16 +887,16 @@ export function SharedActivitiesSection({
                 <span className="flex flex-col gap-1">
                   <span className="flex items-center gap-1.5">
                     <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-500" />
-                    {t("share.locationLabel")}
+                    {t("timeline.locationLabel")}
                   </span>
                   <span className="text-xs font-normal text-slate-400">
-                    {t("share.locationHelper")}
+                    {t("timeline.locationHelper")}
                   </span>
                 </span>
               }
               value={form.location}
               onChange={val => setForm({ ...form, location: val })}
-              placeholder={t("share.locationPlaceholder")}
+              placeholder={t("timeline.locationPlaceholder")}
             />
             <Input
               label={
@@ -934,12 +934,12 @@ export function SharedActivitiesSection({
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={StickyNoteIcon} className="h-4 w-4 text-slate-500" />
-                {t("share.notesLabel")}
+                {t("timeline.notesLabel")}
               </span>
             }
             value={form.notes}
             onChange={(notes) => setForm({ ...form, notes })}
-            placeholder={t("share.notesPlaceholder")}
+            placeholder={t("timeline.notesPlaceholder")}
           />
         </div>
       </BottomSheet>
