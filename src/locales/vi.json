@@ -1383,6 +1383,11 @@
     "switchUser": "Chọn lại người dùng",
     "exit": "Thoát",
     "secureData": "Dữ liệu được chia sẻ an toàn qua KAT Journey.",
-    "sharedUser": "Người được chia sẻ"
+    "sharedUser": "Người được chia sẻ",
+    "bannerDirectEdit": "Chỉnh sửa trực tiếp",
+    "bannerSuggestMode": "Chế độ Đề xuất",
+    "bannerDirectEditDesc": "Vai trò \"{{role}}\": Bạn có quyền chỉnh sửa trực tiếp phần được phân công.",
+    "bannerSuggestModeDesc": "Các thay đổi của bạn sẽ được gửi cho chủ chuyến đi xét duyệt.",
+    "closeBanner": "Đóng thông báo"
   }
 }

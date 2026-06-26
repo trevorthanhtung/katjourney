@@ -26,9 +26,11 @@ export function useTheme() {
       if (isDark) {
         root.setAttribute('data-theme', 'dark');
         root.classList.add('dark');
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#0A1124');
       } else {
         root.removeAttribute('data-theme');
         root.classList.remove('dark');
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#F8FAFC');
       }
     };
 
