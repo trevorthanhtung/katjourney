@@ -249,7 +249,7 @@ export function SharedMembersSection({
       <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-blue-500" />
-          <h3 className="text-[16px] font-black text-kat-dark dark:text-slate-200">Thành viên</h3>
+          <h3 className="text-[16px] font-black text-kat-dark dark:text-slate-200">{t("members.membersTitle")}</h3>
         </div>
       </div>
 
@@ -258,7 +258,7 @@ export function SharedMembersSection({
         <div className="relative">
           <input
             type="text"
-            placeholder="Tìm kiếm thành viên hoặc vai trò..."
+            placeholder={t("members.searchMember")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="block w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-950 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
@@ -331,41 +331,41 @@ export function SharedMembersSection({
                   const rLower = r.toLowerCase();
                   if (rLower.includes("trưởng nhóm") || rLower.includes("trưởng đoàn") || rLower.includes("leader")) {
                     return (
-                      <span key={idx} title={t("roles.leader")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title={t("roles.roleLeader")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={CrownIcon} className="w-4 h-4 text-amber-500 fill-amber-500/10" />
                       </span>
                     );
                   }
                   if (rLower.includes("quản lý chi phí")) {
                     return (
-                      <span key={idx} title={t("roles.costManager")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title={t("roles.roleCostManager")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={Wallet01Icon} className="w-4 h-4 text-emerald-500" />
                       </span>
                     );
                   }
                   if (rLower.includes("tài xế")) {
                     return (
-                      <span key={idx} title={t("roles.driver")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title={t("roles.roleDriver")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={Car01Icon} className="w-4 h-4 text-blue-500" />
                       </span>
                     );
                   }
                   if (rLower.includes("dẫn đường")) {
                     return (
-                      <span key={idx} title={t("roles.navigator")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-700 dark:text-sky-400 border border-sky-200/50 dark:border-sky-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title={t("roles.roleNavigator")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-700 dark:text-sky-400 border border-sky-200/50 dark:border-sky-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={CompassIcon} className="w-4 h-4 text-sky-500" />
                       </span>
                     );
                   }
                   if (rLower.includes("phụ trách hành lý") || rLower.includes("hành lý")) {
                     return (
-                      <span key={idx} title="Hành lý" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                      <span key={idx} title={t("roles.roleLuggage")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                         <HugeiconsIcon icon={Luggage01Icon} className="w-4 h-4 text-indigo-500" />
                       </span>
                     );
                   }
                   return (
-                    <span key={idx} title="Bạn đồng hành" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-350 border border-slate-200/60 dark:border-slate-700/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+                    <span key={idx} title={t("roles.roleCompanion")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-350 border border-slate-200/60 dark:border-slate-700/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                       <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 text-slate-400" />
                     </span>
                   );
@@ -408,17 +408,17 @@ export function SharedMembersSection({
                       {renderRoleBadge(member.role || "Người đồng hành")}
                       {member.isPendingCreate && (
                         <span className="inline-flex items-center rounded-full bg-sky-50 dark:bg-sky-950/30 border border-sky-100 dark:border-sky-900/50 px-2 py-0.5 text-[10px] font-bold text-sky-600 dark:text-sky-400 shrink-0 select-none animate-pulse">
-                          Đề xuất mới
+                          {t("members.suggestNew")}
                         </span>
                       )}
                       {member.isPendingUpdate && (
                         <span className="inline-flex items-center rounded-full bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/50 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 shrink-0 select-none">
-                          Đề xuất đổi vai trò
+                          {t("members.suggestChangeRole")}
                         </span>
                       )}
                       {member.isPendingDelete && (
                         <span className="inline-flex items-center rounded-full bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 px-2 py-0.5 text-[10px] font-bold text-rose-600 dark:text-rose-400 shrink-0 select-none">
-                          Đề xuất xóa
+                          {t("members.suggestDelete")}
                         </span>
                       )}
                     </div>
@@ -460,7 +460,7 @@ export function SharedMembersSection({
                         }
                       }}
                       className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/80 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-kat-teal/40"
-                      title="Tùy chọn đề xuất"
+                      title={t("members.options")}
                     >
                       <HugeiconsIcon icon={MoreVerticalIcon} className="h-5 w-5" />
                     </button>
@@ -499,8 +499,8 @@ export function SharedMembersSection({
         <div className="text-center py-8">
           <p className="text-[14px] font-semibold text-slate-400 dark:text-slate-500">
             {mergedMembers.length > 0 
-              ? `Không tìm thấy thành viên nào khớp với từ khóa "${searchQuery}"`
-              : "Chưa có thành viên nào trong chuyến đi."
+              ? `${t("members.noSearchResults")} "${searchQuery}"`
+              : t("members.noMembersYet")
             }
           </p>
         </div>
@@ -533,7 +533,7 @@ export function SharedMembersSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-colors border-b border-slate-100 dark:border-slate-700"
             >
-              Đổi vai trò
+              {t("members.changeRole")}
             </button>
             <button
               onClick={() => {
@@ -544,7 +544,7 @@ export function SharedMembersSection({
               }}
               className="flex w-full items-center px-4 py-2 text-[13px] font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
             >
-              Đề xuất xóa
+              {t("members.suggestDelete")}
             </button>
           </div>
         </>,
@@ -555,33 +555,33 @@ export function SharedMembersSection({
         <button 
           onClick={handleAdd} 
           className="flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-kat-dark/80 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border-2 border-dashed border-slate-200/80 dark:border-slate-700/50 hover:border-indigo-200 dark:hover:border-indigo-500/50 hover:text-indigo-700 dark:hover:text-indigo-400 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100 dark:shadow-none"
-          title="Đề xuất thêm thành viên"
+          title={t("members.btnSuggestAdd")}
         >
-          <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" /> Đề xuất thêm thành viên
+          <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" /> {t("members.btnSuggestAdd")}
         </button>
       )}
 
       <BottomSheet
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
-        title="Đề xuất thêm thành viên"
+        title={t("members.btnSuggestAdd")}
       >
         <div className="flex flex-col gap-5 py-2">
           <Input 
-            label="Tên thành viên *" 
+            label={t("members.nameLabel")} 
             value={form.name} 
             onChange={(name) => {
               setForm({ ...form, name });
               setShowValidationError(false);
             }} 
-            placeholder="VD: Nguyễn Văn A" 
+            placeholder={t("members.namePlaceholder")} 
           />
           {showValidationError && (
-            <p className="text-rose-500 text-[12.5px] font-bold -mt-3 pl-1">Vui lòng nhập tên thành viên.</p>
+            <p className="text-rose-500 text-[12.5px] font-bold -mt-3 pl-1">{t("members.nameRequired")}</p>
           )}
 
           <div className="space-y-2">
-            <span className="text-[13.5px] font-semibold text-slate-600 dark:text-slate-400">Giới tính (để tạo ảnh đại diện ngẫu nhiên)</span>
+            <span className="text-[13.5px] font-semibold text-slate-600 dark:text-slate-400">{t("members.genderLabel")}</span>
             <div className="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200/40 dark:border-slate-800/80">
               <button
                 type="button"
@@ -593,7 +593,7 @@ export function SharedMembersSection({
                     : "bg-transparent border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
                 )}
               >
-                Nam
+                {t("members.genderMale")}
               </button>
               <button
                 type="button"
@@ -605,7 +605,7 @@ export function SharedMembersSection({
                     : "bg-transparent border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
                 )}
               >
-                Nữ
+                {t("members.genderFemale")}
               </button>
             </div>
           </div>
@@ -614,7 +614,7 @@ export function SharedMembersSection({
             onClick={handleSave}
             className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-dark dark:bg-kat-primary font-black text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary/95 active:scale-[0.98] transition-all shadow-sm"
           >
-            Gửi đề xuất thêm
+            {t("members.btnSuggestAdd")}
           </button>
         </div>
       </BottomSheet>
@@ -627,26 +627,26 @@ export function SharedMembersSection({
           await executeDelete(deleteTargetId);
           setDeleteTargetId(null);
         }}
-        title="Đề xuất xóa thành viên?"
-        description="Bạn đang gửi đề xuất xóa thành viên này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất."
-        confirmLabel="Đề xuất xóa"
+        title={t("members.suggestDeleteTitle")}
+        description={t("members.suggestDeleteDesc")}
+        confirmLabel={t("members.suggestDeleteBtn")}
         itemName={members.find(m => String(m.id) === deleteTargetId)?.name}
       />
 
       <BottomSheet
         isOpen={roleChangeMemberId !== null}
         onClose={() => setRoleChangeMemberId(null)}
-        title="Đề xuất đổi vai trò"
+        title={t("members.suggestRoleTitle")}
       >
         <div className="flex flex-col gap-5 py-2">
           <div className="space-y-1">
             <p className="text-[13.5px] font-bold text-slate-500 dark:text-slate-400">
-              Thành viên: <span className="font-extrabold text-kat-dark dark:text-slate-200">{members.find(m => String(m.id) === roleChangeMemberId)?.name}</span>
+              {t("members.memberLabel")}<span className="font-extrabold text-kat-dark dark:text-slate-200">{members.find(m => String(m.id) === roleChangeMemberId)?.name}</span>
             </p>
           </div>
 
           <div className="space-y-2">
-            <span className="text-[13px] font-bold text-slate-700 dark:text-slate-350 block">Chọn vai trò mới</span>
+            <span className="text-[13px] font-bold text-slate-700 dark:text-slate-350 block">{t("members.chooseNewRole")}</span>
             <div className="grid grid-cols-2 gap-2">
               {["Người đồng hành", "Quản lý chi phí", "Tài xế", "Dẫn đường"].map((r) => {
                 const isSelected = selectedRoles.includes(r);
@@ -668,9 +668,7 @@ export function SharedMembersSection({
                         ? "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 shadow-sm" 
                         : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700/50 text-slate-650 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                     )}
-                  >
-                    {r}
-                  </button>
+                  >{t(`roles.role${r === "Người đồng hành" ? "Companion" : r === "Quản lý chi phí" ? "CostManager" : r === "Tài xế" ? "Driver" : "Navigator"}`)}</button>
                 );
               })}
             </div>
@@ -680,7 +678,7 @@ export function SharedMembersSection({
             onClick={handleRoleChangeSubmit}
             className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-dark dark:bg-kat-primary font-black text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary/95 active:scale-[0.98] transition-all shadow-sm"
           >
-            Gửi đề xuất đổi vai trò
+            {t("members.btnSuggestRole")}
           </button>
         </div>
       </BottomSheet>

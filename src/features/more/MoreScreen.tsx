@@ -777,7 +777,7 @@ function MemberForm({
             } 
             value={name} 
             onChange={(val) => { setName(val); setDirty(true); }} 
-            placeholder="VD: Tùng" 
+            placeholder={t("members.namePlaceholder")} 
           />
           {(dirty || submitAttempted) && nameError && (
             <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{nameError}</p>
@@ -825,7 +825,7 @@ function MemberForm({
             } 
             value={group} 
             onChange={(val) => { setGroup(val); setDirty(true); }} 
-            placeholder="VD: Gia đình A, Nhóm bạn B..."
+            placeholder={t("members.groupPlaceholder")}
           />
           {existingGroups.length > 0 && (
             <div className="mt-2.5 flex flex-wrap gap-2">
@@ -890,7 +890,7 @@ function MemberForm({
             type="tel"
             value={phone} 
             onChange={(val) => { setPhone(val); setDirty(true); }} 
-            placeholder="VD: 0987654321" 
+            placeholder={t("members.phonePlaceholder")} 
           />
           {(dirty || submitAttempted) && phoneError ? (
             <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{phoneError}</p>
@@ -912,7 +912,7 @@ function MemberForm({
               title="Thông tin các vai trò"
             >
               <HugeiconsIcon icon={InformationCircleIcon} className="h-3.5 w-3.5" />
-              <span>Xem vai trò</span>
+              <span>{t("members.viewRoles")}</span>
             </button>
           </span>
           <div className="flex flex-wrap gap-2 mb-3">
@@ -1504,41 +1504,41 @@ function MemberCardRow({
           const rLower = r.toLowerCase();
           if (rLower.includes("trưởng nhóm") || rLower.includes("trưởng đoàn") || rLower.includes("leader")) {
             return (
-              <span key={idx} title="Trưởng nhóm" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span key={idx} title={t("roles.roleLeader")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                 <HugeiconsIcon icon={CrownIcon} className="w-4 h-4 text-amber-500" />
               </span>
             );
           }
           if (rLower.includes("quản lý chi phí")) {
             return (
-              <span key={idx} title="Quản lý chi phí" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span key={idx} title={t("roles.roleCostManager")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                 <HugeiconsIcon icon={WalletCardsIcon} className="w-4 h-4 text-emerald-500" />
               </span>
             );
           }
           if (rLower.includes("tài xế")) {
             return (
-              <span key={idx} title="Tài xế" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span key={idx} title={t("roles.roleDriver")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                 <HugeiconsIcon icon={Car01Icon} className="w-4 h-4 text-blue-500" />
               </span>
             );
           }
           if (rLower.includes("dẫn đường")) {
             return (
-              <span key={idx} title="Dẫn đường" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-700 dark:text-sky-400 border border-sky-200/50 dark:border-sky-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span key={idx} title={t("roles.roleNavigator")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-700 dark:text-sky-400 border border-sky-200/50 dark:border-sky-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                 <HugeiconsIcon icon={CompassIcon} className="w-4 h-4 text-sky-500" />
               </span>
             );
           }
           if (rLower.includes("phụ trách hành lý") || rLower.includes("hành lý")) {
             return (
-              <span key={idx} title="Hành lý" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span key={idx} title={t("roles.roleLuggage")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
                 <HugeiconsIcon icon={Luggage01Icon} className="w-4 h-4 text-indigo-500" />
               </span>
             );
           }
           return (
-            <span key={idx} title="Bạn đồng hành" className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-350 border border-slate-200/60 dark:border-slate-700/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+            <span key={idx} title={t("roles.roleCompanion")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-350 border border-slate-200/60 dark:border-slate-700/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
               <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 text-slate-400" />
             </span>
           );
@@ -1574,7 +1574,7 @@ function MemberCardRow({
             </div>
             {member.phone && (
               <p className="text-[13.5px] font-semibold text-slate-500">
-                SĐT: <span className="text-kat-dark">{member.phone}</span>
+                {t("members.phonePrefix")}<span className="text-kat-dark">{member.phone}</span>
               </p>
             )}
             {member.group && (
@@ -1656,7 +1656,7 @@ function MemberCardRow({
               : "bg-sky-50/50 dark:bg-sky-950/20 border-sky-100 dark:border-sky-900/30 text-sky-700 dark:text-sky-400 font-bold"
           )}>
             <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 shrink-0" />
-            {assignedTasksCount} việc
+            {assignedTasksCount} {t("members.taskCount")}
           </span>
           <span className={classNames(
             "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
@@ -1665,7 +1665,7 @@ function MemberCardRow({
               : "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-bold"
           )}>
             <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5 shrink-0" />
-            Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
+            {t("members.paidPrefix")}{formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} {t("members.paidTimes")})`}
           </span>
         </div>
       </div>
@@ -2051,8 +2051,8 @@ export function MoreScreen({
               <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
             </button>
             <div>
-              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">Thành viên</h2>
-              <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">Quản lý những người cùng tham gia và chia sẻ hành trình.</p>
+              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">{t("members.membersTitle")}</h2>
+              <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">{t("members.membersSubtitle")}</p>
             </div>
           </div>
           {!isReadOnly && (
@@ -2061,7 +2061,7 @@ export function MoreScreen({
               onClick={openNewMember}
             >
               <HugeiconsIcon icon={UserAdd01Icon} className="w-4.5 h-4.5" />
-              Thêm thành viên
+              {t("members.addMember")}
             </button>
           )}
         </div>
@@ -2109,14 +2109,14 @@ export function MoreScreen({
               {members.length < 2 && (
                 <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-start gap-2.5 text-[13px] font-semibold text-slate-500">
                   <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5 text-kat-teal shrink-0" />
-                  <p>Thêm thành viên để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ ràng hơn.</p>
+                  <p>{t("members.emptyMembers")}</p>
                 </div>
               )}
             </div>
           ) : (
             <div className="flex items-start gap-2.5 py-1 text-[14px] md:text-[15px] font-semibold text-slate-500 leading-relaxed">
               <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-kat-teal shrink-0 mt-0.5" />
-              <span>Thêm thành viên để chia chi phí, phân công chuẩn bị và tổng kết chuyến đi rõ ràng hơn.</span>
+              <span>{t("members.emptyMembers")}</span>
             </div>
           )}
         </div>
@@ -2124,12 +2124,12 @@ export function MoreScreen({
         {/* Member List Section */}
         <section className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
-            <h3 className="text-[17px] font-extrabold text-kat-dark">Danh sách thành viên {members.length > 0 && `(${members.length})`}</h3>
+            <h3 className="text-[17px] font-extrabold text-kat-dark">{t("members.memberListTitle")} {members.length > 0 && `(${members.length})`}</h3>
             {members.length > 0 && (
               <div className="relative w-full sm:w-72">
                 <input
                   type="text"
-                  placeholder="Tìm kiếm thành viên hoặc vai trò..."
+                  placeholder={t("members.searchMember")}
                   value={memberSearchQuery}
                   onChange={(e) => setMemberSearchQuery(e.target.value)}
                   className="block w-full rounded-2xl border border-slate-200/60 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/40 backdrop-blur-md py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-350 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-100 dark:focus:ring-slate-800/50 transition-all shadow-sm"
@@ -2230,7 +2230,7 @@ export function MoreScreen({
               </div>
               <h3 className="text-[15px] font-extrabold text-kat-dark">Không tìm thấy kết quả</h3>
               <p className="mt-2 text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">
-                Không tìm thấy thành viên nào khớp với từ khóa "{memberSearchQuery}"
+                {t("members.noSearchResults")} "{memberSearchQuery}"
               </p>
             </div>
           ) : (

@@ -1,5 +1,6 @@
 import React from "react";
 import { BottomSheet } from "./ui";
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   CrownIcon,
@@ -16,55 +17,56 @@ export function RolesHelpSheet({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const roles = [
     {
-      title: "Trưởng nhóm",
+      title: t("roles.roleLeader"),
       icon: CrownIcon,
       colorClass: "bg-amber-50 text-amber-600 border-amber-200/50 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/30",
-      description: "Người tạo chuyến đi và có toàn quyền quản trị tối cao.",
+      description: t("roles.roleLeaderDesc"),
       permissions: [
-        { label: "Sửa lịch trình trực tiếp", allowed: true },
-        { label: "Quản lý chi phí trực tiếp", allowed: true }
+        { label: t("roles.permEditTripDirectly"), allowed: true },
+        { label: t("roles.permManageCostDirectly"), allowed: true }
       ]
     },
     {
-      title: "Tài xế",
+      title: t("roles.roleDriver"),
       icon: Car01Icon,
       colorClass: "bg-blue-50 text-blue-600 border-blue-200/50 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/30",
-      description: "Phụ trách di chuyển, lái xe và quản lý phương tiện chính.",
+      description: t("roles.roleDriverDesc"),
       permissions: [
-        { label: "Sửa lịch trình trực tiếp", allowed: true },
-        { label: "Đề xuất thêm chi phí", allowed: false }
+        { label: t("roles.permEditTripDirectly"), allowed: true },
+        { label: t("roles.permSuggestCost"), allowed: false }
       ]
     },
     {
-      title: "Dẫn đường",
+      title: t("roles.roleNavigator"),
       icon: CompassIcon,
       colorClass: "bg-sky-50 text-sky-600 border-sky-200/50 dark:bg-sky-950/20 dark:text-sky-400 dark:border-sky-900/30",
-      description: "Phụ trách dẫn đường, lộ trình di chuyển và bản đồ.",
+      description: t("roles.roleNavigatorDesc"),
       permissions: [
-        { label: "Sửa lịch trình trực tiếp", allowed: true },
-        { label: "Đề xuất thêm chi phí", allowed: false }
+        { label: t("roles.permEditTripDirectly"), allowed: true },
+        { label: t("roles.permSuggestCost"), allowed: false }
       ]
     },
     {
-      title: "Quản lý chi phí",
+      title: t("roles.roleCostManager"),
       icon: WalletCardsIcon,
       colorClass: "bg-emerald-50 text-emerald-600 border-emerald-200/50 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30",
-      description: "Quản lý quỹ chung, ghi chép và chia tiền chi tiêu.",
+      description: t("roles.roleCostManagerDesc"),
       permissions: [
-        { label: "Quản lý chi phí trực tiếp", allowed: true },
-        { label: "Đề xuất sửa lịch trình", allowed: false }
+        { label: t("roles.permManageCostDirectly"), allowed: true },
+        { label: t("roles.permSuggestTrip"), allowed: false }
       ]
     },
     {
-      title: "Người đồng hành",
+      title: t("roles.roleCompanion"),
       icon: UserGroupIcon,
       colorClass: "bg-slate-50 text-slate-600 border-slate-200/50 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700/50",
-      description: "Xem thông tin chuyến đi và gửi các ý kiến đề xuất.",
+      description: t("roles.roleCompanionDesc"),
       permissions: [
-        { label: "Đề xuất sửa lịch trình", allowed: false },
-        { label: "Đề xuất thêm chi phí", allowed: false }
+        { label: t("roles.permSuggestTrip"), allowed: false },
+        { label: t("roles.permSuggestCost"), allowed: false }
       ]
     }
   ];
@@ -73,8 +75,8 @@ export function RolesHelpSheet({
     <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
-      title="Thông tin các vai trò"
-      subtitle="Mỗi thành viên có trách nhiệm khác nhau để cùng vận hành chuyến đi"
+      title={t("roles.rolesHelpTitle")}
+      subtitle={t("roles.rolesHelpSubtitle")}
     >
       <div className="space-y-4 pb-4">
         {roles.map((role, idx) => (
