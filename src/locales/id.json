@@ -1300,5 +1300,11 @@
     "rolesHelpTitle": "Informasi Peran",
     "rolesHelpSubtitle": "Setiap anggota memiliki tanggung jawab berbeda",
     "roleLabel": "Peran perjalanan"
+  },
+  "sharedScreen": {
+    "bannerDirectEdit": "Edit Langsung",
+    "bannerSuggestMode": "Mode Saran",
+    "bannerDirectEditDesc": "Peran \"{{role}}\": Anda memiliki izin untuk mengedit langsung bagian yang ditugaskan.",
+    "bannerSuggestModeDesc": "Perubahan Anda akan dikirim ke pemilik perjalanan untuk ditinjau."
   }
 }

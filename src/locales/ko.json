@@ -1385,6 +1385,10 @@
     "switchUser": "사용자 전환",
     "exit": "종료",
     "secureData": "KAT Journey를 통해 안전하게 공유된 데이터.",
-    "sharedUser": "공유 사용자"
+    "sharedUser": "공유 사용자",
+    "bannerDirectEdit": "직접 편집",
+    "bannerSuggestMode": "제안 모드",
+    "bannerDirectEditDesc": "역할 \"{{role}}\": 할당된 부분을 직접 편집할 수 있는 권한이 있습니다.",
+    "bannerSuggestModeDesc": "변경 사항은 검토를 위해 여행 소유자에게 전송됩니다."
   }
 }

@@ -1400,6 +1400,10 @@
     "switchUser": "เปลี่ยนผู้ใช้",
     "exit": "ออก",
     "secureData": "ข้อมูลถูกแชร์อย่างปลอดภัยผ่าน KAT Journey",
-    "sharedUser": "ผู้ใช้ที่ได้รับการแชร์"
+    "sharedUser": "ผู้ใช้ที่ได้รับการแชร์",
+    "bannerDirectEdit": "แก้ไขโดยตรง",
+    "bannerSuggestMode": "โหมดแนะนำ",
+    "bannerDirectEditDesc": "บทบาท \"{{role}}\": คุณมีสิทธิ์ในการแก้ไขส่วนที่ได้รับมอบหมายโดยตรง",
+    "bannerSuggestModeDesc": "การเปลี่ยนแปลงของคุณจะถูกส่งไปยังเจ้าของทริปเพื่อตรวจสอบ"
   }
 }

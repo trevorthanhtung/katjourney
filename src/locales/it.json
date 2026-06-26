@@ -1300,5 +1300,11 @@
     "rolesHelpTitle": "Informazioni sui ruoli",
     "rolesHelpSubtitle": "Ogni membro ha responsabilità diverse",
     "roleLabel": "Ruolo nel viaggio"
+  },
+  "sharedScreen": {
+    "bannerDirectEdit": "Modifica Diretta",
+    "bannerSuggestMode": "Modalità Suggerimento",
+    "bannerDirectEditDesc": "Ruolo \"{{role}}\": Hai il permesso di modificare direttamente le parti assegnate.",
+    "bannerSuggestModeDesc": "Le tue modifiche saranno inviate al proprietario del viaggio per la revisione."
   }
 }

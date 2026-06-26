@@ -1400,6 +1400,10 @@
     "switchUser": "切换用户",
     "exit": "退出",
     "secureData": "数据通过 KAT Journey 安全共享。",
-    "sharedUser": "被分享者"
+    "sharedUser": "被分享者",
+    "bannerDirectEdit": "直接编辑",
+    "bannerSuggestMode": "建议模式",
+    "bannerDirectEditDesc": "角色 \"{{role}}\"：您有权限直接编辑分配给您的部分。",
+    "bannerSuggestModeDesc": "您的更改将发送给行程所有者进行审核。"
   }
 }
