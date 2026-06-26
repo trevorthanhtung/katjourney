@@ -790,7 +790,9 @@
     "sectionLabelRole": "Sección: {{sectionName}} • Cambiar rol",
     "sectionLabelAction": "Sección: {{sectionName}} • {{actionName}}",
     "statusCompleted": "Completado",
-    "statusPending": "No completado"
+    "statusPending": "No completado",
+    "valueYes": "Sí",
+    "valueNo": "No"
   },
   "weather": {
     "packingRain": "Está lloviendo en tu destino, ¡no olvides el paraguas!",

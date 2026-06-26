@@ -637,7 +637,9 @@
     "sectionLabelRole": "Section: {{sectionName}} • Change role",
     "sectionLabelAction": "Section: {{sectionName}} • {{actionName}}",
     "statusCompleted": "Done",
-    "statusPending": "Not done"
+    "statusPending": "Not done",
+    "valueYes": "Yes",
+    "valueNo": "No"
   },
   "home": {
     "countdown": "Countdown",

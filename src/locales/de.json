@@ -790,7 +790,9 @@
     "sectionLabelRole": "Bereich: {{sectionName}} • Rolle ändern",
     "sectionLabelAction": "Bereich: {{sectionName}} • {{actionName}}",
     "statusCompleted": "Erledigt",
-    "statusPending": "Nicht erledigt"
+    "statusPending": "Nicht erledigt",
+    "valueYes": "Ja",
+    "valueNo": "Nein"
   },
   "weather": {
     "packingRain": "Es regnet an Ihrem Ziel, vergessen Sie den Regenschirm nicht!",

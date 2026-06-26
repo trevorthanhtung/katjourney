@@ -134,15 +134,15 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
     const { section, action, before, after } = req;
     
     let sectionName = section;
-    if (section === 'activities') sectionName = 'Lịch trình';
-    if (section === 'expenses') sectionName = 'Chi phí';
-    if (section === 'checklist') sectionName = 'Chuẩn bị';
-    if (section === 'journals') sectionName = 'Bản tin';
-    if (section === 'backupPlans') sectionName = 'Phương án dự phòng';
-    if (section === 'travelDocuments') sectionName = 'Giấy tờ';
-    if (section === 'members') sectionName = 'Thành viên';
+    if (section === 'activities') sectionName = t('share.activities');
+    if (section === 'expenses') sectionName = t('share.expenses');
+    if (section === 'checklist') sectionName = t('share.checklist');
+    if (section === 'journals') sectionName = t('share.journals');
+    if (section === 'backupPlans') sectionName = t('share.backupPlanTitle');
+    if (section === 'travelDocuments') sectionName = t('share.documents');
+    if (section === 'members') sectionName = t('share.members');
 
-    let actionName = action === 'create' ? 'Thêm' : action === 'update' ? 'Sửa' : 'Xóa';
+    let actionName = action === 'create' ? t('share.add') : action === 'update' ? t('share.edit') : t('share.delete');
     
     let beforeText = '';
     let afterText = '';
@@ -164,7 +164,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
       if (entries.length === 0) return '';
       if (entries.length === 1) {
         const [k, v] = entries[0];
-        if (typeof v === 'boolean') return v ? `${k}: Có` : `${k}: Không`;
+        if (typeof v === 'boolean') return v ? `${k}: ${t('share.valueYes')}` : `${k}: ${t('share.valueNo')}`;
         return String(v);
       }
       return entries.map(([k, v]) => `${k}: ${v}`).join(', ');

@@ -637,7 +637,9 @@
     "sectionLabelRole": "섹션: {{sectionName}} • 역할 변경",
     "sectionLabelAction": "섹션: {{sectionName}} • {{actionName}}",
     "statusCompleted": "완료",
-    "statusPending": "미완료"
+    "statusPending": "미완료",
+    "valueYes": "예",
+    "valueNo": "아니요"
   },
   "home": {
     "countdown": "카운트다운",

@@ -790,7 +790,9 @@
     "sectionLabelRole": "Section : {{sectionName}} • Changer de rôle",
     "sectionLabelAction": "Section : {{sectionName}} • {{actionName}}",
     "statusCompleted": "Terminé",
-    "statusPending": "Non terminé"
+    "statusPending": "Non terminé",
+    "valueYes": "Oui",
+    "valueNo": "Non"
   },
   "weather": {
     "packingRain": "Il pleut à votre destination, n'oubliez pas le parapluie !",

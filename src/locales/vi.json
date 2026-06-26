@@ -635,7 +635,9 @@
     "sectionLabelRole": "Mục: {{sectionName}} • Đổi vai trò",
     "sectionLabelAction": "Mục: {{sectionName}} • {{actionName}}",
     "statusCompleted": "Hoàn thành",
-    "statusPending": "Chưa hoàn thành"
+    "statusPending": "Chưa hoàn thành",
+    "valueYes": "Có",
+    "valueNo": "Không"
   },
   "home": {
     "countdown": "Đếm ngược",

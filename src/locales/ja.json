@@ -790,7 +790,9 @@
     "sectionLabelRole": "セクション: {{sectionName}} • 役割の変更",
     "sectionLabelAction": "セクション: {{sectionName}} • {{actionName}}",
     "statusCompleted": "完了",
-    "statusPending": "未完了"
+    "statusPending": "未完了",
+    "valueYes": "はい",
+    "valueNo": "いいえ"
   },
   "weather": {
     "packingRain": "目的地で雨が降っています。傘を忘れずに！",

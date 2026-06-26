@@ -790,7 +790,9 @@
     "sectionLabelRole": "部分：{{sectionName}} • 更改角色",
     "sectionLabelAction": "部分：{{sectionName}} • {{actionName}}",
     "statusCompleted": "已完成",
-    "statusPending": "未完成"
+    "statusPending": "未完成",
+    "valueYes": "是",
+    "valueNo": "否"
   },
   "weather": {
     "packingRain": "目的地正在下雨，别忘了带伞！",

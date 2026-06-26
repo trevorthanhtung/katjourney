@@ -790,7 +790,9 @@
     "sectionLabelRole": "ส่วน: {{sectionName}} • เปลี่ยนบทบาท",
     "sectionLabelAction": "ส่วน: {{sectionName}} • {{actionName}}",
     "statusCompleted": "เสร็จสิ้น",
-    "statusPending": "ยังไม่เสร็จ"
+    "statusPending": "ยังไม่เสร็จ",
+    "valueYes": "ใช่",
+    "valueNo": "ไม่"
   },
   "weather": {
     "packingRain": "จุดหมายกำลังมีฝนตก อย่าลืมร่ม！",

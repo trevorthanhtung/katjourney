@@ -790,7 +790,9 @@
     "sectionLabelRole": "Seção: {{sectionName}} • Alterar função",
     "sectionLabelAction": "Seção: {{sectionName}} • {{actionName}}",
     "statusCompleted": "Concluído",
-    "statusPending": "Não concluído"
+    "statusPending": "Não concluído",
+    "valueYes": "Sim",
+    "valueNo": "Não"
   },
   "weather": {
     "packingRain": "Está chovendo no seu destino, não esqueça o guarda-chuva!",
