@@ -216,8 +216,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
       
       setIsRoadmapFormOpen(false);
     } catch (err) {
-      console.error("Lỗi khi lưu lộ trình:", err);
-      alert("Không thể lưu lộ trình. Vui lòng kiểm tra kết nối mạng.");
+      console.error("Error saving trip:", err);
+      alert(t("share.saveTripError") || "Cannot save trip. Please check your network connection.");
     }
   };
 
@@ -370,7 +370,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               onClick={() => window.location.href = "/"}
               className="inline-flex min-h-[44px] w-fit items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 py-2.5 font-bold shadow-sm hover:bg-[#0a1a5c] dark:hover:brightness-110 active:scale-95 transition-all focus:outline-none"
             >
-              Quay lại trang chủ
+              {t("share.backToHome")}
             </button>
           </div>
         </div>
@@ -450,7 +450,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 }}
                 className="w-full rounded-[16px] bg-kat-dark dark:bg-kat-primary py-3 text-[14px] font-black text-white dark:text-slate-950 transition-all active:scale-[0.98] shadow-sm hover:bg-[#0a1a5c] dark:hover:brightness-110 disabled:opacity-50 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 disabled:pointer-events-none"
               >
-                Xác nhận mã PIN
+                {t("share.confirmPin")}
               </button>
             </div>
           </div>
@@ -601,7 +601,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 setShowIdentityModal(false);
               }}
               className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors z-10"
-              title="Đóng, giữ lựa chọn cũ"
+              title={t("common.close")}
             >
               <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
             </button>
@@ -618,7 +618,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 type="button"
                 onClick={() => setIsRolesHelpOpen(true)}
                 className="text-slate-400 hover:text-kat-teal transition-colors p-1 flex items-center justify-center"
-                title="Thông tin các vai trò"
+                title={t("roles.info") || "Role Information"}
               >
                 <HugeiconsIcon icon={InformationCircleIcon} className="h-4.5 w-4.5" />
               </button>
@@ -832,7 +832,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="space-y-4">
               <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-md">
-                ● {status === "past" ? "Đã đi" : status === "active" ? "Đang diễn ra" : "Sắp diễn ra"}
+                ● {status === "past" ? t("trip.past") : status === "active" ? t("trip.ongoing") : t("trip.upcoming")}
               </span>
               <h2 className="text-[28px] font-black leading-tight tracking-tight drop-shadow-sm">
                 {trip.title}
@@ -863,7 +863,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               {/* Timing box with Progress Bar */}
               <div className="flex flex-col items-stretch justify-center rounded-2xl bg-white/10 px-4 py-3 border border-white/20 flex-1 lg:flex-none lg:w-full text-center shrink-0 min-h-[64px]">
                 <p className="text-[10px] font-semibold text-white/60 text-center">
-                  {status === "past" ? "Trạng thái" : "Hành trình"}
+                  {status === "past" ? t("trip.status") : t("trip.journey")}
                 </p>
                 <p className="mt-1 text-[17px] sm:text-[19px] font-black text-white drop-shadow-sm tracking-tight leading-none text-center">
                   {timing.label}
@@ -902,7 +902,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                         </div>
                       </div>
                       <p className="text-[8.5px] text-right text-white/50 font-semibold leading-none">
-                        Đã hoàn thành {Math.round(progressPercent)}%
+                        {t("trip.completed")} {Math.round(progressPercent)}%
                       </p>
                     </div>
                   );
@@ -1036,7 +1036,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             )}>
               {activities.length}
             </p>
-            <p className="text-[11px] font-semibold text-slate-400 dark:text-kat-muted mt-1">Lịch trình</p>
+            <p className="text-[11px] font-semibold text-slate-400 dark:text-kat-muted mt-1">{t("dashboard.itinerary")}</p>
           </div>
 
           {/* Card 2: Chi phí (Conditional) */}
@@ -1553,8 +1553,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       
                       setIsRoadmapFormOpen(false);
                     } catch (err) {
-                      console.error("Lỗi khi lưu lộ trình:", err);
-                      alert("Không thể lưu lộ trình. Vui lòng kiểm tra kết nối mạng.");
+                      console.error("Error saving trip:", err);
+                      alert(t("share.saveTripError") || "Cannot save trip. Please check your network connection.");
                     }
                   }, 50);
                 }
