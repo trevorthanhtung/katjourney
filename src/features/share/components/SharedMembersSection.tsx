@@ -431,7 +431,7 @@ export function SharedMembersSection({
                     )}
                     {member.phone && (
                       <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
-                        SĐT: <span className="text-kat-dark dark:text-slate-300">{member.phone}</span>
+                        {t("members.phonePrefix")}<span className="text-kat-dark dark:text-slate-300">{member.phone}</span>
                       </p>
                     )}
                     {member.note && (
@@ -478,7 +478,7 @@ export function SharedMembersSection({
                       : "bg-sky-50/50 dark:bg-sky-950/20 border-sky-100 dark:border-sky-900/30 text-sky-700 dark:text-sky-400 font-bold"
                   )}>
                     <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 shrink-0" />
-                    {assignedTasksCount} việc
+                    {assignedTasksCount} {t("members.taskCount")}
                   </span>
                   <span className={classNames(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
@@ -487,7 +487,7 @@ export function SharedMembersSection({
                       : "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-bold"
                   )}>
                     <HugeiconsIcon icon={Wallet01Icon} className="h-3.5 w-3.5 shrink-0" />
-                    Đã chi: {formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} lần)`}
+                    {t("members.paidPrefix")}{formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} ${t("members.paidTimes")})`}
                   </span>
                 </div>
               </div>
