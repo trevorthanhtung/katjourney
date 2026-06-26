@@ -279,11 +279,13 @@ const ExpenseCard = React.memo(function ExpenseCard({
       {/* Amount */}
       <div className="shrink-0 pl-2 text-right">
         <p className="font-bold text-kat-dark dark:text-white text-lg">
-          {formatMoney(item.amount, currency)}
+          {item.originalAmount && item.currency && item.currency !== (currency || "VND") 
+            ? formatMoney(item.originalAmount, item.currency) 
+            : formatMoney(item.amount, currency || "VND")}
         </p>
         {item.originalAmount && item.currency && item.currency !== (currency || "VND") && (
           <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
-            {new Intl.NumberFormat('en-US').format(item.originalAmount)} {item.currency}
+            = {formatMoney(item.amount, currency || "VND")}
           </p>
         )}
       </div>
@@ -519,7 +521,7 @@ function ExpenseForm({
       newErrors.amount = t("expenses.errAmount");
     }
 
-    const vndAmount = form.currency === (currency || "VND") ? amountVal : (Math.round(amountVal * form.exchangeRate * 100) / 100);
+    const vndAmount = form.currency === (currency || "VND") ? amountVal : (amountVal * form.exchangeRate);
 
     let finalCategory = form.category;
     if (form.category === "Khác...") {
