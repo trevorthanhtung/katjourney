@@ -333,7 +333,10 @@
     "upcomingTripsTitle": "Sắp diễn ra",
     "upcomingTripsDesc": "Hành trình chuẩn bị khởi hành sắp tới.",
     "pastTripsTitle": "Đã hoàn thành",
-    "pastTripsDesc": "Những chuyến đi đã kết thúc và có thể xem lại tổng kết."
+    "pastTripsDesc": "Những chuyến đi đã kết thúc và có thể xem lại tổng kết.",
+    "itinerary": "Lịch trình",
+    "expenses": "Chi phí",
+    "members": "Thành viên"
   },
   "archive": {
     "title": "Kỷ niệm",

@@ -119,22 +119,22 @@ export default function SharedTripScreen({ token }: { token: string }) {
       <div className="flex items-center gap-1 flex-wrap justify-end">
         {roles.map((roleLower, i) => {
           if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
-            return <span key={i} title={t("roles.leader")} className="shrink-0"><HugeiconsIcon icon={CrownIcon} className="h-3.5 w-3.5 text-amber-500" /></span>;
+            return <span key={i} title={t("roles.roleLeader")} className="shrink-0"><HugeiconsIcon icon={CrownIcon} className="h-3.5 w-3.5 text-amber-500" /></span>;
           }
           if (roleLower === "quản lý chi phí") {
-            return <span key={i} title={t("roles.costManager")} className="shrink-0"><HugeiconsIcon icon={Wallet01Icon} className="h-3.5 w-3.5 text-emerald-500" /></span>;
+            return <span key={i} title={t("roles.roleCostManager")} className="shrink-0"><HugeiconsIcon icon={Wallet01Icon} className="h-3.5 w-3.5 text-emerald-500" /></span>;
           }
           if (roleLower === "tài xế") {
-            return <span key={i} title={t("roles.driver")} className="shrink-0"><HugeiconsIcon icon={Car01Icon} className="h-3.5 w-3.5 text-blue-500" /></span>;
+            return <span key={i} title={t("roles.roleDriver")} className="shrink-0"><HugeiconsIcon icon={Car01Icon} className="h-3.5 w-3.5 text-blue-500" /></span>;
           }
           if (roleLower === "dẫn đường") {
-            return <span key={i} title={t("roles.navigator")} className="shrink-0"><HugeiconsIcon icon={CompassIcon} className="h-3.5 w-3.5 text-sky-500" /></span>;
+            return <span key={i} title={t("roles.roleNavigator")} className="shrink-0"><HugeiconsIcon icon={CompassIcon} className="h-3.5 w-3.5 text-sky-500" /></span>;
           }
-          if (roleLower === "phụ trách hành lý") {
-            return <span key={i} title={t("roles.luggage")} className="shrink-0"><HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 text-indigo-500" /></span>;
+          if (roleLower === "hành lý") {
+            return <span key={i} title={t("roles.roleLuggage")} className="shrink-0"><HugeiconsIcon icon={Briefcase02Icon} className="h-3.5 w-3.5 text-orange-500" /></span>;
           }
           if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
-            return <span key={i} title={t("roles.companion")} className="shrink-0"><HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5 text-slate-400" /></span>;
+            return <span key={i} title={t("roles.roleCompanion")} className="shrink-0"><HugeiconsIcon icon={UserMultiple02Icon} className="h-3.5 w-3.5 text-slate-500" /></span>;
           }
           return <span key={i} title={roleLower} className="shrink-0"><HugeiconsIcon icon={BadgeCheckIcon} className="h-3.5 w-3.5 text-teal-500" /></span>;
         })}
@@ -519,6 +519,24 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const isOwnerOrAdmin = currentUser && !currentUser.isGuest;
   const userRoleLower = (currentUser?.role || "").trim().toLowerCase();
 
+  // Helper to translate comma-separated roles for display
+  const getTranslatedRoles = (roleStr: string) => {
+    if (!roleStr) return "";
+    return roleStr.split(",")
+      .map(r => r.trim())
+      .map(r => {
+        const lower = r.toLowerCase();
+        if (lower === "trưởng nhóm" || lower === "trưởng đoàn" || lower === "leader" || lower === "người đại diện") return t("roles.roleLeader");
+        if (lower === "quản lý chi phí") return t("roles.roleCostManager");
+        if (lower === "tài xế") return t("roles.roleDriver");
+        if (lower === "dẫn đường") return t("roles.roleNavigator");
+        if (lower === "hành lý") return t("roles.roleLuggage");
+        if (lower === "người đồng hành") return t("roles.roleCompanion");
+        return r;
+      })
+      .join(", ");
+  };
+
   // Mode for Activities (Lịch trình) - Driver or Trưởng nhóm has direct edit
   const activitiesMode = (
     isOwnerOrAdmin || 
@@ -761,7 +779,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 </span>
                 <span className="text-white/85 font-medium">
                   {userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí")
-                    ? t("sharedScreen.bannerDirectEditDesc", { role: currentUser?.role || "" })
+                    ? t("sharedScreen.bannerDirectEditDesc", { role: getTranslatedRoles(currentUser?.role || "") })
                     : t("sharedScreen.bannerSuggestModeDesc")
                   }
                 </span>
@@ -1079,7 +1097,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   </p>
                 );
               })()}
-              <p className="text-[11px] font-semibold text-slate-400 dark:text-kat-muted mt-1">Chi phí</p>
+              <p className="text-[11px] font-semibold text-slate-400 dark:text-kat-muted mt-1">{t("dashboard.expenses")}</p>
             </div>
           )}
 
@@ -1108,7 +1126,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             )}>
               {members.length}
             </p>
-            <p className="text-[11px] font-semibold text-slate-400 dark:text-kat-muted mt-1">Thành viên</p>
+            <p className="text-[11px] font-semibold text-slate-400 dark:text-kat-muted mt-1">{t("dashboard.members")}</p>
           </div>
         </section>
 

@@ -335,7 +335,10 @@
     "upcomingTripsTitle": "予定されている旅行",
     "upcomingTripsDesc": "間もなく出発する旅。",
     "pastTripsTitle": "完了した旅行",
-    "pastTripsDesc": "終了し、振り返ることができる旅行。"
+    "pastTripsDesc": "終了し、振り返ることができる旅行。",
+    "itinerary": "旅程",
+    "expenses": "経費",
+    "members": "メンバー"
   },
   "archive": {
     "title": "思い出",

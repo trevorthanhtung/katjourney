@@ -335,7 +335,10 @@
     "upcomingTripsTitle": "예정된 여행",
     "upcomingTripsDesc": "곧 출발할 예정인 여정입니다.",
     "pastTripsTitle": "완료된 여행",
-    "pastTripsDesc": "종료되어 검토할 수 있는 여행입니다."
+    "pastTripsDesc": "종료되어 검토할 수 있는 여행입니다.",
+    "itinerary": "일정",
+    "expenses": "비용",
+    "members": "멤버"
   },
   "archive": {
     "title": "추억",

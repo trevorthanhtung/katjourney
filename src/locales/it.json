@@ -335,7 +335,10 @@
     "upcomingTripsTitle": "Viaggi in arrivo",
     "upcomingTripsDesc": "Viaggi in partenza a breve.",
     "pastTripsTitle": "Viaggi completati",
-    "pastTripsDesc": "Viaggi terminati che possono essere rivisti."
+    "pastTripsDesc": "Viaggi terminati che possono essere rivisti.",
+    "itinerary": "Itinerario",
+    "expenses": "Spese",
+    "members": "Membri"
   },
   "archive": {
     "title": "Ricordi",

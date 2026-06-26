@@ -335,7 +335,10 @@
     "upcomingTripsTitle": "Perjalanan mendatang",
     "upcomingTripsDesc": "Perjalanan yang akan segera berangkat.",
     "pastTripsTitle": "Perjalanan selesai",
-    "pastTripsDesc": "Perjalanan yang telah berakhir dan dapat diulas kembali."
+    "pastTripsDesc": "Perjalanan yang telah berakhir dan dapat diulas kembali.",
+    "itinerary": "Rencana Perjalanan",
+    "expenses": "Pengeluaran",
+    "members": "Anggota"
   },
   "archive": {
     "title": "Kenangan",

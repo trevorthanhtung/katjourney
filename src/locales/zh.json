@@ -335,7 +335,10 @@
     "upcomingTripsTitle": "即将到来的行程",
     "upcomingTripsDesc": "即将出发的旅程。",
     "pastTripsTitle": "已完成的行程",
-    "pastTripsDesc": "已结束并可供回顾的旅行。"
+    "pastTripsDesc": "已结束并可供回顾的旅行。",
+    "itinerary": "行程",
+    "expenses": "费用",
+    "members": "成员"
   },
   "archive": {
     "title": "回忆",

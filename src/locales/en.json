@@ -335,7 +335,10 @@
     "upcomingTripsTitle": "Upcoming trips",
     "upcomingTripsDesc": "Journeys preparing to depart soon.",
     "pastTripsTitle": "Completed trips",
-    "pastTripsDesc": "Trips that have ended and can be reviewed."
+    "pastTripsDesc": "Trips that have ended and can be reviewed.",
+    "itinerary": "Itinerary",
+    "expenses": "Expenses",
+    "members": "Members"
   },
   "archive": {
     "title": "Memories",
