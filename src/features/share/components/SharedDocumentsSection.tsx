@@ -447,7 +447,7 @@ export function SharedDocumentsSection({
               label={t("documents.inputTitleLabel")} 
               value={form.title} 
               onChange={(title) => { setForm({ ...form, title }); setShowValidationError(false); }} 
-              placeholder="VD: Vé máy bay khứ hồi, mã đặt phòng khách sạn..." 
+              placeholder={t("documents.inputTitlePlaceholder")} 
             />
             {showValidationError && !form.title.trim() && (
               <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{t("documents.titleRequired")}</p>
@@ -474,7 +474,7 @@ export function SharedDocumentsSection({
               label={t("documents.inputCodeLabel")} 
               value={form.code} 
               onChange={(code) => setForm({ ...form, code })} 
-              placeholder="VD: PNR ABC123, mã phòng, số vé..." 
+              placeholder={t("documents.inputCodePlaceholder")} 
             />
           </div>
 
@@ -496,23 +496,23 @@ export function SharedDocumentsSection({
               <div className="mt-3 space-y-4 animate-fadeIn">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <DatePicker 
-                    label="Ngày liên quan" 
+                    label={t("documents.inputDateLabel")} 
                     value={form.date} 
                     onChange={(date) => setForm({ ...form, date })} 
                   />
                   <Input 
-                    label="Đường dẫn liên quan" 
+                    label={t("documents.inputLinkLabel")} 
                     value={form.link} 
                     onChange={(link) => setForm({ ...form, link })} 
-                    placeholder="VD: Link vé điện tử, bản đồ, tệp đặt phòng..." 
+                    placeholder={t("documents.inputLinkPlaceholder")} 
                   />
                 </div>
                 <div>
                   <Textarea 
-                    label="Ghi chú" 
+                    label={t("documents.inputNoteLabel")} 
                     value={form.note} 
                     onChange={(note) => setForm({ ...form, note })} 
-                    placeholder="VD: Giờ nhận phòng, hành lý, số điện thoại liên hệ..." 
+                    placeholder={t("documents.inputNotePlaceholder")} 
                   />
                 </div>
                 
@@ -542,8 +542,8 @@ export function SharedDocumentsSection({
                     <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-200 dark:border-slate-700/50 rounded-xl bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors cursor-pointer text-slate-500 dark:text-slate-400">
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <HugeiconsIcon icon={ImageAdd01Icon} className="w-6 h-6 mb-2 text-slate-400" />
-                        <p className="text-[13px]"><span className="font-semibold text-kat-primary-usable">Nhấn để tải ảnh lên</span></p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">Chấp nhận PNG, JPG, WEBP</p>
+                        <p className="text-[13px]"><span className="font-semibold text-kat-primary-usable">{t("documents.uploadBtn")}</span></p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">{t("documents.uploadAcceptedFormats")}</p>
                       </div>
                       <input type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
                     </label>
