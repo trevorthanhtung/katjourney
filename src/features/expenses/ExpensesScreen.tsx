@@ -279,7 +279,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
       {/* Amount */}
       <div className="shrink-0 pl-2 text-right">
         <p className="font-bold text-kat-dark dark:text-white text-lg">
-          {formatMoney(item.amount)}
+          {formatMoney(item.amount, currency)}
         </p>
         {item.originalAmount && item.currency && item.currency !== (currency || "VND") && (
           <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
@@ -519,7 +519,7 @@ function ExpenseForm({
       newErrors.amount = t("expenses.errAmount");
     }
 
-    const vndAmount = form.currency === (currency || "VND") ? amountVal : Math.round(amountVal * form.exchangeRate);
+    const vndAmount = form.currency === (currency || "VND") ? amountVal : (Math.round(amountVal * form.exchangeRate * 100) / 100);
 
     let finalCategory = form.category;
     if (form.category === "Khác...") {
@@ -609,6 +609,8 @@ function ExpenseForm({
                 title={t("expenses.selectCurrency")}
               >
                 <div className="space-y-1 max-h-[60vh] overflow-y-auto scrollbar-none pb-2">
+                  
+                  {/* --- Base Currency Option --- */}
                   <button
                     type="button"
                     onClick={() => {
@@ -622,18 +624,44 @@ function ExpenseForm({
                     }`}
                   >
                     <span className={`text-[15px] ${form.currency === (currency || "VND") ? 'font-extrabold' : 'font-semibold'}`}>
-                      {t("expenses.vnd")}
+                      {currency || "VND"} (Đồng tiền gốc)
                     </span>
                     {form.currency === (currency || "VND") && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
                   </button>
-                  {exchangeRates.map((r) => {
+                  
+                  {/* --- VND Option (if base is not VND) --- */}
+                  {(currency || "VND") !== "VND" && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const baseRate = exchangeRates.find(x => x.currencyCode === currency)?.transfer || 1;
+                        setForm({ ...form, currency: "VND", exchangeRate: 1 / baseRate });
+                        setIsCurrencyDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
+                        form.currency === "VND"
+                          ? "bg-kat-primary-soft text-kat-primary dark:bg-kat-primary/10"
+                          : "hover:bg-slate-50 dark:hover:bg-slate-800 text-kat-dark dark:text-slate-200"
+                      }`}
+                    >
+                      <span className={`text-[15px] ${form.currency === "VND" ? 'font-extrabold' : 'font-semibold'}`}>
+                        VND (Việt Nam Đồng)
+                      </span>
+                      {form.currency === "VND" && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
+                    </button>
+                  )}
+
+                  {/* --- Foreign Currencies Option --- */}
+                  {exchangeRates.filter(r => r.currencyCode !== (currency || "VND")).map((r) => {
                     const isSelected = form.currency === r.currencyCode;
                     return (
                       <button
                         key={r.currencyCode}
                         type="button"
                         onClick={() => {
-                          setForm({ ...form, currency: r.currencyCode, exchangeRate: r.transfer });
+                          const baseRate = currency !== "VND" ? (exchangeRates.find(x => x.currencyCode === currency)?.transfer || 1) : 1;
+                          const toBaseExchangeRate = r.transfer / baseRate;
+                          setForm({ ...form, currency: r.currencyCode, exchangeRate: toBaseExchangeRate });
                           setIsCurrencyDropdownOpen(false);
                         }}
                         className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
@@ -649,6 +677,7 @@ function ExpenseForm({
                       </button>
                     );
                   })}
+
                 </div>
               </BottomSheet>
             </div>
@@ -671,7 +700,7 @@ function ExpenseForm({
           {form.currency !== (currency || "VND") && form.amount && (
             <div className="mt-3 flex flex-col items-center">
               <span className="text-[14px] font-bold text-slate-600 dark:text-slate-300">
-                ≈ {formatMoney(Math.round(Number(form.amount) * form.exchangeRate), currency || "VND")}
+                ≈ {formatMoney(Number(form.amount) * form.exchangeRate, currency || "VND")}
               </span>
               <span className="text-[11px] font-medium text-slate-400 mt-1">
                 {t("expenses.exchangeRate", { currency: form.currency, rate: new Intl.NumberFormat("vi-VN").format(form.exchangeRate) })}
