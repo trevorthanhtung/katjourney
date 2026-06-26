@@ -175,7 +175,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
           {loading ? (
             <div className="flex-1 flex flex-col items-center justify-center">
               <HugeiconsIcon icon={Loading01Icon} className="w-8 h-8 animate-spin text-kat-primary" />
-              <span className="text-xs text-kat-muted mt-2">Đang tải tin nhắn...</span>
+              <span className="text-xs text-kat-muted mt-2">{t("chat.loading")}</span>
             </div>
           ) : messages.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 select-none">

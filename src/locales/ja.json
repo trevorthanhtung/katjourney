@@ -1365,6 +1365,7 @@
     "inputPlaceholder": "メッセージを入力...",
     "connectedAs": "接続名:",
     "openBtn": "チャットを開く",
-    "tripCreator": "旅の作成者"
+    "tripCreator": "旅の作成者",
+    "loading": "メッセージを読み込んでいます..."
   }
 }

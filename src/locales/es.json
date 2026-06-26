@@ -1365,6 +1365,7 @@
     "inputPlaceholder": "Escribe un mensaje...",
     "connectedAs": "Estás conectado como:",
     "openBtn": "Abrir chat",
-    "tripCreator": "Creador del Viaje"
+    "tripCreator": "Creador del Viaje",
+    "loading": "Cargando mensajes..."
   }
 }

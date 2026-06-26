@@ -1345,6 +1345,7 @@
     "inputPlaceholder": "Enter message...",
     "connectedAs": "You are connected as:",
     "openBtn": "Open chat",
-    "tripCreator": "Trip Creator"
+    "tripCreator": "Trip Creator",
+    "loading": "Loading messages..."
   }
 }

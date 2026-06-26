@@ -1345,6 +1345,7 @@
     "inputPlaceholder": "메시지 입력...",
     "connectedAs": "현재 접속 이름:",
     "openBtn": "채팅 열기",
-    "tripCreator": "여행 생성자"
+    "tripCreator": "여행 생성자",
+    "loading": "메시지 불러오는 중..."
   }
 }

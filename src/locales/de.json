@@ -1365,6 +1365,7 @@
     "inputPlaceholder": "Nachricht eingeben...",
     "connectedAs": "Verbunden als:",
     "openBtn": "Chat öffnen",
-    "tripCreator": "Reiseersteller"
+    "tripCreator": "Reiseersteller",
+    "loading": "Nachrichten werden geladen..."
   }
 }

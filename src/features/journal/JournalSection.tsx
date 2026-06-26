@@ -502,12 +502,12 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
   return (
     <div className="space-y-6">
       {/* Small Compact Card for Empty state */}
-      <div className="rounded-[24px] border border-slate-200 bg-white p-6 text-center shadow-soft max-w-md mx-auto my-4 animate-fadeIn">
+      <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 text-center shadow-soft dark:shadow-none max-w-md mx-auto my-4 animate-fadeIn">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
           <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
         </div>
-        <h3 className="text-[16px] font-bold text-kat-dark">{t("journal.emptyTitle")}</h3>
-        <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
+        <h3 className="text-[16px] font-bold text-kat-dark dark:text-slate-200">{t("journal.emptyTitle")}</h3>
+        <p className="mt-2 text-[14.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">
           {t("journal.emptySubtitle")}
         </p>
       </div>
@@ -529,17 +529,17 @@ function JournalEmptyState({ onPromptClick, onWrite }: { onPromptClick: (promptT
               <button 
                 key={prompt}
                 onClick={() => onPromptClick(prompt)} 
-                className="text-left bg-white p-4 rounded-[20px] border border-slate-200 shadow-sm hover:shadow-md transition-all group active:scale-[0.99] flex flex-col justify-between min-h-[112px] w-[260px] md:w-full shrink-0 md:shrink-0 snap-center"
+                className="text-left bg-white dark:bg-kat-surface p-4 rounded-[20px] border border-slate-200 dark:border-kat-border shadow-sm dark:shadow-none hover:shadow-md transition-all group active:scale-[0.99] flex flex-col justify-between min-h-[112px] w-[260px] md:w-full shrink-0 md:shrink-0 snap-center"
               >
                 <div className="flex items-start gap-2.5">
-                  <div className={`p-1.5 rounded-lg bg-slate-50 border border-slate-100/60 ${iconColor} shrink-0 mt-0.5`}>
+                  <div className={`p-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-100/60 dark:border-slate-700/50 ${iconColor} shrink-0 mt-0.5`}>
                     <HugeiconsIcon icon={PromptIcon} className="h-4.5 w-4.5" />
                   </div>
-                  <p className="text-[13.5px] font-extrabold text-slate-700 leading-snug group-hover:text-kat-teal transition-colors line-clamp-2">
+                  <p className="text-[13.5px] font-extrabold text-slate-700 dark:text-slate-200 leading-snug group-hover:text-kat-teal dark:group-hover:text-kat-primary transition-colors line-clamp-2">
                     {prompt}
                   </p>
                 </div>
-                <span className="text-[11px] font-bold text-kat-teal uppercase tracking-wider mt-2 block opacity-80 group-hover:opacity-100 transition-opacity pl-9">
+                <span className="text-[11px] font-bold text-kat-teal dark:text-kat-primary uppercase tracking-wider mt-2 block opacity-80 group-hover:opacity-100 transition-opacity pl-9">
                   {t("journal.writeNow")}
                 </span>
               </button>

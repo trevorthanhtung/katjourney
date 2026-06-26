@@ -1365,6 +1365,7 @@
     "inputPlaceholder": "输入消息...",
     "connectedAs": "您的连接身份是:",
     "openBtn": "打开聊天",
-    "tripCreator": "行程创建者"
+    "tripCreator": "行程创建者",
+    "loading": "正在加载消息..."
   }
 }

@@ -1343,6 +1343,7 @@
     "inputPlaceholder": "Nhập tin nhắn...",
     "connectedAs": "Bạn đang kết nối dưới tên:",
     "openBtn": "Mở cuộc trò chuyện",
-    "tripCreator": "Người tạo chuyến đi"
+    "tripCreator": "Người tạo chuyến đi",
+    "loading": "Đang tải tin nhắn..."
   }
 }

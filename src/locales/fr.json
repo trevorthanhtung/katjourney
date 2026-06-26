@@ -1365,6 +1365,7 @@
     "inputPlaceholder": "Entrez un message...",
     "connectedAs": "Vous êtes connecté en tant que :",
     "openBtn": "Ouvrir la discussion",
-    "tripCreator": "Créateur du voyage"
+    "tripCreator": "Créateur du voyage",
+    "loading": "Chargement des messages..."
   }
 }
