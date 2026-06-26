@@ -755,14 +755,14 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     : "bg-amber-500/20 text-amber-300"
                 )}>
                   {userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí")
-                    ? t("share.bannerDirectEdit")
-                    : t("share.bannerSuggestMode")
+                    ? t("sharedScreen.bannerDirectEdit")
+                    : t("sharedScreen.bannerSuggestMode")
                   }
                 </span>
                 <span className="text-white/85 font-medium">
                   {userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí")
-                    ? t("share.bannerDirectEditDesc", { role: currentUser?.role || "" })
-                    : t("share.bannerSuggestModeDesc")
+                    ? t("sharedScreen.bannerDirectEditDesc", { role: currentUser?.role || "" })
+                    : t("sharedScreen.bannerSuggestModeDesc")
                   }
                 </span>
               </div>
