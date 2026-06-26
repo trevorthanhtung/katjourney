@@ -1379,5 +1379,12 @@
   "offline": {
     "title": "오프라인 상태입니다",
     "subtitle": " - 일부 기능은 인터넷 연결이 필요합니다"
+  },
+  "sharedScreen": {
+    "headerShare": "공유됨",
+    "switchUser": "사용자 전환",
+    "exit": "종료",
+    "secureData": "KAT Journey를 통해 안전하게 공유된 데이터.",
+    "sharedUser": "공유 사용자"
   }
 }

@@ -1379,5 +1379,12 @@
   "offline": {
     "title": "You are offline",
     "subtitle": " - Some features require an internet connection"
+  },
+  "sharedScreen": {
+    "headerShare": "Shared",
+    "switchUser": "Switch user",
+    "exit": "Exit",
+    "secureData": "Data securely shared via KAT Journey.",
+    "sharedUser": "Shared user"
   }
 }

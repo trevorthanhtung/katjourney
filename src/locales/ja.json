@@ -1394,5 +1394,12 @@
   "offline": {
     "title": "オフラインです",
     "subtitle": " - 一部の機能はインターネット接続が必要です"
+  },
+  "sharedScreen": {
+    "headerShare": "共有中",
+    "switchUser": "ユーザーを切り替える",
+    "exit": "終了",
+    "secureData": "データはKAT Journeyを通じて安全に共有されています。",
+    "sharedUser": "共有ユーザー"
   }
 }

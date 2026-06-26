@@ -270,7 +270,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
               }
               let avatar = requesterMember?.avatar;
               if (!avatar) {
-                const requesterName = req.requesterName || "Người được chia sẻ";
+                const requesterName = req.requesterName || t("sharedScreen.sharedUser");
                 let hash = 0;
                 for (let i = 0; i < requesterName.length; i++) {
                   hash = requesterName.charCodeAt(i) + ((hash << 5) - hash);
@@ -292,7 +292,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
                         {getAvatarSvg(avatar, "w-full h-full")}
                       </div>
                       <div>
-                        <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200">{req.requesterName || "Người được chia sẻ"}</p>
+                        <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200">{req.requesterName || t("sharedScreen.sharedUser")}</p>
                         <p className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
                           {formatRequestTime(req.createdAt)}
                         </p>

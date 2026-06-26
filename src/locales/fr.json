@@ -1394,5 +1394,12 @@
   "offline": {
     "title": "Vous êtes hors ligne",
     "subtitle": " - Certaines fonctionnalités nécessitent une connexion internet"
+  },
+  "sharedScreen": {
+    "headerShare": "Partagé",
+    "switchUser": "Changer d'utilisateur",
+    "exit": "Quitter",
+    "secureData": "Données partagées en toute sécurité via KAT Journey.",
+    "sharedUser": "Utilisateur partagé"
   }
 }

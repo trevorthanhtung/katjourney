@@ -1394,5 +1394,12 @@
   "offline": {
     "title": "Estás desconectado",
     "subtitle": " - Algunas funciones requieren conexión a internet"
+  },
+  "sharedScreen": {
+    "headerShare": "Compartido",
+    "switchUser": "Cambiar usuario",
+    "exit": "Salir",
+    "secureData": "Datos compartidos de forma segura a través de KAT Journey.",
+    "sharedUser": "Usuario compartido"
   }
 }

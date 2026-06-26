@@ -1394,5 +1394,12 @@
   "offline": {
     "title": "您已离线",
     "subtitle": " - 部分功能需要网络连接"
+  },
+  "sharedScreen": {
+    "headerShare": "已分享",
+    "switchUser": "切换用户",
+    "exit": "退出",
+    "secureData": "数据通过 KAT Journey 安全共享。",
+    "sharedUser": "被分享者"
   }
 }

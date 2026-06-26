@@ -1377,5 +1377,12 @@
   "offline": {
     "title": "Bạn đang offline",
     "subtitle": " - Một số tính năng cần kết nối mạng"
+  },
+  "sharedScreen": {
+    "headerShare": "Chia sẻ",
+    "switchUser": "Chọn lại người dùng",
+    "exit": "Thoát",
+    "secureData": "Dữ liệu được chia sẻ an toàn qua KAT Journey.",
+    "sharedUser": "Người được chia sẻ"
   }
 }
