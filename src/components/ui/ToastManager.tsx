@@ -33,18 +33,24 @@ export const GlobalToast = () => {
   return createPortal(
     <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[99999] px-4 w-full max-w-[400px] pointer-events-none motion-toast-enter">
       <div 
-        className={`flex items-center gap-2 p-3.5 px-5 rounded-2xl shadow-floating-premium border ${
+        className={`flex items-center gap-3.5 p-3 pr-5 pl-3 rounded-2xl shadow-floating-premium border backdrop-blur-xl transition-all duration-300 ${
           toast.type === 'success' 
-            ? 'bg-emerald-600 text-white border-emerald-500 shadow-emerald-900/20' 
-            : 'bg-rose-600 text-white border-rose-500 shadow-rose-900/20'
+            ? 'bg-white/85 dark:bg-[#111A33]/85 border-emerald-500/20 dark:border-emerald-400/20' 
+            : 'bg-white/85 dark:bg-[#111A33]/85 border-rose-500/20 dark:border-rose-400/20'
         }`}
       >
-        {toast.type === 'success' ? (
-          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5 shrink-0" />
-        ) : (
-          <HugeiconsIcon icon={CancelCircleIcon} className="h-5 w-5 shrink-0" />
-        )}
-        <p className="text-[14px] font-bold leading-tight">{toast.message}</p>
+        <div className={`flex shrink-0 items-center justify-center w-9 h-9 rounded-full ${
+          toast.type === 'success'
+            ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+            : 'bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400'
+        }`}>
+          {toast.type === 'success' ? (
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5" />
+          ) : (
+            <HugeiconsIcon icon={CancelCircleIcon} className="h-5 w-5" />
+          )}
+        </div>
+        <p className="text-[14px] font-semibold leading-tight text-slate-800 dark:text-slate-200">{toast.message}</p>
       </div>
     </div>,
     document.body
