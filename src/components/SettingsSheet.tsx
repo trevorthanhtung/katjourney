@@ -588,27 +588,27 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           </div>
         ) : (
           <>
-            <div className="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-kat-border/40 rounded-[22px] p-4.5 flex justify-between items-center text-[13.5px] font-bold text-slate-500 dark:text-slate-400 min-h-[60px] shadow-soft">
+            <div className="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-white/[0.04] rounded-[22px] p-4.5 flex justify-between items-center text-[13.5px] font-bold text-slate-500 dark:text-slate-400 min-h-[60px] shadow-soft">
               <span className="text-slate-500 dark:text-slate-400 font-bold">{t('settings.auth.lastSync')}</span>
               {lastBackupAt && backupTimeStr && backupDateStr ? (
                 <div className="flex gap-2 items-center">
-                  <div className="inline-flex items-center gap-1.5 font-black text-kat-dark dark:text-slate-200 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-kat-border/40 px-3.5 py-1.5 rounded-full text-[13px]">
+                  <div className="inline-flex items-center gap-1.5 font-black text-kat-dark dark:text-slate-200 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/[0.04] px-3.5 py-1.5 rounded-full text-[13px]">
                     <HugeiconsIcon icon={Clock01Icon} className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
                     <span>{backupTimeStr}</span>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 font-black text-kat-dark dark:text-slate-200 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-kat-border/40 px-3.5 py-1.5 rounded-full text-[13px]">
+                  <div className="inline-flex items-center gap-1.5 font-black text-kat-dark dark:text-slate-200 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/[0.04] px-3.5 py-1.5 rounded-full text-[13px]">
                     <HugeiconsIcon icon={Calendar01Icon} className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
                     <span>{backupDateStr}</span>
                   </div>
                 </div>
               ) : (
-                <span className="font-black text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-kat-border/40 px-4 py-1.5 rounded-full text-[13px]">
+                <span className="font-black text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/[0.04] px-4 py-1.5 rounded-full text-[13px]">
                   {t('settings.auth.neverSynced')}
                 </span>
               )}
             </div>
 
-            <div className="flex items-center justify-between p-4.5 rounded-[22px] border border-slate-200 dark:border-kat-border/40 bg-white dark:bg-slate-800/50 min-h-[76px] shadow-soft">
+            <div className="flex items-center justify-between p-4.5 rounded-[22px] border border-slate-200 dark:border-white/[0.04] bg-white dark:bg-slate-800/50 min-h-[76px] shadow-soft">
               <div className="flex items-center gap-3.5">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100/40 dark:border-indigo-900/30 shrink-0">
                   <HugeiconsIcon icon={CloudIcon} className="w-5 h-5" />
@@ -763,7 +763,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             {isInstallable && !isStandalone && (
               <button
                 onClick={handleInstallPWA}
-                className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-teal-300 hover:shadow-md active:scale-[0.98] dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-teal-500/50 focus:outline-none mb-2"
+                className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-teal-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-teal-500/50 focus:outline-none mb-2"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-teal-500/10"></div>
                 <div className="flex items-center gap-4 relative z-10">
@@ -782,7 +782,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             {/* Giao diện (Theme Selector Row) */}
             <button
               onClick={() => setView("theme")}
-              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-violet-300 hover:shadow-md active:scale-[0.98] dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-violet-500/50 focus:outline-none mb-2"
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-violet-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-violet-500/50 focus:outline-none mb-2"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-violet-500/10"></div>
                 <div className="flex items-center gap-4 relative z-10">
@@ -800,7 +800,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             {/* Language Selector Row */}
             <button
               onClick={() => setView("language")}
-              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-sky-300 hover:shadow-md active:scale-[0.98] dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-sky-500/50 focus:outline-none mb-2"
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-sky-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-sky-500/50 focus:outline-none mb-2"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-sky-500/10"></div>
                 <div className="flex items-center gap-4 relative z-10">
@@ -817,7 +817,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             <button
               onClick={() => setView("privacy")}
-              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-blue-300 hover:shadow-md active:scale-[0.98] dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-blue-500/50 focus:outline-none mb-2"
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-blue-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-blue-500/50 focus:outline-none mb-2"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-blue-500/10"></div>
                 <div className="flex items-center gap-4 relative z-10">
@@ -837,7 +837,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               const isNotificationActive = isNotificationSupported && notificationPermission === "granted" && notificationEnabled;
               return (
                 <div
-                  className="group relative flex items-center justify-between w-full p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-sm transition-all hover:border-emerald-300 hover:shadow-md dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-emerald-500/50 mb-2"
+                  className="group relative flex items-center justify-between w-full p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-sm transition-all hover:border-emerald-300 hover:shadow-md dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-emerald-500/50 mb-2"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-emerald-500/10"></div>
                   <div className="flex items-center gap-4 relative z-10 min-w-0">
@@ -891,7 +891,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             })()}
 
             {/* GPS Setting */}
-            <div className="group relative flex items-center justify-between p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-sm transition-all hover:border-indigo-300 hover:shadow-md dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-indigo-500/50 mb-2">
+            <div className="group relative flex items-center justify-between p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-sm transition-all hover:border-indigo-300 hover:shadow-md dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-indigo-500/50 mb-2">
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-indigo-500/10"></div>
               <div className="flex items-center gap-4 relative z-10 min-w-0">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-600 shadow-inner dark:from-indigo-900/40 dark:to-indigo-800/20 dark:text-indigo-400">
@@ -928,7 +928,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             {/* Exchange Rates */}
             <button
               onClick={() => setView("exchangeRates")}
-              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-cyan-300 hover:shadow-md active:scale-[0.98] dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-cyan-500/50 focus:outline-none mb-2"
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-cyan-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-cyan-500/50 focus:outline-none mb-2"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-cyan-500/10"></div>
                 <div className="flex items-center gap-4 relative z-10">
@@ -946,7 +946,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             {/* About */}
             <button
               onClick={() => setView("about")}
-              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-fuchsia-300 hover:shadow-md active:scale-[0.98] dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-fuchsia-500/50 focus:outline-none mb-2"
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-fuchsia-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-fuchsia-500/50 focus:outline-none mb-2"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-fuchsia-500/10"></div>
                 <div className="flex items-center gap-4 relative z-10">
@@ -964,7 +964,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             {/* Support Author */}
             <button
               onClick={() => setView("donate")}
-              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-amber-300 hover:shadow-md active:scale-[0.98] dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-amber-500/50 focus:outline-none mb-2"
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-amber-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-amber-500/50 focus:outline-none mb-2"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-amber-500/10"></div>
                 <div className="flex items-center gap-4 relative z-10">
@@ -982,7 +982,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             {/* Send Feedback */}
             <a
               href="mailto:trevorthanhtung@gmail.com?subject=Phản hồi ứng dụng KAT Journey"
-              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-sky-300 hover:shadow-md active:scale-[0.98] dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-sky-500/50 focus:outline-none mb-2"
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-sky-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-sky-500/50 focus:outline-none mb-2"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-sky-500/10"></div>
                 <div className="flex items-center gap-4 relative z-10">
@@ -998,7 +998,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             </a>
 
             {/* Version */}
-            <div className="group relative flex items-center justify-between w-full p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-slate-500/50 mb-2">
+            <div className="group relative flex items-center justify-between w-full p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-slate-500/50 mb-2">
               <div className="absolute inset-0 bg-gradient-to-br from-slate-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-slate-500/10"></div>
               <div className="flex items-center gap-4 relative z-10">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 text-slate-600 shadow-inner dark:from-slate-800/40 dark:to-slate-700/20 dark:text-slate-400">
@@ -1032,7 +1032,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                     setIsClearingTemp(false);
                   }
                 }}
-                className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-rose-300 hover:shadow-md active:scale-[0.98] dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-rose-500/50 disabled:opacity-70"
+                className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-rose-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-rose-500/50 disabled:opacity-70"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-rose-500/10"></div>
                 <div className="flex items-center gap-4 relative z-10">
@@ -1056,7 +1056,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-lime-300 hover:shadow-md active:scale-[0.98] dark:border-kat-border/40 dark:bg-slate-800/40 dark:hover:border-lime-500/50"
+                className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-lime-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-lime-500/50"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-lime-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-lime-500/10"></div>
                 <div className="flex items-center gap-4 relative z-10">
@@ -1192,7 +1192,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       <img 
                         src={user.photoURL} 
                         alt={user.displayName || "Avatar"} 
-                        className="h-14 w-14 rounded-full border border-slate-200/80 dark:border-kat-border/40 object-cover shadow-sm shrink-0 ring-2 ring-slate-100 dark:ring-slate-900"
+                        className="h-14 w-14 rounded-full border border-slate-200/80 dark:border-white/[0.04] object-cover shadow-sm shrink-0 ring-2 ring-slate-100 dark:ring-slate-900"
                       />
                     ) : (
                       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-lg shadow-inner shrink-0">
@@ -1352,7 +1352,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             <button
               type="button"
               onClick={() => setView("menu")}
-              className="mt-4 w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-kat-border/40 text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
+              className="mt-4 w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
               {t('settings.actions.backToMenu')}
             </button>
@@ -1365,7 +1365,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             <img src="/logo-dark.png" alt="KAT Journey Logo" className="hidden dark:block h-16 w-16 object-contain drop-shadow-sm mb-2" />
             
             <h3 className="text-[20px] font-black text-kat-dark">KAT Journey</h3>
-            <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200/50 dark:border-kat-border/40">
+            <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200/50 dark:border-white/[0.04]">
               {t('settings.aboutView.subtitle')}
             </span>
 
@@ -1373,7 +1373,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               {t('settings.aboutView.desc')}
             </p>
 
-            <div className="w-full max-w-lg rounded-[24px] border border-slate-200/60 dark:border-kat-border/40 bg-white dark:bg-slate-800/40 p-5 text-left shadow-soft">
+            <div className="w-full max-w-lg rounded-[24px] border border-slate-200/60 dark:border-white/[0.04] bg-white dark:bg-slate-800/40 p-5 text-left shadow-soft">
               <h4 className="text-[13.5px] font-black text-kat-dark">{t('settings.aboutView.techTitle')}</h4>
               <p className="mt-2 text-[12.5px] font-semibold leading-relaxed text-slate-500 dark:text-slate-400">
                 {t('settings.aboutView.techDesc1')}
@@ -1400,7 +1400,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             <button
               type="button"
               onClick={() => setView("menu")}
-              className="mt-4 w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-kat-border/40 text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
+              className="mt-4 w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
               {t('settings.actions.backToMenu')}
             </button>
@@ -1447,7 +1447,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             {donateTab === "vn" ? (
               <>
-                <div className="w-[85%] max-w-[280px] p-4 bg-white dark:bg-slate-900/30 border border-slate-200 dark:border-kat-border/40 rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
+                <div className="w-[85%] max-w-[280px] p-4 bg-white dark:bg-slate-900/30 border border-slate-200 dark:border-white/[0.04] rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
                   <img 
                     src="/donates.png" 
                     alt="Donate QR Code" 
@@ -1490,7 +1490,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             <button
               type="button"
               onClick={() => setView("menu")}
-              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-kat-border/40 text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
+              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
               {t('settings.actions.backToMenu')}
             </button>
@@ -1499,7 +1499,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
         {view === "exchangeRates" && (
           <div className="space-y-5 animate-fadeIn">
-            <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-kat-border/40 rounded-2xl p-4 overflow-hidden">
+            <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/[0.04] rounded-2xl p-4 overflow-hidden">
               <div className="flex items-center justify-between mb-4 px-1">
                 <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
                   <HugeiconsIcon icon={Coins01Icon} className="w-4 h-4" />
@@ -1518,7 +1518,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   exchangeRates.map((rate, idx) => (
                     <div 
                       key={rate.currencyCode} 
-                      className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 shadow-sm"
+                      className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-slate-800/40 border border-slate-100 dark:border-white/[0.04] shadow-sm"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-900/60 flex items-center justify-center font-bold text-slate-700 dark:text-slate-400 text-[13px] border border-slate-100 dark:border-slate-800/50">
@@ -1542,7 +1542,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             <button
               onClick={() => setView("menu")}
-              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-kat-border/40 text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
+              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
               {t('settings.actions.backToMenu')}
             </button>
@@ -1579,7 +1579,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                       "relative flex items-center gap-3.5 p-3 rounded-[20px] border-2 transition-all duration-300 group focus:outline-none text-left overflow-hidden w-full",
                       i18n.language === lang.code
                         ? "border-kat-primary bg-kat-primary/[0.03] dark:bg-kat-primary/[0.05] shadow-sm scale-[1.02]"
-                        : "border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:scale-[1.01] active:scale-[0.98]"
+                        : "border-slate-100 dark:border-white/[0.04] bg-white dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:scale-[1.01] active:scale-[0.98]"
                     )}
                   >
                     {/* Icon */}
@@ -1622,7 +1622,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             <button
               onClick={() => setView("menu")}
-              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-kat-border/40 text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
+              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
               {t('settings.actions.backToMenu')}
             </button>
@@ -1645,7 +1645,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                     "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
                     theme === "light"
                       ? "border-amber-500 bg-amber-500/[0.02] dark:bg-amber-500/[0.01] shadow-[0_4px_20px_rgba(245,158,11,0.08)] scale-[1.02]"
-                      : "bg-white dark:bg-slate-900/40 border-slate-200/80 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98]"
+                      : "bg-white dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98]"
                   )}
                 >
                   {/* Mini Screen Preview */}
@@ -1678,7 +1678,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                     "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
                     theme === "dark"
                       ? "border-violet-500 bg-violet-500/[0.02] dark:bg-violet-500/[0.01] shadow-[0_4px_20px_rgba(139,92,246,0.12)] scale-[1.02]"
-                      : "bg-white dark:bg-slate-900/40 border-slate-200/80 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98]"
+                      : "bg-white dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98]"
                   )}
                 >
                   {/* Mini Screen Preview */}
@@ -1711,7 +1711,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                     "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
                     theme === "system"
                       ? "border-teal-500 bg-teal-500/[0.02] dark:bg-teal-500/[0.01] shadow-[0_4px_20px_rgba(20,184,166,0.08)] scale-[1.02]"
-                      : "bg-white dark:bg-slate-900/40 border-slate-200/80 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98]"
+                      : "bg-white dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98]"
                   )}
                 >
                   {/* Mini Screen Preview (Split) */}
@@ -1754,7 +1754,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             <button
               onClick={() => setView("menu")}
-              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-kat-border/40 text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
+              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
             >
               {t('settings.actions.backToMenu')}
             </button>
@@ -1792,7 +1792,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-colors ${
               restoreMode === "merge" 
                 ? "bg-indigo-600 text-white border-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 dark:border-indigo-500/50" 
-                : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-kat-border/40"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/[0.04]"
             }`}>
               <HugeiconsIcon icon={GitMergeIcon} className="w-5.5 h-5.5" />
             </div>
@@ -1834,7 +1834,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-colors ${
               restoreMode === "replace" 
                 ? "bg-rose-600 text-white border-rose-600 dark:bg-rose-500/20 dark:text-rose-450 dark:border-rose-500/50" 
-                : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-kat-border/40"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/[0.04]"
             }`}>
               <HugeiconsIcon icon={Delete01Icon} className="w-5.5 h-5.5" />
             </div>
@@ -1872,7 +1872,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           <button
             type="button"
             onClick={handleRestore}
-            className={`flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] text-white dark:text-slate-200 px-6 font-black active:scale-[0.98] transition-all duration-200 motion-press shadow-sm border border-transparent dark:border-kat-border/40 ${
+            className={`flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] text-white dark:text-slate-200 px-6 font-black active:scale-[0.98] transition-all duration-200 motion-press shadow-sm border border-transparent dark:border-white/[0.04] ${
               restoreMode === "replace"
                 ? "bg-rose-600 hover:bg-rose-700 hover:shadow-rose-100"
                 : "bg-kat-dark dark:bg-slate-800 hover:bg-kat-dark dark:hover:bg-slate-700 bg-opacity-90 hover:shadow-indigo-100"
@@ -1919,7 +1919,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               }
               setSelectedFileForRestore(null);
             }}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-slate-800 border border-kat-dark dark:border-kat-border/40 px-6 font-bold text-white dark:text-slate-200 hover:bg-kat-dark dark:hover:bg-slate-700 bg-opacity-90 active:scale-98 transition-all duration-200 shadow-sm"
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-slate-800 border border-kat-dark dark:border-white/[0.04] px-6 font-bold text-white dark:text-slate-200 hover:bg-kat-dark dark:hover:bg-slate-700 bg-opacity-90 active:scale-98 transition-all duration-200 shadow-sm"
           >
             <HugeiconsIcon icon={Upload01Icon} className="h-5 w-5" />
             {t('settings.dialogs.fileRestore.restore')}
@@ -1942,7 +1942,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
         <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
           <div className="bg-white dark:bg-kat-surface w-full max-w-md rounded-[28px] border border-slate-200 dark:border-kat-border/60 shadow-2xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-hidden animate-scaleUp">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100 dark:border-kat-border/40">
+            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100 dark:border-white/[0.04]">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/40">
                   <HugeiconsIcon icon={PackageReceiveIcon} className="h-5 w-5" />
@@ -1980,7 +1980,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   { label: t('settings.dialogs.importPreview.checklist'), value: importPreview.checklistCount },
                   { label: t('settings.dialogs.importPreview.journal'), value: importPreview.journalCount },
                 ].map(item => (
-                  <div key={item.label} className="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 p-3 text-center">
+                  <div key={item.label} className="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-white/[0.04] p-3 text-center">
                     <p className="text-[20px] font-black text-kat-dark dark:text-slate-100">{item.value}</p>
                     <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{item.label}</p>
                   </div>
