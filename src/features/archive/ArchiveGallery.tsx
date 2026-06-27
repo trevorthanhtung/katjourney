@@ -14,14 +14,14 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { Trip, db, Expense } from "../../db";
 import { formatDate, formatMoneyCompact } from "../../utils/helpers";
 
-// A palette of premium gradients for cards
-const CARD_GRADIENTS = [
-  "linear-gradient(135deg, #1A3A5C 0%, #1E4976 55%, #2460A7 100%)",
-  "linear-gradient(135deg, #2D1B69 0%, #3D2B8C 55%, #4A35A8 100%)",
-  "linear-gradient(135deg, #0F4C3A 0%, #1A6B50 55%, #217A5C 100%)",
-  "linear-gradient(135deg, #4A1942 0%, #6B2760 55%, #7D3070 100%)",
-  "linear-gradient(135deg, #1A3A5C 0%, #0F4C81 55%, #1565C0 100%)",
-  "linear-gradient(135deg, #5C2A1A 0%, #7A3A20 55%, #963F1E 100%)",
+// A palette of premium glassmorphism glow colors for cards
+const CARD_GLOWS = [
+  "bg-blue-400/15",
+  "bg-fuchsia-400/15",
+  "bg-emerald-400/15",
+  "bg-rose-400/15",
+  "bg-cyan-400/15",
+  "bg-amber-400/15",
 ];
 
 function getTripDurationText(trip: Trip, t: any) {
@@ -57,73 +57,63 @@ function TripCard({
   const { t } = useTranslation();
   const tripExpenses = allExpenses.filter(e => e.tripId === trip.id);
   const totalExpense = tripExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
-  const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
+  const glowClass = CARD_GLOWS[index % CARD_GLOWS.length];
 
   return (
     <div
       onClick={() => onOpenTrip(trip.id!)}
-      className="group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[28px] p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl motion-card-enter h-full min-h-[200px]"
-      style={{
-        background: gradient,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
-      }}
+      className="group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[28px] bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-slate-200/60 dark:border-white/10 hover:border-[#00BFB7]/40 dark:hover:border-[#00BFB7]/50 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(0,191,183,0.08)] transition-all duration-500 motion-card-enter h-full min-h-[200px]"
     >
+      {/* Ambient glass glow specific to each card */}
+      <div className={`absolute top-0 right-0 w-[200px] h-[200px] ${glowClass} blur-[60px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700`} />
+
       {/* Background decorative compass */}
-      <div className="absolute -bottom-4 -right-4 opacity-10 pointer-events-none rotate-12">
-        <HugeiconsIcon icon={CompassIcon} size={112} className="text-white" />
+      <div className="absolute -bottom-6 -right-6 opacity-[0.05] dark:opacity-[0.1] pointer-events-none rotate-12 group-hover:rotate-[24deg] group-hover:scale-110 transition-transform duration-1000 ease-out">
+        <HugeiconsIcon icon={CompassIcon} size={140} className="text-kat-primary" />
       </div>
 
       {/* Top: Badge */}
-      <div className="flex items-center justify-between mb-4">
-        <span className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold tracking-wide"
-          style={{ background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.9)", border: "1px solid rgba(255,255,255,0.2)" }}
-        >
+      <div className="flex items-center justify-between mb-4 relative z-10">
+        <span className="inline-flex items-center rounded-full bg-slate-200/50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 px-3 py-1 text-[11px] font-black tracking-wide text-slate-700 dark:text-slate-300">
           {getTripDurationText(trip, t)}
         </span>
-        <div className="flex h-8 w-8 items-center justify-center rounded-full"
-          style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)" }}
-        >
-          <HugeiconsIcon icon={SparklesIcon} size={16} className="text-white/80" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200/50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10">
+          <HugeiconsIcon icon={SparklesIcon} size={16} className="text-kat-primary group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm" />
         </div>
       </div>
 
       {/* Trip title */}
-      <h4 className="text-[20px] font-extrabold text-white leading-tight mb-5 line-clamp-2 tracking-tight">
+      <h4 className="text-[20px] font-black text-kat-text leading-tight mb-5 line-clamp-2 tracking-tight group-hover:bg-gradient-to-r group-hover:from-kat-primary group-hover:to-teal-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300 relative z-10 w-fit">
         {trip.title}
       </h4>
 
       {/* Info grid */}
-      <div className="grid grid-cols-2 gap-y-2.5 gap-x-3 mt-auto">
-        <div className="flex items-center gap-2 min-w-0">
-          <HugeiconsIcon icon={Location01Icon} size={14} className="text-white/50 shrink-0" />
-          <span className="text-[12.5px] font-semibold text-white/75 truncate">
+      <div className="grid grid-cols-2 gap-y-2.5 gap-x-3 mt-auto relative z-10">
+        <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[12px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-sm">
+          <HugeiconsIcon icon={Location01Icon} size={14} className="text-kat-primary shrink-0 drop-shadow-sm" />
+          <span className="text-[12px] font-black text-slate-700 dark:text-slate-200 truncate">
             {trip.location || t("common.unknownLocation")}
           </span>
         </div>
-        <div className="flex items-center gap-2 min-w-0">
-          <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-white/50 shrink-0" />
-          <span className="text-[12.5px] font-semibold text-white/75 truncate">
+        <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[12px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-sm">
+          <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-kat-primary shrink-0 drop-shadow-sm" />
+          <span className="text-[12px] font-black text-slate-700 dark:text-slate-200 truncate">
             {formatDate(trip.startDate)}
           </span>
         </div>
-        <div className="flex items-center gap-2 min-w-0">
-          <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-white/50 shrink-0" />
-          <span className="text-[12.5px] font-semibold text-white/75 truncate">
+        <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[12px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-sm">
+          <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-kat-primary shrink-0 drop-shadow-sm" />
+          <span className="text-[12px] font-black text-slate-700 dark:text-slate-200 truncate">
             {t('dashboard.peopleCount', { count: memberCounts[trip.id!] || 1 })}
           </span>
         </div>
-        <div className="flex items-center gap-2 min-w-0">
-          <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-white/50 shrink-0" />
-          <span className="text-[12.5px] font-semibold text-white/75 truncate">
+        <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[12px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-sm">
+          <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-kat-primary shrink-0 drop-shadow-sm" />
+          <span className="text-[12px] font-black text-slate-700 dark:text-slate-200 truncate">
             {totalExpense > 0 ? t('dashboard.expenseTotal', { amount: formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND") }) : t('dashboard.noExpense')}
           </span>
         </div>
       </div>
-
-      {/* Hover shimmer overlay */}
-      <div className="absolute inset-0 rounded-[28px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-        style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 100%)" }}
-      />
     </div>
   );
 }
@@ -170,19 +160,19 @@ const archivedTrips = useLiveQuery(async () =>
   // getTripDurationText and TripCard have been moved to the top level (outside ArchiveGallery) to prevent React unmounting/re-rendering animation bugs.
 
   return (
-    <div className="mx-auto w-full max-w-[1120px] px-4 py-6 md:px-6 md:pt-4 md:pb-16">
+    <div className="mx-auto w-full max-w-[1120px] px-4 py-6 md:px-6 md:pt-4 md:pb-16 motion-page-enter">
       {/* Header */}
       <div className="mb-8 flex items-center gap-4">
         <button
           onClick={onBack}
           aria-label={t('archive.back')}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-kat-surface border border-slate-200 dark:border-kat-border text-slate-650 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/10 hover:border-[#00BFB7]/40 dark:hover:border-[#00BFB7]/50 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,191,183,0.12)] transition-all duration-300 shadow-sm group motion-press"
         >
-          <HugeiconsIcon icon={ArrowLeft01Icon} size={20} className="text-slate-600 dark:text-slate-300" />
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={20} className="text-kat-dark dark:text-white group-hover:text-kat-primary transition-colors" />
         </button>
         <div>
-          <h1 className="text-[24px] font-black text-kat-dark">{t('archive.title')}</h1>
-          <p className="text-[13.5px] font-semibold text-slate-500">
+          <h1 className="text-[24px] font-black bg-gradient-to-r from-kat-dark to-kat-primary dark:from-white dark:to-teal-300 bg-clip-text text-transparent drop-shadow-sm">{t('archive.title')}</h1>
+          <p className="text-[13.5px] font-semibold text-slate-600 dark:text-slate-300 mt-0.5">
             {archivedTrips.length > 0
               ? t('archive.savedTrips', { count: archivedTrips.length })
               : t('archive.noTripsDesc')}

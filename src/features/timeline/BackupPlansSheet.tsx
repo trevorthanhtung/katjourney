@@ -174,7 +174,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
             {!isFormOpen && plans.length > 0 && (
               <button
                 onClick={handleOpenAdd}
-                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-kat-teal text-kat-dark px-3.5 text-[13px] font-extrabold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
+                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white px-3.5 text-[13px] font-extrabold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
                 <span>{t("backup.add")}</span>
@@ -324,7 +324,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
                 </button>
                 <button
                   onClick={handleSave}
-                  className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-kat-dark bg-kat-teal hover:brightness-105 transition-all motion-press focus:outline-none"
+                  className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-white bg-indigo-500 hover:bg-indigo-600 hover:brightness-105 transition-all motion-press focus:outline-none"
                 >
                   {t("backup.savePlan")}
                 </button>
@@ -341,7 +341,7 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
               </p>
               <button
                 onClick={handleOpenAdd}
-                className="flex items-center gap-2 px-6 py-3.5 bg-kat-teal text-kat-dark rounded-xl text-[14.5px] font-bold hover:brightness-105 transition-all motion-press"
+                className="flex items-center gap-2 px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-[14.5px] font-bold hover:brightness-105 transition-all motion-press"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-5 h-5" />
                 {t("backup.addFirst")}
@@ -492,3 +492,4 @@ export function BackupPlansSheet({ tripId, activityId, date, isOpen, onClose, on
     document.body
   );
 }
+

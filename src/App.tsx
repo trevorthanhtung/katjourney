@@ -802,28 +802,28 @@ function App() {
             
             {/* Desktop Navigation */}
             {!isManagingTrips && tripId && (
-              <div className="hidden lg:flex ml-6 gap-2 bg-kat-text/5 p-1 rounded-full">
+              <div className="hidden lg:flex ml-6 gap-2 bg-slate-100/50 dark:bg-white/5 backdrop-blur-md p-1.5 rounded-full border border-slate-200/50 dark:border-white/10 shadow-sm">
                 <button 
                   onClick={() => setActiveTab("home")}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "home" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
+                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "home" ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10" : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10")}
                 >
                   {t('nav.home')}
                 </button>
                 <button 
                   onClick={() => setActiveTab("timeline")}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "timeline" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
+                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "timeline" ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10" : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10")}
                 >
                   {t('nav.timeline')}
                 </button>
                 <button 
                   onClick={() => setActiveTab("expenses")}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "expenses" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
+                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "expenses" ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10" : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10")}
                 >
                   {t('nav.expenses')}
                 </button>
                 <button 
                   onClick={() => setActiveTab("checklist")}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "checklist" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
+                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "checklist" ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10" : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10")}
                 >
                   {t('nav.checklist')}
                 </button>
@@ -832,7 +832,7 @@ function App() {
                     setMoreSection("overview");
                     setActiveTab("more");
                   }}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "more" ? "bg-white dark:bg-slate-800 text-kat-text font-bold shadow-sm" : "text-kat-muted font-medium hover:text-kat-text hover:bg-black/5 dark:hover:bg-white/5")}
+                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "more" ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10" : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10")}
                 >
                   {t('nav.more')}
                 </button>
@@ -850,7 +850,7 @@ function App() {
 
             <button
               onClick={() => setIsImportModalOpen(true)}
-              className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-slate-200 dark:border-kat-border text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
+              className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
               title="Xem chuyến đi qua link chia sẻ"
               aria-label="Xem chuyến đi qua link chia sẻ"
             >
@@ -864,7 +864,7 @@ function App() {
               <>
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-slate-200 dark:border-kat-border text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
+                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
                   title="Tìm trong chuyến đi"
                   aria-label={t("search.placeholder")}
                 >
@@ -874,7 +874,7 @@ function App() {
                 <div className="relative" ref={remindersRef}>
                   <button
                     onClick={() => setIsRemindersOpen(!isRemindersOpen)}
-                    className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-kat-border/60 dark:border-kat-border text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
+                    className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
                     title={t("reminders.title")}
                     aria-label={t("reminders.title")}
                   >
@@ -916,7 +916,7 @@ function App() {
                     setIsManagingTrips(true);
                     setIsViewingArchive(false);
                   }}
-                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-kat-surface border border-slate-200 dark:border-kat-border text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.97] transition-[transform,color,background-color,border-color] duration-150 shadow-sm focus:outline-none shrink-0"
+                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
                   title="Quay lại danh sách chuyến đi"
                   aria-label="Quay lại danh sách chuyến đi"
                 >
@@ -927,7 +927,7 @@ function App() {
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full overflow-hidden bg-kat-surface border border-slate-200 dark:border-kat-border hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-[0.97] transition-[transform,box-shadow,background-color,border-color,color] duration-150 shadow-sm focus:outline-none shrink-0"
+                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full overflow-hidden bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 hover:bg-white dark:hover:bg-white/10 hover:text-slate-800 dark:hover:text-white hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
                   title={t('userMenu.accountMenu')}
                   aria-label={t('userMenu.accountMenu')}
                 >

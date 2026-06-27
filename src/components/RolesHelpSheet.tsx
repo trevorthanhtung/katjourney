@@ -82,7 +82,7 @@ export function RolesHelpSheet({
         {roles.map((role, idx) => (
           <div
             key={idx}
-            className="p-4 rounded-2xl border border-slate-100 dark:border-slate-800/80 bg-slate-50/30 dark:bg-slate-800/40 flex flex-col gap-3"
+            className="p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md flex flex-col gap-3 shadow-sm transition-all hover:bg-white/60 dark:hover:bg-white/10"
           >
             <div className="flex items-center gap-3">
               <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${role.colorClass} shadow-sm shrink-0`}>
@@ -98,7 +98,7 @@ export function RolesHelpSheet({
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 pt-1.5 border-t border-slate-100/50 dark:border-slate-800/50">
+            <div className="flex flex-wrap gap-2 pt-1.5 border-t border-slate-200/60 dark:border-white/10">
               {role.permissions.map((p, pIdx) => (
                 <span
                   key={pIdx}

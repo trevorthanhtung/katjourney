@@ -28,11 +28,14 @@ export function SplashScreen({ isFading }: SplashScreenProps) {
 
       {/* Main Logo Container */}
       <div className="relative flex flex-col items-center gap-6 z-10 animate-splash-logo">
-        <div className="flex items-center justify-center rounded-[24px] shadow-lg ring-8 ring-black/5 dark:ring-white/10">
+        <div className="relative flex items-center justify-center rounded-[28px] p-1 overflow-hidden group">
+          {/* Subtle premium shimmer overlay over the logo container */}
+          <div className="absolute top-0 bottom-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer-sweep pointer-events-none z-20"></div>
+          
           <img
             src="/asset/logo.png"
             alt="KAT Journey Logo"
-            className="h-20 w-20 rounded-[24px] object-contain"
+            className="h-24 w-24 rounded-[24px] object-contain animate-splash-neon relative z-10"
             loading="eager"
           />
         </div>

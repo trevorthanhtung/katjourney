@@ -1330,164 +1330,44 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
         )}
 
         {view === "privacy" && (
-          <div className="space-y-4 py-2">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-kat-primary-soft text-kat-primary border border-kat-primary/20 mb-2">
-              <HugeiconsIcon icon={LockIcon} className="h-6 w-6" />
-            </div>
-
-            <h3 className="text-[18px] font-black text-kat-dark text-balance">{t('settings.privacyView.title')}</h3>
-
-            <div className="space-y-3.5 text-[14px] font-semibold text-slate-600 dark:text-slate-400 leading-relaxed">
-              <p>
-                <strong className="dark:text-slate-200">{t('settings.privacyView.offlineTitle')}</strong>{t('settings.privacyView.offlineDesc')}
-              </p>
-              <p>
-                <strong className="dark:text-slate-200">{t('settings.privacyView.identityTitle')}</strong>{t('settings.privacyView.identityDesc')}
-              </p>
-              <p>
-                <strong className="dark:text-slate-200">{t('settings.privacyView.noDataTitle')}</strong>{t('settings.privacyView.noDataDesc')}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setView("menu")}
-              className="mt-4 w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
-            >
-              {t('settings.actions.backToMenu')}
-            </button>
-          </div>
-        )}
-
-        {view === "about" && (
-          <div className="space-y-4 py-2 text-center flex flex-col items-center">
-            <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-16 w-16 object-contain drop-shadow-sm mb-2" />
-            
-            <h3 className="text-[20px] font-black text-kat-dark">KAT Journey</h3>
-            <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200/50 dark:border-white/[0.04]">
-              {t('settings.aboutView.subtitle')}
-            </span>
-
-            <p className="text-[14px] font-semibold leading-relaxed text-slate-650 dark:text-slate-300 text-center max-w-sm mt-2">
-              {t('settings.aboutView.desc')}
-            </p>
-
-            <div className="w-full max-w-lg rounded-[24px] border border-slate-200/60 dark:border-white/[0.04] bg-white dark:bg-slate-800/40 p-5 text-left shadow-soft">
-              <h4 className="text-[13.5px] font-black text-kat-dark">{t('settings.aboutView.techTitle')}</h4>
-              <p className="mt-2 text-[12.5px] font-semibold leading-relaxed text-slate-500 dark:text-slate-400">
-                {t('settings.aboutView.techDesc1')}
-              </p>
-              <p className="mt-2 text-[11.5px] font-medium leading-relaxed text-slate-400 dark:text-slate-500">
-                {t('settings.aboutView.techDesc2')}
-              </p>
-            </div>
-
-            <div className="pt-4 text-center">
-              <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500">
-                {t('settings.aboutView.madeBy')}{" "}
-                <a
-                  href="https://tranthanhtung-trevor.vercel.app/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:underline text-slate-500 dark:text-slate-400 font-bold"
-                >
-                  thanhtungg.
-                </a>
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setView("menu")}
-              className="mt-4 w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
-            >
-              {t('settings.actions.backToMenu')}
-            </button>
-          </div>
-        )}
-
-        {view === "donate" && (
-          <div className="space-y-5 flex flex-col items-center text-center py-2">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30 shadow-sm">
-              <HugeiconsIcon icon={Coffee01Icon} className="h-5 w-5" />
-            </div>
-            
-            <div className="space-y-2 max-w-md">
-              <h4 className="text-[18px] font-black text-kat-dark dark:text-slate-200">{t('settings.donateView.title')}</h4>
-              <p className="text-[14px] font-semibold leading-relaxed text-slate-500 dark:text-slate-400">
-                {t('settings.donateView.desc1')}
-              </p>
-              <p className="text-[12px] font-medium text-slate-400 dark:text-slate-500">
-                {t('settings.donateView.desc2')}
-              </p>
-            </div>
-
-            {/* Tabs */}
-            <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-[85%] max-w-[280px] mb-2 mt-2">
-              <button
-                onClick={() => setDonateTab("vn")}
-                className={classNames(
-                  "flex-1 py-1.5 text-[13px] font-bold rounded-lg transition-all",
-                  donateTab === "vn" ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
-                )}
-              >
-                {t("settings.donateView.tabVietQR", "VietQR")}
-              </button>
-              <button
-                onClick={() => setDonateTab("intl")}
-                className={classNames(
-                  "flex-1 py-1.5 text-[13px] font-bold rounded-lg transition-all",
-                  donateTab === "intl" ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
-                )}
-              >
-                {t("settings.donateView.tabInternational", "International")}
-              </button>
-            </div>
-
-            {donateTab === "vn" ? (
-              <>
-                <div className="w-[85%] max-w-[280px] p-4 bg-white dark:bg-slate-900/30 border border-slate-200 dark:border-white/[0.04] rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
-                  <img 
-                    src="/asset/donates.png" 
-                    alt="Donate QR Code" 
-                    className="w-full h-auto rounded-[16px] object-contain aspect-square" 
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                  <span className="mt-3 text-[11px] font-extrabold text-slate-700 dark:text-slate-400 uppercase tracking-wider bg-slate-50/80 dark:bg-slate-900/80 px-3 py-1 rounded-full border border-slate-100 dark:border-slate-800">
-                    {t('settings.donateView.scanQR')}
-                  </span>
+          <div className="space-y-6 animate-fadeIn text-left">
+            <div className="relative bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/10 rounded-[28px] p-6 shadow-xl dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden">
+              {/* Subtle background glow */}
+              <div className="absolute -top-24 -left-24 w-48 h-48 bg-kat-primary/20 blur-[80px] rounded-full pointer-events-none" />
+              
+              <div className="relative z-10">
+                {/* Glowing Premium Icon */}
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-[20px] bg-kat-primary/15 text-kat-primary mb-5 shadow-[0_0_24px_rgba(0,200,255,0.2)] group">
+                  <div className="absolute inset-0 rounded-[20px] bg-kat-primary animate-ping opacity-20" />
+                  <HugeiconsIcon icon={LockIcon} className="h-7 w-7 transition-transform duration-500 group-hover:scale-110" />
                 </div>
 
-                <a 
-                  href="/asset/donates.png" 
-                  download="kat-journey-donate-qr.png"
-                  className="text-[13px] font-bold text-kat-teal hover:underline flex items-center gap-1 active:scale-95 transition-all"
-                >
-                  <HugeiconsIcon icon={Download01Icon} className="w-4 h-4" />
-                  {t('settings.donateView.saveQR')}
-                </a>
-              </>
-            ) : (
-              <div className="w-full max-w-[280px] space-y-3 mt-2">
-                <a 
-                  href="https://paypal.me/trevorthanhtung"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-full gap-2 py-3.5 px-4 rounded-[16px] bg-[#00457C] text-white font-extrabold text-[14px] transition-all hover:bg-[#005a9e] active:scale-[0.98] shadow-sm"
-                >
-                  <HugeiconsIcon icon={GlobeIcon} className="w-5 h-5" />
-                  {t("settings.donateView.supportPayPal", "Support via PayPal")}
-                </a>
-                <p className="text-[12px] font-medium text-slate-400 mt-3">
-                  {t("settings.donateView.thankYou", "(Thank you for your support!)")}
-                </p>
+                <h3 className="text-[20px] font-black text-slate-800 dark:text-white text-balance tracking-tight mb-5">
+                  {t('settings.privacyView.title')}
+                </h3>
+
+                <div className="space-y-4">
+                  {[
+                    { title: t('settings.privacyView.offlineTitle'), desc: t('settings.privacyView.offlineDesc') },
+                    { title: t('settings.privacyView.identityTitle'), desc: t('settings.privacyView.identityDesc') },
+                    { title: t('settings.privacyView.noDataTitle'), desc: t('settings.privacyView.noDataDesc') },
+                  ].map((item, idx) => (
+                    <div 
+                      key={idx}
+                      className="bg-white/40 dark:bg-slate-800/20 rounded-2xl p-4 border border-slate-100 dark:border-white/[0.03] animate-slideUpFade"
+                      style={{ animationDelay: `${idx * 100}ms`, animationFillMode: 'both' }}
+                    >
+                      <p className="text-[14px] font-semibold text-slate-600 dark:text-slate-400 leading-relaxed">
+                        <strong className="block text-slate-800 dark:text-slate-200 mb-1 text-[14.5px]">{item.title}</strong>
+                        {item.desc}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            )}
+            </div>
 
             <button
-              type="button"
               onClick={() => setView("menu")}
               className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
             >
@@ -1496,40 +1376,225 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
           </div>
         )}
 
+        {view === "about" && (
+          <div className="space-y-6 animate-fadeIn text-center">
+            <div className="relative bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/10 rounded-[28px] p-6 shadow-xl dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col items-center">
+              {/* Subtle background glow */}
+              <div className="absolute -top-20 -right-20 w-56 h-56 bg-kat-primary/20 blur-[80px] rounded-full pointer-events-none" />
+              <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-fuchsia-500/10 dark:bg-fuchsia-500/20 blur-[80px] rounded-full pointer-events-none" />
+              
+              <div className="relative z-10 w-full flex flex-col items-center">
+                {/* Logo with breathing/glow effect */}
+                <div className="relative group mb-4">
+                  <div className="absolute inset-0 bg-kat-primary/30 blur-2xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  <img src="/asset/logo.png" alt="KAT Journey Logo" className="relative h-20 w-20 object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_4px_16px_rgba(255,255,255,0.1)] transition-transform duration-500 hover:scale-110 animate-float" />
+                </div>
+                
+                <h3 className="text-[24px] font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-kat-dark via-slate-800 to-kat-dark dark:from-white dark:via-cyan-100 dark:to-white drop-shadow-sm mb-1">
+                  KAT Journey
+                </h3>
+                
+                <span className="inline-block text-[12px] font-bold text-kat-primary dark:text-cyan-300 bg-kat-primary/10 dark:bg-kat-primary/20 px-3.5 py-1.5 rounded-full border border-kat-primary/20 shadow-[0_0_12px_rgba(var(--kat-primary),0.1)] mb-4">
+                  {t('settings.aboutView.subtitle')}
+                </span>
+
+                <p className="text-[14.5px] font-semibold leading-relaxed text-slate-600 dark:text-slate-300 text-center max-w-[280px] mb-6 animate-slideUpFade" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
+                  {t('settings.aboutView.desc')}
+                </p>
+
+                <div className="w-full rounded-[24px] border border-slate-200/60 dark:border-white/[0.05] bg-white/50 dark:bg-slate-800/30 p-5 text-left shadow-sm backdrop-blur-md animate-slideUpFade group hover:border-slate-300 dark:hover:border-white/10 transition-colors duration-300" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
+                  <h4 className="text-[14px] font-black text-slate-800 dark:text-white mb-2">{t('settings.aboutView.techTitle')}</h4>
+                  <p className="text-[13px] font-semibold leading-relaxed text-slate-500 dark:text-slate-400 mb-2">
+                    {t('settings.aboutView.techDesc1')}
+                  </p>
+                  <p className="text-[12px] font-medium leading-relaxed text-slate-400 dark:text-slate-500">
+                    {t('settings.aboutView.techDesc2')}
+                  </p>
+                </div>
+
+                <div className="pt-6 pb-2 text-center animate-slideUpFade" style={{ animationDelay: '300ms', animationFillMode: 'both' }}>
+                  <p className="text-[13.5px] font-semibold text-slate-400 dark:text-slate-500">
+                    {t('settings.aboutView.madeBy')}{" "}
+                    <a
+                      href="https://tranthanhtung-trevor.vercel.app/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-slate-600 dark:text-slate-300 font-bold hover:text-kat-primary dark:hover:text-cyan-400 transition-colors duration-200 hover:drop-shadow-[0_0_8px_rgba(var(--kat-primary),0.5)]"
+                    >
+                      thanhtungg.
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setView("menu")}
+              className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
+            >
+              {t('settings.actions.backToMenu')}
+            </button>
+          </div>
+        )}
+
+        {view === "donate" && (
+          <div className="space-y-6 animate-fadeIn flex flex-col items-center text-center">
+            <div className="relative bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/10 rounded-[28px] p-6 shadow-xl dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden w-full flex flex-col items-center">
+              {/* Subtle background glow */}
+              <div className="absolute -top-20 -left-20 w-48 h-48 bg-amber-500/15 blur-[80px] rounded-full pointer-events-none" />
+              <div className="absolute -bottom-20 -right-20 w-48 h-48 bg-kat-primary/10 blur-[80px] rounded-full pointer-events-none" />
+
+              <div className="relative z-10 w-full flex flex-col items-center">
+                {/* Glowing Premium Icon */}
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-[20px] bg-amber-500/10 text-amber-500 mb-5 shadow-[0_0_24px_rgba(245,158,11,0.2)] group">
+                  <div className="absolute inset-0 rounded-[20px] bg-amber-500 animate-ping opacity-20" />
+                  <HugeiconsIcon icon={Coffee01Icon} className="h-7 w-7 transition-transform duration-500 group-hover:scale-110" />
+                </div>
+                
+                <div className="space-y-2 max-w-md mb-6">
+                  <h4 className="text-[20px] font-black text-slate-800 dark:text-white tracking-tight">
+                    {t('settings.donateView.title')}
+                  </h4>
+                  <p className="text-[14px] font-semibold leading-relaxed text-slate-500 dark:text-slate-400">
+                    {t('settings.donateView.desc1')}
+                  </p>
+                  <p className="text-[12px] font-medium text-slate-400 dark:text-slate-500 italic">
+                    {t('settings.donateView.desc2')}
+                  </p>
+                </div>
+
+                {/* Tabs */}
+                <div className="flex bg-slate-100/80 dark:bg-slate-900/50 backdrop-blur-md p-1 rounded-2xl w-[90%] max-w-[300px] mb-6 border border-slate-200/50 dark:border-white/[0.03]">
+                  <button
+                    onClick={() => setDonateTab("vn")}
+                    className={classNames(
+                      "flex-1 py-2 text-[13.5px] font-bold rounded-[14px] transition-all duration-300",
+                      donateTab === "vn" ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] ring-1 ring-black/5 dark:ring-white/5" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                    )}
+                  >
+                    {t("settings.donateView.tabVietQR", "VietQR")}
+                  </button>
+                  <button
+                    onClick={() => setDonateTab("intl")}
+                    className={classNames(
+                      "flex-1 py-2 text-[13.5px] font-bold rounded-[14px] transition-all duration-300",
+                      donateTab === "intl" ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] ring-1 ring-black/5 dark:ring-white/5" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                    )}
+                  >
+                    {t("settings.donateView.tabInternational", "Quốc tế")}
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div className="w-full flex flex-col items-center min-h-[220px]">
+                  {donateTab === "vn" ? (
+                    <div className="flex flex-col items-center animate-slideUpFade">
+                      <div className="relative group w-[85%] max-w-[280px] p-4 bg-white dark:bg-slate-900/40 backdrop-blur-md border border-slate-200/80 dark:border-white/10 rounded-[28px] shadow-lg dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:border-amber-500/30">
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent dark:from-white/5 rounded-[28px] pointer-events-none" />
+                        <img 
+                          src="/asset/donates.png" 
+                          alt="Donate QR Code" 
+                          className="relative z-10 w-full h-auto rounded-[18px] object-contain aspect-square shadow-sm" 
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                        <div className="mt-4 flex justify-center relative z-10">
+                          <span className="text-[11px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest bg-amber-50 dark:bg-amber-500/10 px-4 py-1.5 rounded-full border border-amber-200/50 dark:border-amber-500/20">
+                            {t('settings.donateView.scanQR')}
+                          </span>
+                        </div>
+                      </div>
+
+                      <a 
+                        href="/asset/donates.png" 
+                        download="kat-journey-donate-qr.png"
+                        className="mt-5 text-[13px] font-bold text-slate-500 hover:text-kat-primary dark:text-slate-400 dark:hover:text-cyan-400 flex items-center gap-1.5 active:scale-95 transition-all group"
+                      >
+                        <HugeiconsIcon icon={Download01Icon} className="w-4 h-4 transition-transform group-hover:-translate-y-0.5 group-hover:text-kat-primary dark:group-hover:text-cyan-400" />
+                        {t('settings.donateView.saveQR')}
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="w-full max-w-[280px] space-y-4 mt-2 animate-slideUpFade flex flex-col items-center">
+                      <div className="w-20 h-20 bg-[#00457C]/10 dark:bg-[#00457C]/20 rounded-full flex items-center justify-center mb-2">
+                        <HugeiconsIcon icon={GlobeIcon} className="w-10 h-10 text-[#0079C1]" />
+                      </div>
+                      
+                      <a 
+                        href="https://paypal.me/trevorthanhtung"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative overflow-hidden flex items-center justify-center w-full gap-2.5 py-4 px-6 rounded-[20px] bg-gradient-to-r from-[#00457C] to-[#0079C1] text-white font-black text-[15px] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,121,193,0.3)] hover:-translate-y-0.5 active:scale-[0.98] group"
+                      >
+                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                        <span className="relative z-10">{t("settings.donateView.supportPayPal", "Ủng hộ qua PayPal")}</span>
+                      </a>
+                      <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 italic">
+                        {t("settings.donateView.thankYou", "(Cảm ơn sự ủng hộ của bạn!)")}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setView("menu")}
+              className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80 mt-2"
+            >
+              {t('settings.actions.backToMenu')}
+            </button>
+          </div>
+        )}
+
         {view === "exchangeRates" && (
           <div className="space-y-5 animate-fadeIn">
-            <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/[0.04] rounded-2xl p-4 overflow-hidden">
-              <div className="flex items-center justify-between mb-4 px-1">
-                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-                  <HugeiconsIcon icon={Coins01Icon} className="w-4 h-4" />
-                  <span className="text-[13px] font-bold">Vietcombank</span>
+            <div className="relative bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/10 rounded-[28px] p-5 overflow-hidden shadow-xl dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+              {/* Subtle background glow */}
+              <div className="absolute -top-24 -right-24 w-48 h-48 bg-kat-primary/20 blur-[80px] rounded-full pointer-events-none" />
+
+              <div className="flex items-center justify-between mb-5 px-1 relative z-10">
+                <div className="flex items-center gap-2.5">
+                  <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    <HugeiconsIcon icon={Coins01Icon} className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                    <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                    <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-emerald-500" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[14px] font-black text-slate-800 dark:text-white tracking-tight">Vietcombank</span>
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Live</span>
+                    </div>
+                    <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mt-0.5">{t('settings.exchangeRatesView.unit')}</div>
+                  </div>
                 </div>
-                <div className="text-[12px] font-medium text-slate-400 dark:text-slate-500">{t('settings.exchangeRatesView.unit')}</div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2.5 relative z-10">
                 {exchangeRates.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-6 text-slate-400">
-                    <HugeiconsIcon icon={Loading01Icon} className="w-5 h-5 animate-spin mb-2" />
+                  <div className="flex flex-col items-center justify-center py-8 text-slate-400">
+                    <HugeiconsIcon icon={Loading01Icon} className="w-6 h-6 animate-spin mb-3 text-kat-primary" />
                     <span className="text-[13px] font-medium">{t('settings.exchangeRatesView.loading')}</span>
                   </div>
                 ) : (
                   exchangeRates.map((rate, idx) => (
                     <div 
                       key={rate.currencyCode} 
-                      className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-slate-800/40 border border-slate-100 dark:border-white/[0.04] shadow-sm"
+                      className="group flex items-center justify-between p-3.5 rounded-[20px] bg-white/80 dark:bg-slate-800/30 hover:dark:bg-slate-800/60 border border-slate-100 dark:border-white/[0.05] hover:dark:border-white/[0.1] shadow-sm transition-all duration-300 hover:scale-[1.02] cursor-default animate-slideUpFade"
+                      style={{ animationDelay: `${idx * 80}ms`, animationFillMode: 'both' }}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-900/60 flex items-center justify-center font-bold text-slate-700 dark:text-slate-400 text-[13px] border border-slate-100 dark:border-slate-800/50">
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-11 h-11 rounded-[14px] bg-slate-50 dark:bg-white/5 flex items-center justify-center font-black text-slate-700 dark:text-slate-300 text-[13px] border border-slate-200/60 dark:border-white/10 shadow-inner group-hover:scale-105 transition-transform duration-300">
                           {rate.currencyCode}
                         </div>
-                        <span className="text-[13px] font-bold text-slate-800 dark:text-slate-200">{rate.currencyName}</span>
+                        <span className="text-[13.5px] font-black text-slate-800 dark:text-slate-200 tracking-tight">{rate.currencyName}</span>
                       </div>
                       <div className="text-right">
-                        <div className="text-[14px] font-black text-kat-primary">
+                        <div className="text-[15px] font-black text-kat-primary dark:text-cyan-400 dark:drop-shadow-[0_0_8px_rgba(34,211,238,0.4)] transition-all duration-300">
                           {new Intl.NumberFormat('vi-VN').format(rate.transfer)}
                         </div>
-                        <div className="text-[11px] font-medium text-slate-400 dark:text-slate-500 mt-0.5">
+                        <div className="text-[11px] font-bold text-slate-400 dark:text-slate-500 mt-1 tracking-wide uppercase">
                           {t('settings.exchangeRatesView.transfer')}
                         </div>
                       </div>
@@ -1550,72 +1615,81 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
         {view === "language" && (
           <div className="space-y-5 animate-fadeIn text-left">
-            <div className="bg-slate-50 dark:bg-slate-900/20 border border-slate-200/60 dark:border-kat-border/30 rounded-[28px] p-5">
-              <p className="text-[13px] font-bold text-slate-400 dark:text-slate-500 mb-5 leading-relaxed text-center">
-                {t('settings.languageView.desc')}
-              </p>
+            <div className="relative bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/10 rounded-[28px] p-5 shadow-xl dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden">
+              {/* Subtle background glow */}
+              <div className="absolute -top-24 -left-24 w-48 h-48 bg-kat-primary/20 blur-[80px] rounded-full pointer-events-none" />
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {[
-                  { code: 'vi', label: 'Tiếng Việt', char: 'Vi', bg: 'bg-orange-50 dark:bg-orange-500/10', border: 'border-orange-200/50 dark:border-orange-500/20', text: 'text-orange-600 dark:text-orange-400' },
-                  { code: 'en', label: 'English', char: 'En', bg: 'bg-blue-50 dark:bg-blue-500/10', border: 'border-blue-200/50 dark:border-blue-500/20', text: 'text-blue-600 dark:text-blue-400' },
-                  { code: 'ko', label: '한국어', char: '한', bg: 'bg-rose-50 dark:bg-rose-500/10', border: 'border-rose-200/50 dark:border-rose-500/20', text: 'text-rose-600 dark:text-rose-400' },
-                  { code: 'zh', label: '中文', char: '文', bg: 'bg-red-50 dark:bg-red-500/10', border: 'border-red-200/50 dark:border-red-500/20', text: 'text-red-600 dark:text-red-400' },
-                  { code: 'ja', label: '日本語', char: 'あ', bg: 'bg-fuchsia-50 dark:bg-fuchsia-500/10', border: 'border-fuchsia-200/50 dark:border-fuchsia-500/20', text: 'text-fuchsia-600 dark:text-fuchsia-400' },
-                  { code: 'th', label: 'ไทย', char: 'ก', bg: 'bg-emerald-50 dark:bg-emerald-500/10', border: 'border-emerald-200/50 dark:border-emerald-500/20', text: 'text-emerald-600 dark:text-emerald-400' },
-                  { code: 'es', label: 'Español', char: 'Es', bg: 'bg-yellow-50 dark:bg-yellow-500/10', border: 'border-yellow-200/50 dark:border-yellow-500/20', text: 'text-yellow-600 dark:text-yellow-400' },
-                  { code: 'fr', label: 'Français', char: 'Fr', bg: 'bg-sky-50 dark:bg-sky-500/10', border: 'border-sky-200/50 dark:border-sky-500/20', text: 'text-sky-600 dark:text-sky-400' },
-                  { code: 'de', label: 'Deutsch', char: 'De', bg: 'bg-slate-50 dark:bg-slate-500/10', border: 'border-slate-200/50 dark:border-slate-500/20', text: 'text-slate-600 dark:text-slate-400' },
-                  { code: 'it', label: 'Italiano', char: 'It', bg: 'bg-teal-50 dark:bg-teal-500/10', border: 'border-teal-200/50 dark:border-teal-500/20', text: 'text-teal-600 dark:text-teal-400' },
-                  { code: 'pt', label: 'Português', char: 'Pt', bg: 'bg-indigo-50 dark:bg-indigo-500/10', border: 'border-indigo-200/50 dark:border-indigo-500/20', text: 'text-indigo-600 dark:text-indigo-400' },
-                  { code: 'id', label: 'Indonesia', char: 'Id', bg: 'bg-cyan-50 dark:bg-cyan-500/10', border: 'border-cyan-200/50 dark:border-cyan-500/20', text: 'text-cyan-600 dark:text-cyan-400' },
-                ].map((lang) => (
-                  <button
-                    key={lang.code}
-                    type="button"
-                    onClick={() => i18n.changeLanguage(lang.code)}
-                    className={classNames(
-                      "relative flex items-center gap-3.5 p-3 rounded-[20px] border-2 transition-all duration-300 group focus:outline-none text-left overflow-hidden w-full",
-                      i18n.language === lang.code
-                        ? "border-kat-primary bg-kat-primary/5 shadow-md scale-[1.02] dark:border-kat-primary/50 dark:bg-kat-primary/10"
-                        : "border-slate-100 dark:border-white/[0.04] bg-white dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:scale-[1.01] active:scale-[0.98]"
-                    )}
-                  >
-                    {/* Icon */}
-                    <div className={classNames(
-                      "flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] shadow-sm transition-transform duration-300 group-hover:scale-105",
-                      lang.bg,
-                      "border",
-                      lang.border
-                    )}>
-                      <span className={classNames("font-black text-[18px]", lang.text)}>
-                        {lang.char}
-                      </span>
-                    </div>
-
-                    {/* Text */}
-                    <div className="flex-1 min-w-0">
-                      <span className={classNames(
-                        "block text-[14.5px] font-bold truncate transition-colors duration-200",
-                        i18n.language === lang.code ? "text-kat-primary" : "text-slate-800 dark:text-slate-200"
-                      )}>
-                        {lang.label}
-                      </span>
-                    </div>
-
-                    {/* Active Indicator */}
-                    <div className={classNames(
-                      "h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-300 mr-1",
-                      i18n.language === lang.code 
-                        ? "border-kat-primary bg-kat-primary" 
-                        : "border-slate-200 dark:border-slate-700 bg-transparent opacity-0 group-hover:opacity-100"
-                    )}>
-                      {i18n.language === lang.code && (
-                        <HugeiconsIcon icon={CheckIcon} className="w-3.5 h-3.5 text-white" />
+              <div className="relative z-10">
+                <p className="text-[13px] font-bold text-slate-400 dark:text-slate-500 mb-5 leading-relaxed text-center">
+                  {t('settings.languageView.desc')}
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {[
+                    { code: 'vi', label: 'Tiếng Việt', char: 'Vi', bg: 'bg-orange-50 dark:bg-orange-500/10', border: 'border-orange-200/50 dark:border-orange-500/20', text: 'text-orange-600 dark:text-orange-400' },
+                    { code: 'en', label: 'English', char: 'En', bg: 'bg-blue-50 dark:bg-blue-500/10', border: 'border-blue-200/50 dark:border-blue-500/20', text: 'text-blue-600 dark:text-blue-400' },
+                    { code: 'ko', label: '한국어', char: '한', bg: 'bg-rose-50 dark:bg-rose-500/10', border: 'border-rose-200/50 dark:border-rose-500/20', text: 'text-rose-600 dark:text-rose-400' },
+                    { code: 'zh', label: '中文', char: '文', bg: 'bg-red-50 dark:bg-red-500/10', border: 'border-red-200/50 dark:border-red-500/20', text: 'text-red-600 dark:text-red-400' },
+                    { code: 'ja', label: '日本語', char: 'あ', bg: 'bg-fuchsia-50 dark:bg-fuchsia-500/10', border: 'border-fuchsia-200/50 dark:border-fuchsia-500/20', text: 'text-fuchsia-600 dark:text-fuchsia-400' },
+                    { code: 'th', label: 'ไทย', char: 'ก', bg: 'bg-emerald-50 dark:bg-emerald-500/10', border: 'border-emerald-200/50 dark:border-emerald-500/20', text: 'text-emerald-600 dark:text-emerald-400' },
+                    { code: 'es', label: 'Español', char: 'Es', bg: 'bg-yellow-50 dark:bg-yellow-500/10', border: 'border-yellow-200/50 dark:border-yellow-500/20', text: 'text-yellow-600 dark:text-yellow-400' },
+                    { code: 'fr', label: 'Français', char: 'Fr', bg: 'bg-sky-50 dark:bg-sky-500/10', border: 'border-sky-200/50 dark:border-sky-500/20', text: 'text-sky-600 dark:text-sky-400' },
+                    { code: 'de', label: 'Deutsch', char: 'De', bg: 'bg-slate-50 dark:bg-slate-500/10', border: 'border-slate-200/50 dark:border-slate-500/20', text: 'text-slate-600 dark:text-slate-400' },
+                    { code: 'it', label: 'Italiano', char: 'It', bg: 'bg-teal-50 dark:bg-teal-500/10', border: 'border-teal-200/50 dark:border-teal-500/20', text: 'text-teal-600 dark:text-teal-400' },
+                    { code: 'pt', label: 'Português', char: 'Pt', bg: 'bg-indigo-50 dark:bg-indigo-500/10', border: 'border-indigo-200/50 dark:border-indigo-500/20', text: 'text-indigo-600 dark:text-indigo-400' },
+                    { code: 'id', label: 'Indonesia', char: 'Id', bg: 'bg-cyan-50 dark:bg-cyan-500/10', border: 'border-cyan-200/50 dark:border-cyan-500/20', text: 'text-cyan-600 dark:text-cyan-400' },
+                  ].map((lang, idx) => (
+                    <button
+                      key={lang.code}
+                      type="button"
+                      onClick={() => i18n.changeLanguage(lang.code)}
+                      className={classNames(
+                        "relative flex items-center gap-3.5 p-3 rounded-[20px] border-2 transition-all duration-300 group focus:outline-none text-left overflow-hidden w-full animate-slideUpFade",
+                        i18n.language === lang.code
+                          ? "border-kat-primary bg-kat-primary/5 ring-2 ring-kat-primary/20 shadow-lg shadow-kat-primary/20 scale-[1.02] dark:border-kat-primary/50 dark:bg-kat-primary/10"
+                          : "border-slate-100 dark:border-white/[0.04] bg-white/80 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
                       )}
-                    </div>
-                  </button>
-                ))}
+                      style={{ animationDelay: `${idx * 40}ms`, animationFillMode: 'both' }}
+                    >
+                      {/* Background hover gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 dark:via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out pointer-events-none" />
+
+                      {/* Icon */}
+                      <div className={classNames(
+                        "flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] shadow-sm transition-transform duration-300 group-hover:scale-105 relative z-10",
+                        lang.bg,
+                        "border",
+                        lang.border
+                      )}>
+                        <span className={classNames("font-black text-[18px]", lang.text)}>
+                          {lang.char}
+                        </span>
+                      </div>
+
+                      {/* Text */}
+                      <div className="flex-1 min-w-0 relative z-10">
+                        <span className={classNames(
+                          "block text-[14.5px] font-black truncate transition-colors duration-200 tracking-tight",
+                          i18n.language === lang.code ? "text-kat-primary drop-shadow-[0_0_4px_rgba(var(--kat-primary),0.3)]" : "text-slate-800 dark:text-slate-200"
+                        )}>
+                          {lang.label}
+                        </span>
+                      </div>
+
+                      {/* Active Indicator */}
+                      <div className={classNames(
+                        "h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-300 mr-1 relative z-10",
+                        i18n.language === lang.code 
+                          ? "border-kat-primary bg-kat-primary shadow-[0_0_8px_rgba(var(--kat-primary),0.5)]" 
+                          : "border-slate-200 dark:border-slate-700 bg-transparent opacity-0 group-hover:opacity-100"
+                      )}>
+                        {i18n.language === lang.code && (
+                          <HugeiconsIcon icon={CheckIcon} className="w-3.5 h-3.5 text-white" />
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -1630,124 +1704,135 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
         {view === "theme" && (
           <div className="space-y-5 animate-fadeIn text-left">
-            <div className="bg-slate-50 dark:bg-slate-900/20 border border-slate-200/60 dark:border-kat-border/30 rounded-[28px] p-5">
-              <p className="text-[13px] font-bold text-slate-400 dark:text-slate-500 mb-5 leading-relaxed text-center">
-                {t('settings.themeView.desc')}
-              </p>
+            <div className="relative bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/10 rounded-[28px] p-5 shadow-xl dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] overflow-hidden">
+              {/* Subtle background glow */}
+              <div className="absolute -top-24 -left-24 w-48 h-48 bg-kat-primary/20 blur-[80px] rounded-full pointer-events-none" />
               
-              <div className="grid grid-cols-3 gap-3">
-                {/* Light Mode Card */}
-                <button
-                  type="button"
-                  onClick={() => setTheme("light")}
-                  className={classNames(
-                    "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
-                    theme === "light"
-                      ? "border-amber-400 bg-amber-50 shadow-[0_4px_20px_rgba(251,191,36,0.15)] scale-[1.02] dark:border-amber-500/50 dark:bg-amber-500/5 dark:shadow-[0_4px_20px_rgba(245,158,11,0.08)]"
-                      : "bg-white dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98]"
-                  )}
-                >
-                  {/* Mini Screen Preview */}
-                  <div className="w-[76px] h-[52px] rounded-xl bg-white border border-slate-200/80 relative overflow-hidden flex flex-col items-center justify-center shadow-sm shrink-0 mt-0.5">
-                    <div className="absolute top-0 inset-x-0 h-2 bg-slate-50 border-b border-slate-100" />
-                    <div className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                      <HugeiconsIcon icon={Sun01Icon} className="w-5 h-5 text-amber-500 transition-transform duration-500 group-hover:rotate-45" />
-                    </div>
-                  </div>
-
-                  <div className="mt-2.5 mb-0.5">
-                    <span className="block text-[13.5px] font-black text-slate-800 dark:text-slate-200">
-                      {t('settings.themeView.light')}
-                    </span>
-                    <span className="block text-[9.5px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 whitespace-nowrap">
-                      {t('settings.themeView.lightDesc')}
-                    </span>
-                  </div>
-
-                  {theme === "light" && (
-                    <div className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)] animate-pulse" />
-                  )}
-                </button>
-
-                {/* Dark Mode Card */}
-                <button
-                  type="button"
-                  onClick={() => setTheme("dark")}
-                  className={classNames(
-                    "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
-                    theme === "dark"
-                      ? "border-violet-400 bg-violet-50 shadow-[0_4px_20px_rgba(167,139,250,0.15)] scale-[1.02] dark:border-violet-500/50 dark:bg-violet-500/5 dark:shadow-[0_4px_20px_rgba(139,92,246,0.12)]"
-                      : "bg-white dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98]"
-                  )}
-                >
-                  {/* Mini Screen Preview */}
-                  <div className="w-[76px] h-[52px] rounded-xl bg-slate-950 border border-slate-900 relative overflow-hidden flex flex-col items-center justify-center shadow-sm shrink-0 mt-0.5">
-                    <div className="absolute top-0 inset-x-0 h-2 bg-slate-900 border-b border-slate-800" />
-                    <div className="w-8 h-8 rounded-full bg-violet-500/15 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                      <HugeiconsIcon icon={Moon01Icon} className="w-5 h-5 text-violet-400 transition-transform duration-500 group-hover:-rotate-12" />
-                    </div>
-                  </div>
-
-                  <div className="mt-2.5 mb-0.5">
-                    <span className="block text-[13.5px] font-black text-slate-800 dark:text-slate-200">
-                      {t('settings.themeView.dark')}
-                    </span>
-                    <span className="block text-[9.5px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 whitespace-nowrap">
-                      {t('settings.themeView.darkDesc')}
-                    </span>
-                  </div>
-
-                  {theme === "dark" && (
-                    <div className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.6)] animate-pulse" />
-                  )}
-                </button>
-
-                {/* Automatic Mode Card */}
-                <button
-                  type="button"
-                  onClick={() => setTheme("system")}
-                  className={classNames(
-                    "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
-                    theme === "system"
-                      ? "border-teal-400 bg-teal-50 shadow-[0_4px_20px_rgba(45,212,191,0.15)] scale-[1.02] dark:border-teal-500/50 dark:bg-teal-500/5 dark:shadow-[0_4px_20px_rgba(20,184,166,0.08)]"
-                      : "bg-white dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98]"
-                  )}
-                >
-                  {/* Mini Screen Preview (Split) */}
-                  <div className="w-[76px] h-[52px] rounded-xl bg-white border border-slate-200/80 relative overflow-hidden shadow-sm shrink-0 mt-0.5">
-                    {/* Light Underlay */}
-                    <div className="absolute inset-0 flex items-center justify-start pl-2 bg-white">
+              <div className="relative z-10">
+                <p className="text-[13px] font-bold text-slate-400 dark:text-slate-500 mb-5 leading-relaxed text-center">
+                  {t('settings.themeView.desc')}
+                </p>
+                
+                <div className="grid grid-cols-3 gap-3">
+                  {/* Light Mode Card */}
+                  <button
+                    type="button"
+                    onClick={() => setTheme("light")}
+                    className={classNames(
+                      "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
+                      theme === "light"
+                        ? "border-amber-400 bg-amber-50 shadow-[0_4px_24px_rgba(251,191,36,0.25)] ring-2 ring-amber-400/20 scale-[1.02] dark:border-amber-500/50 dark:bg-amber-500/10 dark:shadow-[0_4px_24px_rgba(245,158,11,0.15)]"
+                        : "bg-white/80 dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
+                    )}
+                  >
+                    {/* Mini Screen Preview */}
+                    <div className="w-[76px] h-[52px] rounded-xl bg-white border border-slate-200/80 relative overflow-hidden flex flex-col items-center justify-center shadow-sm shrink-0 mt-0.5 group-hover:shadow-md transition-shadow">
                       <div className="absolute top-0 inset-x-0 h-2 bg-slate-50 border-b border-slate-100" />
-                      <div className="w-6 h-6 rounded-full bg-amber-500/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                        <HugeiconsIcon icon={Sun01Icon} className="w-3.5 h-3.5 text-amber-500" />
+                      <div className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                        <HugeiconsIcon icon={Sun01Icon} className={`w-5 h-5 text-amber-500 ${theme === 'light' ? 'animate-[spin_4s_linear_infinite]' : 'transition-transform duration-500 group-hover:rotate-90'}`} />
                       </div>
                     </div>
 
-                    {/* Dark Overlay (Clipped) */}
-                    <div
-                      className="absolute inset-0 bg-slate-950 flex items-center justify-end pr-2 border-l border-slate-900"
-                      style={{ clipPath: "polygon(100% 0, 0% 100%, 100% 100%)" }}
-                    >
+                    <div className="mt-2.5 mb-0.5">
+                      <span className="block text-[13.5px] font-black text-slate-800 dark:text-slate-200">
+                        {t('settings.themeView.light')}
+                      </span>
+                      <span className="block text-[9.5px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 whitespace-nowrap">
+                        {t('settings.themeView.lightDesc')}
+                      </span>
+                    </div>
+
+                    {theme === "light" && (
+                      <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]">
+                        <span className="absolute inset-0 rounded-full bg-amber-500 animate-ping opacity-75" />
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Dark Mode Card */}
+                  <button
+                    type="button"
+                    onClick={() => setTheme("dark")}
+                    className={classNames(
+                      "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
+                      theme === "dark"
+                        ? "border-violet-400 bg-violet-50 shadow-[0_4px_24px_rgba(167,139,250,0.25)] ring-2 ring-violet-400/20 scale-[1.02] dark:border-violet-500/50 dark:bg-violet-500/10 dark:shadow-[0_4px_24px_rgba(139,92,246,0.15)]"
+                        : "bg-white/80 dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
+                    )}
+                  >
+                    {/* Mini Screen Preview */}
+                    <div className="w-[76px] h-[52px] rounded-xl bg-slate-950 border border-slate-900 relative overflow-hidden flex flex-col items-center justify-center shadow-sm shrink-0 mt-0.5 group-hover:shadow-md transition-shadow">
                       <div className="absolute top-0 inset-x-0 h-2 bg-slate-900 border-b border-slate-800" />
-                      <div className="w-6 h-6 rounded-full bg-violet-500/15 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                        <HugeiconsIcon icon={Moon01Icon} className="w-3.5 h-3.5 text-violet-400" />
+                      <div className="w-8 h-8 rounded-full bg-violet-500/15 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                        <HugeiconsIcon icon={Moon01Icon} className={`w-5 h-5 text-violet-400 ${theme === 'dark' ? 'animate-pulse' : 'transition-transform duration-500 group-hover:-rotate-12'}`} />
                       </div>
                     </div>
-                  </div>
 
-                  <div className="mt-2.5 mb-0.5">
-                    <span className="block text-[13.5px] font-black text-slate-800 dark:text-slate-200">
-                      {t('settings.themeView.system')}
-                    </span>
-                    <span className="block text-[9.5px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 whitespace-nowrap">
-                      {t('settings.themeView.systemDesc')}
-                    </span>
-                  </div>
+                    <div className="mt-2.5 mb-0.5">
+                      <span className="block text-[13.5px] font-black text-slate-800 dark:text-slate-200">
+                        {t('settings.themeView.dark')}
+                      </span>
+                      <span className="block text-[9.5px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 whitespace-nowrap">
+                        {t('settings.themeView.darkDesc')}
+                      </span>
+                    </div>
 
-                  {theme === "system" && (
-                    <div className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.6)] animate-pulse" />
-                  )}
-                </button>
+                    {theme === "dark" && (
+                      <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.8)]">
+                        <span className="absolute inset-0 rounded-full bg-violet-500 animate-ping opacity-75" />
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Automatic Mode Card */}
+                  <button
+                    type="button"
+                    onClick={() => setTheme("system")}
+                    className={classNames(
+                      "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
+                      theme === "system"
+                        ? "border-teal-400 bg-teal-50 shadow-[0_4px_24px_rgba(45,212,191,0.25)] ring-2 ring-teal-400/20 scale-[1.02] dark:border-teal-500/50 dark:bg-teal-500/10 dark:shadow-[0_4px_24px_rgba(20,184,166,0.15)]"
+                        : "bg-white/80 dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
+                    )}
+                  >
+                    {/* Mini Screen Preview (Split) */}
+                    <div className="w-[76px] h-[52px] rounded-xl bg-white border border-slate-200/80 relative overflow-hidden shadow-sm shrink-0 mt-0.5 group-hover:shadow-md transition-shadow">
+                      {/* Light Underlay */}
+                      <div className="absolute inset-0 flex items-center justify-start pl-2 bg-white">
+                        <div className="absolute top-0 inset-x-0 h-2 bg-slate-50 border-b border-slate-100" />
+                        <div className="w-6 h-6 rounded-full bg-amber-500/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+                          <HugeiconsIcon icon={Sun01Icon} className={`w-3.5 h-3.5 text-amber-500 ${theme === 'system' ? 'animate-[spin_4s_linear_infinite]' : ''}`} />
+                        </div>
+                      </div>
+
+                      {/* Dark Overlay (Clipped) */}
+                      <div
+                        className="absolute inset-0 bg-slate-950 flex items-center justify-end pr-2 border-l border-slate-900 transition-all duration-500"
+                        style={{ clipPath: "polygon(100% 0, 0% 100%, 100% 100%)" }}
+                      >
+                        <div className="absolute top-0 inset-x-0 h-2 bg-slate-900 border-b border-slate-800" />
+                        <div className="w-6 h-6 rounded-full bg-violet-500/15 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+                          <HugeiconsIcon icon={Moon01Icon} className={`w-3.5 h-3.5 text-violet-400 ${theme === 'system' ? 'animate-pulse' : ''}`} />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-2.5 mb-0.5">
+                      <span className="block text-[13.5px] font-black text-slate-800 dark:text-slate-200">
+                        {t('settings.themeView.system')}
+                      </span>
+                      <span className="block text-[9.5px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 whitespace-nowrap">
+                        {t('settings.themeView.systemDesc')}
+                      </span>
+                    </div>
+
+                    {theme === "system" && (
+                      <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.8)]">
+                        <span className="absolute inset-0 rounded-full bg-teal-500 animate-ping opacity-75" />
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 

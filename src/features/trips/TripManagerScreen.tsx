@@ -155,60 +155,64 @@ function TripCard({
   return (
     <div 
       onClick={() => onOpenTrip(trip.id!)}
-      className={`group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface p-5 shadow-soft border border-slate-200 dark:border-kat-border border-l-4 ${statusColor} hover:border-slate-350 dark:hover:border-kat-border hover:-translate-y-1 hover:shadow-md transition-all duration-300 w-full max-w-[420px] mx-auto md:mx-0 h-full motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+      className={`group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[24px] bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl p-5 shadow-[0_4px_24px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-slate-200/60 dark:border-white/10 hover:border-[#00BFB7]/40 dark:hover:border-[#00BFB7]/50 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(0,191,183,0.08)] transition-all duration-500 w-full max-w-[420px] mx-auto md:mx-0 h-full motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
     >
+      {/* Mini glass glows */}
+      {timing.status === "active" && <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-emerald-400/10 blur-[50px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2" />}
+      {timing.status === "upcoming" && <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-amber-400/10 blur-[50px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2" />}
+
       <div>
-        <div className="flex flex-wrap items-center gap-2 mb-3">
+        <div className="flex flex-wrap items-center gap-2 mb-3 relative z-10">
           {timing.status === "active" && (
-            <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-800/40 dark:text-emerald-400 uppercase tracking-wider shadow-sm">
+            <span className="inline-flex items-center rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[10.5px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider shadow-sm">
               <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500 drop-shadow-[0_0_3px_rgba(16,185,129,0.8)]"></span>
               </span>
               {t('dashboard.statusActive')}
             </span>
           )}
           {timing.status === "upcoming" && (
-            <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-amber-700 dark:bg-amber-950/30 dark:border-amber-800/40 dark:text-amber-400 uppercase tracking-wider shadow-sm">
+            <span className="inline-flex items-center rounded-full bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 text-[10.5px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider shadow-sm">
               <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500 drop-shadow-[0_0_3px_rgba(245,158,11,0.8)]"></span>
               </span>
               {t('dashboard.statusUpcoming')}
             </span>
           )}
           {timing.status === "past" && (
-            <span className="inline-flex items-center rounded-full bg-slate-50 border border-slate-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-slate-600 dark:bg-slate-800/60 dark:border-slate-700/60 dark:text-slate-300 uppercase tracking-wider shadow-sm">
+            <span className="inline-flex items-center rounded-full bg-slate-200/50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 px-2.5 py-0.5 text-[10.5px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider shadow-sm">
               <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-slate-400"></span>
               </span>
               {t('dashboard.statusPast')}
             </span>
           )}
-          <span className="inline-flex items-center rounded-full bg-slate-100 border border-slate-200/60 px-2.5 py-0.5 text-[10.5px] font-bold text-slate-600 dark:bg-slate-800 dark:border-slate-700/60 dark:text-slate-300 tracking-wide">
+          <span className="inline-flex items-center rounded-full bg-slate-200/50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 px-2.5 py-0.5 text-[10.5px] font-black text-slate-700 dark:text-slate-300 tracking-wide">
             {getTripDurationText(trip, t)}
           </span>
         </div>
 
-        <h4 className="text-[18px] md:text-[19px] font-extrabold text-kat-text leading-tight mb-4 line-clamp-2 tracking-tight">
+        <h4 className="text-[18px] md:text-[20px] font-black text-kat-text leading-tight mb-4 line-clamp-2 tracking-tight group-hover:bg-gradient-to-r group-hover:from-kat-primary group-hover:to-teal-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300 relative z-10 w-fit">
           {trip.title}
         </h4>
 
         {/* Glanceable Grid Info */}
-        <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 text-[12px] font-bold text-slate-655 dark:text-slate-350 mb-1">
-          <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-slate-500/10 dark:group-hover:bg-slate-400/10">
-            <HugeiconsIcon icon={Location01Icon} size={14} className="text-slate-400 shrink-0" />
+        <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 text-[12px] font-black text-slate-700 dark:text-slate-200 mb-1 relative z-10">
+          <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-sm">
+            <HugeiconsIcon icon={Location01Icon} size={14} className="text-kat-primary shrink-0 drop-shadow-sm" />
             <span className="truncate">{trip.location || t('dashboard.noLocationGrid')}</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-slate-500/10 dark:group-hover:bg-slate-400/10">
-            <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-slate-400 shrink-0" />
-            <span className="truncate text-slate-600 dark:text-slate-300">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)}`}</span>
+          <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-sm">
+            <HugeiconsIcon icon={Calendar01Icon} size={14} className="text-kat-primary shrink-0 drop-shadow-sm" />
+            <span className="truncate">{trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)}`}</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-slate-500/10 dark:group-hover:bg-slate-400/10 col-span-1 min-[360px]:col-span-2">
-            <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-slate-400 shrink-0" />
+          <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 col-span-1 min-[360px]:col-span-2 backdrop-blur-sm">
+            <HugeiconsIcon icon={UserGroupIcon} size={14} className="text-kat-primary shrink-0 drop-shadow-sm" />
             <span className="truncate">{t('dashboard.peopleCount', { count: memberCounts[trip.id!] || 1 })}</span>
-            <span className="text-slate-300 mx-0.5">·</span>
-            <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-slate-400 shrink-0" />
+            <span className="text-slate-300 dark:text-slate-600 mx-0.5">·</span>
+            <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-kat-primary shrink-0 drop-shadow-sm" />
             <span className="truncate">{totalExpense > 0 ? t('dashboard.expenseTotal', { amount: formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND") }) : t('dashboard.noExpense')}</span>
           </div>
         </div>
@@ -457,45 +461,49 @@ export function TripManagerScreen({
       ) : (
         <>
           {/* Hero Header */}
-          <div className="group/hero mb-10 md:mb-12 rounded-[32px] bg-gradient-to-br from-[#030D2E] via-[#012633] to-[#004E5A] py-6 px-5 sm:px-6 md:py-8 md:px-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8 shadow-[0_12px_40px_-12px_rgba(3,13,46,0.3)] relative overflow-hidden motion-page-enter">
-            {/* Ambient Background Glows */}
-            <div className="absolute top-0 right-0 w-72 h-72 bg-kat-teal opacity-20 blur-[80px] rounded-full pointer-events-none" />
-            <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-violet-600 opacity-20 blur-[100px] rounded-full pointer-events-none" />
+          <div className="group/hero mb-10 md:mb-12 relative overflow-hidden rounded-[32px] bg-kat-bg dark:bg-[#0A0F1C] border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.1)] py-6 px-5 sm:px-6 md:py-8 md:px-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8 motion-page-enter">
+            {/* Ambient Glass Glows */}
+            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-cyan-400/20 to-fuchsia-500/20 blur-[100px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3" />
+            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-gradient-to-tr from-blue-500/10 to-emerald-400/10 blur-[80px] rounded-full pointer-events-none translate-y-1/2 -translate-x-1/3" />
+            
+            <div className="absolute inset-0 bg-white/40 dark:bg-[#0A0F1C]/40 backdrop-blur-xl pointer-events-none" />
+
             <HugeiconsIcon 
               icon={CompassIcon} 
-              size={176} 
-              className="absolute -right-8 -bottom-8 text-white/[0.03] rotate-12 pointer-events-none transition-all group-hover/hero:scale-110 group-hover/hero:rotate-[24deg] duration-700" 
+              size={200} 
+              className="absolute -right-12 -bottom-12 text-kat-primary opacity-[0.05] dark:opacity-[0.1] rotate-12 pointer-events-none transition-transform group-hover/hero:scale-110 group-hover/hero:rotate-[24deg] duration-1000 ease-out" 
             />
             
-            <div className="relative z-10">
-              <h1 className="text-[28px] sm:text-[32px] md:text-[36px] font-black text-white tracking-tight leading-tight">
+            <div className="relative z-10 flex-1">
+              <h1 className="text-[28px] sm:text-[32px] md:text-[36px] font-black bg-gradient-to-r from-kat-dark to-kat-primary dark:from-white dark:to-teal-300 bg-clip-text text-transparent tracking-tight leading-tight drop-shadow-sm">
                 {t('dashboard.heroTitle')}
               </h1>
-              <p className="mt-2 text-[14px] sm:text-[15px] font-medium text-white/70 max-w-md leading-relaxed">
+              <p className="mt-2.5 text-[14px] sm:text-[15px] font-semibold text-slate-600 dark:text-slate-300 max-w-lg leading-relaxed">
                 {t('dashboard.heroDesc')}
               </p>
             </div>
             
-            <div className="flex flex-row flex-wrap items-center gap-2 w-full lg:w-auto shrink-0 relative z-10 justify-center lg:justify-end">
+            <div className="flex flex-row flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 relative z-10 justify-center lg:justify-end">
               <button
                 onClick={onOpenArchive}
-                className="group relative flex h-[46px] md:h-[50px] items-center justify-center gap-2 rounded-2xl bg-white/[0.08] hover:bg-white/[0.15] text-white px-3 sm:px-6 font-bold text-[12.5px] min-[360px]:text-[13.5px] md:text-[14px] border border-white/15 backdrop-blur-md overflow-hidden active:scale-[0.97] hover:border-white/25 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.15)] whitespace-nowrap shrink-0"
+                className="group relative flex h-[46px] md:h-[50px] items-center justify-center gap-2 rounded-2xl bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 text-kat-dark dark:text-white px-4 sm:px-6 font-extrabold text-[12.5px] min-[360px]:text-[13.5px] md:text-[14px] border border-slate-200/80 dark:border-white/10 backdrop-blur-md overflow-hidden active:scale-[0.97] transition-all duration-300 shadow-sm shrink-0 motion-press"
               >
-                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-kat-primary/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
                 <HugeiconsIcon 
                   icon={SparklesIcon} 
-                  size={16} 
-                  className="text-kat-teal group-hover:scale-110 transition-transform duration-300" 
+                  size={18} 
+                  className="text-kat-primary group-hover:scale-110 transition-transform duration-300" 
                 />
                 <span className="tracking-wide">{t('dashboard.memoriesBtn')}</span>
               </button>
               
               <button
                 onClick={onCreateNew}
-                className="group flex h-[46px] md:h-[50px] items-center justify-center gap-1.5 rounded-2xl bg-white text-[#030D2E] px-3.5 sm:px-7 font-black text-[12.5px] min-[360px]:text-[13.5px] md:text-[14px] shadow-[0_6px_20px_rgba(255,255,255,0.1)] active:scale-[0.97] transition-all duration-300 hover:bg-[#F8F9FA] hover:shadow-[0_8px_24px_rgba(255,255,255,0.2)] whitespace-nowrap shrink-0"
+                className="group relative flex h-[46px] md:h-[50px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-kat-dark to-[#004E5A] dark:from-kat-primary dark:to-[#0081BE] text-white dark:text-slate-900 px-5 sm:px-7 font-black text-[12.5px] min-[360px]:text-[13.5px] md:text-[14px] shadow-[0_6px_20px_rgba(0,191,183,0.25)] active:scale-[0.97] transition-all duration-300 hover:brightness-110 overflow-hidden shrink-0 motion-press"
               >
-                <span className="text-md md:text-lg leading-none group-hover:rotate-90 transition-transform duration-300 font-extrabold">+</span>
-                {t('dashboard.createTripBtn')}
+                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+                <span className="text-md md:text-lg leading-none group-hover:rotate-90 transition-transform duration-300 font-extrabold drop-shadow-md">+</span>
+                <span className="drop-shadow-md">{t('dashboard.createTripBtn')}</span>
               </button>
             </div>
           </div>
@@ -511,66 +519,73 @@ export function TripManagerScreen({
               <section className="mb-12 md:mb-14">
                 <h3 className="mb-4 px-1 text-[20px] font-extrabold text-kat-text motion-title-enter">{t('dashboard.nextTripTitle')}</h3>
                 <div 
-                  className={`group relative overflow-hidden rounded-[32px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border border-l-4 ${featuredBorderColor} p-6 sm:p-8 lg:p-10 shadow-soft cursor-pointer hover:shadow-md hover:border-slate-350/80 dark:hover:border-kat-border hover:-translate-y-1 transition-all duration-300 min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2`}
+                  className="group relative overflow-hidden rounded-[32px] bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/10 p-6 sm:p-8 lg:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.1)] cursor-pointer hover:shadow-[0_12px_48px_rgba(0,191,183,0.12)] hover:border-[#00BFB7]/40 dark:hover:border-[#00BFB7]/50 hover:-translate-y-1 transition-all duration-500 min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2"
                   onClick={() => onOpenTrip(featuredTrip.id!)}
                 >
+                  
+                  {/* Glassmorphism accent glows */}
+                  {featuredStatus.status === "active" ? (
+                    <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-emerald-400/15 blur-[80px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3" />
+                  ) : (
+                    <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-amber-400/15 blur-[80px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3" />
+                  )}
                   
                   {/* Watermark Compass Icon - Mobile */}
                   <HugeiconsIcon 
                     icon={CompassIcon} 
                     size={160} 
-                    className="block lg:hidden absolute -right-6 -bottom-6 text-kat-primary opacity-[0.05] rotate-12 pointer-events-none transition-all group-hover:scale-110 group-hover:rotate-[20deg] duration-700" 
+                    className="block lg:hidden absolute -right-6 -bottom-6 text-kat-primary opacity-[0.05] dark:opacity-[0.1] rotate-12 pointer-events-none transition-transform group-hover:scale-110 group-hover:rotate-[20deg] duration-1000 ease-out" 
                   />
                   {/* Watermark Compass Icon - Desktop */}
                   <HugeiconsIcon 
                     icon={CompassIcon} 
                     size={240} 
-                    className="hidden lg:block absolute -right-8 -bottom-8 text-kat-primary opacity-[0.05] rotate-12 pointer-events-none transition-all group-hover:scale-110 group-hover:rotate-[24deg] duration-700" 
+                    className="hidden lg:block absolute -right-8 -bottom-8 text-kat-primary opacity-[0.05] dark:opacity-[0.1] rotate-12 pointer-events-none transition-transform group-hover:scale-110 group-hover:rotate-[24deg] duration-1000 ease-out" 
                   />
                   
                   <div className="relative z-10 lg:w-2/3 pr-4">
                     <div className="flex flex-wrap gap-2 mb-4">
                       {featuredStatus.status === "active" ? (
-                        <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-3 py-1 text-[11px] font-bold text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-800/40 dark:text-emerald-400 uppercase tracking-wider shadow-sm">
+                        <span className="inline-flex items-center rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider backdrop-blur-md shadow-sm">
                           <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 drop-shadow-[0_0_4px_rgba(16,185,129,0.8)]"></span>
                           </span>
                           {t('dashboard.statusActive')}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-3 py-1 text-[11px] font-bold text-amber-700 dark:bg-amber-950/30 dark:border-amber-800/40 dark:text-amber-400 uppercase tracking-wider shadow-sm">
+                        <span className="inline-flex items-center rounded-full bg-amber-500/10 border border-amber-500/20 px-3.5 py-1 text-[11px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider backdrop-blur-md shadow-sm">
                           <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500 drop-shadow-[0_0_4px_rgba(245,158,11,0.8)]"></span>
                           </span>
                           {t('dashboard.statusUpcoming')}
                         </span>
                       )}
-                      <span className="rounded-full bg-slate-100 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-600 dark:bg-slate-800 dark:border-slate-700/60 dark:text-slate-300">
+                      <span className="rounded-full bg-slate-200/50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 px-3.5 py-1 text-[11px] font-black text-slate-700 dark:text-slate-300 backdrop-blur-md">
                         {getTripDurationText(featuredTrip, t)}
                       </span>
                     </div>
                     
-                    <h4 className="text-[26px] sm:text-[28px] md:text-[34px] font-extrabold text-kat-text leading-tight mb-4 tracking-tight">
+                    <h4 className="text-[26px] sm:text-[28px] md:text-[34px] font-black text-kat-text leading-tight mb-4 tracking-tight drop-shadow-sm group-hover:bg-gradient-to-r group-hover:from-kat-primary group-hover:to-teal-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500 w-fit">
                       {featuredTrip.title}
                     </h4>
                     
                     <div className="flex flex-wrap gap-2 text-slate-700 dark:text-slate-300">
-                      <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-kat-border px-3 py-1.5 rounded-[12px] max-w-full">
-                        <HugeiconsIcon icon={Location01Icon} size={16} className="text-slate-400 shrink-0" />
-                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">{featuredTrip.location || t('dashboard.noLocation')}</span>
+                      <div className="flex items-center gap-2 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-3.5 py-2 rounded-2xl max-w-full backdrop-blur-md">
+                        <HugeiconsIcon icon={Location01Icon} size={16} className="text-kat-primary shrink-0 drop-shadow-sm" />
+                        <span className="font-black text-[13px] text-slate-700 dark:text-slate-200 truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">{featuredTrip.location || t('dashboard.noLocation')}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-kat-border px-3 py-1.5 rounded-[12px] max-w-full">
-                        <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-400 shrink-0" />
-                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{featuredTrip.startDate === featuredTrip.endDate ? formatDate(featuredTrip.startDate) : `${formatDate(featuredTrip.startDate)} - ${formatDate(featuredTrip.endDate)}`}</span>
+                      <div className="flex items-center gap-2 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-3.5 py-2 rounded-2xl max-w-full backdrop-blur-md">
+                        <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-kat-primary shrink-0 drop-shadow-sm" />
+                        <span className="font-black text-[13px] text-slate-700 dark:text-slate-200 truncate">{featuredTrip.startDate === featuredTrip.endDate ? formatDate(featuredTrip.startDate) : `${formatDate(featuredTrip.startDate)} - ${formatDate(featuredTrip.endDate)}`}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/40 dark:border-kat-border px-3 py-1.5 rounded-[12px] max-w-full">
-                        <HugeiconsIcon icon={UserGroupIcon} size={16} className="text-slate-400 shrink-0" />
-                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{t('dashboard.peopleCount', { count: memberCounts[featuredTrip.id!] || 1 })}</span>
-                        <span className="text-slate-300 dark:text-slate-500 mx-0.5">·</span>
-                        <HugeiconsIcon icon={WalletCardsIcon} size={16} className="text-slate-400 shrink-0" />
-                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{featuredTotalExpense > 0 ? t('dashboard.expenseTotal', { amount: formatMoneyCompact(featuredTotalExpense, featuredTrip.defaultCurrency || "VND") }) : t('dashboard.noExpense')}</span>
+                      <div className="flex items-center gap-2 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-3.5 py-2 rounded-2xl max-w-full backdrop-blur-md">
+                        <HugeiconsIcon icon={UserGroupIcon} size={16} className="text-kat-primary shrink-0 drop-shadow-sm" />
+                        <span className="font-black text-[13px] text-slate-700 dark:text-slate-200 truncate">{t('dashboard.peopleCount', { count: memberCounts[featuredTrip.id!] || 1 })}</span>
+                        <span className="text-slate-300 dark:text-slate-600 mx-1">·</span>
+                        <HugeiconsIcon icon={WalletCardsIcon} size={16} className="text-kat-primary shrink-0 drop-shadow-sm" />
+                        <span className="font-black text-[13px] text-slate-700 dark:text-slate-200 truncate">{featuredTotalExpense > 0 ? t('dashboard.expenseTotal', { amount: formatMoneyCompact(featuredTotalExpense, featuredTrip.defaultCurrency || "VND") }) : t('dashboard.noExpense')}</span>
                       </div>
                     </div>
                   </div>

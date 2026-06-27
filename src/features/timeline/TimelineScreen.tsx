@@ -823,43 +823,6 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           </div>
         )}
 
-        {/* Backup plans for all days */}
-        {backupPlans.filter(p => !p.activityId && !p.date).length > 0 && (
-          <div key="backup" className="space-y-4">
-            <div 
-              id="day-section-backup"
-              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 dark:bg-slate-900/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40 dark:border-slate-800/60"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-black text-[14px] shadow-sm shrink-0">
-                  <HugeiconsIcon icon={GitBranchIcon} className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-[16px] font-extrabold text-kat-dark dark:text-slate-200">{t("timeline.generalBackup")}</h4>
-                  <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">{t("timeline.generalBackupDesc")}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
-                className="px-3 py-1.5 rounded-xl bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border text-slate-600 dark:text-slate-350 font-bold text-[13px] hover:bg-slate-50 dark:hover:bg-kat-surface/80 motion-press"
-              >
-                {t("timeline.viewDetails")}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {!isReadOnly && (
-          <div className="flex justify-center mt-6">
-             <button
-                onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-indigo-200 text-indigo-600 font-bold text-[14px] hover:bg-indigo-50 transition-colors motion-press"
-             >
-               <HugeiconsIcon icon={GitBranchIcon} className="w-4.5 h-4.5" />
-               {t("timeline.addTripBackupPlan")}
-             </button>
-          </div>
-        )}
       </div>
     );
   };
@@ -1023,6 +986,59 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           </div>
 
           <WeatherWidget destination={trip.location} latitude={trip.latitude} longitude={trip.longitude} days={tripDays.length} startDate={trip.startDate} />
+  
+          {/* General Backup Widget */}
+          <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 shadow-sm border border-slate-100 dark:border-kat-border space-y-4 min-w-0 overflow-hidden">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400">
+                  <HugeiconsIcon icon={GitBranchIcon} className="h-4 w-4" />
+                </span>
+                <div>
+                  <h4 className="text-[15px] font-extrabold text-kat-dark dark:text-slate-200">{t("timeline.generalBackup")}</h4>
+                  <p className="text-[11px] text-slate-500/80 dark:text-slate-400 font-medium">Áp dụng cho toàn bộ chuyến đi</p>
+                </div>
+              </div>
+              
+              {backupPlans.filter(p => !p.activityId && !p.date).length > 0 && (
+                <button
+                  onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
+                  className="px-2.5 py-1 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 text-slate-600 dark:text-slate-400 font-bold text-[12px] hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer motion-press"
+                >
+                  Xem ({backupPlans.filter(p => !p.activityId && !p.date).length})
+                </button>
+              )}
+            </div>
+
+            {backupPlans.filter(p => !p.activityId && !p.date).length > 0 ? (
+              <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1 scrollbar-none">
+                {backupPlans.filter(p => !p.activityId && !p.date).map((plan) => (
+                  <div key={plan.id} className="text-[13px] font-semibold text-kat-dark dark:text-slate-200 bg-slate-50/70 dark:bg-slate-800/40 rounded-xl px-3 py-2.5 border border-slate-100/50 dark:border-slate-700/40 flex items-center justify-between gap-2">
+                    <span className="truncate">{plan.title}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBackupPlanCtx({}); 
+                        setIsBackupPlansOpen(true);
+                      }}
+                      className="text-[11px] font-bold text-kat-teal hover:underline whitespace-nowrap"
+                    >
+                      Chi tiết &rarr;
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+
+            {!isReadOnly && (
+              <button
+                onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 text-indigo-600 dark:text-indigo-400 font-bold text-[13px] hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition-colors motion-press"
+              >
+                <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />Thêm phương án
+              </button>
+            )}
+          </div>
 
           {/* Roadmap Widget */}
           {days.length > 0 && (
@@ -1187,10 +1203,10 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         <div className="space-y-5 pb-4">
           
           {/* Instruction card */}
-          <div className="flex items-start gap-3 bg-kat-primary-soft border border-kat-teal border-opacity-20 rounded-2xl px-4 py-3">
+          <div className="flex items-start gap-3 bg-kat-primary-soft dark:bg-[#00BFB7]/10 backdrop-blur-md border border-kat-teal border-opacity-20 dark:border-[#00BFB7]/30 rounded-2xl px-4 py-3">
             <HugeiconsIcon icon={Route01Icon} className="h-5 w-5 text-kat-teal shrink-0 mt-0.5" />
             <div>
-              <p className="text-[13px] font-bold text-kat-dark">{t("timeline.pasteGoogleMapsLink")}</p>
+              <p className="text-[13px] font-bold text-kat-dark dark:text-white/90">{t("timeline.pasteGoogleMapsLink")}</p>
               <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium mt-0.5 leading-relaxed">
                 {t("timeline.pasteGoogleMapsHelper")}
               </p>
@@ -1207,7 +1223,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               value={roadmapInputLink}
               onChange={e => setRoadmapInputLink(e.target.value)}
               placeholder="https://www.google.com/maps/dir/..."
-              className="w-full pl-11 pr-4 py-4 bg-white dark:bg-kat-surface border-2 border-slate-200 dark:border-kat-border rounded-2xl text-[14px] font-semibold text-kat-dark dark:text-kat-text placeholder:text-slate-300 placeholder:font-normal focus:outline-none focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 transition-all duration-200"
+              className="w-full pl-11 pr-4 py-4 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md border-0 ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 rounded-2xl text-[14px] font-semibold text-kat-dark dark:text-white/90 placeholder:text-slate-400 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-[#00BFB7] transition-all duration-200"
             />
           </div>
 
@@ -1217,7 +1233,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               href={ensureAbsoluteUrl(roadmapInputLink)}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 text-[13.5px] font-bold text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/30 transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-[#00BFB7]/5 dark:bg-[#00BFB7]/10 backdrop-blur-md border border-[#00BFB7]/20 dark:border-[#00BFB7]/30 text-[13.5px] font-bold text-[#00BFB7] dark:text-[#00BFB7] hover:bg-[#00BFB7]/15 dark:hover:bg-[#00BFB7]/20 transition-colors"
             >
               <HugeiconsIcon icon={MapsIcon} className="w-4 h-4" />
               {t("timeline.checkLink")} &rarr;
@@ -1290,3 +1306,6 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
     </div>
   );
 }
+
+
+

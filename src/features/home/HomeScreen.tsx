@@ -36,7 +36,7 @@ import { getAvatarSvg } from "../../utils/avatars";
 function QuickAction({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
   return (
     <button
-      className="flex flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white p-5 shadow-sm border border-slate-100 transition-[transform,box-shadow,border-color] duration-200 ease-out motion-press md:motion-hover-lift hover:border-[#00BFB7]/30 hover:shadow-[0_8px_20px_rgba(0,191,183,0.06)] active:scale-[0.97] w-full"
+      className="flex flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-100 transition-[transform,box-shadow,border-color] duration-200 ease-out motion-press md:motion-hover-lift hover:border-[#00BFB7]/30 hover:shadow-[0_8px_20px_rgba(0,191,183,0.06)] active:scale-[0.97] w-full"
       onClick={onClick}
     >
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary-soft text-kat-primary transition-transform duration-300 group-hover:scale-110">
@@ -150,7 +150,7 @@ export function HomeScreen({
             return (
               <div 
                 key={member.id || i} 
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-white dark:border-[#1E293B] overflow-hidden bg-slate-50 shadow-sm"
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-white dark:border-[#1E293B] overflow-hidden bg-slate-50 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
                 title={member.name}
               >
                 {member.avatar ? (
@@ -432,7 +432,7 @@ export function HomeScreen({
             </div>
 
             {/* Bản tin card — compact horizontal */}
-            <div className="rounded-3xl bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border p-4 motion-card-enter motion-delay-2 flex items-center gap-4 shadow-sm">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 p-4 motion-card-enter motion-delay-2 flex items-center gap-4 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-500/10 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400">
                 <HugeiconsIcon icon={BookOpen01Icon} className="h-5.5 w-5.5" />
               </div>
@@ -453,7 +453,7 @@ export function HomeScreen({
             </div>
 
             {/* Báo cáo card — action-focused, two buttons prominent */}
-            <div className="rounded-3xl bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border p-5 motion-card-enter motion-delay-3 shadow-sm">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 p-5 motion-card-enter motion-delay-3 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
               <div className="flex items-center gap-3 mb-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                   <HugeiconsIcon icon={FileDownloadIcon} className="h-4.5 w-4.5" />
@@ -488,7 +488,7 @@ export function HomeScreen({
         <section className="space-y-4">
           <h3 className="text-[17px] font-extrabold text-kat-dark px-1 motion-title-enter">{t("home.tripOverview")}</h3>
           
-          <div className="rounded-3xl bg-white dark:bg-kat-surface p-6 shadow-sm border border-slate-100 dark:border-kat-border motion-card-enter motion-delay-2">
+          <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 motion-card-enter motion-delay-2">
             <ul className="space-y-6">
               <li className="flex items-start gap-4">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20">
@@ -571,7 +571,7 @@ export function HomeScreen({
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.nextActivity")}</h3>
             {nextEvent ? (
               <div 
-                className="flex items-center gap-4 rounded-3xl bg-white dark:bg-kat-surface p-5 shadow-sm border border-slate-100 dark:border-kat-border transition-[box-shadow,transform,border-color] duration-200 hover:shadow-md cursor-pointer group motion-card-enter motion-delay-1 motion-press active:scale-[0.97]" 
+                className="flex items-center gap-4 rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 transition-[box-shadow,transform,border-color] duration-200 hover:shadow-md cursor-pointer group motion-card-enter motion-delay-1 motion-press active:scale-[0.97]" 
                 onClick={() => onNavigateTab("timeline")}
               >
                 <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-kat-primary-soft text-kat-primary transition-colors group-hover:bg-[#00BFB7]/20">
@@ -591,7 +591,7 @@ export function HomeScreen({
                 <HugeiconsIcon icon={ChevronRightIcon} size={20} className="text-slate-300 dark:text-slate-500" />
               </div>
             ) : (
-              <div className="rounded-[24px] bg-white dark:bg-kat-surface p-6 border border-slate-200 dark:border-kat-border shadow-sm flex flex-col items-center text-center motion-card-enter motion-delay-1">
+              <div className="rounded-[24px] bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex flex-col items-center text-center motion-card-enter motion-delay-1">
                 <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">{t("home.noScheduledActivity")}</p>
                 {!isReadOnly && (
                     <button 
@@ -610,12 +610,12 @@ export function HomeScreen({
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.preTripReminders")}</h3>
             {reminders.length > 0 ? (
-              <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-100 dark:border-kat-border shadow-sm space-y-4 motion-card-enter motion-delay-2">
+              <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] space-y-4 motion-card-enter motion-delay-2">
                 <div className="grid grid-cols-1 gap-3.5">
                   {reminders.map((rem, idx) => (
                     <div 
                       key={rem.id} 
-                      className="flex flex-col justify-between p-4 rounded-2xl border border-slate-100 dark:border-kat-border bg-slate-50/20 dark:bg-slate-800/10 hover:border-amber-200/60 transition-all group"
+                      className="flex flex-col justify-between p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md hover:border-amber-200/60 transition-all group"
                     >
                       <div>
                         <h4 className="text-[14px] font-extrabold text-slate-800 dark:text-slate-200 leading-snug flex items-start gap-2">
@@ -646,12 +646,12 @@ export function HomeScreen({
                 </div>
               </div>
             ) : (
-              <div className="rounded-[24px] bg-white dark:bg-kat-surface p-6 border border-slate-200 dark:border-kat-border shadow-sm flex flex-col items-center text-center motion-card-enter motion-delay-2">
+              <div className="rounded-[24px] bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex flex-col items-center text-center motion-card-enter motion-delay-2">
                 <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">{t("home.everythingReady")}</p>
                 {!isReadOnly && (
                     <button 
                       onClick={() => onNavigateTab("checklist")}
-                      className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-kat-primary text-kat-dark dark:text-slate-900 hover:brightness-105 px-4 py-2.5 text-[13px] font-black transition-[transform,filter] duration-150 shadow-sm active:scale-[0.97] motion-press"
+                      className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-kat-primary text-kat-dark dark:text-slate-900 hover:brightness-105 px-4 py-2.5 text-[13px] font-black transition-[transform,filter] duration-150 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] active:scale-[0.97] motion-press"
                     >
                       <HugeiconsIcon icon={Briefcase01Icon} size={16} />
                       Chuẩn bị hành lý
@@ -667,7 +667,7 @@ export function HomeScreen({
           {/* Tổng quan hành trình */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.tripOverview")}</h3>
-            <div className="rounded-3xl bg-white dark:bg-kat-surface p-6 shadow-sm border border-slate-100 dark:border-kat-border motion-card-enter motion-delay-3">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 motion-card-enter motion-delay-3">
               <ul className="space-y-6">
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20">
@@ -718,7 +718,7 @@ export function HomeScreen({
           {/* Giấy tờ & đặt chỗ */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.docsAndBookings")}</h3>
-            <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-100 dark:border-kat-border shadow-sm motion-card-enter motion-delay-4">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-card-enter motion-delay-4">
               {travelDocuments.length > 0 ? (
                 <div className="space-y-3">
                   <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
@@ -754,7 +754,7 @@ export function HomeScreen({
                   {!isReadOnly && (
                       <button 
                         onClick={() => onNavigateMore("documents")}
-                        className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-extrabold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-sm motion-press"
+                        className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-extrabold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-press"
                       >
                         <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
                         Thêm giấy tờ
@@ -796,7 +796,7 @@ export function HomeScreen({
           {/* Lịch trình hôm nay */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.todaySchedule")}</h3>
-            <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-100 dark:border-kat-border shadow-sm space-y-4 motion-card-enter motion-delay-1">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] space-y-4 motion-card-enter motion-delay-1">
               {/* Phương án dự phòng hôm nay */}
               {todayBackupPlans.length > 0 && (
                 <div className="p-4 bg-indigo-50 dark:bg-indigo-950/20 rounded-2xl border border-indigo-100 dark:border-indigo-900/30 flex items-start gap-3">
@@ -820,7 +820,7 @@ export function HomeScreen({
 
               {/* Hoạt động hôm nay */}
               {todayEvents.length === 0 ? (
-                <div className="p-4 rounded-2xl border border-slate-100/80 dark:border-kat-border/40 bg-slate-50/20 dark:bg-slate-800/10 text-center">
+                <div className="p-4 rounded-2xl border border-slate-100/80 dark:border-kat-border/40 bg-white/40 dark:bg-white/5 backdrop-blur-md text-center">
                   <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500">{t("home.noTodaySchedule")}</p>
                   <button 
                     onClick={() => onNavigateTab("timeline")}
@@ -841,8 +841,8 @@ export function HomeScreen({
                         onClick={() => item.id && !isReadOnly && db.events.update(item.id, { completed: !item.completed })}
                         className={`w-full min-h-[46px] flex items-center justify-between p-3 px-4 rounded-2xl border transition-all text-left group motion-press ${
                           item.completed 
-                            ? "bg-slate-50/45 dark:bg-slate-800/10 border-slate-100/60 dark:border-slate-700/40 text-slate-400/80 dark:text-slate-500" 
-                            : "bg-white dark:bg-kat-surface border-slate-200/60 dark:border-kat-border text-slate-700 dark:text-slate-200 hover:bg-slate-50/60 dark:hover:bg-slate-800/60 hover:border-[#00BFB7]/30"
+                            ? "bg-white/20 dark:bg-white/5 backdrop-blur-sm border-slate-100/60 dark:border-slate-700/40 text-slate-400/80 dark:text-slate-500" 
+                            : "bg-white/40 dark:bg-white/5 backdrop-blur-md border-slate-200/60 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:bg-slate-50/60 dark:hover:bg-white/10 hover:border-[#00BFB7]/30"
                         }`}
                       >
                         <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -868,7 +868,7 @@ export function HomeScreen({
           {/* Giấy tờ cần kiểm tra */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.docsToCheck")}</h3>
-            <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-100 dark:border-kat-border shadow-sm motion-card-enter motion-delay-2">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-card-enter motion-delay-2">
               {idDocs.length > 0 ? (
                 <div className="space-y-3.5">
                   <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
@@ -897,7 +897,7 @@ export function HomeScreen({
                   {!isReadOnly && (
                     <button 
                       onClick={() => onNavigateMore("documents")}
-                      className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-extrabold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-sm motion-press"
+                      className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-extrabold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-press"
                     >
                       <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
                       Bổ sung giấy tờ
@@ -914,7 +914,7 @@ export function HomeScreen({
           {/* Tổng quan hành trình */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.tripOverview")}</h3>
-            <div className="rounded-3xl bg-white dark:bg-kat-surface p-6 shadow-sm border border-slate-100 dark:border-kat-border motion-card-enter motion-delay-3">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 motion-card-enter motion-delay-3">
               <ul className="space-y-6">
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20">
@@ -965,9 +965,9 @@ export function HomeScreen({
           {/* Chuẩn bị còn thiếu */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.missingPacking")}</h3>
-            <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-100 dark:border-kat-border shadow-sm motion-card-enter motion-delay-4">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-card-enter motion-delay-4">
               {checklist.length === 0 ? (
-                <div className="p-4 rounded-2xl border border-slate-100/80 dark:border-kat-border/40 bg-slate-50/20 dark:bg-slate-800/10 text-center">
+                <div className="p-4 rounded-2xl border border-slate-100/80 dark:border-kat-border/40 bg-white/40 dark:bg-white/5 backdrop-blur-md text-center">
                   <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500">{t("home.noChecklistItems")}</p>
                 </div>
               ) : (
@@ -978,8 +978,8 @@ export function HomeScreen({
                       onClick={() => item.id && db.checklist.update(item.id, { completed: !item.completed })}
                       className={`w-full min-h-[46px] flex items-center justify-between p-3 px-4 rounded-2xl border transition-all text-left group motion-press ${
                         item.completed 
-                          ? "bg-slate-50/45 dark:bg-slate-800/10 border-slate-100/60 dark:border-slate-700/40 text-slate-400/80 dark:text-slate-500" 
-                          : "bg-white dark:bg-kat-surface border-slate-200/60 dark:border-kat-border text-slate-700 dark:text-slate-200 hover:bg-slate-50/60 dark:hover:bg-slate-800/60 hover:border-[#00BFB7]/30"
+                          ? "bg-white/20 dark:bg-white/5 backdrop-blur-sm border-slate-100/60 dark:border-slate-700/40 text-slate-400/80 dark:text-slate-500" 
+                          : "bg-white/40 dark:bg-white/5 backdrop-blur-md border-slate-200/60 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:bg-slate-50/60 dark:hover:bg-white/10 hover:border-[#00BFB7]/30"
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -1013,7 +1013,7 @@ export function HomeScreen({
           {/* Lịch trình đã ghi */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">{t("home.recordedSchedule")}</h3>
-            <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-100 dark:border-kat-border shadow-sm motion-card-enter motion-delay-5">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-card-enter motion-delay-5">
               <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
                 {events.length > 0 
                   ? t("home.activeEvents", { count: events.length })
@@ -1054,3 +1054,8 @@ export function HomeScreen({
     </>
   );
 }
+
+
+
+
+

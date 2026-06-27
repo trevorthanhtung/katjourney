@@ -170,7 +170,7 @@ function LocationInput({
           value={value}
           onChange={(e) => handleChange(e.target.value)}
           placeholder={t("trips.exampleLocation")}
-          className="w-full rounded-[14px] border border-slate-200 dark:border-slate-700/50 bg-slate-50/80 dark:bg-slate-800/40 pl-10 pr-10 py-3 text-[14px] font-medium text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-kat-primary focus:ring-2 focus:ring-kat-primary/20 dark:focus:bg-kat-surface focus:outline-none transition-all"
+          className="w-full rounded-[14px] border border-slate-200 dark:border-white/10 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md pl-10 pr-10 py-3 text-[14px] font-medium text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-kat-primary focus:ring-2 focus:ring-kat-primary/20 dark:focus:bg-white/5 focus:outline-none transition-all"
           autoComplete="off"
         />
         {loading && (
@@ -182,7 +182,7 @@ function LocationInput({
           <button
             type="button"
             onClick={() => { onChange(""); setSuggestions([]); setIsOpen(false); }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/20 transition-colors"
           >
             <HugeiconsIcon icon={Cancel01Icon} size={12} />
           </button>
@@ -190,7 +190,7 @@ function LocationInput({
       </div>
 
       {isOpen && suggestions.length > 0 && (
-        <ul className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-floating animate-fadeIn">
+        <ul className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-[#0A0F1C]/80 backdrop-blur-xl shadow-floating animate-fadeIn">
           {suggestions.map((result, idx) => {
             const name = normalizeVietnameseDisplayText(result.name);
             const sub = normalizeVietnameseDisplayText([result.admin1, result.country].filter(Boolean).join(", "));
@@ -200,7 +200,7 @@ function LocationInput({
                   type="button"
                   onMouseDown={(e) => { e.preventDefault(); handleSelect(result); }}
                   onTouchStart={(e) => { e.preventDefault(); handleSelect(result); }}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-100/60 dark:border-slate-700/50 last:border-0"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border-b border-slate-100/60 dark:border-white/5 last:border-0"
                 >
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 dark:bg-kat-teal/20">
                     <HugeiconsIcon icon={Location01Icon} size={14} className="text-kat-primary dark:text-kat-teal" />
@@ -319,15 +319,15 @@ const todayDate = new Date();
       {/* Trip type toggle */}
       <div className="grid grid-cols-2 gap-2 mb-4">
         <button type="button" onClick={() => { onChangeTripType("dayTrip"); setPickingEnd(false); }}
-          className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px]",
-            tripType === "dayTrip" ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 dark:bg-slate-800/40 ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800/60")}
+          className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px] backdrop-blur-md",
+            tripType === "dayTrip" ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary" : "bg-white/50 dark:bg-[#0A0F1C]/40 ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 hover:bg-white/80 dark:hover:bg-white/5")}
         >
           <span className={classNames("text-[14px] font-bold", tripType === "dayTrip" ? "text-kat-primary dark:text-kat-teal" : "text-slate-700 dark:text-slate-350")}>{t("tripForm.dayTripBtn")}</span>
           <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "dayTrip" ? "text-[#00BFB7]/80 dark:text-kat-teal/80" : "text-slate-400 dark:text-slate-500")}>{t("tripForm.dayTripDesc")}</span>
         </button>
         <button type="button" onClick={() => { onChangeTripType("multiDay"); setPickingEnd(false); }}
-          className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px]",
-            tripType === "multiDay" ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary" : "bg-slate-50 dark:bg-slate-800/40 ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800/60")}
+          className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px] backdrop-blur-md",
+            tripType === "multiDay" ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary" : "bg-white/50 dark:bg-[#0A0F1C]/40 ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 hover:bg-white/80 dark:hover:bg-white/5")}
         >
           <span className={classNames("text-[14px] font-bold", tripType === "multiDay" ? "text-kat-primary dark:text-kat-teal" : "text-slate-700 dark:text-slate-350")}>{t("tripForm.multiDayBtn")}</span>
           <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "multiDay" ? "text-[#00BFB7]/80 dark:text-kat-teal/80" : "text-slate-400 dark:text-slate-500")}>{t("tripForm.multiDayDesc")}</span>
@@ -349,9 +349,9 @@ const todayDate = new Date();
       </div>
 
       {/* Calendar grid */}
-      <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white dark:bg-slate-800/40 overflow-hidden">
+      <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md overflow-hidden">
         {/* Month navigation */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/40">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/10">
           <button type="button" onClick={prevMonth}
             className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors text-slate-500 dark:text-slate-400">
             <HugeiconsIcon icon={ChevronLeftIcon} size={16} />
@@ -364,7 +364,7 @@ const todayDate = new Date();
         </div>
 
         {/* Day headers */}
-        <div className="grid grid-cols-7 border-b border-slate-100 dark:border-slate-700/40">
+        <div className="grid grid-cols-7 border-b border-slate-100 dark:border-white/10">
           {daysOfWeek.map(d => (
             <div key={d} className="py-1.5 text-center text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">{d}</div>
           ))}
@@ -413,7 +413,7 @@ const todayDate = new Date();
                       ? "text-kat-primary dark:text-kat-teal font-semibold hover:bg-[#00BFB7]/10 dark:hover:bg-kat-teal/20"
                       : isToday
                       ? "text-kat-primary dark:text-kat-teal font-bold ring-1 ring-[#00BFB7]/50 dark:ring-kat-teal/50 hover:bg-[#00BFB7]/10 dark:hover:bg-kat-teal/20"
-                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/80"
+                      : "text-slate-700 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-white/5"
                   )}
                 >
                   {day}
@@ -629,17 +629,22 @@ function MemberForm({
 
   const togglePreset = (preset: string) => {
     setDirty(true);
-    if (preset === "Người đồng hành") {
-      setSelectedPresets(["Người đồng hành"]);
+    const companionLabel = t("members.roleCompanion");
+    const leaderLabel = t("members.roleLeader");
+    
+    if (preset === companionLabel || preset === leaderLabel || preset === "Người đồng hành" || preset === "Trưởng nhóm") {
+      setSelectedPresets([preset]);
     } else {
-      let next = selectedPresets.filter(p => p !== "Người đồng hành");
+      let next = selectedPresets.filter(p => 
+        p !== companionLabel && p !== leaderLabel && p !== "Người đồng hành" && p !== "Trưởng nhóm"
+      );
       if (next.includes(preset)) {
         next = next.filter(p => p !== preset);
       } else {
         next.push(preset);
       }
       if (next.length === 0) {
-        next = ["Người đồng hành"];
+        next = [companionLabel];
       }
       setSelectedPresets(next);
     }

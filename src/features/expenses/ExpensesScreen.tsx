@@ -121,7 +121,7 @@ export function SettlementCard({
   }
 
   return (
-    <section className="rounded-3xl border border-slate-100 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-sm mt-6 animate-fadeIn">
+    <section className="rounded-3xl border border-slate-200/60 dark:border-white/10 bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-sm mt-6 animate-fadeIn">
       <div className="flex items-center gap-2 mb-4">
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
           <HugeiconsIcon icon={BalanceScaleIcon} className="h-4.5 w-4.5" />
@@ -137,7 +137,7 @@ export function SettlementCard({
             const toGroup = toMember?.isGroupLeader && toMember.group ? toMember.group : null;
             
             return (
-              <div key={idx} className="flex flex-col justify-center bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 shadow-sm rounded-2xl p-4 gap-2">
+              <div key={idx} className="flex flex-col justify-center bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/60 dark:border-white/10 shadow-sm rounded-2xl p-4 gap-2">
                 <div className="flex items-center justify-between w-full">
                   <div className="flex flex-col items-center flex-1">
                     <span className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 mb-1">
@@ -167,7 +167,7 @@ export function SettlementCard({
           })}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center p-6 text-center border border-dashed border-slate-200 dark:border-kat-border/40 rounded-2xl bg-slate-50/30 dark:bg-slate-800/20">
+        <div className="flex flex-col items-center justify-center p-6 text-center border border-dashed border-slate-200/60 dark:border-white/10 rounded-2xl bg-slate-50/30 dark:bg-slate-800/20">
           <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">{emptyText}</p>
         </div>
       )}
@@ -241,7 +241,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
   };
 
   return (
-    <article className={`motion-card-enter motion-delay-${Math.min(idx + 1, 5)} flex items-center justify-between gap-4 rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-200 dark:border-kat-border/40 shadow-sm transition-all duration-200 hover:shadow-md`}>
+    <article className={`motion-card-enter motion-delay-${Math.min(idx + 1, 5)} flex items-center justify-between gap-4 rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-sm transition-all duration-200 hover:shadow-md`}>
       <div className="min-w-0 flex-1">
         {/* Description */}
         <h4 className="text-base font-semibold text-kat-dark dark:text-white truncate">
@@ -250,7 +250,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
 
         {/* Category & Badge */}
         <div className="flex items-center flex-wrap gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1.5">
-          <span className="inline-flex items-center gap-1 font-medium bg-slate-100/80 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/20 dark:border-slate-700/60">
+          <span className="inline-flex items-center gap-1 font-medium bg-slate-100/50 dark:bg-white/5 backdrop-blur-sm px-2 py-0.5 rounded-md border border-slate-200/50 dark:border-white/10">
             {getCategoryIcon(item.category)}
             {catMap[item.category] || item.category}
           </span>
@@ -258,8 +258,8 @@ const ExpenseCard = React.memo(function ExpenseCard({
           <span className={classNames(
             "inline-flex items-center rounded-md px-2 py-0.5 font-bold border",
             isPersonal 
-              ? "bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200/80 dark:border-slate-700/60" 
-              : "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-450 border-emerald-100 dark:border-emerald-900/30"
+              ? "bg-slate-50/50 dark:bg-white/5 backdrop-blur-sm text-slate-500 dark:text-slate-400 border-slate-200/50 dark:border-white/10" 
+              : "bg-[#00BFB7]/10 dark:bg-[#00BFB7]/10 backdrop-blur-sm text-[#00BFB7] dark:text-[#00BFB7] border-[#00BFB7]/20 dark:border-[#00BFB7]/30"
           )}>
             {isPersonal ? t("expenses.splitPersonal") : item.splitMode === "perGroup" ? t("expenses.splitPerGroup") : t("expenses.splitShared")}
           </span>
@@ -270,7 +270,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
           </span>
           
           {item.date && (
-            <span className="font-medium px-2 py-0.5 bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 rounded-md">
+            <span className="font-medium px-2 py-0.5 bg-slate-50/50 dark:bg-white/5 backdrop-blur-sm border border-slate-200/50 dark:border-white/10 rounded-md">
               {new Date(item.date).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
             </span>
           )}
@@ -307,7 +307,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
           </button>
 
           {isMenuOpen && (
-            <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 dark:border-kat-border bg-white dark:bg-kat-surface p-1.5 shadow-lg animate-scaleIn text-left">
+            <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-200/60 dark:border-white/10 bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-1.5 shadow-lg animate-scaleIn text-left">
               <button
                 type="button"
                 onClick={(e) => {
@@ -1203,7 +1203,7 @@ export function ExpensesScreen({
         </div>
         
         {/* Total Expense Hero */}
-        <section className="relative overflow-hidden rounded-[32px] bg-white dark:bg-kat-surface border-t-4 border-t-[#030D2E] dark:border-t-kat-border/40 border-x border-b border-slate-200 dark:border-kat-border/40 p-6 md:p-8 text-kat-dark dark:text-slate-100 shadow-soft">
+        <section className="relative overflow-hidden rounded-[32px] bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl border-t-4 border-t-[#030D2E] dark:border-t-kat-border/40 border-x border-b border-slate-200/60 dark:border-white/10 p-6 md:p-8 text-kat-dark dark:text-slate-100 shadow-soft">
           
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="flex-1 space-y-5">
@@ -1216,21 +1216,21 @@ export function ExpensesScreen({
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
-                <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
+                <div className="bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/60 dark:border-white/10 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
                     <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{t("expenses.sharedTrip")}</p>
                     <p className="text-[18px] font-black text-[#00AFA8] dark:text-[#00BFB7] mt-0.5">{formatMoney(totalSharedExpense, baseCurrency)}</p>
                   </div>
                   <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-[#00AFA8]/60 dark:text-[#00BFB7]/60 shrink-0 mt-0.5" />
                 </div>
-                <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
+                <div className="bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/60 dark:border-white/10 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
                     <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{t("expenses.personalExpense")}</p>
                     <p className="text-[18px] font-black text-kat-dark dark:text-slate-200 mt-0.5">{formatMoney(totalPersonalExpense, baseCurrency)}</p>
                   </div>
                   <HugeiconsIcon icon={UserIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500 shrink-0 mt-0.5" />
                 </div>
-                <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex items-start justify-between">
+                <div className="bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/60 dark:border-white/10 rounded-2xl p-4 shadow-sm flex items-start justify-between">
                   <div>
                     <p className="text-[12px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                       {hasGroups ? t("expenses.avgPerGroup") : t("expenses.avgPerPerson")}
@@ -1266,7 +1266,7 @@ export function ExpensesScreen({
           <>
             {/* Breakdown Grid */}
             <section className="grid gap-6 lg:grid-cols-2">
-              <div className="rounded-3xl border border-slate-100 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-sm">
+              <div className="rounded-3xl border border-slate-200/60 dark:border-white/10 bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-5">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
                     <HugeiconsIcon icon={PieChartIcon} className="h-4.5 w-4.5" />
@@ -1275,7 +1275,7 @@ export function ExpensesScreen({
                 </div>
                 <BreakdownSection items={byCategory} total={totalExpense} emptyText={t("expenses.noCatYet")} />
               </div>
-              <div className="rounded-3xl border border-slate-100 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-sm">
+              <div className="rounded-3xl border border-slate-200/60 dark:border-white/10 bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-5">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary">
                     <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5" />
@@ -1373,3 +1373,6 @@ export function ExpensesScreen({
     </div>
   );
 }
+
+
+

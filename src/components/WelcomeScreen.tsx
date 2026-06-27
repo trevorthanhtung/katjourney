@@ -178,28 +178,35 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] grid grid-cols-1 lg:grid-cols-2 w-full bg-kat-bg overflow-hidden font-sans select-none">
+    <div className="fixed inset-0 z-[100] flex flex-col lg:grid lg:grid-cols-2 w-full bg-kat-bg overflow-hidden font-sans select-none">
       
-      {/* 1. LEFT SIDE - Hero Image (Desktop only) */}
-      <div className="hidden lg:flex relative w-full h-full overflow-hidden select-text">
-        {/* Background Landscape Image - Light Mode */}
+      {/* Dynamic Cinematic Backgrounds (Full screen on mobile, left half on desktop) */}
+      <div className="absolute inset-0 w-full h-full lg:w-1/2 overflow-hidden z-0">
         <img 
-          src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop" 
-          alt="Travel Landscape Light" 
-          className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-10000 hover:scale-105 dark:hidden"
+          src="https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=2070&auto=format&fit=crop" 
+          alt="Cinematic Resort" 
+          className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ${activeSlide === 0 ? 'opacity-100 scale-105' : 'opacity-0 scale-100'}`}
           loading="eager"
         />
-        {/* Background Landscape Image - Dark Mode */}
         <img 
-          src="https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?q=80&w=2070&auto=format&fit=crop" 
-          alt="Travel Landscape Dark" 
-          className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-10000 hover:scale-105 hidden dark:block"
+          src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop" 
+          alt="Cinematic Airplane Sunset" 
+          className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ${activeSlide === 1 ? 'opacity-100 scale-105' : 'opacity-0 scale-100'}`}
+          loading="eager"
+        />
+        <img 
+          src="https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?q=80&w=2070&auto=format&fit=crop" 
+          alt="Cinematic Starry Night" 
+          className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ${activeSlide === 2 ? 'opacity-100 scale-105' : 'opacity-0 scale-100'}`}
           loading="eager"
         />
         
-        {/* Dark Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-        
+        {/* Luxury Dark Gradient Overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1120] via-[#0B1120]/60 to-[#0B1120]/30" />
+      </div>
+      
+      {/* 1. LEFT SIDE - Hero Image Content (Desktop only) */}
+      <div className="hidden lg:flex relative w-full h-full overflow-hidden select-text z-10 pointer-events-none">
         {/* Top Logo */}
         <div className="absolute top-8 left-12 flex items-center gap-3 z-10 select-none">
           <div className="flex h-9 w-9 items-center justify-center shrink-0">
@@ -220,13 +227,21 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
       </div>
 
       {/* 2. RIGHT SIDE - Zero-Friction Auth Form (Mobile-first) */}
-      <div className="flex flex-col justify-between items-center relative w-full h-full px-6 py-6 pb-safe lg:px-12 lg:py-10 bg-white dark:bg-[#0A1124] overflow-hidden">
+      <div className="flex flex-col justify-between items-center relative w-full h-full px-6 py-6 pb-safe lg:px-12 lg:py-10 bg-transparent lg:bg-white dark:lg:bg-[#0A1124] overflow-hidden z-10">
         
+        {/* Mobile Top Logo (Since background covers mobile, we can show a nice white logo on mobile) */}
+        <div className="lg:hidden flex items-center justify-center w-full mt-4 mb-2 select-none relative z-10">
+          <div className="flex h-10 w-10 items-center justify-center shrink-0">
+            <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-full w-full rounded-xl object-contain shadow-sm border border-white/20" />
+          </div>
+          <span className="ml-3 text-[22px] font-black tracking-tight text-white drop-shadow-md">KAT Journey</span>
+        </div>
+
         <div className="hidden lg:block h-2 w-full shrink-0 relative z-10" />
 
         {/* MIDDLE ACTIONS: Auth Card */}
         <div className="w-full max-w-[400px] mx-auto flex-1 flex flex-col justify-center">
-        <div className="w-full p-6 sm:p-8 bg-white dark:bg-[#0F172A]/40 rounded-[32px] shadow-[0_2px_24px_rgba(3,13,46,0.07)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-slate-200 dark:border-slate-800/80 flex flex-col items-center relative z-10 animate-scaleUp">
+        <div className="w-full p-6 sm:p-8 backdrop-blur-2xl bg-white/95 dark:bg-[#0F172A]/70 lg:backdrop-blur-none lg:bg-white dark:lg:bg-[#0F172A]/40 rounded-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.2)] lg:shadow-[0_2px_24px_rgba(3,13,46,0.07)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-white/20 dark:border-slate-800/80 flex flex-col items-center relative z-10 animate-scaleUp">
           
           {/* Onboarding Carousel (2027 Premium Swipeable) */}
           <div 

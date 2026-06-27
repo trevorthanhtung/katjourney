@@ -132,38 +132,38 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
   // Helper to render the actual chat UI (Header, Messages Feed, Input Area)
   const renderChatContent = (isMobileFullscreen: boolean, onBackClick?: () => void) => {
     return (
-      <div className="bg-white dark:bg-kat-surface flex flex-col overflow-hidden h-full w-full">
+      <div className="bg-white/50 dark:bg-[#0A0F1C]/20 flex flex-col overflow-hidden h-full w-full">
         {/* Header */}
-        <div className="bg-gradient-to-r from-kat-hero-start via-kat-hero-end to-kat-primary-usable p-4 text-white flex justify-between items-center shrink-0 border-b border-kat-border dark:border-slate-800/80 shadow-sm">
+        <div className="bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-4 text-kat-dark dark:text-white flex justify-between items-center shrink-0 border-b border-slate-200/60 dark:border-white/10 shadow-sm z-10">
           <div className="flex items-center gap-3 min-w-0">
             {isMobileFullscreen && onBackClick && (
               <button 
                 onClick={onBackClick}
-                className="p-1.5 hover:bg-white/10 rounded-full transition-colors mr-1 shrink-0 active:scale-95"
+                className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors mr-1 shrink-0 active:scale-95"
               >
-                <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 text-white" />
+                <HugeiconsIcon icon={ArrowLeft01Icon} className="w-5 h-5 text-kat-dark dark:text-white" />
               </button>
             )}
-            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/20 shadow-inner shrink-0">
-              <HugeiconsIcon icon={BubbleChatIcon} className="w-5 h-5 text-kat-primary-light animate-pulse" />
+            <div className="w-10 h-10 rounded-full bg-[#00BFB7]/10 flex items-center justify-center border border-[#00BFB7]/20 shadow-inner shrink-0">
+              <HugeiconsIcon icon={BubbleChatIcon} className="w-5 h-5 text-[#00BFB7] animate-pulse" />
             </div>
             <div className="min-w-0">
-              <h3 className="font-bold text-[14px] sm:text-[15px] tracking-wide text-white flex items-center gap-1.5">
+              <h3 className="font-bold text-[14px] sm:text-[15px] tracking-wide text-kat-dark dark:text-white flex items-center gap-1.5">
                 {t("chat.headerTitle")}
                 <span className="flex h-2 w-2 relative">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_#10B981]"></span>
                 </span>
               </h3>
-              <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-slate-300 truncate">
-                <span className="truncate">{t("chat.chattingAs")} <span className="font-semibold text-white">{currentUser.name}</span></span>
+              <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                <span className="truncate">{t("chat.chattingAs")} <span className="font-semibold text-kat-dark dark:text-slate-200">{currentUser.name}</span></span>
               </div>
             </div>
           </div>
           {!isMobileFullscreen && !inline && onClose && (
             <button 
               onClick={onClose}
-              className="p-2 hover:bg-white/10 rounded-full transition-all duration-200 hover:rotate-90 active:scale-90"
+              className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-kat-dark dark:text-white rounded-full transition-all duration-200 hover:rotate-90 active:scale-90"
             >
               <HugeiconsIcon icon={Cancel01Icon} className="w-5 h-5" />
             </button>
@@ -171,16 +171,16 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
         </div>
  
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-[#F8FAFC]/30 to-[#F8FAFC] dark:from-kat-surface/30 dark:to-kat-bg flex flex-col custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 bg-slate-50/50 dark:bg-transparent flex flex-col custom-scrollbar">
           {loading ? (
             <div className="flex-1 flex flex-col items-center justify-center">
-              <HugeiconsIcon icon={Loading01Icon} className="w-8 h-8 animate-spin text-kat-primary" />
+              <HugeiconsIcon icon={Loading01Icon} className="w-8 h-8 animate-spin text-[#00BFB7]" />
               <span className="text-xs text-kat-muted mt-2">{t("chat.loading")}</span>
             </div>
           ) : messages.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 select-none">
-              <div className="w-16 h-16 rounded-full bg-kat-primary-soft flex items-center justify-center mb-3">
-                <HugeiconsIcon icon={BubbleChatIcon} className="w-8 h-8 text-kat-primary-usable" />
+              <div className="w-16 h-16 rounded-full bg-[#00BFB7]/10 flex items-center justify-center mb-3 border border-[#00BFB7]/20">
+                <HugeiconsIcon icon={BubbleChatIcon} className="w-8 h-8 text-[#00BFB7]" />
               </div>
               <h4 className="font-bold text-kat-text text-sm mb-1">{t("chat.emptyTitle")}</h4>
               <p className="text-xs text-kat-muted max-w-[200px]">{t("chat.emptySubtitle")}</p>
@@ -284,41 +284,43 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
           <div ref={messagesEndRef} />
         </div>
  
-        {/* Input */}
+        {/* Input Area */}
         {isReadOnly ? (
-          <div className="mx-4 my-3 p-3 bg-slate-50 dark:bg-slate-800/45 border border-kat-border/40 dark:border-slate-700/40 rounded-[20px] text-center text-[12px] font-bold text-slate-400 dark:text-slate-400 select-none flex items-center justify-center gap-1.5 shrink-0">
+          <div className="mx-4 my-3 p-3 bg-slate-50 dark:bg-slate-800/45 border border-kat-border/40 dark:border-slate-700/40 rounded-[20px] text-center text-[12px] font-bold text-slate-400 dark:text-slate-400 select-none flex items-center justify-center gap-1.5 shrink-0 z-10">
             <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 animate-pulse" />
             Chuyến đi đã kết thúc &mdash; Chỉ xem trò chuyện
           </div>
         ) : (
-          <form 
-            onSubmit={handleSend}
-            className="mx-4 my-3 p-1.5 bg-white/85 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/50 dark:border-slate-700/50 rounded-[22px] flex items-center gap-2 shrink-0 shadow-[0_8px_24px_rgba(3,13,46,0.06)] dark:shadow-none focus-within:shadow-[0_12px_28px_rgba(0,191,183,0.12)] focus-within:border-kat-primary/40 transition-all duration-300"
-          >
-            <input
-              type="text"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder={t("chat.inputPlaceholder")}
-              className="flex-1 bg-transparent border-0 rounded-full px-3 py-1.5 text-xs text-kat-text placeholder-kat-muted/65 focus:outline-none transition-all duration-200"
-            />
-            <button
-              type="submit"
-              disabled={!inputText.trim() || sending}
-              className={classNames(
-                "w-9 h-9 rounded-full text-white flex items-center justify-center transition-all duration-300 shrink-0 shadow-md active:scale-90 motion-press",
-                inputText.trim() && !sending
-                  ? "bg-gradient-to-r from-kat-primary to-kat-primary-usable hover:scale-105 shadow-kat-primary/20 hover:shadow-[0_0_12px_rgba(0,191,183,0.4)]"
-                  : "bg-slate-100 dark:bg-slate-900 text-slate-300 dark:text-slate-600 shadow-none scale-100 cursor-not-allowed"
-              )}
+          <div className="p-3 bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl border-t border-slate-200/60 dark:border-white/10 shrink-0 z-10">
+            <form 
+              onSubmit={handleSend}
+              className="flex items-center gap-2 bg-white dark:bg-[#131b2e]/60 border border-slate-200/60 dark:border-white/10 rounded-2xl p-1.5 shadow-inner transition-colors focus-within:border-[#00BFB7]/50 focus-within:bg-white dark:focus-within:bg-[#131b2e] focus-within:ring-2 focus-within:ring-[#00BFB7]/10"
             >
-              {sending ? (
-                <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin" />
-              ) : (
-                <HugeiconsIcon icon={SentIcon} className="w-4 h-4 ml-0.5" />
-              )}
-            </button>
-          </form>
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder={t("chat.inputPlaceholder")}
+                className="flex-1 bg-transparent border-0 rounded-full px-3 py-1.5 text-xs text-kat-dark dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none transition-all duration-200"
+              />
+              <button
+                type="submit"
+                disabled={!inputText.trim() || sending}
+                className={classNames(
+                  "w-9 h-9 rounded-full text-white flex items-center justify-center transition-all duration-300 shrink-0 shadow-md active:scale-90 motion-press",
+                  inputText.trim() && !sending
+                    ? "bg-gradient-to-r from-kat-primary to-kat-primary-usable hover:scale-105 shadow-kat-primary/20 hover:shadow-[0_0_12px_rgba(0,191,183,0.4)]"
+                    : "bg-slate-100 dark:bg-slate-900 text-slate-300 dark:text-slate-600 shadow-none scale-100 cursor-not-allowed"
+                )}
+              >
+                {sending ? (
+                  <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin" />
+                ) : (
+                  <HugeiconsIcon icon={SentIcon} className="w-4 h-4 ml-0.5" />
+                )}
+              </button>
+            </form>
+          </div>
         )}
       </div>
     );
@@ -383,3 +385,4 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
     </>
   );
 }
+
