@@ -12,7 +12,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Trip, db, Expense } from "../../db";
-import { formatDate } from "../../utils/helpers";
+import { formatDate, formatMoneyCompact } from "../../utils/helpers";
 
 // A palette of premium gradients for cards
 const CARD_GRADIENTS = [
@@ -115,7 +115,7 @@ function TripCard({
         <div className="flex items-center gap-2 min-w-0">
           <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-white/50 shrink-0" />
           <span className="text-[12.5px] font-semibold text-white/75 truncate">
-            {totalExpense > 0 ? t('dashboard.expenseTotal', { amount: totalExpense.toLocaleString() + 'đ' }) : t('dashboard.noExpense')}
+            {totalExpense > 0 ? t('dashboard.expenseTotal', { amount: formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND") }) : t('dashboard.noExpense')}
           </span>
         </div>
       </div>

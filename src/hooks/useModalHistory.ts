@@ -23,19 +23,22 @@ export function useModalHistory(isOpen: boolean, onClose: () => void, modalHash:
 
   useEffect(() => {
     if (isOpen) {
-      const targetHash = `#${modalHash}`;
+      const url = new URL(window.location.href);
+      const currentModal = url.searchParams.get("modal");
       
-      // Push history state if not already on the target hash
-      if (window.location.hash !== targetHash) {
-        console.log(`[ModalHistory:${modalHash}] pushing hash. current:`, window.location.hash);
-        window.history.pushState({ isModal: true, modalHash }, "", targetHash);
+      // Push history state if not already on the target modal query param
+      if (currentModal !== modalHash) {
+        console.log(`[ModalHistory:${modalHash}] pushing param. current:`, currentModal);
+        url.searchParams.set("modal", modalHash);
+        window.history.pushState({ isModal: true, modalHash }, "", url.toString());
       } else {
-        console.log(`[ModalHistory:${modalHash}] hash already correct:`, window.location.hash);
+        console.log(`[ModalHistory:${modalHash}] param already correct:`, currentModal);
       }
 
       const handlePopState = () => {
-        // If the hash changed and is no longer the target hash, close the modal
-        if (window.location.hash !== targetHash) {
+        const currentUrl = new URL(window.location.href);
+        // If the param changed and is no longer the target param, close the modal
+        if (currentUrl.searchParams.get("modal") !== modalHash) {
           isNavigatingRef.current = true;
           onCloseRef.current();
         }
@@ -45,9 +48,10 @@ export function useModalHistory(isOpen: boolean, onClose: () => void, modalHash:
       
       return () => {
         window.removeEventListener("popstate", handlePopState);
-        // If closed manually by clicking close button/outside, pop the hash
-        console.log(`[ModalHistory:${modalHash}] cleanup. isNavigating:${isNavigatingRef.current} hash:${window.location.hash} target:${targetHash}`);
-        if (!isNavigatingRef.current && window.location.hash === targetHash) {
+        // If closed manually by clicking close button/outside, pop the param
+        const currentUrl = new URL(window.location.href);
+        console.log(`[ModalHistory:${modalHash}] cleanup. isNavigating:${isNavigatingRef.current} param:${currentUrl.searchParams.get("modal")} target:${modalHash}`);
+        if (!isNavigatingRef.current && currentUrl.searchParams.get("modal") === modalHash) {
           console.log(`[ModalHistory:${modalHash}] calling history.back()`);
           window.history.back();
         }

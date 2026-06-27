@@ -1361,8 +1361,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
         {view === "about" && (
           <div className="space-y-4 py-2 text-center flex flex-col items-center">
-            <img src="/asset/logo.png" alt="KAT Journey Logo" className="dark:hidden h-16 w-16 object-contain drop-shadow-sm mb-2" />
-            <img src="/logo-dark.png" alt="KAT Journey Logo" className="hidden dark:block h-16 w-16 object-contain drop-shadow-sm mb-2" />
+            <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-16 w-16 object-contain drop-shadow-sm mb-2" />
             
             <h3 className="text-[20px] font-black text-kat-dark">KAT Journey</h3>
             <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200/50 dark:border-white/[0.04]">
@@ -1449,7 +1448,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               <>
                 <div className="w-[85%] max-w-[280px] p-4 bg-white dark:bg-slate-900/30 border border-slate-200 dark:border-white/[0.04] rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
                   <img 
-                    src="/donates.png" 
+                    src="/asset/donates.png" 
                     alt="Donate QR Code" 
                     className="w-full h-auto rounded-[16px] object-contain aspect-square" 
                     onError={(e) => {
@@ -1462,7 +1461,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                 </div>
 
                 <a 
-                  href="/donates.png" 
+                  href="/asset/donates.png" 
                   download="kat-journey-donate-qr.png"
                   className="text-[13px] font-bold text-kat-teal hover:underline flex items-center gap-1 active:scale-95 transition-all"
                 >

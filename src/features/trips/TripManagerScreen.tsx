@@ -4,7 +4,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Airplane01Icon, Calendar01Icon, Location01Icon, CompassIcon, UserGroupIcon, WalletCardsIcon, SparklesIcon, MapsIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Trip, db, deleteTripCascade, Expense, ChecklistItem } from "../../db";
-import { formatDate, getTripTiming } from "../../utils/helpers";
+import { formatDate, getTripTiming, formatMoneyCompact } from "../../utils/helpers";
 import { TripForm } from "../more/MoreScreen";
 import { TypedDeleteConfirmModal, BottomSheet } from "../../components/ui";
 import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
@@ -126,7 +126,7 @@ function TripCard({
           </div>
           <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3.5 py-2 rounded-[12px]">
             <HugeiconsIcon icon={WalletCardsIcon} size={15} className="text-slate-400 shrink-0" />
-            <span>{totalExpense > 0 ? t('dashboard.expenseTotal', { amount: totalExpense.toLocaleString() + 'đ' }) : t('dashboard.noExpenseFull')}</span>
+            <span>{totalExpense > 0 ? t('dashboard.expenseTotal', { amount: formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND") }) : t('dashboard.noExpenseFull')}</span>
           </div>
           
           {tripChecklist.length > 0 && (
@@ -209,7 +209,7 @@ function TripCard({
             <span className="truncate">{t('dashboard.peopleCount', { count: memberCounts[trip.id!] || 1 })}</span>
             <span className="text-slate-300 mx-0.5">·</span>
             <HugeiconsIcon icon={WalletCardsIcon} size={14} className="text-slate-400 shrink-0" />
-            <span className="truncate">{totalExpense > 0 ? t('dashboard.expenseTotal', { amount: totalExpense.toLocaleString() + 'đ' }) : t('dashboard.noExpense')}</span>
+            <span className="truncate">{totalExpense > 0 ? t('dashboard.expenseTotal', { amount: formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND") }) : t('dashboard.noExpense')}</span>
           </div>
         </div>
       </div>
@@ -570,7 +570,7 @@ export function TripManagerScreen({
                         <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{t('dashboard.peopleCount', { count: memberCounts[featuredTrip.id!] || 1 })}</span>
                         <span className="text-slate-300 dark:text-slate-500 mx-0.5">·</span>
                         <HugeiconsIcon icon={WalletCardsIcon} size={16} className="text-slate-400 shrink-0" />
-                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{featuredTotalExpense > 0 ? t('dashboard.expenseTotal', { amount: featuredTotalExpense.toLocaleString() + 'đ' }) : t('dashboard.noExpense')}</span>
+                        <span className="font-extrabold text-[13px] text-slate-600 dark:text-slate-300 truncate">{featuredTotalExpense > 0 ? t('dashboard.expenseTotal', { amount: formatMoneyCompact(featuredTotalExpense, featuredTrip.defaultCurrency || "VND") }) : t('dashboard.noExpense')}</span>
                       </div>
                     </div>
                   </div>

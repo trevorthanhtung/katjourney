@@ -202,8 +202,8 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
         
         {/* Top Logo */}
         <div className="absolute top-8 left-12 flex items-center gap-3 z-10 select-none">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-white/20 shadow-sm shrink-0">
-            <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-6 w-6 object-contain" />
+          <div className="flex h-9 w-9 items-center justify-center shrink-0">
+            <img src="/asset/logo.png" alt="KAT Journey Logo" className="h-full w-full rounded-xl object-contain shadow-sm border border-white/20" />
           </div>
           <span className="text-[20px] font-black tracking-tight text-white drop-shadow-sm">KAT Journey</span>
         </div>

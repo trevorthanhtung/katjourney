@@ -271,10 +271,41 @@ function App() {
   const lastHistoryStateRef = React.useRef<any>(null);
   const historyDepthRef = React.useRef(0);
 
-  // Clear any dangling hash on boot
+  // Initialize deep links for query param based modals
   React.useEffect(() => {
+    // We can still clear legacy dangling hashes to be safe
     if (window.location.hash) {
       window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search);
+    }
+    
+    const url = new URL(window.location.href);
+    const modalParam = url.searchParams.get("modal");
+    
+    if (modalParam) {
+      // Create a base history entry so hitting back closes the modal instead of exiting app
+      const baseUrl = new URL(window.location.href);
+      baseUrl.searchParams.delete("modal");
+      window.history.replaceState(window.history.state, "", baseUrl.toString());
+      window.history.pushState({ isModal: true, modalHash: modalParam }, "", url.toString());
+
+      // Open the corresponding global modal
+      switch (modalParam) {
+        case "settings-modal":
+          setIsSettingsOpen(true);
+          break;
+        case "search-modal":
+          setIsSearchOpen(true);
+          break;
+        case "inbox-modal":
+          setIsAppInboxOpen(true);
+          break;
+        case "reminders-modal":
+          setIsRemindersOpen(true);
+          break;
+        case "create-trip-modal":
+          setIsCreatingTrip(true);
+          break;
+      }
     }
   }, []);
 
@@ -765,8 +796,7 @@ function App() {
         <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
           <div className="flex items-center gap-3 shrink-0">
             <div className="flex items-center gap-1.5 min-[390px]:gap-2 select-none shrink-0">
-              <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden lg:block dark:hidden h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
-              <img src="/logo-dark.png" alt="KAT Journey Logo" className="hidden dark:lg:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
+              <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden lg:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
               <h1 className="text-[17px] min-[390px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap shrink-0">KAT Journey</h1>
             </div>
             
