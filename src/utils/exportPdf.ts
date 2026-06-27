@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import i18n from "../i18n";
 import { formatDate, formatMoney, safeFileName, today, TripData } from "./helpers";
 import { RobotoRegular } from "./Roboto-Regular-normal";
 
@@ -68,7 +69,7 @@ export function exportTripPdf(data: TripData) {
       doc.setFontSize(7.5);
       doc.setTextColor(...C_SLATE);
       hLine(12);
-      doc.text("KAT Journey — Bản tin & Tổng kết chuyến đi", MARGIN_L, 10);
+      doc.text(i18n.t("export.footerNote"), MARGIN_L, 10);
       hLine(282);
       doc.text("thanhtungg.", MARGIN_L, 287);
       doc.text(`Trang ${i} / ${totalPages}`, PAGE_W - MARGIN_R, 287, { align: "right" });
@@ -80,7 +81,7 @@ export function exportTripPdf(data: TripData) {
   // ═══════════════════════════════════════
   doc.setFontSize(16);
   doc.setTextColor(...C_NAVY);
-  doc.text("BÁO CÁO CHUYẾN ĐI", PAGE_W / 2, Y, { align: "center" });
+  doc.text(i18n.t("export.reportTitle"), PAGE_W / 2, Y, { align: "center" });
   Y += 5;
   hLine(Y);
   Y += 10;
@@ -88,21 +89,21 @@ export function exportTripPdf(data: TripData) {
   // ═══════════════════════════════════════
   // PHẦN 1 — Thông tin khái quát (2×2 grid)
   // ═══════════════════════════════════════
-  sectionLabel("Phần 1 — Thông tin khái quát");
+  sectionLabel(i18n.t("export.part1"));
 
   const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
   const dateText = isDayTrip
     ? formatDate(trip.startDate)
     : `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}`;
-  const typeText = isDayTrip ? "Đi trong ngày" : (() => {
+  const typeText = isDayTrip ? i18n.t("export.dayTrip") : (() => {
     const d = Math.ceil(Math.abs(new Date(trip.endDate).getTime() - new Date(trip.startDate).getTime()) / 86400000) + 1;
-    return `${d} ngày ${d > 1 ? d - 1 : 0} đêm`;
+    return `${d} ${i18n.t("export.days")} ${d > 1 ? d - 1 : 0} ${i18n.t("export.nights")}`;
   })();
 
   const infoItems: [string, string][] = [
-    ["Tên chuyến đi", trip.title || "—"],
-    ["Địa điểm", trip.location || "Chưa xác định"],
-    ["Thời gian", dateText],
+    [i18n.t("export.tripName"), trip.title || "—"],
+    [i18n.t("export.location"), trip.location || "Chưa xác định"],
+    [i18n.t("export.duration"), dateText],
     ["Loại hình", typeText],
   ];
 
@@ -138,14 +139,14 @@ export function exportTripPdf(data: TripData) {
   // ═══════════════════════════════════════
   // PHẦN 2 — Lịch trình chi tiết (Grid table)
   // ═══════════════════════════════════════
-  sectionLabel("Phần 2 — Lịch trình chi tiết");
+  sectionLabel(i18n.t("export.part2"));
 
   // Column definitions: [label, x-offset from MARGIN_L, width]
   const tCols: [string, number, number][] = [
     ["Ngày",          0,   28],
     ["Giờ",          28,   16],
     ["Hoạt động & Ghi chú", 44, 66],
-    ["Địa điểm",    110,   42],
+    [i18n.t("export.location"),    110,   42],
     ["Trạng thái [ ]", 152, 18],
   ];
   const tHeaderH = 8;

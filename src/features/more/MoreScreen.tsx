@@ -1466,26 +1466,35 @@ function ActionCard({
 }) {
   const content = (
     <>
-      <div className="flex items-center gap-3.5 min-w-0 flex-1">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-white/5"></div>
+      <div className="flex items-center gap-4 min-w-0 flex-1 relative z-10">
         <div className={classNames(
-          "flex shrink-0 h-10 w-10 items-center justify-center rounded-xl border transition-colors",
+          "flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl shadow-inner transition-transform group-hover:scale-110 group-hover:rotate-3",
           iconBgColor,
           iconTextColor
         )}>
           <HugeiconsIcon icon={Icon} className="h-5.5 w-5.5" />
         </div>
-        <span className={classNames("text-base font-medium truncate leading-tight", titleClassName)}>
+        <span className={classNames("text-[15px] font-bold truncate leading-tight transition-colors group-hover:text-kat-primary dark:group-hover:text-kat-teal", titleClassName)}>
           {title}
         </span>
       </div>
-      <div className="flex items-center gap-2 shrink-0 pl-2">
+      <div className="flex items-center gap-2 shrink-0 pl-2 relative z-10">
         {rightElement !== undefined ? (
           rightElement
         ) : (
-          (onClick || disabled) && <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+          (onClick || disabled) && <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500 transition-transform group-hover:translate-x-1" />
         )}
       </div>
     </>
+  );
+
+  const wrapperClasses = classNames(
+    "group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border p-4 shadow-sm transition-all focus:outline-none",
+    disabled 
+      ? "bg-slate-50 dark:bg-slate-900/40 border-slate-200/50 dark:border-slate-800/50 opacity-60 cursor-not-allowed" 
+      : "bg-white dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-700/50 hover:border-kat-primary/30 dark:hover:border-kat-primary/40 hover:shadow-md active:scale-[0.98]",
+    className
   );
 
   if (onClick || disabled) {
@@ -1494,13 +1503,7 @@ function ActionCard({
         type="button"
         onClick={onClick}
         disabled={disabled}
-        className={classNames(
-          "group flex w-full items-center justify-between px-4 py-3 rounded-2xl min-h-[56px] text-left transition-all focus:outline-none focus:ring-2 focus:ring-kat-teal/50",
-          disabled 
-            ? "bg-slate-50 dark:bg-slate-900/40 border border-slate-200/50 dark:border-slate-800/80 opacity-60 cursor-not-allowed text-slate-400 dark:text-slate-500" 
-            : "bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50/60 dark:hover:bg-slate-800/80 text-kat-dark dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-650 motion-press md:motion-hover-lift",
-          className
-        )}
+        className={wrapperClasses}
       >
         {content}
       </button>
@@ -2610,37 +2613,43 @@ export function MoreScreen({
               />
               
               {isDataSectionOpen && (
-                <div className="flex flex-col gap-2 pl-4 border-l border-slate-200 mt-1 animate-fadeIn">
-                  <ActionCard
-                    icon={Download01Icon}
-                    title={t("more.dataBackup")}
-                    onClick={exportTrip}
-                    iconBgColor="bg-sky-50 dark:bg-sky-950/20"
-                    iconTextColor="text-sky-600 border-sky-100 dark:text-sky-400 dark:border-sky-900/30"
-                  />
+                <div className="flex flex-col gap-2.5 mt-1 animate-fadeIn sm:pl-8 pl-4">
+                  <div className="relative">
+                    {/* Decorative connection line */}
+                    <div className="absolute -left-3 top-0 bottom-6 w-px bg-gradient-to-b from-blue-200 via-sky-200 to-transparent dark:from-blue-800 dark:via-sky-800 hidden sm:block"></div>
+                    
+                    <div className="flex flex-col gap-2.5">
+                      <ActionCard
+                        icon={Download01Icon}
+                        title={t("more.dataBackup")}
+                        onClick={exportTrip}
+                        iconBgColor="bg-sky-50 dark:bg-sky-950/20"
+                        iconTextColor="text-sky-600 border-sky-100 dark:text-sky-400 dark:border-sky-900/30"
+                      />
 
-
-                  <ActionCard
-                    icon={File01Icon}
-                    title={t("more.dataExportPdf")}
-                    onClick={async () => {
-                      const { exportTripPdf } = await import("../../utils/exportPdf");
-                      exportTripPdf(tripData);
-                    }}
-                    iconBgColor="bg-rose-50 dark:bg-rose-950/20"
-                    iconTextColor="text-rose-600 border-rose-100 dark:text-rose-450 dark:border-rose-900/30"
-                  />
-                  
-                  <ActionCard
-                    icon={Table01Icon}
-                    title={t("more.dataExportExcel")}
-                    onClick={async () => {
-                      const { exportTripExcel } = await import("../../utils/exportExcel");
-                      exportTripExcel(tripData).catch(console.error);
-                    }}
-                    iconBgColor="bg-emerald-50 dark:bg-emerald-950/20"
-                    iconTextColor="text-emerald-600 border-emerald-100 dark:text-emerald-400 dark:border-emerald-900/30"
-                  />
+                      <ActionCard
+                        icon={File01Icon}
+                        title={t("more.dataExportPdf")}
+                        onClick={async () => {
+                          const { exportTripPdf } = await import("../../utils/exportPdf");
+                          exportTripPdf(tripData);
+                        }}
+                        iconBgColor="bg-rose-50 dark:bg-rose-950/20"
+                        iconTextColor="text-rose-600 border-rose-100 dark:text-rose-450 dark:border-rose-900/30"
+                      />
+                      
+                      <ActionCard
+                        icon={Table01Icon}
+                        title={t("more.dataExportExcel")}
+                        onClick={async () => {
+                          const { exportTripExcel } = await import("../../utils/exportExcel");
+                          exportTripExcel(tripData).catch(console.error);
+                        }}
+                        iconBgColor="bg-emerald-50 dark:bg-emerald-950/20"
+                        iconTextColor="text-emerald-600 border-emerald-100 dark:text-emerald-400 dark:border-emerald-900/30"
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

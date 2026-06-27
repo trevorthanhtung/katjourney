@@ -1,4 +1,5 @@
 import ExcelJS from "exceljs";
+import i18n from "../i18n";
 import { formatDate, getChecklistStats, getPackingStats, safeFileName, today, TripData } from "./helpers";
 
 // ─────────────────────────────────────────────
@@ -96,13 +97,13 @@ export async function exportTripExcel(data: TripData) {
   // ════════════════════════════════════════════
   // SHEET 1 — TỔNG QUAN
   // ════════════════════════════════════════════
-  const ws1 = workbook.addWorksheet("Tổng quan");
+  const ws1 = workbook.addWorksheet(i18n.t("export.overview"));
   setColWidths(ws1, [26, 36, 4, 26, 22]);
 
   // Title row
   ws1.mergeCells("A1:E1");
   const titleCell = ws1.getCell("A1");
-  titleCell.value = "KAT JOURNEY — BÁO CÁO CHUYẾN ĐI";
+  titleCell.value = i18n.t("export.reportTitle");
   titleCell.font = { bold: true, size: 14, name: "Arial", color: { argb: "FF2C3E50" } };
   titleCell.alignment = { horizontal: "center", vertical: "middle" };
   titleCell.fill = LABEL_FILL;
@@ -112,16 +113,16 @@ export async function exportTripExcel(data: TripData) {
   ws1.addRow([]);
 
   // Info grid
-  const typeText = isDayTrip ? "Đi trong ngày" : (() => {
+  const typeText = isDayTrip ? i18n.t("export.dayTrip") : (() => {
     const d = Math.ceil(Math.abs(new Date(trip.endDate).getTime() - new Date(trip.startDate).getTime()) / 86400000) + 1;
-    return `${d} ngày ${d > 1 ? d - 1 : 0} đêm`;
+    return `${d} ${i18n.t("export.days")} ${d > 1 ? d - 1 : 0} ${i18n.t("export.nights")}`;
   })();
 
   const infoRows: [string, string | number, string | undefined, string | number | undefined, boolean | undefined, boolean | undefined][] = [
-    ["Tên chuyến đi", trip.title || "—",            "Địa điểm",       trip.location || "Chưa xác định", undefined, undefined],
-    ["Thời gian",      dateText,                     "Loại hình",      typeText, undefined, undefined],
-    ["Thành viên",     (members ?? []).length,        "Tổng chi phí",   grandTotal, false, true],
-    ["Checklist",      `${checklistStats.completed}/${checklistStats.total} hoàn thành`, "Hành lý", `${packingStats.completed}/${packingStats.total} đã xếp`, undefined, undefined],
+    [i18n.t("export.tripName"), trip.title || "—",            i18n.t("export.location"),       trip.location || "—", undefined, undefined],
+    [i18n.t("export.duration"),      dateText,                     i18n.t("export.type"),      typeText, undefined, undefined],
+    [i18n.t("export.member"),     (members ?? []).length,        i18n.t("export.totalExpense"),   grandTotal, false, true],
+    ["Checklist",      `${checklistStats.completed}/${checklistStats.total} ${i18n.t("export.completed")}`, i18n.t("export.luggage"), `${packingStats.completed}/${packingStats.total} ${i18n.t("export.completed")}`, undefined, undefined],
   ];
 
   let altIdx = 0;
@@ -145,18 +146,18 @@ export async function exportTripExcel(data: TripData) {
   // ════════════════════════════════════════════
   // SHEET 2 — LỊCH TRÌNH
   // ════════════════════════════════════════════
-  const ws2 = workbook.addWorksheet("Lịch trình");
+  const ws2 = workbook.addWorksheet(i18n.t("export.itinerary"));
   setColWidths(ws2, [6, 16, 12, 44, 30, 16]);
 
   ws2.mergeCells("A1:F1");
   const t2 = ws2.getCell("A1");
-  t2.value = "LỊCH TRÌNH CHI TIẾT";
+  t2.value = i18n.t("export.part2");
   t2.font = { bold: true, size: 12, name: "Arial", color: { argb: "FF2C3E50" } };
   t2.alignment = { horizontal: "center", vertical: "middle" };
   t2.fill = LABEL_FILL;
   ws2.getRow(1).height = 28;
 
-  const h2 = ws2.addRow(["STT", "Ngày", "Giờ", "Hoạt động / Ghi chú", "Địa điểm / Tọa độ", "Trạng thái"]);
+  const h2 = ws2.addRow(["STT", i18n.t("export.date"), i18n.t("export.time"), i18n.t("export.activity"), i18n.t("export.location"), i18n.t("export.status")]);
   applyHeaderStyle(h2);
   freezeRow(ws2, 2);
 
@@ -165,7 +166,7 @@ export async function exportTripExcel(data: TripData) {
     .sort((a, b) => a.date.localeCompare(b.date) || (a.time || "").localeCompare(b.time || ""));
 
   if (sortedEvents.length === 0) {
-    const r = ws2.addRow(["—", "—", "—", "Chưa có hoạt động nào", "—", "—"]);
+    const r = ws2.addRow(["—", "—", "—", i18n.t("export.noActivity"), "—", "—"]);
     applyBodyRow(r, 0);
   } else {
     sortedEvents.forEach((e, i) => {
@@ -176,7 +177,7 @@ export async function exportTripExcel(data: TripData) {
         e.time || "—",
         activity,
         e.location || "—",
-        e.completed ? "Hoàn thành" : "Chưa xong",
+        e.completed ? i18n.t("export.completed") : i18n.t("export.notCompleted"),
       ]);
       applyBodyRow(r, i);
       r.height = e.notes ? 30 : 18;
@@ -186,24 +187,24 @@ export async function exportTripExcel(data: TripData) {
   // ════════════════════════════════════════════
   // SHEET 3 — TÀI CHÍNH
   // ════════════════════════════════════════════
-  const ws3 = workbook.addWorksheet("Tài chính");
+  const ws3 = workbook.addWorksheet(i18n.t("export.expenses"));
   setColWidths(ws3, [6, 14, 30, 22, 20, 20]);
 
   ws3.mergeCells("A1:F1");
   const t3 = ws3.getCell("A1");
-  t3.value = "QUẢN LÝ TÀI CHÍNH CHUYẾN ĐI";
+  t3.value = i18n.t("export.part3");
   t3.font = { bold: true, size: 12, name: "Arial", color: { argb: "FF2C3E50" } };
   t3.alignment = { horizontal: "center", vertical: "middle" };
   t3.fill = LABEL_FILL;
   ws3.getRow(1).height = 28;
 
-  const h3 = ws3.addRow(["STT", "Ngày", "Hạng mục chi", "Số tiền", "Phân loại", "Người chi trả"]);
+  const h3 = ws3.addRow(["STT", i18n.t("export.date"), i18n.t("export.type"), i18n.t("export.amount"), i18n.t("export.type"), i18n.t("export.payer")]);
   applyHeaderStyle(h3);
   freezeRow(ws3, 2);
 
   const allExpenses = expenses.filter(e => !e.isDeleted);
   if (allExpenses.length === 0) {
-    const r = ws3.addRow(["—", "—", "Chưa có ghi chép chi phí nào", 0, "—", "—"]);
+    const r = ws3.addRow(["—", "—", i18n.t("export.noExpense"), 0, "—", "—"]);
     applyBodyRow(r, 0);
     r.getCell(4).numFmt = MONEY_FORMAT;
   } else {
@@ -217,7 +218,7 @@ export async function exportTripExcel(data: TripData) {
         e.date ? formatDate(e.date) : "—",
         description,
         Number(e.amount || 0),
-        e.splitType === "personal" ? "Chi cá nhân" : "Chi chung",
+        e.splitType === "personal" ? i18n.t("export.personalExpense") : i18n.t("export.sharedExpense"),
         e.payer || "—",
       ]);
       applyBodyRow(r, i);
@@ -227,9 +228,9 @@ export async function exportTripExcel(data: TripData) {
     // Summary rows
     ws3.addRow([]);
     const sumRows: [string, number][] = [
-      ["Chi chung",   sharedTotal],
-      ["Chi cá nhân", personalTotal],
-      ["TỔNG CỘNG",   grandTotal],
+      [i18n.t("export.sharedExpense"),   sharedTotal],
+      [i18n.t("export.personalExpense"), personalTotal],
+      [i18n.t("export.grandTotal"),   grandTotal],
     ];
     sumRows.forEach(([lbl, val], si) => {
       const r = ws3.addRow(["", "", lbl, val, "", ""]);
@@ -247,18 +248,18 @@ export async function exportTripExcel(data: TripData) {
   // ════════════════════════════════════════════
   // SHEET 4 — HÀNH LÝ & GIẤY TỜ
   // ════════════════════════════════════════════
-  const ws4 = workbook.addWorksheet("Hành lý & Giấy tờ");
+  const ws4 = workbook.addWorksheet(i18n.t("export.prepAndDocs"));
   setColWidths(ws4, [6, 22, 34, 22, 20, 16]);
 
   ws4.mergeCells("A1:F1");
   const t4 = ws4.getCell("A1");
-  t4.value = "HÀNH LÝ & GIẤY TỜ / ĐẶT CHỖ";
+  t4.value = i18n.t("export.part4");
   t4.font = { bold: true, size: 12, name: "Arial", color: { argb: "FF2C3E50" } };
   t4.alignment = { horizontal: "center", vertical: "middle" };
   t4.fill = LABEL_FILL;
   ws4.getRow(1).height = 28;
 
-  const h4 = ws4.addRow(["STT", "Phân loại", "Tên vật dụng / Giấy tờ", "Mã Booking", "Phụ trách", "Trạng thái"]);
+  const h4 = ws4.addRow(["STT", i18n.t("export.type"), i18n.t("export.docType"), "Booking Code", i18n.t("export.role"), i18n.t("export.status")]);
   applyHeaderStyle(h4);
   freezeRow(ws4, 2);
 
@@ -267,19 +268,19 @@ export async function exportTripExcel(data: TripData) {
   const docsList = (travelDocuments ?? []).filter(d => !d.isDeleted);
 
   const docTypeLabels: Record<string, string> = {
-    ticket: "Vé máy bay / tàu xe",
-    hotel: "Khách sạn / lưu trú",
-    booking: "Vé tham quan / đặt chỗ",
-    document: "Giấy tờ cá nhân",
-    contact: "Liên hệ khẩn cấp",
-    map: "Bản đồ / địa chỉ",
-    other: "Khác",
+    ticket: "Ticket",
+    hotel: "Hotel",
+    booking: "Booking",
+    document: "Document",
+    contact: "Contact",
+    map: "Map",
+    other: "Other",
   };
 
   let rowIdx4 = 0;
 
   if (packings.length === 0 && docsList.length === 0) {
-    const r = ws4.addRow(["—", "—", "Chưa có dữ liệu hành lý / giấy tờ nào", "—", "—", "—"]);
+    const r = ws4.addRow(["—", "—", i18n.t("export.noActivity"), "—", "—", "—"]);
     applyBodyRow(r, 0);
   } else {
     packings.forEach(p => {
@@ -289,7 +290,7 @@ export async function exportTripExcel(data: TripData) {
         p.title,
         "—",
         "—",
-        p.completed ? "Đã xếp" : "Chưa xếp",
+        p.completed ? i18n.t("export.completed") : i18n.t("export.notCompleted"),
       ]);
       applyBodyRow(r, rowIdx4);
       rowIdx4++;
@@ -302,7 +303,7 @@ export async function exportTripExcel(data: TripData) {
     docsList.forEach(d => {
       const r = ws4.addRow([
         rowIdx4 + 1,
-        docTypeLabels[d.type || "other"] || "Khác",
+        docTypeLabels[d.type || "other"] || "Other",
         d.title,
         d.code || "—",
         "—",

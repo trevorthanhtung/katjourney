@@ -1004,8 +1004,9 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             </div>
 
             {/* ── Section: Quản lý dữ liệu ── */}
-            <div className="pt-2 space-y-2">
-              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1 pb-2">{t('settings.menu.dataManagement.title')}</p>
+            <div className="pt-2 space-y-2.5">
+              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2 pb-1">{t('settings.menu.dataManagement.title')}</p>
+              
               <button
                 type="button"
                 disabled={isClearingTemp}
@@ -1020,43 +1021,47 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                     setIsClearingTemp(false);
                   }
                 }}
-                className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 active:scale-[0.99] transition-all text-left focus:outline-none disabled:opacity-60 animate-press"
+                className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-rose-300 hover:shadow-md active:scale-[0.98] dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-rose-500/50 disabled:opacity-70"
               >
-                <div className="flex items-center gap-3.5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30">
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-rose-500/10"></div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-100 to-rose-50 text-rose-600 shadow-inner dark:from-rose-900/40 dark:to-rose-800/20 dark:text-rose-400">
                     {isClearingTemp
-                      ? <HugeiconsIcon icon={Loading01Icon} className="h-5 w-5 animate-spin" />
-                      : <HugeiconsIcon icon={EraserIcon} className="h-5 w-5" />}
+                      ? <HugeiconsIcon icon={Loading01Icon} className="h-5.5 w-5.5 animate-spin" />
+                      : <HugeiconsIcon icon={EraserIcon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110 group-hover:rotate-6" />}
                   </div>
-                  <div>
-                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.dataManagement.clearTemp.title')}</h4>
-                    <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.dataManagement.clearTemp.desc')}</p>
+                  <div className="text-left">
+                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">{t('settings.menu.dataManagement.clearTemp.title')}</h4>
+                    <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.dataManagement.clearTemp.desc')}</p>
                   </div>
                 </div>
                 {clearTempSuccess
-                  ? <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-2.5 py-1 rounded-full">
+                  ? <span className="relative z-10 flex items-center gap-1.5 rounded-full bg-emerald-100/80 px-3 py-1 text-[11px] font-bold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 shadow-sm">
                       {t('common.done')}
                     </span>
-                  : <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />}
+                  : <HugeiconsIcon icon={ChevronRightIcon} className="relative z-10 h-5 w-5 text-slate-400 transition-transform group-hover:translate-x-1" />}
               </button>
 
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="group flex w-full cursor-pointer items-center justify-between bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 px-4 py-4 rounded-[20px] text-left hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-all focus:outline-none focus:ring-2 focus:ring-kat-teal/50"
+                className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-lime-300 hover:shadow-md active:scale-[0.98] dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-lime-500/50"
               >
-                <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                  <div className="flex shrink-0 h-10 w-10 items-center justify-center rounded-full border bg-lime-50 dark:bg-lime-950/20 text-lime-600 dark:text-lime-400 border-lime-100 dark:border-lime-900/30">
-                    <HugeiconsIcon icon={PackageReceiveIcon} className="h-5 w-5" />
+                <div className="absolute inset-0 bg-gradient-to-br from-lime-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-lime-500/10"></div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-lime-100 to-lime-50 text-lime-600 shadow-inner dark:from-lime-900/40 dark:to-lime-800/20 dark:text-lime-400">
+                    {importing 
+                      ? <HugeiconsIcon icon={Loading01Icon} className="h-5.5 w-5.5 animate-spin" />
+                      : <HugeiconsIcon icon={PackageReceiveIcon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110 group-hover:-translate-y-0.5" />}
                   </div>
-                  <div>
-                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">
+                  <div className="text-left">
+                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-lime-600 dark:group-hover:text-lime-400 transition-colors">
                       {importing ? "..." : t('settings.menu.dataManagement.restoreData.title')}
                     </h4>
-                    <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.dataManagement.restoreData.desc')}</p>
+                    <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.dataManagement.restoreData.desc')}</p>
                   </div>
                 </div>
-                <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+                <HugeiconsIcon icon={ChevronRightIcon} className="relative z-10 h-5 w-5 text-slate-400 transition-transform group-hover:translate-x-1" />
                 <input
                   ref={fileInputRef}
                   className="hidden"
@@ -1073,40 +1078,42 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             {/* ── Section: Vùng nguy hiểm ── */}
             <div className="pt-1 pb-2">
-              <p className="text-[11px] font-bold text-red-400 dark:text-rose-500 uppercase tracking-widest px-1 pb-2">{t('settings.menu.dangerZone.title')}</p>
+              <p className="text-[11px] font-bold text-red-400 dark:text-rose-500 uppercase tracking-widest px-2 pb-1">{t('settings.menu.dangerZone.title')}</p>
               {user && !user.isAnonymous ? (
                 <button
                   type="button"
                   onClick={() => setIsDeleteAccountOpen(true)}
-                  className="flex items-center justify-between w-full p-4 rounded-[20px] bg-red-50/60 dark:bg-rose-950/10 border border-red-200/60 dark:border-rose-900/35 hover:bg-red-50 dark:hover:bg-rose-950/20 active:scale-[0.99] transition-all text-left focus:outline-none"
+                  className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-red-200/60 bg-white p-4 shadow-sm transition-all hover:border-red-400 hover:shadow-md active:scale-[0.98] dark:border-rose-900/35 dark:bg-slate-800/40 dark:hover:border-rose-500/50"
                 >
-                  <div className="flex items-center gap-3.5">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-rose-950/30 text-red-600 dark:text-rose-400 border border-red-200 dark:border-rose-900/25">
-                      <HugeiconsIcon icon={UserRemove01Icon} className="h-5 w-5" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-rose-500/10"></div>
+                  <div className="flex items-center gap-4 relative z-10">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-red-100 to-red-50 text-red-600 shadow-inner dark:from-rose-950/40 dark:to-rose-900/20 dark:text-rose-400">
+                      <HugeiconsIcon icon={UserRemove01Icon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110 group-hover:rotate-6" />
                     </div>
-                    <div>
-                      <h4 className="text-[15px] font-bold text-red-700 dark:text-rose-400">{t('settings.menu.dangerZone.deleteAccount.title')}</h4>
-                      <p className="text-[12px] text-red-400 dark:text-rose-500 font-medium">{t('settings.menu.dangerZone.deleteAccount.desc')}</p>
+                    <div className="text-left">
+                      <h4 className="text-[15px] font-bold text-red-700 dark:text-rose-400 group-hover:text-red-600 transition-colors">{t('settings.menu.dangerZone.deleteAccount.title')}</h4>
+                      <p className="text-[12px] font-medium text-red-400 dark:text-rose-500 mt-0.5">{t('settings.menu.dangerZone.deleteAccount.desc')}</p>
                     </div>
                   </div>
-                  <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5 text-red-500 dark:text-rose-500/80" />
+                  <HugeiconsIcon icon={Delete01Icon} className="relative z-10 h-5.5 w-5.5 text-red-500/80 transition-transform group-hover:scale-110 dark:text-rose-500/80" />
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={() => setIsFactoryResetOpen(true)}
-                  className="flex items-center justify-between w-full p-4 rounded-[20px] bg-red-50/60 dark:bg-rose-950/10 border border-red-200/60 dark:border-rose-900/35 hover:bg-red-50 dark:hover:bg-rose-950/20 active:scale-[0.99] transition-all text-left focus:outline-none"
+                  className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-red-200/60 bg-white p-4 shadow-sm transition-all hover:border-red-400 hover:shadow-md active:scale-[0.98] dark:border-rose-900/35 dark:bg-slate-800/40 dark:hover:border-rose-500/50"
                 >
-                  <div className="flex items-center gap-3.5">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-rose-950/30 text-red-600 dark:text-rose-400 border border-red-200 dark:border-rose-900/25">
-                      <HugeiconsIcon icon={RotateLeft01Icon} className="h-5 w-5" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-rose-500/10"></div>
+                  <div className="flex items-center gap-4 relative z-10">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-red-100 to-red-50 text-red-600 shadow-inner dark:from-rose-950/40 dark:to-rose-900/20 dark:text-rose-400">
+                      <HugeiconsIcon icon={RotateLeft01Icon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110 group-hover:-rotate-12" />
                     </div>
-                    <div>
-                      <h4 className="text-[15px] font-bold text-red-700 dark:text-rose-400">{t('settings.menu.dangerZone.factoryReset.title')}</h4>
-                      <p className="text-[12px] text-red-400 dark:text-rose-500 font-medium">{t('settings.menu.dangerZone.factoryReset.desc')}</p>
+                    <div className="text-left">
+                      <h4 className="text-[15px] font-bold text-red-700 dark:text-rose-400 group-hover:text-red-600 transition-colors">{t('settings.menu.dangerZone.factoryReset.title')}</h4>
+                      <p className="text-[12px] font-medium text-red-400 dark:text-rose-500 mt-0.5">{t('settings.menu.dangerZone.factoryReset.desc')}</p>
                     </div>
                   </div>
-                  <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5 text-red-400 dark:text-rose-500/80" />
+                  <HugeiconsIcon icon={Delete01Icon} className="relative z-10 h-5.5 w-5.5 text-red-500/80 transition-transform group-hover:scale-110 dark:text-rose-500/80" />
                 </button>
               )}
             </div>
