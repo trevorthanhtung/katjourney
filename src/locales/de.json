@@ -1585,5 +1585,12 @@
     "offlineReadyDesc": "Die App wurde erfolgreich für den Offline-Betrieb gespeichert. Sie können ohne Netzwerkverbindung darauf zugreifen.",
     "later": "Später",
     "updateNow": "Jetzt aktualisieren"
+  },
+  "sync": {
+    "foundUpdate": "Neues Update gefunden",
+    "foundUpdateDesc": "Neueste Daten sind von Ihrem anderen Gerät verfügbar.",
+    "syncNow": "Jetzt synchronisieren",
+    "syncSuccess": "Mit neuen Daten vom anderen Gerät aktualisiert.",
+    "syncFail": "Wiederherstellung fehlgeschlagen: "
   }
 }

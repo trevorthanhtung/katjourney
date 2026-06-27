@@ -1585,5 +1585,12 @@
     "offlineReadyDesc": "应用程序已成功保存以供离线使用。您可以在没有网络连接的情况下访问它。",
     "later": "稍后",
     "updateNow": "立即更新"
+  },
+  "sync": {
+    "foundUpdate": "发现新更新",
+    "foundUpdateDesc": "您可以从其他设备获取最新数据。",
+    "syncNow": "立即同步",
+    "syncSuccess": "已使用其他设备的新数据更新。",
+    "syncFail": "恢复失败： "
   }
 }

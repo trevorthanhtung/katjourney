@@ -1585,5 +1585,12 @@
     "offlineReadyDesc": "La aplicación se ha guardado correctamente para su uso sin conexión. Puedes acceder sin conexión a la red.",
     "later": "Más tarde",
     "updateNow": "Actualizar ahora"
+  },
+  "sync": {
+    "foundUpdate": "Nueva actualización encontrada",
+    "foundUpdateDesc": "Los últimos datos están disponibles desde tu otro dispositivo.",
+    "syncNow": "Sincronizar ahora",
+    "syncSuccess": "Actualizado con nuevos datos del otro dispositivo.",
+    "syncFail": "Error al restaurar: "
   }
 }

@@ -1585,5 +1585,12 @@
     "offlineReadyDesc": "O aplicativo foi salvo com sucesso para uso offline. Você pode acessá-lo sem conexão de rede.",
     "later": "Mais tarde",
     "updateNow": "Atualizar agora"
+  },
+  "sync": {
+    "foundUpdate": "Nova atualização encontrada",
+    "foundUpdateDesc": "Os dados mais recentes estão disponíveis em seu outro dispositivo.",
+    "syncNow": "Sincronizar",
+    "syncSuccess": "Atualizado com novos dados do outro dispositivo.",
+    "syncFail": "Falha na restauração: "
   }
 }

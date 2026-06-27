@@ -1079,8 +1079,8 @@ function App() {
                 <HugeiconsIcon icon={CloudIcon} className="w-4.5 h-4.5" />
               </div>
               <div className="min-w-0">
-                <h3 className="text-[13.5px] font-extrabold text-slate-800 dark:text-slate-200 leading-tight">Đã tìm thấy bản cập nhật mới</h3>
-                <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5 font-semibold leading-none truncate hidden sm:block">Có dữ liệu mới nhất từ thiết bị khác của bạn.</p>
+                <h3 className="text-[13.5px] font-extrabold text-slate-800 dark:text-slate-200 leading-tight">{t("sync.foundUpdate", "Đã tìm thấy bản cập nhật mới")}</h3>
+                <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5 font-semibold leading-none truncate hidden sm:block">{t("sync.foundUpdateDesc", "Có dữ liệu mới nhất từ thiết bị khác của bạn.")}</p>
               </div>
             </div>
             
@@ -1089,9 +1089,9 @@ function App() {
                 try {
                   await syncProps.restoreNow("merge");
                   syncProps.setHasCloudVersion(false);
-                  showToast("Đã cập nhật dữ liệu mới từ thiết bị khác.");
+                  showToast(t("sync.syncSuccess", "Đã cập nhật dữ liệu mới từ thiết bị khác."));
                 } catch (e: any) {
-                  showToast("Khôi phục thất bại: " + e.message);
+                  showToast(t("sync.syncFail", "Khôi phục thất bại: ") + e.message);
                 }
               }}
               disabled={syncProps.isSyncing}
@@ -1100,12 +1100,12 @@ function App() {
               {syncProps.isSyncing ? (
                 <>
                   <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5 animate-spin" />
-                  Đang xử lý…
+                  {t("common.processing", "Đang xử lý…")}
                 </>
               ) : (
                 <>
                   <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5" />
-                  Đồng bộ ngay
+                  {t("sync.syncNow", "Đồng bộ ngay")}
                 </>
               )}
             </button>

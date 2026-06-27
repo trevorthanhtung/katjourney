@@ -1585,5 +1585,12 @@
     "offlineReadyDesc": "L'application a été enregistrée avec succès hors ligne. Vous pouvez y accéder sans connexion réseau.",
     "later": "Plus tard",
     "updateNow": "Mettre à jour"
+  },
+  "sync": {
+    "foundUpdate": "Nouvelle mise à jour trouvée",
+    "foundUpdateDesc": "Les dernières données sont disponibles depuis votre autre appareil.",
+    "syncNow": "Synchroniser",
+    "syncSuccess": "Mise à jour avec les nouvelles données de l'autre appareil.",
+    "syncFail": "Échec de la restauration : "
   }
 }

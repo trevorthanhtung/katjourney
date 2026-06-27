@@ -1570,5 +1570,12 @@
     "offlineReadyDesc": "앱이 오프라인용으로 성공적으로 저장되었습니다. 네트워크 연결 없이 액세스할 수 있습니다.",
     "later": "나중에",
     "updateNow": "지금 업데이트"
+  },
+  "sync": {
+    "foundUpdate": "새 업데이트 발견",
+    "foundUpdateDesc": "다른 기기에서 최신 데이터를 사용할 수 있습니다.",
+    "syncNow": "동기화",
+    "syncSuccess": "다른 기기의 새 데이터로 업데이트되었습니다.",
+    "syncFail": "복원 실패: "
   }
 }

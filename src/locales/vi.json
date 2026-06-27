@@ -1569,5 +1569,12 @@
     "offlineReadyDesc": "Ứng dụng đã được lưu ngoại tuyến thành công, bạn có thể truy cập mà không cần mạng.",
     "later": "Để sau",
     "updateNow": "Cập nhật ngay"
+  },
+  "sync": {
+    "foundUpdate": "Đã tìm thấy bản cập nhật mới",
+    "foundUpdateDesc": "Có dữ liệu mới nhất từ thiết bị khác của bạn.",
+    "syncNow": "Đồng bộ ngay",
+    "syncSuccess": "Đã cập nhật dữ liệu mới từ thiết bị khác.",
+    "syncFail": "Khôi phục thất bại: "
   }
 }
