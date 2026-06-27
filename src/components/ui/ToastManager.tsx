@@ -31,9 +31,9 @@ export const GlobalToast = () => {
   if (!toast) return null;
 
   return createPortal(
-    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[9999] px-4 w-full max-w-[400px] pointer-events-none motion-page-enter">
+    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[99999] px-4 w-full max-w-[400px] pointer-events-none motion-toast-enter">
       <div 
-        className={`flex items-center gap-2 p-3.5 px-5 rounded-2xl shadow-xl border ${
+        className={`flex items-center gap-2 p-3.5 px-5 rounded-2xl shadow-floating-premium border ${
           toast.type === 'success' 
             ? 'bg-emerald-600 text-white border-emerald-500 shadow-emerald-900/20' 
             : 'bg-rose-600 text-white border-rose-500 shadow-rose-900/20'
