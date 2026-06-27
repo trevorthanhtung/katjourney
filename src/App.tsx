@@ -1425,7 +1425,7 @@ function App() {
         </div>
       )}
 
-      <ReloadPrompt />
+      <ReloadPrompt hasBottomNav={!isManagingTrips && !!tripId} />
     </>
   );
 }

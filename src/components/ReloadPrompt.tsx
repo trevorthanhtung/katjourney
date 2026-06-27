@@ -4,7 +4,7 @@ import { useRegisterSW } from "virtual:pwa-register/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { SystemUpdate01Icon, Download01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
 
-export function ReloadPrompt() {
+export function ReloadPrompt({ hasBottomNav = false }: { hasBottomNav?: boolean }) {
   const { t } = useTranslation();
   const [registration, setRegistration] = React.useState<ServiceWorkerRegistration | null>(null);
 
@@ -90,7 +90,7 @@ export function ReloadPrompt() {
   }
 
   return (
-    <div className="fixed bottom-24 md:bottom-6 right-4 left-4 md:left-auto md:w-[380px] z-[9999] animate-slideUp">
+    <div className={`fixed right-4 left-4 md:left-auto md:w-[380px] z-[9999] animate-slideUp transition-all duration-300 ${hasBottomNav ? "bottom-24 lg:bottom-6" : "bottom-6"}`}>
       <div className="backdrop-blur-xl bg-white/95 dark:bg-[#111A33]/90 border border-slate-200/50 dark:border-slate-800/60 shadow-[0_20px_50px_rgba(3,13,46,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.35)] rounded-[24px] p-5 flex flex-col gap-4.5 transition-all duration-300">
         <div className="flex items-start gap-3.5">
           <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500/10 to-emerald-500/10 border border-teal-500/20 dark:border-teal-500/30 text-kat-teal shrink-0 shadow-inner">
