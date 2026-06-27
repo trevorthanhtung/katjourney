@@ -333,7 +333,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
         title={t("share.declineTitle")}
       >
         <div className="space-y-5">
-          <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed">
+          <div className="rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 p-4 text-[13.5px] text-rose-800 dark:text-rose-300 font-semibold leading-relaxed">
             Bạn có chắc chắn muốn từ chối đề xuất chỉnh sửa này? Thao tác này sẽ không áp dụng các chỉnh sửa của thành viên vào chuyến đi của bạn.
           </div>
 
@@ -341,7 +341,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
             <button
               type="button"
               onClick={() => setRejectId(null)}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200 motion-press"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.98] transition-all duration-200 motion-press"
             >
               Hủy
             </button>
@@ -352,7 +352,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
                   confirmReject(rejectId);
                 }
               }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 transition-all active:scale-[0.98] motion-press"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 dark:border-rose-600 px-6 font-bold text-white hover:bg-rose-700 transition-all active:scale-[0.98] motion-press"
             >
               {t("share.declineBtnSubmit")}
             </button>
@@ -366,7 +366,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
         title={t("share.approveAllConfirmTitle")}
       >
         <div className="space-y-5">
-          <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 text-[13.5px] text-emerald-800 font-semibold leading-relaxed">
+          <div className="rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 p-4 text-[13.5px] text-emerald-800 dark:text-emerald-300 font-semibold leading-relaxed">
             {t("share.approveAllConfirmDesc", { count: requests.length })}
           </div>
 
@@ -374,7 +374,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
             <button
               type="button"
               onClick={() => setIsConfirmApproveAllOpen(false)}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200 motion-press"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.98] transition-all duration-200 motion-press"
             >
               Hủy
             </button>
@@ -395,7 +395,7 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
         title={t("share.declineAllTitle")}
       >
         <div className="space-y-5">
-          <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-[13.5px] text-rose-800 font-semibold leading-relaxed">
+          <div className="rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 p-4 text-[13.5px] text-rose-800 dark:text-rose-300 font-semibold leading-relaxed">
             {t("share.declineAllDesc", { count: requests.length })}
           </div>
 
@@ -403,14 +403,14 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
             <button
               type="button"
               onClick={() => setIsConfirmRejectAllOpen(false)}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 px-6 font-bold text-slate-700 hover:bg-slate-200 active:scale-[0.98] transition-all duration-200 motion-press"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.98] transition-all duration-200 motion-press"
             >
               Hủy
             </button>
             <button
               type="button"
               onClick={confirmRejectAll}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 transition-all active:scale-[0.98] motion-press"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 dark:border-rose-600 px-6 font-bold text-white hover:bg-rose-700 transition-all active:scale-[0.98] motion-press"
             >
               {t("share.declineAll")}
             </button>
