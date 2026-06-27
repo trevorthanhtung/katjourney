@@ -12,7 +12,7 @@ export default {
         kat: {
           bg: "var(--kat-bg)",
           surface: "var(--kat-surface)",
-          border: "var(--kat-border)",
+          border: "rgb(var(--kat-border-rgb) / <alpha-value>)",
           primary: "var(--kat-primary)",
           "primary-light": "var(--kat-primary-light, #80EAD6)",
           "primary-usable": "var(--kat-primary-usable)",

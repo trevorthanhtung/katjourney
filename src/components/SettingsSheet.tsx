@@ -1157,7 +1157,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                     <button
                       onClick={handleGoogleSignIn}
                       disabled={actionLoading !== null}
-                      className="w-full flex items-center justify-center gap-3 min-h-[50px] rounded-[16px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all font-bold text-[15px] text-kat-dark dark:text-slate-200 active:scale-[0.98] shadow-sm disabled:opacity-60"
+                      className="group relative flex w-full items-center justify-center gap-3 min-h-[50px] overflow-hidden rounded-[20px] border border-slate-200/60 bg-white font-bold text-[15px] text-kat-dark shadow-sm transition-all hover:border-slate-300 hover:shadow-md active:scale-[0.98] disabled:opacity-60 dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50"
                     >
                       {actionLoading === "google" ? (
                         <HugeiconsIcon icon={Loading01Icon} className="h-5 w-5 text-kat-teal animate-spin" />
@@ -1490,7 +1490,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             <button
               type="button"
               onClick={() => setView("menu")}
-              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
+              className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
             >
               {t('settings.actions.backToMenu')}
             </button>
@@ -1542,7 +1542,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             <button
               onClick={() => setView("menu")}
-              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
+              className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
             >
               {t('settings.actions.backToMenu')}
             </button>
@@ -1578,7 +1578,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                     className={classNames(
                       "relative flex items-center gap-3.5 p-3 rounded-[20px] border-2 transition-all duration-300 group focus:outline-none text-left overflow-hidden w-full",
                       i18n.language === lang.code
-                        ? "border-kat-primary bg-kat-primary/[0.03] dark:bg-kat-primary/[0.05] shadow-sm scale-[1.02]"
+                        ? "border-kat-primary bg-kat-primary/5 shadow-md scale-[1.02] dark:border-kat-primary/50 dark:bg-kat-primary/10"
                         : "border-slate-100 dark:border-white/[0.04] bg-white dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:scale-[1.01] active:scale-[0.98]"
                     )}
                   >
@@ -1622,7 +1622,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             <button
               onClick={() => setView("menu")}
-              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
+              className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
             >
               {t('settings.actions.backToMenu')}
             </button>
@@ -1644,7 +1644,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   className={classNames(
                     "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
                     theme === "light"
-                      ? "border-amber-500 bg-amber-500/[0.02] dark:bg-amber-500/[0.01] shadow-[0_4px_20px_rgba(245,158,11,0.08)] scale-[1.02]"
+                      ? "border-amber-400 bg-amber-50 shadow-[0_4px_20px_rgba(251,191,36,0.15)] scale-[1.02] dark:border-amber-500/50 dark:bg-amber-500/5 dark:shadow-[0_4px_20px_rgba(245,158,11,0.08)]"
                       : "bg-white dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98]"
                   )}
                 >
@@ -1677,7 +1677,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   className={classNames(
                     "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
                     theme === "dark"
-                      ? "border-violet-500 bg-violet-500/[0.02] dark:bg-violet-500/[0.01] shadow-[0_4px_20px_rgba(139,92,246,0.12)] scale-[1.02]"
+                      ? "border-violet-400 bg-violet-50 shadow-[0_4px_20px_rgba(167,139,250,0.15)] scale-[1.02] dark:border-violet-500/50 dark:bg-violet-500/5 dark:shadow-[0_4px_20px_rgba(139,92,246,0.12)]"
                       : "bg-white dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98]"
                   )}
                 >
@@ -1710,7 +1710,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   className={classNames(
                     "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
                     theme === "system"
-                      ? "border-teal-500 bg-teal-500/[0.02] dark:bg-teal-500/[0.01] shadow-[0_4px_20px_rgba(20,184,166,0.08)] scale-[1.02]"
+                      ? "border-teal-400 bg-teal-50 shadow-[0_4px_20px_rgba(45,212,191,0.15)] scale-[1.02] dark:border-teal-500/50 dark:bg-teal-500/5 dark:shadow-[0_4px_20px_rgba(20,184,166,0.08)]"
                       : "bg-white dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98]"
                   )}
                 >
@@ -1754,7 +1754,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
 
             <button
               onClick={() => setView("menu")}
-              className="w-full inline-flex min-h-[50px] items-center justify-center rounded-[18px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/[0.04] text-slate-700 dark:text-slate-300 px-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200"
+              className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
             >
               {t('settings.actions.backToMenu')}
             </button>
