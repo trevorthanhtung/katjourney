@@ -153,21 +153,17 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
       if (o.text) return o.text;
       if (o.name && o.role) return `${o.name} (${o.role})`;
       if (o.name) return o.name;
-      if (o.description && o.amount) return `${o.description} (${formatMoney(o.amount)})`;
+      if (o.amount !== undefined) {
+        const desc = o.description || o.category || t('share.expenses');
+        return `${desc} (${formatMoney(o.amount)})`;
+      }
       if (o.description) return o.description;
       // Xử lý field "completed" đơn lẻ (checklist)
       if ('completed' in o && Object.keys(o).length === 1) {
         return o.completed ? t("share.statusCompleted") : t("share.statusPending");
       }
-      // Fallback: lọc bỏ các giá trị null/undefined, hiển thị gọn
-      const entries = Object.entries(o).filter(([, v]) => v !== null && v !== undefined && v !== '');
-      if (entries.length === 0) return '';
-      if (entries.length === 1) {
-        const [k, v] = entries[0];
-        if (typeof v === 'boolean') return v ? `${k}: ${t('share.valueYes')}` : `${k}: ${t('share.valueNo')}`;
-        return String(v);
-      }
-      return entries.map(([k, v]) => `${k}: ${v}`).join(', ');
+      
+      return t('share.itemUpdated', 'Chi tiết mục này');
     };
 
     if (section === 'members' && action === 'update') {
@@ -177,11 +173,11 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
       return (
         <div className="mt-2 space-y-1">
           <p className="text-[13px] font-bold text-slate-700 dark:text-slate-400">{t("share.sectionLabelRole", { sectionName })}</p>
-          <div className="text-[13px] mt-1 font-medium text-slate-800 dark:text-slate-200">
+          <div className="text-[13px] mt-1.5 font-medium text-slate-800 dark:text-slate-200">
             Xin đổi vai trò cho <span className="font-bold">{memberName}</span>:
-            <div className="flex items-center gap-2 mt-1 pl-2 border-l-2 border-slate-200 dark:border-slate-800">
-              <span className="text-slate-400 dark:text-slate-500 line-through">{oldRole}</span>
-              <span className="text-slate-400 dark:text-slate-550">→</span>
+            <div className="flex flex-wrap items-center gap-2 mt-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-100 dark:border-slate-700/50">
+              <span className="text-slate-400 dark:text-slate-500 line-through shrink-0">{oldRole}</span>
+              <span className="text-slate-300 dark:text-slate-600 shrink-0">→</span>
               <span className="text-kat-teal font-bold">{newRole}</span>
             </div>
           </div>
@@ -202,17 +198,21 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
       <div className="mt-2 space-y-1">
         <p className="text-[13px] font-bold text-slate-700 dark:text-slate-400">{t("share.sectionLabelAction", { sectionName, actionName })}</p>
         {action === 'update' && (
-          <div className="flex items-center gap-2 text-[13px] mt-1">
-            <span className="text-slate-400 dark:text-slate-500 line-through">{beforeText}</span>
-            <span className="text-slate-400 dark:text-slate-550">→</span>
-            <span className="text-sky-600 dark:text-sky-400 font-medium">{afterText}</span>
+          <div className="flex items-center gap-2 text-[13px] mt-1.5 bg-slate-50 dark:bg-[#0A0F1C]/40 backdrop-blur-sm rounded-xl p-3 border border-slate-100 dark:border-white/5">
+            <span className="text-slate-400 dark:text-slate-500 line-through truncate max-w-[45%]">{beforeText}</span>
+            <span className="text-slate-300 dark:text-slate-600 shrink-0">→</span>
+            <span className="text-kat-teal font-bold truncate max-w-[45%]">{afterText}</span>
           </div>
         )}
         {action === 'create' && (
-          <p className="text-[13px] text-emerald-600 dark:text-emerald-400 font-medium mt-1">+ {afterText}</p>
+          <div className="flex items-center gap-2 text-[13px] mt-1.5 bg-emerald-50/50 dark:bg-emerald-500/10 backdrop-blur-sm rounded-xl p-3 border border-emerald-100/50 dark:border-emerald-500/20">
+            <span className="text-emerald-600 dark:text-emerald-400 font-semibold truncate">+ {afterText}</span>
+          </div>
         )}
         {action === 'delete' && (
-          <p className="text-[13px] text-rose-500 dark:text-rose-400 line-through mt-1">- {beforeText}</p>
+          <div className="flex items-center gap-2 text-[13px] mt-1.5 bg-rose-50/50 dark:bg-rose-500/10 backdrop-blur-sm rounded-xl p-3 border border-rose-100/50 dark:border-rose-500/20">
+            <span className="text-rose-500 dark:text-rose-400 font-semibold line-through truncate">- {beforeText}</span>
+          </div>
         )}
       </div>
     );
@@ -285,14 +285,14 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
               }
 
               return (
-                <div key={req.id} className="bg-white dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700/50 p-4 shadow-sm">
+                <div key={req.id} className="bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl rounded-[20px] border border-slate-200/60 dark:border-white/5 p-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] transition-all">
                   <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/60">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-slate-900 border border-slate-200/50 dark:border-white/10 shadow-sm">
                         {getAvatarSvg(avatar, "w-full h-full")}
                       </div>
                       <div>
-                        <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200">{req.requesterName || t("sharedScreen.sharedUser")}</p>
+                        <p className="text-[14px] font-bold text-slate-800 dark:text-slate-100">{req.requesterName || t("sharedScreen.sharedUser")}</p>
                         <p className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
                           {formatRequestTime(req.createdAt)}
                         </p>
@@ -300,22 +300,22 @@ export function ShareChangeRequestsSheet({ isOpen, onClose, token, requests, mem
                     </div>
                   </div>
 
-                  <div className="mt-3">
+                  <div className="mt-3.5">
                     {renderChangeDetails(req)}
                   </div>
 
-                  <div className="mt-4 flex gap-2">
+                  <div className="mt-4.5 flex gap-2.5">
                     <button
                       onClick={() => handleReject(req.id)}
                       disabled={isApproving !== null}
-                      className="flex-1 rounded-xl bg-slate-100 dark:bg-slate-800 py-2 text-[13px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 border-transparent"
+                      className="flex-1 rounded-xl bg-slate-100/80 dark:bg-slate-800/60 backdrop-blur-sm py-2.5 text-[13px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 border border-slate-200/50 dark:border-white/5"
                     >
                       {isApproving === req.id ? t("share.processing") : t("share.declineBtn")}
                     </button>
                     <button
                       onClick={() => handleApprove(req.id)}
                       disabled={isApproving !== null}
-                      className="flex-1 rounded-xl bg-kat-primary py-2 text-[13px] font-bold text-white dark:text-slate-950 hover:brightness-105 transition-colors disabled:opacity-50 border-transparent"
+                      className="flex-1 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 py-2.5 text-[13px] font-bold text-white shadow-[0_4px_16px_rgba(0,191,183,0.25)] hover:from-emerald-600 hover:to-teal-700 transition-all disabled:opacity-50 border border-transparent"
                     >
                       {isApproving === req.id ? t("share.processing") : t("share.approveBtn")}
                     </button>
