@@ -763,69 +763,73 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             {isInstallable && !isStandalone && (
               <button
                 onClick={handleInstallPWA}
-                className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-all text-left focus:outline-none mb-2"
+                className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-teal-300 hover:shadow-md active:scale-[0.98] dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-teal-500/50 focus:outline-none mb-2"
               >
-                <div className="flex items-center gap-3.5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 dark:bg-emerald-950/20 text-teal-600 dark:text-emerald-400 border border-teal-100 dark:border-emerald-900/30">
-                    <HugeiconsIcon icon={Download01Icon} className="h-5 w-5" />
+                <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-teal-500/10"></div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-100 to-teal-50 text-teal-600 shadow-inner dark:from-teal-900/40 dark:to-teal-800/20 dark:text-teal-400">
+                    <HugeiconsIcon icon={Download01Icon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110" />
                   </div>
                   <div className="min-w-0 text-left">
-                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.install.title')}</h4>
-                    <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.install.desc')}</p>
+                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">{t('settings.menu.install.title')}</h4>
+                    <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.install.desc')}</p>
                   </div>
                 </div>
-                <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+                <HugeiconsIcon icon={ChevronRightIcon} className="relative z-10 h-5 w-5 text-slate-400 transition-transform group-hover:translate-x-1" />
               </button>
             )}
 
             {/* Giao diện (Theme Selector Row) */}
             <button
               onClick={() => setView("theme")}
-              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-all text-left focus:outline-none mb-2"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-50 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400 border border-violet-100/45 dark:border-violet-900/30 shrink-0">
-                  <HugeiconsIcon icon={ColorsIcon} className="h-5 w-5" />
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-violet-300 hover:shadow-md active:scale-[0.98] dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-violet-500/50 focus:outline-none mb-2"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-violet-500/10"></div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-100 to-violet-50 text-violet-600 shadow-inner dark:from-violet-900/40 dark:to-violet-800/20 dark:text-violet-400">
+                    <HugeiconsIcon icon={ColorsIcon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110" />
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">{t('settings.menu.theme.title')}</h4>
+                    <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.theme.desc')}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.theme.title')}</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.theme.desc')}</p>
-                </div>
-              </div>
-              <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+                <HugeiconsIcon icon={ChevronRightIcon} className="relative z-10 h-5 w-5 text-slate-400 transition-transform group-hover:translate-x-1" />
             </button>
 
             {/* Language Selector Row */}
             <button
               onClick={() => setView("language")}
-              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-all text-left focus:outline-none mb-2"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-600 dark:text-sky-400 border border-sky-100/45 dark:border-sky-900/30 shrink-0">
-                  <HugeiconsIcon icon={LanguageSkillIcon} className="h-5 w-5" />
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-sky-300 hover:shadow-md active:scale-[0.98] dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-sky-500/50 focus:outline-none mb-2"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-sky-500/10"></div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-100 to-sky-50 text-sky-600 shadow-inner dark:from-sky-900/40 dark:to-sky-800/20 dark:text-sky-400">
+                    <HugeiconsIcon icon={LanguageSkillIcon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110" />
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">{t('settings.menu.language.title')}</h4>
+                    <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.language.desc')}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.language.title')}</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.language.desc')}</p>
-                </div>
-              </div>
-              <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+                <HugeiconsIcon icon={ChevronRightIcon} className="relative z-10 h-5 w-5 text-slate-400 transition-transform group-hover:translate-x-1" />
             </button>
 
             <button
               onClick={() => setView("privacy")}
-              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-all text-left focus:outline-none mb-2"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30">
-                  <HugeiconsIcon icon={LockIcon} className="h-5 w-5" />
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-blue-300 hover:shadow-md active:scale-[0.98] dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-blue-500/50 focus:outline-none mb-2"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-blue-500/10"></div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 shadow-inner dark:from-blue-900/40 dark:to-blue-800/20 dark:text-blue-400">
+                    <HugeiconsIcon icon={LockIcon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110" />
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{t('settings.menu.privacy.title')}</h4>
+                    <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.privacy.desc')}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.privacy.title')}</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.privacy.desc')}</p>
-                </div>
-              </div>
-              <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+                <HugeiconsIcon icon={ChevronRightIcon} className="relative z-10 h-5 w-5 text-slate-400 transition-transform group-hover:translate-x-1" />
             </button>
 
             {/* Notifications */}
@@ -833,15 +837,16 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               const isNotificationActive = isNotificationSupported && notificationPermission === "granted" && notificationEnabled;
               return (
                 <div
-                  className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 mb-2"
+                  className="group relative flex items-center justify-between w-full p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-sm transition-all hover:border-emerald-300 hover:shadow-md dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-emerald-500/50 mb-2"
                 >
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 shrink-0">
-                      <HugeiconsIcon icon={Notification01Icon} className="h-5 w-5" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-emerald-500/10"></div>
+                  <div className="flex items-center gap-4 relative z-10 min-w-0">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-600 shadow-inner dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-emerald-400">
+                      <HugeiconsIcon icon={Notification01Icon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110" />
                     </div>
                     <div className="min-w-0 text-left">
-                      <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.notification.title')}</h4>
-                      <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.notification.desc')}</p>
+                      <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{t('settings.menu.notification.title')}</h4>
+                      <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.notification.desc')}</p>
                     </div>
                   </div>
                   
@@ -871,7 +876,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                         }
                       }
                     }}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    className={`relative z-10 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
                       isNotificationActive ? "bg-kat-primary" : "bg-slate-200 dark:bg-slate-700"
                     } ${!isNotificationSupported ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
@@ -886,14 +891,15 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             })()}
 
             {/* GPS Setting */}
-            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/40 rounded-[20px] border border-slate-100 dark:border-kat-border/40 shadow-soft mb-2">
-              <div className="flex items-center gap-3.5 min-w-0">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-900/30 shrink-0">
-                  <HugeiconsIcon icon={Location01Icon} className="h-5 w-5" />
+            <div className="group relative flex items-center justify-between p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-sm transition-all hover:border-indigo-300 hover:shadow-md dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-indigo-500/50 mb-2">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-indigo-500/10"></div>
+              <div className="flex items-center gap-4 relative z-10 min-w-0">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-600 shadow-inner dark:from-indigo-900/40 dark:to-indigo-800/20 dark:text-indigo-400">
+                  <HugeiconsIcon icon={Location01Icon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110" />
                 </div>
                 <div className="min-w-0 text-left">
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.location.title')}</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.location.desc')}</p>
+                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{t('settings.menu.location.title')}</h4>
+                  <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.location.desc')}</p>
                 </div>
               </div>
               
@@ -907,7 +913,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   localStorage.setItem("kat_gps_enabled", String(nextState));
                   showToast(nextState ? t("toast.gpsAutoEnabled") : t("toast.gpsAutoDisabled"), "success");
                 }}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                className={`relative z-10 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
                   gpsEnabled ? "bg-kat-primary" : "bg-slate-200 dark:bg-slate-700"
                 }`}
               >
@@ -922,83 +928,88 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
             {/* Exchange Rates */}
             <button
               onClick={() => setView("exchangeRates")}
-              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-all text-left focus:outline-none mb-2"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-50 dark:bg-cyan-950/20 text-cyan-600 dark:text-cyan-400 border border-cyan-100 dark:border-cyan-900/30">
-                  <HugeiconsIcon icon={Coins01Icon} className="h-5 w-5" />
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-cyan-300 hover:shadow-md active:scale-[0.98] dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-cyan-500/50 focus:outline-none mb-2"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-cyan-500/10"></div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-100 to-cyan-50 text-cyan-600 shadow-inner dark:from-cyan-900/40 dark:to-cyan-800/20 dark:text-cyan-400">
+                    <HugeiconsIcon icon={Coins01Icon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110" />
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">{t('settings.menu.exchangeRates.title')}</h4>
+                    <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.exchangeRates.desc')}</p>
+                  </div>
                 </div>
-                <div className="min-w-0 text-left">
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.exchangeRates.title')}</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.exchangeRates.desc')}</p>
-                </div>
-              </div>
-              <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+                <HugeiconsIcon icon={ChevronRightIcon} className="relative z-10 h-5 w-5 text-slate-400 transition-transform group-hover:translate-x-1" />
             </button>
 
             {/* About */}
             <button
               onClick={() => setView("about")}
-              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-all text-left focus:outline-none mb-2"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-fuchsia-50 dark:bg-fuchsia-950/20 text-fuchsia-600 dark:text-fuchsia-400 border border-fuchsia-100 dark:border-fuchsia-900/30">
-                  <HugeiconsIcon icon={InformationCircleIcon} className="h-5 w-5" />
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-fuchsia-300 hover:shadow-md active:scale-[0.98] dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-fuchsia-500/50 focus:outline-none mb-2"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-fuchsia-500/10"></div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-100 to-fuchsia-50 text-fuchsia-600 shadow-inner dark:from-fuchsia-900/40 dark:to-fuchsia-800/20 dark:text-fuchsia-400">
+                    <HugeiconsIcon icon={InformationCircleIcon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110" />
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-fuchsia-600 dark:group-hover:text-fuchsia-400 transition-colors">{t('settings.menu.about.title')}</h4>
+                    <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.about.desc')}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.about.title')}</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.about.desc')}</p>
-                </div>
-              </div>
-              <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+                <HugeiconsIcon icon={ChevronRightIcon} className="relative z-10 h-5 w-5 text-slate-400 transition-transform group-hover:translate-x-1" />
             </button>
 
             {/* Support Author */}
             <button
               onClick={() => setView("donate")}
-              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-all text-left focus:outline-none mb-2"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30">
-                  <HugeiconsIcon icon={Coffee01Icon} className="h-5 w-5" />
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-amber-300 hover:shadow-md active:scale-[0.98] dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-amber-500/50 focus:outline-none mb-2"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-amber-500/10"></div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-100 to-amber-50 text-amber-600 shadow-inner dark:from-amber-900/40 dark:to-amber-800/20 dark:text-amber-400">
+                    <HugeiconsIcon icon={Coffee01Icon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110" />
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">{t('settings.menu.donate.title')}</h4>
+                    <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.donate.desc')}</p>
+                  </div>
                 </div>
-                <div className="min-w-0 text-left">
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.donate.title')}</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.donate.desc')}</p>
-                </div>
-              </div>
-              <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+                <HugeiconsIcon icon={ChevronRightIcon} className="relative z-10 h-5 w-5 text-slate-400 transition-transform group-hover:translate-x-1" />
             </button>
 
             {/* Send Feedback */}
             <a
               href="mailto:trevorthanhtung@gmail.com?subject=Phản hồi ứng dụng KAT Journey"
-              className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-all text-left focus:outline-none mb-2"
-            >
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-600 dark:text-sky-400 border border-sky-100 dark:border-sky-900/30">
-                  <HugeiconsIcon icon={Mail01Icon} className="h-5 w-5" />
+              className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-sky-300 hover:shadow-md active:scale-[0.98] dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-sky-500/50 focus:outline-none mb-2"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-sky-500/10"></div>
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-100 to-sky-50 text-sky-600 shadow-inner dark:from-sky-900/40 dark:to-sky-800/20 dark:text-sky-400">
+                    <HugeiconsIcon icon={Mail01Icon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110" />
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">{t('settings.menu.feedback.title')}</h4>
+                    <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.feedback.desc')}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.feedback.title')}</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.feedback.desc')}</p>
-                </div>
-              </div>
-              <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />
+                <HugeiconsIcon icon={ChevronRightIcon} className="relative z-10 h-5 w-5 text-slate-400 transition-transform group-hover:translate-x-1" />
             </a>
 
             {/* Version */}
-            <div className="flex items-center justify-between w-full p-4 rounded-[20px] bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 mb-2">
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border border-slate-200/50 dark:border-slate-700/50">
-                  <HugeiconsIcon icon={PackageIcon} className="h-5 w-5" />
+            <div className="group relative flex items-center justify-between w-full p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md dark:border-slate-700/50 dark:bg-slate-800/40 dark:hover:border-slate-500/50 mb-2">
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-slate-500/10"></div>
+              <div className="flex items-center gap-4 relative z-10">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 text-slate-600 shadow-inner dark:from-slate-800/40 dark:to-slate-700/20 dark:text-slate-400">
+                  <HugeiconsIcon icon={PackageIcon} className="h-5.5 w-5.5 transition-transform group-hover:scale-110" />
                 </div>
-                <div>
-                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200">{t('settings.menu.version.title')}</h4>
-                  <p className="text-[12px] text-slate-400 dark:text-slate-400 font-medium">{t('settings.menu.version.desc')}</p>
+                <div className="text-left">
+                  <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-slate-600 dark:group-hover:text-slate-400 transition-colors">{t('settings.menu.version.title')}</h4>
+                  <p className="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('settings.menu.version.desc')}</p>
                 </div>
               </div>
-              <span className="text-xs font-black text-slate-500 dark:text-slate-400 bg-slate-200/70 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700">
+              <span className="relative z-10 text-xs font-black text-slate-500 dark:text-slate-400 bg-slate-200/70 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700">
                 {APP_VERSION}
               </span>
             </div>
