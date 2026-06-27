@@ -107,7 +107,11 @@
       "desc1": "Si KAT Journey le resulta útil, puede enviar un pequeño café para ayudar al creador a seguir desarrollando la aplicación.",
       "desc2": "El apoyo es opcional. Gracias por usar KAT Journey.",
       "scanQR": "Escanear el código QR para transferir",
-      "saveQR": "Guardar código QR en el dispositivo"
+      "saveQR": "Guardar código QR en el dispositivo",
+      "tabVietQR": "VietQR (VN)",
+      "tabInternational": "Internacional",
+      "supportPayPal": "Apoyar vía PayPal",
+      "thankYou": "(¡Gracias por tu apoyo!)"
     },
     "aboutView": {
       "subtitle": "Asistente de viaje personal",
@@ -298,7 +302,9 @@
     "deleting": "Eliminando...",
     "delete": "Eliminar",
     "unknownLocation": "Ubicación desconocida",
-    "archivedBanner": "El viaje ha terminado — solo lectura, no se permiten ediciones."
+    "archivedBanner": "El viaje ha terminado — solo lectura, no se permiten ediciones.",
+    "autoSavingTooltip": "Guardado automático...",
+    "savingBadge": "Guardando..."
   },
   "sharedTrip": {
     "viewTitle": "Ver viaje compartido",
@@ -342,7 +348,16 @@
     "pastTripsDesc": "Viajes que han finalizado y se pueden revisar.",
     "itinerary": "Itinerario",
     "expenses": "Gastos",
-    "members": "Miembros"
+    "members": "Miembros",
+    "emptyTitle": "Aún no hay viajes",
+    "emptyDesc": "Planifica en detalle, organiza el equipaje y gestiona los gastos de forma inteligente para tu próximo viaje.",
+    "emptyFeature1": "Itinerario",
+    "emptyFeature1Desc": "Detalles diarios",
+    "emptyFeature2": "Gastos",
+    "emptyFeature2Desc": "Dividir cuentas",
+    "emptyFeature3": "Equipaje",
+    "emptyFeature3Desc": "Maletas y artículos",
+    "emptyCreateBtn": "Crea tu primer viaje"
   },
   "archive": {
     "title": "Recuerdos",
@@ -1313,7 +1328,8 @@
     "catEntertainment": "Entretenimiento",
     "catPreparation": "Preparativos",
     "catOther": "Otro",
-    "catCustom": "Otro..."
+    "catCustom": "Otro...",
+    "baseCurrency": "(Moneda base)"
   },
   "more": {
     "workspaceTitle": "Espacio de viaje",

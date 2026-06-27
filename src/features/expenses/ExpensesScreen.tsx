@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { CURRENCY_LABELS } from "../../constants/currencies";
+import { getCurrencyLabel } from "../../constants/currencies";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -37,7 +37,7 @@ import { db, Expense, Member, EventItem } from "../../db";
 import { formatMoney, getSettlementSuggestions, sumBy, expenseCategories, getGroupUnits, getMemberShareForExpense } from "../../utils/helpers";
 import { BottomSheet, FormActions, Input, ScreenTitle, Select, DatePicker, DeleteConfirmModal, classNames } from "../../components/ui";
 import { useModalHistory } from "../../hooks/useModalHistory";
-import { fetchExchangeRates, ExchangeRate } from "../../services/currencyService";
+import { fetchExchangeRates, ExchangeRate, FALLBACK_RATES } from "../../services/currencyService";
 import { getCurrentPosition, reverseGeocode, getCurrencyForCountry } from "../../services/locationService";
 
 export function CategoryBar({ percent, colorClass }: { percent: number; colorClass: string }) {
@@ -360,7 +360,7 @@ function ExpenseForm({
   onShowToast?: (msg: string) => void;
   currency?: string;
 }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
   const catMap: Record<string, string> = React.useMemo(() => ({
     "Di chuyển": t("expenses.catTransport"),
     "Vé máy bay": t("expenses.catFlights"),
@@ -387,7 +387,7 @@ function ExpenseForm({
     return labels;
   }, [categoryOptions, catMap]);
 
-  const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
+  const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>(FALLBACK_RATES);
   
   useEffect(() => {
     fetchExchangeRates().then(setExchangeRates);
@@ -620,14 +620,14 @@ function ExpenseForm({
                       setForm({ ...form, currency: currency || "VND", exchangeRate: 1 });
                       setIsCurrencyDropdownOpen(false);
                     }}
-                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
+                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press border ${
                       form.currency === (currency || "VND")
-                        ? "bg-kat-primary-soft text-kat-primary dark:bg-kat-primary/10"
-                        : "hover:bg-slate-50 dark:hover:bg-slate-800 text-kat-dark dark:text-slate-200"
+                        ? "bg-kat-primary/10 border-kat-primary/30 dark:bg-kat-primary/20 dark:border-kat-primary/40 text-kat-primary dark:text-kat-primary"
+                        : "bg-slate-50 border-slate-100 hover:bg-slate-100 dark:bg-slate-800/40 dark:border-slate-700/50 dark:hover:bg-slate-800 text-kat-dark dark:text-slate-200"
                     }`}
                   >
                     <span className={`text-[15px] ${form.currency === (currency || "VND") ? 'font-extrabold' : 'font-semibold'}`}>
-                      {CURRENCY_LABELS[currency || "VND"] || (currency || "VND")} (Đồng tiền gốc)
+                      {getCurrencyLabel(currency || "VND", i18n.language)} {t('expenses.baseCurrency')}
                     </span>
                     {form.currency === (currency || "VND") && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
                   </button>
@@ -641,14 +641,14 @@ function ExpenseForm({
                         setForm({ ...form, currency: "VND", exchangeRate: 1 / baseRate });
                         setIsCurrencyDropdownOpen(false);
                       }}
-                      className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
+                      className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press border ${
                         form.currency === "VND"
-                          ? "bg-kat-primary-soft text-kat-primary dark:bg-kat-primary/10"
-                          : "hover:bg-slate-50 dark:hover:bg-slate-800 text-kat-dark dark:text-slate-200"
+                          ? "bg-kat-primary/10 border-kat-primary/30 dark:bg-kat-primary/20 dark:border-kat-primary/40 text-kat-primary dark:text-kat-primary"
+                          : "bg-slate-50 border-slate-100 hover:bg-slate-100 dark:bg-slate-800/40 dark:border-slate-700/50 dark:hover:bg-slate-800 text-kat-dark dark:text-slate-200"
                       }`}
                     >
                       <span className={`text-[15px] ${form.currency === "VND" ? 'font-extrabold' : 'font-semibold'}`}>
-                        {CURRENCY_LABELS["VND"]}
+                        {getCurrencyLabel("VND", i18n.language)}
                       </span>
                       {form.currency === "VND" && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
                     </button>
@@ -667,14 +667,14 @@ function ExpenseForm({
                           setForm({ ...form, currency: r.currencyCode, exchangeRate: toBaseExchangeRate });
                           setIsCurrencyDropdownOpen(false);
                         }}
-                        className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press ${
+                        className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 motion-press border ${
                           isSelected
-                            ? "bg-kat-primary-soft text-kat-primary dark:bg-kat-primary/10"
-                            : "hover:bg-slate-50 dark:hover:bg-slate-800 text-kat-dark dark:text-slate-200"
+                            ? "bg-kat-primary/10 border-kat-primary/30 dark:bg-kat-primary/20 dark:border-kat-primary/40 text-kat-primary dark:text-kat-primary"
+                            : "bg-slate-50 border-slate-100 hover:bg-slate-100 dark:bg-slate-800/40 dark:border-slate-700/50 dark:hover:bg-slate-800 text-kat-dark dark:text-slate-200"
                         }`}
                       >
                         <span className={`text-[15px] ${isSelected ? 'font-extrabold' : 'font-semibold'}`}>
-                          {CURRENCY_LABELS[r.currencyCode] || `${r.currencyCode} ${r.currencyName ? `(${r.currencyName})` : ""}`}
+                          {getCurrencyLabel(r.currencyCode, i18n.language) || `${r.currencyCode} ${r.currencyName ? `(${r.currencyName})` : ""}`}
                         </span>
                         {isSelected && <HugeiconsIcon icon={CheckIcon} size={20} className="text-kat-primary" />}
                       </button>
@@ -1368,6 +1368,7 @@ export function ExpensesScreen({
         onClose={() => setIsFormOpen(false)}
         onSaved={showToast}
         onShowToast={showToast}
+        currency={baseCurrency}
       />
     </div>
   );

@@ -402,36 +402,36 @@ export function TripManagerScreen({
           </div>
           
           <h3 className="mb-2.5 text-[24px] sm:text-[28px] font-black text-kat-text tracking-tight relative z-10 leading-tight">
-            Chưa có chuyến đi nào
+            {t('dashboard.emptyTitle')}
           </h3>
-          <p className="mb-6 text-[14px] sm:text-[15.5px] font-semibold text-slate-500 leading-relaxed max-w-[380px] relative z-10">
-            Hãy lên kế hoạch chi tiết, sắp xếp hành lý và quản lý chi tiêu thông minh cho chuyến đi tiếp theo của bạn.
+          <p className="mb-6 text-[14px] sm:text-[15.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed max-w-[380px] relative z-10">
+            {t('dashboard.emptyDesc')}
           </p>
           
           {/* Feature Showcase Grid */}
           <div className="grid grid-cols-3 gap-3 w-full max-w-[460px] mb-8 relative z-10">
-            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#F8FAFC]/50 border border-[#E2E8F0]/60 hover:bg-[#F8FAFC]/90 hover:border-[#0081BE]/30 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
-              <div className="h-9 w-9 rounded-xl bg-[#0081BE]/8 text-[#0081BE] flex items-center justify-center mb-2 shadow-sm border border-[#0081BE]/10 group-hover/item:scale-110 transition-transform duration-300">
+            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#F8FAFC]/50 dark:bg-slate-800/40 border border-[#E2E8F0]/60 dark:border-slate-700/50 hover:bg-[#F8FAFC]/90 dark:hover:bg-slate-800/80 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
+              <div className="h-9 w-9 rounded-xl bg-[#0081BE]/8 dark:bg-[#38bdf8]/10 text-[#0081BE] dark:text-[#38bdf8] flex items-center justify-center mb-2 shadow-sm border border-[#0081BE]/10 dark:border-[#38bdf8]/20 group-hover/item:scale-110 transition-transform duration-300">
                 <HugeiconsIcon icon={Calendar01Icon} size={18} />
               </div>
-              <span className="text-[11.5px] font-black text-[#030D2E] tracking-tight">Lịch trình</span>
-              <span className="text-[9.5px] text-slate-400 font-semibold mt-0.5">Chi tiết từng ngày</span>
+              <span className="text-[11.5px] font-black text-[#030D2E] dark:text-slate-100 tracking-tight">{t('dashboard.emptyFeature1')}</span>
+              <span className="text-[9.5px] text-slate-400 dark:text-slate-400 font-semibold mt-0.5">{t('dashboard.emptyFeature1Desc')}</span>
             </div>
 
-            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#F8FAFC]/50 border border-[#E2E8F0]/60 hover:bg-[#F8FAFC]/90 hover:border-[#F89B02]/30 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
-              <div className="h-9 w-9 rounded-xl bg-[#F89B02]/8 text-[#F89B02] flex items-center justify-center mb-2 shadow-sm border border-[#F89B02]/10 group-hover/item:scale-110 transition-transform duration-300">
+            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#F8FAFC]/50 dark:bg-slate-800/40 border border-[#E2E8F0]/60 dark:border-slate-700/50 hover:bg-[#F8FAFC]/90 dark:hover:bg-slate-800/80 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
+              <div className="h-9 w-9 rounded-xl bg-[#F89B02]/8 dark:bg-[#fbbf24]/10 text-[#F89B02] dark:text-[#fbbf24] flex items-center justify-center mb-2 shadow-sm border border-[#F89B02]/10 dark:border-[#fbbf24]/20 group-hover/item:scale-110 transition-transform duration-300">
                 <HugeiconsIcon icon={WalletCardsIcon} size={18} />
               </div>
-              <span className="text-[11.5px] font-black text-[#030D2E] tracking-tight">Chi phí</span>
-              <span className="text-[9.5px] text-slate-400 font-semibold mt-0.5">Chia hóa đơn</span>
+              <span className="text-[11.5px] font-black text-[#030D2E] dark:text-slate-100 tracking-tight">{t('dashboard.emptyFeature2')}</span>
+              <span className="text-[9.5px] text-slate-400 dark:text-slate-400 font-semibold mt-0.5">{t('dashboard.emptyFeature2Desc')}</span>
             </div>
 
-            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#F8FAFC]/50 border border-[#E2E8F0]/60 hover:bg-[#F8FAFC]/90 hover:border-[#00BFB7]/30 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
-              <div className="h-9 w-9 rounded-xl bg-[#00BFB7]/8 text-[#00BFB7] flex items-center justify-center mb-2 shadow-sm border border-[#00BFB7]/10 group-hover/item:scale-110 transition-transform duration-300">
+            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#F8FAFC]/50 dark:bg-slate-800/40 border border-[#E2E8F0]/60 dark:border-slate-700/50 hover:bg-[#F8FAFC]/90 dark:hover:bg-slate-800/80 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
+              <div className="h-9 w-9 rounded-xl bg-[#00BFB7]/8 dark:bg-[#2dd4bf]/10 text-[#00BFB7] dark:text-[#2dd4bf] flex items-center justify-center mb-2 shadow-sm border border-[#00BFB7]/10 dark:border-[#2dd4bf]/20 group-hover/item:scale-110 transition-transform duration-300">
                 <HugeiconsIcon icon={CheckmarkCircle02Icon} size={18} />
               </div>
-              <span className="text-[11.5px] font-black text-[#030D2E] tracking-tight">Chuẩn bị</span>
-              <span className="text-[9.5px] text-slate-400 font-semibold mt-0.5">Hành lý & đồ đạc</span>
+              <span className="text-[11.5px] font-black text-[#030D2E] dark:text-slate-100 tracking-tight">{t('dashboard.emptyFeature3')}</span>
+              <span className="text-[9.5px] text-slate-400 dark:text-slate-400 font-semibold mt-0.5">{t('dashboard.emptyFeature3Desc')}</span>
             </div>
           </div>
           
@@ -440,7 +440,7 @@ export function TripManagerScreen({
             className="group flex h-12 sm:h-14 w-full items-center justify-center gap-2 rounded-[20px] bg-gradient-to-r from-[#030D2E] via-[#004E5A] to-[#00BFB7] text-white px-6 font-black text-[14.5px] sm:text-[15.5px] hover:brightness-[1.08] active:scale-[0.98] transition-all duration-300 relative z-10 shadow-[0_8px_30px_rgba(0,191,183,0.2)] hover:shadow-[0_12px_36px_rgba(0,191,183,0.35)] motion-press"
           >
             <span className="text-[20px] leading-none group-hover:rotate-90 transition-transform duration-300 font-bold">+</span>
-            Tạo chuyến đi đầu tiên
+            {t('dashboard.emptyCreateBtn')}
           </button>
  
           {archivedTripsCount > 0 && (

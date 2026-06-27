@@ -9,7 +9,19 @@ export interface ExchangeRate {
 const CACHE_KEY = "kat_journey_exchange_rates";
 const CACHE_EXPIRY_MS = 4 * 60 * 60 * 1000; // 4 hours
 
-const FALLBACK_RATES: ExchangeRate[] = [
+export function sortExchangeRates(rates: ExchangeRate[]): ExchangeRate[] {
+  const priority = ["USD", "EUR", "JPY", "KRW"];
+  return [...rates].sort((a, b) => {
+    const idxA = priority.indexOf(a.currencyCode);
+    const idxB = priority.indexOf(b.currencyCode);
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+    return a.currencyCode.localeCompare(b.currencyCode);
+  });
+}
+
+export const FALLBACK_RATES: ExchangeRate[] = sortExchangeRates([
   { currencyCode: "USD", currencyName: "USD", buy: 25000, transfer: 25400, sell: 25500 },
   { currencyCode: "EUR", currencyName: "EUR", buy: 26500, transfer: 27000, sell: 27200 },
   { currencyCode: "JPY", currencyName: "JPY", buy: 155, transfer: 160, sell: 165 },
@@ -20,7 +32,7 @@ const FALLBACK_RATES: ExchangeRate[] = [
   { currencyCode: "AUD", currencyName: "AUD", buy: 16000, transfer: 16400, sell: 16600 },
   { currencyCode: "CAD", currencyName: "CAD", buy: 17800, transfer: 18200, sell: 18400 },
   { currencyCode: "GBP", currencyName: "GBP", buy: 31000, transfer: 31500, sell: 32000 },
-];
+]);
 
 export async function fetchExchangeRates(): Promise<ExchangeRate[]> {
   const cached = localStorage.getItem(CACHE_KEY);
@@ -28,7 +40,7 @@ export async function fetchExchangeRates(): Promise<ExchangeRate[]> {
     try {
       const { data, timestamp } = JSON.parse(cached);
       if (Date.now() - timestamp < CACHE_EXPIRY_MS) {
-        return data;
+        return sortExchangeRates(data);
       }
     } catch (e) {
       console.warn("Failed to parse cached exchange rates", e);
@@ -74,11 +86,12 @@ export async function fetchExchangeRates(): Promise<ExchangeRate[]> {
     }
 
     if (rates.length > 0) {
+      const sortedRates = sortExchangeRates(rates);
       localStorage.setItem(
         CACHE_KEY,
-        JSON.stringify({ data: rates, timestamp: Date.now() })
+        JSON.stringify({ data: sortedRates, timestamp: Date.now() })
       );
-      return rates;
+      return sortedRates;
     }
     
     throw new Error("No exchange rates found in response");
@@ -88,7 +101,7 @@ export async function fetchExchangeRates(): Promise<ExchangeRate[]> {
     // If API fails and we have cache (even expired), return it
     if (cached) {
       try {
-        return JSON.parse(cached).data;
+        return sortExchangeRates(JSON.parse(cached).data);
       } catch (e) {
         // ignore
       }

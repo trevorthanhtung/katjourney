@@ -12,6 +12,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   Coffee01Icon,
+  GlobeIcon,
   Shield01Icon,
   CompassIcon,
   Download01Icon,
@@ -161,6 +162,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
     journalCount: number;
   } | null>(null);
   const [isImportPreviewOpen, setIsImportPreviewOpen] = useState(false);
+  const [donateTab, setDonateTab] = useState<"vn" | "intl">(i18n.language === "vi" ? "vn" : "intl");
 
   // Modal history registration
   useModalHistory(isRestoreFileConfirmOpen, () => setIsRestoreFileConfirmOpen(false), "restore-file-confirm");
@@ -1032,7 +1034,7 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
                   </div>
                 </div>
                 {clearTempSuccess
-                  ? <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+                  ? <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-2.5 py-1 rounded-full">
                       {t('common.done')}
                     </span>
                   : <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400" />}
@@ -1403,28 +1405,69 @@ export function SettingsSheet({ isOpen, onClose, initialView, syncProps, onTripS
               </p>
             </div>
 
-            <div className="w-[85%] max-w-[280px] p-4 bg-white dark:bg-slate-900/30 border border-slate-200 dark:border-kat-border/40 rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
-              <img 
-                src="/donates.png" 
-                alt="Donate QR Code" 
-                className="w-full h-auto rounded-[16px] object-contain aspect-square" 
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
-              <span className="mt-3 text-[11px] font-extrabold text-slate-700 dark:text-slate-400 uppercase tracking-wider bg-slate-50/80 dark:bg-slate-900/80 px-3 py-1 rounded-full border border-slate-100 dark:border-slate-800">
-                {t('settings.donateView.scanQR')}
-              </span>
+            {/* Tabs */}
+            <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-[85%] max-w-[280px] mb-2 mt-2">
+              <button
+                onClick={() => setDonateTab("vn")}
+                className={classNames(
+                  "flex-1 py-1.5 text-[13px] font-bold rounded-lg transition-all",
+                  donateTab === "vn" ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                )}
+              >
+                {t("settings.donateView.tabVietQR", "VietQR")}
+              </button>
+              <button
+                onClick={() => setDonateTab("intl")}
+                className={classNames(
+                  "flex-1 py-1.5 text-[13px] font-bold rounded-lg transition-all",
+                  donateTab === "intl" ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                )}
+              >
+                {t("settings.donateView.tabInternational", "International")}
+              </button>
             </div>
 
-            <a 
-              href="/donates.png" 
-              download="kat-journey-donate-qr.png"
-              className="text-[13px] font-bold text-kat-teal hover:underline flex items-center gap-1 active:scale-95 transition-all"
-            >
-              <HugeiconsIcon icon={Download01Icon} className="w-4 h-4" />
-              {t('settings.donateView.saveQR')}
-            </a>
+            {donateTab === "vn" ? (
+              <>
+                <div className="w-[85%] max-w-[280px] p-4 bg-white dark:bg-slate-900/30 border border-slate-200 dark:border-kat-border/40 rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
+                  <img 
+                    src="/donates.png" 
+                    alt="Donate QR Code" 
+                    className="w-full h-auto rounded-[16px] object-contain aspect-square" 
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <span className="mt-3 text-[11px] font-extrabold text-slate-700 dark:text-slate-400 uppercase tracking-wider bg-slate-50/80 dark:bg-slate-900/80 px-3 py-1 rounded-full border border-slate-100 dark:border-slate-800">
+                    {t('settings.donateView.scanQR')}
+                  </span>
+                </div>
+
+                <a 
+                  href="/donates.png" 
+                  download="kat-journey-donate-qr.png"
+                  className="text-[13px] font-bold text-kat-teal hover:underline flex items-center gap-1 active:scale-95 transition-all"
+                >
+                  <HugeiconsIcon icon={Download01Icon} className="w-4 h-4" />
+                  {t('settings.donateView.saveQR')}
+                </a>
+              </>
+            ) : (
+              <div className="w-full max-w-[280px] space-y-3 mt-2">
+                <a 
+                  href="https://paypal.me/trevorthanhtung"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-full gap-2 py-3.5 px-4 rounded-[16px] bg-[#00457C] text-white font-extrabold text-[14px] transition-all hover:bg-[#005a9e] active:scale-[0.98] shadow-sm"
+                >
+                  <HugeiconsIcon icon={GlobeIcon} className="w-5 h-5" />
+                  {t("settings.donateView.supportPayPal", "Support via PayPal")}
+                </a>
+                <p className="text-[12px] font-medium text-slate-400 mt-3">
+                  {t("settings.donateView.thankYou", "(Thank you for your support!)")}
+                </p>
+              </div>
+            )}
 
             <button
               type="button"

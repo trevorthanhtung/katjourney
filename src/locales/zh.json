@@ -107,7 +107,11 @@
       "desc1": "如果 KAT Journey 对您有帮助，您可以发送一杯咖啡来支持开发者进一步完善应用。",
       "desc2": "支持是自愿的。感谢您使用 KAT Journey。",
       "scanQR": "扫描二维码转账",
-      "saveQR": "保存二维码到设备"
+      "saveQR": "保存二维码到设备",
+      "tabVietQR": "VietQR (VN)",
+      "tabInternational": "国际",
+      "supportPayPal": "通过 PayPal 支持",
+      "thankYou": "(感谢您的支持！)"
     },
     "aboutView": {
       "subtitle": "个人旅程助手",
@@ -298,7 +302,9 @@
     "deleting": "删除中...",
     "delete": "删除",
     "unknownLocation": "未知地点",
-    "archivedBanner": "行程已结束 — 仅供查看，不可编辑。"
+    "archivedBanner": "行程已结束 — 仅供查看，不可编辑。",
+    "autoSavingTooltip": "自动保存中...",
+    "savingBadge": "保存中..."
   },
   "sharedTrip": {
     "viewTitle": "查看分享的行程",
@@ -342,7 +348,16 @@
     "pastTripsDesc": "已结束并可供回顾的旅行。",
     "itinerary": "行程",
     "expenses": "费用",
-    "members": "成员"
+    "members": "成员",
+    "emptyTitle": "还没有旅行",
+    "emptyDesc": "为您的下一次旅行详细计划，整理行李，并智能地管理费用。",
+    "emptyFeature1": "行程",
+    "emptyFeature1Desc": "每日详细信息",
+    "emptyFeature2": "费用",
+    "emptyFeature2Desc": "分摊账单",
+    "emptyFeature3": "打包",
+    "emptyFeature3Desc": "行李和物品",
+    "emptyCreateBtn": "创建您的第一次旅行"
   },
   "archive": {
     "title": "回忆",
@@ -1313,7 +1328,8 @@
     "catEntertainment": "娱乐",
     "catPreparation": "行前准备",
     "catOther": "其他",
-    "catCustom": "其他..."
+    "catCustom": "其他...",
+    "baseCurrency": "(基础货币)"
   },
   "more": {
     "workspaceTitle": "旅行工作区",

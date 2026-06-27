@@ -107,7 +107,11 @@
       "desc1": "If KAT Journey is useful to you, you can send a small coffee to support the creator in further developing the app.",
       "desc2": "Support is optional. Thank you for using KAT Journey.",
       "scanQR": "Scan QR code to transfer",
-      "saveQR": "Save QR code to device"
+      "saveQR": "Save QR code to device",
+      "tabVietQR": "VietQR (VN)",
+      "tabInternational": "International",
+      "supportPayPal": "Support via PayPal",
+      "thankYou": "(Thank you for your support!)"
     },
     "aboutView": {
       "subtitle": "Personal Journey Assistant",
@@ -298,7 +302,9 @@
     "deleting": "Deleting...",
     "delete": "Delete",
     "unknownLocation": "Unknown location",
-    "archivedBanner": "Trip has ended — read-only, no edits allowed."
+    "archivedBanner": "Trip has ended — read-only, no edits allowed.",
+    "autoSavingTooltip": "Auto-saving...",
+    "savingBadge": "Saving..."
   },
   "sharedTrip": {
     "viewTitle": "View Shared Trip",
@@ -342,7 +348,16 @@
     "pastTripsDesc": "Trips that have ended and can be reviewed.",
     "itinerary": "Itinerary",
     "expenses": "Expenses",
-    "members": "Members"
+    "members": "Members",
+    "emptyTitle": "No trips yet",
+    "emptyDesc": "Plan in detail, organize luggage, and smartly manage expenses for your next trip.",
+    "emptyFeature1": "Itinerary",
+    "emptyFeature1Desc": "Day-by-day details",
+    "emptyFeature2": "Expenses",
+    "emptyFeature2Desc": "Split bills",
+    "emptyFeature3": "Packing",
+    "emptyFeature3Desc": "Luggage & items",
+    "emptyCreateBtn": "Create your first trip"
   },
   "archive": {
     "title": "Memories",
@@ -1298,7 +1313,8 @@
     "catEntertainment": "Entertainment",
     "catPreparation": "Preparation",
     "catOther": "Other",
-    "catCustom": "Custom..."
+    "catCustom": "Custom...",
+    "baseCurrency": "(Base Currency)"
   },
   "more": {
     "workspaceTitle": "Trip Workspace",

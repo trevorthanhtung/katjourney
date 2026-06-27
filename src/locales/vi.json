@@ -107,7 +107,11 @@
       "desc1": "Nếu KAT Journey hữu ích với bạn, bạn có thể gửi một ly cà phê nhỏ để ủng hộ tác giả tiếp tục phát triển ứng dụng.",
       "desc2": "Ủng hộ là tùy chọn. Cảm ơn bạn đã sử dụng KAT Journey.",
       "scanQR": "Quét mã QR để chuyển khoản",
-      "saveQR": "Lưu mã QR về máy"
+      "saveQR": "Lưu mã QR về máy",
+      "tabVietQR": "VietQR (VN)",
+      "tabInternational": "Quốc tế",
+      "supportPayPal": "Ủng hộ qua PayPal",
+      "thankYou": "(Cảm ơn sự ủng hộ của bạn!)"
     },
     "aboutView": {
       "subtitle": "Trợ lý hành trình cá nhân",
@@ -296,7 +300,9 @@
     "deleting": "Đang xóa...",
     "delete": "Xóa",
     "unknownLocation": "Chưa xác định",
-    "archivedBanner": "Chuyến đi đã kết thúc — chỉ xem, không chỉnh sửa."
+    "archivedBanner": "Chuyến đi đã kết thúc — chỉ xem, không chỉnh sửa.",
+    "autoSavingTooltip": "Đang tự động sao lưu…",
+    "savingBadge": "Đang lưu…"
   },
   "sharedTrip": {
     "viewTitle": "Xem chuyến đi được chia sẻ",
@@ -340,7 +346,16 @@
     "pastTripsDesc": "Những chuyến đi đã kết thúc và có thể xem lại tổng kết.",
     "itinerary": "Lịch trình",
     "expenses": "Chi phí",
-    "members": "Thành viên"
+    "members": "Thành viên",
+    "emptyTitle": "Chưa có chuyến đi nào",
+    "emptyDesc": "Hãy lên kế hoạch chi tiết, sắp xếp hành lý và quản lý chi tiêu thông minh cho chuyến đi tiếp theo của bạn.",
+    "emptyFeature1": "Lịch trình",
+    "emptyFeature1Desc": "Chi tiết từng ngày",
+    "emptyFeature2": "Chi phí",
+    "emptyFeature2Desc": "Chia hóa đơn",
+    "emptyFeature3": "Chuẩn bị",
+    "emptyFeature3Desc": "Hành lý & đồ đạc",
+    "emptyCreateBtn": "Tạo chuyến đi đầu tiên"
   },
   "archive": {
     "title": "Kỷ niệm",
@@ -1296,7 +1311,8 @@
     "catEntertainment": "Vui chơi & Giải trí",
     "catPreparation": "Chuẩn bị hành lý",
     "catOther": "Khác",
-    "catCustom": "Khác..."
+    "catCustom": "Khác...",
+    "baseCurrency": "(Đồng tiền gốc)"
   },
   "more": {
     "workspaceTitle": "Không gian chuyến đi",

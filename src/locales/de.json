@@ -107,7 +107,11 @@
       "desc1": "Wenn KAT Journey für Sie nützlich ist, können Sie dem Entwickler einen kleinen Kaffee spendieren, um die App weiterzuentwickeln.",
       "desc2": "Unterstützung ist freiwillig. Danke, dass Sie KAT Journey nutzen.",
       "scanQR": "QR-Code scannen, um zu überweisen",
-      "saveQR": "QR-Code auf dem Gerät speichern"
+      "saveQR": "QR-Code auf dem Gerät speichern",
+      "tabVietQR": "VietQR (VN)",
+      "tabInternational": "International",
+      "supportPayPal": "Unterstützung via PayPal",
+      "thankYou": "(Danke für deine Unterstützung!)"
     },
     "aboutView": {
       "subtitle": "Persönlicher Reiseassistent",
@@ -298,7 +302,9 @@
     "deleting": "Löschen...",
     "delete": "Löschen",
     "unknownLocation": "Unbekannter Ort",
-    "archivedBanner": "Reise ist beendet — schreibgeschützt, keine Änderungen."
+    "archivedBanner": "Reise ist beendet — schreibgeschützt, keine Änderungen.",
+    "autoSavingTooltip": "Automatisches Speichern...",
+    "savingBadge": "Speichern..."
   },
   "sharedTrip": {
     "viewTitle": "Geteilte Reise ansehen",
@@ -342,7 +348,16 @@
     "pastTripsDesc": "Reisen, die beendet sind und überprüft werden können.",
     "itinerary": "Reiseplan",
     "expenses": "Ausgaben",
-    "members": "Mitglieder"
+    "members": "Mitglieder",
+    "emptyTitle": "Noch keine Reisen",
+    "emptyDesc": "Planen Sie im Detail, organisieren Sie Ihr Gepäck und verwalten Sie Ausgaben intelligent für Ihre nächste Reise.",
+    "emptyFeature1": "Reiseplan",
+    "emptyFeature1Desc": "Tägliche Details",
+    "emptyFeature2": "Ausgaben",
+    "emptyFeature2Desc": "Rechnungen teilen",
+    "emptyFeature3": "Packen",
+    "emptyFeature3Desc": "Gepäck & Artikel",
+    "emptyCreateBtn": "Erste Reise erstellen"
   },
   "archive": {
     "title": "Erinnerungen",
@@ -1313,7 +1328,8 @@
     "catEntertainment": "Unterhaltung",
     "catPreparation": "Vorbereitung",
     "catOther": "Sonstiges",
-    "catCustom": "Sonstiges..."
+    "catCustom": "Sonstiges...",
+    "baseCurrency": "(Basiswährung)"
   },
   "more": {
     "workspaceTitle": "Reise-Arbeitsbereich",

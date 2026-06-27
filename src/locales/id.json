@@ -107,7 +107,11 @@
       "desc1": "Jika KAT Journey berguna bagi Anda, Anda dapat mengirimkan sedikit kopi untuk mendukung pembuat dalam mengembangkan aplikasi ini lebih lanjut.",
       "desc2": "Dukungan bersifat opsional. Terima kasih telah menggunakan KAT Journey.",
       "scanQR": "Pindai kode QR untuk mentransfer",
-      "saveQR": "Simpan kode QR ke perangkat"
+      "saveQR": "Simpan kode QR ke perangkat",
+      "tabVietQR": "VietQR (VN)",
+      "tabInternational": "Internasional",
+      "supportPayPal": "Dukung via PayPal",
+      "thankYou": "(Terima kasih atas dukungan Anda!)"
     },
     "aboutView": {
       "subtitle": "Asisten Perjalanan Pribadi",
@@ -298,7 +302,9 @@
     "deleting": "Menghapus...",
     "delete": "Hapus",
     "unknownLocation": "Lokasi tidak diketahui",
-    "archivedBanner": "Perjalanan telah berakhir — hanya baca, tidak dapat diedit."
+    "archivedBanner": "Perjalanan telah berakhir — hanya baca, tidak dapat diedit.",
+    "autoSavingTooltip": "Menyimpan otomatis...",
+    "savingBadge": "Menyimpan..."
   },
   "sharedTrip": {
     "viewTitle": "Lihat perjalanan yang dibagikan",

@@ -107,7 +107,11 @@
       "desc1": "KAT Journey がお役に立っている場合は、アプリのさらなる開発をサポートするためにコーヒー 1 杯分を送ることができます。",
       "desc2": "サポートは任意です。KAT Journey をご利用いただきありがとうございます。",
       "scanQR": "QRコードをスキャンして送金",
-      "saveQR": "QRコードをデバイスに保存"
+      "saveQR": "QRコードをデバイスに保存",
+      "tabVietQR": "VietQR (VN)",
+      "tabInternational": "国際的",
+      "supportPayPal": "PayPalでサポート",
+      "thankYou": "(ご支援ありがとうございます！)"
     },
     "aboutView": {
       "subtitle": "パーソナルジャーニーアシスタント",
@@ -298,7 +302,9 @@
     "deleting": "削除中...",
     "delete": "削除",
     "unknownLocation": "場所不明",
-    "archivedBanner": "旅行は終了しました — 読み取り専用です。編集はできません。"
+    "archivedBanner": "旅行は終了しました — 読み取り専用です。編集はできません。",
+    "autoSavingTooltip": "自動保存中...",
+    "savingBadge": "保存中..."
   },
   "sharedTrip": {
     "viewTitle": "共有された旅行を見る",
@@ -342,7 +348,16 @@
     "pastTripsDesc": "終了し、振り返ることができる旅行。",
     "itinerary": "旅程",
     "expenses": "経費",
-    "members": "メンバー"
+    "members": "メンバー",
+    "emptyTitle": "まだ旅行はありません",
+    "emptyDesc": "次の旅行のために、詳細に計画し、荷物を整理し、賢く費用を管理しましょう。",
+    "emptyFeature1": "旅程",
+    "emptyFeature1Desc": "毎日の詳細",
+    "emptyFeature2": "費用",
+    "emptyFeature2Desc": "割り勘",
+    "emptyFeature3": "持ち物",
+    "emptyFeature3Desc": "荷物とアイテム",
+    "emptyCreateBtn": "最初の旅行を作成"
   },
   "archive": {
     "title": "思い出",
@@ -1313,7 +1328,8 @@
     "catEntertainment": "エンターテイメント",
     "catPreparation": "準備",
     "catOther": "その他",
-    "catCustom": "その他..."
+    "catCustom": "その他...",
+    "baseCurrency": "(基本通貨)"
   },
   "more": {
     "workspaceTitle": "旅行ワークスペース",

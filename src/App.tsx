@@ -812,9 +812,9 @@ function App() {
           
           <div className="flex items-center gap-2 md:gap-3">
             {isAutoBackingUp && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 animate-pulse shrink-0" title="Đang tự động sao lưu…">
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 animate-pulse shrink-0" title={t("common.autoSavingTooltip")}>
                 <HugeiconsIcon icon={CloudIcon} className="w-3.5 h-3.5 animate-spin shrink-0" />
-                <span className="text-[10px] font-black uppercase tracking-wider hidden sm:inline">Đang lưu…</span>
+                <span className="text-[10px] font-black uppercase tracking-wider hidden sm:inline">{t("common.savingBadge")}</span>
               </div>
             )}
 

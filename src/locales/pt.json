@@ -107,7 +107,11 @@
       "desc1": "Se o KAT Journey for útil para você, você pode enviar um pequeno café para apoiar o criador no desenvolvimento do aplicativo.",
       "desc2": "O apoio é opcional. Obrigado por usar o KAT Journey.",
       "scanQR": "Digitalize o código QR para transferir",
-      "saveQR": "Salvar código QR no dispositivo"
+      "saveQR": "Salvar código QR no dispositivo",
+      "tabVietQR": "VietQR (VN)",
+      "tabInternational": "Internacional",
+      "supportPayPal": "Apoiar via PayPal",
+      "thankYou": "(Obrigado pelo seu apoio!)"
     },
     "aboutView": {
       "subtitle": "Assistente Pessoal de Viagem",
@@ -298,7 +302,9 @@
     "deleting": "Excluindo...",
     "delete": "Excluir",
     "unknownLocation": "Local desconhecido",
-    "archivedBanner": "A viagem terminou — somente leitura, sem edições."
+    "archivedBanner": "A viagem terminou — somente leitura, sem edições.",
+    "autoSavingTooltip": "Salvamento automático...",
+    "savingBadge": "Salvando..."
   },
   "sharedTrip": {
     "viewTitle": "Ver viagem compartilhada",
@@ -342,7 +348,16 @@
     "pastTripsDesc": "Viagens concluídas que podem ser revisadas.",
     "itinerary": "Itinerário",
     "expenses": "Despesas",
-    "members": "Membros"
+    "members": "Membros",
+    "emptyTitle": "Nenhuma viagem ainda",
+    "emptyDesc": "Planeje detalhadamente, organize as bagagens e gerencie despesas de forma inteligente para sua próxima viagem.",
+    "emptyFeature1": "Roteiro",
+    "emptyFeature1Desc": "Detalhes diários",
+    "emptyFeature2": "Despesas",
+    "emptyFeature2Desc": "Dividir contas",
+    "emptyFeature3": "Bagagem",
+    "emptyFeature3Desc": "Malas e itens",
+    "emptyCreateBtn": "Criar primeira viagem"
   },
   "archive": {
     "title": "Lembranças",
@@ -1313,7 +1328,8 @@
     "catEntertainment": "Entretenimento",
     "catPreparation": "Preparação",
     "catOther": "Outro",
-    "catCustom": "Outro..."
+    "catCustom": "Outro...",
+    "baseCurrency": "(Moeda base)"
   },
   "more": {
     "workspaceTitle": "Espaço de viagem",

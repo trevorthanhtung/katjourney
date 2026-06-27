@@ -53,7 +53,7 @@ export function formatMoney(value: number, currency: string = "VND") {
       .replace(/\s+/g, "")
       .replace(/[đĐVNDvnd]/g, "₫");
   }
-  return new Intl.NumberFormat(undefined, { style: "currency", currency }).format(value);
+  return new Intl.NumberFormat(undefined, { style: "currency", currency, currencyDisplay: "narrowSymbol" }).format(value);
 }
 
 export function formatMoneyCompact(value: number, currency: string = "VND") {
@@ -66,7 +66,7 @@ export function formatMoneyCompact(value: number, currency: string = "VND") {
     }
     return formatMoney(value, currency);
   }
-  return new Intl.NumberFormat(undefined, { style: "currency", currency, notation: "compact" }).format(value);
+  return new Intl.NumberFormat(undefined, { style: "currency", currency, notation: "compact", currencyDisplay: "narrowSymbol" }).format(value);
 }
 
 export function formatDate(value: string) {

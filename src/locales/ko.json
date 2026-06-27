@@ -107,7 +107,11 @@
       "desc1": "KAT Journey가 유용했다면, 개발자가 앱을 더욱 발전시킬 수 있도록 커피 한 잔을 보내 후원하실 수 있습니다.",
       "desc2": "후원은 선택 사항입니다. KAT Journey를 사용해 주셔서 감사합니다.",
       "scanQR": "QR 코드를 스캔하여 송금",
-      "saveQR": "QR 코드를 기기에 저장"
+      "saveQR": "QR 코드를 기기에 저장",
+      "tabVietQR": "VietQR (VN)",
+      "tabInternational": "국제",
+      "supportPayPal": "PayPal로 지원하기",
+      "thankYou": "(지원해 주셔서 감사합니다!)"
     },
     "aboutView": {
       "subtitle": "개인 여행 어시스턴트",
@@ -298,7 +302,9 @@
     "deleting": "삭제 중...",
     "delete": "삭제",
     "unknownLocation": "위치 알 수 없음",
-    "archivedBanner": "여행이 종료되었습니다 — 읽기 전용이며 편집할 수 없습니다."
+    "archivedBanner": "여행이 종료되었습니다 — 읽기 전용이며 편집할 수 없습니다.",
+    "autoSavingTooltip": "자동 저장 중...",
+    "savingBadge": "저장 중..."
   },
   "sharedTrip": {
     "viewTitle": "공유된 여행 보기",
@@ -342,7 +348,16 @@
     "pastTripsDesc": "종료되어 검토할 수 있는 여행입니다.",
     "itinerary": "일정",
     "expenses": "비용",
-    "members": "멤버"
+    "members": "멤버",
+    "emptyTitle": "아직 여행이 없습니다",
+    "emptyDesc": "다음 여행을 위해 자세히 계획하고, 수하물을 정리하며, 현명하게 비용을 관리하세요.",
+    "emptyFeature1": "일정",
+    "emptyFeature1Desc": "일일 세부 정보",
+    "emptyFeature2": "비용",
+    "emptyFeature2Desc": "비용 나누기",
+    "emptyFeature3": "준비물",
+    "emptyFeature3Desc": "수하물 및 물품",
+    "emptyCreateBtn": "첫 여행 만들기"
   },
   "archive": {
     "title": "추억",
@@ -1298,7 +1313,8 @@
     "catEntertainment": "엔터테인먼트",
     "catPreparation": "준비물",
     "catOther": "기타",
-    "catCustom": "기타..."
+    "catCustom": "기타...",
+    "baseCurrency": "(기본 통화)"
   },
   "more": {
     "workspaceTitle": "여행 워크스페이스",

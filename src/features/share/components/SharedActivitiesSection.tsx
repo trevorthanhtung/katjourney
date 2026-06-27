@@ -365,7 +365,7 @@ export function SharedActivitiesSection({
               )}
               {item.isPendingCreate && (
                 <span className="inline-flex items-center rounded-full bg-sky-50 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 px-2 py-0.5 text-[10px] font-bold text-sky-600 dark:text-sky-400 shrink-0 select-none animate-fadeIn">
-                  {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
+                  {changeRequests.find(r => String(r.id) === String(item.changeRequestId))?.status === 'auto_approved' ? t('common.savingBadge') : t('share.suggestAdd')}
                 </span>
               )}
               {item.isPendingUpdate && (

@@ -107,7 +107,11 @@
       "desc1": "Se KAT Journey ti è utile, puoi inviare un piccolo caffè per supportare il creatore nello sviluppo ulteriore dell'app.",
       "desc2": "Il supporto è facoltativo. Grazie per aver utilizzato KAT Journey.",
       "scanQR": "Scansiona il codice QR per trasferire",
-      "saveQR": "Salva il codice QR sul dispositivo"
+      "saveQR": "Salva il codice QR sul dispositivo",
+      "tabVietQR": "VietQR (VN)",
+      "tabInternational": "Internazionale",
+      "supportPayPal": "Supporta tramite PayPal",
+      "thankYou": "(Grazie per il tuo supporto!)"
     },
     "aboutView": {
       "subtitle": "Assistente di viaggio personale",
@@ -298,7 +302,9 @@
     "deleting": "Eliminazione...",
     "delete": "Elimina",
     "unknownLocation": "Luogo sconosciuto",
-    "archivedBanner": "Il viaggio è terminato — sola lettura, modifiche non consentite."
+    "archivedBanner": "Il viaggio è terminato — sola lettura, modifiche non consentite.",
+    "autoSavingTooltip": "Salvataggio automatico...",
+    "savingBadge": "Salvataggio..."
   },
   "sharedTrip": {
     "viewTitle": "Visualizza viaggio condiviso",
@@ -342,7 +348,16 @@
     "pastTripsDesc": "Viaggi terminati che possono essere rivisti.",
     "itinerary": "Itinerario",
     "expenses": "Spese",
-    "members": "Membri"
+    "members": "Membri",
+    "emptyTitle": "Nessun viaggio ancora",
+    "emptyDesc": "Pianifica nei dettagli, organizza i bagagli e gestisci in modo intelligente le spese per il tuo prossimo viaggio.",
+    "emptyFeature1": "Itinerario",
+    "emptyFeature1Desc": "Dettagli giornalieri",
+    "emptyFeature2": "Spese",
+    "emptyFeature2Desc": "Dividi le spese",
+    "emptyFeature3": "Bagagli",
+    "emptyFeature3Desc": "Valigie & oggetti",
+    "emptyCreateBtn": "Crea il tuo primo viaggio"
   },
   "archive": {
     "title": "Ricordi",
@@ -1295,7 +1310,8 @@
     "catEntertainment": "Intrattenimento",
     "catPreparation": "Preparativi",
     "catOther": "Altro",
-    "catCustom": "Altro..."
+    "catCustom": "Altro...",
+    "baseCurrency": "(Valuta base)"
   },
   "more": {
     "workspaceTitle": "Spazio di viaggio",

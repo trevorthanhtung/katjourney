@@ -107,7 +107,11 @@
       "desc1": "Si KAT Journey vous est utile, vous pouvez envoyer un petit café pour aider le créateur à développer l'application.",
       "desc2": "Le soutien est facultatif. Merci d'utiliser KAT Journey.",
       "scanQR": "Scanner le code QR pour transférer",
-      "saveQR": "Enregistrer le code QR sur l'appareil"
+      "saveQR": "Enregistrer le code QR sur l'appareil",
+      "tabVietQR": "VietQR (VN)",
+      "tabInternational": "International",
+      "supportPayPal": "Soutenir via PayPal",
+      "thankYou": "(Merci pour votre soutien!)"
     },
     "aboutView": {
       "subtitle": "Assistant de voyage personnel",
@@ -298,7 +302,9 @@
     "deleting": "Suppression...",
     "delete": "Supprimer",
     "unknownLocation": "Lieu inconnu",
-    "archivedBanner": "Le voyage est terminé — lecture seule, aucune modification."
+    "archivedBanner": "Le voyage est terminé — lecture seule, aucune modification.",
+    "autoSavingTooltip": "Sauvegarde automatique...",
+    "savingBadge": "Enregistrement..."
   },
   "sharedTrip": {
     "viewTitle": "Voir le voyage partagé",
@@ -342,7 +348,16 @@
     "pastTripsDesc": "Voyages terminés qui peuvent être passés en revue.",
     "itinerary": "Itinéraire",
     "expenses": "Dépenses",
-    "members": "Membres"
+    "members": "Membres",
+    "emptyTitle": "Pas encore de voyage",
+    "emptyDesc": "Planifiez en détail, organisez vos bagages et gérez intelligemment les dépenses de votre prochain voyage.",
+    "emptyFeature1": "Itinéraire",
+    "emptyFeature1Desc": "Détails journaliers",
+    "emptyFeature2": "Dépenses",
+    "emptyFeature2Desc": "Partager l'addition",
+    "emptyFeature3": "Bagages",
+    "emptyFeature3Desc": "Valises & articles",
+    "emptyCreateBtn": "Créer le premier voyage"
   },
   "archive": {
     "title": "Souvenirs",
@@ -1313,7 +1328,8 @@
     "catEntertainment": "Divertissement",
     "catPreparation": "Préparation",
     "catOther": "Autre",
-    "catCustom": "Autre..."
+    "catCustom": "Autre...",
+    "baseCurrency": "(Devise de base)"
   },
   "more": {
     "workspaceTitle": "Espace de voyage",

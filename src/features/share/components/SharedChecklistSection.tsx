@@ -419,12 +419,12 @@ export function SharedChecklistSection({
                     )}
                     {c.isPendingCreate && (
                       <span className="inline-flex items-center rounded-full bg-sky-50 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 px-2 py-0.5 text-[10px] font-bold text-sky-600 dark:text-sky-400 shrink-0 select-none animate-fadeIn">
-                        {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất mới'}
+                        {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? t('common.savingBadge') : t('share.suggestAdd')}
                       </span>
                     )}
                     {c.isPendingUpdate && (
                       <span className="inline-flex items-center rounded-full bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 shrink-0 select-none animate-fadeIn">
-                        {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? 'Đang lưu...' : 'Đề xuất sửa'}
+                        {changeRequests.find(r => String(r.id) === String(c.changeRequestId))?.status === 'auto_approved' ? t('common.savingBadge') : t('share.suggestEdit')}
                       </span>
                     )}
                   </div>
