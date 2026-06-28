@@ -10,6 +10,15 @@ import { numericToAlpha2 } from "../../lib/countryCodes";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShareMapModal } from "./ShareMapModal";
 
+function getFlagEmoji(countryCode: string) {
+  if (!countryCode) return "";
+  const codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+}
+
 interface AtlasScreenProps {
   isOpen: boolean;
   onClose: () => void;
@@ -200,182 +209,121 @@ export function AtlasScreen({
         </div>
       </div>
 
-      {/* HUD Overlay - 2027 Spatial UI */}
-      <div className="absolute inset-x-0 bottom-0 pointer-events-none p-6 md:p-10 flex flex-col justify-end items-center h-full z-10 overflow-hidden">
-        {/* Dynamic Island HUD */}
-        <div className="pointer-events-auto relative z-20 flex flex-col items-center w-full max-w-7xl mx-auto">
-          <AnimatePresence mode="wait">
-            {!isStatsExpanded ? (
-              <motion.button
-                key="pill"
-                initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsStatsExpanded(true)}
-                className="bg-white/5 backdrop-blur-3xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.5)] px-6 py-3 rounded-full flex items-center gap-4 group relative overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-sky-500/20 via-pink-500/20 to-sky-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl"></div>
-
-                {visitedCountries.length > 0 && (
-                  <div className="flex -space-x-2 mr-2">
-                    {visitedCountries.slice(0, 3).map((id, idx) => {
-                      const alpha2 = numericToAlpha2[id];
-                      if (!alpha2) return null;
-                      return (
-                        <img
-                          key={id}
-                          src={`https://flagcdn.com/w40/${alpha2.toLowerCase()}.png`}
-                          alt={alpha2}
-                          className="w-6 h-6 rounded-full object-cover border border-white/30 shadow-sm relative"
-                          style={{ zIndex: 3 - idx }}
-                        />
-                      );
-                    })}
-                    {visitedCountries.length > 3 && (
-                      <div className="w-6 h-6 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-[8px] font-bold text-white relative z-0">
-                        +{visitedCountries.length - 3}
-                      </div>
-                    )}
+      {/* HUD Overlay */}
+      <div className="absolute inset-x-0 bottom-0 pointer-events-none p-4 md:p-8 flex flex-col justify-end items-start h-full">
+        {/* Flags Card */}
+        {visitedCountries.length > 0 && (
+          <div className="pointer-events-auto bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl p-5 rounded-3xl shadow-xl border border-white/20 dark:border-slate-700/50 mb-4 max-w-md w-full animate-fade-in-up">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">
+                {t("atlas.stats.flagsCollected", "Flags collected")}
+              </div>
+              <div className="bg-pink-100 dark:bg-pink-500/20 text-pink-600 dark:text-pink-400 px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider">
+                {((visitedCountries.length / 195) * 100).toFixed(1)}%{" "}
+                {t("atlas.stats.ofWorld", "thế giới")}
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto no-scrollbar pr-2">
+              {visitedCountries.map((id) => {
+                const alpha2 = numericToAlpha2[id];
+                if (!alpha2) return null;
+                return (
+                  <div
+                    key={id}
+                    className="text-3xl drop-shadow-sm hover:scale-125 transition-transform cursor-help"
+                    title={countryStats[id]?.name}
+                  >
+                    {getFlagEmoji(alpha2)}
                   </div>
-                )}
+                );
+              })}
+            </div>
+          </div>
+        )}
 
-                <div className="flex items-center gap-3">
-                  <span className="text-white font-medium tracking-wide">
-                    {visitedCountries.length}{" "}
-                    <span className="text-white/60 text-[10px] uppercase tracking-[0.2em]">
-                      {t("dashboard.stats.countries", "Quốc gia")}
-                    </span>
-                  </span>
-                  <div className="w-1 h-1 rounded-full bg-white/30"></div>
-                  <span className="text-white font-medium tracking-wide">
-                    {propsTotalTrips}{" "}
-                    <span className="text-white/60 text-[10px] uppercase tracking-[0.2em]">
-                      {t("atlas.stats.trips", "Chuyến đi")}
-                    </span>
-                  </span>
-                </div>
+        {/* Main Stats Bar */}
+        <div className="pointer-events-auto bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl p-6 rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/50 w-full max-w-4xl flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-12 relative overflow-hidden">
+          {/* Ambient Glow */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-pink-500/5 dark:bg-pink-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
 
-                <div className="ml-2 w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-white/70 group-hover:bg-white/20 group-hover:text-white transition-colors">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 15l7-7 7 7"
-                    />
-                  </svg>
-                </div>
-              </motion.button>
-            ) : (
-              <motion.div
-                key="panel"
-                initial={{ opacity: 0, y: 50, scale: 0.95, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: 30, scale: 0.95, filter: "blur(10px)" }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="w-full max-w-[1000px] mx-auto bg-black/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-white/10 flex flex-col md:flex-row gap-2 relative shadow-[0_24px_64px_rgba(0,0,0,0.8)] md:h-[150px] items-stretch"
-              >
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-sky-500/10 via-pink-500/5 to-transparent rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+          {/* Countries Count */}
+          <div className="flex items-center gap-3">
+            <span className="text-5xl sm:text-6xl font-black text-slate-800 dark:text-white leading-none tracking-tighter">
+              {visitedCountries.length}
+            </span>
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-widest leading-tight">
+                {t("dashboard.stats.countries", "Quốc gia")}
+              </span>
+              <span className="text-[10px] font-bold text-pink-500 uppercase tracking-wider">
+                {((visitedCountries.length / 195) * 100).toFixed(1)}%{" "}
+                {t("atlas.stats.ofWorld", "thế giới")}
+              </span>
+            </div>
+          </div>
 
-                <button
-                  onClick={() => setIsStatsExpanded(false)}
-                  className="absolute -top-3 -right-3 w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 hover:bg-slate-700 text-white backdrop-blur-xl border border-white/20 transition-all z-30 shadow-xl"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+          {/* Vertical Divider */}
+          <div className="hidden md:block w-px h-12 bg-slate-200 dark:bg-slate-700"></div>
 
-                {/* Hero Card: Countries */}
-                <div className="flex-shrink-0 flex flex-col justify-between p-4 md:p-5 bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 rounded-[1.5rem] w-full md:w-56 relative overflow-hidden group shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
-                  <div className="absolute inset-0 bg-sky-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
-                  <div className="relative z-10 flex flex-col">
-                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/50 mb-1">
-                      {t("dashboard.stats.countries", "Quốc gia")}
-                    </span>
-                    <span className="text-[10px] font-medium text-sky-400 tracking-wider">
-                      {((visitedCountries.length / 195) * 100).toFixed(1)}%{" "}
-                      {t("dashboard.stats.world", "World")}
-                    </span>
-                  </div>
-                  <div className="relative z-10 flex items-end justify-between mt-auto">
-                    <span className="text-5xl font-black text-white tracking-tighter leading-none drop-shadow-md">
-                      {visitedCountries.length}
-                    </span>
-                    {visitedCountries.length > 0 && (
-                      <div className="flex -space-x-1.5 pb-1">
-                        {visitedCountries.slice(0, 3).map((id, idx) => {
-                          const alpha2 = numericToAlpha2[id];
-                          if (!alpha2) return null;
-                          return (
-                            <img
-                              key={id}
-                              src={`https://flagcdn.com/w20/${alpha2.toLowerCase()}.png`}
-                              alt={alpha2}
-                              className="w-6 h-6 rounded-full object-cover border border-white/20 shadow-sm relative"
-                              style={{ zIndex: 3 - idx }}
-                            />
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </div>
+          {/* Main Stats */}
+          <div className="flex flex-1 justify-between max-w-sm">
+            <div className="flex flex-col items-center justify-center">
+              <span className="text-2xl font-black text-slate-800 dark:text-white mb-0.5">
+                {propsTotalTrips}
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                {t("atlas.stats.trips", "Trips")}
+              </span>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <span className="text-2xl font-black text-slate-800 dark:text-white mb-0.5">
+                {totalPlaces}
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                {t("atlas.stats.places", "Places")}
+              </span>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <span className="text-2xl font-black text-slate-800 dark:text-white mb-0.5">
+                {totalCities}
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                {t("atlas.stats.cities", "Cities")}
+              </span>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <span className="text-2xl font-black text-slate-800 dark:text-white mb-0.5">
+                {totalDays}
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                {t("atlas.stats.days", "Days")}
+              </span>
+            </div>
+          </div>
 
-                {/* Number Grid Cards */}
-                <div className="flex-1 grid grid-cols-2 lg:grid-cols-4 gap-2 z-10">
-                  {[
-                    { label: t("atlas.stats.trips", "Chuyến đi"), value: propsTotalTrips },
-                    { label: t("atlas.stats.places", "Địa điểm"), value: totalPlaces },
-                    { label: t("atlas.stats.cities", "Thành phố"), value: totalCities },
-                    { label: t("atlas.stats.days", "Ngày"), value: totalDays },
-                  ].map((stat, i) => (
-                    <div
-                      key={i}
-                      className="flex flex-col items-center justify-center p-3 bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-[1.5rem] transition-all duration-300 group shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] h-full"
-                    >
-                      <span className="text-3xl lg:text-4xl font-extralight text-white mb-1 tabular-nums group-hover:scale-110 transition-transform duration-300 drop-shadow-md">
-                        {stat.value}
-                      </span>
-                      <span className="text-[9px] font-medium uppercase tracking-[0.2em] text-white/40 text-center leading-tight">
-                        {stat.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Last Trip Card */}
-                <div className="flex-shrink-0 flex flex-col justify-between p-4 md:p-5 bg-sky-500/10 border border-sky-400/20 rounded-[1.5rem] w-full md:w-56 relative overflow-hidden group shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
-                  <div className="absolute inset-0 bg-gradient-to-br from-sky-400/20 via-transparent to-transparent opacity-50"></div>
-                  <div className="relative z-10 flex flex-col">
-                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-sky-200/60 mb-1">
-                      {t("atlas.stats.lastTrip", "Chuyến đi cuối")}
-                    </span>
-                    <span className="text-sm md:text-base font-semibold text-white tracking-wide truncate max-w-full drop-shadow-md">
-                      {translatedLastTrip}
-                    </span>
-                  </div>
-                  <div className="relative z-10 flex items-end justify-between mt-auto">
-                    <span className="text-[9px] font-medium uppercase tracking-[0.2em] text-sky-200/60 mb-1">
-                      {t("atlas.stats.tripsIn", "Năm")} {new Date().getFullYear()}
-                    </span>
-                    <span className="text-4xl font-light text-sky-300 tabular-nums drop-shadow-[0_0_15px_rgba(56,189,248,0.4)]">
-                      {currentYearTrips}
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Secondary Stats Group */}
+          <div className="hidden lg:flex items-center gap-6 bg-slate-50 dark:bg-slate-900/50 py-3 px-6 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+            <div className="flex flex-col">
+              <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-slate-400 mb-0.5">
+                {t("atlas.stats.lastTrip", "Last Trip")}
+              </span>
+              <span className="text-[13px] font-black tracking-tight text-slate-800 dark:text-white">
+                {translatedLastTrip}
+              </span>
+            </div>
+            <div className="w-px h-8 bg-slate-200 dark:bg-slate-700"></div>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl font-black text-slate-800 dark:text-white leading-none">
+                {currentYearTrips}
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-slate-400 leading-tight w-16">
+                {t("atlas.stats.tripsIn", "Trips in")} {new Date().getFullYear()}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
+
       {/* Floating Tooltip */}
       {tooltip && (
         <div
