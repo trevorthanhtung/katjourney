@@ -701,43 +701,6 @@ function EventForm({
     </BottomSheet>
   );
 }
-// --- Optimize Route: Accommodation Marker ---
-function AccommodationMarker({
-  label,
-  hotelName,
-  position,
-}: {
-  label: string;
-  hotelName: string;
-  position: "start" | "end";
-}) {
-  return (
-    <div className={`relative flex gap-4 pl-1 ${position === "start" ? "mb-4" : "mt-4"}`}>
-      {/* Timeline connector */}
-      <div className="absolute bottom-0 left-[21px] top-0 w-0.5 bg-slate-200/80 dark:bg-slate-800" />
-
-      {/* Marker icon */}
-      <div className="relative z-10 flex shrink-0">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-600 shadow-none">
-          <HugeiconsIcon
-            icon={HotelIcon}
-            className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500"
-          />
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="flex items-center gap-2 min-h-[32px] pb-0.5">
-        <span className="text-[11.5px] font-semibold text-slate-400 dark:text-slate-500 italic">
-          {label}
-        </span>
-        <span className="text-[11.5px] font-bold text-slate-500 dark:text-slate-400 truncate max-w-[200px]">
-          {hotelName}
-        </span>
-      </div>
-    </div>
-  );
-}
 
 export function TimelineScreen({
   trip,
@@ -834,38 +797,6 @@ export function TimelineScreen({
   );
 
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
-
-  // --- Optimize Route ---
-  const [optimizeRoute, setOptimizeRoute] = useState(
-    () => localStorage.getItem("kat_optimize_route") === "true"
-  );
-  useEffect(() => {
-    const handleChange = () =>
-      setOptimizeRoute(localStorage.getItem("kat_optimize_route") === "true");
-    window.addEventListener("kat_settings_changed", handleChange);
-    window.addEventListener("storage", (e) => {
-      if (e.key === "kat_optimize_route") handleChange();
-    });
-    return () => {
-      window.removeEventListener("kat_settings_changed", handleChange);
-    };
-  }, []);
-
-  // Find accommodation for each day: use the accommodation activity from that day, or fallback to the most recent one before
-  const getAccommodationForDay = (day: string): EventItem | null => {
-    if (!optimizeRoute) return null;
-    // First: check if there's an accommodation activity ON this day
-    const onDay = events.find((e) => e.date === day && e.type === "accommodation" && !e.isDeleted);
-    if (onDay) return onDay;
-    // Fallback: find the most recent accommodation activity from a previous day
-    const prevDays = days.filter((d) => d < day).reverse();
-    for (const d of prevDays) {
-      const acc = events.find((e) => e.date === d && e.type === "accommodation" && !e.isDeleted);
-      if (acc) return acc;
-    }
-    // Final fallback: any accommodation in the trip
-    return events.find((e) => e.type === "accommodation" && !e.isDeleted) || null;
-  };
 
   const backupPlans =
     useLiveQuery(
@@ -995,16 +926,6 @@ export function TimelineScreen({
           const dayExpenses = expenses.filter((exp) => exp.date === day);
           const totalDayExpense = dayExpenses.reduce((sum, exp) => sum + exp.amount, 0);
 
-          // Optimize Route: find accommodation for this day
-          const accommodation = getAccommodationForDay(day);
-          const hotelName = accommodation?.title || accommodation?.location || "";
-          // Only show markers if there are non-accommodation activities
-          const hasNonAccommodation = dayEvents.some((e) => e.type !== "accommodation");
-          const showRouteMarkers =
-            optimizeRoute && accommodation && hotelName && hasNonAccommodation;
-          const isFirstDay = index === 0;
-          const isLastDay = index === days.length - 1;
-
           return (
             <div key={day} className="space-y-4">
               <DayHeader
@@ -1015,19 +936,6 @@ export function TimelineScreen({
                 mapUrl={trip.dayRoadmaps?.[day]}
               />
               <div className="px-1">
-                {/* Optimize Route: Departure marker */}
-                {showRouteMarkers && (
-                  <AccommodationMarker
-                    label={
-                      isFirstDay
-                        ? t("timeline.routeStartFrom", "Xuất phát từ")
-                        : t("timeline.routeDepartFrom", "Khởi hành từ")
-                    }
-                    hotelName={hotelName}
-                    position="start"
-                  />
-                )}
-
                 {dayEvents.map((item, idx) => (
                   <ActivityCard
                     key={item.id}
@@ -1048,19 +956,6 @@ export function TimelineScreen({
                     onAddExpense={onAddExpense ? () => onAddExpense(day, item.id!) : undefined}
                   />
                 ))}
-
-                {/* Optimize Route: Return marker */}
-                {showRouteMarkers && (
-                  <AccommodationMarker
-                    label={
-                      isLastDay
-                        ? t("timeline.routeEndAt", "Kết thúc tại")
-                        : t("timeline.routeReturnTo", "Quay về")
-                    }
-                    hotelName={hotelName}
-                    position="end"
-                  />
-                )}
               </div>
             </div>
           );

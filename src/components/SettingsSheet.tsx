@@ -184,9 +184,6 @@ export function SettingsSheet({
   const [distanceUnit, setDistanceUnit] = useState<"km" | "mi">(
     (localStorage.getItem("kat_distance_unit") as "km" | "mi") || "km"
   );
-  const [optimizeRoute, setOptimizeRoute] = useState(
-    localStorage.getItem("kat_optimize_route") === "true"
-  );
 
   const toggleTemperatureUnit = () => {
     const newUnit = temperatureUnit === "C" ? "F" : "C";
@@ -199,13 +196,6 @@ export function SettingsSheet({
     const newUnit = distanceUnit === "km" ? "mi" : "km";
     setDistanceUnit(newUnit);
     localStorage.setItem("kat_distance_unit", newUnit);
-    window.dispatchEvent(new Event("kat_settings_changed"));
-  };
-
-  const toggleOptimizeRoute = () => {
-    const newVal = !optimizeRoute;
-    setOptimizeRoute(newVal);
-    localStorage.setItem("kat_optimize_route", String(newVal));
     window.dispatchEvent(new Event("kat_settings_changed"));
   };
 
@@ -1022,44 +1012,6 @@ export function SettingsSheet({
                       className="flex h-8 w-14 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm relative z-10 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors uppercase"
                     >
                       {distanceUnit}
-                    </button>
-                  </div>
-
-                  {/* Optimize Route from Accommodation */}
-                  <div className="group relative flex items-center justify-between w-full p-3 rounded-[16px] transition-all hover:bg-pink-50 dark:hover:bg-pink-500/10">
-                    <div className="flex items-center gap-4 relative z-10 min-w-0">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-100 text-pink-600 dark:bg-pink-900/40 dark:text-pink-400">
-                        <HugeiconsIcon
-                          icon={GitMergeIcon}
-                          className="h-5 w-5 transition-transform group-hover:scale-110"
-                        />
-                      </div>
-                      <div className="min-w-0 text-left">
-                        <h4 className="text-[14px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
-                          {t("settings.menu.optimizeRoute.title", "Tối ưu lộ trình")}
-                        </h4>
-                        <p className="text-[11.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
-                          {t("settings.menu.optimizeRoute.desc", "Tự tính theo khách sạn lưu trú")}
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={optimizeRoute}
-                      onClick={toggleOptimizeRoute}
-                      className={classNames(
-                        optimizeRoute ? "bg-pink-500" : "bg-slate-200 dark:bg-slate-700",
-                        "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none z-10"
-                      )}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={classNames(
-                          optimizeRoute ? "translate-x-5" : "translate-x-0",
-                          "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
-                        )}
-                      />
                     </button>
                   </div>
                 </div>
