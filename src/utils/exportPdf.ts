@@ -188,10 +188,21 @@ export function exportTripPdf(data: TripData) {
     Y += 14;
   } else {
     sortedEvents.forEach((event, idx) => {
+      doc.setFontSize(8);
+      const titleLines = doc.splitTextToSize(event.title, tCols[2][2] - 4) as string[];
+      doc.setFontSize(7);
       const noteLines = event.notes
         ? (doc.splitTextToSize(event.notes, tCols[2][2] - 4) as string[])
         : [];
-      const rowH2 = Math.max(9, 5 + noteLines.length * 4);
+      doc.setFontSize(8);
+      const locLines = doc.splitTextToSize(event.location || "—", tCols[3][2] - 4) as string[];
+
+      const titleH = titleLines.length * 4;
+      const noteH = noteLines.length > 0 ? noteLines.length * 4 : 0;
+      const col2H = titleH + noteH;
+      const col3H = locLines.length * 4;
+
+      const rowH2 = Math.max(9, 5 + Math.max(col2H, col3H));
 
       checkSpace(rowH2 + 1);
 
@@ -226,18 +237,19 @@ export function exportTripPdf(data: TripData) {
       doc.text(event.time || "—", MARGIN_L + tCols[1][1] + 2, Y + 5.5);
       // Col 2: Activity + notes
       doc.setTextColor(...C_NAVY);
-      doc.text(event.title, MARGIN_L + tCols[2][1] + 2, Y + 5.5);
+      titleLines.forEach((line, li) => {
+        doc.text(line, MARGIN_L + tCols[2][1] + 2, Y + 5.5 + li * 4);
+      });
       if (noteLines.length > 0) {
         doc.setFontSize(7);
         doc.setTextColor(...C_SLATE);
         noteLines.forEach((line, li) => {
-          doc.text(line, MARGIN_L + tCols[2][1] + 2, Y + 9.5 + li * 4);
+          doc.text(line, MARGIN_L + tCols[2][1] + 2, Y + 5.5 + titleH + li * 4);
         });
       }
       // Col 3: Location
       doc.setFontSize(8);
       doc.setTextColor(...C_SLATE);
-      const locLines = doc.splitTextToSize(event.location || "—", tCols[3][2] - 4) as string[];
       locLines.forEach((line, li) => {
         doc.text(line, MARGIN_L + tCols[3][1] + 2, Y + 5.5 + li * 4);
       });
@@ -390,153 +402,216 @@ export function exportItineraryPdf(data: TripData) {
   doc.setFont("Roboto", "normal");
 
   const PAGE_W = 210;
+  const PAGE_H = 297;
   const MARGIN_L = 20;
   const MARGIN_R = 20;
   const CONTENT_W = PAGE_W - MARGIN_L - MARGIN_R; // 170mm
   const PAGE_BOTTOM = 275;
 
-  // Color constants
-  const C_NAVY: [number, number, number] = [3, 13, 46];
-  const C_SLATE: [number, number, number] = [100, 116, 139];
-  const C_BORDER: [number, number, number] = [189, 195, 199];
-  const C_TABLE_HEADER: [number, number, number] = [52, 73, 94];
+  // Color constants - Modern Palette
+  const C_KAT_TEAL: [number, number, number] = [0, 191, 183];
+  const C_NAVY: [number, number, number] = [15, 23, 42]; // slate-900
+  const C_SLATE: [number, number, number] = [100, 116, 139]; // slate-500
+  const C_SLATE_LIGHT: [number, number, number] = [226, 232, 240]; // slate-200
   const C_WHITE: [number, number, number] = [255, 255, 255];
+  const C_BG_LIGHT: [number, number, number] = [248, 250, 252]; // slate-50
 
-  let Y = 30;
+  let Y = 35;
 
   function checkSpace(needed: number) {
     if (Y + needed > PAGE_BOTTOM) {
       doc.addPage();
       Y = 25;
+      return true;
     }
+    return false;
   }
 
-  function hLine(y: number) {
-    doc.setDrawColor(...C_BORDER);
-    doc.setLineWidth(0.3);
-    doc.line(MARGIN_L, y, PAGE_W - MARGIN_R, y);
-  }
+  // Header Design
+  doc.setFillColor(...C_KAT_TEAL);
+  doc.rect(0, 0, PAGE_W, 20, "F");
 
-  // Header
-  doc.setFontSize(16);
-  doc.setTextColor(...C_NAVY);
-  doc.text(`Lịch trình: ${trip.title || "Không tên"}`, PAGE_W / 2, Y, { align: "center" });
-  Y += 5;
-  hLine(Y);
-  Y += 10;
-
-  // Column definitions: [label, x-offset from MARGIN_L, width]
-  const tCols: [string, number, number][] = [
-    ["Ngày", 0, 28],
-    ["Giờ", 28, 16],
-    ["Hoạt động & Ghi chú", 44, 66],
-    [i18n.t("export.location"), 110, 42],
-    ["Trạng thái [ ]", 152, 18],
-  ];
-  const tHeaderH = 8;
-
-  checkSpace(tHeaderH + 2);
-
-  // Draw header row
-  doc.setFillColor(...C_TABLE_HEADER);
-  doc.setDrawColor(...C_BORDER);
-  doc.setLineWidth(0.3);
-  doc.rect(MARGIN_L, Y, CONTENT_W, tHeaderH, "FD");
-
-  doc.setFontSize(8);
+  doc.setFontSize(18);
   doc.setTextColor(...C_WHITE);
-  tCols.forEach(([label, ox]) => {
-    doc.text(label, MARGIN_L + ox + 2, Y + 5.5);
-  });
-  Y += tHeaderH;
+  doc.setFont("Roboto", "bold");
+  doc.text("LỊCH TRÌNH CHUYẾN ĐI", MARGIN_L, 13);
 
-  // Rows
+  doc.setFontSize(10);
+  doc.setFont("Roboto", "normal");
+  doc.text("KAT Journey", PAGE_W - MARGIN_R, 13, { align: "right" });
+
+  // Trip Title
+  doc.setFontSize(22);
+  doc.setTextColor(...C_NAVY);
+  doc.setFont("Roboto", "bold");
+  const titleLines = doc.splitTextToSize(trip.title || "Chuyến đi chưa đặt tên", CONTENT_W);
+  doc.text(titleLines, MARGIN_L, Y);
+  Y += titleLines.length * 8;
+
+  // Trip Location & Date
+  doc.setFontSize(11);
+  doc.setTextColor(...C_SLATE);
+  doc.setFont("Roboto", "normal");
+
+  const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
+  const dateText = isDayTrip
+    ? formatDate(trip.startDate)
+    : `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}`;
+
+  doc.text(`📍 ${trip.location || "Chưa xác định địa điểm"}`, MARGIN_L, Y);
+  Y += 6;
+  doc.text(`📅 ${dateText}`, MARGIN_L, Y);
+  Y += 12;
+
+  // Group events by date
   const sortedEvents = [...events]
     .filter((e) => !e.isDeleted)
     .sort((a, b) => a.date.localeCompare(b.date) || (a.time || "").localeCompare(b.time || ""));
 
   if (sortedEvents.length === 0) {
-    checkSpace(10);
-    doc.setFillColor(250, 250, 250);
-    doc.setDrawColor(...C_BORDER);
-    doc.rect(MARGIN_L, Y, CONTENT_W, 10, "FD");
-    doc.setFontSize(8.5);
+    doc.setFontSize(12);
     doc.setTextColor(...C_SLATE);
-    doc.text("Chưa có hoạt động nào trong lịch trình.", MARGIN_L + 3, Y + 6.5);
-    Y += 14;
+    doc.text("Chưa có hoạt động nào trong lịch trình.", MARGIN_L, Y);
   } else {
-    sortedEvents.forEach((event, idx) => {
-      const noteLines = event.notes
-        ? (doc.splitTextToSize(event.notes, tCols[2][2] - 4) as string[])
-        : [];
-      const rowH2 = Math.max(9, 5 + noteLines.length * 4);
+    // Columns: [Giờ, Hoạt động, Địa điểm, Check]
+    const tCols = [
+      { label: "Giờ", x: 0, w: 18 },
+      { label: "Hoạt động & Ghi chú", x: 18, w: 76 },
+      { label: "Địa điểm", x: 94, w: 64 },
+      { label: "Check", x: 158, w: 12 },
+    ];
 
-      checkSpace(rowH2 + 1);
+    let currentDate = "";
 
-      // Alternating row bg
-      if (idx % 2 === 0) {
-        doc.setFillColor(248, 249, 250);
-      } else {
-        doc.setFillColor(255, 255, 255);
-      }
-      doc.setDrawColor(...C_BORDER);
-      doc.setLineWidth(0.2);
-      doc.rect(MARGIN_L, Y, CONTENT_W, rowH2, "FD");
+    sortedEvents.forEach((event) => {
+      // Draw Day Header if date changes
+      if (event.date !== currentDate) {
+        currentDate = event.date;
 
-      // Draw vertical col dividers
-      let runX = MARGIN_L;
-      tCols.forEach(([, , w], ci) => {
-        if (ci > 0) {
-          doc.setDrawColor(...C_BORDER);
-          doc.setLineWidth(0.2);
-          doc.line(runX, Y, runX, Y + rowH2);
-        }
-        runX += w;
-      });
+        checkSpace(25);
+        Y += 6;
 
-      doc.setFontSize(8);
-      doc.setTextColor(...C_NAVY);
+        // Day Header Banner
+        doc.setFillColor(...C_NAVY);
+        doc.roundedRect(MARGIN_L, Y, CONTENT_W, 10, 2, 2, "F");
 
-      // Col 0: Date
-      doc.text(formatDate(event.date), MARGIN_L + tCols[0][1] + 2, Y + 5.5);
-      // Col 1: Time
-      doc.setTextColor(...C_SLATE);
-      doc.text(event.time || "—", MARGIN_L + tCols[1][1] + 2, Y + 5.5);
-      // Col 2: Activity + notes
-      doc.setTextColor(...C_NAVY);
-      doc.text(event.title, MARGIN_L + tCols[2][1] + 2, Y + 5.5);
-      if (noteLines.length > 0) {
-        doc.setFontSize(7);
+        doc.setFontSize(11);
+        doc.setTextColor(...C_WHITE);
+        doc.setFont("Roboto", "bold");
+        doc.text(formatDate(event.date), MARGIN_L + 4, Y + 6.5);
+        Y += 10;
+
+        // Table Header
+        doc.setFillColor(...C_BG_LIGHT);
+        doc.rect(MARGIN_L, Y, CONTENT_W, 8, "F");
+        doc.setDrawColor(...C_SLATE_LIGHT);
+        doc.setLineWidth(0.3);
+        doc.line(MARGIN_L, Y + 8, PAGE_W - MARGIN_R, Y + 8);
+
+        doc.setFontSize(9);
         doc.setTextColor(...C_SLATE);
-        noteLines.forEach((line, li) => {
-          doc.text(line, MARGIN_L + tCols[2][1] + 2, Y + 9.5 + li * 4);
+        doc.setFont("Roboto", "bold");
+        tCols.forEach((col) => {
+          doc.text(col.label, MARGIN_L + col.x + 2, Y + 5.5);
+        });
+        Y += 8;
+        doc.setFont("Roboto", "normal");
+      }
+
+      // Calculate row height based on text wrapping
+      doc.setFontSize(9);
+      const titleWrap = doc.splitTextToSize(event.title, tCols[1].w - 4) as string[];
+      doc.setFontSize(8);
+      const noteWrap = event.notes
+        ? (doc.splitTextToSize(event.notes, tCols[1].w - 4) as string[])
+        : [];
+      const locWrap = doc.splitTextToSize(event.location || "—", tCols[2].w - 4) as string[];
+
+      const titleH = titleWrap.length * 4.5;
+      const noteH = noteWrap.length > 0 ? 2 + noteWrap.length * 3.5 : 0;
+      const col2H = titleH + noteH;
+      const col3H = locWrap.length * 4.5;
+
+      const contentH = Math.max(col2H, col3H);
+      const rowH = Math.max(10, contentH + 6); // Add 6mm padding (3 top, 3 bottom)
+
+      // Add page if needed, but redraw headers? For simplicity, just add page.
+      if (checkSpace(rowH)) {
+        // Redraw table header if we jumped to a new page
+        doc.setFillColor(...C_BG_LIGHT);
+        doc.rect(MARGIN_L, Y, CONTENT_W, 8, "F");
+        doc.setDrawColor(...C_SLATE_LIGHT);
+        doc.setLineWidth(0.3);
+        doc.line(MARGIN_L, Y + 8, PAGE_W - MARGIN_R, Y + 8);
+
+        doc.setFontSize(9);
+        doc.setTextColor(...C_SLATE);
+        doc.setFont("Roboto", "bold");
+        tCols.forEach((col) => {
+          doc.text(col.label, MARGIN_L + col.x + 2, Y + 5.5);
+        });
+        Y += 8;
+        doc.setFont("Roboto", "normal");
+      }
+
+      // Draw Row Bottom Border
+      doc.setDrawColor(...C_SLATE_LIGHT);
+      doc.setLineWidth(0.2);
+      doc.line(MARGIN_L, Y + rowH, PAGE_W - MARGIN_R, Y + rowH);
+
+      const textY = Y + 4.5;
+
+      // Time
+      doc.setFontSize(9);
+      doc.setTextColor(...C_NAVY);
+      doc.setFont("Roboto", "bold");
+      doc.text(event.time || "—", MARGIN_L + tCols[0].x + 2, textY);
+      doc.setFont("Roboto", "normal");
+
+      // Activity
+      doc.setTextColor(...C_NAVY);
+      titleWrap.forEach((line, li) => {
+        doc.text(line, MARGIN_L + tCols[1].x + 2, textY + li * 4.5);
+      });
+      if (noteWrap.length > 0) {
+        doc.setFontSize(8);
+        doc.setTextColor(...C_SLATE);
+        noteWrap.forEach((line, li) => {
+          doc.text(line, MARGIN_L + tCols[1].x + 2, textY + titleH + 1 + li * 3.5);
         });
       }
-      // Col 3: Location
+
+      // Location
       doc.setFontSize(8);
       doc.setTextColor(...C_SLATE);
-      const locLines = doc.splitTextToSize(event.location || "—", tCols[3][2] - 4) as string[];
-      locLines.forEach((line, li) => {
-        doc.text(line, MARGIN_L + tCols[3][1] + 2, Y + 5.5 + li * 4);
+      locWrap.forEach((line, li) => {
+        doc.text(line, MARGIN_L + tCols[2].x + 2, textY + li * 4.5);
       });
-      // Col 4: Status checkbox
-      doc.setTextColor(...C_NAVY);
-      doc.text(event.completed ? "[x]" : "[ ]", MARGIN_L + tCols[4][1] + 4, Y + 5.5);
 
-      Y += rowH2;
+      // Status
+      doc.setTextColor(...C_SLATE);
+      doc.text(event.completed ? "[ x ]" : "[   ]", MARGIN_L + tCols[3].x + 2, textY);
+
+      Y += rowH;
     });
   }
 
-  // Footer
+  // Footer for all pages
   const totalPages = (doc as any).getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
-    doc.setFont("Roboto", "normal");
-    doc.setFontSize(7.5);
+    doc.setFontSize(8);
     doc.setTextColor(...C_SLATE);
-    hLine(282);
-    doc.text("thanhtungg. - Lịch trình chuyến đi", MARGIN_L, 287);
-    doc.text(`Trang ${i} / ${totalPages}`, PAGE_W - MARGIN_R, 287, { align: "right" });
+
+    // Top-right banner text if needed? Already handled by the header rect.
+
+    // Footer line
+    doc.setDrawColor(...C_SLATE_LIGHT);
+    doc.setLineWidth(0.3);
+    doc.line(MARGIN_L, PAGE_BOTTOM + 5, PAGE_W - MARGIN_R, PAGE_BOTTOM + 5);
+
+    doc.text("Lịch trình tạo bởi KAT Journey", MARGIN_L, PAGE_BOTTOM + 10);
+    doc.text(`Trang ${i} / ${totalPages}`, PAGE_W - MARGIN_R, PAGE_BOTTOM + 10, { align: "right" });
   }
 
   doc.save(`KAT-Journey_LichTrinh_${safeFileName(trip.title)}_${trip.startDate || today}.pdf`);
