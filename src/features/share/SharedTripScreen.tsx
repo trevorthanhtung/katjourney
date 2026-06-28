@@ -36,7 +36,7 @@ import {
   InformationCircleIcon,
 } from "@hugeicons/core-free-icons";
 import { RolesHelpSheet } from "../../components/RolesHelpSheet";
-import { getViewShareData } from "../../services/cloudShareService";
+import {} from "../../services/cloudShareService";
 import {
   formatDate,
   classNames,
@@ -99,6 +99,12 @@ import { useSharedTrip } from "../../hooks/useSharedTrip";
 import { useSharedTripAuth } from "./hooks/useSharedTripAuth";
 import { useSharedTripNavigation } from "./hooks/useSharedTripNavigation";
 import { useSharedTripIdentity } from "./hooks/useSharedTripIdentity";
+
+import { SharedTripBanner } from "./components/SharedTripBanner";
+import { SharedTripStickyHeader } from "./components/SharedTripStickyHeader";
+import { SharedTripMobileNav } from "./components/SharedTripMobileNav";
+import { SharedTripPinGate } from "./components/SharedTripPinGate";
+import { SharedTripIdentityModal } from "./components/SharedTripIdentityModal";
 
 export default function SharedTripScreen({ token }: { token: string }) {
   const { t } = useTranslation();
@@ -415,66 +421,14 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   if (isPinRequired) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-slate-50 dark:bg-[#0A1124] p-4 animate-fadeIn overflow-hidden z-50">
-        <div className="w-full max-w-md max-h-[90dvh] rounded-[32px] bg-white dark:bg-slate-900 p-6 shadow-xl border border-slate-100 dark:border-slate-800/80 animate-scaleIn flex flex-col relative">
-          <div className="flex flex-col items-center text-center shrink-0">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 mb-4">
-              <HugeiconsIcon icon={SecurityWarningIcon} className="h-8 w-8" />
-            </div>
-            <h2 className="text-[22px] font-extrabold text-kat-dark tracking-tight flex items-center justify-center gap-1.5">
-              <span>{t("share.checkpoint")}</span>
-            </h2>
-            <p className="mt-2 text-[14px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-              {t("share.pinProtected")}
-            </p>
-          </div>
-
-          <div className="mt-6 flex-1 min-h-0 flex flex-col">
-            <div className="space-y-5">
-              <div className="flex gap-3 justify-center py-2">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <input
-                    key={i}
-                    type="password"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={1}
-                    id={`share-pin-digit-${i}`}
-                    autoComplete="one-time-code"
-                    spellCheck={false}
-                    value={pinInput[i] || ""}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, "");
-                      handlePinInput(val, i);
-                    }}
-                    onKeyDown={(e) => {
-                      handlePinBackspace(e.key, i);
-                    }}
-                    className={classNames(
-                      "w-12 h-12 rounded-xl border-2 text-center text-[20px] font-black focus:ring-2 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
-                      pinError
-                        ? "border-rose-300 dark:border-rose-900/30 bg-rose-50 dark:bg-rose-950/20 text-rose-900 dark:text-rose-400 focus:border-rose-400 focus:ring-rose-200"
-                        : "border-slate-200 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-200 focus:border-kat-dark dark:focus:border-slate-400 focus:ring-[#030D2E]/20 dark:focus:ring-white/10"
-                    )}
-                  />
-                ))}
-              </div>
-              {pinError && (
-                <p className="text-center text-xs font-bold text-rose-500">
-                  {t("share.pinIncorrect")}
-                </p>
-              )}
-              <button
-                disabled={pinInput.length < 4}
-                onClick={confirmPin}
-                className="w-full rounded-[16px] bg-kat-dark dark:bg-kat-primary py-3 text-[14px] font-black text-white dark:text-slate-950 transition-all active:scale-[0.98] shadow-sm hover:bg-[#0a1a5c] dark:hover:brightness-110 disabled:opacity-50 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 disabled:pointer-events-none"
-              >
-                {t("share.confirmPin")}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <SharedTripPinGate
+        pinInput={pinInput}
+        pinError={pinError}
+        handlePinInput={handlePinInput}
+        handlePinBackspace={handlePinBackspace}
+        confirmPin={confirmPin}
+        t={t}
+      />
     );
   }
 
@@ -669,153 +623,25 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   if (showIdentityModal) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-slate-50 dark:bg-[#0A1124] p-4 animate-fadeIn overflow-hidden z-50">
-        <div className="w-full max-w-md max-h-[90dvh] rounded-[32px] bg-white dark:bg-kat-surface p-6 shadow-xl border border-slate-100 dark:border-slate-800/80 animate-scaleIn flex flex-col relative">
-          {/* Close button — only show when user already has an identity (re-selecting) */}
-          {currentUser && (
-            <button
-              onClick={() => {
-                localStorage.removeItem("kat_pending_swap_" + trip.id);
-                setShowIdentityModal(false);
-              }}
-              className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors z-10"
-              title={t("common.close")}
-            >
-              <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
-            </button>
-          )}
-          <div className="flex flex-col items-center text-center shrink-0">
-            {/* Icon */}
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 mb-4">
-              <HugeiconsIcon icon={UserGroupIcon} className="h-8 w-8" />
-            </div>
-
-            <h2 className="text-[22px] font-extrabold text-kat-dark tracking-tight flex items-center justify-center gap-1.5">
-              <span>{t("share.whoAreYou")}</span>
-              <button
-                type="button"
-                onClick={() => setIsRolesHelpOpen(true)}
-                className="text-slate-400 hover:text-kat-teal transition-colors p-1 flex items-center justify-center"
-                title={t("roles.info") || "Role Information"}
-              >
-                <HugeiconsIcon icon={InformationCircleIcon} className="h-4.5 w-4.5" />
-              </button>
-            </h2>
-            <p className="mt-2 text-[14px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
-              {t("share.selectYourName")}
-            </p>
-          </div>
-
-          <div className="mt-6 flex-1 min-h-0 flex flex-col">
-            <div className="space-y-3 flex-1 min-h-0 flex flex-col">
-              {/* Search Bar */}
-              <div className="relative shrink-0">
-                <input
-                  type="text"
-                  value={memberSearchQuery}
-                  onChange={(e) => setMemberSearchQuery(e.target.value)}
-                  placeholder={t("share.searchMember")}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl text-[14px] font-semibold text-kat-dark placeholder:text-slate-400 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-none focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 focus:bg-white dark:focus:bg-slate-800 transition-all duration-200"
-                />
-                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                  <HugeiconsIcon icon={Search01Icon} className="w-4 h-4" />
-                </div>
-                {memberSearchQuery && (
-                  <button
-                    onClick={() => setMemberSearchQuery("")}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1"
-                  >
-                    <HugeiconsIcon icon={Cancel01Icon} className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-
-              <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60 border border-slate-100 dark:border-slate-800/60 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 custom-scrollbar">
-                {(() => {
-                  const filteredMembers = members.filter((m: Member) => {
-                    const roleLower = (m.role || "").trim().toLowerCase();
-                    const matchesSearch =
-                      memberSearchQuery.trim() === "" ||
-                      m.name.toLowerCase().includes(memberSearchQuery.toLowerCase());
-                    return (
-                      matchesSearch &&
-                      !(
-                        roleLower === "trưởng nhóm" ||
-                        roleLower === "trưởng đoàn" ||
-                        roleLower === "người đại diện" ||
-                        roleLower === "leader"
-                      )
-                    );
-                  });
-
-                  if (filteredMembers.length === 0) {
-                    return (
-                      <div className="p-8 text-center text-slate-400 dark:text-slate-500 select-none">
-                        <HugeiconsIcon
-                          icon={Search01Icon}
-                          className="w-8 h-8 mx-auto mb-2 text-slate-350 dark:text-slate-600"
-                        />
-                        <p className="text-xs font-semibold">{t("share.memberNotFound")}</p>
-                      </div>
-                    );
-                  }
-
-                  return filteredMembers.map((m: Member) => (
-                    <button
-                      key={m.id}
-                      onClick={() => {
-                        const guest = { name: m.name, role: m.role, isGuest: true, canEdit: true };
-                        saveIdentity(guest, trip.id);
-                        localStorage.removeItem("kat_pending_swap_" + trip.id);
-                        setCurrentUser(guest);
-                        setShowIdentityModal(false);
-                        setIdentityChecked(true);
-                        setIsBannerVisible(true);
-                      }}
-                      className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"
-                    >
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700">
-                        {m.avatar ? (
-                          getAvatarSvg(m.avatar, "w-full h-full")
-                        ) : (
-                          <HugeiconsIcon icon={UserGroupIcon} className="h-4 w-4 text-slate-400" />
-                        )}
-                      </div>
-                      <div className="flex items-center justify-between flex-1 pr-1">
-                        <span className="text-[14px] font-bold text-slate-800 dark:text-slate-200">
-                          {m.name}
-                        </span>
-                        {renderRoleIcons(m.role || "")}
-                      </div>
-                    </button>
-                  ));
-                })()}
-              </div>
-
-              <button
-                onClick={() => {
-                  const guest = { name: "Người xem", isGuest: true, canEdit: false };
-                  saveIdentity(guest, trip.id);
-                  localStorage.removeItem("kat_pending_swap_" + trip.id);
-                  setCurrentUser(guest);
-                  setShowIdentityModal(false);
-                  setIdentityChecked(true);
-                  setIsBannerVisible(true);
-                }}
-                className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors border border-slate-100 dark:border-slate-800/60 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 shrink-0"
-              >
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-400">
-                  <HugeiconsIcon icon={GlobeIcon} className="h-4 w-4" />
-                </div>
-                <span className="text-[14px] font-bold text-slate-600 dark:text-slate-300">
-                  {t("share.justWantToView")}
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
+      <>
+        <SharedTripIdentityModal
+          currentUser={currentUser}
+          trip={trip}
+          members={members}
+          memberSearchQuery={memberSearchQuery}
+          setMemberSearchQuery={setMemberSearchQuery}
+          saveIdentity={saveIdentity}
+          setCurrentUser={setCurrentUser}
+          setShowIdentityModal={setShowIdentityModal}
+          setIdentityChecked={setIdentityChecked}
+          setIsBannerVisible={setIsBannerVisible}
+          setIsRolesHelpOpen={setIsRolesHelpOpen}
+          t={t}
+          getAvatarSvg={getAvatarSvg}
+          renderRoleIcons={renderRoleIcons}
+        />
         <RolesHelpSheet isOpen={isRolesHelpOpen} onClose={() => setIsRolesHelpOpen(false)} />
-      </div>
+      </>
     );
   }
 
@@ -830,115 +656,29 @@ export default function SharedTripScreen({ token }: { token: string }) {
       }
     >
       {/* Banner */}
-      {isBannerVisible &&
-        currentUser &&
-        currentUser.canEdit &&
-        (userRoleLower.includes("tài xế") ||
-          userRoleLower.includes("dẫn đường") ||
-          userRoleLower.includes("quản lý chi phí") ||
-          canRequestEdit) && (
-          <div
-            className={classNames(
-              "py-2.5 px-4 shadow-md select-none border-b",
-              userRoleLower.includes("tài xế") ||
-                userRoleLower.includes("dẫn đường") ||
-                userRoleLower.includes("quản lý chi phí")
-                ? "text-emerald-900 border-emerald-200/50 bg-gradient-to-r from-emerald-50 via-emerald-100/80 to-teal-50/50 dark:text-white dark:border-white/5 dark:bg-gradient-to-r dark:from-[#003830] dark:via-[#005c56] dark:to-[#004c43]"
-                : "text-sky-900 border-sky-200/50 bg-gradient-to-r from-sky-50 via-sky-100/80 to-indigo-50/50 dark:text-white dark:border-white/5 dark:bg-gradient-to-r dark:from-[#0a122c] dark:via-[#0f1d4a] dark:to-[#161330]"
-            )}
-          >
-            <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2.5 text-[12px] font-bold text-slate-800 dark:text-white/90">
-                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
-                  <HugeiconsIcon icon={PencilEdit01Icon} className="h-3 w-3" />
-                </div>
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span
-                    className={classNames(
-                      "px-1.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border border-white/10",
-                      userRoleLower.includes("tài xế") ||
-                        userRoleLower.includes("dẫn đường") ||
-                        userRoleLower.includes("quản lý chi phí")
-                        ? "bg-kat-teal/20 text-kat-teal"
-                        : "bg-amber-500/20 text-amber-300"
-                    )}
-                  >
-                    {userRoleLower.includes("tài xế") ||
-                    userRoleLower.includes("dẫn đường") ||
-                    userRoleLower.includes("quản lý chi phí")
-                      ? t("sharedScreen.bannerDirectEdit")
-                      : t("sharedScreen.bannerSuggestMode")}
-                  </span>
-                  <span className="text-white/85 font-medium">
-                    {userRoleLower.includes("tài xế") ||
-                    userRoleLower.includes("dẫn đường") ||
-                    userRoleLower.includes("quản lý chi phí")
-                      ? t("sharedScreen.bannerDirectEditDesc", {
-                          role: getTranslatedRoles(currentUser?.role || ""),
-                        })
-                      : t("sharedScreen.bannerSuggestModeDesc")}
-                  </span>
-                </div>
-              </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsBannerVisible(false);
-                }}
-                className="text-slate-400 hover:text-slate-700 dark:text-white/40 dark:hover:text-white/85 p-1 rounded-full transition-colors cursor-pointer shrink-0"
-                title={t("sharedScreen.closeBanner")}
-              >
-                <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        )}
+      <SharedTripBanner
+        isVisible={isBannerVisible}
+        onClose={() => setIsBannerVisible(false)}
+        canEdit={!!currentUser?.canEdit}
+        userRoleLower={userRoleLower}
+        canRequestEdit={canRequestEdit}
+        t={t}
+        getTranslatedRoles={getTranslatedRoles}
+        rawRole={currentUser?.role || ""}
+      />
 
       {/* Header */}
-      <header
-        className={`sticky top-0 z-40 bg-white/55 supports-[backdrop-filter]:bg-white/45 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 dark:bg-[#0A1124]/60 dark:supports-[backdrop-filter]:bg-[#0A1124]/45 dark:border-slate-800/80 px-2.5 min-[390px]:px-4 pb-3 pt-3 shadow-[0_4px_24px_rgba(3,13,46,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.2)] transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`}
-        style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}
-      >
-        <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
-          <div className="flex items-center gap-1.5 min-[390px]:gap-2 select-none shrink-0">
-            <img
-              src="/asset/logo.png"
-              alt="KAT Journey Logo"
-              className="hidden md:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm"
-            />
-            <h1 className="text-[17px] min-[390px]:text-[20px] font-extrabold tracking-tight text-kat-dark dark:text-white whitespace-nowrap shrink-0">
-              KAT Journey
-            </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 dark:bg-indigo-950/30 dark:border-indigo-900/40 px-1.5 min-[390px]:px-2 py-0.5 text-[10px] font-bold text-indigo-600 dark:text-indigo-350 whitespace-nowrap shrink-0">
-              <HugeiconsIcon icon={Share01Icon} className="h-3 w-3 shrink-0" />{" "}
-              {t("sharedScreen.headerShare")}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 min-[390px]:gap-2 shrink-0">
-            {/* Switch identity button */}
-            {currentUser && (
-              <button
-                onClick={() => {
-                  localStorage.setItem("kat_pending_swap_" + trip.id, "true");
-                  setStep("identity");
-                  setShowIdentityModal(true);
-                }}
-                title={t("sharedScreen.switchUser")}
-                className="flex items-center justify-center gap-1.5 min-h-[34px] min-[390px]:min-h-[36px] px-2 min-[390px]:px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-[12px] font-bold text-slate-655 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white shadow-sm transition-all active:scale-[0.97] shrink-0"
-              >
-                <HugeiconsIcon icon={UserSettingsIcon} className="h-3.5 w-3.5 shrink-0" />
-                <span className="hidden sm:inline whitespace-nowrap">{currentUser.name}</span>
-              </button>
-            )}
-            <button
-              onClick={() => (window.location.href = "/")}
-              className="flex items-center justify-center min-h-[34px] min-[390px]:min-h-[38px] text-[12px] min-[390px]:text-[13px] font-black text-white dark:text-slate-950 bg-[#030D2E] dark:bg-white hover:bg-[#0a1a5c] dark:hover:bg-slate-100 px-4 rounded-xl shadow-sm transition-all active:scale-[0.97] whitespace-nowrap shrink-0"
-            >
-              {t("sharedScreen.exit")}
-            </button>
-          </div>
-        </div>
-      </header>
+      <SharedTripStickyHeader
+        areBarsVisible={areBarsVisible}
+        currentUser={currentUser}
+        onSwitchUser={() => {
+          localStorage.setItem("kat_pending_swap_" + trip.id, "true");
+          setStep("identity");
+          setShowIdentityModal(true);
+        }}
+        onExit={() => (window.location.href = "/")}
+        t={t}
+      />
 
       {/* Main Content */}
       <main className="max-w-[1120px] mx-auto px-2.5 min-[390px]:px-4 pt-6 pb-20 lg:pb-6 space-y-6">
@@ -1929,57 +1669,15 @@ export default function SharedTripScreen({ token }: { token: string }) {
       />
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav
-        className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`}
-        style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
-      >
-        <div
-          ref={containerRef}
-          className="relative flex h-[56px] min-[390px]:h-[60px] items-center justify-between px-2"
-        >
-          {/* Active Indicator Slide Pill */}
-          {indicatorStyle.width > 0 && (
-            <div
-              className="absolute top-[6px] bottom-[6px] rounded-full bg-white dark:bg-slate-800 transition-[left,width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45 dark:border-slate-700/50"
-              style={{
-                left: `${indicatorStyle.left}px`,
-                width: `${indicatorStyle.width}px`,
-              }}
-            />
-          )}
-          {tabsList.map((tab) => {
-            const IconComponent = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                ref={setButtonRef(tab.id)}
-                onClick={() => setActiveTab(tab.id)}
-                className={classNames(
-                  "relative flex items-center justify-center rounded-full transition-[color,background-color,width,padding,gap,transform] duration-200 ease-out overflow-hidden motion-press z-10",
-                  isActive
-                    ? "text-kat-dark px-2.5 min-[340px]:px-3 min-[390px]:px-5 h-[40px] min-[340px]:h-[44px] min-[390px]:h-[48px] gap-1 min-[340px]:gap-1.5 min-[390px]:gap-2 font-extrabold"
-                    : "text-kat-dark opacity-50 hover:opacity-75 w-10 min-[340px]:w-11 min-[390px]:w-12 h-10 min-[340px]:h-11 min-[390px]:h-12"
-                )}
-              >
-                <HugeiconsIcon
-                  icon={IconComponent}
-                  className={classNames(
-                    "shrink-0 transition-transform duration-200 ease-out",
-                    isActive ? "scale-105" : "scale-100",
-                    "h-[18px] w-[18px] min-[340px]:h-[19px] min-[340px]:w-[19px] min-[390px]:h-[22px] min-[390px]:w-[22px]"
-                  )}
-                />
-                {isActive && (
-                  <span className="text-[10px] min-[340px]:text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap">
-                    {tab.label}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </nav>
+      <SharedTripMobileNav
+        areBarsVisible={areBarsVisible}
+        containerRef={containerRef}
+        indicatorStyle={indicatorStyle}
+        tabsList={tabsList}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        setButtonRef={setButtonRef}
+      />
 
       <RolesHelpSheet isOpen={isRolesHelpOpen} onClose={() => setIsRolesHelpOpen(false)} />
     </div>

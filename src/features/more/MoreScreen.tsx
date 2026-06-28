@@ -34,7 +34,8 @@ import {
   FileDownloadIcon,
   GlobeIcon,
   InformationCircleIcon,
-  Location01Icon, Coins01Icon,
+  Location01Icon,
+  Coins01Icon,
   LockIcon,
   Luggage01Icon,
   MapsIcon,
@@ -56,10 +57,17 @@ import {
   UserAdd01Icon,
   UserGroupIcon,
   WalletCardsIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  UserCheck01Icon,
 } from "@hugeicons/core-free-icons";
 
-function ShareSwitch({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) {
+function ShareSwitch({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
   return (
     <button
       type="button"
@@ -81,27 +89,47 @@ function ShareSwitch({ checked, onChange }: { checked: boolean; onChange: (check
     </button>
   );
 }
-import { ChecklistItem, db, deleteTripCascade, EventItem, Expense, JournalEntry, Member, PackingItem, Trip, archiveTrip, unarchiveTrip } from "../../db";
+import {
+  ChecklistItem,
+  db,
+  deleteTripCascade,
+  EventItem,
+  Expense,
+  JournalEntry,
+  Member,
+  PackingItem,
+  Trip,
+  archiveTrip,
+  unarchiveTrip,
+} from "../../db";
 import { getAvatarSvg, getRandomAvatarId } from "../../utils/avatars";
 import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
-import { 
-  checklistSections, 
-  createTripExport, 
-  formatDate, 
-  formatMoney, 
-  getWrappedStats, 
-  moodLabels, 
-  packingTripTypes, 
-  safeFileName, 
-  today, 
-  TripData, 
+import {
+  checklistSections,
+  createTripExport,
+  formatDate,
+  formatMoney,
+  getWrappedStats,
+  moodLabels,
+  packingTripTypes,
+  safeFileName,
+  today,
+  TripData,
   getChecklistStats,
   getTripTiming,
   APP_VERSION,
-  downloadBlob
+  downloadBlob,
 } from "../../utils/helpers";
 import { normalizeVietnameseDisplayText } from "../../utils/helpers";
-import { BottomSheet, FormActions, Input, ScreenTitle, Select, TypedDeleteConfirmModal, classNames } from "../../components/ui";
+import {
+  BottomSheet,
+  FormActions,
+  Input,
+  ScreenTitle,
+  Select,
+  TypedDeleteConfirmModal,
+  classNames,
+} from "../../components/ui";
 import { RolesHelpSheet } from "../../components/RolesHelpSheet";
 import { JournalSection } from "../journal/JournalSection";
 import { TravelDocumentsSection } from "./TravelDocumentsSection";
@@ -128,7 +156,11 @@ function LocationInput({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const fetchSuggestions = useCallback(async (query: string) => {
-    if (query.length < 2) { setSuggestions([]); setIsOpen(false); return; }
+    if (query.length < 2) {
+      setSuggestions([]);
+      setIsOpen(false);
+      return;
+    }
     setLoading(true);
     const results = await searchLocation(query);
     setSuggestions(results);
@@ -143,7 +175,9 @@ function LocationInput({
   }
 
   function handleSelect(result: GeocodingResult) {
-    const display = normalizeVietnameseDisplayText([result.name, result.admin1, result.country].filter(Boolean).join(", "));
+    const display = normalizeVietnameseDisplayText(
+      [result.name, result.admin1, result.country].filter(Boolean).join(", ")
+    );
     onChange(display);
     onSelectResult(result);
     setSuggestions([]);
@@ -164,7 +198,11 @@ function LocationInput({
   return (
     <div ref={containerRef} className="relative">
       <div className="relative">
-        <HugeiconsIcon icon={Location01Icon} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-kat-primary pointer-events-none" size={16} />
+        <HugeiconsIcon
+          icon={Location01Icon}
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-kat-primary pointer-events-none"
+          size={16}
+        />
         <input
           type="text"
           value={value}
@@ -181,7 +219,11 @@ function LocationInput({
         {!loading && value && (
           <button
             type="button"
-            onClick={() => { onChange(""); setSuggestions([]); setIsOpen(false); }}
+            onClick={() => {
+              onChange("");
+              setSuggestions([]);
+              setIsOpen(false);
+            }}
             className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-white/20 transition-colors"
           >
             <HugeiconsIcon icon={Cancel01Icon} size={12} />
@@ -193,21 +235,39 @@ function LocationInput({
         <ul className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-[#0A0F1C]/80 backdrop-blur-xl shadow-floating animate-fadeIn">
           {suggestions.map((result, idx) => {
             const name = normalizeVietnameseDisplayText(result.name);
-            const sub = normalizeVietnameseDisplayText([result.admin1, result.country].filter(Boolean).join(", "));
+            const sub = normalizeVietnameseDisplayText(
+              [result.admin1, result.country].filter(Boolean).join(", ")
+            );
             return (
               <li key={idx}>
                 <button
                   type="button"
-                  onMouseDown={(e) => { e.preventDefault(); handleSelect(result); }}
-                  onTouchStart={(e) => { e.preventDefault(); handleSelect(result); }}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    handleSelect(result);
+                  }}
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    handleSelect(result);
+                  }}
                   className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border-b border-slate-100/60 dark:border-white/5 last:border-0"
                 >
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-kat-primary/10 dark:bg-kat-teal/20">
-                    <HugeiconsIcon icon={Location01Icon} size={14} className="text-kat-primary dark:text-kat-teal" />
+                    <HugeiconsIcon
+                      icon={Location01Icon}
+                      size={14}
+                      className="text-kat-primary dark:text-kat-teal"
+                    />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13.5px] font-bold text-slate-800 dark:text-slate-200 truncate">{name}</p>
-                    {sub && <p className="text-[11.5px] text-slate-400 dark:text-slate-500 font-medium truncate">{sub}</p>}
+                    <p className="text-[13.5px] font-bold text-slate-800 dark:text-slate-200 truncate">
+                      {name}
+                    </p>
+                    {sub && (
+                      <p className="text-[11.5px] text-slate-400 dark:text-slate-500 font-medium truncate">
+                        {sub}
+                      </p>
+                    )}
                   </div>
                 </button>
               </li>
@@ -222,7 +282,20 @@ function LocationInput({
 
 // --- CalendarRangePicker Component ---
 const DAYS_OF_WEEK = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
-const MONTHS_VI = ["Tháng 1","Tháng 2","Tháng 3","Tháng 4","Tháng 5","Tháng 6","Tháng 7","Tháng 8","Tháng 9","Tháng 10","Tháng 11","Tháng 12"];
+const MONTHS_VI = [
+  "Tháng 1",
+  "Tháng 2",
+  "Tháng 3",
+  "Tháng 4",
+  "Tháng 5",
+  "Tháng 6",
+  "Tháng 7",
+  "Tháng 8",
+  "Tháng 9",
+  "Tháng 10",
+  "Tháng 11",
+  "Tháng 12",
+];
 
 function CalendarRangePicker({
   startDate,
@@ -239,12 +312,11 @@ function CalendarRangePicker({
   onChangeStart: (d: string) => void;
   onChangeEnd: (d: string) => void;
 }) {
-  
   const { t } = useTranslation();
   const daysOfWeek = t("tripForm.daysOfWeek", { returnObjects: true }) as string[];
   const months = t("tripForm.months", { returnObjects: true }) as string[];
-const todayDate = new Date();
-  todayDate.setHours(0,0,0,0);
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
 
   const initialMonth = startDate ? new Date(startDate + "T00:00:00") : new Date();
   const [viewYear, setViewYear] = React.useState(initialMonth.getFullYear());
@@ -255,11 +327,11 @@ const todayDate = new Date();
   const [pickingEnd, setPickingEnd] = React.useState(false);
 
   function toISO(y: number, m: number, d: number) {
-    return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
   }
 
   function getDaysInMonth(y: number, m: number) {
-    return new Date(y, m+1, 0).getDate();
+    return new Date(y, m + 1, 0).getDate();
   }
 
   function getFirstDayOfWeek(y: number, m: number) {
@@ -267,12 +339,16 @@ const todayDate = new Date();
   }
 
   function prevMonth() {
-    if (viewMonth === 0) { setViewMonth(11); setViewYear(v => v-1); }
-    else setViewMonth(v => v-1);
+    if (viewMonth === 0) {
+      setViewMonth(11);
+      setViewYear((v) => v - 1);
+    } else setViewMonth((v) => v - 1);
   }
   function nextMonth() {
-    if (viewMonth === 11) { setViewMonth(0); setViewYear(v => v+1); }
-    else setViewMonth(v => v+1);
+    if (viewMonth === 11) {
+      setViewMonth(0);
+      setViewYear((v) => v + 1);
+    } else setViewMonth((v) => v + 1);
   }
 
   function handleDayClick(iso: string) {
@@ -299,17 +375,28 @@ const todayDate = new Date();
 
   const daysInMonth = getDaysInMonth(viewYear, viewMonth);
   const firstDow = getFirstDayOfWeek(viewYear, viewMonth);
-  const cells: (number|null)[] = Array(firstDow).fill(null);
+  const cells: (number | null)[] = Array(firstDow).fill(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
   while (cells.length % 7 !== 0) cells.push(null);
 
-  const effectiveEnd = tripType === "dayTrip" ? startDate : (pickingEnd && hoverDate ? (hoverDate < startDate ? startDate : hoverDate) : endDate);
+  const effectiveEnd =
+    tripType === "dayTrip"
+      ? startDate
+      : pickingEnd && hoverDate
+        ? hoverDate < startDate
+          ? startDate
+          : hoverDate
+        : endDate;
 
   // Format display
   function fmtDisplay(iso: string) {
     if (!iso) return "--";
     const d = new Date(iso + "T00:00:00");
-    return t('tripForm.dateFmt', { day: d.getDate(), month: months[d.getMonth()], year: d.getFullYear() });
+    return t("tripForm.dateFmt", {
+      day: d.getDate(),
+      month: months[d.getMonth()],
+      year: d.getFullYear(),
+    });
   }
 
   const monthLabel = `${months[viewMonth]} ${viewYear}`;
@@ -318,19 +405,73 @@ const todayDate = new Date();
     <div className="w-full">
       {/* Trip type toggle */}
       <div className="grid grid-cols-2 gap-2 mb-4">
-        <button type="button" onClick={() => { onChangeTripType("dayTrip"); setPickingEnd(false); }}
-          className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px] backdrop-blur-md",
-            tripType === "dayTrip" ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary" : "bg-white/50 dark:bg-[#0A0F1C]/40 ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 hover:bg-white/80 dark:hover:bg-white/5")}
+        <button
+          type="button"
+          onClick={() => {
+            onChangeTripType("dayTrip");
+            setPickingEnd(false);
+          }}
+          className={classNames(
+            "flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px] backdrop-blur-md",
+            tripType === "dayTrip"
+              ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary"
+              : "bg-white/50 dark:bg-[#0A0F1C]/40 ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 hover:bg-white/80 dark:hover:bg-white/5"
+          )}
         >
-          <span className={classNames("text-[14px] font-bold", tripType === "dayTrip" ? "text-kat-primary dark:text-kat-teal" : "text-slate-700 dark:text-slate-350")}>{t("tripForm.dayTripBtn")}</span>
-          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "dayTrip" ? "text-[#00BFB7]/80 dark:text-kat-teal/80" : "text-slate-400 dark:text-slate-500")}>{t("tripForm.dayTripDesc")}</span>
+          <span
+            className={classNames(
+              "text-[14px] font-bold",
+              tripType === "dayTrip"
+                ? "text-kat-primary dark:text-kat-teal"
+                : "text-slate-700 dark:text-slate-350"
+            )}
+          >
+            {t("tripForm.dayTripBtn")}
+          </span>
+          <span
+            className={classNames(
+              "text-[11px] font-medium mt-0.5",
+              tripType === "dayTrip"
+                ? "text-[#00BFB7]/80 dark:text-kat-teal/80"
+                : "text-slate-400 dark:text-slate-500"
+            )}
+          >
+            {t("tripForm.dayTripDesc")}
+          </span>
         </button>
-        <button type="button" onClick={() => { onChangeTripType("multiDay"); setPickingEnd(false); }}
-          className={classNames("flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px] backdrop-blur-md",
-            tripType === "multiDay" ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary" : "bg-white/50 dark:bg-[#0A0F1C]/40 ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 hover:bg-white/80 dark:hover:bg-white/5")}
+        <button
+          type="button"
+          onClick={() => {
+            onChangeTripType("multiDay");
+            setPickingEnd(false);
+          }}
+          className={classNames(
+            "flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px] backdrop-blur-md",
+            tripType === "multiDay"
+              ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary"
+              : "bg-white/50 dark:bg-[#0A0F1C]/40 ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 hover:bg-white/80 dark:hover:bg-white/5"
+          )}
         >
-          <span className={classNames("text-[14px] font-bold", tripType === "multiDay" ? "text-kat-primary dark:text-kat-teal" : "text-slate-700 dark:text-slate-350")}>{t("tripForm.multiDayBtn")}</span>
-          <span className={classNames("text-[11px] font-medium mt-0.5", tripType === "multiDay" ? "text-[#00BFB7]/80 dark:text-kat-teal/80" : "text-slate-400 dark:text-slate-500")}>{t("tripForm.multiDayDesc")}</span>
+          <span
+            className={classNames(
+              "text-[14px] font-bold",
+              tripType === "multiDay"
+                ? "text-kat-primary dark:text-kat-teal"
+                : "text-slate-700 dark:text-slate-350"
+            )}
+          >
+            {t("tripForm.multiDayBtn")}
+          </span>
+          <span
+            className={classNames(
+              "text-[11px] font-medium mt-0.5",
+              tripType === "multiDay"
+                ? "text-[#00BFB7]/80 dark:text-kat-teal/80"
+                : "text-slate-400 dark:text-slate-500"
+            )}
+          >
+            {t("tripForm.multiDayDesc")}
+          </span>
         </button>
       </div>
 
@@ -340,11 +481,14 @@ const todayDate = new Date();
           <p className="text-[18px] font-extrabold text-kat-text">{fmtDisplay(startDate)}</p>
         ) : (
           <p className="text-[18px] font-extrabold text-kat-text">
-            {fmtDisplay(startDate)} <span className="text-kat-muted font-bold mx-1">—</span> {fmtDisplay(effectiveEnd)}
+            {fmtDisplay(startDate)} <span className="text-kat-muted font-bold mx-1">—</span>{" "}
+            {fmtDisplay(effectiveEnd)}
           </p>
         )}
         {tripType === "multiDay" && pickingEnd && (
-          <p className="text-[12px] text-kat-primary dark:text-kat-teal font-semibold mt-0.5 animate-pulse">{t("tripForm.pickEndPrompt")}</p>
+          <p className="text-[12px] text-kat-primary dark:text-kat-teal font-semibold mt-0.5 animate-pulse">
+            {t("tripForm.pickEndPrompt")}
+          </p>
         )}
       </div>
 
@@ -352,21 +496,34 @@ const todayDate = new Date();
       <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md overflow-hidden">
         {/* Month navigation */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/10">
-          <button type="button" onClick={prevMonth}
-            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors text-slate-500 dark:text-slate-400">
+          <button
+            type="button"
+            onClick={prevMonth}
+            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors text-slate-500 dark:text-slate-400"
+          >
             <HugeiconsIcon icon={ChevronLeftIcon} size={16} />
           </button>
-          <span className="text-[14px] font-bold text-slate-800 dark:text-slate-200">{monthLabel}</span>
-          <button type="button" onClick={nextMonth}
-            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors text-slate-500 dark:text-slate-400">
+          <span className="text-[14px] font-bold text-slate-800 dark:text-slate-200">
+            {monthLabel}
+          </span>
+          <button
+            type="button"
+            onClick={nextMonth}
+            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors text-slate-500 dark:text-slate-400"
+          >
             <HugeiconsIcon icon={ChevronRightIcon} size={16} />
           </button>
         </div>
 
         {/* Day headers */}
         <div className="grid grid-cols-7 border-b border-slate-100 dark:border-white/10">
-          {daysOfWeek.map(d => (
-            <div key={d} className="py-1.5 text-center text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">{d}</div>
+          {daysOfWeek.map((d) => (
+            <div
+              key={d}
+              className="py-1.5 text-center text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide"
+            >
+              {d}
+            </div>
           ))}
         </div>
 
@@ -377,7 +534,12 @@ const todayDate = new Date();
             const iso = toISO(viewYear, viewMonth, day);
             const isStart = iso === startDate;
             const isEnd = tripType !== "dayTrip" && iso === effectiveEnd;
-            const inRange = tripType !== "dayTrip" && startDate && effectiveEnd && iso > startDate && iso < effectiveEnd;
+            const inRange =
+              tripType !== "dayTrip" &&
+              startDate &&
+              effectiveEnd &&
+              iso > startDate &&
+              iso < effectiveEnd;
             const isToday = iso === todayDate.toISOString().split("T")[0];
 
             // Rounded cap logic for range bar
@@ -394,10 +556,16 @@ const todayDate = new Date();
               >
                 {/* Range bar background */}
                 {(inRange || isStartCap || isEndCap) && !isSingleDay && (
-                  <div className={classNames(
-                    "absolute inset-y-0.5 bg-[#00BFB7]/15 dark:bg-kat-teal/20",
-                    isStartCap ? "left-1/2 right-0" : isEndCap ? "left-0 right-1/2" : "left-0 right-0"
-                  )} />
+                  <div
+                    className={classNames(
+                      "absolute inset-y-0.5 bg-[#00BFB7]/15 dark:bg-kat-teal/20",
+                      isStartCap
+                        ? "left-1/2 right-0"
+                        : isEndCap
+                          ? "left-0 right-1/2"
+                          : "left-0 right-0"
+                    )}
+                  />
                 )}
 
                 <button
@@ -408,12 +576,12 @@ const todayDate = new Date();
                     (isStart || isEnd) && !isSingleDay
                       ? "bg-kat-primary text-white dark:text-slate-950 font-bold shadow-sm"
                       : isSingleDay
-                      ? "bg-kat-primary text-white dark:text-slate-950 font-bold shadow-sm"
-                      : inRange
-                      ? "text-kat-primary dark:text-kat-teal font-semibold hover:bg-[#00BFB7]/10 dark:hover:bg-kat-teal/20"
-                      : isToday
-                      ? "text-kat-primary dark:text-kat-teal font-bold ring-1 ring-[#00BFB7]/50 dark:ring-kat-teal/50 hover:bg-[#00BFB7]/10 dark:hover:bg-kat-teal/20"
-                      : "text-slate-700 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-white/5"
+                        ? "bg-kat-primary text-white dark:text-slate-950 font-bold shadow-sm"
+                        : inRange
+                          ? "text-kat-primary dark:text-kat-teal font-semibold hover:bg-[#00BFB7]/10 dark:hover:bg-kat-teal/20"
+                          : isToday
+                            ? "text-kat-primary dark:text-kat-teal font-bold ring-1 ring-[#00BFB7]/50 dark:ring-kat-teal/50 hover:bg-[#00BFB7]/10 dark:hover:bg-kat-teal/20"
+                            : "text-slate-700 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-white/5"
                   )}
                 >
                   {day}
@@ -428,14 +596,19 @@ const todayDate = new Date();
 }
 // --- End CalendarRangePicker ---
 
-
-
-
-
-function TripForm({ trip, isOpen, onClose, onSaved }: { trip?: Trip; isOpen: boolean; onClose: () => void; onSaved: (id: number) => void }) {
-  
+function TripForm({
+  trip,
+  isOpen,
+  onClose,
+  onSaved,
+}: {
+  trip?: Trip;
+  isOpen: boolean;
+  onClose: () => void;
+  onSaved: (id: number) => void;
+}) {
   const { t, i18n } = useTranslation();
-const [form, setForm] = useState<{
+  const [form, setForm] = useState<{
     title: string;
     location: string;
     latitude?: number;
@@ -452,7 +625,7 @@ const [form, setForm] = useState<{
     defaultCurrency: trip?.defaultCurrency,
     tripType: trip?.tripType ?? (trip?.startDate === trip?.endDate ? "dayTrip" : "multiDay"),
     startDate: trip?.startDate ?? today,
-    endDate: trip?.endDate ?? today
+    endDate: trip?.endDate ?? today,
   });
 
   const [dirty, setDirty] = useState(false);
@@ -468,7 +641,7 @@ const [form, setForm] = useState<{
         defaultCurrency: trip?.defaultCurrency,
         tripType: trip?.tripType ?? (trip?.startDate === trip?.endDate ? "dayTrip" : "multiDay"),
         startDate: trip?.startDate ?? today,
-        endDate: trip?.endDate ?? today
+        endDate: trip?.endDate ?? today,
       });
       setDirty(false);
       setSubmitAttempted(false);
@@ -477,18 +650,22 @@ const [form, setForm] = useState<{
 
   const titleError = !form.title.trim() ? t("tripForm.nameError") : "";
   const startDateError = !form.startDate ? t("tripForm.startDateError") : "";
-  const endDateError = form.tripType === "multiDay" && !form.endDate ? t("tripForm.endDateError") : "";
-  const dateCompareError = form.tripType === "multiDay" && form.endDate && form.startDate && form.endDate < form.startDate ? t("tripForm.dateCompareError") : "";
+  const endDateError =
+    form.tripType === "multiDay" && !form.endDate ? t("tripForm.endDateError") : "";
+  const dateCompareError =
+    form.tripType === "multiDay" && form.endDate && form.startDate && form.endDate < form.startDate
+      ? t("tripForm.dateCompareError")
+      : "";
   const hasError = !!titleError || !!startDateError || !!endDateError || !!dateCompareError;
 
   async function save() {
     setSubmitAttempted(true);
     if (hasError) return;
 
-    const payload = { 
-      ...form, 
+    const payload = {
+      ...form,
       endDate: form.tripType === "dayTrip" ? form.startDate : form.endDate,
-      createdAt: trip?.createdAt ?? new Date().toISOString() 
+      createdAt: trip?.createdAt ?? new Date().toISOString(),
     };
     if (trip?.id) {
       await db.trips.update(trip.id, payload);
@@ -502,15 +679,15 @@ const [form, setForm] = useState<{
   }
 
   return (
-    <BottomSheet 
-      isOpen={isOpen} 
-      onClose={onClose} 
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
       title={trip ? t("tripForm.editTitle") : t("tripForm.createTitle")}
       subtitle={trip ? undefined : t("tripForm.createSubtitle")}
       footer={
-        <FormActions 
-          onSave={save} 
-          saveLabel={trip ? t("tripForm.saveBtn") : t("tripForm.createBtn")} 
+        <FormActions
+          onSave={save}
+          saveLabel={trip ? t("tripForm.saveBtn") : t("tripForm.createBtn")}
           saveAriaLabel={trip ? t("tripForm.saveAria") : t("tripForm.createAria")}
           disabled={hasError}
           onCancel={onClose}
@@ -519,15 +696,18 @@ const [form, setForm] = useState<{
     >
       <div className="space-y-4 md:space-y-5">
         <div>
-          <Input 
+          <Input
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={PencilEdit01Icon} size={16} className="text-slate-500" />
                 {t("tripForm.nameLabel")}
               </span>
-            } 
-            value={form.title} 
-            onChange={(title) => { setForm({ ...form, title }); setDirty(true); }} 
+            }
+            value={form.title}
+            onChange={(title) => {
+              setForm({ ...form, title });
+              setDirty(true);
+            }}
             placeholder={t("tripForm.namePlaceholder")}
           />
           {(dirty || submitAttempted) && titleError && (
@@ -541,11 +721,29 @@ const [form, setForm] = useState<{
           </span>
           <LocationInput
             value={form.location}
-            onChange={(location) => setForm((f) => ({ ...f, location, latitude: undefined, longitude: undefined, defaultCurrency: undefined }))}
+            onChange={(location) =>
+              setForm((f) => ({
+                ...f,
+                location,
+                latitude: undefined,
+                longitude: undefined,
+                defaultCurrency: undefined,
+              }))
+            }
             onSelectResult={(result) => {
-              const display = normalizeVietnameseDisplayText([result.name, result.admin1, result.country].filter(Boolean).join(", "));
-              const currency = result.country_code ? getCurrencyForCountry(result.country_code) : undefined;
-              setForm((f) => ({ ...f, location: display, latitude: result.latitude, longitude: result.longitude, defaultCurrency: currency || undefined }));
+              const display = normalizeVietnameseDisplayText(
+                [result.name, result.admin1, result.country].filter(Boolean).join(", ")
+              );
+              const currency = result.country_code
+                ? getCurrencyForCountry(result.country_code)
+                : undefined;
+              setForm((f) => ({
+                ...f,
+                location: display,
+                latitude: result.latitude,
+                longitude: result.longitude,
+                defaultCurrency: currency || undefined,
+              }));
             }}
           />
           {form.latitude && form.longitude ? (
@@ -558,7 +756,6 @@ const [form, setForm] = useState<{
             </p>
           )}
         </div>
-        
 
         {/* === CURRENCY SECTION === */}
         <div>
@@ -568,12 +765,13 @@ const [form, setForm] = useState<{
           </span>
           <Select
             value={form.defaultCurrency || "VND"}
-            onChange={(val) => setForm(f => ({ ...f, defaultCurrency: val }))}
+            onChange={(val) => setForm((f) => ({ ...f, defaultCurrency: val }))}
             options={CURRENCY_OPTIONS}
             labels={useMemo(() => {
               const labels: Record<string, string> = {};
-              CURRENCY_OPTIONS.forEach(code => {
-                labels[code] = `${getCurrencyLabel(code, i18n.language)} ${code === (trip?.defaultCurrency || 'VND') ? t('expenses.baseCurrency') : ''}`.trim();
+              CURRENCY_OPTIONS.forEach((code) => {
+                labels[code] =
+                  `${getCurrencyLabel(code, i18n.language)} ${code === (trip?.defaultCurrency || "VND") ? t("expenses.baseCurrency") : ""}`.trim();
               });
               return labels;
             }, [i18n.language, trip?.defaultCurrency, t])}
@@ -590,15 +788,17 @@ const [form, setForm] = useState<{
             startDate={form.startDate}
             endDate={form.endDate}
             tripType={form.tripType}
-            onChangeTripType={(tripType) => setForm(f => ({ ...f, tripType }))}
-            onChangeStart={(startDate) => setForm(f => ({ ...f, startDate }))}
-            onChangeEnd={(endDate) => setForm(f => ({ ...f, endDate }))}
+            onChangeTripType={(tripType) => setForm((f) => ({ ...f, tripType }))}
+            onChangeStart={(startDate) => setForm((f) => ({ ...f, startDate }))}
+            onChangeEnd={(endDate) => setForm((f) => ({ ...f, endDate }))}
           />
           {(dirty || submitAttempted) && startDateError && (
             <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{startDateError}</p>
           )}
           {(dirty || submitAttempted) && (endDateError || dateCompareError) && (
-            <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">{endDateError || dateCompareError}</p>
+            <p className="mt-1.5 px-1 text-[13px] font-medium text-rose-500">
+              {endDateError || dateCompareError}
+            </p>
           )}
         </div>
       </div>
@@ -606,22 +806,28 @@ const [form, setForm] = useState<{
   );
 }
 
-function MemberForm({ 
-  tripId, 
-  editing, 
-  isOpen, 
+function MemberForm({
+  tripId,
+  editing,
+  isOpen,
   onClose,
-  onShowToast
-}: { 
-  tripId: number; 
-  editing: Member | null; 
-  isOpen: boolean; 
+  onShowToast,
+}: {
+  tripId: number;
+  editing: Member | null;
+  isOpen: boolean;
   onClose: () => void;
   onShowToast?: (msg: string) => void;
 }) {
   const { t } = useTranslation();
-  const PRESETS = [t("members.roleLeader"), t("members.roleBudget"), t("members.roleDriver"), t("members.roleNavigator"), t("members.roleCompanion")];
-  
+  const PRESETS = [
+    t("members.roleLeader"),
+    t("members.roleBudget"),
+    t("members.roleDriver"),
+    t("members.roleNavigator"),
+    t("members.roleCompanion"),
+  ];
+
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedPresets, setSelectedPresets] = useState<string[]>(["Người đồng hành"]);
@@ -631,15 +837,24 @@ function MemberForm({
     setDirty(true);
     const companionLabel = t("members.roleCompanion");
     const leaderLabel = t("members.roleLeader");
-    
-    if (preset === companionLabel || preset === leaderLabel || preset === "Người đồng hành" || preset === "Trưởng nhóm") {
+
+    if (
+      preset === companionLabel ||
+      preset === leaderLabel ||
+      preset === "Người đồng hành" ||
+      preset === "Trưởng nhóm"
+    ) {
       setSelectedPresets([preset]);
     } else {
-      let next = selectedPresets.filter(p => 
-        p !== companionLabel && p !== leaderLabel && p !== "Người đồng hành" && p !== "Trưởng nhóm"
+      let next = selectedPresets.filter(
+        (p) =>
+          p !== companionLabel &&
+          p !== leaderLabel &&
+          p !== "Người đồng hành" &&
+          p !== "Trưởng nhóm"
       );
       if (next.includes(preset)) {
-        next = next.filter(p => p !== preset);
+        next = next.filter((p) => p !== preset);
       } else {
         next.push(preset);
       }
@@ -654,12 +869,14 @@ function MemberForm({
   const [gender, setGender] = useState<string>("male");
   const [group, setGroup] = useState("");
   const [isGroupLeader, setIsGroupLeader] = useState(false);
-  
+
   const [dirty, setDirty] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
   const liveMembers = useLiveQuery(() => db.members.where({ tripId }).toArray(), [tripId]) || [];
-  const existingGroups = Array.from(new Set(liveMembers.map(m => m.group).filter(Boolean))) as string[];
+  const existingGroups = Array.from(
+    new Set(liveMembers.map((m) => m.group).filter(Boolean))
+  ) as string[];
 
   useEffect(() => {
     if (isOpen) {
@@ -670,12 +887,12 @@ function MemberForm({
         setGender(editing.gender ?? "male");
         setGroup(editing.group ?? "");
         setIsGroupLeader(editing.isGroupLeader ?? false);
-        
+
         const currentRole = editing.role ?? "Người đồng hành";
         const loadedPresets = currentRole
           .split(",")
-          .map(r => r.trim())
-          .filter(r => PRESETS.includes(r));
+          .map((r) => r.trim())
+          .filter((r) => PRESETS.includes(r));
         if (loadedPresets.length > 0) {
           setSelectedPresets(loadedPresets);
         } else {
@@ -696,11 +913,11 @@ function MemberForm({
   }, [editing, isOpen]);
 
   const nameError = !name.trim() ? "Vui lòng nhập tên thành viên." : "";
-  
+
   const phoneClean = phone.trim();
   const isPhoneInvalid = phoneClean !== "" && !/^(0[3|5|7|8|9])[0-9]{8}$/.test(phoneClean);
   const phoneError = isPhoneInvalid ? t("members.phoneError") : "";
-  
+
   const hasError = !!nameError || !!phoneError;
 
   async function save() {
@@ -708,16 +925,19 @@ function MemberForm({
     if (hasError) return;
 
     const finalRole = selectedPresets.join(", ");
-    
+
     // Generate avatar if not already present or if gender changed
     let finalAvatar = editing?.avatar;
     const existingMembers = await db.members.where({ tripId }).toArray();
-    
+
     if (!editing?.id) {
-      const existingAvatars = existingMembers.map(m => m.avatar).filter(Boolean) as string[];
+      const existingAvatars = existingMembers.map((m) => m.avatar).filter(Boolean) as string[];
       finalAvatar = getRandomAvatarId(gender, existingAvatars);
     } else if (editing && editing.gender !== gender) {
-      const existingAvatars = existingMembers.filter(m => m.id !== editing.id).map(m => m.avatar).filter(Boolean) as string[];
+      const existingAvatars = existingMembers
+        .filter((m) => m.id !== editing.id)
+        .map((m) => m.avatar)
+        .filter(Boolean) as string[];
       finalAvatar = getRandomAvatarId(gender, existingAvatars);
     }
 
@@ -731,7 +951,7 @@ function MemberForm({
       avatar: finalAvatar,
       group: group.trim() || undefined,
       isGroupLeader: group.trim() ? isGroupLeader : undefined,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     if (editing?.id) {
@@ -739,13 +959,15 @@ function MemberForm({
     } else {
       await db.members.add({
         ...payload,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       });
     }
 
     // Automatically unset other group leaders if this member is now the leader
     if (payload.group && payload.isGroupLeader) {
-      const otherLeaders = existingMembers.filter(m => m.group === payload.group && m.isGroupLeader && m.id !== editing?.id);
+      const otherLeaders = existingMembers.filter(
+        (m) => m.group === payload.group && m.isGroupLeader && m.id !== editing?.id
+      );
       for (const leader of otherLeaders) {
         if (leader.id) {
           await db.members.update(leader.id, { isGroupLeader: false });
@@ -759,20 +981,27 @@ function MemberForm({
 
   const getPresetIcon = (preset: string) => {
     switch (preset) {
-      case "Người đồng hành": return <HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5" />;
-      case "Trưởng nhóm": return <HugeiconsIcon icon={CrownIcon} className="h-3.5 w-3.5 text-amber-500" />;
-      case "Quản lý chi phí": return <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5 text-emerald-500" />;
-      case "Tài xế": return <HugeiconsIcon icon={Car01Icon} className="h-3.5 w-3.5 text-blue-500" />;
-      case "Dẫn đường": return <HugeiconsIcon icon={CompassIcon} className="h-3.5 w-3.5 text-sky-500" />;
-      case "Phụ trách hành lý": return <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 text-indigo-500" />;
-      default: return null;
+      case "Người đồng hành":
+        return <HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5" />;
+      case "Trưởng nhóm":
+        return <HugeiconsIcon icon={CrownIcon} className="h-3.5 w-3.5 text-amber-500" />;
+      case "Quản lý chi phí":
+        return <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5 text-emerald-500" />;
+      case "Tài xế":
+        return <HugeiconsIcon icon={Car01Icon} className="h-3.5 w-3.5 text-blue-500" />;
+      case "Dẫn đường":
+        return <HugeiconsIcon icon={CompassIcon} className="h-3.5 w-3.5 text-sky-500" />;
+      case "Phụ trách hành lý":
+        return <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 text-indigo-500" />;
+      default:
+        return null;
     }
   };
 
   return (
-    <BottomSheet 
-      isOpen={isOpen} 
-      onClose={onClose} 
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
       title={editing ? t("members.formEditTitle") : t("members.formAddTitle")}
       footer={
         <div className="flex items-center gap-2.5 w-full">
@@ -801,16 +1030,19 @@ function MemberForm({
     >
       <div className="space-y-5">
         <div>
-          <Input 
+          <Input
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={UserIcon} className="h-4 w-4 text-slate-500" />
                 {t("members.nameLabel")}
               </span>
-            } 
-            value={name} 
-            onChange={(val) => { setName(val); setDirty(true); }} 
-            placeholder={t("members.namePlaceholder")} 
+            }
+            value={name}
+            onChange={(val) => {
+              setName(val);
+              setDirty(true);
+            }}
+            placeholder={t("members.namePlaceholder")}
           />
           {(dirty || submitAttempted) && nameError && (
             <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{nameError}</p>
@@ -826,7 +1058,7 @@ function MemberForm({
             {[
               { value: "male", label: t("members.genderMale") },
               { value: "female", label: t("members.genderFemale") },
-              { value: "other", label: t("members.genderOther") }
+              { value: "other", label: t("members.genderOther") },
             ].map((g) => (
               <button
                 key={g.value}
@@ -849,24 +1081,30 @@ function MemberForm({
         </div>
 
         <div>
-          <Input 
+          <Input
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-4 w-4 text-slate-500" />
                 {t("members.groupLabel")}
               </span>
-            } 
-            value={group} 
-            onChange={(val) => { setGroup(val); setDirty(true); }} 
+            }
+            value={group}
+            onChange={(val) => {
+              setGroup(val);
+              setDirty(true);
+            }}
             placeholder={t("members.groupPlaceholder")}
           />
           {existingGroups.length > 0 && (
             <div className="mt-2.5 flex flex-wrap gap-2">
-              {existingGroups.map(g => (
+              {existingGroups.map((g) => (
                 <button
                   key={g}
                   type="button"
-                  onClick={() => { setGroup(g); setDirty(true); }}
+                  onClick={() => {
+                    setGroup(g);
+                    setDirty(true);
+                  }}
                   className={classNames(
                     "px-3 py-1.5 rounded-xl text-[12px] font-bold transition-colors border",
                     group === g
@@ -880,55 +1118,71 @@ function MemberForm({
             </div>
           )}
           {(() => {
-            const currentGroupMembers = liveMembers.filter(m => m.group === group.trim());
-            const existingLeader = currentGroupMembers.find(m => m.isGroupLeader && m.id !== editing?.id);
-            return group.trim() !== "" && (
-              <div className="mt-3 flex items-center justify-between px-1">
-                <div className="flex flex-col">
-                  <span className="text-[13.5px] font-bold text-slate-600 dark:text-slate-400">{t("members.isGroupLeader")}</span>
-                  {existingLeader && (
-                    <span className="text-[11px] text-slate-400 mt-0.5">
-                      {isGroupLeader ? t("members.willReplace", { name: existingLeader.name }) : t("members.currentLeaderIs", { name: existingLeader.name })}
+            const currentGroupMembers = liveMembers.filter((m) => m.group === group.trim());
+            const existingLeader = currentGroupMembers.find(
+              (m) => m.isGroupLeader && m.id !== editing?.id
+            );
+            return (
+              group.trim() !== "" && (
+                <div className="mt-3 flex items-center justify-between px-1">
+                  <div className="flex flex-col">
+                    <span className="text-[13.5px] font-bold text-slate-600 dark:text-slate-400">
+                      {t("members.isGroupLeader")}
                     </span>
-                  )}
+                    {existingLeader && (
+                      <span className="text-[11px] text-slate-400 mt-0.5">
+                        {isGroupLeader
+                          ? t("members.willReplace", { name: existingLeader.name })
+                          : t("members.currentLeaderIs", { name: existingLeader.name })}
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsGroupLeader(!isGroupLeader);
+                      setDirty(true);
+                    }}
+                    className={classNames(
+                      "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                      isGroupLeader ? "bg-kat-teal" : "bg-slate-200 dark:bg-slate-700"
+                    )}
+                  >
+                    <span
+                      className={classNames(
+                        "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                        isGroupLeader ? "translate-x-5" : "translate-x-0"
+                      )}
+                    />
+                  </button>
                 </div>
-                <button
-                type="button"
-                onClick={() => { setIsGroupLeader(!isGroupLeader); setDirty(true); }}
-                className={classNames(
-                  "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-                  isGroupLeader ? "bg-kat-teal" : "bg-slate-200 dark:bg-slate-700"
-                )}
-              >
-                <span
-                  className={classNames(
-                    "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-                    isGroupLeader ? "translate-x-5" : "translate-x-0"
-                  )}
-                />
-              </button>
-            </div>
+              )
             );
           })()}
         </div>
 
         <div>
-          <Input 
+          <Input
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={CallIcon} className="h-4 w-4 text-slate-500" />
                 {t("members.phone")}
               </span>
-            } 
+            }
             type="tel"
-            value={phone} 
-            onChange={(val) => { setPhone(val); setDirty(true); }} 
-            placeholder={t("members.phonePlaceholder")} 
+            value={phone}
+            onChange={(val) => {
+              setPhone(val);
+              setDirty(true);
+            }}
+            placeholder={t("members.phonePlaceholder")}
           />
           {(dirty || submitAttempted) && phoneError ? (
             <p className="mt-1.5 px-1 text-[13px] font-semibold text-rose-600">{phoneError}</p>
           ) : (
-            <p className="mt-1.5 px-1 text-[11.5px] font-bold text-kat-muted">{t("members.phoneHelp")}</p>
+            <p className="mt-1.5 px-1 text-[11.5px] font-bold text-kat-muted">
+              {t("members.phoneHelp")}
+            </p>
           )}
         </div>
 
@@ -981,7 +1235,10 @@ function MemberForm({
             <textarea
               className="mt-1.5 min-h-[90px] w-full rounded-2xl border-0 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700/50 transition-shadow focus:bg-white dark:focus:bg-slate-700 focus:ring-2 focus:ring-kat-teal placeholder-slate-400 dark:placeholder-slate-500"
               value={note}
-              onChange={(event) => { setNote(event.target.value); setDirty(true); }}
+              onChange={(event) => {
+                setNote(event.target.value);
+                setDirty(true);
+              }}
               placeholder={t("members.notePlaceholderDetailed")}
             />
           </label>
@@ -998,7 +1255,7 @@ function DeleteMemberConfirmModal({
   onConfirm,
   memberName,
   hasExpenses,
-  hasChecklist
+  hasChecklist,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -1015,14 +1272,11 @@ function DeleteMemberConfirmModal({
       onConfirm={onConfirm}
       title={t("members.deleteConfirmTitle")}
       itemName={memberName}
-      warning={
-        hasExpenses || hasChecklist
-          ? t("members.deleteConfirmWarning")
-          : undefined
-      }
+      warning={hasExpenses || hasChecklist ? t("members.deleteConfirmWarning") : undefined}
       description={
         <>
-          Thành viên <span className="font-extrabold text-kat-dark">{memberName}</span> {t("members.deleteConfirmDesc1")}
+          Thành viên <span className="font-extrabold text-kat-dark">{memberName}</span>{" "}
+          {t("members.deleteConfirmDesc1")}
         </>
       }
       confirmLabel={t("members.menuDelete")}
@@ -1047,16 +1301,14 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 border border-amber-100 shadow-sm">
           <HugeiconsIcon icon={Coffee01Icon} className="h-5 w-5" />
         </div>
-        
+
         {/* Texts */}
         <div className="space-y-2 max-w-md">
           <h4 className="text-[18px] font-black text-kat-dark">{t("donateView.title")}</h4>
           <p className="text-[14px] font-semibold leading-relaxed text-slate-500">
             {t("donateView.desc1")}
           </p>
-          <p className="text-[12px] font-medium text-slate-400">
-            {t("donateView.desc2")}
-          </p>
+          <p className="text-[12px] font-medium text-slate-400">{t("donateView.desc2")}</p>
         </div>
 
         {/* Tabs */}
@@ -1065,7 +1317,9 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             onClick={() => setTab("vn")}
             className={classNames(
               "flex-1 py-1.5 text-[13px] font-bold rounded-lg transition-all",
-              tab === "vn" ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+              tab === "vn"
+                ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
             )}
           >
             {t("donateView.tabVietQR", "VietQR")}
@@ -1074,7 +1328,9 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             onClick={() => setTab("intl")}
             className={classNames(
               "flex-1 py-1.5 text-[13px] font-bold rounded-lg transition-all",
-              tab === "intl" ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+              tab === "intl"
+                ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
             )}
           >
             {t("donateView.tabInternational", "International")}
@@ -1086,12 +1342,12 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
           <>
             {/* QR Code Card */}
             <div className="w-[85%] max-w-[280px] p-4 bg-white border border-slate-200 rounded-[24px] shadow-soft flex flex-col items-center transition-all hover:shadow-md">
-              <img 
-                src="/donates.png" 
-                alt="Donate QR Code" 
-                className="w-full h-auto rounded-[16px] object-contain aspect-square" 
+              <img
+                src="/donates.png"
+                alt="Donate QR Code"
+                className="w-full h-auto rounded-[16px] object-contain aspect-square"
                 onError={(e) => {
-                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.style.display = "none";
                 }}
               />
               <span className="mt-3 text-[11px] font-extrabold text-kat-dark uppercase tracking-wider bg-slate-50/80 px-3 py-1 rounded-full border border-slate-100">
@@ -1100,8 +1356,8 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
             </div>
 
             {/* Save QR action */}
-            <a 
-              href="/donates.png" 
+            <a
+              href="/donates.png"
               download="kat-journey-donate-qr.png"
               className="text-[13px] font-bold text-kat-teal hover:underline flex items-center gap-1 active:scale-95 transition-all"
             >
@@ -1110,7 +1366,7 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
           </>
         ) : (
           <div className="w-full max-w-[280px] space-y-3 mt-2">
-            <a 
+            <a
               href="https://paypal.me/trevorthanhtung"
               target="_blank"
               rel="noopener noreferrer"
@@ -1138,40 +1394,51 @@ function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
   );
 }
 
-function WrappedSection({ data, setSection }: { data: TripData; setSection: (section: any) => void }) {
+function WrappedSection({
+  data,
+  setSection,
+}: {
+  data: TripData;
+  setSection: (section: any) => void;
+}) {
   const { t } = useTranslation();
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const stats = getWrappedStats(data);
   const mood = stats.mostCommonMood ? moodLabels[stats.mostCommonMood] : undefined;
 
   // Derived Finance Data
-  const sharedExpenses = data.expenses.filter(e => e.splitType !== "personal" && !e.isDeleted);
-  const personalExpenses = data.expenses.filter(e => e.splitType === "personal" && !e.isDeleted);
+  const sharedExpenses = data.expenses.filter((e) => e.splitType !== "personal" && !e.isDeleted);
+  const personalExpenses = data.expenses.filter((e) => e.splitType === "personal" && !e.isDeleted);
   const sharedTotal = sharedExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
   const personalTotal = personalExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
 
   // Storytelling Logic
-  const sortedEvents = [...data.events].sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+  const sortedEvents = [...data.events].sort(
+    (a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time)
+  );
   const sortedJournals = [...data.journals].sort((a, b) => a.date.localeCompare(b.date));
-  
+
   let firstMomentText = "";
   if (sortedEvents.length > 0 && sortedJournals.length > 0) {
     if (sortedEvents[0].date <= sortedJournals[0].date) {
-      firstMomentText = `${t('more.wrappedFirstMomentEvent1')} "${sortedEvents[0].title}" vào ngày ${formatDate(sortedEvents[0].date)}.`;
+      firstMomentText = `${t("more.wrappedFirstMomentEvent1")} "${sortedEvents[0].title}" vào ngày ${formatDate(sortedEvents[0].date)}.`;
     } else {
-      firstMomentText = `${t('more.wrappedFirstMomentJournal1')} ${formatDate(sortedJournals[0].date)}: "${sortedJournals[0].title}".`;
+      firstMomentText = `${t("more.wrappedFirstMomentJournal1")} ${formatDate(sortedJournals[0].date)}: "${sortedJournals[0].title}".`;
     }
   } else if (sortedEvents.length > 0) {
-    firstMomentText = `${t('more.wrappedFirstMomentEvent1')} "${sortedEvents[0].title}" vào ngày ${formatDate(sortedEvents[0].date)}.`;
+    firstMomentText = `${t("more.wrappedFirstMomentEvent1")} "${sortedEvents[0].title}" vào ngày ${formatDate(sortedEvents[0].date)}.`;
   } else if (sortedJournals.length > 0) {
-    firstMomentText = `${t('more.wrappedFirstMomentJournal1')} ${formatDate(sortedJournals[0].date)}: "${sortedJournals[0].title}".`;
+    firstMomentText = `${t("more.wrappedFirstMomentJournal1")} ${formatDate(sortedJournals[0].date)}: "${sortedJournals[0].title}".`;
   }
 
-  const eventsByDate = data.events.reduce<Record<string, import("../../db").EventItem[]>>((result, item) => {
-    result[item.date] = [...(result[item.date] ?? []), item];
-    return result;
-  }, {});
-  
+  const eventsByDate = data.events.reduce<Record<string, import("../../db").EventItem[]>>(
+    (result, item) => {
+      result[item.date] = [...(result[item.date] ?? []), item];
+      return result;
+    },
+    {}
+  );
+
   let maxEventsDate = "";
   let maxEventsCount = 0;
   Object.entries(eventsByDate).forEach(([date, evs]) => {
@@ -1181,7 +1448,9 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
     }
   });
 
-  const uniqueLocations = Array.from(new Set(data.events.filter(e => e.location.trim() !== "").map(e => e.location.trim())));
+  const uniqueLocations = Array.from(
+    new Set(data.events.filter((e) => e.location.trim() !== "").map((e) => e.location.trim()))
+  );
 
   async function handleExportPdf() {
     setIsGeneratingPdf(true);
@@ -1210,9 +1479,13 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           </button>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark">{t("more.featureWrapped")}</h2>
+              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark">
+                {t("more.featureWrapped")}
+              </h2>
             </div>
-            <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">{t("more.wrappedSubtitle")}</p>
+            <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">
+              {t("more.wrappedSubtitle")}
+            </p>
           </div>
         </div>
         <button
@@ -1220,18 +1493,23 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
           disabled={isGeneratingPdf}
           className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-5 text-[13.5px] font-bold hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center disabled:opacity-50 disabled:cursor-not-allowed border border-transparent dark:border-kat-primary"
         >
-          <HugeiconsIcon icon={FileDownloadIcon} className={classNames("h-4 w-4", !isGeneratingPdf && "animate-bounce")} />
+          <HugeiconsIcon
+            icon={FileDownloadIcon}
+            className={classNames("h-4 w-4", !isGeneratingPdf && "animate-bounce")}
+          />
           <span>{isGeneratingPdf ? t("more.wrappedExporting") : t("more.wrappedExportPdf")}</span>
         </button>
       </div>
-      
+
       {/* Hero Recap Card */}
       <section className="relative overflow-hidden rounded-[32px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border p-8 text-kat-text shadow-soft">
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5 border border-kat-primary/20">
             <HugeiconsIcon icon={CompassIcon} className="h-6 w-6" />
           </div>
-          <h2 className="text-[30px] md:text-[36px] font-black leading-tight tracking-tight text-kat-dark">{data.trip.title}</h2>
+          <h2 className="text-[30px] md:text-[36px] font-black leading-tight tracking-tight text-kat-dark">
+            {data.trip.title}
+          </h2>
           <div className="mt-4 flex flex-wrap justify-center gap-2.5">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
               <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-kat-primary" />
@@ -1240,7 +1518,10 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             {data.trip.tripType === "dayTrip" || data.trip.startDate === data.trip.endDate ? (
               <>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
-                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-[#0081BE] dark:text-[#33A6DA]" />
+                  <HugeiconsIcon
+                    icon={Calendar01Icon}
+                    className="h-4 w-4 text-[#0081BE] dark:text-[#33A6DA]"
+                  />
                   {formatDate(data.trip.startDate)}
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-kat-primary-soft border border-kat-primary/15 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable">
@@ -1250,14 +1531,17 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
               </>
             ) : (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
-                <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-[#0081BE] dark:text-[#33A6DA]" />
+                <HugeiconsIcon
+                  icon={Calendar01Icon}
+                  className="h-4 w-4 text-[#0081BE] dark:text-[#33A6DA]"
+                />
                 {formatDate(data.trip.startDate)} – {formatDate(data.trip.endDate)}
               </span>
             )}
           </div>
         </div>
       </section>
- 
+
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
@@ -1265,38 +1549,54 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             <HugeiconsIcon icon={Sun01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
-            <span className="text-[28px] font-black text-kat-dark leading-none block">{stats.totalDays}</span>
-            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">{t("more.wrappedDays")}</span>
+            <span className="text-[28px] font-black text-kat-dark leading-none block">
+              {stats.totalDays}
+            </span>
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">
+              {t("more.wrappedDays")}
+            </span>
           </div>
         </div>
- 
+
         <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary-soft text-kat-teal border border-kat-teal border-opacity-20">
             <HugeiconsIcon icon={Route01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
-            <span className="text-[28px] font-black text-kat-dark leading-none block">{stats.activityCount}</span>
-            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">{t("more.wrappedEvents")}</span>
+            <span className="text-[28px] font-black text-kat-dark leading-none block">
+              {stats.activityCount}
+            </span>
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">
+              {t("more.wrappedEvents")}
+            </span>
           </div>
         </div>
- 
+
         <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
             <HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
-            <span className="text-[28px] font-black text-kat-dark leading-none block">{stats.checklistPercent}%</span>
-            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">{t("more.wrappedPacking")}</span>
+            <span className="text-[28px] font-black text-kat-dark leading-none block">
+              {stats.checklistPercent}%
+            </span>
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">
+              {t("more.wrappedPacking")}
+            </span>
           </div>
         </div>
- 
+
         <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary-soft text-kat-teal border border-kat-teal border-opacity-20">
             <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
-            <span className="text-[28px] font-black text-kat-dark leading-none block">{stats.journalCount}</span>
-            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">{t("more.wrappedJournals")}</span>
+            <span className="text-[28px] font-black text-kat-dark leading-none block">
+              {stats.journalCount}
+            </span>
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">
+              {t("more.wrappedJournals")}
+            </span>
           </div>
         </div>
       </div>
@@ -1308,25 +1608,37 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             <HugeiconsIcon icon={WalletCardsIcon} className="h-5 w-5 text-kat-primary" />
             {t("more.wrappedExpenseTitle")}
           </h3>
-          
+
           {data.expenses.length > 0 ? (
             <div className="space-y-6">
               <div>
-                <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">{t("more.wrappedTotalExpense")}</p>
-                <p className="mt-1 text-[36px] font-black text-kat-dark leading-none">{formatMoney(stats.totalExpense)}</p>
+                <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">
+                  {t("more.wrappedTotalExpense")}
+                </p>
+                <p className="mt-1 text-[36px] font-black text-kat-dark leading-none">
+                  {formatMoney(stats.totalExpense)}
+                </p>
               </div>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200/60 dark:border-slate-700/50 pt-6 max-w-md">
                 <div>
-                  <p className="text-[13px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider">{t("more.wrappedSharedExpense")}</p>
-                  <p className="mt-1 text-[18px] font-black text-kat-primary-usable">{formatMoney(sharedTotal)}</p>
+                  <p className="text-[13px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider">
+                    {t("more.wrappedSharedExpense")}
+                  </p>
+                  <p className="mt-1 text-[18px] font-black text-kat-primary-usable">
+                    {formatMoney(sharedTotal)}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-[13px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider">{t("more.wrappedPersonalExpense")}</p>
-                  <p className="mt-1 text-[18px] font-black text-kat-dark">{formatMoney(personalTotal)}</p>
+                  <p className="text-[13px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider">
+                    {t("more.wrappedPersonalExpense")}
+                  </p>
+                  <p className="mt-1 text-[18px] font-black text-kat-dark">
+                    {formatMoney(personalTotal)}
+                  </p>
                 </div>
               </div>
-              
+
               {data.members.length === 0 ? (
                 <div className="border-t border-slate-200/60 dark:border-slate-700/50 pt-6">
                   <div className="rounded-2xl border border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/25 px-4 py-3.5 text-[13.5px] text-slate-500 dark:text-slate-400 font-semibold leading-relaxed">
@@ -1337,9 +1649,16 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
                 <>
                   {stats.topPayer && (
                     <div className="border-t border-slate-200/60 dark:border-slate-700/50 pt-6">
-                      <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">{t("more.wrappedTopPayer")}</p>
+                      <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">
+                        {t("more.wrappedTopPayer")}
+                      </p>
                       <p className="mt-1 text-[14.5px] font-medium leading-relaxed text-slate-600 dark:text-slate-350">
-                        <span className="font-extrabold text-kat-dark">{stats.topPayer.name}</span> {t("more.wrappedTopPayerDesc")} <span className="font-extrabold text-kat-primary-usable">{formatMoney(stats.topPayer.amount)}</span>.
+                        <span className="font-extrabold text-kat-dark">{stats.topPayer.name}</span>{" "}
+                        {t("more.wrappedTopPayerDesc")}{" "}
+                        <span className="font-extrabold text-kat-primary-usable">
+                          {formatMoney(stats.topPayer.amount)}
+                        </span>
+                        .
                       </p>
                     </div>
                   )}
@@ -1348,7 +1667,9 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
             </div>
           ) : (
             <div className="text-center py-6 border border-slate-200/60 dark:border-slate-700/50 rounded-2xl bg-slate-50/40 dark:bg-slate-800/10">
-              <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-450">{t("more.wrappedNoExpenseData")}</p>
+              <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-450">
+                {t("more.wrappedNoExpenseData")}
+              </p>
             </div>
           )}
         </div>
@@ -1359,19 +1680,27 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-500 mb-4 ring-4 ring-amber-500/5 dark:ring-amber-500/10">
           <HugeiconsIcon icon={SmilePlusIcon} className="h-6 w-6" />
         </div>
-        <h3 className="text-[13px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2">{t("more.wrappedMoodTitle")}</h3>
+        <h3 className="text-[13px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2">
+          {t("more.wrappedMoodTitle")}
+        </h3>
         {mood ? (
           <div className="mt-2 flex flex-col items-center animate-fadeIn">
-            <p className="text-[28px] md:text-[32px] font-black text-kat-dark dark:text-white">{mood}</p>
+            <p className="text-[28px] md:text-[32px] font-black text-kat-dark dark:text-white">
+              {mood}
+            </p>
             <p className="mt-2 text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 text-center max-w-[280px] leading-relaxed">
               {t("more.wrappedMoodDesc")}
             </p>
           </div>
         ) : (
           <div className="flex flex-col items-center mt-2">
-            <p className="text-[16px] font-extrabold text-kat-dark mb-1.5">{t("more.wrappedNoMoodData")}</p>
-            <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 mb-5 max-w-sm">{t("more.wrappedNoMoodDesc")}</p>
-            <button 
+            <p className="text-[16px] font-extrabold text-kat-dark mb-1.5">
+              {t("more.wrappedNoMoodData")}
+            </p>
+            <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 mb-5 max-w-sm">
+              {t("more.wrappedNoMoodDesc")}
+            </p>
+            <button
               onClick={() => setSection("journal")}
               className="flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 py-2.5 text-[14px] font-extrabold text-white dark:text-slate-950 hover:bg-kat-dark/95 dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] transition-all shadow-sm border border-transparent dark:border-kat-primary"
             >
@@ -1388,10 +1717,13 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <HugeiconsIcon icon={Camera01Icon} className="h-5 w-5 text-amber-500" />
-            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">{t("more.wrappedFirstMoment")}</h4>
+            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">
+              {t("more.wrappedFirstMoment")}
+            </h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
-            {firstMomentText || "Chưa có dấu ấn đầu tiên. Hãy thêm hoạt động hoặc đăng bài viết để lưu lại khoảnh khắc mở đầu."}
+            {firstMomentText ||
+              "Chưa có dấu ấn đầu tiên. Hãy thêm hoạt động hoặc đăng bài viết để lưu lại khoảnh khắc mở đầu."}
           </p>
         </div>
 
@@ -1399,12 +1731,20 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <HugeiconsIcon icon={StarIcon} className="h-5 w-5 text-amber-500" />
-            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">{t("more.wrappedBusiestDay")}</h4>
+            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">
+              {t("more.wrappedBusiestDay")}
+            </h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
             {maxEventsDate ? (
               <>
-                <span className="font-extrabold text-amber-600 dark:text-amber-400">{formatDate(maxEventsDate)}</span> {t("more.wrappedBusiestDayDesc")} <span className="font-bold text-kat-dark">{maxEventsCount} {t("more.wrappedBusiestDayDesc2")}</span>
+                <span className="font-extrabold text-amber-600 dark:text-amber-400">
+                  {formatDate(maxEventsDate)}
+                </span>{" "}
+                {t("more.wrappedBusiestDayDesc")}{" "}
+                <span className="font-bold text-kat-dark">
+                  {maxEventsCount} {t("more.wrappedBusiestDayDesc2")}
+                </span>
               </>
             ) : (
               t("more.wrappedNoBusiestDay")
@@ -1416,7 +1756,9 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
         <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-soft flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <HugeiconsIcon icon={MapsIcon} className="h-5 w-5 text-kat-primary" />
-            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">{t("more.wrappedLocations")}</h4>
+            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">
+              {t("more.wrappedLocations")}
+            </h4>
           </div>
           <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
             {uniqueLocations.length > 0 ? uniqueLocations.join(", ") : t("more.wrappedNoLocations")}
@@ -1427,21 +1769,23 @@ function WrappedSection({ data, setSection }: { data: TripData; setSection: (sec
   );
 }
 
-
-
-function MiniStatCard({ 
-  label, 
-  value, 
-  colorClass 
-}: { 
-  label: string; 
-  value: string | number; 
+function MiniStatCard({
+  label,
+  value,
+  colorClass,
+}: {
+  label: string;
+  value: string | number;
   colorClass: string;
 }) {
   return (
     <div className="rounded-2xl border border-slate-100/60 bg-white p-3.5 shadow-inner flex flex-col justify-center min-h-[72px] transition-all hover:scale-[1.01]">
-      <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider leading-none">{label}</span>
-      <span className={classNames("text-[15.5px] font-black mt-1.5 truncate leading-tight", colorClass)}>
+      <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider leading-none">
+        {label}
+      </span>
+      <span
+        className={classNames("text-[15.5px] font-black mt-1.5 truncate leading-tight", colorClass)}
+      >
         {value}
       </span>
     </div>
@@ -1457,7 +1801,7 @@ function ActionCard({
   className = "",
   titleClassName = "text-kat-dark dark:text-slate-200",
   rightElement,
-  disabled
+  disabled,
 }: {
   icon: any;
   title: string;
@@ -1473,43 +1817,48 @@ function ActionCard({
     <>
       <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-white/5"></div>
       <div className="flex items-center gap-4 min-w-0 flex-1 relative z-10">
-        <div className={classNames(
-          "flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl shadow-inner transition-transform group-hover:scale-110 group-hover:rotate-3",
-          iconBgColor,
-          iconTextColor
-        )}>
+        <div
+          className={classNames(
+            "flex shrink-0 h-11 w-11 items-center justify-center rounded-2xl shadow-inner transition-transform group-hover:scale-110 group-hover:rotate-3",
+            iconBgColor,
+            iconTextColor
+          )}
+        >
           <HugeiconsIcon icon={Icon} className="h-5.5 w-5.5" />
         </div>
-        <span className={classNames("text-[15px] font-bold truncate leading-tight transition-colors group-hover:text-kat-primary dark:group-hover:text-kat-teal", titleClassName)}>
+        <span
+          className={classNames(
+            "text-[15px] font-bold truncate leading-tight transition-colors group-hover:text-kat-primary dark:group-hover:text-kat-teal",
+            titleClassName
+          )}
+        >
           {title}
         </span>
       </div>
       <div className="flex items-center gap-2 shrink-0 pl-2 relative z-10">
-        {rightElement !== undefined ? (
-          rightElement
-        ) : (
-          (onClick || disabled) && <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500 transition-transform group-hover:translate-x-1" />
-        )}
+        {rightElement !== undefined
+          ? rightElement
+          : (onClick || disabled) && (
+              <HugeiconsIcon
+                icon={ChevronRightIcon}
+                className="h-5 w-5 text-slate-400 dark:text-slate-500 transition-transform group-hover:translate-x-1"
+              />
+            )}
       </div>
     </>
   );
 
   const wrapperClasses = classNames(
     "group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border p-4 shadow-sm transition-all focus:outline-none",
-    disabled 
-      ? "bg-slate-50 dark:bg-slate-900/40 border-slate-200/50 dark:border-slate-800/50 opacity-60 cursor-not-allowed" 
+    disabled
+      ? "bg-slate-50 dark:bg-slate-900/40 border-slate-200/50 dark:border-slate-800/50 opacity-60 cursor-not-allowed"
       : "bg-white dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-700/50 hover:border-kat-primary/30 dark:hover:border-kat-primary/40 hover:shadow-md active:scale-[0.98]",
     className
   );
 
   if (onClick || disabled) {
     return (
-      <button
-        type="button"
-        onClick={onClick}
-        disabled={disabled}
-        className={wrapperClasses}
-      >
+      <button type="button" onClick={onClick} disabled={disabled} className={wrapperClasses}>
         {content}
       </button>
     );
@@ -1527,16 +1876,13 @@ function ActionCard({
   );
 }
 
-
-
-
 function MemberCardRow({
   member,
   checklist,
   expenses,
   openEditMember,
   onDeleteMember,
-  isReadOnly
+  isReadOnly,
 }: {
   member: Member;
   checklist: ChecklistItem[];
@@ -1548,85 +1894,129 @@ function MemberCardRow({
   const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const initial = member.name.trim().charAt(0).toUpperCase() || "?";
-                
+
   // Helper computations
-  const assignedTasksCount = checklist.filter(c => c.assignedTo === member.name).length;
-  const memberExpenses = expenses.filter(e => e.payer === member.name && !e.isDeleted);
+  const assignedTasksCount = checklist.filter((c) => c.assignedTo === member.name).length;
+  const memberExpenses = expenses.filter((e) => e.payer === member.name && !e.isDeleted);
   const paidExpensesCount = memberExpenses.length;
   const totalSpent = memberExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
 
   const roleLower = (member.role || "").trim().toLowerCase();
-  const isLeader = roleLower.includes("trưởng nhóm") || roleLower.includes("trưởng đoàn") || roleLower.includes("leader");
+  const isLeader =
+    roleLower.includes("trưởng nhóm") ||
+    roleLower.includes("trưởng đoàn") ||
+    roleLower.includes("leader");
   const isCost = roleLower.includes("quản lý chi phí");
   const isDriver = roleLower.includes("tài xế");
   const isGuide = roleLower.includes("dẫn đường");
   const isLuggage = roleLower.includes("hành lý") || roleLower.includes("phụ trách hành lý");
 
-  let cardBg = "bg-gradient-to-br from-slate-50/20 via-white to-white border-slate-200/60 dark:from-slate-800/10 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
+  let cardBg =
+    "bg-gradient-to-br from-slate-50/20 via-white to-white border-slate-200/60 dark:from-slate-800/10 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
   let borderAccent = "border-l-4 border-l-slate-400";
 
   if (isLeader) {
-    cardBg = "bg-gradient-to-br from-amber-50/30 via-white to-white border-slate-200/60 dark:from-amber-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
+    cardBg =
+      "bg-gradient-to-br from-amber-50/30 via-white to-white border-slate-200/60 dark:from-amber-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
     borderAccent = "border-l-4 border-l-amber-500";
   } else if (isCost) {
-    cardBg = "bg-gradient-to-br from-emerald-50/30 via-white to-white border-slate-200/60 dark:from-emerald-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
+    cardBg =
+      "bg-gradient-to-br from-emerald-50/30 via-white to-white border-slate-200/60 dark:from-emerald-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
     borderAccent = "border-l-4 border-l-emerald-500";
   } else if (isDriver) {
-    cardBg = "bg-gradient-to-br from-blue-50/30 via-white to-white border-slate-200/60 dark:from-blue-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
+    cardBg =
+      "bg-gradient-to-br from-blue-50/30 via-white to-white border-slate-200/60 dark:from-blue-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
     borderAccent = "border-l-4 border-l-blue-500";
   } else if (isGuide) {
-    cardBg = "bg-gradient-to-br from-sky-50/30 via-white to-white border-slate-200/60 dark:from-sky-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
+    cardBg =
+      "bg-gradient-to-br from-sky-50/30 via-white to-white border-slate-200/60 dark:from-sky-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
     borderAccent = "border-l-4 border-l-sky-500";
   } else if (isLuggage) {
-    cardBg = "bg-gradient-to-br from-indigo-50/30 via-white to-white border-slate-200/60 dark:from-indigo-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
+    cardBg =
+      "bg-gradient-to-br from-indigo-50/30 via-white to-white border-slate-200/60 dark:from-indigo-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
     borderAccent = "border-l-4 border-l-indigo-500";
+  } else if (member.isGroupLeader) {
+    cardBg =
+      "bg-gradient-to-br from-teal-50/30 via-white to-white border-slate-200/60 dark:from-teal-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
+    borderAccent = "border-l-4 border-l-teal-500";
   }
 
   const renderRoleBadge = (roleStr: string) => {
-    const roles = (roleStr || "Người đồng hành").split(",").map(r => r.trim()).filter(Boolean);
+    const roles = (roleStr || "Người đồng hành")
+      .split(",")
+      .map((r) => r.trim())
+      .filter(Boolean);
     if (roles.length === 0) roles.push("Người đồng hành");
 
     return (
       <div className="flex flex-wrap items-center gap-1.5 shrink-0">
         {roles.map((r, idx) => {
           const rLower = r.toLowerCase();
-          if (rLower.includes("trưởng nhóm") || rLower.includes("trưởng đoàn") || rLower.includes("leader")) {
+          if (
+            rLower.includes("trưởng nhóm") ||
+            rLower.includes("trưởng đoàn") ||
+            rLower.includes("leader")
+          ) {
             return (
-              <span key={idx} title={t("roles.roleLeader")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span
+                key={idx}
+                title={t("roles.roleLeader")}
+                className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110"
+              >
                 <HugeiconsIcon icon={CrownIcon} className="w-4 h-4 text-amber-500" />
               </span>
             );
           }
           if (rLower.includes("quản lý chi phí")) {
             return (
-              <span key={idx} title={t("roles.roleCostManager")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span
+                key={idx}
+                title={t("roles.roleCostManager")}
+                className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110"
+              >
                 <HugeiconsIcon icon={WalletCardsIcon} className="w-4 h-4 text-emerald-500" />
               </span>
             );
           }
           if (rLower.includes("tài xế")) {
             return (
-              <span key={idx} title={t("roles.roleDriver")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span
+                key={idx}
+                title={t("roles.roleDriver")}
+                className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-200/50 dark:border-blue-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110"
+              >
                 <HugeiconsIcon icon={Car01Icon} className="w-4 h-4 text-blue-500" />
               </span>
             );
           }
           if (rLower.includes("dẫn đường")) {
             return (
-              <span key={idx} title={t("roles.roleNavigator")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-700 dark:text-sky-400 border border-sky-200/50 dark:border-sky-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span
+                key={idx}
+                title={t("roles.roleNavigator")}
+                className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-700 dark:text-sky-400 border border-sky-200/50 dark:border-sky-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110"
+              >
                 <HugeiconsIcon icon={CompassIcon} className="w-4 h-4 text-sky-500" />
               </span>
             );
           }
           if (rLower.includes("phụ trách hành lý") || rLower.includes("hành lý")) {
             return (
-              <span key={idx} title={t("roles.roleLuggage")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+              <span
+                key={idx}
+                title={t("roles.roleLuggage")}
+                className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-900/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110"
+              >
                 <HugeiconsIcon icon={Luggage01Icon} className="w-4 h-4 text-indigo-500" />
               </span>
             );
           }
           return (
-            <span key={idx} title={t("roles.roleCompanion")} className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-350 border border-slate-200/60 dark:border-slate-700/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110">
+            <span
+              key={idx}
+              title={t("roles.roleCompanion")}
+              className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-350 border border-slate-200/60 dark:border-slate-700/50 shadow-[0_1px_2px_rgba(0,0,0,0.05)] shrink-0 select-none transition-transform hover:scale-110"
+            >
               <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 text-slate-400" />
             </span>
           );
@@ -1636,11 +2026,13 @@ function MemberCardRow({
   };
 
   return (
-    <div className={classNames(
-      "relative rounded-3xl border transition-all flex flex-col justify-between gap-4.5 p-5 shadow-[0_4px_15px_rgba(3,13,46,0.015)] hover:shadow-[0_8px_25px_rgba(3,13,46,0.04)] hover:scale-[1.005] duration-200",
-      cardBg,
-      borderAccent
-    )}>
+    <div
+      className={classNames(
+        "relative rounded-3xl border transition-all flex flex-col justify-between gap-4.5 p-5 shadow-[0_4px_15px_rgba(3,13,46,0.015)] hover:shadow-[0_8px_25px_rgba(3,13,46,0.04)] hover:scale-[1.005] duration-200",
+        cardBg,
+        borderAccent
+      )}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4 min-w-0 flex-1">
           {/* Avatar */}
@@ -1657,18 +2049,37 @@ function MemberCardRow({
           {/* Member details */}
           <div className="min-w-0 flex-1 space-y-1.5">
             <div className="flex items-center flex-wrap gap-x-2 gap-y-1 min-w-0">
-              <h4 className="text-[16.5px] font-extrabold text-kat-dark truncate leading-tight min-w-0">{member.name}</h4>
+              <h4 className="text-[16.5px] font-extrabold text-kat-dark truncate leading-tight min-w-0">
+                {member.name}
+              </h4>
               {renderRoleBadge(member.role || "Người đồng hành")}
             </div>
             {member.phone && (
               <p className="text-[13.5px] font-semibold text-slate-500">
-                {t("members.phonePrefix")}<span className="text-kat-dark">{member.phone}</span>
+                {t("members.phonePrefix")}
+                <span className="text-kat-dark">{member.phone}</span>
               </p>
             )}
             {member.group && (
-              <p className="text-[13.5px] font-semibold text-slate-500">
-                {t("members.groupPrefix")}<span className={member.isGroupLeader ? "text-kat-dark dark:text-kat-primary-usable" : "text-slate-700 dark:text-slate-300"}>{member.group}</span>
-              </p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <p className="text-[13.5px] font-semibold text-slate-500 flex items-center">
+                  {t("members.groupPrefix")}
+                  <span
+                    className={
+                      member.isGroupLeader
+                        ? "text-kat-dark font-extrabold dark:text-kat-primary-usable"
+                        : "text-slate-700 dark:text-slate-300"
+                    }
+                  >
+                    {member.group}
+                  </span>
+                </p>
+                {member.isGroupLeader && (
+                  <span className="inline-flex items-center gap-1 rounded bg-teal-50 px-1.5 py-0.5 text-[10px] font-bold text-teal-600 border border-teal-100 dark:bg-teal-950/30 dark:border-teal-900/30 dark:text-teal-400 select-none">
+                    Đại diện
+                  </span>
+                )}
+              </div>
             )}
             {member.note && (
               <p className="text-[13px] font-medium text-slate-400 dark:text-slate-500 italic mt-1 bg-slate-50/70 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-100/50 dark:border-slate-700/30 break-words">
@@ -1682,54 +2093,57 @@ function MemberCardRow({
         {!isReadOnly && (
           <div className="relative shrink-0">
             <button
-            type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-kat-teal/40"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsMenuOpen(!isMenuOpen);
-            }}
-            title="Tùy chọn"
-          >
-            <HugeiconsIcon icon={MoreVerticalIcon} className="h-5 w-5" />
-          </button>
+              type="button"
+              className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-kat-teal/40"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMenuOpen(!isMenuOpen);
+              }}
+              title="Tùy chọn"
+            >
+              <HugeiconsIcon icon={MoreVerticalIcon} className="h-5 w-5" />
+            </button>
 
-          {isMenuOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-30 cursor-default"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsMenuOpen(false);
-                }}
-              />
-              <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 dark:border-slate-700/50 bg-white dark:bg-slate-800 p-1.5 shadow-lg text-left">
-                <button
-                  type="button"
+            {isMenuOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-30 cursor-default"
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsMenuOpen(false);
-                    openEditMember(member);
                   }}
-                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 active:bg-slate-100 dark:active:bg-slate-600 transition-colors"
-                >
-                  <HugeiconsIcon icon={PencilEdit01Icon} className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                  {t("members.menuEdit")}
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsMenuOpen(false);
-                    onDeleteMember(member);
-                  }}
-                  className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
-                >
-                  <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
-                  {t("members.menuDelete")}
-                </button>
-              </div>
-            </>
-          )}
+                />
+                <div className="absolute right-0 bottom-full mb-1 z-40 w-32 rounded-2xl border border-slate-150 dark:border-slate-700/50 bg-white dark:bg-slate-800 p-1.5 shadow-lg text-left">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsMenuOpen(false);
+                      openEditMember(member);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 active:bg-slate-100 dark:active:bg-slate-600 transition-colors"
+                  >
+                    <HugeiconsIcon
+                      icon={PencilEdit01Icon}
+                      className="h-4 w-4 text-slate-500 dark:text-slate-400"
+                    />
+                    {t("members.menuEdit")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsMenuOpen(false);
+                      onDeleteMember(member);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/30 active:bg-rose-100 dark:active:bg-rose-900/20 transition-colors"
+                  >
+                    <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
+                    {t("members.menuDelete")}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -1737,23 +2151,29 @@ function MemberCardRow({
       {/* Mini Stats Row */}
       <div className="pt-3 border-t border-slate-100/60 dark:border-slate-700/40 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex flex-wrap gap-2 text-[12px]">
-          <span className={classNames(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
-            assignedTasksCount === 0 
-              ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700/30 text-slate-400 dark:text-slate-500 font-semibold" 
-              : "bg-sky-50/50 dark:bg-sky-950/20 border-sky-100 dark:border-sky-900/30 text-sky-700 dark:text-sky-400 font-bold"
-          )}>
+          <span
+            className={classNames(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
+              assignedTasksCount === 0
+                ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700/30 text-slate-400 dark:text-slate-500 font-semibold"
+                : "bg-sky-50/50 dark:bg-sky-950/20 border-sky-100 dark:border-sky-900/30 text-sky-700 dark:text-sky-400 font-bold"
+            )}
+          >
             <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 shrink-0" />
             {assignedTasksCount} {t("members.taskCount")}
           </span>
-          <span className={classNames(
-            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-extrabold shadow-sm border",
-            totalSpent > 0
-              ? "bg-kat-teal-soft/30 dark:bg-kat-teal-soft/10 text-kat-teal dark:text-kat-primary-usable border-kat-teal/20"
-              : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700"
-          )}>
+          <span
+            className={classNames(
+              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-extrabold shadow-sm border",
+              totalSpent > 0
+                ? "bg-kat-teal-soft/30 dark:bg-kat-teal-soft/10 text-kat-teal dark:text-kat-primary-usable border-kat-teal/20"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700"
+            )}
+          >
             <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5 shrink-0" />
-            {t("members.paidPrefix")}{formatMoney(totalSpent)} {paidExpensesCount > 0 && `(${paidExpensesCount} ${t("members.paidTimes")})`}
+            {t("members.paidPrefix")}
+            {formatMoney(totalSpent)}{" "}
+            {paidExpensesCount > 0 && `(${paidExpensesCount} ${t("members.paidTimes")})`}
           </span>
         </div>
       </div>
@@ -1763,7 +2183,11 @@ function MemberCardRow({
 
 import { ensureAnonymousUser } from "../../services/authService";
 import { supabaseEnabled, supabase } from "../../lib/supabase";
-import { createShareLink, revokeShareLink, updateShareLink } from "../../services/cloudShareService";
+import {
+  createShareLink,
+  revokeShareLink,
+  updateShareLink,
+} from "../../services/cloudShareService";
 
 export function MoreScreen({
   trip,
@@ -1783,7 +2207,7 @@ export function MoreScreen({
   onOpenSettings,
   isReadOnly,
   isAutoSyncing,
-  lastSyncedAt
+  lastSyncedAt,
 }: {
   trip: Trip;
   members: Member[];
@@ -1797,7 +2221,9 @@ export function MoreScreen({
   onTripSelected: (id: number) => void;
   onShowToast?: (msg: string) => void;
   section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents";
-  setSection: (section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents") => void;
+  setSection: (
+    section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents"
+  ) => void;
   onOpenInbox?: () => void;
   onOpenSettings?: (view?: "menu" | "auth" | "privacy" | "about" | "donate") => void;
   isReadOnly?: boolean;
@@ -1839,22 +2265,42 @@ export function MoreScreen({
 
   // Sync hooks with history for closing modals on browser back action
   useModalHistory(editingTrip, () => setEditingTrip(false), "edit-trip-modal");
-  useModalHistory(isMemberFormOpen, () => {
-    setIsMemberFormOpen(false);
-    setEditingMember(null);
-  }, "member-form-modal");
+  useModalHistory(
+    isMemberFormOpen,
+    () => {
+      setIsMemberFormOpen(false);
+      setEditingMember(null);
+    },
+    "member-form-modal"
+  );
   useModalHistory(isDataSectionOpen, () => setIsDataSectionOpen(false), "data-backup-modal");
   useModalHistory(isDonateOpen, () => setIsDonateOpen(false), "donate-modal");
   useModalHistory(isShareModalOpen, () => setIsShareModalOpen(false), "share-trip-modal");
 
   useModalHistory(isDeleteConfirmOpen, () => setIsDeleteConfirmOpen(false), "delete-trip-confirm");
-  useModalHistory(isArchiveConfirmOpen, () => setIsArchiveConfirmOpen(false), "archive-trip-confirm");
-  useModalHistory(isUnarchiveConfirmOpen, () => setIsUnarchiveConfirmOpen(false), "unarchive-trip-confirm");
-  useModalHistory(isFactoryResetConfirmOpen, () => setIsFactoryResetConfirmOpen(false), "factory-reset-confirm");
-  useModalHistory(isDeleteMemberConfirmOpen, () => {
-    setIsDeleteMemberConfirmOpen(false);
-    setMemberToDelete(null);
-  }, "delete-member-confirm");
+  useModalHistory(
+    isArchiveConfirmOpen,
+    () => setIsArchiveConfirmOpen(false),
+    "archive-trip-confirm"
+  );
+  useModalHistory(
+    isUnarchiveConfirmOpen,
+    () => setIsUnarchiveConfirmOpen(false),
+    "unarchive-trip-confirm"
+  );
+  useModalHistory(
+    isFactoryResetConfirmOpen,
+    () => setIsFactoryResetConfirmOpen(false),
+    "factory-reset-confirm"
+  );
+  useModalHistory(
+    isDeleteMemberConfirmOpen,
+    () => {
+      setIsDeleteMemberConfirmOpen(false);
+      setMemberToDelete(null);
+    },
+    "delete-member-confirm"
+  );
   const [shareLoading, setShareLoading] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
   const [shareOptions, setShareOptions] = useState({
@@ -1885,25 +2331,35 @@ export function MoreScreen({
     trip.shareIncludeBackupPlans,
     trip.shareIncludeDocuments,
     trip.shareUsePinProtection,
-    trip.sharePin
+    trip.sharePin,
   ]);
 
   const [copiedLink, setCopiedLink] = useState(false);
 
-  const activeShareLink = trip.shareToken ? {
-    token: trip.shareToken,
-    url: `${window.location.origin}/share/${trip.shareToken}`
-  } : null;
+  const activeShareLink = trip.shareToken
+    ? {
+        token: trip.shareToken,
+        url: `${window.location.origin}/share/${trip.shareToken}`,
+      }
+    : null;
 
-  const tripData = { trip, members, events, expenses, checklist, journals, packingItems, travelDocuments };
+  const tripData = {
+    trip,
+    members,
+    events,
+    expenses,
+    checklist,
+    journals,
+    packingItems,
+    travelDocuments,
+  };
 
   const sortedMembers = React.useMemo(() => {
     let list = [...members];
     if (memberSearchQuery.trim()) {
       const q = memberSearchQuery.toLowerCase().trim();
-      list = list.filter(m => 
-        m.name.toLowerCase().includes(q) || 
-        (m.role && m.role.toLowerCase().includes(q))
+      list = list.filter(
+        (m) => m.name.toLowerCase().includes(q) || (m.role && m.role.toLowerCase().includes(q))
       );
     }
     const isLeader = (m: Member) => {
@@ -1918,15 +2374,15 @@ export function MoreScreen({
     list.sort((a, b) => {
       const aHasGroup = !!a.group;
       const bHasGroup = !!b.group;
-      
+
       if (aHasGroup && bHasGroup) {
         const groupComp = a.group!.localeCompare(b.group!);
         if (groupComp !== 0) return groupComp;
-        
+
         if (a.isGroupLeader && !b.isGroupLeader) return -1;
         if (!a.isGroupLeader && b.isGroupLeader) return 1;
       }
-      
+
       if (aHasGroup && !bHasGroup) return -1;
       if (!aHasGroup && bHasGroup) return 1;
 
@@ -1934,7 +2390,7 @@ export function MoreScreen({
       const bLeader = isLeader(b);
       if (aLeader && !bLeader) return -1;
       if (!aLeader && bLeader) return 1;
-      
+
       return a.name.localeCompare(b.name);
     });
     return list;
@@ -1957,10 +2413,13 @@ export function MoreScreen({
   async function handleCreateLink() {
     try {
       setShareLoading(true);
-      await createShareLink(trip.id!, { 
-        ...shareOptions, 
+      await createShareLink(trip.id!, {
+        ...shareOptions,
         mode: "request_edit",
-        sharePin: shareOptions.usePinProtection && shareOptions.sharePin.length === 4 ? shareOptions.sharePin : undefined
+        sharePin:
+          shareOptions.usePinProtection && shareOptions.sharePin.length === 4
+            ? shareOptions.sharePin
+            : undefined,
       });
       // Save sharing configuration to local Dexie so background sync knows about it!
       await db.trips.update(trip.id!, {
@@ -1970,7 +2429,10 @@ export function MoreScreen({
         shareIncludeBackupPlans: shareOptions.includeBackupPlans,
         shareIncludeDocuments: shareOptions.includeDocuments,
         shareUsePinProtection: shareOptions.usePinProtection,
-        sharePin: shareOptions.usePinProtection && shareOptions.sharePin.length === 4 ? shareOptions.sharePin : undefined
+        sharePin:
+          shareOptions.usePinProtection && shareOptions.sharePin.length === 4
+            ? shareOptions.sharePin
+            : undefined,
       });
     } catch (e: any) {
       showToast(t("toast.shareLinkCreateError"), "error");
@@ -1987,7 +2449,10 @@ export function MoreScreen({
       await updateShareLink(trip.id!, activeShareLink.token, {
         ...shareOptions,
         mode: "request_edit",
-        sharePin: shareOptions.usePinProtection && shareOptions.sharePin.length === 4 ? shareOptions.sharePin : undefined
+        sharePin:
+          shareOptions.usePinProtection && shareOptions.sharePin.length === 4
+            ? shareOptions.sharePin
+            : undefined,
       });
       showToast(t("toast.syncSuccess"));
     } catch (e: any) {
@@ -2038,8 +2503,6 @@ export function MoreScreen({
     }
   }
 
-
-
   async function factoryReset() {
     try {
       await db.delete();
@@ -2080,51 +2543,69 @@ export function MoreScreen({
 
   if (section === "journal") {
     return (
-      <JournalSection 
-        tripId={trip.id!} 
-        journals={journals} 
-        onShowToast={onShowToast} 
-        onBack={() => setSection("overview")} 
-        isReadOnly={isReadOnly} 
-        renderChatBox={trip.shareToken ? () => {
-          const leader = members?.find(m => m.role?.toLowerCase().includes("trưởng nhóm") || m.role?.toLowerCase().includes("leader"));
-          
-          let chatName = t("chat.tripCreator");
-          let chatRole = t("chat.tripCreator");
+      <JournalSection
+        tripId={trip.id!}
+        journals={journals}
+        onShowToast={onShowToast}
+        onBack={() => setSection("overview")}
+        isReadOnly={isReadOnly}
+        renderChatBox={
+          trip.shareToken
+            ? () => {
+                const leader = members?.find(
+                  (m) =>
+                    m.role?.toLowerCase().includes("trưởng nhóm") ||
+                    m.role?.toLowerCase().includes("leader")
+                );
 
-          if (leader) {
-            chatName = leader.name;
-            chatRole = "Trưởng nhóm";
-          } else if (authName) {
-            chatName = authName;
-            chatRole = t("chat.tripCreator");
-          }
+                let chatName = t("chat.tripCreator");
+                let chatRole = t("chat.tripCreator");
 
-          return (
-            <ChatBox 
-              token={trip.shareToken!} 
-              currentUser={{ 
-                name: chatName, 
-                role: chatRole,
-                isGuest: false, 
-                canEdit: true 
-              }} 
-              inline={true}
-              isReadOnly={isReadOnly}
-            />
-          );
-        } : undefined}
+                if (leader) {
+                  chatName = leader.name;
+                  chatRole = "Trưởng nhóm";
+                } else if (authName) {
+                  chatName = authName;
+                  chatRole = t("chat.tripCreator");
+                }
+
+                return (
+                  <ChatBox
+                    token={trip.shareToken!}
+                    currentUser={{
+                      name: chatName,
+                      role: chatRole,
+                      isGuest: false,
+                      canEdit: true,
+                    }}
+                    inline={true}
+                    isReadOnly={isReadOnly}
+                  />
+                );
+              }
+            : undefined
+        }
       />
     );
   }
   if (section === "wrapped") return <WrappedSection data={tripData} setSection={setSection} />;
-  if (section === "documents") return <TravelDocumentsSection tripId={trip.id!} onBack={() => setSection("overview")} onShowToast={onShowToast} isReadOnly={isReadOnly} />;
-  
+  if (section === "documents")
+    return (
+      <TravelDocumentsSection
+        tripId={trip.id!}
+        onBack={() => setSection("overview")}
+        onShowToast={onShowToast}
+        isReadOnly={isReadOnly}
+      />
+    );
+
   if (section === "members") {
-
-
-    const membersWithTasks = members.filter(m => checklist.some(c => c.assignedTo === m.name)).length;
-    const membersWithExpenses = members.filter(m => expenses.some(e => e.payer === m.name)).length;
+    const membersWithTasks = members.filter((m) =>
+      checklist.some((c) => c.assignedTo === m.name)
+    ).length;
+    const membersWithExpenses = members.filter((m) =>
+      expenses.some((e) => e.payer === m.name)
+    ).length;
 
     return (
       <div className="mx-auto max-w-[960px] space-y-6 pb-0 md:pb-8">
@@ -2139,12 +2620,16 @@ export function MoreScreen({
               <HugeiconsIcon icon={ArrowLeft01Icon} className="h-5 w-5" />
             </button>
             <div>
-              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">{t("members.membersTitle")}</h2>
-              <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">{t("members.membersSubtitle")}</p>
+              <h2 className="text-[28px] md:text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">
+                {t("members.membersTitle")}
+              </h2>
+              <p className="mt-0.5 text-[14px] md:text-[15px] font-medium text-slate-500 dark:text-slate-400">
+                {t("members.membersSubtitle")}
+              </p>
             </div>
           </div>
           {!isReadOnly && (
-            <button 
+            <button
               className="flex h-11 sm:h-12 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 transition-all hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] shadow-sm w-full sm:w-auto shrink-0 border border-transparent dark:border-kat-primary px-5 text-[14px] font-black"
               onClick={openNewMember}
             >
@@ -2163,47 +2648,82 @@ export function MoreScreen({
                   <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-500 flex items-center justify-center mb-2">
                     <HugeiconsIcon icon={UserGroupIcon} className="w-5 h-5" />
                   </div>
-                  <span className="text-[20px] font-black text-kat-dark leading-none">{members.length}</span>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">{t("members.statMembers")}</span>
+                  <span className="text-[20px] font-black text-kat-dark leading-none">
+                    {members.length}
+                  </span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">
+                    {t("members.statMembers")}
+                  </span>
                 </div>
-                
+
                 <div className="rounded-[20px] bg-white dark:bg-kat-surface border border-slate-200/60 dark:border-slate-800/60 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-transform hover:scale-[1.02]">
                   <div className="h-10 w-10 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-500 flex items-center justify-center mb-2">
                     <HugeiconsIcon icon={CheckmarkBadge01Icon} className="w-5 h-5" />
                   </div>
-                  <span className="text-[20px] font-black text-kat-dark leading-none">{membersWithTasks}</span>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">{t("members.statTasks")}</span>
+                  <span className="text-[20px] font-black text-kat-dark leading-none">
+                    {membersWithTasks}
+                  </span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">
+                    {t("members.statTasks")}
+                  </span>
                 </div>
 
                 <div className="rounded-[20px] bg-white dark:bg-kat-surface border border-slate-200/60 dark:border-slate-800/60 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-transform hover:scale-[1.02]">
                   <div className="h-10 w-10 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 flex items-center justify-center mb-2">
                     <HugeiconsIcon icon={WalletCardsIcon} className="w-5 h-5" />
                   </div>
-                  <span className="text-[20px] font-black text-kat-dark leading-none">{membersWithExpenses}</span>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">{t("members.statPaid")}</span>
+                  <span className="text-[20px] font-black text-kat-dark leading-none">
+                    {membersWithExpenses}
+                  </span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">
+                    {t("members.statPaid")}
+                  </span>
                 </div>
 
                 <div className="rounded-[20px] bg-white dark:bg-kat-surface border border-slate-200/60 dark:border-slate-800/60 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-transform hover:scale-[1.02]">
-                  <div className={classNames("h-10 w-10 rounded-full flex items-center justify-center mb-2", members.length >= 2 ? "bg-teal-50 dark:bg-teal-900/20 text-teal-500" : "bg-slate-50 dark:bg-slate-800 text-slate-400")}>
-                    <HugeiconsIcon icon={members.length >= 2 ? CheckmarkCircle01Icon : AlertCircleIcon} className="w-5 h-5" />
+                  <div
+                    className={classNames(
+                      "h-10 w-10 rounded-full flex items-center justify-center mb-2",
+                      members.length >= 2
+                        ? "bg-teal-50 dark:bg-teal-900/20 text-teal-500"
+                        : "bg-slate-50 dark:bg-slate-800 text-slate-400"
+                    )}
+                  >
+                    <HugeiconsIcon
+                      icon={members.length >= 2 ? CheckmarkCircle01Icon : AlertCircleIcon}
+                      className="w-5 h-5"
+                    />
                   </div>
-                  <span className={classNames("text-[14px] font-black leading-none", members.length >= 2 ? "text-kat-dark" : "text-slate-400")}>
+                  <span
+                    className={classNames(
+                      "text-[14px] font-black leading-none",
+                      members.length >= 2 ? "text-kat-dark" : "text-slate-400"
+                    )}
+                  >
                     {members.length >= 2 ? t("members.statReady") : t("members.statNeedMore")}
                   </span>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">{t("members.statSplit")}</span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">
+                    {t("members.statSplit")}
+                  </span>
                 </div>
               </div>
-              
+
               {members.length < 2 && (
                 <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-start gap-2.5 text-[13px] font-semibold text-slate-500">
-                  <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5 text-kat-teal shrink-0" />
+                  <HugeiconsIcon
+                    icon={UserGroupIcon}
+                    className="h-4.5 w-4.5 text-kat-teal shrink-0"
+                  />
                   <p>{t("members.emptyMembers")}</p>
                 </div>
               )}
             </div>
           ) : (
             <div className="flex items-start gap-2.5 py-1 text-[14px] md:text-[15px] font-semibold text-slate-500 leading-relaxed">
-              <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-kat-teal shrink-0 mt-0.5" />
+              <HugeiconsIcon
+                icon={UserGroupIcon}
+                className="h-5 w-5 text-kat-teal shrink-0 mt-0.5"
+              />
               <span>{t("members.emptyMembers")}</span>
             </div>
           )}
@@ -2212,7 +2732,9 @@ export function MoreScreen({
         {/* Member List Section */}
         <section className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
-            <h3 className="text-[17px] font-extrabold text-kat-dark">{t("members.memberListTitle")} {members.length > 0 && `(${members.length})`}</h3>
+            <h3 className="text-[17px] font-extrabold text-kat-dark">
+              {t("members.memberListTitle")} {members.length > 0 && `(${members.length})`}
+            </h3>
             {members.length > 0 && (
               <div className="relative w-full sm:w-72">
                 <input
@@ -2236,15 +2758,15 @@ export function MoreScreen({
               </div>
             )}
           </div>
-          
+
           {sortedMembers.length ? (
             (() => {
               const groups: { name: string; members: typeof sortedMembers }[] = [];
               const noGroup: typeof sortedMembers = [];
-              
-              sortedMembers.forEach(m => {
+
+              sortedMembers.forEach((m) => {
                 if (m.group) {
-                  let g = groups.find(x => x.name === m.group);
+                  let g = groups.find((x) => x.name === m.group);
                   if (!g) {
                     g = { name: m.group, members: [] };
                     groups.push(g);
@@ -2257,11 +2779,13 @@ export function MoreScreen({
 
               return (
                 <div className="flex flex-col gap-6">
-                  {groups.map(g => (
+                  {groups.map((g) => (
                     <div key={g.name} className="animate-fadeIn">
                       <div className="flex items-center gap-2 mb-3 px-1">
                         <HugeiconsIcon icon={UserGroupIcon} className="w-5 h-5 text-kat-teal" />
-                        <h3 className="text-[14px] font-bold text-slate-700 dark:text-slate-300">{g.name}</h3>
+                        <h3 className="text-[14px] font-bold text-slate-700 dark:text-slate-300">
+                          {g.name}
+                        </h3>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {g.members.map((member) => (
@@ -2281,13 +2805,15 @@ export function MoreScreen({
                       </div>
                     </div>
                   ))}
-                  
+
                   {noGroup.length > 0 && (
                     <div className={groups.length > 0 ? "animate-fadeIn" : "animate-fadeIn"}>
                       {groups.length > 0 && (
                         <div className="flex items-center gap-2 mb-3 px-1">
                           <HugeiconsIcon icon={UserIcon} className="w-5 h-5 text-slate-400" />
-                          <h3 className="text-[14px] font-bold text-slate-700 dark:text-slate-300">{t("members.otherMembers")}</h3>
+                          <h3 className="text-[14px] font-bold text-slate-700 dark:text-slate-300">
+                            {t("members.otherMembers")}
+                          </h3>
                         </div>
                       )}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2329,7 +2855,8 @@ export function MoreScreen({
               </div>
               <h3 className="text-[16px] font-bold text-kat-dark">Chưa có thành viên nào</h3>
               <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
-                Thêm thành viên để cùng chia chi phí, chuẩn bị hành lý và lưu lại vai trò trong chuyến đi.
+                Thêm thành viên để cùng chia chi phí, chuẩn bị hành lý và lưu lại vai trò trong
+                chuyến đi.
               </p>
             </div>
           )}
@@ -2342,7 +2869,7 @@ export function MoreScreen({
           onClose={() => setIsMemberFormOpen(false)}
           onShowToast={onShowToast}
         />
-        
+
         <DeleteMemberConfirmModal
           isOpen={isDeleteMemberConfirmOpen}
           onClose={() => {
@@ -2351,8 +2878,12 @@ export function MoreScreen({
           }}
           onConfirm={executeDeleteMember}
           memberName={memberToDelete?.name ?? ""}
-          hasExpenses={memberToDelete ? expenses.some(e => e.payer === memberToDelete.name) : false}
-          hasChecklist={memberToDelete ? checklist.some(c => c.assignedTo === memberToDelete.name) : false}
+          hasExpenses={
+            memberToDelete ? expenses.some((e) => e.payer === memberToDelete.name) : false
+          }
+          hasChecklist={
+            memberToDelete ? checklist.some((c) => c.assignedTo === memberToDelete.name) : false
+          }
         />
       </div>
     );
@@ -2363,8 +2894,12 @@ export function MoreScreen({
       <div className="mx-auto max-w-[640px] space-y-6 pb-0 md:pb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">{t("more.workspaceTitle")}</h2>
-            <p className="mt-1 text-[15px] font-medium text-slate-500 dark:text-slate-400">{t("more.workspaceDescNoTrip")}</p>
+            <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">
+              {t("more.workspaceTitle")}
+            </h2>
+            <p className="mt-1 text-[15px] font-medium text-slate-500 dark:text-slate-400">
+              {t("more.workspaceDescNoTrip")}
+            </p>
           </div>
           <button
             onClick={() => setSection("overview")}
@@ -2376,7 +2911,6 @@ export function MoreScreen({
 
         {/* App settings items */}
         <div className="flex flex-col gap-2">
-
           {/* Privacy */}
           <button
             onClick={() => onOpenSettings?.("privacy")}
@@ -2387,11 +2921,18 @@ export function MoreScreen({
                 <HugeiconsIcon icon={LockIcon} className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">Quyền riêng tư</h4>
-                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium">Quản lý an toàn dữ liệu và quyền cá nhân</p>
+                <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">
+                  Quyền riêng tư
+                </h4>
+                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium">
+                  Quản lý an toàn dữ liệu và quyền cá nhân
+                </p>
               </div>
             </div>
-            <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500" />
+            <HugeiconsIcon
+              icon={ChevronRightIcon}
+              className="h-5 w-5 text-slate-400 dark:text-slate-500"
+            />
           </button>
 
           {/* About */}
@@ -2404,11 +2945,18 @@ export function MoreScreen({
                 <HugeiconsIcon icon={InformationCircleIcon} className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">Thông tin ứng dụng</h4>
-                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium">Khám phá thông tin và hành trình phát triển</p>
+                <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">
+                  Thông tin ứng dụng
+                </h4>
+                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium">
+                  Khám phá thông tin và hành trình phát triển
+                </p>
               </div>
             </div>
-            <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500" />
+            <HugeiconsIcon
+              icon={ChevronRightIcon}
+              className="h-5 w-5 text-slate-400 dark:text-slate-500"
+            />
           </button>
 
           {/* Donate */}
@@ -2421,11 +2969,18 @@ export function MoreScreen({
                 <HugeiconsIcon icon={Coffee01Icon} className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">Ủng hộ tác giả</h4>
-                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium">Nếu bạn thấy app hữu ích, cảm ơn rất nhiều</p>
+                <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">
+                  Ủng hộ tác giả
+                </h4>
+                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium">
+                  Nếu bạn thấy app hữu ích, cảm ơn rất nhiều
+                </p>
               </div>
             </div>
-            <HugeiconsIcon icon={ChevronRightIcon} className="h-5 w-5 text-slate-400 dark:text-slate-500" />
+            <HugeiconsIcon
+              icon={ChevronRightIcon}
+              className="h-5 w-5 text-slate-400 dark:text-slate-500"
+            />
           </button>
 
           {/* Version */}
@@ -2435,17 +2990,25 @@ export function MoreScreen({
                 <HugeiconsIcon icon={PackageIcon} className="h-5 w-5" />
               </div>
               <div>
-                <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">Phiên bản</h4>
-                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium">Phiên bản hiện tại trên thiết bị</p>
+                <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">
+                  Phiên bản
+                </h4>
+                <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium">
+                  Phiên bản hiện tại trên thiết bị
+                </p>
               </div>
             </div>
-            <span className="text-xs font-black text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200/60 dark:border-slate-700/60">{APP_VERSION}</span>
+            <span className="text-xs font-black text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200/60 dark:border-slate-700/60">
+              {APP_VERSION}
+            </span>
           </div>
         </div>
 
         {/* Danger zone */}
         <div className="flex flex-col gap-2">
-          <p className="text-[11px] font-bold text-rose-400 uppercase tracking-widest px-1 pb-1">Vùng nguy hiểm</p>
+          <p className="text-[11px] font-bold text-rose-400 uppercase tracking-widest px-1 pb-1">
+            Vùng nguy hiểm
+          </p>
           <ActionCard
             icon={Delete01Icon}
             title="Khôi phục cài đặt gốc"
@@ -2456,7 +3019,7 @@ export function MoreScreen({
             className="border-rose-100 dark:border-rose-900/30 bg-rose-50/10 dark:bg-rose-950/5 hover:bg-rose-50/20 dark:hover:bg-rose-950/10 text-rose-600 dark:text-rose-400 focus:ring-rose-500/50"
           />
         </div>
-        
+
         <div className="mt-8 text-center">
           <p className="text-[13.5px] font-bold text-slate-400">
             {t("more.madeBy")}{" "}
@@ -2481,10 +3044,11 @@ export function MoreScreen({
   return (
     <div className="mx-auto max-w-[800px] px-2 md:px-0">
       <div className="flex flex-col gap-6 pb-0 md:pb-8">
-        
         {/* Title Block */}
         <div>
-          <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">{t("more.workspaceTitle")}</h2>
+          <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">
+            {t("more.workspaceTitle")}
+          </h2>
           <p className="mt-1 text-[15px] font-medium text-slate-500 dark:text-slate-400">
             {t("more.workspaceDesc")}
           </p>
@@ -2492,22 +3056,24 @@ export function MoreScreen({
 
         {/* Hero chuyến đi compact hơn */}
         <section className="relative overflow-hidden rounded-[28px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-slate-800/80 p-5 md:p-6 text-kat-text shadow-soft">
-          <div 
+          <div
             className="absolute -right-6 -bottom-6 w-32 h-32 rotate-12 pointer-events-none z-0 flex items-center justify-center text-kat-primary"
             style={{ opacity: 0.04, color: "var(--kat-primary)" }}
           >
             <HugeiconsIcon icon={CompassIcon} size={128} />
           </div>
-          
+
           <div className="relative z-10 flex flex-col gap-4">
             {/* Header info */}
             <div>
-              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-550 dark:text-slate-450">{t("more.currentTrip")}</p>
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-550 dark:text-slate-450">
+                {t("more.currentTrip")}
+              </p>
               <h3 className="mt-1 break-words text-[24px] md:text-[28px] font-black leading-tight tracking-tight text-kat-dark dark:text-slate-200">
                 {trip.title}
               </h3>
             </div>
-            
+
             {/* Metadata tags */}
             <div className="flex flex-wrap gap-2 text-[12.5px] font-bold text-slate-600 dark:text-slate-400">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/35 px-3 py-1.5">
@@ -2516,7 +3082,9 @@ export function MoreScreen({
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/35 px-3 py-1.5">
                 <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-kat-primary" />
-                {trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}`}
+                {trip.startDate === trip.endDate
+                  ? formatDate(trip.startDate)
+                  : `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}`}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/35 px-3 py-1.5">
                 <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-kat-primary" />
@@ -2548,7 +3116,9 @@ export function MoreScreen({
 
         {/* Thao tác chính */}
         <section className="space-y-3">
-          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">{t("more.sectionFeatures")}</h3>
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">
+            {t("more.sectionFeatures")}
+          </h3>
           <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
             <ActionCard
               icon={MapsIcon}
@@ -2598,7 +3168,9 @@ export function MoreScreen({
 
         {/* Hệ thống */}
         <section className="space-y-3">
-          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">{t("more.sectionData")}</h3>
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">
+            {t("more.sectionData")}
+          </h3>
           <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
             <div className="flex flex-col gap-2 md:col-span-2">
               <ActionCard
@@ -2608,21 +3180,22 @@ export function MoreScreen({
                 iconBgColor="bg-blue-50 dark:bg-blue-950/20"
                 iconTextColor="text-blue-600 border-blue-100 dark:text-blue-400 dark:border-blue-900/30"
                 rightElement={
-                  <HugeiconsIcon icon={ChevronRightIcon} 
+                  <HugeiconsIcon
+                    icon={ChevronRightIcon}
                     className={classNames(
-                      "h-5 w-5 text-muted-foreground transition-transform duration-200", 
+                      "h-5 w-5 text-muted-foreground transition-transform duration-200",
                       isDataSectionOpen ? "rotate-90" : ""
-                    )} 
+                    )}
                   />
                 }
               />
-              
+
               {isDataSectionOpen && (
                 <div className="flex flex-col gap-2.5 mt-1 animate-fadeIn sm:pl-8 pl-4">
                   <div className="relative">
                     {/* Decorative connection line */}
                     <div className="absolute -left-3 top-0 bottom-6 w-px bg-gradient-to-b from-blue-200 via-sky-200 to-transparent dark:from-blue-800 dark:via-sky-800 hidden sm:block"></div>
-                    
+
                     <div className="flex flex-col gap-2.5">
                       <ActionCard
                         icon={Download01Icon}
@@ -2642,7 +3215,7 @@ export function MoreScreen({
                         iconBgColor="bg-rose-50 dark:bg-rose-950/20"
                         iconTextColor="text-rose-600 border-rose-100 dark:text-rose-450 dark:border-rose-900/30"
                       />
-                      
+
                       <ActionCard
                         icon={Table01Icon}
                         title={t("more.dataExportExcel")}
@@ -2663,7 +3236,9 @@ export function MoreScreen({
 
         {/* Vùng thao tác cẩn trọng */}
         <section className="space-y-3 pt-2">
-          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-rose-500/80">{t("more.sectionDanger")}</h3>
+          <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-rose-500/80">
+            {t("more.sectionDanger")}
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {!isReadOnly ? (
               <ActionCard
@@ -2712,13 +3287,9 @@ export function MoreScreen({
             </a>
           </p>
         </div>
-
       </div>
 
-      <DonateModal
-        isOpen={isDonateOpen}
-        onClose={() => setIsDonateOpen(false)}
-      />
+      <DonateModal isOpen={isDonateOpen} onClose={() => setIsDonateOpen(false)} />
 
       <TripForm
         trip={trip}
@@ -2743,8 +3314,10 @@ export function MoreScreen({
         }}
         onConfirm={executeDeleteMember}
         memberName={memberToDelete?.name ?? ""}
-        hasExpenses={memberToDelete ? expenses.some(e => e.payer === memberToDelete.name) : false}
-        hasChecklist={memberToDelete ? checklist.some(c => c.assignedTo === memberToDelete.name) : false}
+        hasExpenses={memberToDelete ? expenses.some((e) => e.payer === memberToDelete.name) : false}
+        hasChecklist={
+          memberToDelete ? checklist.some((c) => c.assignedTo === memberToDelete.name) : false
+        }
       />
 
       <ConfirmDeleteTripDialog
@@ -2783,93 +3356,133 @@ export function MoreScreen({
               {/* Option Rows */}
               <div className="space-y-2.5">
                 {/* Row: Bao gồm chi phí */}
-                <div 
-                  onClick={() => setShareOptions({ ...shareOptions, includeExpenses: !shareOptions.includeExpenses })}
+                <div
+                  onClick={() =>
+                    setShareOptions({
+                      ...shareOptions,
+                      includeExpenses: !shareOptions.includeExpenses,
+                    })
+                  }
                   className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-slate-150/60 dark:border-slate-700/50 rounded-2xl cursor-pointer transition-all"
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-500 dark:text-emerald-400">
                       <HugeiconsIcon icon={WalletCardsIcon} className="h-4.5 w-4.5" />
                     </span>
-                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">{t("share.includeExpenses")}</span>
+                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">
+                      {t("share.includeExpenses")}
+                    </span>
                   </div>
-                  <ShareSwitch 
-                    checked={shareOptions.includeExpenses} 
-                    onChange={(val) => setShareOptions({ ...shareOptions, includeExpenses: val })} 
+                  <ShareSwitch
+                    checked={shareOptions.includeExpenses}
+                    onChange={(val) => setShareOptions({ ...shareOptions, includeExpenses: val })}
                   />
                 </div>
 
                 {/* Row: Bao gồm bản tin */}
-                <div 
-                  onClick={() => setShareOptions({ ...shareOptions, includeJournals: !shareOptions.includeJournals })}
+                <div
+                  onClick={() =>
+                    setShareOptions({
+                      ...shareOptions,
+                      includeJournals: !shareOptions.includeJournals,
+                    })
+                  }
                   className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-slate-150/60 dark:border-slate-700/50 rounded-2xl cursor-pointer transition-all"
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-50 dark:bg-violet-950/20 text-violet-500 dark:text-violet-400">
                       <HugeiconsIcon icon={BookOpen01Icon} className="h-4.5 w-4.5" />
                     </span>
-                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">{t("share.includeJournals")}</span>
+                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">
+                      {t("share.includeJournals")}
+                    </span>
                   </div>
-                  <ShareSwitch 
-                    checked={shareOptions.includeJournals} 
-                    onChange={(val) => setShareOptions({ ...shareOptions, includeJournals: val })} 
+                  <ShareSwitch
+                    checked={shareOptions.includeJournals}
+                    onChange={(val) => setShareOptions({ ...shareOptions, includeJournals: val })}
                   />
                 </div>
 
                 {/* Row: Bao gồm danh sách chuẩn bị */}
-                <div 
-                  onClick={() => setShareOptions({ ...shareOptions, includeChecklist: !shareOptions.includeChecklist })}
+                <div
+                  onClick={() =>
+                    setShareOptions({
+                      ...shareOptions,
+                      includeChecklist: !shareOptions.includeChecklist,
+                    })
+                  }
                   className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-slate-150/60 dark:border-slate-700/50 rounded-2xl cursor-pointer transition-all"
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-500 dark:text-amber-400">
                       <HugeiconsIcon icon={CheckmarkCircle01Icon} className="h-4.5 w-4.5" />
                     </span>
-                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">{t("share.includeChecklist")}</span>
+                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">
+                      {t("share.includeChecklist")}
+                    </span>
                   </div>
-                  <ShareSwitch 
-                    checked={shareOptions.includeChecklist} 
-                    onChange={(val) => setShareOptions({ ...shareOptions, includeChecklist: val })} 
+                  <ShareSwitch
+                    checked={shareOptions.includeChecklist}
+                    onChange={(val) => setShareOptions({ ...shareOptions, includeChecklist: val })}
                   />
                 </div>
 
                 {/* Row: Bao gồm phương án dự phòng */}
-                <div 
-                  onClick={() => setShareOptions({ ...shareOptions, includeBackupPlans: !shareOptions.includeBackupPlans })}
+                <div
+                  onClick={() =>
+                    setShareOptions({
+                      ...shareOptions,
+                      includeBackupPlans: !shareOptions.includeBackupPlans,
+                    })
+                  }
                   className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-slate-150/60 dark:border-slate-700/50 rounded-2xl cursor-pointer transition-all"
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-50 dark:bg-sky-950/20 text-sky-500 dark:text-sky-400">
                       <HugeiconsIcon icon={Alert01Icon} className="h-4.5 w-4.5" />
                     </span>
-                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">{t("share.includeBackup")}</span>
+                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">
+                      {t("share.includeBackup")}
+                    </span>
                   </div>
-                  <ShareSwitch 
-                    checked={shareOptions.includeBackupPlans} 
-                    onChange={(val) => setShareOptions({ ...shareOptions, includeBackupPlans: val })} 
+                  <ShareSwitch
+                    checked={shareOptions.includeBackupPlans}
+                    onChange={(val) =>
+                      setShareOptions({ ...shareOptions, includeBackupPlans: val })
+                    }
                   />
                 </div>
 
                 {/* Row: Bao gồm giấy tờ & đặt chỗ */}
-                <div 
-                  onClick={() => setShareOptions({ ...shareOptions, includeDocuments: !shareOptions.includeDocuments })}
+                <div
+                  onClick={() =>
+                    setShareOptions({
+                      ...shareOptions,
+                      includeDocuments: !shareOptions.includeDocuments,
+                    })
+                  }
                   className="flex min-h-[48px] items-center justify-between py-3 px-4 bg-slate-50/50 dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-slate-150/60 dark:border-slate-700/50 rounded-2xl cursor-pointer transition-all"
                 >
                   <div className="flex items-center gap-3">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-950/20 text-rose-500 dark:text-rose-400">
                       <HugeiconsIcon icon={File01Icon} className="h-4.5 w-4.5" />
                     </span>
-                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">{t("share.includeDocs")}</span>
+                    <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">
+                      {t("share.includeDocs")}
+                    </span>
                   </div>
-                  <ShareSwitch 
-                    checked={shareOptions.includeDocuments} 
-                    onChange={(val) => setShareOptions({ ...shareOptions, includeDocuments: val })} 
+                  <ShareSwitch
+                    checked={shareOptions.includeDocuments}
+                    onChange={(val) => setShareOptions({ ...shareOptions, includeDocuments: val })}
                   />
                 </div>
 
                 {shareOptions.includeDocuments && (
                   <div className="rounded-2xl bg-rose-50/70 border border-rose-100 p-4 text-[13px] text-rose-800 dark:text-rose-400 font-semibold flex gap-2 animate-fadeIn dark:bg-rose-950/20 dark:border-rose-900/30">
-                    <HugeiconsIcon icon={AlertCircleIcon} className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
+                    <HugeiconsIcon
+                      icon={AlertCircleIcon}
+                      className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5"
+                    />
                     <span>{t("share.docWarning")}</span>
                   </div>
                 )}
@@ -2878,7 +3491,13 @@ export function MoreScreen({
               {/* PIN Protection */}
               <div className="rounded-2xl border border-slate-200/80 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 overflow-hidden">
                 <div
-                  onClick={() => setShareOptions(o => ({ ...o, usePinProtection: !o.usePinProtection, sharePin: "" }))}
+                  onClick={() =>
+                    setShareOptions((o) => ({
+                      ...o,
+                      usePinProtection: !o.usePinProtection,
+                      sharePin: "",
+                    }))
+                  }
                   className="flex min-h-[52px] items-center justify-between py-3 px-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all"
                 >
                   <div className="flex items-center gap-3">
@@ -2886,21 +3505,29 @@ export function MoreScreen({
                       <HugeiconsIcon icon={LockIcon} className="h-4.5 w-4.5" />
                     </span>
                     <div>
-                      <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">{t("share.pinProtect")}</span>
-                      <p className="text-[11.5px] text-slate-400 dark:text-slate-500 font-medium">{t("share.pinDesc")}</p>
+                      <span className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200">
+                        {t("share.pinProtect")}
+                      </span>
+                      <p className="text-[11.5px] text-slate-400 dark:text-slate-500 font-medium">
+                        {t("share.pinDesc")}
+                      </p>
                     </div>
                   </div>
                   <ShareSwitch
                     checked={shareOptions.usePinProtection}
-                    onChange={(val) => setShareOptions(o => ({ ...o, usePinProtection: val, sharePin: "" }))}
+                    onChange={(val) =>
+                      setShareOptions((o) => ({ ...o, usePinProtection: val, sharePin: "" }))
+                    }
                   />
                 </div>
 
                 {shareOptions.usePinProtection && (
                   <div className="px-4 pb-4 pt-1 border-t border-slate-100 dark:border-slate-700/50 animate-fadeIn">
-                    <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mb-2.5">{t("share.enterPin")}</p>
+                    <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mb-2.5">
+                      {t("share.enterPin")}
+                    </p>
                     <div className="flex gap-3 justify-center">
-                      {[0,1,2,3].map((i) => (
+                      {[0, 1, 2, 3].map((i) => (
                         <input
                           key={i}
                           id={`pin-digit-${i}`}
@@ -2913,15 +3540,15 @@ export function MoreScreen({
                             const arr = shareOptions.sharePin.padEnd(4, " ").split("");
                             arr[i] = val || " ";
                             const newPin = arr.join("").replace(/ +$/, "");
-                            setShareOptions(o => ({ ...o, sharePin: newPin }));
+                            setShareOptions((o) => ({ ...o, sharePin: newPin }));
                             if (val && i < 3) {
-                              const next = document.getElementById(`pin-digit-${i+1}`);
+                              const next = document.getElementById(`pin-digit-${i + 1}`);
                               (next as HTMLInputElement)?.focus();
                             }
                           }}
                           onKeyDown={(e) => {
                             if (e.key === "Backspace" && !shareOptions.sharePin[i] && i > 0) {
-                              const prev = document.getElementById(`pin-digit-${i-1}`);
+                              const prev = document.getElementById(`pin-digit-${i - 1}`);
                               (prev as HTMLInputElement)?.focus();
                             }
                           }}
@@ -2936,7 +3563,9 @@ export function MoreScreen({
                       </p>
                     )}
                     {shareOptions.usePinProtection && shareOptions.sharePin.length < 4 && (
-                      <p className="mt-2 text-center text-[12px] text-amber-500 dark:text-amber-400 font-semibold">{t("share.pinError")}</p>
+                      <p className="mt-2 text-center text-[12px] text-amber-500 dark:text-amber-400 font-semibold">
+                        {t("share.pinError")}
+                      </p>
                     )}
                   </div>
                 )}
@@ -2954,7 +3583,10 @@ export function MoreScreen({
                 <button
                   type="button"
                   onClick={handleCreateLink}
-                  disabled={shareLoading || (shareOptions.usePinProtection && shareOptions.sharePin.length < 4)}
+                  disabled={
+                    shareLoading ||
+                    (shareOptions.usePinProtection && shareOptions.sharePin.length < 4)
+                  }
                   className="flex-[2] rounded-xl bg-kat-dark dark:bg-kat-primary py-3 font-bold text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none border border-transparent dark:border-kat-primary"
                 >
                   {shareLoading ? t("share.creatingLink") : t("share.createLink")}
@@ -2965,8 +3597,13 @@ export function MoreScreen({
             <div className="space-y-5 animate-fadeIn">
               {/* Success layout */}
               <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100/80 dark:border-emerald-900/30 p-3.5">
-                <HugeiconsIcon icon={CheckmarkCircle01Icon} className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <span className="text-[14px] font-bold text-emerald-800 dark:text-emerald-300">{t("share.linkCreated")}</span>
+                <HugeiconsIcon
+                  icon={CheckmarkCircle01Icon}
+                  className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0"
+                />
+                <span className="text-[14px] font-bold text-emerald-800 dark:text-emerald-300">
+                  {t("share.linkCreated")}
+                </span>
               </div>
 
               {/* Copy Link field inside an Input container with inline Copy button */}
@@ -2993,7 +3630,10 @@ export function MoreScreen({
                     title="Sao chép link"
                   >
                     {copiedLink ? (
-                      <HugeiconsIcon icon={CheckIcon} className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
+                      <HugeiconsIcon
+                        icon={CheckIcon}
+                        className="h-4 w-4 text-emerald-500 dark:text-emerald-400"
+                      />
                     ) : (
                       <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />
                     )}
@@ -3005,8 +3645,8 @@ export function MoreScreen({
                         try {
                           await navigator.share({
                             title: "KAT Journey",
-                            text: t("share.joinTrip", { trip: trip?.title || '' }),
-                            url: activeShareLink.url
+                            text: t("share.joinTrip", { trip: trip?.title || "" }),
+                            url: activeShareLink.url,
                           });
                         } catch (err) {
                           console.log("Share failed or cancelled", err);
@@ -3025,14 +3665,29 @@ export function MoreScreen({
               <div className="text-[12px] font-semibold flex items-center gap-2 bg-slate-50 dark:bg-slate-800/20 border border-slate-150/50 dark:border-slate-700/30 rounded-xl py-2 px-3 animate-fadeIn text-slate-600 dark:text-slate-400">
                 {isAutoSyncing ? (
                   <>
-                    <HugeiconsIcon icon={Refresh01Icon} className="h-3.5 w-3.5 animate-spin text-sky-600 dark:text-sky-400" />
-                    <span className="text-sky-700 dark:text-sky-300">{t("share.syncingChanges")}</span>
+                    <HugeiconsIcon
+                      icon={Refresh01Icon}
+                      className="h-3.5 w-3.5 animate-spin text-sky-600 dark:text-sky-400"
+                    />
+                    <span className="text-sky-700 dark:text-sky-300">
+                      {t("share.syncingChanges")}
+                    </span>
                   </>
                 ) : (
                   <>
-                    <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <HugeiconsIcon
+                      icon={CheckIcon}
+                      className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400"
+                    />
                     <span className="text-emerald-700 dark:text-emerald-400">
-                      {t("share.autoSyncLast")} {lastSyncedAt ? lastSyncedAt.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : t("share.justNow")}
+                      {t("share.autoSyncLast")}{" "}
+                      {lastSyncedAt
+                        ? lastSyncedAt.toLocaleTimeString("vi-VN", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                          })
+                        : t("share.justNow")}
                     </span>
                   </>
                 )}
@@ -3053,7 +3708,10 @@ export function MoreScreen({
                   disabled={syncLoading}
                   className="flex-[2] rounded-xl bg-kat-dark/10 dark:bg-slate-800 border border-kat-dark/20 dark:border-slate-700 py-3 font-bold text-kat-dark dark:text-slate-200 hover:bg-kat-dark/20 dark:hover:bg-slate-700 active:scale-95 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none flex items-center justify-center gap-1.5"
                 >
-                  <HugeiconsIcon icon={Refresh01Icon} className={classNames("h-4 w-4", syncLoading && "animate-spin")} />
+                  <HugeiconsIcon
+                    icon={Refresh01Icon}
+                    className={classNames("h-4 w-4", syncLoading && "animate-spin")}
+                  />
                   {syncLoading ? t("share.syncing") : t("share.syncData")}
                 </button>
                 <button
@@ -3070,18 +3728,17 @@ export function MoreScreen({
         </div>
       </BottomSheet>
 
-
-
-
-
-      <BottomSheet 
-        isOpen={isArchiveConfirmOpen} 
-        onClose={() => setIsArchiveConfirmOpen(false)} 
+      <BottomSheet
+        isOpen={isArchiveConfirmOpen}
+        onClose={() => setIsArchiveConfirmOpen(false)}
         title={t("more.archiveModalTitle")}
       >
         <div className="space-y-5">
           <div className="rounded-[20px] bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 p-5 text-[14px] text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
-            <Trans i18nKey="more.archiveModalDesc" components={{ b: <b className="text-kat-dark" /> }} />
+            <Trans
+              i18nKey="more.archiveModalDesc"
+              components={{ b: <b className="text-kat-dark" /> }}
+            />
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
@@ -3092,7 +3749,7 @@ export function MoreScreen({
             >
               {t("common.cancel")}
             </button>
-             <button
+            <button
               type="button"
               onClick={async () => {
                 setIsArchiveConfirmOpen(false);
@@ -3111,14 +3768,17 @@ export function MoreScreen({
       </BottomSheet>
 
       {/* Unarchive Confirm Modal */}
-      <BottomSheet 
-        isOpen={isUnarchiveConfirmOpen} 
-        onClose={() => setIsUnarchiveConfirmOpen(false)} 
+      <BottomSheet
+        isOpen={isUnarchiveConfirmOpen}
+        onClose={() => setIsUnarchiveConfirmOpen(false)}
         title={t("more.unarchiveModalTitle")}
       >
         <div className="space-y-5">
           <div className="rounded-[20px] bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 p-5 text-[14px] text-emerald-800 dark:text-emerald-400 font-medium leading-relaxed">
-            <Trans i18nKey="more.unarchiveModalDesc" components={{ b: <b className="text-emerald-700 dark:text-emerald-300" /> }} />
+            <Trans
+              i18nKey="more.unarchiveModalDesc"
+              components={{ b: <b className="text-emerald-700 dark:text-emerald-300" /> }}
+            />
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
@@ -3129,7 +3789,7 @@ export function MoreScreen({
             >
               {t("common.cancel")}
             </button>
-             <button
+            <button
               type="button"
               onClick={async () => {
                 setIsUnarchiveConfirmOpen(false);
@@ -3146,7 +3806,6 @@ export function MoreScreen({
           </div>
         </div>
       </BottomSheet>
-
     </div>
   );
 }
