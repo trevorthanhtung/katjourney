@@ -357,7 +357,52 @@
     "emptyFeature2Desc": "Dividir cuentas",
     "emptyFeature3": "Equipaje",
     "emptyFeature3Desc": "Maletas y artículos",
-    "emptyCreateBtn": "Crea tu primer viaje"
+    "emptyCreateBtn": "Crea tu primer viaje",
+    "tabs": {
+      "planned": "Planeado",
+      "archived": "Archivado",
+      "completed": "Completado"
+    },
+    "card": {
+      "openDates": "Fechas por confirmar",
+      "days": "DÍAS",
+      "buddies": "AMIGOS",
+      "expense": "GASTOS",
+      "newTripTitle": "Nuevo Viaje",
+      "newTripDesc": "Planifica un nuevo viaje desde cero"
+    },
+    "stats": {
+      "countries": "Países",
+      "of195": "de 195",
+      "totalTrips": "Total Viajes",
+      "scheduled": "Programados",
+      "daysTraveled": "Días de Viaje",
+      "daysLabel": "días",
+      "onAllJourneys": "En todos los viajes",
+      "distance": "Distancia",
+      "km": "km",
+      "noFlights": "Sin vuelos aún"
+    },
+    "widgets": {
+      "timezones": "Zonas Horarias",
+      "saigon": "Saigón",
+      "tokyo": "Tokio",
+      "london": "Londres",
+      "noTimezonesSelected": "No se han seleccionado zonas horarias",
+      "searchTimezone": "Buscar zona horaria...",
+      "noTimezonesFound": "No se encontraron zonas horarias"
+    },
+    "hero": {
+      "upcoming": "PRÓXIMO",
+      "liveNow": "EN CURSO",
+      "buddies": "Compañeros",
+      "tripDates": "Fechas de viaje",
+      "ongoing": "EN CURSO",
+      "places": "Lugares",
+      "travelers": "Viajeros",
+      "destinations": "Destinos",
+      "daysLeft": "DÍAS RESTANTES"
+    }
   },
   "archive": {
     "title": "Recuerdos",

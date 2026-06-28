@@ -20,6 +20,8 @@ const TripForm = React.lazy(() =>
 );
 import { TypedDeleteConfirmModal, BottomSheet } from "../../components/ui";
 import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
+import { GamificationStats, TimezonesWidget } from "./components/DashboardWidgets";
+import { HeroTripCard } from "./components/HeroTripCard";
 
 function getTripDurationText(trip: Trip, t: any) {
   const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
@@ -48,6 +50,7 @@ interface TripCardProps {
   allChecklist: ChecklistItem[];
   memberCounts: Record<number, number>;
   onOpenTrip: (id: number) => void;
+  viewMode?: "grid" | "list";
 }
 
 function TripCard({
@@ -58,241 +61,212 @@ function TripCard({
   allChecklist,
   memberCounts,
   onOpenTrip,
+  viewMode = "grid",
 }: TripCardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const timing = getTripTiming(trip);
   const tripExpenses = allExpenses.filter((e) => e.tripId === trip.id);
   const totalExpense = tripExpenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
-  const tripChecklist = allChecklist.filter((c) => c.tripId === trip.id);
-  const checklistRemaining = tripChecklist.filter((c) => !c.completed).length;
 
-  const statusColor =
+  // Compute days
+  const startDate = new Date(trip.startDate);
+  const endDate = new Date(trip.endDate);
+  let daysTotal = 1;
+  if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+    daysTotal =
+      Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) + 1;
+  }
+
+  // Generate a random-looking gradient based on trip ID
+  const gradients = [
+    "from-pink-500 to-rose-700",
+    "from-emerald-400 to-teal-600",
+    "from-blue-500 to-indigo-700",
+    "from-orange-400 to-red-600",
+    "from-purple-500 to-fuchsia-700",
+  ];
+  const gradientClass = gradients[(trip.id || 0) % gradients.length];
+
+  // Date formatting for the middle section
+  const formatShortDate = (dateStr: string) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleDateString(i18n.language || "vi-VN", { month: "short", day: "numeric" });
+  };
+
+  const startStr = formatShortDate(trip.startDate);
+  const endStr = formatShortDate(trip.endDate);
+
+  let dateDisplay = startStr;
+  if (endStr && startStr !== endStr) {
+    dateDisplay = `${startStr} ➔ ${endStr}`;
+  }
+
+  const statusLabel =
     timing.status === "active"
-      ? "border-l-[#00BFB7]"
+      ? t("dashboard.statusActive")
       : timing.status === "upcoming"
-        ? "border-l-[#F89B02]"
-        : "border-l-[#0081BE]";
+        ? t("dashboard.statusUpcoming")
+        : t("dashboard.statusPast");
+  const statusColorClass =
+    timing.status === "active"
+      ? "bg-emerald-400"
+      : timing.status === "upcoming"
+        ? "bg-amber-400"
+        : "bg-slate-400";
 
-  // Single Featured Card Layout
-  if (isSingle) {
+  if (viewMode === "list") {
     return (
       <div
         onClick={() => onOpenTrip(trip.id!)}
-        className={`group relative cursor-pointer overflow-hidden rounded-[32px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border border-l-4 ${statusColor} p-6 lg:p-8 shadow-soft hover:shadow-md hover:border-slate-350 dark:hover:border-kat-border hover:-translate-y-1 active:scale-[0.99] transition-all duration-300 w-full flex flex-col lg:flex-row gap-6 justify-between items-stretch lg:min-w-[560px] lg:max-w-[700px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+        className={`group relative cursor-pointer flex flex-row overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-300 w-full h-24 motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
       >
-        {/* Left info column */}
-        <div className="flex-1 flex flex-col justify-between pr-4">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-              {timing.status === "active" && (
-                <span className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-3 py-1 text-[11px] font-bold text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-800/40 dark:text-emerald-400 uppercase tracking-wider shadow-sm">
-                  <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                  {t("dashboard.statusActive")}
-                </span>
-              )}
-              {timing.status === "upcoming" && (
-                <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/60 px-3 py-1 text-[11px] font-bold text-amber-700 dark:bg-amber-950/30 dark:border-amber-800/40 dark:text-amber-400 uppercase tracking-wider shadow-sm">
-                  <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                  {t("dashboard.statusUpcoming")}
-                </span>
-              )}
-              {timing.status === "past" && (
-                <span className="inline-flex items-center rounded-full bg-slate-50 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-600 dark:bg-slate-800/60 dark:border-slate-700/60 dark:text-slate-300 uppercase tracking-wider shadow-sm">
-                  <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-slate-400"></span>
-                  </span>
-                  {t("dashboard.statusPast")}
-                </span>
-              )}
-              <span className="inline-flex items-center rounded-full bg-slate-100 border border-slate-200/60 px-3 py-1 text-[11px] font-bold text-slate-650 dark:bg-slate-800 dark:border-slate-700/60 dark:text-slate-300 tracking-wide">
-                {getTripDurationText(trip, t)}
-              </span>
-            </div>
-
-            <h4 className="text-[22px] lg:text-[25px] font-extrabold text-kat-text leading-tight mb-4 tracking-tight">
-              {trip.title}
-            </h4>
+        {/* Left Side (Gradient & Title) */}
+        <div
+          className={`w-[35%] sm:w-[35%] lg:w-[30%] shrink-0 bg-gradient-to-r ${gradientClass} relative px-4 sm:px-6 flex flex-col justify-center`}
+        >
+          {/* Status Badge */}
+          <div className="absolute top-3 left-4 sm:left-6 flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm">
+            <span className={`relative flex h-1.5 w-1.5 rounded-full ${statusColorClass}`}></span>
+            {statusLabel}
           </div>
 
-          <div className="flex flex-col gap-2 pb-2">
-            <div className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3 py-1.5 rounded-[12px] w-fit max-w-full">
-              <HugeiconsIcon icon={Location01Icon} size={15} className="text-slate-400 shrink-0" />
-              <span className="truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">
-                {trip.location || t("dashboard.noLocation")}
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3 py-1.5 rounded-[12px] w-fit max-w-full">
-              <HugeiconsIcon icon={Calendar01Icon} size={15} className="text-slate-400 shrink-0" />
-              <span className="truncate">
-                {trip.startDate === trip.endDate
-                  ? formatDate(trip.startDate)
-                  : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
-              </span>
-            </div>
-          </div>
+          <h4 className="text-[18px] sm:text-[24px] font-bold text-white leading-tight truncate tracking-tight drop-shadow-sm mt-3">
+            {trip.title}
+          </h4>
         </div>
 
-        {/* Right stats column */}
-        <div className="w-full lg:w-[250px] shrink-0 lg:border-l lg:border-slate-200 dark:lg:border-kat-border lg:pl-6 flex flex-col justify-center gap-2.5">
-          <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3.5 py-2 rounded-[12px]">
-            <HugeiconsIcon icon={UserGroupIcon} size={15} className="text-slate-400 shrink-0" />
-            <span>
-              {t("dashboard.peopleCountCompanion", { count: memberCounts[trip.id!] || 1 })}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 text-[12px] font-extrabold text-slate-650 dark:text-slate-300 bg-slate-500/5 dark:bg-slate-400/5 border border-slate-200/60 dark:border-kat-border px-3.5 py-2 rounded-[12px]">
-            <HugeiconsIcon icon={WalletCardsIcon} size={15} className="text-slate-400 shrink-0" />
-            <span>
-              {totalExpense > 0
-                ? t("dashboard.expenseTotal", {
-                    amount: formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND"),
-                  })
-                : t("dashboard.noExpenseFull")}
+        {/* Right Side (Stats) */}
+        <div className="flex-1 bg-white dark:bg-kat-surface flex flex-row items-center justify-between px-3 sm:px-6 min-w-0">
+          <div className="flex-1 flex flex-col items-center justify-center min-w-0 pr-2 sm:pr-4">
+            <span className="text-[12px] sm:text-[13px] font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap truncate w-full text-center">
+              {dateDisplay
+                ? dateDisplay.split(" ➔ ").map((d, i, arr) => (
+                    <span key={i}>
+                      {d} {i < arr.length - 1 && <span className="text-slate-300 mx-1">➔</span>}
+                    </span>
+                  ))
+                : t("dashboard.card.openDates", "Open dates")}
             </span>
           </div>
 
-          {tripChecklist.length > 0 &&
-            (checklistRemaining > 0 ? (
-              <div className="flex items-center gap-2 text-[12px] font-extrabold text-rose-700 dark:text-rose-400 bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100/60 dark:border-rose-900/30 px-3.5 py-2 rounded-[12px]">
-                <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse shrink-0"></span>
-                <span className="truncate">
-                  {timing.status === "past"
-                    ? t("dashboard.itemsUnprepared", { count: checklistRemaining })
-                    : t("dashboard.itemsToPrepare", { count: checklistRemaining })}
-                </span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-[12px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-100/60 dark:border-emerald-900/30 px-3.5 py-2 rounded-[12px]">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0"></span>
-                <span className="truncate">{t("dashboard.luggageReady")}</span>
-              </div>
-            ))}
+          <div className="h-10 w-px bg-slate-100 dark:bg-slate-800/80 mx-2 sm:mx-4 shrink-0"></div>
+
+          <div className="grid grid-cols-3 shrink-0 w-[150px] sm:w-[200px] xl:w-[240px] gap-1 sm:gap-2">
+            <div className="flex flex-col items-center min-w-0">
+              <span className="text-[16px] sm:text-[18px] font-black text-kat-text dark:text-slate-200 leading-none truncate w-full text-center">
+                {daysTotal}
+              </span>
+              <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 truncate w-full text-center">
+                {t("dashboard.card.days", "NGÀY")}
+              </span>
+            </div>
+            <div className="flex flex-col items-center min-w-0">
+              <span className="text-[16px] sm:text-[18px] font-black text-kat-text dark:text-slate-200 leading-none truncate w-full text-center">
+                {memberCounts[trip.id!] || 1}
+              </span>
+              <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 truncate w-full text-center">
+                {t("dashboard.card.buddies", "NGƯỜI")}
+              </span>
+            </div>
+            <div className="flex flex-col items-center min-w-0">
+              <span
+                className="text-[16px] sm:text-[18px] font-black text-kat-text dark:text-slate-200 leading-none truncate w-full text-center"
+                title={
+                  totalExpense > 0
+                    ? formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND")
+                    : "0"
+                }
+              >
+                {totalExpense > 0
+                  ? formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND")
+                  : "0"}
+              </span>
+              <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 truncate w-full text-center">
+                {t("dashboard.card.expense", "CHI PHÍ")}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  // Grid Card Layout
   return (
     <div
       onClick={() => onOpenTrip(trip.id!)}
-      className={`group relative cursor-pointer flex flex-col justify-between overflow-hidden rounded-[24px] bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl p-5 shadow-[0_4px_24px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-slate-200/60 dark:border-white/10 hover:border-[#00BFB7]/40 dark:hover:border-[#00BFB7]/50 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(0,191,183,0.08)] transition-all duration-500 w-full max-w-[420px] mx-auto md:mx-0 h-full motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+      className={`group relative cursor-pointer flex flex-col overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 w-full h-[260px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
     >
-      {/* Mini glass glows */}
-      {timing.status === "active" && (
-        <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-emerald-400/10 blur-[50px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2" />
-      )}
-      {timing.status === "upcoming" && (
-        <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-amber-400/10 blur-[50px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2" />
-      )}
+      {/* Top Banner Area (Gradient) */}
+      <div
+        className={`flex-1 bg-gradient-to-br ${gradientClass} relative p-6 flex flex-col justify-between overflow-hidden`}
+      >
+        {/* Status Badge */}
+        <div className="relative z-10 flex justify-start items-start">
+          <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider shadow-sm">
+            <span className={`relative flex h-2 w-2 rounded-full ${statusColorClass}`}></span>
+            {statusLabel}
+          </div>
+        </div>
 
-      <div>
-        <div className="flex flex-wrap items-center gap-2 mb-3 relative z-10">
-          {timing.status === "active" && (
-            <span className="inline-flex items-center rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[10.5px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider shadow-sm">
-              <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500 drop-shadow-[0_0_3px_rgba(16,185,129,0.8)]"></span>
-              </span>
-              {t("dashboard.statusActive")}
-            </span>
-          )}
-          {timing.status === "upcoming" && (
-            <span className="inline-flex items-center rounded-full bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 text-[10.5px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider shadow-sm">
-              <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500 drop-shadow-[0_0_3px_rgba(245,158,11,0.8)]"></span>
-              </span>
-              {t("dashboard.statusUpcoming")}
-            </span>
-          )}
-          {timing.status === "past" && (
-            <span className="inline-flex items-center rounded-full bg-slate-200/50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 px-2.5 py-0.5 text-[10.5px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider shadow-sm">
-              <span className="relative flex h-1.5 w-1.5 mr-1 shrink-0">
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-slate-400"></span>
-              </span>
-              {t("dashboard.statusPast")}
-            </span>
-          )}
-          <span className="inline-flex items-center rounded-full bg-slate-200/50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 px-2.5 py-0.5 text-[10.5px] font-black text-slate-700 dark:text-slate-300 tracking-wide">
-            {getTripDurationText(trip, t)}
+        {/* Title */}
+        <div className="relative z-10 mt-auto">
+          <h4 className="text-[26px] sm:text-[30px] font-bold text-white leading-tight line-clamp-2 tracking-tight drop-shadow-sm">
+            {trip.title}
+          </h4>
+        </div>
+      </div>
+
+      {/* Bottom Info Area (White/Solid) */}
+      <div className="h-[120px] bg-white dark:bg-kat-surface flex flex-col justify-between p-5">
+        {/* Dates */}
+        <div className="text-center">
+          <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-400">
+            {dateDisplay || t("dashboard.card.openDates", "Open dates")}
           </span>
         </div>
 
-        <h4 className="text-[18px] md:text-[20px] font-black text-kat-text leading-tight mb-4 line-clamp-2 tracking-tight group-hover:bg-gradient-to-r group-hover:from-kat-primary group-hover:to-teal-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300 relative z-10 w-fit">
-          {trip.title}
-        </h4>
+        {/* Subtle Divider */}
+        <div className="h-px w-full bg-slate-100 dark:bg-slate-800/50 my-2"></div>
 
-        {/* Glanceable Grid Info */}
-        <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 text-[12px] font-black text-slate-700 dark:text-slate-200 mb-1 relative z-10">
-          <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-sm">
-            <HugeiconsIcon
-              icon={Location01Icon}
-              size={14}
-              className="text-kat-primary shrink-0 drop-shadow-sm"
-            />
-            <span className="truncate">{trip.location || t("dashboard.noLocationGrid")}</span>
-          </div>
-          <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-sm">
-            <HugeiconsIcon
-              icon={Calendar01Icon}
-              size={14}
-              className="text-kat-primary shrink-0 drop-shadow-sm"
-            />
-            <span className="truncate">
-              {trip.startDate === trip.endDate
-                ? formatDate(trip.startDate)
-                : `${formatDate(trip.startDate)}`}
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-2 text-center pb-1">
+          <div className="flex flex-col items-center min-w-0">
+            <span className="text-[18px] font-black text-kat-text dark:text-slate-200 truncate w-full px-1">
+              {daysTotal}
+            </span>
+            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 truncate w-full px-1">
+              {t("dashboard.card.days", "NGÀY")}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[10px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 col-span-1 min-[360px]:col-span-2 backdrop-blur-sm">
-            <HugeiconsIcon
-              icon={UserGroupIcon}
-              size={14}
-              className="text-kat-primary shrink-0 drop-shadow-sm"
-            />
-            <span className="truncate">
-              {t("dashboard.peopleCount", { count: memberCounts[trip.id!] || 1 })}
+          <div className="flex flex-col items-center min-w-0">
+            <span className="text-[18px] font-black text-kat-text dark:text-slate-200 truncate w-full px-1">
+              {memberCounts[trip.id!] || 1}
             </span>
-            <span className="text-slate-300 dark:text-slate-600 mx-0.5">·</span>
-            <HugeiconsIcon
-              icon={WalletCardsIcon}
-              size={14}
-              className="text-kat-primary shrink-0 drop-shadow-sm"
-            />
-            <span className="truncate">
+            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 truncate w-full px-1">
+              {t("dashboard.card.buddies", "NGƯỜI")}
+            </span>
+          </div>
+          <div className="flex flex-col items-center min-w-0">
+            <span
+              className="text-[18px] font-black text-kat-text dark:text-slate-200 truncate w-full px-1"
+              title={
+                totalExpense > 0
+                  ? formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND")
+                  : "0"
+              }
+            >
               {totalExpense > 0
-                ? t("dashboard.expenseTotal", {
-                    amount: formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND"),
-                  })
-                : t("dashboard.noExpense")}
+                ? formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND")
+                : "0"}
+            </span>
+            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 truncate w-full px-1">
+              {t("dashboard.card.expense", "CHI PHÍ")}
             </span>
           </div>
         </div>
       </div>
-
-      {/* Checklist Status Border Block */}
-      {tripChecklist.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60 flex">
-          {checklistRemaining > 0 ? (
-            <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-rose-700 dark:text-rose-400 bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100/60 dark:border-rose-900/30 px-2.5 py-1 rounded-[8px]">
-              <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-              <span>{t("dashboard.itemsToPrepare", { count: checklistRemaining })}</span>
-            </div>
-          ) : (
-            <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-100/60 dark:border-emerald-900/30 px-2.5 py-1 rounded-[8px]">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-              <span>{t("dashboard.luggageReady")}</span>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }
@@ -305,6 +279,9 @@ interface TripListProps {
   allChecklist: ChecklistItem[];
   memberCounts: Record<number, number>;
   onOpenTrip: (id: number) => void;
+  showCreateCard?: boolean;
+  onCreateNew?: () => void;
+  viewMode?: "grid" | "list";
 }
 
 function TripList({
@@ -315,9 +292,12 @@ function TripList({
   allChecklist,
   memberCounts,
   onOpenTrip,
+  showCreateCard = false,
+  onCreateNew,
+  viewMode = "grid",
 }: TripListProps) {
-  if (!items.length) return null;
-  const isSingle = items.length === 1;
+  const { t } = useTranslation();
+  if (!items.length && !showCreateCard) return null;
 
   return (
     <section className="mb-10 md:mb-12">
@@ -334,23 +314,56 @@ function TripList({
 
       <div
         className={
-          isSingle
-            ? "flex flex-col items-start"
-            : "grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch"
+          viewMode === "list"
+            ? "flex flex-col gap-4 items-stretch w-full"
+            : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch"
         }
       >
         {items.map((trip, idx) => (
           <TripCard
             key={trip.id}
             trip={trip}
-            isSingle={isSingle}
             idx={idx}
             allExpenses={allExpenses}
             allChecklist={allChecklist}
             memberCounts={memberCounts}
             onOpenTrip={onOpenTrip}
+            viewMode={viewMode}
           />
         ))}
+
+        {showCreateCard && (
+          <div
+            onClick={onCreateNew}
+            className={`group cursor-pointer flex ${viewMode === "list" ? "flex-col h-32" : "flex-col h-[260px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square"} items-center justify-center rounded-[24px] border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/40 active:scale-[0.97] transition-all duration-200 ease-out w-full motion-card-enter`}
+          >
+            <div
+              className={`rounded-full bg-slate-800 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all duration-300 ease-out shadow-sm ${viewMode === "list" ? "w-10 h-10 mb-2" : "w-14 h-14 mb-4"}`}
+            >
+              <svg
+                className={viewMode === "list" ? "w-5 h-5" : "w-6 h-6"}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 5v14m-7-7h14" />
+              </svg>
+            </div>
+            <h4
+              className={`${viewMode === "list" ? "text-[15px]" : "text-[18px]"} font-bold text-kat-text dark:text-slate-200 group-hover:text-slate-800 dark:group-hover:text-white transition-colors`}
+            >
+              {t("dashboard.card.newTripTitle", "New Trip")}
+            </h4>
+            {viewMode === "grid" && (
+              <p className="text-[12px] font-semibold text-slate-400 mt-2 px-6 text-center">
+                {t("dashboard.card.newTripDesc", "Plan a new trip from scratch")}
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -372,6 +385,8 @@ export function TripManagerScreen({
   const { t } = useTranslation();
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [tripToDelete, setTripToDelete] = useState<Trip | null>(null);
+  const [filterTab, setFilterTab] = useState<"planned" | "archived" | "completed">("planned");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const allMembersRaw = useLiveQuery(async () =>
     (await db.members.toArray()).filter((m) => !m.isDeleted)
@@ -422,14 +437,7 @@ export function TripManagerScreen({
     })
     .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
 
-  const featuredTrip = allFutureTrips.length > 0 ? allFutureTrips[0] : null;
-  const remainingTrips = trips.filter((t) => t.id !== featuredTrip?.id);
-
-  const remainingActive = remainingTrips.filter((t) => getTripTiming(t).status === "active");
-  const remainingUpcoming = remainingTrips.filter(
-    (t) => getTripTiming(t).status === "upcoming" || getTripTiming(t).status === "unknown"
-  );
-  const remainingPast = remainingTrips.filter((t) => getTripTiming(t).status === "past");
+  const pastTrips = trips.filter((t) => getTripTiming(t).status === "past");
 
   if (isLoading) {
     return (
@@ -554,228 +562,173 @@ export function TripManagerScreen({
           )}
         </div>
       ) : (
-        <>
-          {/* Hero Header */}
-          <div className="group/hero mb-10 md:mb-12 relative overflow-hidden rounded-[32px] bg-kat-bg dark:bg-[#0A0F1C] border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.1)] py-6 px-5 sm:px-6 md:py-8 md:px-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8 motion-page-enter">
-            {/* Ambient Glass Glows */}
-            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-cyan-400/20 to-fuchsia-500/20 blur-[100px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3" />
-            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-gradient-to-tr from-blue-500/10 to-emerald-400/10 blur-[80px] rounded-full pointer-events-none translate-y-1/2 -translate-x-1/3" />
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8 w-full motion-page-enter">
+          {/* Main Content Column */}
+          <div className="xl:col-span-8 flex flex-col gap-6 lg:gap-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+              <h2 className="text-[26px] font-black text-kat-text tracking-tight motion-title-enter">
+                Chuyến đi
+              </h2>
 
-            <div className="absolute inset-0 bg-white/40 dark:bg-[#0A0F1C]/40 backdrop-blur-xl pointer-events-none" />
-
-            <HugeiconsIcon
-              icon={CompassIcon}
-              size={200}
-              className="absolute -right-12 -bottom-12 text-kat-primary opacity-[0.05] dark:opacity-[0.1] rotate-12 pointer-events-none transition-transform group-hover/hero:scale-110 group-hover/hero:rotate-[24deg] duration-1000 ease-out"
-            />
-
-            <div className="relative z-10 flex-1">
-              <h1 className="text-[28px] sm:text-[32px] md:text-[36px] font-black bg-gradient-to-r from-kat-dark to-kat-primary dark:from-white dark:to-teal-300 bg-clip-text text-transparent tracking-tight leading-tight drop-shadow-sm">
-                {t("dashboard.heroTitle")}
-              </h1>
-              <p className="mt-2.5 text-[14px] sm:text-[15px] font-semibold text-slate-600 dark:text-slate-300 max-w-lg leading-relaxed">
-                {t("dashboard.heroDesc")}
-              </p>
-            </div>
-
-            <div className="flex flex-row flex-wrap items-center gap-3 w-full lg:w-auto shrink-0 relative z-10 justify-center lg:justify-end">
-              <button
-                onClick={onOpenArchive}
-                className="group relative flex h-[46px] md:h-[50px] items-center justify-center gap-2 rounded-2xl bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 text-kat-dark dark:text-white px-4 sm:px-6 font-extrabold text-[12.5px] min-[360px]:text-[13.5px] md:text-[14px] border border-slate-200/80 dark:border-white/10 backdrop-blur-md overflow-hidden active:scale-[0.97] transition-all duration-300 shadow-sm shrink-0 motion-press"
-              >
-                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-kat-primary/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
-                <HugeiconsIcon
-                  icon={SparklesIcon}
-                  size={18}
-                  className="text-kat-primary group-hover:scale-110 transition-transform duration-300"
-                />
-                <span className="tracking-wide">{t("dashboard.memoriesBtn")}</span>
-              </button>
-
-              <button
-                onClick={onCreateNew}
-                className="group relative flex h-[46px] md:h-[50px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-kat-dark to-[#004E5A] dark:from-kat-primary dark:to-[#0081BE] text-white dark:text-slate-900 px-5 sm:px-7 font-black text-[12.5px] min-[360px]:text-[13.5px] md:text-[14px] shadow-[0_6px_20px_rgba(0,191,183,0.25)] active:scale-[0.97] transition-all duration-300 hover:brightness-110 overflow-hidden shrink-0 motion-press"
-              >
-                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
-                <span className="text-md md:text-lg leading-none group-hover:rotate-90 transition-transform duration-300 font-extrabold drop-shadow-md">
-                  +
-                </span>
-                <span className="drop-shadow-md">{t("dashboard.createTripBtn")}</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Featured Trip (Sắp diễn ra tiếp theo) */}
-          {featuredTrip &&
-            (() => {
-              const featuredStatus = getTripTiming(featuredTrip);
-              const featuredBorderColor =
-                featuredStatus.status === "active" ? "border-l-[#00BFB7]" : "border-l-[#F89B02]";
-              const featuredTotalExpense = allExpenses
-                .filter((expense) => expense.tripId === featuredTrip.id)
-                .reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
-              return (
-                <section className="mb-12 md:mb-14">
-                  <h3 className="mb-4 px-1 text-[20px] font-extrabold text-kat-text motion-title-enter">
-                    {t("dashboard.nextTripTitle")}
-                  </h3>
-                  <div
-                    className="group relative overflow-hidden rounded-[32px] bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/10 p-6 sm:p-8 lg:p-10 shadow-[0_8px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.1)] cursor-pointer hover:shadow-[0_12px_48px_rgba(0,191,183,0.12)] hover:border-[#00BFB7]/40 dark:hover:border-[#00BFB7]/50 hover:-translate-y-1 transition-all duration-500 min-h-[220px] flex flex-col justify-center motion-card-enter motion-delay-2"
-                    onClick={() => onOpenTrip(featuredTrip.id!)}
+              <div className="flex items-center justify-center w-full sm:w-auto gap-2">
+                <div className="flex bg-slate-100/80 dark:bg-slate-800/70 p-1.5 rounded-full backdrop-blur-md gap-1">
+                  <button
+                    onClick={() => setFilterTab("planned")}
+                    className={`px-5 py-1.5 rounded-full text-[13.5px] font-bold transition-all duration-300 
+${filterTab === "planned" ? "bg-white text-slate-900 dark:bg-kat-primary dark:text-[#030D2E] shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
                   >
-                    {/* Glassmorphism accent glows */}
-                    {featuredStatus.status === "active" ? (
-                      <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-emerald-400/15 blur-[80px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3" />
-                    ) : (
-                      <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-amber-400/15 blur-[80px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3" />
-                    )}
+                    {t("dashboard.tabs.planned", "Kế hoạch")}
+                  </button>
+                  <button
+                    onClick={() => setFilterTab("archived")}
+                    className={`px-5 py-1.5 rounded-full text-[13.5px] font-bold transition-all duration-300 
+${filterTab === "archived" ? "bg-white text-slate-900 dark:bg-kat-primary dark:text-[#030D2E] shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                  >
+                    {t("dashboard.tabs.archived", "Lưu trữ")}
+                  </button>
+                  <button
+                    onClick={() => setFilterTab("completed")}
+                    className={`px-5 py-1.5 rounded-full text-[13.5px] font-bold transition-all duration-300 
+${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-kat-primary dark:text-[#030D2E] shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                  >
+                    {t("dashboard.tabs.completed", "Đã qua")}
+                  </button>
+                </div>
 
-                    {/* Watermark Compass Icon - Mobile */}
-                    <HugeiconsIcon
-                      icon={CompassIcon}
-                      size={160}
-                      className="block lg:hidden absolute -right-6 -bottom-6 text-kat-primary opacity-[0.05] dark:opacity-[0.1] rotate-12 pointer-events-none transition-transform group-hover:scale-110 group-hover:rotate-[20deg] duration-1000 ease-out"
-                    />
-                    {/* Watermark Compass Icon - Desktop */}
-                    <HugeiconsIcon
-                      icon={CompassIcon}
-                      size={240}
-                      className="hidden lg:block absolute -right-8 -bottom-8 text-kat-primary opacity-[0.05] dark:opacity-[0.1] rotate-12 pointer-events-none transition-transform group-hover:scale-110 group-hover:rotate-[24deg] duration-1000 ease-out"
-                    />
+                <div className="flex bg-slate-100/80 dark:bg-slate-800/70 p-1.5 rounded-full backdrop-blur-md gap-1">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`p-1.5 rounded-full transition-all duration-300 ${viewMode === "grid" ? "bg-white text-slate-900 dark:bg-kat-primary dark:text-[#030D2E] shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                    title={t("dashboard.viewMode.grid", "Grid View")}
+                  >
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="3" y="3" width="7" height="7"></rect>
+                      <rect x="14" y="3" width="7" height="7"></rect>
+                      <rect x="14" y="14" width="7" height="7"></rect>
+                      <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-1.5 rounded-full transition-all duration-300 ${viewMode === "list" ? "bg-white text-slate-900 dark:bg-kat-primary dark:text-[#030D2E] shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                    title={t("dashboard.viewMode.list", "List View")}
+                  >
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="8" y1="6" x2="21" y2="6"></line>
+                      <line x1="8" y1="12" x2="21" y2="12"></line>
+                      <line x1="8" y1="18" x2="21" y2="18"></line>
+                      <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                      <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                      <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
 
-                    <div className="relative z-10 lg:w-2/3 pr-4">
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {featuredStatus.status === "active" ? (
-                          <span className="inline-flex items-center rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider backdrop-blur-md shadow-sm">
-                            <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 drop-shadow-[0_0_4px_rgba(16,185,129,0.8)]"></span>
-                            </span>
-                            {t("dashboard.statusActive")}
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center rounded-full bg-amber-500/10 border border-amber-500/20 px-3.5 py-1 text-[11px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider backdrop-blur-md shadow-sm">
-                            <span className="relative flex h-2 w-2 mr-1.5 shrink-0">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500 drop-shadow-[0_0_4px_rgba(245,158,11,0.8)]"></span>
-                            </span>
-                            {t("dashboard.statusUpcoming")}
-                          </span>
-                        )}
-                        <span className="rounded-full bg-slate-200/50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 px-3.5 py-1 text-[11px] font-black text-slate-700 dark:text-slate-300 backdrop-blur-md">
-                          {getTripDurationText(featuredTrip, t)}
-                        </span>
-                      </div>
+            {filterTab === "planned" && (
+              <>
+                {/* Gamification Stats */}
+                <GamificationStats
+                  totalTrips={trips.length}
+                  totalDays={trips.reduce((acc, t) => {
+                    const s = new Date(t.startDate);
+                    const e = new Date(t.endDate);
+                    if (isNaN(s.getTime()) || isNaN(e.getTime())) return acc;
+                    return (
+                      acc + Math.ceil(Math.abs(e.getTime() - s.getTime()) / (1000 * 3600 * 24)) + 1
+                    );
+                  }, 0)}
+                />
 
-                      <h4 className="text-[26px] sm:text-[28px] md:text-[34px] font-black text-kat-text leading-tight mb-4 tracking-tight drop-shadow-sm group-hover:bg-gradient-to-r group-hover:from-kat-primary group-hover:to-teal-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500 w-fit">
-                        {featuredTrip.title}
-                      </h4>
+                {/* All Future Trips List */}
+                <div className="space-y-4">
+                  {allFutureTrips.length > 0 && (
+                    <HeroTripCard trip={allFutureTrips[0]} onOpenTrip={onOpenTrip} />
+                  )}
+                  <TripList
+                    title=""
+                    items={allFutureTrips.slice(1)}
+                    allExpenses={allExpenses}
+                    allChecklist={allChecklist}
+                    memberCounts={memberCounts}
+                    onOpenTrip={onOpenTrip}
+                    showCreateCard={true}
+                    onCreateNew={onCreateNew}
+                    viewMode={viewMode}
+                  />
+                </div>
+              </>
+            )}
 
-                      <div className="flex flex-wrap gap-2 text-slate-700 dark:text-slate-300">
-                        <div className="flex items-center gap-2 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-3.5 py-2 rounded-2xl max-w-full backdrop-blur-md">
-                          <HugeiconsIcon
-                            icon={Location01Icon}
-                            size={16}
-                            className="text-kat-primary shrink-0 drop-shadow-sm"
-                          />
-                          <span className="font-black text-[13px] text-slate-700 dark:text-slate-200 truncate max-w-[180px] min-[360px]:max-w-[220px] min-[390px]:max-w-[280px]">
-                            {featuredTrip.location || t("dashboard.noLocation")}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-3.5 py-2 rounded-2xl max-w-full backdrop-blur-md">
-                          <HugeiconsIcon
-                            icon={Calendar01Icon}
-                            size={16}
-                            className="text-kat-primary shrink-0 drop-shadow-sm"
-                          />
-                          <span className="font-black text-[13px] text-slate-700 dark:text-slate-200 truncate">
-                            {featuredTrip.startDate === featuredTrip.endDate
-                              ? formatDate(featuredTrip.startDate)
-                              : `${formatDate(featuredTrip.startDate)} - ${formatDate(featuredTrip.endDate)}`}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-3.5 py-2 rounded-2xl max-w-full backdrop-blur-md">
-                          <HugeiconsIcon
-                            icon={UserGroupIcon}
-                            size={16}
-                            className="text-kat-primary shrink-0 drop-shadow-sm"
-                          />
-                          <span className="font-black text-[13px] text-slate-700 dark:text-slate-200 truncate">
-                            {t("dashboard.peopleCount", {
-                              count: memberCounts[featuredTrip.id!] || 1,
-                            })}
-                          </span>
-                          <span className="text-slate-300 dark:text-slate-600 mx-1">·</span>
-                          <HugeiconsIcon
-                            icon={WalletCardsIcon}
-                            size={16}
-                            className="text-kat-primary shrink-0 drop-shadow-sm"
-                          />
-                          <span className="font-black text-[13px] text-slate-700 dark:text-slate-200 truncate">
-                            {featuredTotalExpense > 0
-                              ? t("dashboard.expenseTotal", {
-                                  amount: formatMoneyCompact(
-                                    featuredTotalExpense,
-                                    featuredTrip.defaultCurrency || "VND"
-                                  ),
-                                })
-                              : t("dashboard.noExpense")}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              );
-            })()}
-
-          {/* Remaining Trips List */}
-          {remainingTrips.length > 0 && (
-            <div className="space-y-4">
-              {featuredTrip && remainingTrips.length <= 2 ? (
+            {filterTab === "archived" && (
+              <div className="space-y-4 motion-page-enter">
                 <TripList
-                  title={t("dashboard.allTripsTitle")}
-                  subtitle={t("dashboard.allTripsDesc")}
-                  items={remainingTrips}
+                  title=""
+                  items={archivedTripsRaw}
                   allExpenses={allExpenses}
                   allChecklist={allChecklist}
                   memberCounts={memberCounts}
                   onOpenTrip={onOpenTrip}
+                  showCreateCard={false}
+                  viewMode={viewMode}
                 />
-              ) : (
-                <>
-                  <TripList
-                    title={t("dashboard.activeTripsTitle")}
-                    subtitle={t("dashboard.activeTripsDesc")}
-                    items={remainingActive}
-                    allExpenses={allExpenses}
-                    allChecklist={allChecklist}
-                    memberCounts={memberCounts}
-                    onOpenTrip={onOpenTrip}
-                  />
-                  <TripList
-                    title={t("dashboard.upcomingTripsTitle")}
-                    subtitle={t("dashboard.upcomingTripsDesc")}
-                    items={remainingUpcoming}
-                    allExpenses={allExpenses}
-                    allChecklist={allChecklist}
-                    memberCounts={memberCounts}
-                    onOpenTrip={onOpenTrip}
-                  />
-                  <TripList
-                    title={t("dashboard.pastTripsTitle")}
-                    subtitle={t("dashboard.pastTripsDesc")}
-                    items={remainingPast}
-                    allExpenses={allExpenses}
-                    allChecklist={allChecklist}
-                    memberCounts={memberCounts}
-                    onOpenTrip={onOpenTrip}
-                  />
-                </>
-              )}
-            </div>
-          )}
-        </>
+                {archivedTripsRaw.length === 0 && (
+                  <div className="flex flex-col items-center justify-center py-20 text-center">
+                    <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">
+                      Không có chuyến đi nào được lưu trữ
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {filterTab === "completed" && (
+              <div className="space-y-4 motion-page-enter">
+                <TripList
+                  title=""
+                  items={pastTrips}
+                  allExpenses={allExpenses}
+                  allChecklist={allChecklist}
+                  memberCounts={memberCounts}
+                  onOpenTrip={onOpenTrip}
+                  showCreateCard={false}
+                  viewMode={viewMode}
+                />
+                {pastTrips.length === 0 && (
+                  <div className="flex flex-col items-center justify-center py-20 text-center">
+                    <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">
+                      Chưa có chuyến đi nào hoàn thành
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Right Sidebar Widgets */}
+          <div className="xl:col-span-4 flex flex-col gap-5 lg:gap-6">
+            <TimezonesWidget />
+          </div>
+        </div>
       )}
 
       <React.Suspense fallback={null}>

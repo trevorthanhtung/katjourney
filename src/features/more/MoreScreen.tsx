@@ -200,7 +200,7 @@ function LocationInput({
       <div className="relative">
         <HugeiconsIcon
           icon={Location01Icon}
-          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-kat-primary pointer-events-none"
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-kat-primary pointer-events-none z-10"
           size={16}
         />
         <input
@@ -698,8 +698,12 @@ function TripForm({
         <div>
           <Input
             label={
-              <span className="flex items-center gap-1.5">
-                <HugeiconsIcon icon={PencilEdit01Icon} size={16} className="text-slate-500" />
+              <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
+                <HugeiconsIcon
+                  icon={PencilEdit01Icon}
+                  size={16}
+                  className="text-slate-700 dark:text-slate-300"
+                />
                 {t("tripForm.nameLabel")}
               </span>
             }
@@ -715,8 +719,12 @@ function TripForm({
           )}
         </div>
         <div>
-          <span className="mb-1.5 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-            <HugeiconsIcon icon={Location01Icon} size={16} className="text-slate-500" />
+          <span className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+            <HugeiconsIcon
+              icon={Location01Icon}
+              size={16}
+              className="text-slate-700 dark:text-slate-300"
+            />
             {t("tripForm.locationLabel")}
           </span>
           <LocationInput
@@ -759,8 +767,12 @@ function TripForm({
 
         {/* === CURRENCY SECTION === */}
         <div>
-          <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-            <HugeiconsIcon icon={Coins01Icon} size={16} className="text-slate-500" />
+          <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+            <HugeiconsIcon
+              icon={Coins01Icon}
+              size={16}
+              className="text-slate-700 dark:text-slate-300"
+            />
             {t("tripForm.currencyLabel")}
           </span>
           <Select
@@ -780,8 +792,12 @@ function TripForm({
 
         {/* === DATE SECTION replaced with CalendarRangePicker === */}
         <div>
-          <span className="mb-2 block text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-            <HugeiconsIcon icon={Calendar01Icon} size={16} className="text-slate-500" />
+          <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+            <HugeiconsIcon
+              icon={Calendar01Icon}
+              size={16}
+              className="text-slate-700 dark:text-slate-300"
+            />
             {t("tripForm.timeLabel")}
           </span>
           <CalendarRangePicker

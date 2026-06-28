@@ -357,7 +357,52 @@
     "emptyFeature2Desc": "Rechnungen teilen",
     "emptyFeature3": "Packen",
     "emptyFeature3Desc": "Gepäck & Artikel",
-    "emptyCreateBtn": "Erste Reise erstellen"
+    "emptyCreateBtn": "Erste Reise erstellen",
+    "tabs": {
+      "planned": "Geplant",
+      "archived": "Archiviert",
+      "completed": "Abgeschlossen"
+    },
+    "card": {
+      "openDates": "Offene Daten",
+      "days": "TAGE",
+      "buddies": "FREUNDE",
+      "expense": "KOSTEN",
+      "newTripTitle": "Neue Reise",
+      "newTripDesc": "Plane eine neue Reise von Grund auf"
+    },
+    "stats": {
+      "countries": "Länder",
+      "of195": "von 195",
+      "totalTrips": "Alle Reisen",
+      "scheduled": "Geplant",
+      "daysTraveled": "Reisetage",
+      "daysLabel": "Tage",
+      "onAllJourneys": "Auf allen Reisen",
+      "distance": "Entfernung",
+      "km": "km",
+      "noFlights": "Keine Flüge"
+    },
+    "widgets": {
+      "timezones": "Zeitzonen",
+      "saigon": "Saigon",
+      "tokyo": "Tokio",
+      "london": "London",
+      "noTimezonesSelected": "Keine Zeitzonen ausgewählt",
+      "searchTimezone": "Zeitzone suchen...",
+      "noTimezonesFound": "Keine Zeitzonen gefunden"
+    },
+    "hero": {
+      "upcoming": "BEVORSTEHEND",
+      "liveNow": "LÄUFT",
+      "buddies": "Begleiter",
+      "tripDates": "Reisedaten",
+      "ongoing": "LAUFEND",
+      "places": "Orte",
+      "travelers": "Reisende",
+      "destinations": "Ziele",
+      "daysLeft": "TAGE ÜBRIG"
+    }
   },
   "archive": {
     "title": "Erinnerungen",

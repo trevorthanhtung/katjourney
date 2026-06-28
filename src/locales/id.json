@@ -348,7 +348,52 @@
     "pastTripsDesc": "Perjalanan yang telah berakhir dan dapat diulas kembali.",
     "itinerary": "Rencana Perjalanan",
     "expenses": "Pengeluaran",
-    "members": "Anggota"
+    "members": "Anggota",
+    "tabs": {
+      "planned": "Direncanakan",
+      "archived": "Diarsipkan",
+      "completed": "Selesai"
+    },
+    "card": {
+      "openDates": "Tanggal belum pasti",
+      "days": "HARI",
+      "buddies": "TEMAN",
+      "expense": "BIAYA",
+      "newTripTitle": "Perjalanan Baru",
+      "newTripDesc": "Rencanakan perjalanan baru dari awal"
+    },
+    "stats": {
+      "countries": "Negara",
+      "of195": "dari 195",
+      "totalTrips": "Total Perjalanan",
+      "scheduled": "Dijadwalkan",
+      "daysTraveled": "Hari Perjalanan",
+      "daysLabel": "hari",
+      "onAllJourneys": "Pada semua perjalanan",
+      "distance": "Jarak",
+      "km": "km",
+      "noFlights": "Belum ada penerbangan"
+    },
+    "widgets": {
+      "timezones": "Zona Waktu",
+      "saigon": "Saigon",
+      "tokyo": "Tokyo",
+      "london": "London",
+      "noTimezonesSelected": "Tidak ada zona waktu yang dipilih",
+      "searchTimezone": "Cari zona waktu...",
+      "noTimezonesFound": "Zona waktu tidak ditemukan"
+    },
+    "hero": {
+      "upcoming": "AKAN DATANG",
+      "liveNow": "SEDANG BERLANGSUNG",
+      "buddies": "Teman",
+      "tripDates": "Tanggal Perjalanan",
+      "ongoing": "BERLANGSUNG",
+      "places": "Tempat",
+      "travelers": "Pelancong",
+      "destinations": "Destinasi",
+      "daysLeft": "HARI LAGI"
+    }
   },
   "archive": {
     "title": "Kenangan",

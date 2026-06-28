@@ -77,6 +77,18 @@
           "title": "Xóa tài khoản",
           "desc": "Xóa vĩnh viễn tài khoản & dữ liệu"
         }
+      },
+      "temperature": {
+        "title": "Nhiệt độ",
+        "desc": "Đơn vị nhiệt độ ưu tiên"
+      },
+      "distance": {
+        "title": "Khoảng cách",
+        "desc": "Hiển thị theo km hoặc dặm"
+      },
+      "optimizeRoute": {
+        "title": "Tối ưu lộ trình",
+        "desc": "Tự động lấy điểm bắt đầu/kết thúc là nơi lưu trú"
       }
     },
     "language": {
@@ -232,6 +244,10 @@
       "syncSuccess": "Dữ liệu đã được cập nhật mới nhất.",
       "syncSuccessCloud": "Đã đồng bộ dữ liệu lên Cloud thành công!",
       "syncFailed": "Đồng bộ thất bại: "
+    },
+    "section": {
+      "system": "Hệ thống",
+      "info": "Thông tin & Hỗ trợ"
     }
   },
   "welcomeScreen": {
@@ -355,7 +371,52 @@
     "emptyFeature2Desc": "Chia hóa đơn",
     "emptyFeature3": "Chuẩn bị",
     "emptyFeature3Desc": "Hành lý & đồ đạc",
-    "emptyCreateBtn": "Tạo chuyến đi đầu tiên"
+    "emptyCreateBtn": "Tạo chuyến đi đầu tiên",
+    "tabs": {
+      "planned": "Kế hoạch",
+      "archived": "Lưu trữ",
+      "completed": "Đã qua"
+    },
+    "card": {
+      "openDates": "Chưa có ngày",
+      "days": "NGÀY",
+      "buddies": "NGƯỜI",
+      "expense": "CHI PHÍ",
+      "newTripTitle": "Tạo chuyến đi",
+      "newTripDesc": "Lên kế hoạch một hành trình mới"
+    },
+    "stats": {
+      "countries": "Quốc gia",
+      "of195": "của 195",
+      "totalTrips": "Tổng chuyến đi",
+      "scheduled": "Đã lên lịch",
+      "daysTraveled": "Ngày vi vu",
+      "daysLabel": "ngày",
+      "onAllJourneys": "Trên mọi hành trình",
+      "distance": "Chặng đường",
+      "km": "km",
+      "noFlights": "Chưa có dữ liệu"
+    },
+    "widgets": {
+      "timezones": "Múi giờ",
+      "noTimezonesSelected": "Chưa chọn múi giờ nào",
+      "searchTimezone": "Tìm kiếm múi giờ...",
+      "noTimezonesFound": "Không tìm thấy múi giờ nào",
+      "saigon": "Sài Gòn",
+      "tokyo": "Tokyo",
+      "london": "London"
+    },
+    "hero": {
+      "upcoming": "SẮP TỚI",
+      "liveNow": "ĐANG DIỄN RA",
+      "buddies": "Bạn đồng hành",
+      "tripDates": "Ngày đi",
+      "ongoing": "ĐANG DIỄN RA",
+      "places": "Địa điểm",
+      "travelers": "Người tham gia",
+      "destinations": "Điểm đến",
+      "daysLeft": "NGÀY NỮA"
+    }
   },
   "archive": {
     "title": "Kỷ niệm",

@@ -355,7 +355,52 @@
     "emptyFeature2Desc": "AA 分摊更省心",
     "emptyFeature3": "行李清单",
     "emptyFeature3Desc": "出门不再丢三落四",
-    "emptyCreateBtn": "开启我的第一次旅行"
+    "emptyCreateBtn": "开启我的第一次旅行",
+    "tabs": {
+      "planned": "计划中",
+      "archived": "已归档",
+      "completed": "已完成"
+    },
+    "card": {
+      "openDates": "未定日期",
+      "days": "天",
+      "buddies": "伙伴",
+      "expense": "费用",
+      "newTripTitle": "新行程",
+      "newTripDesc": "从头开始规划新行程"
+    },
+    "stats": {
+      "countries": "国家",
+      "of195": "/ 195",
+      "totalTrips": "总行程",
+      "scheduled": "已安排",
+      "daysTraveled": "旅行天数",
+      "daysLabel": "天",
+      "onAllJourneys": "所有旅程中",
+      "distance": "距离",
+      "km": "公里",
+      "noFlights": "尚无航班"
+    },
+    "widgets": {
+      "timezones": "时区",
+      "saigon": "西贡",
+      "tokyo": "东京",
+      "london": "伦敦",
+      "noTimezonesSelected": "未选择时区",
+      "searchTimezone": "搜索时区...",
+      "noTimezonesFound": "未找到时区"
+    },
+    "hero": {
+      "upcoming": "即将到来",
+      "liveNow": "进行中",
+      "buddies": "伙伴",
+      "tripDates": "旅行日期",
+      "ongoing": "进行中",
+      "places": "地点",
+      "travelers": "旅行者",
+      "destinations": "目的地",
+      "daysLeft": "天剩余"
+    }
   },
   "archive": {
     "title": "回忆图鉴",

@@ -355,7 +355,52 @@
     "emptyFeature2Desc": "손쉬운 정산",
     "emptyFeature3": "준비물",
     "emptyFeature3Desc": "체크리스트 관리",
-    "emptyCreateBtn": "첫 여행 만들기"
+    "emptyCreateBtn": "첫 여행 만들기",
+    "tabs": {
+      "planned": "계획됨",
+      "archived": "보관됨",
+      "completed": "완료됨"
+    },
+    "card": {
+      "openDates": "날짜 미정",
+      "days": "일",
+      "buddies": "동행",
+      "expense": "비용",
+      "newTripTitle": "새 여행",
+      "newTripDesc": "처음부터 새 여행 계획하기"
+    },
+    "stats": {
+      "countries": "국가",
+      "of195": "/ 195",
+      "totalTrips": "총 여행",
+      "scheduled": "예정됨",
+      "daysTraveled": "여행 일수",
+      "daysLabel": "일",
+      "onAllJourneys": "모든 여정에서",
+      "distance": "거리",
+      "km": "km",
+      "noFlights": "예정된 비행 없음"
+    },
+    "widgets": {
+      "timezones": "시간대",
+      "saigon": "사이공",
+      "tokyo": "도쿄",
+      "london": "런던",
+      "noTimezonesSelected": "선택된 시간대가 없습니다",
+      "searchTimezone": "시간대 검색...",
+      "noTimezonesFound": "시간대를 찾을 수 없습니다"
+    },
+    "hero": {
+      "upcoming": "예정",
+      "liveNow": "진행 중",
+      "buddies": "동행인",
+      "tripDates": "여행 날짜",
+      "ongoing": "진행 중",
+      "places": "장소",
+      "travelers": "여행자",
+      "destinations": "목적지",
+      "daysLeft": "일 남음"
+    }
   },
   "archive": {
     "title": "추억 보관소",

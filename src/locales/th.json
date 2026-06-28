@@ -355,7 +355,52 @@
     "emptyFeature2Desc": "หารค่าใช้จ่ายง่าย ไม่ผิดใจกัน",
     "emptyFeature3": "เช็คลิสต์กันลืม",
     "emptyFeature3Desc": "ของครบแน่นอน ไม่ตกหล่น",
-    "emptyCreateBtn": "สร้างทริปแรกกันเลย"
+    "emptyCreateBtn": "สร้างทริปแรกกันเลย",
+    "tabs": {
+      "planned": "วางแผนไว้",
+      "archived": "เก็บถาวร",
+      "completed": "เสร็จสิ้น"
+    },
+    "card": {
+      "openDates": "ยังไม่กำหนดวัน",
+      "days": "วัน",
+      "buddies": "เพื่อนร่วมทาง",
+      "expense": "ค่าใช้จ่าย",
+      "newTripTitle": "ทริปใหม่",
+      "newTripDesc": "วางแผนทริปใหม่ตั้งแต่เริ่มต้น"
+    },
+    "stats": {
+      "countries": "ประเทศ",
+      "of195": "จาก 195",
+      "totalTrips": "ทริปทั้งหมด",
+      "scheduled": "กำหนดไว้แล้ว",
+      "daysTraveled": "จำนวนวันที่เดินทาง",
+      "daysLabel": "วัน",
+      "onAllJourneys": "ในทุกการเดินทาง",
+      "distance": "ระยะทาง",
+      "km": "กม.",
+      "noFlights": "ยังไม่มีเที่ยวบิน"
+    },
+    "widgets": {
+      "timezones": "เขตเวลา",
+      "saigon": "ไซ่ง่อน",
+      "tokyo": "โตเกียว",
+      "london": "ลอนดอน",
+      "noTimezonesSelected": "ไม่ได้เลือกเขตเวลา",
+      "searchTimezone": "ค้นหาเขตเวลา...",
+      "noTimezonesFound": "ไม่พบเขตเวลา"
+    },
+    "hero": {
+      "upcoming": "กำลังจะมาถึง",
+      "liveNow": "กำลังดำเนินการ",
+      "buddies": "เพื่อนร่วมทาง",
+      "tripDates": "วันที่เดินทาง",
+      "ongoing": "กำลังดำเนินการ",
+      "places": "สถานที่",
+      "travelers": "นักเดินทาง",
+      "destinations": "จุดหมายปลายทาง",
+      "daysLeft": "วันเหลือ"
+    }
   },
   "archive": {
     "title": "ความทรงจำ",

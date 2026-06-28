@@ -355,7 +355,52 @@
     "emptyFeature2Desc": "割り勘",
     "emptyFeature3": "持ち物",
     "emptyFeature3Desc": "準備リスト",
-    "emptyCreateBtn": "最初の旅行を作成"
+    "emptyCreateBtn": "最初の旅行を作成",
+    "tabs": {
+      "planned": "計画中",
+      "archived": "アーカイブ済み",
+      "completed": "完了"
+    },
+    "card": {
+      "openDates": "日程未定",
+      "days": "日",
+      "buddies": "仲間",
+      "expense": "費用",
+      "newTripTitle": "新しい旅行",
+      "newTripDesc": "ゼロから新しい旅行を計画する"
+    },
+    "stats": {
+      "countries": "国",
+      "of195": "/ 195",
+      "totalTrips": "総旅行数",
+      "scheduled": "予定",
+      "daysTraveled": "旅行日数",
+      "daysLabel": "日",
+      "onAllJourneys": "すべての旅で",
+      "distance": "距離",
+      "km": "km",
+      "noFlights": "フライト予定なし"
+    },
+    "widgets": {
+      "timezones": "タイムゾーン",
+      "saigon": "サイゴン",
+      "tokyo": "東京",
+      "london": "ロンドン",
+      "noTimezonesSelected": "タイムゾーンが選択されていません",
+      "searchTimezone": "タイムゾーンを検索...",
+      "noTimezonesFound": "タイムゾーンが見つかりません"
+    },
+    "hero": {
+      "upcoming": "予定",
+      "liveNow": "開催中",
+      "buddies": "仲間",
+      "tripDates": "旅行日程",
+      "ongoing": "進行中",
+      "places": "場所",
+      "travelers": "旅行者",
+      "destinations": "目的地",
+      "daysLeft": "日残り"
+    }
   },
   "archive": {
     "title": "思い出",

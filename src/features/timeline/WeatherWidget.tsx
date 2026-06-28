@@ -6,6 +6,7 @@ import { getWeatherIcon } from "../../services/weatherService";
 import { useWeather } from "../../hooks/useWeather";
 import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather";
 import { WeatherDetailsModal } from "./WeatherDetailsModal";
+import { useTemperatureUnit } from "../../hooks/useTemperatureUnit";
 
 interface WeatherWidgetProps {
   destination: string;
@@ -24,44 +25,95 @@ function getPackingTip(
   t: any
 ): { emoji: string; message: string; color: string } | null {
   const diff = destTemp - myTemp;
-  const isDestRainy = (destCode >= 51 && destCode <= 67) || (destCode >= 80 && destCode <= 82) || (destCode >= 95 && destCode <= 99);
-  const isMyRainy = (myCode >= 51 && myCode <= 67) || (myCode >= 80 && myCode <= 82) || (myCode >= 95 && myCode <= 99);
+  const isDestRainy =
+    (destCode >= 51 && destCode <= 67) ||
+    (destCode >= 80 && destCode <= 82) ||
+    (destCode >= 95 && destCode <= 99);
+  const isMyRainy =
+    (myCode >= 51 && myCode <= 67) ||
+    (myCode >= 80 && myCode <= 82) ||
+    (myCode >= 95 && myCode <= 99);
 
   if (isDestRainy && !isMyRainy) {
-    return { emoji: "🌧️", message: t("weather.packingRain"), color: "bg-sky-50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-900/30 text-sky-800 dark:text-sky-350" };
+    return {
+      emoji: "🌧️",
+      message: t("weather.packingRain"),
+      color:
+        "bg-sky-50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-900/30 text-sky-800 dark:text-sky-350",
+    };
   }
   if (diff <= -7) {
-    return { emoji: "🧥", message: t("weather.colder", { diff: Math.abs(Math.round(diff)) }), color: "bg-indigo-50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900/30 text-indigo-800 dark:text-indigo-350" };
+    return {
+      emoji: "🧥",
+      message: t("weather.colder", { diff: Math.abs(Math.round(diff)) }),
+      color:
+        "bg-indigo-50 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-900/30 text-indigo-800 dark:text-indigo-350",
+    };
   }
   if (diff <= -4) {
-    return { emoji: "🧣", message: t("weather.cooler", { diff: Math.abs(Math.round(diff)) }), color: "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/30 text-blue-800 dark:text-blue-350" };
+    return {
+      emoji: "🧣",
+      message: t("weather.cooler", { diff: Math.abs(Math.round(diff)) }),
+      color:
+        "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/30 text-blue-800 dark:text-blue-350",
+    };
   }
   if (diff >= 7) {
-    return { emoji: "☀️", message: t("weather.hotter", { diff: Math.round(diff) }), color: "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/30 text-amber-800 dark:text-amber-350" };
+    return {
+      emoji: "☀️",
+      message: t("weather.hotter", { diff: Math.round(diff) }),
+      color:
+        "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/30 text-amber-800 dark:text-amber-350",
+    };
   }
   if (diff >= 4) {
-    return { emoji: "🕶️", message: t("weather.warmer", { diff: Math.round(diff) }), color: "bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-900/30 text-orange-800 dark:text-orange-350" };
+    return {
+      emoji: "🕶️",
+      message: t("weather.warmer", { diff: Math.round(diff) }),
+      color:
+        "bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-900/30 text-orange-800 dark:text-orange-350",
+    };
   }
   return null;
 }
 
-export function WeatherWidget({ destination, latitude, longitude, days = 3, startDate }: WeatherWidgetProps) {
+export function WeatherWidget({
+  destination,
+  latitude,
+  longitude,
+  days = 3,
+  startDate,
+}: WeatherWidgetProps) {
   const { t } = useTranslation();
   const today = new Date().toISOString().split("T")[0];
   const isFuture = startDate && startDate > today;
 
-  const { loading, error, forecast } = useWeather(destination, latitude, longitude, days, startDate);
+  const { loading, error, forecast } = useWeather(
+    destination,
+    latitude,
+    longitude,
+    days,
+    startDate
+  );
   const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
+
+  const { unit, formatTemp } = useTemperatureUnit();
 
   // Compute packing tip
   const packingTip = (() => {
     if (!forecast || !myForecast) return null;
-    const destTemp = forecast.current?.temperature ?? ((forecast.temperature_2m_max?.[0] ?? 0) + (forecast.temperature_2m_min?.[0] ?? 0)) / 2;
-    const myTemp = myForecast.current?.temperature ?? ((myForecast.temperature_2m_max?.[0] ?? 0) + (myForecast.temperature_2m_min?.[0] ?? 0)) / 2;
+    const destTemp =
+      forecast.current?.temperature ??
+      ((forecast.temperature_2m_max?.[0] ?? 0) + (forecast.temperature_2m_min?.[0] ?? 0)) / 2;
+    const myTemp =
+      myForecast.current?.temperature ??
+      ((myForecast.temperature_2m_max?.[0] ?? 0) + (myForecast.temperature_2m_min?.[0] ?? 0)) / 2;
     const destCode = forecast.current?.weathercode ?? forecast.weathercode?.[0] ?? 0;
     const myCode = myForecast.current?.weathercode ?? myForecast.weathercode?.[0] ?? 0;
-    return getPackingTip(destTemp, myTemp, destCode, myCode, t);
+
+    // Pass the formatted temperatures to getPackingTip so the tip text uses the right unit
+    return getPackingTip(formatTemp(destTemp), formatTemp(myTemp), destCode, myCode, t);
   })();
 
   if (!destination?.trim() && !latitude && !longitude) {
@@ -70,21 +122,33 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 dark:bg-sky-950 text-sky-500 mb-1 shadow-sm animate-pulse">
           <HugeiconsIcon icon={CloudRainWindIcon} className="w-5.5 h-5.5" />
         </span>
-        <span className="text-[14px] font-black text-kat-dark">{t("weather.noDestinationTitle")}</span>
-        <span className="text-[11.5px] text-slate-500/80 dark:text-slate-400 font-medium max-w-[220px] leading-relaxed">{t("weather.noDestinationDesc")}</span>
+        <span className="text-[14px] font-black text-kat-dark">
+          {t("weather.noDestinationTitle")}
+        </span>
+        <span className="text-[11.5px] text-slate-500/80 dark:text-slate-400 font-medium max-w-[220px] leading-relaxed">
+          {t("weather.noDestinationDesc")}
+        </span>
       </div>
     );
   }
 
   if (error || (!loading && !forecast)) {
     const today = new Date().toISOString().split("T")[0];
-    const daysUntil = startDate && startDate > today
-      ? Math.ceil((new Date(startDate + "T00:00:00").getTime() - new Date(today + "T00:00:00").getTime()) / (1000 * 60 * 60 * 24))
-      : 0;
+    const daysUntil =
+      startDate && startDate > today
+        ? Math.ceil(
+            (new Date(startDate + "T00:00:00").getTime() -
+              new Date(today + "T00:00:00").getTime()) /
+              (1000 * 60 * 60 * 24)
+          )
+        : 0;
 
     return (
       <div className="w-full h-auto py-5 mb-6 rounded-3xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 flex flex-col items-center justify-center gap-1.5 px-4 text-center">
-        <HugeiconsIcon icon={CloudRainWindIcon} className="w-6 h-6 mb-0.5 text-slate-300 dark:text-slate-500" />
+        <HugeiconsIcon
+          icon={CloudRainWindIcon}
+          className="w-6 h-6 mb-0.5 text-slate-300 dark:text-slate-500"
+        />
         {daysUntil > 0 ? (
           <span className="text-[12.5px] font-bold text-slate-400">
             {t("weather.forecastNotAvailable", { daysUntil })}
@@ -99,7 +163,9 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
   if (loading) {
     return (
       <div className="w-full h-24 mb-6 rounded-2xl bg-sky-50/50 dark:bg-sky-950/20 border border-sky-100/50 dark:border-sky-900/30 animate-pulse flex items-center justify-center">
-        <span className="text-sky-400 dark:text-sky-300 text-[13px] font-bold">{t("weather.loading")}</span>
+        <span className="text-sky-400 dark:text-sky-300 text-[13px] font-bold">
+          {t("weather.loading")}
+        </span>
       </div>
     );
   }
@@ -129,7 +195,9 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/10 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400">
                 <HugeiconsIcon icon={CloudRainWindIcon} className="h-4 w-4" />
               </span>
-              <h4 className="text-[15px] font-extrabold text-kat-dark">{t("weather.weatherForecast")}</h4>
+              <h4 className="text-[15px] font-extrabold text-kat-dark">
+                {t("weather.weatherForecast")}
+              </h4>
             </div>
             <span className="text-[10.5px] font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 dark:bg-sky-400/10 px-2.5 py-1 rounded-lg uppercase tracking-wider">
               {t("weather.days", { days })}
@@ -138,7 +206,9 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
 
           {/* Smart Packing Tip Banner */}
           {packingTip && (
-            <div className={`mx-4 mb-3 flex items-center gap-2.5 rounded-2xl border px-3.5 py-2.5 ${packingTip.color}`}>
+            <div
+              className={`mx-4 mb-3 flex items-center gap-2.5 rounded-2xl border px-3.5 py-2.5 ${packingTip.color}`}
+            >
               <p className="text-[12px] font-bold leading-snug">{packingTip.message}</p>
             </div>
           )}
@@ -147,24 +217,26 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
             {forecast?.time.map((dateStr, idx) => {
               const dateObj = new Date(dateStr);
               const dayStr = dateObj.toLocaleDateString("vi-VN", { weekday: "short" });
-              const maxTemp = Math.round(forecast.temperature_2m_max[idx]);
-              const minTemp = Math.round(forecast.temperature_2m_min[idx]);
-              
+              const maxTemp = formatTemp(forecast.temperature_2m_max[idx]);
+              const minTemp = formatTemp(forecast.temperature_2m_min[idx]);
+
               const leftPercent = 0;
               const widthPercent = 100;
-              
+
               // Current temperature dot position for "today" (idx === 0, non-future only)
               let currentTempDotPercent: number | null = null;
               if (idx === 0 && !isFuture && currentTemp != null) {
-                const clampedTemp = Math.max(minTemp, Math.min(maxTemp, currentTemp));
-                const rangeForDay = maxTemp - minTemp;
+                const rawMin = forecast.temperature_2m_min[idx];
+                const rawMax = forecast.temperature_2m_max[idx];
+                const clampedTemp = Math.max(rawMin, Math.min(rawMax, currentTemp));
+                const rangeForDay = rawMax - rawMin;
                 if (rangeForDay === 0) {
                   currentTempDotPercent = 50;
                 } else {
-                  currentTempDotPercent = ((clampedTemp - minTemp) / rangeForDay) * 100;
+                  currentTempDotPercent = ((clampedTemp - rawMin) / rangeForDay) * 100;
                 }
               }
-              
+
               return (
                 <button
                   key={idx}
@@ -174,18 +246,20 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
                   <span className="w-16 text-[13.5px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors shrink-0">
                     {idx === 0 && !isFuture ? t("weather.today") : dayStr}
                   </span>
-                  
+
                   <div className="w-8 flex items-center justify-center shrink-0">
                     {getWeatherIcon(forecast.weathercode[idx], "w-[22px] h-[22px] drop-shadow-sm")}
                   </div>
-                  
+
                   <div className="flex items-center gap-3 flex-1 justify-end">
-                    <span className="font-semibold text-slate-400 dark:text-slate-500 text-[12.5px] w-8 text-right shrink-0">{minTemp}°</span>
-                    
+                    <span className="font-semibold text-slate-400 dark:text-slate-500 text-[12.5px] w-8 text-right shrink-0">
+                      {minTemp}°
+                    </span>
+
                     {/* iOS Style Temperature Bar with current temp dot */}
                     <div className="h-1.5 w-16 sm:w-20 bg-slate-100 dark:bg-slate-800 rounded-full overflow-visible relative shrink-0">
-                      <div 
-                        className="absolute h-full bg-gradient-to-r from-sky-400 via-emerald-400 to-amber-400 rounded-full opacity-90 shadow-sm" 
+                      <div
+                        className="absolute h-full bg-gradient-to-r from-sky-400 via-emerald-400 to-amber-400 rounded-full opacity-90 shadow-sm"
                         style={{ left: `${leftPercent}%`, width: `${widthPercent}%` }}
                       />
                       {/* Current temperature indicator dot (only for "Hôm nay") */}
@@ -193,12 +267,14 @@ export function WeatherWidget({ destination, latitude, longitude, days = 3, star
                         <div
                           className="absolute w-3 h-3 bg-white border-2 border-sky-500 rounded-full shadow-md -top-[3px] transition-all"
                           style={{ left: `calc(${currentTempDotPercent}% - 6px)` }}
-                          title={t("weather.currentTemp", { temp: Math.round(currentTemp!) })}
+                          title={t("weather.currentTemp", { temp: formatTemp(currentTemp!) })}
                         />
                       )}
                     </div>
-                    
-                    <span className="font-black text-kat-dark dark:text-slate-200 text-[13px] w-8 text-right shrink-0">{maxTemp}°</span>
+
+                    <span className="font-black text-kat-dark dark:text-slate-200 text-[13px] w-8 text-right shrink-0">
+                      {maxTemp}°
+                    </span>
                   </div>
                 </button>
               );

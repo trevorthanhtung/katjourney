@@ -77,6 +77,18 @@
           "title": "Delete Account",
           "desc": "Permanently delete account & data"
         }
+      },
+      "temperature": {
+        "title": "Temperature Unit",
+        "desc": "Preferred temperature unit"
+      },
+      "distance": {
+        "title": "Distance Unit",
+        "desc": "Display in km or miles"
+      },
+      "optimizeRoute": {
+        "title": "Optimize Route",
+        "desc": "Auto-set start/end points based on accommodation"
       }
     },
     "language": {
@@ -234,6 +246,10 @@
       "syncSuccess": "Data is up to date.",
       "syncSuccessCloud": "Data synced to Cloud successfully!",
       "syncFailed": "Sync failed: "
+    },
+    "section": {
+      "system": "System",
+      "info": "Information & Support"
     }
   },
   "welcomeScreen": {
@@ -357,7 +373,52 @@
     "emptyFeature2Desc": "Split bills",
     "emptyFeature3": "Packing",
     "emptyFeature3Desc": "Luggage & items",
-    "emptyCreateBtn": "Create your first trip"
+    "emptyCreateBtn": "Create your first trip",
+    "tabs": {
+      "planned": "Planned",
+      "archived": "Archived",
+      "completed": "Completed"
+    },
+    "card": {
+      "openDates": "Open dates",
+      "days": "DAYS",
+      "buddies": "BUDDIES",
+      "expense": "EXPENSE",
+      "newTripTitle": "New Trip",
+      "newTripDesc": "Plan a new trip from scratch"
+    },
+    "stats": {
+      "countries": "Countries",
+      "of195": "of 195",
+      "totalTrips": "Total Trips",
+      "scheduled": "Scheduled",
+      "daysTraveled": "Days on Road",
+      "daysLabel": "days",
+      "onAllJourneys": "On all journeys",
+      "distance": "Distance",
+      "km": "km",
+      "noFlights": "No flights yet"
+    },
+    "widgets": {
+      "timezones": "Timezones",
+      "saigon": "Saigon",
+      "tokyo": "Tokyo",
+      "london": "London",
+      "noTimezonesSelected": "No timezones selected",
+      "searchTimezone": "Search timezone...",
+      "noTimezonesFound": "No timezones found"
+    },
+    "hero": {
+      "upcoming": "UPCOMING",
+      "liveNow": "LIVE NOW",
+      "buddies": "Buddies",
+      "tripDates": "Trip Dates",
+      "ongoing": "ONGOING",
+      "places": "Places",
+      "travelers": "Travelers",
+      "destinations": "Destinations",
+      "daysLeft": "DAYS LEFT"
+    }
   },
   "archive": {
     "title": "Memories",

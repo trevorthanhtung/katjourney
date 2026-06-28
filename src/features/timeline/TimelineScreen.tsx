@@ -1,35 +1,51 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { 
-  CheckIcon, 
-  Cancel01Icon, 
-  Location01Icon, 
-  Add01Icon, 
-  Calendar01Icon, 
-  Delete01Icon, 
-  Clock01Icon, 
-  Route01Icon, 
-  MapPinned, 
-  ChevronRightIcon, 
-  MapsIcon, 
-  ChevronDownIcon, 
-  MoreVerticalIcon, 
-  PencilEdit01Icon, 
-  StickyNote01Icon, 
-  TextIcon, 
-  GitBranchIcon, 
-  Dish01Icon, 
-  Camera01Icon, 
-  HotelIcon, 
-  Coffee01Icon, 
-  ShoppingBag01Icon, 
-  MoreHorizontalCircle01Icon 
+import {
+  CheckIcon,
+  Cancel01Icon,
+  Location01Icon,
+  Add01Icon,
+  Calendar01Icon,
+  Delete01Icon,
+  Clock01Icon,
+  Route01Icon,
+  MapPinned,
+  ChevronRightIcon,
+  MapsIcon,
+  ChevronDownIcon,
+  MoreVerticalIcon,
+  PencilEdit01Icon,
+  StickyNote01Icon,
+  TextIcon,
+  GitBranchIcon,
+  Dish01Icon,
+  Camera01Icon,
+  HotelIcon,
+  Coffee01Icon,
+  ShoppingBag01Icon,
+  MoreHorizontalCircle01Icon,
 } from "@hugeicons/core-free-icons";
 import { db, EventItem, Trip, Expense } from "../../db";
 import { useLiveQuery } from "dexie-react-hooks";
-import { classNames, formatDate, formatMoney, getTripTiming, formatDateShort, daysBetween, today } from "../../utils/helpers";
-import { BottomSheet, FormActions, Input, Textarea, Select, TimePicker, DeleteConfirmModal } from "../../components/ui";
+import {
+  classNames,
+  formatDate,
+  formatMoney,
+  getTripTiming,
+  formatDateShort,
+  daysBetween,
+  today,
+} from "../../utils/helpers";
+import {
+  BottomSheet,
+  FormActions,
+  Input,
+  Textarea,
+  Select,
+  TimePicker,
+  DeleteConfirmModal,
+} from "../../components/ui";
 import { BackupPlansSheet } from "./BackupPlansSheet";
 import { TimelineCalendarView } from "./TimelineCalendarView";
 import { getEmbedMapUrl, ensureAbsoluteUrl, getMapFilterClass } from "../../utils/mapUtils";
@@ -38,36 +54,93 @@ import { useModalHistory } from "../../hooks/useModalHistory";
 
 // Define categories for PWA Travel 2027
 const ACTIVITY_CATEGORIES_BASE = [
-  { id: "transport", labelKey: "timeline.catTransport", icon: Route01Icon, bgColor: "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/30", activeBg: "bg-blue-100 dark:bg-blue-950/40 border-blue-400 dark:border-blue-500 text-blue-700 dark:text-blue-300" },
-  { id: "dining", labelKey: "timeline.catDining", icon: Dish01Icon, bgColor: "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30", activeBg: "bg-rose-100 dark:bg-rose-950/40 border-rose-400 dark:border-rose-500 text-rose-700 dark:text-rose-300" },
-  { id: "sightseeing", labelKey: "timeline.catSightseeing", icon: Camera01Icon, bgColor: "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/30", activeBg: "bg-amber-100 dark:bg-amber-950/40 border-amber-400 dark:border-amber-500 text-amber-700 dark:text-amber-300" },
-  { id: "accommodation", labelKey: "timeline.catAccommodation", icon: HotelIcon, bgColor: "bg-slate-100 dark:bg-slate-800 text-kat-dark dark:text-slate-200 border-slate-200 dark:border-slate-700/50", activeBg: "bg-kat-dark/10 dark:bg-slate-800 border-kat-dark dark:border-slate-650 text-kat-dark dark:text-slate-200" },
-  { id: "relaxation", labelKey: "timeline.catRelaxation", icon: Coffee01Icon, bgColor: "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30", activeBg: "bg-emerald-100 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-500 text-emerald-700 dark:text-emerald-300" },
-  { id: "shopping", labelKey: "timeline.catShopping", icon: ShoppingBag01Icon, bgColor: "bg-purple-50 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400 border-purple-100 dark:border-purple-900/30", activeBg: "bg-purple-100 dark:bg-purple-950/40 border-purple-400 dark:border-purple-500 text-purple-700 dark:text-emerald-300" },
-  { id: "other", labelKey: "timeline.catOther", icon: MoreHorizontalCircle01Icon, bgColor: "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-100 dark:border-slate-700/40", activeBg: "bg-slate-100 dark:bg-slate-800 border-slate-400 dark:border-slate-600 text-slate-700 dark:text-slate-350" }
+  {
+    id: "transport",
+    labelKey: "timeline.catTransport",
+    icon: Route01Icon,
+    bgColor:
+      "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/30",
+    activeBg:
+      "bg-blue-100 dark:bg-blue-950/40 border-blue-400 dark:border-blue-500 text-blue-700 dark:text-blue-300",
+  },
+  {
+    id: "dining",
+    labelKey: "timeline.catDining",
+    icon: Dish01Icon,
+    bgColor:
+      "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30",
+    activeBg:
+      "bg-rose-100 dark:bg-rose-950/40 border-rose-400 dark:border-rose-500 text-rose-700 dark:text-rose-300",
+  },
+  {
+    id: "sightseeing",
+    labelKey: "timeline.catSightseeing",
+    icon: Camera01Icon,
+    bgColor:
+      "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/30",
+    activeBg:
+      "bg-amber-100 dark:bg-amber-950/40 border-amber-400 dark:border-amber-500 text-amber-700 dark:text-amber-300",
+  },
+  {
+    id: "accommodation",
+    labelKey: "timeline.catAccommodation",
+    icon: HotelIcon,
+    bgColor:
+      "bg-slate-100 dark:bg-slate-800 text-kat-dark dark:text-slate-200 border-slate-200 dark:border-slate-700/50",
+    activeBg:
+      "bg-kat-dark/10 dark:bg-slate-800 border-kat-dark dark:border-slate-650 text-kat-dark dark:text-slate-200",
+  },
+  {
+    id: "relaxation",
+    labelKey: "timeline.catRelaxation",
+    icon: Coffee01Icon,
+    bgColor:
+      "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30",
+    activeBg:
+      "bg-emerald-100 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-500 text-emerald-700 dark:text-emerald-300",
+  },
+  {
+    id: "shopping",
+    labelKey: "timeline.catShopping",
+    icon: ShoppingBag01Icon,
+    bgColor:
+      "bg-purple-50 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400 border-purple-100 dark:border-purple-900/30",
+    activeBg:
+      "bg-purple-100 dark:bg-purple-950/40 border-purple-400 dark:border-purple-500 text-purple-700 dark:text-emerald-300",
+  },
+  {
+    id: "other",
+    labelKey: "timeline.catOther",
+    icon: MoreHorizontalCircle01Icon,
+    bgColor:
+      "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-100 dark:border-slate-700/40",
+    activeBg:
+      "bg-slate-100 dark:bg-slate-800 border-slate-400 dark:border-slate-600 text-slate-700 dark:text-slate-350",
+  },
 ];
 
 function getCategory(id?: string) {
-  return ACTIVITY_CATEGORIES_BASE.find(c => c.id === id) || ACTIVITY_CATEGORIES_BASE[ACTIVITY_CATEGORIES_BASE.length - 1];
+  return (
+    ACTIVITY_CATEGORIES_BASE.find((c) => c.id === id) ||
+    ACTIVITY_CATEGORIES_BASE[ACTIVITY_CATEGORIES_BASE.length - 1]
+  );
 }
 
-
-
-const ActivityCard = React.memo(function ActivityCard({ 
-  item, 
-  onEdit, 
-  isToday, 
+const ActivityCard = React.memo(function ActivityCard({
+  item,
+  onEdit,
+  isToday,
   isUpcoming,
   idx = 0,
   backupCount,
   linkedExpenses,
   onOpenBackup,
   onDelete,
-  onAddExpense
-}: { 
-  item: EventItem; 
-  onEdit: () => void; 
-  isToday: boolean; 
+  onAddExpense,
+}: {
+  item: EventItem;
+  onEdit: () => void;
+  isToday: boolean;
   isUpcoming: boolean;
   idx?: number;
   backupCount?: number;
@@ -79,25 +152,27 @@ const ActivityCard = React.memo(function ActivityCard({
   const { t } = useTranslation();
   const category = getCategory(item.type);
   const CatIcon = category.icon;
-  
+
   const toggleComplete = async (e: React.MouseEvent) => {
     e.stopPropagation();
     await db.events.update(item.id!, { completed: !item.completed });
   };
 
   return (
-    <article className={`group relative flex gap-4 pl-1 mb-6 last:mb-2 motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}>
+    <article
+      className={`group relative flex gap-4 pl-1 mb-6 last:mb-2 motion-card-enter motion-delay-${Math.min(idx + 1, 5)}`}
+    >
       {/* Timeline connector line */}
       <div className="absolute bottom-0 left-[21px] top-11 w-0.5 bg-slate-200/80 dark:bg-slate-800 group-last:bg-transparent" />
-      
+
       {/* Activity type icon serving as timeline marker (min 44x44px target) */}
       <div className="relative z-10 flex shrink-0">
         <button
           onClick={toggleComplete}
           className={classNames(
             "flex h-11 w-11 items-center justify-center rounded-full shadow-sm ring-4 ring-[#F8FAFC] dark:ring-[#0A1124] transition-all duration-200 motion-press",
-            item.completed 
-              ? "bg-emerald-500 text-white hover:bg-emerald-600" 
+            item.completed
+              ? "bg-emerald-500 text-white hover:bg-emerald-600"
               : `${category.bgColor} border hover:scale-105`
           )}
           aria-label={item.completed ? t("timeline.markIncomplete") : t("timeline.markComplete")}
@@ -111,7 +186,7 @@ const ActivityCard = React.memo(function ActivityCard({
       </div>
 
       {/* Card Body */}
-      <div 
+      <div
         onClick={onEdit}
         className="min-w-0 flex-1 rounded-2xl bg-white dark:bg-kat-surface p-4 shadow-sm border border-slate-100 dark:border-kat-border hover:shadow-md hover:border-slate-200 dark:hover:border-kat-border cursor-pointer transition-all duration-200 motion-press"
       >
@@ -129,24 +204,34 @@ const ActivityCard = React.memo(function ActivityCard({
                   {t("timeline.noTimeSet")}
                 </span>
               )}
-              
-              <span className={classNames("text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border", category.bgColor)}>
+
+              <span
+                className={classNames(
+                  "text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border",
+                  category.bgColor
+                )}
+              >
                 {t(category.labelKey)}
               </span>
             </div>
 
             {/* Title */}
-            <h3 className={classNames(
-              "text-[17px] font-extrabold text-kat-dark leading-tight", 
-              item.completed && "text-slate-400 line-through decoration-slate-300"
-            )}>
+            <h3
+              className={classNames(
+                "text-[17px] font-extrabold text-kat-dark leading-tight",
+                item.completed && "text-slate-400 line-through decoration-slate-300"
+              )}
+            >
               {item.title}
             </h3>
 
             {/* Location */}
             {item.location && (
               <p className="mt-2 flex items-start gap-1 text-[14px] font-medium text-slate-600">
-                <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 shrink-0 mt-0.5 text-slate-400" />
+                <HugeiconsIcon
+                  icon={Location01Icon}
+                  className="h-4 w-4 shrink-0 mt-0.5 text-slate-400"
+                />
                 <span className="truncate">{item.location}</span>
               </p>
             )}
@@ -164,7 +249,9 @@ const ActivityCard = React.memo(function ActivityCard({
                 {getEmbedMapUrl(item.mapLink || item.location || "", item.location) && (
                   <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm bg-slate-100 relative min-h-[160px]">
                     <div className="absolute inset-0 flex items-center justify-center text-slate-400">
-                      <span className="text-[12px] font-medium animate-pulse">{t("timeline.loadingMap")}</span>
+                      <span className="text-[12px] font-medium animate-pulse">
+                        {t("timeline.loadingMap")}
+                      </span>
                     </div>
                     <iframe
                       title="Google Maps Embed"
@@ -178,15 +265,24 @@ const ActivityCard = React.memo(function ActivityCard({
                   </div>
                 )}
                 {(() => {
-                  const isRoute = item.mapLink && (item.mapLink.includes("/maps/dir/") || item.mapLink.includes("maps/dir"));
+                  const isRoute =
+                    item.mapLink &&
+                    (item.mapLink.includes("/maps/dir/") || item.mapLink.includes("maps/dir"));
                   return (
-                    <a 
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-[13px] font-bold text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors" 
-                      href={ensureAbsoluteUrl(item.mapLink) || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`} 
-                      target="_blank" 
+                    <a
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-[13px] font-bold text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors"
+                      href={
+                        ensureAbsoluteUrl(item.mapLink) ||
+                        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`
+                      }
+                      target="_blank"
                       rel="noreferrer"
                     >
-                      {isRoute ? <HugeiconsIcon icon={Route01Icon} className="w-3.5 h-3.5" /> : <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />}
+                      {isRoute ? (
+                        <HugeiconsIcon icon={Route01Icon} className="w-3.5 h-3.5" />
+                      ) : (
+                        <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />
+                      )}
                       {isRoute ? t("timeline.viewRoute") + " " : t("timeline.openGoogleMaps") + " "}
                       &rarr;
                     </a>
@@ -197,32 +293,48 @@ const ActivityCard = React.memo(function ActivityCard({
 
             {/* Backup Plans Badge */}
             <div className="mt-3">
-              <button 
-                onClick={(e) => { e.stopPropagation(); onOpenBackup?.(); }}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenBackup?.();
+                }}
                 className={classNames(
                   "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] font-bold border transition-colors motion-press",
-                  backupCount && backupCount > 0 
+                  backupCount && backupCount > 0
                     ? "bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
                     : "bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-kat-border/40 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
                 )}
               >
                 <HugeiconsIcon icon={GitBranchIcon} className="w-3.5 h-3.5" />
-                {backupCount && backupCount > 0 ? t("timeline.backupPlansCount", { count: backupCount }) : t("timeline.addBackupPlan")}
+                {backupCount && backupCount > 0
+                  ? t("timeline.backupPlansCount", { count: backupCount })
+                  : t("timeline.addBackupPlan")}
               </button>
             </div>
 
             {/* Expenses Linked */}
-            {(linkedExpenses && linkedExpenses.length > 0 || onAddExpense) && (
-              <div className="mt-4 border-t border-slate-100 dark:border-kat-border/40 pt-3 flex flex-wrap items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                {linkedExpenses?.map(exp => (
-                  <div key={exp.id} className="flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 text-[12px] rounded-lg border border-rose-200 dark:border-rose-900/30 shadow-sm">
+            {((linkedExpenses && linkedExpenses.length > 0) || onAddExpense) && (
+              <div
+                className="mt-4 border-t border-slate-100 dark:border-kat-border/40 pt-3 flex flex-wrap items-center gap-2"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {linkedExpenses?.map((exp) => (
+                  <div
+                    key={exp.id}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 text-[12px] rounded-lg border border-rose-200 dark:border-rose-900/30 shadow-sm"
+                  >
                     <span className="font-extrabold">{formatMoney(exp.amount)}</span>
-                    <span className="text-rose-600 dark:text-rose-400/80 truncate max-w-[120px] font-medium">- {exp.description || exp.category}</span>
+                    <span className="text-rose-600 dark:text-rose-400/80 truncate max-w-[120px] font-medium">
+                      - {exp.description || exp.category}
+                    </span>
                   </div>
                 ))}
                 {onAddExpense && (
                   <button
-                    onClick={(e) => { e.stopPropagation(); onAddExpense(); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onAddExpense();
+                    }}
                     className="flex items-center gap-1 px-2 py-1.5 rounded-lg border border-dashed border-slate-300 dark:border-slate-700/60 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-[12px] font-bold transition-colors"
                   >
                     <HugeiconsIcon icon={Add01Icon} className="w-3.5 h-3.5" />
@@ -238,23 +350,23 @@ const ActivityCard = React.memo(function ActivityCard({
   );
 });
 
-function DayHeader({ 
-  day, 
-  index, 
-  isToday, 
+function DayHeader({
+  day,
+  index,
+  isToday,
   totalExpense = 0,
-  mapUrl
-}: { 
-  day: string; 
-  index: number; 
-  isToday: boolean; 
+  mapUrl,
+}: {
+  day: string;
+  index: number;
+  isToday: boolean;
   totalExpense?: number;
   mapUrl?: string;
 }) {
   const { t } = useTranslation();
   return (
-    <div 
-      id={`day-section-${day}`} 
+    <div
+      id={`day-section-${day}`}
       className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 dark:bg-slate-900/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40 dark:border-slate-800/60"
     >
       <div className="flex items-center gap-3">
@@ -263,7 +375,9 @@ function DayHeader({
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <h4 className="text-[16px] font-extrabold text-kat-dark dark:text-slate-200">{t("timeline.dayN", { n: index + 1 })}</h4>
+            <h4 className="text-[16px] font-extrabold text-kat-dark dark:text-slate-200">
+              {t("timeline.dayN", { n: index + 1 })}
+            </h4>
             {mapUrl && (
               <a
                 href={mapUrl}
@@ -272,12 +386,17 @@ function DayHeader({
                 className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/30 text-[11px] font-extrabold tracking-wide transition-all active:scale-95 shadow-sm"
                 title={t("timeline.openRouteMap")}
               >
-                <HugeiconsIcon icon={Location01Icon} className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                <HugeiconsIcon
+                  icon={Location01Icon}
+                  className="w-3 h-3 text-emerald-600 dark:text-emerald-400"
+                />
                 <span>{t("timeline.map")}</span>
               </a>
             )}
           </div>
-          <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">{formatDate(day)}</p>
+          <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
+            {formatDate(day)}
+          </p>
         </div>
       </div>
       <div className="flex items-center gap-2">
@@ -296,20 +415,20 @@ function DayHeader({
   );
 }
 
-function EventForm({ 
-  tripId, 
-  tripDays, 
-  editing, 
-  isOpen, 
+function EventForm({
+  tripId,
+  tripDays,
+  editing,
+  isOpen,
   onClose,
   defaultDate,
   onSaved,
-  onDelete
-}: { 
-  tripId: number; 
-  tripDays: string[]; 
-  editing: EventItem | null; 
-  isOpen: boolean; 
+  onDelete,
+}: {
+  tripId: number;
+  tripDays: string[];
+  editing: EventItem | null;
+  isOpen: boolean;
   onClose: () => void;
   defaultDate?: string;
   onSaved?: (date: string) => void;
@@ -323,7 +442,7 @@ function EventForm({
     notes: "",
     mapLink: "",
     type: "other",
-    date: ""
+    date: "",
   });
 
   // Tránh reset form khi đang nhập mà parent component render lại
@@ -339,16 +458,16 @@ function EventForm({
               notes: editing.notes || "",
               mapLink: editing.mapLink || "",
               type: editing.type || "other",
-              date: editing.date || (tripDays[0] || today)
+              date: editing.date || tripDays[0] || today,
             }
-          : { 
-              time: "", 
-              title: "", 
-              location: "", 
-              notes: "", 
-              mapLink: "", 
+          : {
+              time: "",
+              title: "",
+              location: "",
+              notes: "",
+              mapLink: "",
               type: "other",
-              date: defaultDate || (tripDays.includes(today) ? today : (tripDays[0] || today))
+              date: defaultDate || (tripDays.includes(today) ? today : tripDays[0] || today),
             }
       );
     }
@@ -359,40 +478,44 @@ function EventForm({
     if (!form.title.trim()) return;
     const cleanForm = {
       ...form,
-      mapLink: form.mapLink ? ensureAbsoluteUrl(form.mapLink) : ""
+      mapLink: form.mapLink ? ensureAbsoluteUrl(form.mapLink) : "",
     };
     if (editing?.id) {
-      await db.events.update(editing.id, { 
-        ...cleanForm, 
-        completed: editing.completed 
+      await db.events.update(editing.id, {
+        ...cleanForm,
+        completed: editing.completed,
       });
       onSaved?.(form.date);
       onClose();
     } else {
-      await db.events.add({ 
-        ...cleanForm, 
-        tripId, 
-        completed: false 
+      await db.events.add({
+        ...cleanForm,
+        tripId,
+        completed: false,
       });
       onSaved?.(form.date);
       onClose();
     }
   }
 
-  const dateLabels = tripDays.reduce((acc, date, idx) => {
-    acc[date] = t("timeline.dayNDate", { n: idx + 1, date: formatDate(date) });
-    return acc;
-  }, {} as Record<string, string>);
+  const dateLabels = tripDays.reduce(
+    (acc, date, idx) => {
+      acc[date] = t("timeline.dayNDate", { n: idx + 1, date: formatDate(date) });
+      return acc;
+    },
+    {} as Record<string, string>
+  );
 
   const selectedDateIdx = tripDays.indexOf(form.date);
-  const helperText = selectedDateIdx !== -1 
-    ? t("timeline.activityWillBeAdded", { n: selectedDateIdx + 1, date: formatDate(form.date) })
-    : "";
+  const helperText =
+    selectedDateIdx !== -1
+      ? t("timeline.activityWillBeAdded", { n: selectedDateIdx + 1, date: formatDate(form.date) })
+      : "";
 
   return (
-    <BottomSheet 
-      isOpen={isOpen} 
-      onClose={onClose} 
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
       title={editing ? t("timeline.editActivity") : t("timeline.addActivity")}
       footer={
         <div className="flex items-center gap-2.5 w-full">
@@ -406,7 +529,7 @@ function EventForm({
               <HugeiconsIcon icon={Delete01Icon} className="h-5 w-5" />
             </button>
           )}
-          
+
           <button
             type="button"
             onClick={onClose}
@@ -428,161 +551,213 @@ function EventForm({
       }
     >
       <div className="space-y-5">
-      {/* Title Input */}
-      <Input 
-        label={
-          <span className="flex items-center gap-1.5">
-            <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-slate-500" />
-            {t("timeline.titleLabel")}
-          </span>
-        } 
-        value={form.title} 
-        onChange={(title) => setForm({ ...form, title })} 
-        placeholder={t("timeline.titlePlaceholder")} 
-      />
+        {/* Title Input */}
+        <Input
+          label={
+            <span className="flex items-center gap-1.5">
+              <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-slate-500" />
+              {t("timeline.titleLabel")}
+            </span>
+          }
+          value={form.title}
+          onChange={(title) => setForm({ ...form, title })}
+          placeholder={t("timeline.titlePlaceholder")}
+        />
 
-      {/* Category Selector Grid */}
-      <div className="space-y-2">
-        <span className="text-sm font-semibold text-slate-600">{t("timeline.activityType")}</span>
-        <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
-          {ACTIVITY_CATEGORIES_BASE.map(cat => {
-            const Icon = cat.icon;
-            const isSelected = form.type === cat.id;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setForm({ ...form, type: cat.id })}
-                className={classNames(
-                  "flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border transition-all text-center h-[64px] motion-press",
-                  isSelected 
-                    ? cat.activeBg 
-                    : "border-slate-200 dark:border-kat-border/40 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-slate-500 dark:text-slate-400"
-                )}
-              >
-                <HugeiconsIcon icon={Icon} className="h-5 w-5" />
-                <span className="text-[10px] font-bold leading-none">{t(cat.labelKey)}</span>
-              </button>
-            );
-          })}
+        {/* Category Selector Grid */}
+        <div className="space-y-2">
+          <span className="text-sm font-semibold text-slate-600">{t("timeline.activityType")}</span>
+          <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+            {ACTIVITY_CATEGORIES_BASE.map((cat) => {
+              const Icon = cat.icon;
+              const isSelected = form.type === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setForm({ ...form, type: cat.id })}
+                  className={classNames(
+                    "flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border transition-all text-center h-[64px] motion-press",
+                    isSelected
+                      ? cat.activeBg
+                      : "border-slate-200 dark:border-kat-border/40 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-slate-500 dark:text-slate-400"
+                  )}
+                >
+                  <HugeiconsIcon icon={Icon} className="h-5 w-5" />
+                  <span className="text-[10px] font-bold leading-none">{t(cat.labelKey)}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      {/* Date and Time selectors */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          {tripDays.length > 0 ? (
-            <Select
-              label={
-                <span className="flex items-center gap-1.5">
-                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
-                  {t("timeline.selectDate")}
-                </span>
-              }
-              value={form.date}
-              onChange={(date) => setForm({ ...form, date })}
-              options={tripDays}
-              labels={dateLabels}
-            />
-          ) : (
-            <Input 
-              label={
-                <span className="flex items-center gap-1.5">
-                  <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
-                  {t("timeline.dateLabel")}
-                </span>
-              } 
-              value={form.date} 
-              onChange={(date) => setForm({ ...form, date })} 
-            />
-          )}
-          {helperText && (
-            <p className="px-1 text-[12px] font-semibold text-slate-500">{helperText}</p>
-          )}
-        </div>
-        
-        <TimePicker 
+        {/* Date and Time selectors */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1">
+            {tripDays.length > 0 ? (
+              <Select
+                label={
+                  <span className="flex items-center gap-1.5">
+                    <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
+                    {t("timeline.selectDate")}
+                  </span>
+                }
+                value={form.date}
+                onChange={(date) => setForm({ ...form, date })}
+                options={tripDays}
+                labels={dateLabels}
+              />
+            ) : (
+              <Input
+                label={
+                  <span className="flex items-center gap-1.5">
+                    <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-500" />
+                    {t("timeline.dateLabel")}
+                  </span>
+                }
+                value={form.date}
+                onChange={(date) => setForm({ ...form, date })}
+              />
+            )}
+            {helperText && (
+              <p className="px-1 text-[12px] font-semibold text-slate-500">{helperText}</p>
+            )}
+          </div>
+
+          <TimePicker
             label={
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={Clock01Icon} className="h-4 w-4 text-slate-500" />
                 {t("timeline.timeLabel")}
               </span>
-            } 
-            value={form.time} 
-            onChange={(time) => setForm({ ...form, time })} 
+            }
+            value={form.time}
+            onChange={(time) => setForm({ ...form, time })}
           />
-      </div>
+        </div>
 
-      {/* Location and Map link */}
-      <div className="flex flex-col gap-4">
-        <Input 
-          label={
-            <span className="flex flex-col gap-1">
-              <span className="flex items-center gap-1.5">
-                <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-500" />
-                {t("timeline.location")}
+        {/* Location and Map link */}
+        <div className="flex flex-col gap-4">
+          <Input
+            label={
+              <span className="flex flex-col gap-1">
+                <span className="flex items-center gap-1.5">
+                  <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-500" />
+                  {t("timeline.location")}
+                </span>
+                <span className="text-xs font-normal text-slate-400">
+                  {t("timeline.locationHelper")}
+                </span>
               </span>
-              <span className="text-xs font-normal text-slate-400">
-                {t("timeline.locationHelper")}
+            }
+            value={form.location}
+            onChange={(location) => setForm({ ...form, location })}
+            placeholder={t("timeline.locationPlaceholder")}
+          />
+          <Input
+            label={
+              <span className="flex flex-col gap-1">
+                <span className="flex items-center gap-1.5">
+                  <HugeiconsIcon icon={MapsIcon} className="h-4 w-4 text-slate-500" />
+                  Link Google Maps
+                </span>
+                <span className="text-xs font-normal text-slate-400">
+                  {t("timeline.pasteMapLink")}
+                </span>
               </span>
-            </span>
-          } 
-          value={form.location} 
-          onChange={(location) => setForm({ ...form, location })} 
-          placeholder={t("timeline.locationPlaceholder")} 
-        />
-        <Input 
-          label={
-            <span className="flex flex-col gap-1">
-              <span className="flex items-center gap-1.5">
-                <HugeiconsIcon icon={MapsIcon} className="h-4 w-4 text-slate-500" />
-                Link Google Maps
-              </span>
-              <span className="text-xs font-normal text-slate-400">
-                {t("timeline.pasteMapLink")}
-              </span>
-            </span>
-          } 
-          value={form.mapLink} 
-          onChange={(mapLink) => setForm({ ...form, mapLink })} 
-          placeholder="https://maps.google.com/..." 
-        />
-        {form.mapLink && (
-          <div className="mt-1 flex justify-end">
-            <a
-              href={ensureAbsoluteUrl(form.mapLink)}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors"
-            >
-              <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />
-              {t("timeline.checkLink")} &rarr;
-            </a>
-          </div>
-        )}
-      </div>
+            }
+            value={form.mapLink}
+            onChange={(mapLink) => setForm({ ...form, mapLink })}
+            placeholder="https://maps.google.com/..."
+          />
+          {form.mapLink && (
+            <div className="mt-1 flex justify-end">
+              <a
+                href={ensureAbsoluteUrl(form.mapLink)}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors"
+              >
+                <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />
+                {t("timeline.checkLink")} &rarr;
+              </a>
+            </div>
+          )}
+        </div>
 
-      {/* Notes */}
-      <Textarea 
-        label={
-          <span className="flex items-center gap-1.5">
-            <HugeiconsIcon icon={StickyNote01Icon} className="h-4 w-4 text-slate-500" />
-            {t("timeline.notesLabel")}
-          </span>
-        } 
-        value={form.notes} 
-        onChange={(notes) => setForm({ ...form, notes })} 
-        placeholder={t("timeline.notesPlaceholder")} 
-      />
+        {/* Notes */}
+        <Textarea
+          label={
+            <span className="flex items-center gap-1.5">
+              <HugeiconsIcon icon={StickyNote01Icon} className="h-4 w-4 text-slate-500" />
+              {t("timeline.notesLabel")}
+            </span>
+          }
+          value={form.notes}
+          onChange={(notes) => setForm({ ...form, notes })}
+          placeholder={t("timeline.notesPlaceholder")}
+        />
       </div>
     </BottomSheet>
   );
 }
-export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isReadOnly }: { trip: Trip; events: EventItem[]; expenses?: Expense[]; onAddExpense?: (date: string, eventId: number) => void; isReadOnly?: boolean }) {
+// --- Optimize Route: Accommodation Marker ---
+function AccommodationMarker({
+  label,
+  hotelName,
+  position,
+}: {
+  label: string;
+  hotelName: string;
+  position: "start" | "end";
+}) {
+  return (
+    <div className={`relative flex gap-4 pl-1 ${position === "start" ? "mb-4" : "mt-4"}`}>
+      {/* Timeline connector */}
+      <div className="absolute bottom-0 left-[21px] top-0 w-0.5 bg-slate-200/80 dark:bg-slate-800" />
+
+      {/* Marker icon */}
+      <div className="relative z-10 flex shrink-0">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-600 shadow-none">
+          <HugeiconsIcon
+            icon={HotelIcon}
+            className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500"
+          />
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex items-center gap-2 min-h-[32px] pb-0.5">
+        <span className="text-[11.5px] font-semibold text-slate-400 dark:text-slate-500 italic">
+          {label}
+        </span>
+        <span className="text-[11.5px] font-bold text-slate-500 dark:text-slate-400 truncate max-w-[200px]">
+          {hotelName}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+export function TimelineScreen({
+  trip,
+  events,
+  expenses = [],
+  onAddExpense,
+  isReadOnly,
+}: {
+  trip: Trip;
+  events: EventItem[];
+  expenses?: Expense[];
+  onAddExpense?: (date: string, eventId: number) => void;
+  isReadOnly?: boolean;
+}) {
   const { t } = useTranslation();
   const tripDays = daysBetween(trip.startDate, trip.endDate);
   const eventDays = Array.from(new Set(events.map((e) => e.date)));
-  const days = Array.from(new Set([...tripDays, ...eventDays])).filter(Boolean).sort();
+  const days = Array.from(new Set([...tripDays, ...eventDays]))
+    .filter(Boolean)
+    .sort();
   const tripIsActive = today >= trip.startDate && today <= trip.endDate;
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -631,24 +806,75 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
     }
   };
 
-  useModalHistory(isFormOpen, () => {
-    setIsFormOpen(false);
-    setEditing(null);
-  }, "activity-form-modal");
+  useModalHistory(
+    isFormOpen,
+    () => {
+      setIsFormOpen(false);
+      setEditing(null);
+    },
+    "activity-form-modal"
+  );
 
-  useModalHistory(isBackupPlansOpen, () => {
-    setIsBackupPlansOpen(false);
-    setBackupPlanCtx({});
-  }, "backup-plans-modal");
+  useModalHistory(
+    isBackupPlansOpen,
+    () => {
+      setIsBackupPlansOpen(false);
+      setBackupPlanCtx({});
+    },
+    "backup-plans-modal"
+  );
 
-  useModalHistory(isDeleteConfirmOpen, () => {
-    setIsDeleteConfirmOpen(false);
-    setEventToDelete(null);
-  }, "delete-event-confirm");
+  useModalHistory(
+    isDeleteConfirmOpen,
+    () => {
+      setIsDeleteConfirmOpen(false);
+      setEventToDelete(null);
+    },
+    "delete-event-confirm"
+  );
 
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
 
-  const backupPlans = useLiveQuery(async () => (await db.backupPlans.where("tripId").equals(trip.id!).toArray()).filter(p => !p.isDeleted), [trip.id]) ?? [];
+  // --- Optimize Route ---
+  const [optimizeRoute, setOptimizeRoute] = useState(
+    () => localStorage.getItem("kat_optimize_route") === "true"
+  );
+  useEffect(() => {
+    const handleChange = () =>
+      setOptimizeRoute(localStorage.getItem("kat_optimize_route") === "true");
+    window.addEventListener("kat_settings_changed", handleChange);
+    window.addEventListener("storage", (e) => {
+      if (e.key === "kat_optimize_route") handleChange();
+    });
+    return () => {
+      window.removeEventListener("kat_settings_changed", handleChange);
+    };
+  }, []);
+
+  // Find accommodation for each day: use the accommodation activity from that day, or fallback to the most recent one before
+  const getAccommodationForDay = (day: string): EventItem | null => {
+    if (!optimizeRoute) return null;
+    // First: check if there's an accommodation activity ON this day
+    const onDay = events.find((e) => e.date === day && e.type === "accommodation" && !e.isDeleted);
+    if (onDay) return onDay;
+    // Fallback: find the most recent accommodation activity from a previous day
+    const prevDays = days.filter((d) => d < day).reverse();
+    for (const d of prevDays) {
+      const acc = events.find((e) => e.date === d && e.type === "accommodation" && !e.isDeleted);
+      if (acc) return acc;
+    }
+    // Final fallback: any accommodation in the trip
+    return events.find((e) => e.type === "accommodation" && !e.isDeleted) || null;
+  };
+
+  const backupPlans =
+    useLiveQuery(
+      async () =>
+        (await db.backupPlans.where("tripId").equals(trip.id!).toArray()).filter(
+          (p) => !p.isDeleted
+        ),
+      [trip.id]
+    ) ?? [];
   const isScrollingRef = useRef(false);
 
   // Default selected day calculations on mount or trip bounds change
@@ -677,7 +903,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
     if (defaultDateVal) {
       setFormDefaultDate(defaultDateVal);
     } else {
-      setFormDefaultDate(tripDays.includes(today) ? today : (tripDays[0] || today));
+      setFormDefaultDate(tripDays.includes(today) ? today : tripDays[0] || today);
     }
     setIsFormOpen(true);
   }
@@ -706,7 +932,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
     }
   };
 
-  const undatedEvents = events.filter(e => !e.date);
+  const undatedEvents = events.filter((e) => !e.date);
 
   const renderTimeline = () => {
     const activeDays = days;
@@ -715,28 +941,34 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
       <div id="timeline-top" className="space-y-8 motion-page-enter">
         {activeDays.map((day) => {
           const index = days.indexOf(day);
-          const dayEvents = events.filter((item) => item.date === day).sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+          const dayEvents = events
+            .filter((item) => item.date === day)
+            .sort((a, b) => (a.time || "").localeCompare(b.time || ""));
           const isToday = tripIsActive && day === today;
-          
+
           if (dayEvents.length === 0) {
             // Smart Collapse: Slim Row (max height 48px, keeps vertical line connection)
             return (
-              <div 
-                key={day} 
-                id={`day-section-${day}`} 
+              <div
+                key={day}
+                id={`day-section-${day}`}
                 className="scroll-mt-[180px] relative flex items-center justify-between h-[48px] pl-1 py-1 group"
               >
                 {/* Vertical line through marker */}
                 <div className="absolute bottom-0 left-[21px] top-0 w-0.5 bg-slate-200/80 dark:bg-slate-800 group-last:bg-transparent" />
-                
+
                 <div className="flex items-center gap-3.5 relative z-10">
                   {/* Circle marker */}
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-extrabold border border-slate-200 dark:border-slate-700/50 text-[12px]">
                     {index + 1}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-extrabold text-kat-dark">{t("timeline.dayN", { n: index + 1 })}</span>
-                    <span className="text-xs font-semibold text-slate-400">({formatDateShort(day)})</span>
+                    <span className="text-sm font-extrabold text-kat-dark">
+                      {t("timeline.dayN", { n: index + 1 })}
+                    </span>
+                    <span className="text-xs font-semibold text-slate-400">
+                      ({formatDateShort(day)})
+                    </span>
                     {isToday && (
                       <span className="rounded-full bg-sunset-50 dark:bg-sunset-950/20 px-2 py-0.5 text-[9.5px] font-black uppercase tracking-widest text-sunset-600 dark:text-sunset-400 border border-sunset-100 dark:border-sunset-900/30">
                         {t("timeline.today")}
@@ -744,9 +976,9 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                     )}
                   </div>
                 </div>
-                
+
                 {!isReadOnly && (
-                  <button 
+                  <button
                     type="button"
                     onClick={() => openNewForm(day)}
                     className="relative z-10 text-[13px] font-bold text-kat-teal hover:brightness-95 transition-colors pr-2 flex items-center gap-1 motion-press"
@@ -760,31 +992,75 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           }
 
           // Non-empty days: DayHeader + ActivityCards
-          const dayExpenses = expenses.filter(exp => exp.date === day);
+          const dayExpenses = expenses.filter((exp) => exp.date === day);
           const totalDayExpense = dayExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+
+          // Optimize Route: find accommodation for this day
+          const accommodation = getAccommodationForDay(day);
+          const hotelName = accommodation?.title || accommodation?.location || "";
+          // Only show markers if there are non-accommodation activities
+          const hasNonAccommodation = dayEvents.some((e) => e.type !== "accommodation");
+          const showRouteMarkers =
+            optimizeRoute && accommodation && hotelName && hasNonAccommodation;
+          const isFirstDay = index === 0;
+          const isLastDay = index === days.length - 1;
 
           return (
             <div key={day} className="space-y-4">
-              <DayHeader day={day} index={index} isToday={isToday} totalExpense={totalDayExpense} mapUrl={trip.dayRoadmaps?.[day]} />
+              <DayHeader
+                day={day}
+                index={index}
+                isToday={isToday}
+                totalExpense={totalDayExpense}
+                mapUrl={trip.dayRoadmaps?.[day]}
+              />
               <div className="px-1">
+                {/* Optimize Route: Departure marker */}
+                {showRouteMarkers && (
+                  <AccommodationMarker
+                    label={
+                      isFirstDay
+                        ? t("timeline.routeStartFrom", "Xuất phát từ")
+                        : t("timeline.routeDepartFrom", "Khởi hành từ")
+                    }
+                    hotelName={hotelName}
+                    position="start"
+                  />
+                )}
+
                 {dayEvents.map((item, idx) => (
-                  <ActivityCard 
-                    key={item.id} 
-                    item={item} 
-                    onEdit={() => openEditForm(item)} 
+                  <ActivityCard
+                    key={item.id}
+                    item={item}
+                    onEdit={() => openEditForm(item)}
                     onDelete={() => initiateDelete(item)}
-                    isToday={isToday} 
-                    isUpcoming={day > today} 
+                    isToday={isToday}
+                    isUpcoming={day > today}
                     idx={idx}
-                    backupCount={backupPlans.filter(p => p.activityId === item.id).length}
+                    backupCount={backupPlans.filter((p) => p.activityId === item.id).length}
                     onOpenBackup={() => {
                       setBackupPlanCtx({ activityId: item.id, date: day });
                       setIsBackupPlansOpen(true);
                     }}
-                    linkedExpenses={expenses.filter(exp => String(exp.eventId) === String(item.id))}
+                    linkedExpenses={expenses.filter(
+                      (exp) => String(exp.eventId) === String(item.id)
+                    )}
                     onAddExpense={onAddExpense ? () => onAddExpense(day, item.id!) : undefined}
                   />
                 ))}
+
+                {/* Optimize Route: Return marker */}
+                {showRouteMarkers && (
+                  <AccommodationMarker
+                    label={
+                      isLastDay
+                        ? t("timeline.routeEndAt", "Kết thúc tại")
+                        : t("timeline.routeReturnTo", "Quay về")
+                    }
+                    hotelName={hotelName}
+                    position="end"
+                  />
+                )}
               </div>
             </div>
           );
@@ -793,7 +1069,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         {/* Undated fallback events */}
         {undatedEvents.length > 0 && (
           <div key="undated" className="space-y-4">
-            <div 
+            <div
               id="day-section-undated"
               className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 dark:bg-slate-900/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40 dark:border-slate-800/60"
             >
@@ -802,62 +1078,66 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   ?
                 </div>
                 <div>
-                  <h4 className="text-[16px] font-extrabold text-kat-dark dark:text-slate-200">{t("timeline.unscheduled")}</h4>
-                  <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">{t("timeline.unscheduledDesc")}</p>
+                  <h4 className="text-[16px] font-extrabold text-kat-dark dark:text-slate-200">
+                    {t("timeline.unscheduled")}
+                  </h4>
+                  <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
+                    {t("timeline.unscheduledDesc")}
+                  </p>
                 </div>
               </div>
             </div>
             <div className="px-1">
               {undatedEvents.map((item, idx) => (
-                <ActivityCard 
-                  key={item.id} 
-                  item={item} 
-                  onEdit={() => openEditForm(item)} 
+                <ActivityCard
+                  key={item.id}
+                  item={item}
+                  onEdit={() => openEditForm(item)}
                   onDelete={() => initiateDelete(item)}
-                  isToday={false} 
-                  isUpcoming={false} 
+                  isToday={false}
+                  isUpcoming={false}
                   idx={idx}
                 />
               ))}
             </div>
           </div>
         )}
-
       </div>
     );
   };
 
   return (
     <div className="mx-auto max-w-[1120px] px-1 md:px-0">
-      
       {/* Title Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-[32px] font-black tracking-tight text-kat-dark">{t("timeline.pageTitle")}</h2>
+          <h2 className="text-[32px] font-black tracking-tight text-kat-dark">
+            {t("timeline.pageTitle")}
+          </h2>
           <p className="mt-1 text-[15px] font-bold text-slate-500 dark:text-slate-400">
             {t("timeline.pageSubtitle")}
           </p>
         </div>
-        
+
         <div className="flex items-center justify-center w-full sm:w-auto gap-3">
           <div className="flex bg-[#E2E8F0]/40 dark:bg-slate-800/40 p-1 rounded-xl">
-            <button 
+            <button
               onClick={() => setViewMode("list")}
               className={classNames(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press border",
-                viewMode === "list" 
-                  ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-kat-text shadow-sm border-slate-200/10 dark:border-slate-700/55" 
+                viewMode === "list"
+                  ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-kat-text shadow-sm border-slate-200/10 dark:border-slate-700/55"
                   : "text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-kat-text border-transparent"
               )}
             >
               {t("timeline.listView")}
             </button>
-            <button 
+            <button
               onClick={() => setViewMode("calendar")}
               className={classNames(
                 "flex items-center justify-center w-9 h-8 rounded-lg transition-all motion-press border",
-                viewMode === "calendar" 
-                  ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-kat-text shadow-sm border-slate-200/10 dark:border-slate-700/55" 
+                viewMode === "calendar"
+                  ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-kat-text shadow-sm border-slate-200/10 dark:border-slate-700/55"
                   : "text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-kat-text border-transparent"
               )}
               aria-label={t("timeline.listView")}
@@ -865,9 +1145,9 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               <HugeiconsIcon icon={Calendar01Icon} className="h-4.5 w-4.5" />
             </button>
           </div>
-          
+
           {!isReadOnly && (
-            <button 
+            <button
               onClick={() => openNewForm()}
               className="hidden md:flex items-center justify-center gap-1.5 rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-4 py-2 text-[13.5px] font-extrabold shadow-[0_4px_14px_rgba(3,13,46,0.18)] dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all h-10 border border-transparent dark:border-kat-primary motion-press"
             >
@@ -877,8 +1157,6 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           )}
         </div>
       </div>
-
-
 
       {/* Global Add FAB (Mobile only) */}
       {!isReadOnly && (
@@ -899,7 +1177,12 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
           {events.length === 0 && viewMode === "list" ? (
             /* Compact Empty Timeline Card */
             <div id="timeline-top">
-              <DayHeader day={trip.startDate} index={0} isToday={tripIsActive && trip.startDate === today} mapUrl={trip.dayRoadmaps?.[trip.startDate]} />
+              <DayHeader
+                day={trip.startDate}
+                index={0}
+                isToday={tripIsActive && trip.startDate === today}
+                mapUrl={trip.dayRoadmaps?.[trip.startDate]}
+              />
               <div className="px-1 relative flex gap-4 pl-1">
                 {/* Circle marker */}
                 <div className="relative z-10 flex shrink-0">
@@ -907,38 +1190,44 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                     1
                   </div>
                 </div>
-                
+
                 {/* Compact Card */}
                 <div className="min-w-0 flex-1 rounded-[24px] bg-kat-surface p-6 border border-slate-200 dark:border-kat-border shadow-soft animate-fadeIn flex flex-col items-center text-center">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary-soft text-kat-primary mb-4 ring-4 ring-[#00BFB7]/10">
                     <HugeiconsIcon icon={Location01Icon} className="h-6 w-6" />
                   </div>
-                  <h4 className="text-[15px] font-bold text-kat-text">{t("timeline.emptyTitle")}</h4>
-                  <p className="mt-1 text-[13.5px] text-kat-muted font-medium max-w-sm">{t("timeline.emptyDesc")}</p>
+                  <h4 className="text-[15px] font-bold text-kat-text">
+                    {t("timeline.emptyTitle")}
+                  </h4>
+                  <p className="mt-1 text-[13.5px] text-kat-muted font-medium max-w-sm">
+                    {t("timeline.emptyDesc")}
+                  </p>
                 </div>
               </div>
             </div>
           ) : viewMode === "calendar" ? (
-            <TimelineCalendarView 
-              events={events} 
-              trip={trip} 
+            <TimelineCalendarView
+              events={events}
+              trip={trip}
               onOpenNewForm={openNewForm}
               renderActivityCard={(item, idx) => (
-                <ActivityCard 
-                  key={item.id} 
-                  item={item} 
-                  onEdit={() => openEditForm(item)} 
+                <ActivityCard
+                  key={item.id}
+                  item={item}
+                  onEdit={() => openEditForm(item)}
                   onDelete={() => initiateDelete(item)}
-                  isToday={item.date === today} 
-                  isUpcoming={(item.date || "") > today} 
+                  isToday={item.date === today}
+                  isUpcoming={(item.date || "") > today}
                   idx={idx}
-                  backupCount={backupPlans.filter(p => p.activityId === item.id).length}
+                  backupCount={backupPlans.filter((p) => p.activityId === item.id).length}
                   onOpenBackup={() => {
                     setBackupPlanCtx({ activityId: item.id, date: item.date });
                     setIsBackupPlansOpen(true);
                   }}
-                  linkedExpenses={expenses.filter(exp => String(exp.eventId) === String(item.id))}
-                  onAddExpense={onAddExpense && item.date ? () => onAddExpense(item.date!, item.id!) : undefined}
+                  linkedExpenses={expenses.filter((exp) => String(exp.eventId) === String(item.id))}
+                  onAddExpense={
+                    onAddExpense && item.date ? () => onAddExpense(item.date!, item.id!) : undefined
+                  }
                 />
               )}
             />
@@ -957,14 +1246,16 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               </span>
               <h4 className="text-[15px] font-extrabold text-kat-dark">{t("timeline.tripInfo")}</h4>
             </div>
-            
+
             <div className="space-y-3 text-[14px] font-medium text-slate-600">
               <div className="flex items-center justify-between border-b border-slate-50 pb-2">
                 <span className="flex items-center gap-2">
                   <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
                   {t("timeline.location")}
                 </span>
-                <span className="font-bold text-kat-dark">{trip.location || t("common.unknownLocation")}</span>
+                <span className="font-bold text-kat-dark">
+                  {trip.location || t("common.unknownLocation")}
+                </span>
               </div>
               <div className="flex items-center justify-between border-b border-slate-50 pb-2">
                 <span className="flex items-center gap-2">
@@ -972,7 +1263,9 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   {t("timeline.time")}
                 </span>
                 <span className="font-bold text-kat-dark">
-                  {trip.startDate === trip.endDate ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
+                  {trip.startDate === trip.endDate
+                    ? formatDate(trip.startDate)
+                    : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
                 </span>
               </div>
               <div className="flex items-center justify-between pb-1">
@@ -980,13 +1273,21 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   <HugeiconsIcon icon={Route01Icon} className="h-4 w-4 text-slate-400" />
                   {t("timeline.scheduleItems")}
                 </span>
-                <span className="font-bold text-kat-dark">{t("timeline.itemsCount", { count: events.length })}</span>
+                <span className="font-bold text-kat-dark">
+                  {t("timeline.itemsCount", { count: events.length })}
+                </span>
               </div>
             </div>
           </div>
 
-          <WeatherWidget destination={trip.location} latitude={trip.latitude} longitude={trip.longitude} days={tripDays.length} startDate={trip.startDate} />
-  
+          <WeatherWidget
+            destination={trip.location}
+            latitude={trip.latitude}
+            longitude={trip.longitude}
+            days={tripDays.length}
+            startDate={trip.startDate}
+          />
+
           {/* General Backup Widget */}
           <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 shadow-sm border border-slate-100 dark:border-kat-border space-y-4 min-w-0 overflow-hidden">
             <div className="flex items-center justify-between">
@@ -995,47 +1296,63 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                   <HugeiconsIcon icon={GitBranchIcon} className="h-4 w-4" />
                 </span>
                 <div>
-                  <h4 className="text-[15px] font-extrabold text-kat-dark dark:text-slate-200">{t("timeline.generalBackup")}</h4>
-                  <p className="text-[11px] text-slate-500/80 dark:text-slate-400 font-medium">Áp dụng cho toàn bộ chuyến đi</p>
+                  <h4 className="text-[15px] font-extrabold text-kat-dark dark:text-slate-200">
+                    {t("timeline.generalBackup")}
+                  </h4>
+                  <p className="text-[11px] text-slate-500/80 dark:text-slate-400 font-medium">
+                    Áp dụng cho toàn bộ chuyến đi
+                  </p>
                 </div>
               </div>
-              
-              {backupPlans.filter(p => !p.activityId && !p.date).length > 0 && (
+
+              {backupPlans.filter((p) => !p.activityId && !p.date).length > 0 && (
                 <button
-                  onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
+                  onClick={() => {
+                    setBackupPlanCtx({});
+                    setIsBackupPlansOpen(true);
+                  }}
                   className="px-2.5 py-1 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 text-slate-600 dark:text-slate-400 font-bold text-[12px] hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer motion-press"
                 >
-                  Xem ({backupPlans.filter(p => !p.activityId && !p.date).length})
+                  Xem ({backupPlans.filter((p) => !p.activityId && !p.date).length})
                 </button>
               )}
             </div>
 
-            {backupPlans.filter(p => !p.activityId && !p.date).length > 0 ? (
+            {backupPlans.filter((p) => !p.activityId && !p.date).length > 0 ? (
               <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1 scrollbar-none">
-                {backupPlans.filter(p => !p.activityId && !p.date).map((plan) => (
-                  <div key={plan.id} className="text-[13px] font-semibold text-kat-dark dark:text-slate-200 bg-slate-50/70 dark:bg-slate-800/40 rounded-xl px-3 py-2.5 border border-slate-100/50 dark:border-slate-700/40 flex items-center justify-between gap-2">
-                    <span className="truncate">{plan.title}</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setBackupPlanCtx({}); 
-                        setIsBackupPlansOpen(true);
-                      }}
-                      className="text-[11px] font-bold text-kat-teal hover:underline whitespace-nowrap"
+                {backupPlans
+                  .filter((p) => !p.activityId && !p.date)
+                  .map((plan) => (
+                    <div
+                      key={plan.id}
+                      className="text-[13px] font-semibold text-kat-dark dark:text-slate-200 bg-slate-50/70 dark:bg-slate-800/40 rounded-xl px-3 py-2.5 border border-slate-100/50 dark:border-slate-700/40 flex items-center justify-between gap-2"
                     >
-                      Chi tiết &rarr;
-                    </button>
-                  </div>
-                ))}
+                      <span className="truncate">{plan.title}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setBackupPlanCtx({});
+                          setIsBackupPlansOpen(true);
+                        }}
+                        className="text-[11px] font-bold text-kat-teal hover:underline whitespace-nowrap"
+                      >
+                        Chi tiết &rarr;
+                      </button>
+                    </div>
+                  ))}
               </div>
             ) : null}
 
             {!isReadOnly && (
               <button
-                onClick={() => { setBackupPlanCtx({}); setIsBackupPlansOpen(true); }}
+                onClick={() => {
+                  setBackupPlanCtx({});
+                  setIsBackupPlansOpen(true);
+                }}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 text-indigo-600 dark:text-indigo-400 font-bold text-[13px] hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition-colors motion-press"
               >
-                <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />Thêm phương án
+                <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
+                Thêm phương án
               </button>
             )}
           </div>
@@ -1047,7 +1364,9 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400">
                   <HugeiconsIcon icon={Route01Icon} className="h-4 w-4" />
                 </span>
-                <h4 className="text-[15px] font-extrabold text-kat-dark">{t("timeline.travelRoute")}</h4>
+                <h4 className="text-[15px] font-extrabold text-kat-dark">
+                  {t("timeline.travelRoute")}
+                </h4>
               </div>
 
               {/* Day selector custom pill */}
@@ -1067,7 +1386,12 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                           {t("timeline.viewingDay")}
                         </div>
                         <div className="text-[14.5px] font-extrabold text-kat-dark dark:text-slate-100">
-                          {selectedRoadmapDay ? t("timeline.dayNDate", { n: days.indexOf(selectedRoadmapDay) + 1, date: formatDateShort(selectedRoadmapDay) }) : t("timeline.selectDay")}
+                          {selectedRoadmapDay
+                            ? t("timeline.dayNDate", {
+                                n: days.indexOf(selectedRoadmapDay) + 1,
+                                date: formatDateShort(selectedRoadmapDay),
+                              })
+                            : t("timeline.selectDay")}
                         </div>
                       </div>
                     </div>
@@ -1084,13 +1408,20 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 const dateLabel = selectedRoadmapDay ? formatDateShort(selectedRoadmapDay) : "";
                 const manualMapUrl = trip.dayRoadmaps?.[selectedRoadmapDay] || "";
                 // Fallback: lấy mapLink từ activity "Di chuyển" trong ngày này
-                const dayActivities = events.filter(e => e.date === selectedRoadmapDay);
-                const travelActivity = dayActivities.find(e => e.mapLink && (e.type === 'transport' || e.type === 'Di chuyển' || e.type === 'travel'));
-                const fallbackActivity = !travelActivity ? dayActivities.find(e => e.mapLink) : null;
+                const dayActivities = events.filter((e) => e.date === selectedRoadmapDay);
+                const travelActivity = dayActivities.find(
+                  (e) =>
+                    e.mapLink &&
+                    (e.type === "transport" || e.type === "Di chuyển" || e.type === "travel")
+                );
+                const fallbackActivity = !travelActivity
+                  ? dayActivities.find((e) => e.mapLink)
+                  : null;
                 const autoMapUrl = (travelActivity || fallbackActivity)?.mapLink || "";
                 const mapUrl = manualMapUrl || autoMapUrl;
                 const isAuto = !manualMapUrl && !!autoMapUrl;
-                const isRoute = mapUrl && (mapUrl.includes("/maps/dir/") || mapUrl.includes("maps/dir"));
+                const isRoute =
+                  mapUrl && (mapUrl.includes("/maps/dir/") || mapUrl.includes("maps/dir"));
 
                 return (
                   <div className="bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 rounded-2xl p-3.5 space-y-3">
@@ -1106,7 +1437,9 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                           }}
                           className="text-kat-teal hover:opacity-85 font-bold flex items-center gap-1 cursor-pointer"
                         >
-                          {mapUrl && <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />}
+                          {mapUrl && (
+                            <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />
+                          )}
                           {mapUrl ? t("timeline.editBtn") : t("timeline.addBtn")}
                         </button>
                       )}
@@ -1134,7 +1467,9 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                       </div>
                     ) : (
                       <div className="space-y-2 text-center py-2">
-                        <p className="text-[12.5px] font-semibold text-slate-400">{t("timeline.noRouteForDay")}</p>
+                        <p className="text-[12.5px] font-semibold text-slate-400">
+                          {t("timeline.noRouteForDay")}
+                        </p>
                         {!isReadOnly && (
                           <button
                             type="button"
@@ -1156,11 +1491,10 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
               })()}
             </div>
           )}
-          
+
           {/* Gợi ý hành trình has been replaced by the redesigned WeatherWidget above */}
         </div>
       </div>
-
 
       <EventForm
         tripId={trip.id!}
@@ -1201,12 +1535,13 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
         title={t("timeline.roadmapEditTitle", { n: days.indexOf(roadmapEditDay) + 1 })}
       >
         <div className="space-y-5 pb-4">
-          
           {/* Instruction card */}
           <div className="flex items-start gap-3 bg-kat-primary-soft dark:bg-[#00BFB7]/10 backdrop-blur-md border border-kat-teal border-opacity-20 dark:border-[#00BFB7]/30 rounded-2xl px-4 py-3">
             <HugeiconsIcon icon={Route01Icon} className="h-5 w-5 text-kat-teal shrink-0 mt-0.5" />
             <div>
-              <p className="text-[13px] font-bold text-kat-dark dark:text-white/90">{t("timeline.pasteGoogleMapsLink")}</p>
+              <p className="text-[13px] font-bold text-kat-dark dark:text-white/90">
+                {t("timeline.pasteGoogleMapsLink")}
+              </p>
               <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium mt-0.5 leading-relaxed">
                 {t("timeline.pasteGoogleMapsHelper")}
               </p>
@@ -1221,7 +1556,7 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
             <input
               type="url"
               value={roadmapInputLink}
-              onChange={e => setRoadmapInputLink(e.target.value)}
+              onChange={(e) => setRoadmapInputLink(e.target.value)}
               placeholder="https://www.google.com/maps/dir/..."
               className="w-full pl-11 pr-4 py-4 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md border-0 ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 rounded-2xl text-[14px] font-semibold text-kat-dark dark:text-white/90 placeholder:text-slate-400 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-[#00BFB7] transition-all duration-200"
             />
@@ -1267,23 +1602,29 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 }}
                 className={classNames(
                   "w-full flex items-center justify-between p-4 rounded-[16px] transition-all duration-200 active:scale-[0.98]",
-                  isSelected 
-                    ? "bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-100 dark:border-emerald-800/40 shadow-sm" 
+                  isSelected
+                    ? "bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-100 dark:border-emerald-800/40 shadow-sm"
                     : "bg-white hover:bg-slate-50 dark:bg-kat-surface hover:dark:bg-slate-800/40 border border-slate-100 hover:border-slate-200 dark:border-kat-border/40 hover:dark:border-kat-border/70"
                 )}
               >
                 <div className="flex items-center gap-3.5">
-                  <div className={classNames(
-                    "w-9 h-9 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors",
-                    isSelected ? "bg-emerald-600 text-white shadow-sm" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
-                  )}>
+                  <div
+                    className={classNames(
+                      "w-9 h-9 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors",
+                      isSelected
+                        ? "bg-emerald-600 text-white shadow-sm"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+                    )}
+                  >
                     {idx + 1}
                   </div>
                   <div className="text-left">
-                    <div className={classNames(
-                      "text-[15px] font-extrabold",
-                      isSelected ? "text-emerald-900 dark:text-emerald-300" : "text-kat-dark"
-                    )}>
+                    <div
+                      className={classNames(
+                        "text-[15px] font-extrabold",
+                        isSelected ? "text-emerald-900 dark:text-emerald-300" : "text-kat-dark"
+                      )}
+                    >
                       {t("timeline.dayN", { n: idx + 1 })}
                     </div>
                     <div className="text-[12.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
@@ -1293,19 +1634,17 @@ export function TimelineScreen({ trip, events, expenses = [], onAddExpense, isRe
                 </div>
                 {isSelected && (
                   <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center">
-                    <HugeiconsIcon icon={CheckIcon} className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
+                    <HugeiconsIcon
+                      icon={CheckIcon}
+                      className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400"
+                    />
                   </div>
                 )}
               </button>
-            )
+            );
           })}
         </div>
       </BottomSheet>
-
-
     </div>
   );
 }
-
-
-

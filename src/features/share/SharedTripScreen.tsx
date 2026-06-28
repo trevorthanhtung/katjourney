@@ -72,6 +72,7 @@ import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather
 import { useScrollBarVisibility } from "../../hooks/useScrollBarVisibility";
 import { usePackingTip } from "../../hooks/usePackingTip";
 import { getWeatherIcon, getWeatherText, getWeatherGradient } from "../../services/weatherService";
+import { useTemperatureUnit } from "../../hooks/useTemperatureUnit";
 import { WeatherDetailsModal } from "../timeline/WeatherDetailsModal";
 import { BottomSheet, FormActions, Select } from "../../components/ui";
 import { SharedBackupPlansSheet } from "./components/SharedBackupPlansSheet";
@@ -146,6 +147,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   );
   const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
+  const { formatTemp } = useTemperatureUnit();
 
   // Packing tip based on GPS vs destination temp
   const packingTip = usePackingTip(forecast, myForecast);
@@ -869,7 +871,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   <div className="flex items-center justify-between gap-2 w-full min-w-0">
                     <div className="flex items-center gap-1.5 min-w-0 shrink">
                       <span className="text-3xl min-[360px]:text-4xl font-black text-white drop-shadow-sm tracking-tighter shrink-0">
-                        {Math.round(forecast.current?.temperature || 20)}°
+                        {formatTemp(forecast.current?.temperature || 20)}°
                       </span>
                       <div className="flex flex-col ml-1 min-w-0 shrink">
                         <span className="mb-[-4px] flex items-center justify-center h-8 shrink-0">
@@ -886,10 +888,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     <div className="w-px h-10 bg-white/30 mx-0.5 shrink-0" />
                     <div className="flex flex-col text-right whitespace-nowrap shrink-0">
                       <span className="text-[11px] min-[360px]:text-[11.5px] font-extrabold text-white/95">
-                        {t("weather.high")}: {Math.round(forecast.temperature_2m_max[0])}°
+                        {t("weather.high")}: {formatTemp(forecast.temperature_2m_max[0])}°
                       </span>
                       <span className="text-[11px] min-[360px]:text-[11.5px] font-bold text-white/70">
-                        {t("weather.low")}: {Math.round(forecast.temperature_2m_min[0])}°
+                        {t("weather.low")}: {formatTemp(forecast.temperature_2m_min[0])}°
                       </span>
                     </div>
                   </div>
