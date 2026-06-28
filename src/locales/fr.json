@@ -1389,6 +1389,7 @@
     "dataTripData": "Données du voyage",
     "dataBackup": "Sauvegarder",
     "dataExportPdf": "Exporter en PDF",
+    "dataExportItineraryPdf": "Exporter l'itinéraire en PDF",
     "dataExportExcel": "Exporter en Excel",
     "sectionDanger": "Zone de danger",
     "actionEndTrip": "Terminer le voyage",

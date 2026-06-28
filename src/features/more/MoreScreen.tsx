@@ -3233,6 +3233,17 @@ export function MoreScreen({
                       />
 
                       <ActionCard
+                        icon={File01Icon}
+                        title={t("more.dataExportItineraryPdf", "Xuất lịch trình PDF")}
+                        onClick={async () => {
+                          const { exportItineraryPdf } = await import("../../utils/exportPdf");
+                          exportItineraryPdf(tripData);
+                        }}
+                        iconBgColor="bg-fuchsia-50 dark:bg-fuchsia-950/20"
+                        iconTextColor="text-fuchsia-600 border-fuchsia-100 dark:text-fuchsia-450 dark:border-fuchsia-900/30"
+                      />
+
+                      <ActionCard
                         icon={Table01Icon}
                         title={t("more.dataExportExcel")}
                         onClick={async () => {

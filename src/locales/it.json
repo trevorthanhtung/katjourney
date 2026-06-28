@@ -1371,6 +1371,7 @@
     "dataTripData": "Dati viaggio",
     "dataBackup": "Esegui backup",
     "dataExportPdf": "Esporta PDF",
+    "dataExportItineraryPdf": "Esporta itinerario in PDF",
     "dataExportExcel": "Esporta Excel",
     "sectionDanger": "Zona di pericolo",
     "actionEndTrip": "Termina viaggio",

@@ -1361,6 +1361,7 @@
     "dataTripData": "Data Perjalanan",
     "dataBackup": "Cadangkan",
     "dataExportPdf": "Ekspor Laporan PDF",
+    "dataExportItineraryPdf": "Ekspor PDF Jadwal",
     "dataExportExcel": "Ekspor Spreadsheet Excel",
     "sectionDanger": "Zona Bahaya",
     "actionEndTrip": "Akhiri perjalanan",

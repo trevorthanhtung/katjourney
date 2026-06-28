@@ -1390,6 +1390,7 @@
     "dataTripData": "Trip Data",
     "dataBackup": "Backup Trip",
     "dataExportPdf": "Export PDF Report",
+    "dataExportItineraryPdf": "Export Itinerary PDF",
     "dataExportExcel": "Export Excel Spreadsheet",
     "sectionDanger": "Danger Zone",
     "actionEndTrip": "End trip",

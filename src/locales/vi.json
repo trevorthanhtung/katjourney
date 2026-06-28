@@ -1388,6 +1388,7 @@
     "dataTripData": "Dữ liệu chuyến đi",
     "dataBackup": "Sao lưu hành trình",
     "dataExportPdf": "Xuất báo cáo PDF",
+    "dataExportItineraryPdf": "Xuất lịch trình PDF",
     "dataExportExcel": "Xuất bảng tính Excel",
     "sectionDanger": "Vùng nguy hiểm",
     "actionEndTrip": "Kết thúc chuyến đi",
