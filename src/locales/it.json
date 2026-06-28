@@ -77,6 +77,18 @@
           "title": "Elimina account",
           "desc": "Elimina definitivamente account e dati"
         }
+      },
+      "temperature": {
+        "title": "Temperatura",
+        "desc": "Unità di temperatura preferita"
+      },
+      "distance": {
+        "title": "Distanza",
+        "desc": "Visualizzato in chilometri o miglia"
+      },
+      "optimizeRoute": {
+        "title": "Ottimizza il percorso",
+        "desc": "Prendi automaticamente il punto di partenza/arrivo come alloggio"
       }
     },
     "language": {
@@ -119,7 +131,8 @@
       "techTitle": "Tecnologia e Licenze",
       "techDesc1": "KAT Journey è costruito con React, Vite, Dexie e Supabase. Il sistema utilizza Supabase per la sincronizzazione e la condivisione solo quando accedi attivamente.",
       "techDesc2": "Desideriamo esprimere la nostra sincera gratitudine agli autori e alla comunità open source che hanno accompagnato questo progetto.",
-      "madeBy": "realizzato da"
+      "madeBy": "realizzato da",
+      "techDesc3": "UI and features inspired by TREK & Stippl."
     },
     "languageView": {
       "desc": "Scegli la lingua di visualizzazione per KAT Journey."
@@ -234,6 +247,10 @@
       "syncSuccess": "I dati sono aggiornati.",
       "syncSuccessCloud": "Dati sincronizzati sul Cloud con successo!",
       "syncFailed": "Sincronizzazione fallita: "
+    },
+    "section": {
+      "system": "Sistema",
+      "info": "Informazioni e supporto"
     }
   },
   "welcomeScreen": {
@@ -381,7 +398,8 @@
       "onAllJourneys": "Su tutti i viaggi",
       "distance": "Distanza",
       "km": "km",
-      "noFlights": "Nessun volo"
+      "noFlights": "Nessun volo",
+      "world": "Mondo"
     },
     "widgets": {
       "timezones": "Fusi Orari",
@@ -402,7 +420,8 @@
       "travelers": "Viaggiatori",
       "destinations": "Destinazioni",
       "daysLeft": "GIORNI RIMANENTI"
-    }
+    },
+    "trips": "Viaggi"
   },
   "archive": {
     "title": "Ricordi",
@@ -453,7 +472,8 @@
       "Dicembre"
     ],
     "dateFmt": "{{day}} {{month}} {{year}}",
-    "currencyLabel": "Valuta di base"
+    "currencyLabel": "Valuta di base",
+    "addDestination": "Aggiungi destinazione"
   },
   "toast": {
     "invalidFileFormat": "Formato file KAT Journey non valido.",
@@ -626,7 +646,10 @@
     "viewReview": "Vedi Revisione",
     "viewSummary": "Vedi Riepilogo",
     "weatherError": "Impossibile caricare il meteo",
-    "writeJournal": "Scrivi Diario"
+    "writeJournal": "Scrivi Diario",
+    "hero": {
+      "destinations_other": "{{location}} e altri {{count}}"
+    }
   },
   "trips": {
     "exampleLocation": "Es. Phu Quoc"
@@ -831,7 +854,28 @@
     "statusCompleted": "Completato",
     "statusPending": "Non completato",
     "valueYes": "Sì",
-    "valueNo": "No"
+    "valueNo": "No",
+    "includeJournals": "Include newsletter",
+    "includeChecklist": "Include elenco di preparazione",
+    "includeBackup": "Include un piano di riserva",
+    "includeDocs": "Include documenti e prenotazione",
+    "docWarning": "I documenti possono contenere codici di prenotazione, biglietti, numeri di telefono o link privati. Abilitalo solo se ti fidi davvero del destinatario del collegamento.",
+    "pinProtect": "Protetto da codice PIN",
+    "pinDesc": "Gli spettatori devono inserire il PIN corretto per aprire",
+    "pinReady": "Il codice PIN è pronto",
+    "pinError": "Inserisci tutte e 4 le cifre",
+    "creatingLink": "Creazione collegamento...",
+    "joinTrip": "Unisciti al viaggio \"{{trip}}\" con me su KAT Journey!",
+    "syncingChanges": "Sincronizzazione automatica delle ultime modifiche...",
+    "autoSyncLast": "Sincronizza automaticamente quando ci sono modifiche. L'ultima volta:",
+    "justNow": "Appena finito",
+    "syncing": "Sincronizzazione...",
+    "syncData": "Sincronizza i dati",
+    "turningOff": "Spegnimento...",
+    "turnOff": "Disattiva la condivisione",
+    "viewer": "Spettatore",
+    "noMembersTitle": "Nessun membro ancora",
+    "noMembersDesc": "Aggiungi membri per dividere i costi, preparare i bagagli e salvare i ruoli nel viaggio."
   },
   "weather": {
     "packingRain": "Piove alla tua destinazione, non dimenticare l'ombrello!",
@@ -853,18 +897,18 @@
     "days": "{{days}} giorni",
     "today": "Oggi",
     "currentTemp": "Attuale: {{temp}}°",
-    "outdoorIdealTitle": "Meteo ideale per attività all'aperto",
-    "outdoorIdealDesc": "Soleggiato e cielo sereno. Ideale per spiaggia, trekking, campeggio o fotografia.",
-    "coolPleasantTitle": "Meteo fresco e piacevole",
-    "coolPleasantDesc": "Nuvoloso e fresco, non troppo caldo. Ideale per passeggiare nel centro storico.",
-    "foggyTitle": "Meteo nebbioso, attenzione sui passi montani",
-    "foggyDesc": "Aria fredda con bella nebbia. Perfetto per caffè romantici. Se guidi, usa le luci di segnalazione.",
-    "rainyTitle": "Pioggia, passa ad attività al coperto",
-    "rainyDesc": "Bagnato e piovoso. Dai la priorità a musei, parchi al coperto, acquari o caffè.",
-    "stormTitle": "Temporali pericolosi, resta al coperto",
-    "stormDesc": "Maltempo con temporali pericolosi. Evita barche, nuoto o foresta.",
+    "outdoorIdealTitle": "Tempo ideale per attività all'aperto",
+    "outdoorIdealDesc": "Cielo soleggiato e sereno. Ottimo per andare in spiaggia, fare escursioni, campeggio o fotografia all'aperto. Non dimenticare crema solare e occhiali da sole!",
+    "coolPleasantTitle": "Tempo fresco e piacevole",
+    "coolPleasantDesc": "Nuvoloso e fresco, non troppo caldo. Ottimo per passeggiare nel centro storico, nei mercati notturni o fare visite turistiche senza stancarsi.",
+    "foggyTitle": "Tempo nebbioso, fare attenzione sui passi di montagna",
+    "foggyDesc": "Aria fredda con nebbia bellissima. Perfetto per caffè romantici e pentole calde. Se guidi, usa le luci di emergenza e guida lentamente.",
+    "rainyTitle": "Rovesci, passa ad attività al coperto",
+    "rainyDesc": "Umido e piovoso. Dovresti dare priorità a musei, parchi divertimento al coperto, acquari, caffè o creare souvenir.",
+    "stormTitle": "Temporali pericolosi, resta al chiuso",
+    "stormDesc": "Brutto tempo con temporali pericolosi. Evita di andare in barca, nuotare o andare nella foresta. Compra del cibo e gioca a giochi da tavolo o guarda un film in camera.",
     "normalTitle": "Bel tempo per le vacanze",
-    "normalDesc": "Condizioni meteo normali. Segui il programma per pianificare le attività.",
+    "normalDesc": "Condizioni meteorologiche normali. Segui il programma giornaliero per pianificare le tue attività in modo ragionevole.",
     "uvLow": "Basso",
     "uvMedium": "Medio",
     "uvHigh": "Alto",
@@ -1505,7 +1549,13 @@
     "bannerDirectEdit": "Modifica Diretta",
     "bannerSuggestMode": "Modalità Suggerimento",
     "bannerDirectEditDesc": "Ruolo \"{{role}}\": Hai il permesso di modificare direttamente le parti assegnate.",
-    "bannerSuggestModeDesc": "Le tue modifiche saranno inviate al proprietario del viaggio per la revisione."
+    "bannerSuggestModeDesc": "Le tue modifiche saranno inviate al proprietario del viaggio per la revisione.",
+    "headerShare": "Condividere",
+    "switchUser": "Seleziona nuovamente l'utente",
+    "exit": "Uscita",
+    "secureData": "I dati vengono condivisi in modo sicuro tramite KAT Journey.",
+    "sharedUser": "Persona condivisa",
+    "closeBanner": "Chiudi notifica"
   },
   "trip": {
     "upcoming": "In arrivo",
@@ -1513,12 +1563,68 @@
     "past": "Passato",
     "status": "Stato",
     "journey": "Viaggio",
-    "completed": "Completato"
+    "completed": "Completato",
+    "locationAndOthers": "{{location}} e altri {{count}}"
   },
   "journal": {
     "titleError": "Inserisci un titolo.",
     "contentError": "Inserisci il contenuto.",
-    "defaultTitle": "Diario di viaggio"
+    "defaultTitle": "Diario di viaggio",
+    "title": "Notiziario di viaggio",
+    "subtitle": "Salva emozioni, storie e momenti memorabili.",
+    "tabPosts": "Notiziario",
+    "tabChat": "Chiacchierata",
+    "postBtn": "Pubblica articoli",
+    "statPosts": "Articolo pubblicato",
+    "statPostsCount": "articolo",
+    "statPostsEmpty": "Non ci sono ancora post",
+    "statMood": "Ultime emozioni",
+    "statLastWrite": "Registrazione più recente",
+    "emptyDesc": "Cattura un momento in modo che il viaggio abbia una sua storia.",
+    "formTitleAdd": "Pubblica articoli nella newsletter",
+    "formTitleEdit": "Modifica articolo della newsletter",
+    "cancel": "Cancellare",
+    "submit": "Pubblica articoli",
+    "dateLabel": "Data registrata",
+    "titleLabel": "Titolo articolo *",
+    "titlePlaceholder": "Esempio: una giornata memorabile a Vung Tau",
+    "locLoading": "Prendere posizioni...",
+    "locCurrent": "Restare",
+    "locRemove": "Elimina posizione",
+    "locAttach": "Tocca per allegare la posizione",
+    "locUnknown": "Posizione sconosciuta",
+    "moodLabel": "Sentimenti oggi",
+    "contentLabel": "La tua storia *",
+    "contentPlaceholder": "Registra emozioni, storie, cibi deliziosi o momenti memorabili...",
+    "imgUploading": "Caricamento foto...",
+    "imgAttach": "Allega immagini",
+    "promptTitle": "Suggerimenti per una scrittura veloce",
+    "menuEdit": "Aggiustare",
+    "menuDelete": "Cancellare",
+    "delConfirmTitle": "Eliminare questo post?",
+    "delConfirmDesc": "L'articolo non apparirà più nella newsletter. Una volta eliminato, non è possibile annullarlo.",
+    "delConfirmBtn": "Elimina i post",
+    "emptyTitle": "Non ci sono ancora post",
+    "emptySubtitle": "Inizia con una sensazione, un luogo che hai visitato o un momento che vuoi ricordare.",
+    "writeNow": "Registra ora →",
+    "reactionBtn": "Rilascia le emozioni",
+    "mood_good": "Divertimento",
+    "mood_okay": "Tranquillo",
+    "mood_great": "Eccitato",
+    "mood_very_bad": "Stanco",
+    "mood_bad": "Sorpresa",
+    "mood_default": "Memorabile",
+    "promptEmpty1": "Cosa vuoi ricordare di più oggi?",
+    "promptEmpty2": "C'è un momento che vuoi catturare?",
+    "promptEmpty3": "Un piatto, una destinazione o una persona che hai incontrato?",
+    "promptEmpty4": "Cosa rende questo viaggio diverso?",
+    "promptSugg1": "La cosa che voglio ricordare di più",
+    "promptSugg2": "Piatto memorabile",
+    "promptSugg3": "La persona che hai incontrato",
+    "promptSugg4": "Momento felice",
+    "promptSugg5": "Qualcosa che voglio ricordare per sempre",
+    "promptPrefix": "Suggerire:",
+    "swipe": "Scorri orizzontalmente ›"
   },
   "pwa": {
     "newVersion": "Nuova versione disponibile!",
@@ -1586,5 +1692,54 @@
     "itinerary": "Itinerary",
     "expenses": "Expenses",
     "prepAndDocs": "Preparation & Docs"
+  },
+  "sharedVia": "Condiviso tramite",
+  "madeBy": "Creato da",
+  "atlas": {
+    "stats": {
+      "trips": "Viaggi",
+      "places": "Luoghi",
+      "cities": "Città",
+      "days": "Giorni",
+      "lastTrip": "Ultimo viaggio",
+      "tripsIn": "Viaggi nel",
+      "first": "Primo",
+      "latest": "Ultimo"
+    },
+    "tooltip": {
+      "trip": "Viaggio",
+      "trips": "Viaggi",
+      "places": "Luoghi",
+      "firstTrip": "Primo viaggio",
+      "lastTrip": "Ultimo viaggio",
+      "hoangsa": "Isole Hoàng Sa",
+      "truongsa": "Isole Trường Sa",
+      "vietnam": "Vietnam"
+    },
+    "share": {
+      "error": "Errore durante la creazione dell'immagine. Riprova più tardi.",
+      "text": "Dai un'occhiata alla mia mappa di viaggio su KAT Journey!",
+      "btn_share": "Condividi",
+      "btn_save": "Salva immagine",
+      "fallback": "Impossibile condividere, passaggio automatico al download..."
+    }
+  },
+  "chat": {
+    "title": "Chat di gruppo",
+    "emptyTitle": "Non ci sono ancora messaggi",
+    "emptySubtitle": "Sii il primo a salutare nella chat di gruppo!",
+    "inputPlaceholder": "Inserisci il messaggio...",
+    "connectedAs": "Ti stai connettendo come:",
+    "openBtn": "Apri una chat",
+    "tripCreator": "Creatore di viaggi",
+    "loading": "Caricamento messaggio...",
+    "headerTitle": "Dialogo di viaggio",
+    "chattingAs": "Chiacchierando:",
+    "today": "Oggi",
+    "yesterday": "Ieri"
+  },
+  "offline": {
+    "title": "Sei offline",
+    "subtitle": "- Alcune funzionalità richiedono una connessione di rete"
   }
 }

@@ -8,12 +8,15 @@ import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather
 import { WeatherDetailsModal } from "./WeatherDetailsModal";
 import { useTemperatureUnit } from "../../hooks/useTemperatureUnit";
 
+import { Trip } from "../../db";
+import { Location01Icon, Refresh01Icon } from "@hugeicons/core-free-icons";
+
 interface WeatherWidgetProps {
-  destination: string;
-  latitude?: number;
-  longitude?: number;
+  trip: Trip;
+  selectedDestIndex?: number;
+  onSelectDestIndex?: (index: number) => void;
   days?: number;
-  startDate?: string;
+  isFuture?: boolean;
 }
 
 // Helper to determine packing tip from temp difference and weather codes
@@ -78,22 +81,28 @@ function getPackingTip(
 }
 
 export function WeatherWidget({
-  destination,
-  latitude,
-  longitude,
+  trip,
+  selectedDestIndex,
+  onSelectDestIndex,
   days = 3,
-  startDate,
+  isFuture,
 }: WeatherWidgetProps) {
-  const { t } = useTranslation();
-  const today = new Date().toISOString().split("T")[0];
-  const isFuture = startDate && startDate > today;
+  const { t, i18n } = useTranslation();
+
+  const activeDestIndex = selectedDestIndex ?? 0;
+  const activeDest = trip.destinations?.[activeDestIndex] || {
+    name: trip.location,
+    latitude: trip.latitude,
+    longitude: trip.longitude,
+    countryCode: trip.countryCode,
+  };
 
   const { loading, error, forecast } = useWeather(
-    destination,
-    latitude,
-    longitude,
+    activeDest.name,
+    activeDest.latitude,
+    activeDest.longitude,
     days,
-    startDate
+    trip.startDate
   );
   const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
@@ -116,7 +125,7 @@ export function WeatherWidget({
     return getPackingTip(formatTemp(destTemp), formatTemp(myTemp), destCode, myCode, t);
   })();
 
-  if (!destination?.trim() && !latitude && !longitude) {
+  if (!activeDest?.name?.trim() && !activeDest?.latitude && !activeDest?.longitude) {
     return (
       <div className="w-full mb-6 rounded-3xl bg-gradient-to-b from-sky-50/20 via-sky-50/5 to-white dark:from-sky-950/10 dark:via-sky-950/5 dark:to-kat-surface border border-slate-200/40 dark:border-kat-border/40 p-5 shadow-[0_4px_20px_rgba(3,13,46,0.02)] dark:shadow-none flex flex-col items-center justify-center text-center gap-2">
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 dark:bg-sky-950 text-sky-500 mb-1 shadow-sm animate-pulse">
@@ -135,9 +144,9 @@ export function WeatherWidget({
   if (error || (!loading && !forecast)) {
     const today = new Date().toISOString().split("T")[0];
     const daysUntil =
-      startDate && startDate > today
+      trip.startDate && trip.startDate > today
         ? Math.ceil(
-            (new Date(startDate + "T00:00:00").getTime() -
+            (new Date(trip.startDate + "T00:00:00").getTime() -
               new Date(today + "T00:00:00").getTime()) /
               (1000 * 60 * 60 * 24)
           )
@@ -187,9 +196,9 @@ export function WeatherWidget({
         </div>
 
         <div className="relative z-10 flex flex-col gap-0">
-          <button
+          <div
+            className="flex items-center justify-between px-5 pt-5 pb-3 w-full text-left transition-colors cursor-pointer"
             onClick={() => setWeatherModalOpen(true)}
-            className="flex items-center justify-between px-5 pt-5 pb-3 w-full text-left transition-colors"
           >
             <div className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/10 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400">
@@ -199,10 +208,25 @@ export function WeatherWidget({
                 {t("weather.weatherForecast")}
               </h4>
             </div>
-            <span className="text-[10.5px] font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 dark:bg-sky-400/10 px-2.5 py-1 rounded-lg uppercase tracking-wider">
-              {t("weather.days", { days })}
-            </span>
-          </button>
+
+            <div className="flex items-center gap-2">
+              {trip.destinations && trip.destinations.length > 1 && (
+                <div className="flex items-center gap-1.5 bg-sky-500/10 dark:bg-sky-400/10 px-2 py-1 rounded-lg">
+                  <HugeiconsIcon
+                    icon={Location01Icon}
+                    size={12}
+                    className="text-sky-600 dark:text-sky-400"
+                  />
+                  <span className="text-[10px] font-bold text-sky-700 dark:text-sky-300 uppercase tracking-wider max-w-[80px] truncate">
+                    {activeDest.name}
+                  </span>
+                </div>
+              )}
+              <span className="text-[10.5px] font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 dark:bg-sky-400/10 px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                {t("weather.days", { days })}
+              </span>
+            </div>
+          </div>
 
           {/* Smart Packing Tip Banner */}
           {packingTip && (
@@ -216,7 +240,10 @@ export function WeatherWidget({
           <div className="flex flex-col px-5 pb-5 max-h-[350px] overflow-y-auto pr-1 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800/40">
             {forecast?.time.map((dateStr, idx) => {
               const dateObj = new Date(dateStr);
-              const dayStr = dateObj.toLocaleDateString("vi-VN", { weekday: "short" });
+              // Use user's selected language or fallback to en
+              const dayStr = dateObj.toLocaleDateString(i18n.language || "en", {
+                weekday: "short",
+              });
               const maxTemp = formatTemp(forecast.temperature_2m_max[idx]);
               const minTemp = formatTemp(forecast.temperature_2m_min[idx]);
 
@@ -286,10 +313,13 @@ export function WeatherWidget({
       <WeatherDetailsModal
         isOpen={weatherModalOpen}
         onClose={() => setWeatherModalOpen(false)}
-        destination={destination}
+        destination={activeDest.name || trip.location || t("home.location")}
         forecast={forecast}
         currentLocationForecast={myForecast}
         currentLocationName={myLocationName}
+        destinations={trip.destinations}
+        selectedDestIndex={activeDestIndex}
+        onSelectDestIndex={onSelectDestIndex}
       />
     </>
   );

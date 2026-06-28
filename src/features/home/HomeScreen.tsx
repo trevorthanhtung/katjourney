@@ -19,6 +19,7 @@ import {
   CheckmarkCircle02Icon,
   Link02Icon,
   CloudRainWindIcon,
+  ChevronDownIcon,
 } from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
 import { ChecklistItem, EventItem, Expense, Member, Trip, db, TravelDocument } from "../../db";
@@ -75,6 +76,8 @@ export function HomeScreen({
   onNavigateMore,
   onOpenInbox,
   isReadOnly = false,
+  selectedDestIndex,
+  onSelectDestIndex,
 }: {
   trip: Trip;
   members: Member[];
@@ -90,6 +93,8 @@ export function HomeScreen({
   ) => void;
   onOpenInbox?: () => void;
   isReadOnly?: boolean;
+  selectedDestIndex?: number;
+  onSelectDestIndex?: (index: number) => void;
 }) {
   const { t } = useTranslation();
   const journals =
@@ -115,14 +120,23 @@ export function HomeScreen({
       [trip.id]
     ) ?? [];
 
+  const activeDestIndex = selectedDestIndex ?? 0;
+  const activeDest = trip.destinations?.[activeDestIndex] || {
+    name: trip.location,
+    latitude: trip.latitude,
+    longitude: trip.longitude,
+    countryCode: trip.countryCode,
+  };
+
   // Weather data
   const {
     forecast,
     loading: weatherLoading,
     error: weatherError,
-  } = useWeather(trip.location, trip.latitude, trip.longitude, 1);
+  } = useWeather(activeDest.name, activeDest.latitude, activeDest.longitude, 1);
   const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
+  const [isDestDropdownOpen, setIsDestDropdownOpen] = useState(false);
   const { formatTemp, unit } = useTemperatureUnit();
   useModalHistory(weatherModalOpen, () => setWeatherModalOpen(false), "weather-modal");
 
@@ -259,30 +273,32 @@ export function HomeScreen({
 
     return (
       <div
-        className="mb-6 relative rounded-[32px] p-6 text-white overflow-hidden shadow-xl border border-white/5 group hover:shadow-2xl hover:scale-[1.002] transition-all duration-500 ease-out motion-weather-bg"
+        className="mb-6 relative z-10 rounded-[32px] p-6 text-white shadow-xl border border-white/5 group hover:shadow-2xl hover:scale-[1.002] transition-all duration-500 ease-out motion-weather-bg"
         style={{ background: bgGradient }}
       >
-        {/* Subtle World Map Watermark */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div className="absolute inset-0 rounded-[32px] overflow-hidden pointer-events-none">
+          {/* Subtle World Map Watermark */}
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
-        {/* Dynamic Weather Backdrops */}
-        {forecast && currentCode != null && (
-          <>
-            {(currentCode === 0 || currentCode === 1) && <div className="weather-sunny-glow" />}
-            {(currentCode === 2 ||
-              currentCode === 3 ||
-              currentCode === 45 ||
-              currentCode === 48) && <div className="weather-cloudy-drift" />}
-            {/* If it's rain/drizzle/snow */}
-            {((currentCode >= 51 && currentCode <= 67) ||
-              (currentCode >= 80 && currentCode <= 82) ||
-              currentCode >= 95) && (
-              <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-25">
-                <div className="absolute inset-0 bg-[linear-gradient(170deg,transparent_40%,rgba(255,255,255,0.15)_45%,rgba(255,255,255,0.15)_50%,transparent_55%)] bg-[size:40px_120px] animate-weather-sway" />
-              </div>
-            )}
-          </>
-        )}
+          {/* Dynamic Weather Backdrops */}
+          {forecast && currentCode != null && (
+            <>
+              {(currentCode === 0 || currentCode === 1) && <div className="weather-sunny-glow" />}
+              {(currentCode === 2 ||
+                currentCode === 3 ||
+                currentCode === 45 ||
+                currentCode === 48) && <div className="weather-cloudy-drift" />}
+              {/* If it's rain/drizzle/snow */}
+              {((currentCode >= 51 && currentCode <= 67) ||
+                (currentCode >= 80 && currentCode <= 82) ||
+                currentCode >= 95) && (
+                <div className="absolute inset-0 pointer-events-none opacity-25">
+                  <div className="absolute inset-0 bg-[linear-gradient(170deg,transparent_40%,rgba(255,255,255,0.15)_45%,rgba(255,255,255,0.15)_50%,transparent_55%)] bg-[size:40px_120px] animate-weather-sway" />
+                </div>
+              )}
+            </>
+          )}
+        </div>
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-5">
           <div className="space-y-3 min-w-0 flex-1">
@@ -298,10 +314,82 @@ export function HomeScreen({
               {trip.title}
             </h2>
             <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[12px] font-medium border border-white/10 text-white/90">
-                <HugeiconsIcon icon={Location01Icon} size={13} className="text-white/70" />
-                {trip.location || t("home.planning")}
-              </span>
+              <div className="relative inline-flex z-50">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (trip.destinations && trip.destinations.length > 1) {
+                      setIsDestDropdownOpen(!isDestDropdownOpen);
+                    }
+                  }}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium border text-white/90 transition-all ${
+                    trip.destinations && trip.destinations.length > 1 && isDestDropdownOpen
+                      ? "bg-white/20 border-white/30 shadow-inner"
+                      : "bg-white/10 border-white/10 hover:bg-white/15"
+                  } ${trip.destinations && trip.destinations.length > 1 ? "cursor-pointer" : ""}`}
+                >
+                  <HugeiconsIcon icon={Location01Icon} size={13} className="text-white/70" />
+                  {trip.destinations && trip.destinations.length > 1
+                    ? t("trip.locationAndOthers", {
+                        location: activeDest.name || trip.location,
+                        count: trip.destinations.length - 1,
+                        defaultValue: "{{location}} & {{count}} điểm khác",
+                      })
+                    : trip.location || t("home.planning")}
+
+                  {trip.destinations &&
+                    trip.destinations.length > 1 &&
+                    onSelectDestIndex &&
+                    selectedDestIndex !== undefined && (
+                      <HugeiconsIcon
+                        icon={ChevronDownIcon}
+                        size={12}
+                        className={`text-white/50 ml-0.5 transition-transform duration-200 ${isDestDropdownOpen ? "rotate-180" : ""}`}
+                      />
+                    )}
+                </button>
+
+                {isDestDropdownOpen &&
+                  trip.destinations &&
+                  trip.destinations.length > 1 &&
+                  onSelectDestIndex &&
+                  selectedDestIndex !== undefined && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setIsDestDropdownOpen(false)}
+                      />
+                      <div className="absolute top-full left-0 mt-2 min-w-[240px] max-w-[85vw] bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden flex flex-col p-1.5 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
+                        {trip.destinations.map((d, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => {
+                              onSelectDestIndex(idx);
+                              setIsDestDropdownOpen(false);
+                            }}
+                            className={`text-left px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center justify-between group ${
+                              idx === selectedDestIndex
+                                ? "bg-sky-500/10 text-sky-600 dark:bg-sky-400/10 dark:text-sky-400"
+                                : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50"
+                            }`}
+                          >
+                            <span className="truncate max-w-[200px]">
+                              {d.name || t("common.unknownLocation")}
+                            </span>
+                            {idx === selectedDestIndex && (
+                              <HugeiconsIcon
+                                icon={CheckmarkCircle02Icon}
+                                size={16}
+                                className="text-sky-600 dark:text-sky-400 shrink-0 ml-2"
+                              />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+              </div>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[12px] font-medium border border-white/10 text-white/90">
                 <HugeiconsIcon icon={Calendar01Icon} size={13} className="text-white/70" />
                 {isDayTrip
@@ -1119,7 +1207,7 @@ export function HomeScreen({
                       className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-extrabold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-press"
                     >
                       <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
-                      Bổ sung giấy tờ
+                      {t("documents.addBtn", "Bổ sung giấy tờ")}
                     </button>
                   )}
                 </div>
@@ -1298,6 +1386,9 @@ export function HomeScreen({
         forecast={forecast}
         currentLocationForecast={myForecast}
         currentLocationName={myLocationName}
+        destinations={trip.destinations}
+        selectedDestIndex={activeDestIndex}
+        onSelectDestIndex={onSelectDestIndex}
       />
     </>
   );

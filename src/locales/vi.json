@@ -131,7 +131,8 @@
       "techTitle": "Công nghệ & giấy phép",
       "techDesc1": "KAT Journey được xây dựng bằng React, Vite, Dexie và Supabase. Hệ thống chỉ sử dụng Supabase để đồng bộ và chia sẻ khi bạn chủ động đăng nhập.",
       "techDesc2": "Chúng mình xin gửi lời cảm ơn chân thành đến các tác giả và cộng đồng mã nguồn mở đã đồng hành cùng dự án.",
-      "madeBy": "thực hiện bởi"
+      "madeBy": "thực hiện bởi",
+      "techDesc3": "Ứng dụng được tham khảo ý tưởng giao diện và tính năng từ TREK & Stippl."
     },
     "languageView": {
       "desc": "Chọn ngôn ngữ hiển thị cho KAT Journey."
@@ -395,7 +396,8 @@
       "onAllJourneys": "Trên mọi hành trình",
       "distance": "Chặng đường",
       "km": "km",
-      "noFlights": "Chưa có dữ liệu"
+      "noFlights": "Chưa có dữ liệu",
+      "world": "Thế giới"
     },
     "widgets": {
       "timezones": "Múi giờ",
@@ -416,7 +418,8 @@
       "travelers": "Người tham gia",
       "destinations": "Điểm đến",
       "daysLeft": "NGÀY NỮA"
-    }
+    },
+    "trips": "Chuyến đi"
   },
   "archive": {
     "title": "Kỷ niệm",
@@ -467,7 +470,8 @@
       "Tháng 12"
     ],
     "dateFmt": "{{day}} thg {{month}}, {{year}}",
-    "currencyLabel": "Đơn vị tiền tệ"
+    "currencyLabel": "Đơn vị tiền tệ",
+    "addDestination": "Thêm điểm đến"
   },
   "toast": {
     "invalidFileFormat": "Định dạng file KAT Journey không hợp lệ.",
@@ -710,7 +714,10 @@
     "statusCompleted": "Hoàn thành",
     "statusPending": "Chưa hoàn thành",
     "valueYes": "Có",
-    "valueNo": "Không"
+    "valueNo": "Không",
+    "viewer": "Người xem",
+    "noMembersTitle": "Chưa có thành viên nào",
+    "noMembersDesc": "Thêm thành viên để cùng chia chi phí, chuẩn bị hành lý và lưu lại vai trò trong chuyến đi."
   },
   "home": {
     "countdown": "Đếm ngược",
@@ -822,7 +829,10 @@
     "duration": "{{days}} ngày {{nights}} đêm",
     "longTrip": "Dài ngày",
     "noMembers": "Chưa có thành viên",
-    "andOthers": "{{name}} và {{count}} người khác"
+    "andOthers": "{{name}} và {{count}} người khác",
+    "hero": {
+      "destinations_other": "{{location}} & {{count}} điểm khác"
+    }
   },
   "weather": {
     "packingRain": "Điểm đến đang có mưa, đừng quên bỏ ô vào vali nhé!",
@@ -1614,7 +1624,8 @@
     "past": "Đã kết thúc",
     "status": "Trạng thái",
     "journey": "Hành trình",
-    "completed": "Hoàn thành"
+    "completed": "Hoàn thành",
+    "locationAndOthers": "{{location}} & {{count}} điểm khác"
   },
   "pwa": {
     "newVersion": "Có phiên bản mới!",
@@ -1682,5 +1693,36 @@
     "itinerary": "Lịch trình",
     "expenses": "Chi phí",
     "prepAndDocs": "Chuẩn bị & Tài liệu"
+  },
+  "sharedVia": "Chia sẻ qua",
+  "madeBy": "thực hiện bởi",
+  "atlas": {
+    "stats": {
+      "trips": "Chuyến đi",
+      "places": "Địa điểm",
+      "cities": "Thành phố",
+      "days": "Ngày",
+      "lastTrip": "Chuyến đi cuối",
+      "tripsIn": "Chuyến đi năm",
+      "first": "Lần đầu",
+      "latest": "Gần nhất"
+    },
+    "tooltip": {
+      "trip": "Chuyến",
+      "trips": "Chuyến",
+      "places": "Địa điểm",
+      "firstTrip": "Lần đầu đến",
+      "lastTrip": "Lần cuối đến",
+      "hoangsa": "Quần đảo Hoàng Sa",
+      "truongsa": "Quần đảo Trường Sa",
+      "vietnam": "Việt Nam"
+    },
+    "share": {
+      "error": "Có lỗi xảy ra khi tạo ảnh. Vui lòng thử lại sau.",
+      "text": "Xem bản đồ du lịch của tôi trên KAT Journey!",
+      "btn_share": "Chia sẻ",
+      "btn_save": "Tải ảnh",
+      "fallback": "Không thể chia sẻ, tự động chuyển sang tải ảnh..."
+    }
   }
 }

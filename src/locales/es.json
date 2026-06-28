@@ -77,6 +77,18 @@
           "title": "Eliminar cuenta",
           "desc": "Eliminar permanentemente la cuenta y los datos"
         }
+      },
+      "temperature": {
+        "title": "Temperatura",
+        "desc": "Unidad de temperatura preferida"
+      },
+      "distance": {
+        "title": "Distancia",
+        "desc": "Se muestra en kilómetros o millas"
+      },
+      "optimizeRoute": {
+        "title": "Optimizar la ruta",
+        "desc": "Toma automáticamente el punto de inicio/finalización como alojamiento."
       }
     },
     "language": {
@@ -119,7 +131,8 @@
       "techTitle": "Tecnología y Licencias",
       "techDesc1": "KAT Journey está construido con React, Vite, Dexie y Supabase. El sistema solo usa Supabase para sincronizar y compartir cuando usted inicia sesión activamente.",
       "techDesc2": "Nos gustaría expresar nuestro sincero agradecimiento a los autores y a la comunidad de código abierto que han acompañado este proyecto.",
-      "madeBy": "hecho por"
+      "madeBy": "hecho por",
+      "techDesc3": "UI and features inspired by TREK & Stippl."
     },
     "languageView": {
       "desc": "Elija el idioma de visualización de KAT Journey."
@@ -234,6 +247,10 @@
       "syncSuccess": "Los datos están actualizados.",
       "syncSuccessCloud": "¡Datos sincronizados en la nube con éxito!",
       "syncFailed": "Error de sincronización: "
+    },
+    "section": {
+      "system": "Sistema",
+      "info": "Información y soporte"
     }
   },
   "welcomeScreen": {
@@ -381,7 +398,8 @@
       "onAllJourneys": "En todos los viajes",
       "distance": "Distancia",
       "km": "km",
-      "noFlights": "Sin vuelos aún"
+      "noFlights": "Sin vuelos aún",
+      "world": "Mundo"
     },
     "widgets": {
       "timezones": "Zonas Horarias",
@@ -402,7 +420,8 @@
       "travelers": "Viajeros",
       "destinations": "Destinos",
       "daysLeft": "DÍAS RESTANTES"
-    }
+    },
+    "trips": "Viajes"
   },
   "archive": {
     "title": "Recuerdos",
@@ -453,7 +472,8 @@
       "Diciembre"
     ],
     "dateFmt": "{{day}} {{month}}, {{year}}",
-    "currencyLabel": "Moneda base"
+    "currencyLabel": "Moneda base",
+    "addDestination": "Añadir destino"
   },
   "toast": {
     "invalidFileFormat": "Formato de archivo de KAT Journey no válido.",
@@ -626,7 +646,10 @@
     "viewReview": "Ver Revisión",
     "viewSummary": "Ver Resumen",
     "weatherError": "No se puede cargar el clima",
-    "writeJournal": "Escribir Diario"
+    "writeJournal": "Escribir Diario",
+    "hero": {
+      "destinations_other": "{{location}} y {{count}} más"
+    }
   },
   "trips": {
     "exampleLocation": "Ej: Phu Quoc"
@@ -849,7 +872,10 @@
     "statusCompleted": "Completado",
     "statusPending": "No completado",
     "valueYes": "Sí",
-    "valueNo": "No"
+    "valueNo": "No",
+    "viewer": "Espectador",
+    "noMembersTitle": "Aún no hay miembros",
+    "noMembersDesc": "Agregue miembros para dividir costos, preparar equipaje y guardar roles en el viaje."
   },
   "weather": {
     "packingRain": "Está lloviendo en tu destino, ¡no olvides el paraguas!",
@@ -872,21 +898,21 @@
     "today": "Hoy",
     "currentTemp": "Actual: {{temp}}°",
     "outdoorIdealTitle": "Clima ideal para actividades al aire libre",
-    "outdoorIdealDesc": "Soleado y cielo despejado. Ideal para playa, senderismo, camping o fotografía.",
+    "outdoorIdealDesc": "Cielos soleados y despejados. Ideal para ir a la playa, hacer senderismo, acampar o fotografía al aire libre. ¡No olvides el protector solar y las gafas de sol!",
     "coolPleasantTitle": "Clima fresco y agradable",
-    "coolPleasantDesc": "Nublado y fresco, no demasiado caliente. Ideal para pasear por el casco antiguo.",
-    "foggyTitle": "Clima con niebla, cuidado en las montañas",
-    "foggyDesc": "Aire frío con hermosa niebla. Perfecto para cafés románticos. Si conduces, usa luces de advertencia.",
-    "rainyTitle": "Lluvia, cambiar a actividades interiores",
-    "rainyDesc": "Húmedo y lluvioso. Prioriza museos, parques cubiertos, acuarios o cafeterías.",
-    "stormTitle": "Tormentas peligrosas, quédate dentro",
-    "stormDesc": "Mal tiempo con tormentas peligrosas. Evita paseos en barco, nadar o ir al bosque.",
-    "normalTitle": "Buen clima para vacaciones",
-    "normalDesc": "Condiciones climáticas normales. Sigue el itinerario para planificar actividades.",
+    "coolPleasantDesc": "Nublado y fresco, sin hacer demasiado calor. Ideal para pasear por el casco antiguo, los mercados nocturnos o hacer turismo sin agotarse.",
+    "foggyTitle": "Clima con niebla, cuidado en los pasos de montaña",
+    "foggyDesc": "Aire frío con hermosa niebla. Perfecto para cafeterías románticas y estofados. Si conduces un coche o una moto, usa las luces de advertencia y conduce despacio.",
+    "rainyTitle": "Chubascos, cambia a actividades de interior",
+    "rainyDesc": "Húmedo y lluvioso. Deberías priorizar visitar museos, parques de atracciones cubiertos, acuarios, cafeterías o hacer recuerdos.",
+    "stormTitle": "Tormentas eléctricas peligrosas, quédate en el interior",
+    "stormDesc": "Mal tiempo con tormentas eléctricas peligrosas. Evita navegar, nadar o ir al bosque. Compra comida y juega a juegos de mesa o mira una película en tu habitación.",
+    "normalTitle": "Buen clima para las vacaciones",
+    "normalDesc": "Condiciones climáticas normales. Siga el horario diario para planificar tus actividades razonablemente.",
     "uvLow": "Bajo",
     "uvMedium": "Medio",
     "uvHigh": "Alto",
-    "uvVeryHigh": "Muy Alto",
+    "uvVeryHigh": "Muy alto",
     "uvExtreme": "Extremo",
     "currentWeather": "Clima Actual",
     "high": "Máx",
@@ -1606,7 +1632,8 @@
     "bannerDirectEdit": "Edición Directa",
     "bannerSuggestMode": "Modo Sugerencia",
     "bannerDirectEditDesc": "Rol \"{{role}}\": Tienes permiso para editar directamente las partes asignadas.",
-    "bannerSuggestModeDesc": "Tus cambios se enviarán al propietario del viaje para su revisión."
+    "bannerSuggestModeDesc": "Tus cambios se enviarán al propietario del viaje para su revisión.",
+    "closeBanner": "Cerrar notificación"
   },
   "trip": {
     "upcoming": "Próximo",
@@ -1614,7 +1641,8 @@
     "past": "Pasado",
     "status": "Estado",
     "journey": "Viaje",
-    "completed": "Completado"
+    "completed": "Completado",
+    "locationAndOthers": "{{location}} y {{count}} más"
   },
   "pwa": {
     "newVersion": "¡Nueva versión disponible!",
@@ -1682,5 +1710,36 @@
     "itinerary": "Itinerario",
     "expenses": "Gastos",
     "prepAndDocs": "Preparación y Doc."
+  },
+  "sharedVia": "Compartido vía",
+  "madeBy": "Hecho por",
+  "atlas": {
+    "stats": {
+      "trips": "Viajes",
+      "places": "Lugares",
+      "cities": "Ciudades",
+      "days": "Días",
+      "lastTrip": "Último viaje",
+      "tripsIn": "Viajes en",
+      "first": "Primero",
+      "latest": "Último"
+    },
+    "tooltip": {
+      "trip": "Viaje",
+      "trips": "Viajes",
+      "places": "Lugares",
+      "firstTrip": "Primer viaje",
+      "lastTrip": "Último viaje",
+      "hoangsa": "Islas Hoàng Sa",
+      "truongsa": "Islas Trường Sa",
+      "vietnam": "Vietnam"
+    },
+    "share": {
+      "error": "Error al crear la imagen. Por favor, inténtelo de nuevo más tarde.",
+      "text": "¡Mira mi mapa de viajes en KAT Journey!",
+      "btn_share": "Compartir",
+      "btn_save": "Guardar imagen",
+      "fallback": "No se puede compartir, cambiando automáticamente a descarga..."
+    }
   }
 }

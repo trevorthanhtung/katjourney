@@ -5,6 +5,13 @@ export type ChecklistSection = "Before Trip" | "During Trip" | "After Trip";
 export type JournalMood = "very_bad" | "bad" | "okay" | "good" | "great";
 export type PackingTripType = "Biển" | "Núi" | "Thành phố" | "Camping" | "Gia đình";
 
+export interface TripDestination {
+  name: string;
+  latitude?: number;
+  longitude?: number;
+  countryCode?: string;
+}
+
 export interface Trip {
   id?: number;
   title: string;
@@ -14,14 +21,16 @@ export interface Trip {
   endDate: string;
   latitude?: number;
   longitude?: number;
+  countryCode?: string;
   defaultCurrency?: string;
+  destinations?: TripDestination[];
   createdAt: string;
   shareToken?: string;
   sharePin?: string;
   mediaLink?: string;
   updatedAt?: string;
   isDeleted?: boolean;
-  status?: 'active' | 'archived';
+  status?: "active" | "archived";
   dayRoadmaps?: Record<string, string>;
   shareIncludeExpenses?: boolean;
   shareIncludeJournals?: boolean;
@@ -101,6 +110,15 @@ export interface ChecklistItem {
   isDeleted?: boolean;
 }
 
+export interface JournalComment {
+  id: string;
+  authorId: string;
+  authorName: string;
+  avatar?: string;
+  content: string;
+  createdAt: string;
+}
+
 export interface JournalEntry {
   id?: number;
   tripId: number;
@@ -118,6 +136,7 @@ export interface JournalEntry {
   updatedAt?: string;
   isDeleted?: boolean;
   reactions?: Record<string, string[]>;
+  comments?: JournalComment[];
 }
 
 export interface PackingItem {
@@ -147,7 +166,8 @@ export interface TravelDocument {
   isDeleted?: boolean;
 }
 
-export type BackupPlanType = "food" | "place" | "transport" | "hotel" | "indoor" | "weather" | "other";
+export type BackupPlanType =
+  "food" | "place" | "transport" | "hotel" | "indoor" | "weather" | "other";
 
 export interface BackupPlan {
   id?: number;
@@ -184,7 +204,7 @@ export class KatJourneyDB extends Dexie {
       members: "++id, tripId, name",
       events: "++id, tripId, date, completed",
       expenses: "++id, tripId, category, payer",
-      checklist: "++id, tripId, section, completed"
+      checklist: "++id, tripId, section, completed",
     });
     this.version(2).stores({
       trips: "++id, title, startDate, endDate, createdAt",
@@ -193,7 +213,7 @@ export class KatJourneyDB extends Dexie {
       expenses: "++id, tripId, category, payer",
       checklist: "++id, tripId, section, completed",
       journals: "++id, tripId, date, mood",
-      packingItems: "++id, tripId, tripType, completed"
+      packingItems: "++id, tripId, tripType, completed",
     });
     this.version(3).stores({
       trips: "++id, title, startDate, endDate, createdAt",
@@ -203,7 +223,7 @@ export class KatJourneyDB extends Dexie {
       checklist: "++id, tripId, section, completed",
       journals: "++id, tripId, date, mood",
       packingItems: "++id, tripId, tripType, completed",
-      travelDocuments: "++id, tripId, type"
+      travelDocuments: "++id, tripId, type",
     });
     this.version(4).stores({
       trips: "++id, title, startDate, endDate, createdAt",
@@ -214,7 +234,7 @@ export class KatJourneyDB extends Dexie {
       journals: "++id, tripId, date, mood",
       packingItems: "++id, tripId, tripType, completed",
       travelDocuments: "++id, tripId, type",
-      backupPlans: "++id, tripId, activityId, date"
+      backupPlans: "++id, tripId, activityId, date",
     });
     this.version(5).stores({
       trips: "++id, title, startDate, endDate, createdAt",
@@ -225,25 +245,30 @@ export class KatJourneyDB extends Dexie {
       journals: "++id, tripId, date, mood",
       packingItems: "++id, tripId, tripType, completed",
       travelDocuments: "++id, tripId, type",
-      backupPlans: "++id, tripId, activityId, date"
+      backupPlans: "++id, tripId, activityId, date",
     });
-    this.version(6).stores({
-      trips: "++id, title, startDate, endDate, createdAt",
-      members: "++id, tripId, name",
-      events: "++id, tripId, date, completed",
-      expenses: "++id, tripId, category, payer",
-      checklist: "++id, tripId, section, completed",
-      journals: "++id, tripId, date, mood",
-      packingItems: "++id, tripId, tripType, completed",
-      travelDocuments: "++id, tripId, type",
-      backupPlans: "++id, tripId, activityId, date"
-    }).upgrade(async (tx) => {
-      await tx.table("expenses").toCollection().modify(expense => {
-        if (!expense.date) {
-          expense.date = expense.updatedAt || expense.createdAt || new Date().toISOString();
-        }
+    this.version(6)
+      .stores({
+        trips: "++id, title, startDate, endDate, createdAt",
+        members: "++id, tripId, name",
+        events: "++id, tripId, date, completed",
+        expenses: "++id, tripId, category, payer",
+        checklist: "++id, tripId, section, completed",
+        journals: "++id, tripId, date, mood",
+        packingItems: "++id, tripId, tripType, completed",
+        travelDocuments: "++id, tripId, type",
+        backupPlans: "++id, tripId, activityId, date",
+      })
+      .upgrade(async (tx) => {
+        await tx
+          .table("expenses")
+          .toCollection()
+          .modify((expense) => {
+            if (!expense.date) {
+              expense.date = expense.updatedAt || expense.createdAt || new Date().toISOString();
+            }
+          });
       });
-    });
     this.version(7).stores({
       trips: "++id, title, startDate, endDate, createdAt",
       members: "++id, tripId, name",
@@ -253,7 +278,7 @@ export class KatJourneyDB extends Dexie {
       journals: "++id, tripId, date, mood",
       packingItems: "++id, tripId, tripType, completed",
       travelDocuments: "++id, tripId, type",
-      backupPlans: "++id, tripId, activityId, date"
+      backupPlans: "++id, tripId, activityId, date",
     });
   }
 }
@@ -284,20 +309,20 @@ export async function deleteTripCascade(tripId: number) {
         db.journals,
         db.packingItems,
         db.travelDocuments,
-        db.backupPlans
+        db.backupPlans,
       ];
-      
+
       for (const table of tables) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (table as any).where("tripId").equals(tripId).modify({
           isDeleted: true,
-          updatedAt: now
+          updatedAt: now,
         });
       }
-      
+
       await db.trips.update(tripId, {
         isDeleted: true,
-        updatedAt: now
+        updatedAt: now,
       });
     }
   );
@@ -306,16 +331,16 @@ export async function deleteTripCascade(tripId: number) {
 export async function archiveTrip(tripId: number) {
   const now = new Date().toISOString();
   await db.trips.update(tripId, {
-    status: 'archived',
-    updatedAt: now
+    status: "archived",
+    updatedAt: now,
   });
 }
 
 export async function unarchiveTrip(tripId: number) {
   const now = new Date().toISOString();
   await db.trips.update(tripId, {
-    status: 'active',
-    updatedAt: now
+    status: "active",
+    updatedAt: now,
   });
 }
 
@@ -337,41 +362,41 @@ const tablesToTrack = [
   db.journals,
   db.packingItems,
   db.travelDocuments,
-  db.backupPlans
+  db.backupPlans,
 ];
 
-tablesToTrack.forEach(table => {
+tablesToTrack.forEach((table) => {
   table.hook("creating", (primKey, obj) => {
     updateLocalTimestamp();
-    
+
     const withAudit = {
       ...obj,
       updatedAt: new Date().toISOString(),
-      isDeleted: obj.isDeleted !== undefined ? obj.isDeleted : false
+      isDeleted: obj.isDeleted !== undefined ? obj.isDeleted : false,
     };
     const encrypted = encryptObject(withAudit);
-    
+
     // Mutate the original obj in-place to preserve Dexie's auto-increment key tracking
     for (const key of Object.keys(obj)) {
       delete (obj as any)[key];
     }
     Object.assign(obj, encrypted);
-    if ('id' in (obj as any) && (obj as any).id === undefined) {
+    if ("id" in (obj as any) && (obj as any).id === undefined) {
       delete (obj as any).id;
     }
   });
-  
+
   table.hook("reading", (obj) => {
     return obj ? decryptObject(obj) : obj;
   });
-  
+
   table.hook("updating", (modifications, primKey, obj) => {
     updateLocalTimestamp();
     const newMods = { ...modifications, updatedAt: new Date().toISOString() };
     // Mã hóa các trường thay đổi
     return encryptObject(newMods);
   });
-  
+
   table.hook("deleting", () => {
     updateLocalTimestamp();
   });

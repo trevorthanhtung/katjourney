@@ -99,6 +99,7 @@ import {
   Member,
   PackingItem,
   Trip,
+  TripDestination,
   archiveTrip,
   unarchiveTrip,
 } from "../../db";
@@ -610,18 +611,25 @@ function TripForm({
   const { t, i18n } = useTranslation();
   const [form, setForm] = useState<{
     title: string;
-    location: string;
-    latitude?: number;
-    longitude?: number;
+    destinations: TripDestination[];
     defaultCurrency?: string;
     tripType: "dayTrip" | "multiDay";
     startDate: string;
     endDate: string;
   }>({
     title: trip?.title ?? "",
-    location: trip?.location ?? "",
-    latitude: trip?.latitude,
-    longitude: trip?.longitude,
+    destinations: trip?.destinations?.length
+      ? trip.destinations
+      : trip?.location
+        ? [
+            {
+              name: trip.location,
+              latitude: trip.latitude,
+              longitude: trip.longitude,
+              countryCode: trip.countryCode,
+            },
+          ]
+        : [{ name: "" }],
     defaultCurrency: trip?.defaultCurrency,
     tripType: trip?.tripType ?? (trip?.startDate === trip?.endDate ? "dayTrip" : "multiDay"),
     startDate: trip?.startDate ?? today,
@@ -635,9 +643,18 @@ function TripForm({
     if (isOpen) {
       setForm({
         title: trip?.title ?? "",
-        location: trip?.location ?? "",
-        latitude: trip?.latitude,
-        longitude: trip?.longitude,
+        destinations: trip?.destinations?.length
+          ? trip.destinations
+          : trip?.location
+            ? [
+                {
+                  name: trip.location,
+                  latitude: trip.latitude,
+                  longitude: trip.longitude,
+                  countryCode: trip.countryCode,
+                },
+              ]
+            : [{ name: "" }],
         defaultCurrency: trip?.defaultCurrency,
         tripType: trip?.tripType ?? (trip?.startDate === trip?.endDate ? "dayTrip" : "multiDay"),
         startDate: trip?.startDate ?? today,
@@ -664,6 +681,10 @@ function TripForm({
 
     const payload = {
       ...form,
+      location: form.destinations[0]?.name || "",
+      latitude: form.destinations[0]?.latitude,
+      longitude: form.destinations[0]?.longitude,
+      countryCode: form.destinations[0]?.countryCode,
       endDate: form.tripType === "dayTrip" ? form.startDate : form.endDate,
       createdAt: trip?.createdAt ?? new Date().toISOString(),
     };
@@ -719,50 +740,93 @@ function TripForm({
           )}
         </div>
         <div>
-          <span className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-            <HugeiconsIcon
-              icon={Location01Icon}
-              size={16}
-              className="text-slate-700 dark:text-slate-300"
-            />
-            {t("tripForm.locationLabel")}
-          </span>
-          <LocationInput
-            value={form.location}
-            onChange={(location) =>
-              setForm((f) => ({
-                ...f,
-                location,
-                latitude: undefined,
-                longitude: undefined,
-                defaultCurrency: undefined,
-              }))
-            }
-            onSelectResult={(result) => {
-              const display = normalizeVietnameseDisplayText(
-                [result.name, result.admin1, result.country].filter(Boolean).join(", ")
-              );
-              const currency = result.country_code
-                ? getCurrencyForCountry(result.country_code)
-                : undefined;
-              setForm((f) => ({
-                ...f,
-                location: display,
-                latitude: result.latitude,
-                longitude: result.longitude,
-                defaultCurrency: currency || undefined,
-              }));
-            }}
-          />
-          {form.latitude && form.longitude ? (
-            <p className="mt-2.5 px-1 text-[11.5px] font-bold text-emerald-600 flex items-center gap-1 animate-fadeIn">
-              <HugeiconsIcon icon={CheckIcon} size={14} /> {t("tripForm.locationSuccess")}
-            </p>
-          ) : (
-            <p className="mt-2.5 px-1 text-[11.5px] font-semibold text-slate-400 leading-relaxed">
-              {t("tripForm.locationHelper")}
-            </p>
-          )}
+          <div className="flex items-center justify-between mb-2">
+            <span className="block text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+              <HugeiconsIcon
+                icon={Location01Icon}
+                size={16}
+                className="text-slate-700 dark:text-slate-300"
+              />
+              {t("tripForm.locationLabel")}
+            </span>
+          </div>
+          <div className="space-y-3">
+            {form.destinations.map((dest, idx) => (
+              <div key={idx} className="relative">
+                <LocationInput
+                  value={dest.name}
+                  onChange={(name) => {
+                    const newDests = [...form.destinations];
+                    newDests[idx] = {
+                      ...newDests[idx],
+                      name,
+                      latitude: undefined,
+                      longitude: undefined,
+                      countryCode: undefined,
+                    };
+                    setForm((f) => ({ ...f, destinations: newDests }));
+                  }}
+                  onSelectResult={(result) => {
+                    const display = normalizeVietnameseDisplayText(
+                      [result.name, result.admin1, result.country].filter(Boolean).join(", ")
+                    );
+                    const newDests = [...form.destinations];
+                    newDests[idx] = {
+                      ...newDests[idx],
+                      name: display,
+                      latitude: result.latitude,
+                      longitude: result.longitude,
+                      countryCode: result.country_code,
+                    };
+
+                    const updates: any = { destinations: newDests };
+                    // If first destination, update currency
+                    if (idx === 0 && result.country_code) {
+                      updates.defaultCurrency =
+                        getCurrencyForCountry(result.country_code) || form.defaultCurrency;
+                    }
+                    setForm((f) => ({ ...f, ...updates }));
+                  }}
+                />
+                {form.destinations.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newDests = [...form.destinations];
+                      newDests.splice(idx, 1);
+                      setForm((f) => ({ ...f, destinations: newDests }));
+                    }}
+                    className="absolute right-[12px] top-[13px] text-slate-400 hover:text-rose-500 transition-colors bg-white dark:bg-slate-800"
+                  >
+                    <HugeiconsIcon icon={Cancel01Icon} size={18} />
+                  </button>
+                )}
+                {dest.latitude && dest.longitude ? (
+                  <p className="mt-2 px-1 text-[11.5px] font-bold text-emerald-600 flex items-center gap-1 animate-fadeIn">
+                    <HugeiconsIcon icon={CheckIcon} size={14} /> {t("tripForm.locationSuccess")}
+                  </p>
+                ) : (
+                  <p className="mt-2 px-1 text-[11.5px] font-semibold text-slate-400 leading-relaxed">
+                    {idx === 0
+                      ? t("tripForm.locationHelper")
+                      : t(
+                          "tripForm.additionalLocationHelper",
+                          "Chọn điểm đến để cập nhật dự báo thời tiết."
+                        )}
+                  </p>
+                )}
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                setForm((f) => ({ ...f, destinations: [...f.destinations, { name: "" }] }));
+              }}
+              className="flex items-center justify-center w-full py-2.5 mt-2 border-2 border-dashed border-slate-200 dark:border-slate-700/50 rounded-xl text-[13.5px] font-semibold text-kat-primary hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+            >
+              + {t("tripForm.addDestination", "Thêm điểm đến")}
+            </button>
+          </div>
         </div>
 
         {/* === CURRENCY SECTION === */}
@@ -2869,10 +2933,14 @@ export function MoreScreen({
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mx-auto mb-4 ring-4 ring-kat-primary/5">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-6 w-6" />
               </div>
-              <h3 className="text-[16px] font-bold text-kat-dark">Chưa có thành viên nào</h3>
+              <h3 className="text-[16px] font-bold text-kat-dark">
+                {t("share.noMembersTitle", "Chưa có thành viên nào")}
+              </h3>
               <p className="mt-2 text-[14.5px] font-semibold text-slate-500 leading-relaxed">
-                Thêm thành viên để cùng chia chi phí, chuẩn bị hành lý và lưu lại vai trò trong
-                chuyến đi.
+                {t(
+                  "share.noMembersDesc",
+                  "Thêm thành viên để cùng chia chi phí, chuẩn bị hành lý và lưu lại vai trò trong chuyến đi."
+                )}
               </p>
             </div>
           )}

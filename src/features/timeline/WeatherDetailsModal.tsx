@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Cancel01Icon } from "@hugeicons/core-free-icons";
+import { Cancel01Icon, CheckmarkCircle02Icon, ChevronDownIcon } from "@hugeicons/core-free-icons";
 import {
   WeatherForecast,
   getWeatherIcon,
@@ -30,6 +30,9 @@ interface WeatherDetailsModalProps {
   forecast: WeatherForecast | null;
   currentLocationForecast?: WeatherForecast | null;
   currentLocationName?: string | null;
+  destinations?: { name: string; latitude?: number; longitude?: number; countryCode?: string }[];
+  selectedDestIndex?: number;
+  onSelectDestIndex?: (index: number) => void;
 }
 
 export function WeatherDetailsModal({
@@ -39,12 +42,16 @@ export function WeatherDetailsModal({
   forecast,
   currentLocationForecast,
   currentLocationName,
+  destinations,
+  selectedDestIndex,
+  onSelectDestIndex,
 }: WeatherDetailsModalProps) {
   const { t } = useTranslation();
   useBodyScrollLock(isOpen);
   const [shouldRender, setShouldRender] = useState(isOpen);
   const [animate, setAnimate] = useState(false);
-  const [errorState, setErrorState] = useState<string | null>(null);
+  const [isDestDropdownOpen, setIsDestDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { formatTemp } = useTemperatureUnit();
   const { formatSpeed, speedLabel } = useDistanceUnit();
 
@@ -226,79 +233,85 @@ export function WeatherDetailsModal({
 
         {/* Modal Box */}
         <div
-          className={`w-full md:max-w-lg bg-slate-50 dark:bg-kat-surface md:rounded-[32px] rounded-t-[36px] shadow-[0_-10px_40px_rgba(3,13,46,0.12)] md:shadow-[0_20px_60px_rgba(3,13,46,0.18)] relative overflow-hidden transition-all duration-300 max-h-[92vh] md:max-h-[85vh] flex flex-col z-10 border border-slate-100/50 dark:border-kat-border/40 ${
+          className={`w-full md:max-w-lg bg-slate-50 dark:bg-kat-surface md:rounded-[32px] rounded-t-[36px] shadow-[0_-10px_40px_rgba(3,13,46,0.12)] md:shadow-[0_20px_60px_rgba(3,13,46,0.18)] relative transition-all duration-300 max-h-[92vh] md:max-h-[85vh] flex flex-col z-10 border border-slate-100/50 dark:border-kat-border/40 ${
             animate ? "translate-y-0 opacity-100" : "translate-y-full md:translate-y-10 opacity-0"
           }`}
         >
           {/* Dynamic Animated Weather Background Panel */}
           <div
-            className="relative h-44 shrink-0 flex flex-col justify-end p-6 text-white overflow-hidden"
+            className="relative h-44 shrink-0 flex flex-col justify-end p-6 text-white z-20 md:rounded-t-[32px] rounded-t-[36px]"
             style={{ background: bgGradient }}
           >
-            {/* Sunny animations */}
-            {isSunny && (
-              <div
-                className="absolute -right-10 -top-10 w-44 h-44 bg-white/20 rounded-full blur-2xl pointer-events-none"
-                style={{ animation: "sun-glow 10s infinite linear" }}
-              />
-            )}
-
-            {/* Cloudy/Foggy animations */}
-            {(isCloudy || isFoggy) && (
-              <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Background wrapper for animations to prevent overflow */}
+            <div className="absolute inset-0 overflow-hidden md:rounded-t-[32px] rounded-t-[36px] pointer-events-none">
+              {/* Sunny animations */}
+              {isSunny && (
                 <div
-                  className="absolute w-64 h-24 bg-white/10 rounded-full blur-xl -top-6"
-                  style={{ animation: "drift-cloud-sm 20s infinite linear" }}
+                  className="absolute -right-10 -top-10 w-44 h-44 bg-white/20 rounded-full blur-2xl pointer-events-none"
+                  style={{ animation: "sun-glow 10s infinite linear" }}
                 />
-                <div
-                  className="absolute w-48 h-20 bg-white/5 rounded-full blur-lg top-10"
-                  style={{ animation: "drift-cloud-sm 14s infinite linear", animationDelay: "3s" }}
-                />
-              </div>
-            )}
+              )}
 
-            {/* Rainy animations */}
-            {(isRainy || isStormy) && (
+              {/* Cloudy/Foggy animations */}
+              {(isCloudy || isFoggy) && (
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                  <div
+                    className="absolute w-64 h-24 bg-white/10 rounded-full blur-xl -top-6"
+                    style={{ animation: "drift-cloud-sm 20s infinite linear" }}
+                  />
+                  <div
+                    className="absolute w-48 h-20 bg-white/5 rounded-full blur-lg top-10"
+                    style={{
+                      animation: "drift-cloud-sm 14s infinite linear",
+                      animationDelay: "3s",
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Rainy animations */}
+              {(isRainy || isStormy) && (
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                  {Array.from({ length: 15 }).map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="absolute w-[1.5px] bg-white/30 rounded-full"
+                      style={{
+                        height: `${20 + Math.random() * 20}px`,
+                        left: `${Math.random() * 100}%`,
+                        top: `-40px`,
+                        opacity: 0.15 + Math.random() * 0.2,
+                        animation: `rain-fall ${0.6 + Math.random() * 0.5}s infinite linear`,
+                        animationDelay: `${Math.random() * 1.5}s`,
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Storm flash background */}
+              {isStormy && (
+                <div
+                  className="absolute inset-0 bg-white pointer-events-none"
+                  style={{ animation: "storm-flash 6s infinite ease-out" }}
+                />
+              )}
+
+              {/* Floating light dust (aesthetic particle) */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                {Array.from({ length: 15 }).map((_, idx) => (
+                {Array.from({ length: 6 }).map((_, idx) => (
                   <div
                     key={idx}
-                    className="absolute w-[1.5px] bg-white/30 rounded-full"
+                    className="absolute w-1 h-1 bg-white/20 rounded-full"
                     style={{
-                      height: `${20 + Math.random() * 20}px`,
-                      left: `${Math.random() * 100}%`,
-                      top: `-40px`,
-                      opacity: 0.15 + Math.random() * 0.2,
-                      animation: `rain-fall ${0.6 + Math.random() * 0.5}s infinite linear`,
-                      animationDelay: `${Math.random() * 1.5}s`,
+                      left: `${20 + Math.random() * 60}%`,
+                      top: `${20 + Math.random() * 60}%`,
+                      animation: `float-dust ${3 + Math.random() * 3}s infinite ease-in-out`,
+                      animationDelay: `${idx * 0.5}s`,
                     }}
                   />
                 ))}
               </div>
-            )}
-
-            {/* Storm flash background */}
-            {isStormy && (
-              <div
-                className="absolute inset-0 bg-white pointer-events-none"
-                style={{ animation: "storm-flash 6s infinite ease-out" }}
-              />
-            )}
-
-            {/* Floating light dust (aesthetic particle) */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              {Array.from({ length: 6 }).map((_, idx) => (
-                <div
-                  key={idx}
-                  className="absolute w-1 h-1 bg-white/20 rounded-full"
-                  style={{
-                    left: `${20 + Math.random() * 60}%`,
-                    top: `${20 + Math.random() * 60}%`,
-                    animation: `float-dust ${3 + Math.random() * 3}s infinite ease-in-out`,
-                    animationDelay: `${idx * 0.5}s`,
-                  }}
-                />
-              ))}
             </div>
 
             {/* Header Actions */}
@@ -311,12 +324,67 @@ export function WeatherDetailsModal({
 
             {/* Location details */}
             <div className="relative z-10 text-left drop-shadow-md">
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-white/70">
-                {t("weather.currentWeather")}
-              </span>
-              <h3 className="text-xl md:text-2xl font-black text-white line-clamp-1">
-                {destination}
-              </h3>
+              {destinations &&
+              destinations.length > 1 &&
+              onSelectDestIndex &&
+              selectedDestIndex !== undefined ? (
+                <div className="relative inline-block z-50">
+                  <button
+                    type="button"
+                    onClick={() => setIsDestDropdownOpen(!isDestDropdownOpen)}
+                    className={`flex items-center gap-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white text-lg md:text-xl font-black rounded-xl pl-4 pr-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all ${isDestDropdownOpen ? "bg-white/30 shadow-inner" : ""}`}
+                  >
+                    <span className="truncate max-w-[200px] md:max-w-[300px]">
+                      {destinations[selectedDestIndex]?.name || t("common.unknownLocation")}
+                    </span>
+                    <HugeiconsIcon
+                      icon={ChevronDownIcon}
+                      className={`h-5 w-5 opacity-70 transition-transform duration-200 ${isDestDropdownOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+
+                  {isDestDropdownOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setIsDestDropdownOpen(false)}
+                      />
+                      <div className="absolute top-full left-0 mt-2 min-w-[280px] max-w-[90vw] bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col p-1.5 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
+                        {destinations.map((d, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => {
+                              onSelectDestIndex(idx);
+                              setIsDestDropdownOpen(false);
+                            }}
+                            className={`text-left px-4 py-3 rounded-xl text-base font-semibold transition-colors flex items-center justify-between group ${
+                              idx === selectedDestIndex
+                                ? "bg-sky-500/10 text-sky-600 dark:bg-sky-400/10 dark:text-sky-400"
+                                : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50"
+                            }`}
+                          >
+                            <span className="truncate max-w-[220px]">
+                              {d.name || t("common.unknownLocation")}
+                            </span>
+                            {idx === selectedDestIndex && (
+                              <HugeiconsIcon
+                                icon={CheckmarkCircle02Icon}
+                                size={18}
+                                className="text-sky-600 dark:text-sky-400 shrink-0 ml-2"
+                              />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <h3 className="text-xl md:text-2xl font-black text-white line-clamp-1">
+                  {destination}
+                </h3>
+              )}
 
               <div className="flex items-end justify-between mt-2">
                 <div className="flex items-center gap-3">
@@ -348,7 +416,7 @@ export function WeatherDetailsModal({
 
           {/* Modal Scrollable Body */}
           <div
-            className="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar"
+            className="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar md:rounded-b-[32px]"
             style={{ paddingBottom: "max(40px, calc(env(safe-area-inset-bottom) + 24px))" }}
           >
             {/* Smart Suggestion Banner */}
@@ -640,7 +708,7 @@ export function WeatherDetailsModal({
             onClick={onClose}
             className="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold rounded-xl transition-colors"
           >
-            Đóng
+            {t("common.close", "Đóng")}
           </button>
         </div>
       </div>

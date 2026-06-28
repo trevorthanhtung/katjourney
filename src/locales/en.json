@@ -131,7 +131,8 @@
       "techTitle": "Technology & Licenses",
       "techDesc1": "KAT Journey is built with React, Vite, Dexie, and Supabase. The system only uses Supabase for syncing and sharing when you actively log in.",
       "techDesc2": "We would like to express our sincere gratitude to the authors and the open-source community who have accompanied this project.",
-      "madeBy": "made by"
+      "madeBy": "made by",
+      "techDesc3": "UI and features inspired by TREK & Stippl."
     },
     "languageView": {
       "desc": "Choose the display language for KAT Journey."
@@ -397,7 +398,8 @@
       "onAllJourneys": "On all journeys",
       "distance": "Distance",
       "km": "km",
-      "noFlights": "No flights yet"
+      "noFlights": "No flights yet",
+      "world": "World"
     },
     "widgets": {
       "timezones": "Timezones",
@@ -418,7 +420,8 @@
       "travelers": "Travelers",
       "destinations": "Destinations",
       "daysLeft": "DAYS LEFT"
-    }
+    },
+    "trips": "Trips"
   },
   "archive": {
     "title": "Memories",
@@ -469,7 +472,8 @@
       "December"
     ],
     "dateFmt": "{{month}} {{day}}, {{year}}",
-    "currencyLabel": "Base Currency"
+    "currencyLabel": "Base Currency",
+    "addDestination": "Add destination"
   },
   "toast": {
     "invalidFileFormat": "Invalid KAT Journey file format.",
@@ -712,7 +716,10 @@
     "statusCompleted": "Done",
     "statusPending": "Not done",
     "valueYes": "Yes",
-    "valueNo": "No"
+    "valueNo": "No",
+    "viewer": "Viewer",
+    "noMembersTitle": "No members yet",
+    "noMembersDesc": "Add members to split costs, pack luggage, and save roles on the trip."
   },
   "home": {
     "countdown": "Countdown",
@@ -824,7 +831,10 @@
     "duration": "{{days}} days {{nights}} nights",
     "longTrip": "Long trip",
     "noMembers": "No members yet",
-    "andOthers": "{{name}} and {{count}} others"
+    "andOthers": "{{name}} and {{count}} others",
+    "hero": {
+      "destinations_other": "{{location}} & {{count}} others"
+    }
   },
   "weather": {
     "packingRain": "It's raining at your destination, don't forget an umbrella!",
@@ -1616,7 +1626,8 @@
     "past": "Past trip",
     "status": "Status",
     "journey": "Journey",
-    "completed": "Completed"
+    "completed": "Completed",
+    "locationAndOthers": "{{location}} & {{count}} others"
   },
   "pwa": {
     "newVersion": "New version available!",
@@ -1684,5 +1695,36 @@
     "itinerary": "Itinerary",
     "expenses": "Expenses",
     "prepAndDocs": "Preparation & Docs"
+  },
+  "sharedVia": "Shared via",
+  "madeBy": "Made by",
+  "atlas": {
+    "stats": {
+      "trips": "Trips",
+      "places": "Places",
+      "cities": "Cities",
+      "days": "Days",
+      "lastTrip": "Last Trip",
+      "tripsIn": "Trips in",
+      "first": "First",
+      "latest": "Latest"
+    },
+    "tooltip": {
+      "trip": "Trip",
+      "trips": "Trips",
+      "places": "Places",
+      "firstTrip": "First Trip",
+      "lastTrip": "Last Trip",
+      "hoangsa": "Hoàng Sa Islands",
+      "truongsa": "Trường Sa Islands",
+      "vietnam": "Vietnam"
+    },
+    "share": {
+      "error": "Error creating image. Please try again later.",
+      "text": "Check out my travel map on KAT Journey!",
+      "btn_share": "Share",
+      "btn_save": "Save Image",
+      "fallback": "Cannot share, automatically switching to download..."
+    }
   }
 }

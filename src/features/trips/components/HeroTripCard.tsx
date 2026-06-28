@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Trip, db } from "../../../db";
 import { useLiveQuery } from "dexie-react-hooks";
+import { getAvatarSvg } from "../../../utils/avatars";
 const HERO_IMAGES = [
   "https://images.unsplash.com/photo-1433086966358-54859d0ed716?q=80&w=1200&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=1200&auto=format&fit=crop",
@@ -32,12 +33,14 @@ export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
     return () => clearInterval(timer);
   }, [currentImageIdx]);
 
-  // Fetch real-time counts for this trip
-  const memberCount = useLiveQuery(
-    () => db.members.where("tripId").equals(trip.id!).count(),
+  // Fetch real-time members for this trip
+  const members = useLiveQuery(
+    () => db.members.where("tripId").equals(trip.id!).toArray(),
     [trip.id],
-    1
+    []
   );
+  const memberCount = members.length;
+
   const eventCount = useLiveQuery(
     () => db.events.where("tripId").equals(trip.id!).count(),
     [trip.id],
@@ -132,12 +135,23 @@ export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
                 {t("dashboard.hero.buddies", "Buddies")}
               </span>
               <div className="flex -space-x-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50">
-                  M
-                </div>
-                {memberCount > 1 && (
+                {members.slice(0, 2).map((member, i) => {
+                  const bgColors = ["bg-indigo-500", "bg-rose-500", "bg-emerald-500"];
+                  const colorClass = bgColors[i % bgColors.length];
+                  return (
+                    <div
+                      key={member.id || i}
+                      className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full ${colorClass} flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50 overflow-hidden`}
+                    >
+                      {member.avatar
+                        ? getAvatarSvg(member.avatar, "w-full h-full")
+                        : member.name.charAt(0).toUpperCase()}
+                    </div>
+                  );
+                })}
+                {memberCount > 2 && (
                   <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50">
-                    +{memberCount - 1}
+                    +{memberCount - 2}
                   </div>
                 )}
               </div>
@@ -187,17 +201,35 @@ export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
                 {t("dashboard.hero.places", "Places")}
               </span>
               <div className="flex -space-x-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-amber-500 flex items-center justify-center text-white border-2 border-black/50 overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=200&auto=format&fit=crop"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-500 flex items-center justify-center text-white border-2 border-black/50 overflow-hidden p-1 shadow-inner">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-full h-full drop-shadow-md"
+                  >
+                    <path
+                      d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
+                      fill="#93C5FD"
+                    />
+                    <path
+                      d="M12 21C16.9706 21 21 16.9706 21 12C21 11.0256 20.8451 10.0874 20.5582 9.2063C19.7891 9.71536 18.882 10 17.9259 10C15.2289 10 13 7.8203 13 5.18519C13 4.22554 13.2926 3.33618 13.8055 2.58557C13.2268 2.39659 12.6225 2.2963 12 2.2963C6.63842 2.2963 2.2963 6.63842 2.2963 12C2.2963 17.3616 6.63842 21.7037 12 21.7037V21Z"
+                      fill="#3B82F6"
+                    />
+                    <circle cx="8" cy="8" r="2" fill="#EFF6FF" />
+                  </svg>
                 </div>
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-teal-500 flex items-center justify-center text-white border-2 border-black/50 overflow-hidden hidden sm:flex">
-                  <img
-                    src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=200&auto=format&fit=crop"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white border-2 border-black/50 overflow-hidden hidden sm:flex p-1 shadow-inner">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-full h-full drop-shadow-md"
+                  >
+                    <path d="M2 20H22L12 4L2 20Z" fill="#A7F3D0" />
+                    <path d="M12 4L22 20H12V4Z" fill="#10B981" />
+                    <path d="M7 20H17L12 12L7 20Z" fill="#047857" />
+                  </svg>
                 </div>
                 <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-700 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50">
                   +{eventCount > 2 ? eventCount - 2 : 0}

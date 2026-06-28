@@ -202,6 +202,14 @@ function App() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
 
+  // Shared destination index for weather widgets across tabs
+  const [selectedDestIndex, setSelectedDestIndex] = useState(0);
+
+  // Reset dest index when trip changes
+  useEffect(() => {
+    setSelectedDestIndex(0);
+  }, [selectedTripId]);
+
   const remindersRef = React.useRef<HTMLDivElement>(null);
   const userMenuRef = React.useRef<HTMLDivElement>(null);
 
@@ -1231,6 +1239,8 @@ function App() {
                       onNavigateMore={navigateToMore}
                       onOpenInbox={() => setIsAppInboxOpen(true)}
                       isReadOnly={isReadOnly}
+                      selectedDestIndex={selectedDestIndex}
+                      onSelectDestIndex={setSelectedDestIndex}
                     />
                   )}
                   <React.Suspense
@@ -1245,6 +1255,8 @@ function App() {
                         trip={trip}
                         events={events ?? []}
                         expenses={expenses ?? []}
+                        selectedDestIndex={selectedDestIndex}
+                        onSelectDestIndex={setSelectedDestIndex}
                         onAddExpense={(date, eventId) => {
                           setExpenseInitialAddState({ date, eventId });
                           setActiveTab("expenses");

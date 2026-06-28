@@ -706,12 +706,16 @@ export function TimelineScreen({
   trip,
   events,
   expenses = [],
+  selectedDestIndex,
+  onSelectDestIndex,
   onAddExpense,
   isReadOnly,
 }: {
   trip: Trip;
   events: EventItem[];
   expenses?: Expense[];
+  selectedDestIndex?: number;
+  onSelectDestIndex?: (index: number) => void;
   onAddExpense?: (date: string, eventId: number) => void;
   isReadOnly?: boolean;
 }) {
@@ -1176,11 +1180,10 @@ export function TimelineScreen({
           </div>
 
           <WeatherWidget
-            destination={trip.location}
-            latitude={trip.latitude}
-            longitude={trip.longitude}
-            days={tripDays.length}
-            startDate={trip.startDate}
+            trip={trip}
+            selectedDestIndex={selectedDestIndex}
+            onSelectDestIndex={onSelectDestIndex}
+            days={Math.max(3, tripDays.length + 1)}
           />
 
           {/* General Backup Widget */}
@@ -1195,7 +1198,7 @@ export function TimelineScreen({
                     {t("timeline.generalBackup")}
                   </h4>
                   <p className="text-[11px] text-slate-500/80 dark:text-slate-400 font-medium">
-                    Áp dụng cho toàn bộ chuyến đi
+                    {t("timeline.generalBackupDesc", "Áp dụng cho toàn bộ chuyến đi")}
                   </p>
                 </div>
               </div>
@@ -1231,7 +1234,7 @@ export function TimelineScreen({
                         }}
                         className="text-[11px] font-bold text-kat-teal hover:underline whitespace-nowrap"
                       >
-                        Chi tiết &rarr;
+                        {t("common.details", "Chi tiết")} &rarr;
                       </button>
                     </div>
                   ))}
@@ -1247,7 +1250,7 @@ export function TimelineScreen({
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 text-indigo-600 dark:text-indigo-400 font-bold text-[13px] hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition-colors motion-press"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
-                Thêm phương án
+                {t("timeline.addTripBackupPlan", "Thêm phương án")}
               </button>
             )}
           </div>

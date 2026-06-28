@@ -34,6 +34,7 @@ import {
   Calendar01Icon,
   Coins01Icon,
   Location01Icon,
+  Navigation02Icon,
   ColorsIcon,
   Sun01Icon,
   Moon01Icon,
@@ -915,7 +916,7 @@ export function SettingsSheet({
                     className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-violet-50 dark:hover:bg-violet-500/10 active:scale-[0.98] focus:outline-none"
                   >
                     <div className="flex items-center gap-4 relative z-10">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-400">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-100 to-violet-50 text-violet-600 shadow-inner dark:from-violet-900/40 dark:to-violet-800/20 dark:text-violet-400 border border-violet-200 dark:border-violet-800/60 ring-1 ring-white/50 dark:ring-white/5">
                         <HugeiconsIcon
                           icon={ColorsIcon}
                           className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -942,7 +943,7 @@ export function SettingsSheet({
                     className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-sky-50 dark:hover:bg-sky-500/10 active:scale-[0.98] focus:outline-none"
                   >
                     <div className="flex items-center gap-4 relative z-10">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-600 dark:bg-sky-900/40 dark:text-sky-400">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-100 to-sky-50 text-sky-600 shadow-inner dark:from-sky-900/40 dark:to-sky-800/20 dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 ring-1 ring-white/50 dark:ring-white/5">
                         <HugeiconsIcon
                           icon={LanguageSkillIcon}
                           className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -966,7 +967,7 @@ export function SettingsSheet({
                   {/* Temperature Unit */}
                   <div className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-orange-50 dark:hover:bg-orange-500/10">
                     <div className="flex items-center gap-4 relative z-10">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-600 dark:bg-orange-900/40 dark:text-orange-400">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-orange-100 to-orange-50 text-orange-600 shadow-inner dark:from-orange-900/40 dark:to-orange-800/20 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60 ring-1 ring-white/50 dark:ring-white/5">
                         <HugeiconsIcon
                           icon={Sun01Icon}
                           className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -992,9 +993,9 @@ export function SettingsSheet({
                   {/* Distance Unit */}
                   <div className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-cyan-50 dark:hover:bg-cyan-500/10">
                     <div className="flex items-center gap-4 relative z-10">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-100 text-cyan-600 dark:bg-cyan-900/40 dark:text-cyan-400">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-100 to-cyan-50 text-cyan-600 shadow-inner dark:from-cyan-900/40 dark:to-cyan-800/20 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800/60 ring-1 ring-white/50 dark:ring-white/5">
                         <HugeiconsIcon
-                          icon={Location01Icon}
+                          icon={Navigation02Icon}
                           className="h-5 w-5 transition-transform group-hover:scale-110"
                         />
                       </div>
@@ -1171,7 +1172,7 @@ export function SettingsSheet({
                     className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-blue-50 dark:hover:bg-blue-500/10 active:scale-[0.98] focus:outline-none"
                   >
                     <div className="flex items-center gap-4 relative z-10">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 shadow-inner dark:from-blue-900/40 dark:to-blue-800/20 dark:text-blue-400 border border-blue-200 dark:border-blue-800/60 ring-1 ring-white/50 dark:ring-white/5">
                         <HugeiconsIcon
                           icon={LockIcon}
                           className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -1198,7 +1199,7 @@ export function SettingsSheet({
                     className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-fuchsia-50 dark:hover:bg-fuchsia-500/10 active:scale-[0.98] focus:outline-none"
                   >
                     <div className="flex items-center gap-4 relative z-10">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-fuchsia-100 text-fuchsia-600 dark:bg-fuchsia-900/40 dark:text-fuchsia-400">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-fuchsia-100 to-fuchsia-50 text-fuchsia-600 shadow-inner dark:from-fuchsia-900/40 dark:to-fuchsia-800/20 dark:text-fuchsia-400 border border-fuchsia-200 dark:border-fuchsia-800/60 ring-1 ring-white/50 dark:ring-white/5">
                         <HugeiconsIcon
                           icon={InformationCircleIcon}
                           className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -1225,7 +1226,7 @@ export function SettingsSheet({
                     className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-amber-50 dark:hover:bg-amber-500/10 active:scale-[0.98] focus:outline-none"
                   >
                     <div className="flex items-center gap-4 relative z-10">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 text-amber-600 shadow-inner dark:from-amber-900/40 dark:to-amber-800/20 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60 ring-1 ring-white/50 dark:ring-white/5">
                         <HugeiconsIcon
                           icon={Coffee01Icon}
                           className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -1252,7 +1253,7 @@ export function SettingsSheet({
                     className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-sky-50 dark:hover:bg-sky-500/10 active:scale-[0.98] focus:outline-none"
                   >
                     <div className="flex items-center gap-4 relative z-10">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-600 dark:bg-sky-900/40 dark:text-sky-400">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-100 to-sky-50 text-sky-600 shadow-inner dark:from-sky-900/40 dark:to-sky-800/20 dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 ring-1 ring-white/50 dark:ring-white/5">
                         <HugeiconsIcon
                           icon={Mail01Icon}
                           className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -1276,7 +1277,7 @@ export function SettingsSheet({
                   {/* Version */}
                   <div className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-slate-50 dark:hover:bg-slate-500/10">
                     <div className="flex items-center gap-4 relative z-10">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800/40 dark:text-slate-400">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 text-slate-600 shadow-inner dark:from-slate-800/40 dark:to-slate-700/40 dark:text-slate-400 border border-slate-200 dark:border-slate-700/60 ring-1 ring-white/50 dark:ring-white/5">
                         <HugeiconsIcon
                           icon={PackageIcon}
                           className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -1806,6 +1807,9 @@ export function SettingsSheet({
                     </p>
                     <p className="text-[12px] font-medium leading-relaxed text-slate-400 dark:text-slate-500">
                       {t("settings.aboutView.techDesc2")}
+                    </p>
+                    <p className="text-[12px] font-medium leading-relaxed text-slate-400 dark:text-slate-500 mt-2">
+                      {t("settings.aboutView.techDesc3")}
                     </p>
                   </div>
 

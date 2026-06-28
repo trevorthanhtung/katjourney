@@ -134,7 +134,19 @@ export function SharedTripIdentityModal({
                   <button
                     key={m.id}
                     onClick={() => {
-                      const guest = { name: m.name, role: m.role, isGuest: true, canEdit: true };
+                      const roleLower = (m.role || "").toLowerCase();
+                      const isViewer =
+                        roleLower.includes("xem") ||
+                        roleLower.includes("trẻ em") ||
+                        roleLower.includes("khách") ||
+                        roleLower.includes("chỉ xem") ||
+                        roleLower.includes("viewer");
+                      const guest = {
+                        name: m.name,
+                        role: m.role,
+                        isGuest: true,
+                        canEdit: !isViewer,
+                      };
                       saveIdentity(guest, trip.id);
                       localStorage.removeItem("kat_pending_swap_" + trip.id);
                       setCurrentUser(guest);
@@ -164,7 +176,11 @@ export function SharedTripIdentityModal({
 
             <button
               onClick={() => {
-                const guest = { name: "Người xem", isGuest: true, canEdit: false };
+                const guest = {
+                  name: (t("share.viewer") || "Người xem") as string,
+                  isGuest: true,
+                  canEdit: false,
+                };
                 saveIdentity(guest, trip.id);
                 localStorage.removeItem("kat_pending_swap_" + trip.id);
                 setCurrentUser(guest);

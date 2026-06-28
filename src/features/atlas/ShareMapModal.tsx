@@ -1,0 +1,261 @@
+import React, { useRef, useState, useMemo } from "react";
+import { motion } from "framer-motion";
+import { toPng } from "html-to-image";
+import { useTranslation } from "react-i18next";
+import { geoEquirectangular, geoPath } from "d3-geo";
+
+interface ShareMapModalProps {
+  onClose: () => void;
+  geographies: any[];
+  visitedCountries: string[];
+  totalTrips: number;
+}
+
+export function ShareMapModal({
+  onClose,
+  geographies,
+  visitedCountries,
+  totalTrips,
+}: ShareMapModalProps) {
+  const { t } = useTranslation();
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  // SVG dimensions for the flat map
+  const width = 800;
+  const height = 450;
+
+  const { projection, pathGenerator } = useMemo(() => {
+    const proj = geoEquirectangular().fitSize([width, height], {
+      type: "FeatureCollection",
+      features: geographies,
+    } as any);
+    const pathGen = geoPath().projection(proj);
+    return { projection: proj, pathGenerator: pathGen };
+  }, [geographies, width, height]);
+
+  const percentage = ((visitedCountries.length / 195) * 100).toFixed(1);
+
+  const handleDownload = async (existingDataUrl?: string) => {
+    if (!mapRef.current) return;
+    setIsExporting(true);
+    try {
+      const dataUrl =
+        existingDataUrl ||
+        (await toPng(mapRef.current, {
+          cacheBust: true,
+          pixelRatio: 2,
+          style: {
+            transform: "scale(1)",
+            transformOrigin: "top left",
+          },
+        }));
+
+      const link = document.createElement("a");
+      link.download = `kat-journey-map-${new Date().getTime()}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Failed to export map:", err);
+      alert(t("atlas.share.error", "Có lỗi xảy ra khi tạo ảnh. Vui lòng thử lại sau."));
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleNativeShare = async () => {
+    if (!mapRef.current) return;
+    setIsExporting(true);
+    try {
+      await new Promise((r) => setTimeout(r, 100));
+      const dataUrl = await toPng(mapRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        style: {
+          transform: "scale(1)",
+          transformOrigin: "top left",
+        },
+      });
+
+      if (navigator.canShare) {
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], "my-travel-map.png", { type: blob.type });
+
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: "KAT Journey",
+            text: t("atlas.share.text", "Xem bản đồ du lịch của tôi trên KAT Journey!"),
+            files: [file],
+          });
+          return;
+        }
+      }
+
+      // Fallback to download if sharing is not supported
+      await handleDownload(dataUrl);
+    } catch (err) {
+      console.error("Share failed", err);
+      alert(t("atlas.share.fallback", "Không thể chia sẻ, tự động chuyển sang tải ảnh..."));
+      handleDownload();
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+      {/* Close button */}
+      <button
+        onClick={onClose}
+        className="absolute top-6 right-6 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors z-10"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+
+      {/* The Map Card (This will be exported) */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="w-full max-w-lg mx-auto bg-gradient-to-b from-[#0B1727] to-[#040A12] rounded-[2rem] overflow-hidden shadow-[0_0_80px_rgba(6,182,212,0.15)] border border-cyan-500/20 ring-1 ring-white/5 relative"
+      >
+        <div
+          ref={mapRef}
+          className="bg-gradient-to-b from-[#0B1727] to-[#040A12] w-full flex flex-col relative overflow-hidden"
+          style={{ aspectRatio: "4/5" }} // Instagram portrait friendly
+        >
+          {/* Header */}
+          <div className="flex items-center justify-center gap-2 pt-8 pb-4 relative z-10">
+            <img
+              src="/asset/logo.png"
+              alt="KAT Journey"
+              className="w-6 h-6 rounded-md object-cover"
+            />
+            <span className="text-white font-bold text-lg tracking-wide">KAT Journey</span>
+          </div>
+
+          {/* Map Area */}
+          <div className="flex-1 w-full relative flex items-center justify-center px-4">
+            {/* Soft background glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-cyan-500/30 rounded-full blur-[100px] pointer-events-none"></div>
+
+            <svg
+              viewBox={`0 0 ${width} ${height}`}
+              className="w-full h-full drop-shadow-xl relative z-10"
+              style={{ overflow: "visible" }}
+            >
+              <g>
+                {geographies.map((geo) => {
+                  const isVisited = visitedCountries.includes(geo.id);
+                  return (
+                    <path
+                      key={geo.id || geo.properties.name}
+                      d={pathGenerator(geo) || ""}
+                      fill={isVisited ? "#22d3ee" : "rgba(255,255,255,0.02)"}
+                      stroke={isVisited ? "#0891b2" : "rgba(255,255,255,0.05)"}
+                      strokeWidth={isVisited ? 1 : 0.5}
+                      className="transition-colors duration-300"
+                    />
+                  );
+                })}
+              </g>
+            </svg>
+          </div>
+
+          {/* Stats Bar */}
+          <div className="mt-auto px-6 pb-8 pt-4">
+            <div className="grid grid-cols-3 gap-4 border-t border-cyan-500/20 pt-6">
+              <div className="flex flex-col items-center justify-center border-r border-cyan-500/20">
+                <span className="text-3xl font-mono tracking-tight font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-cyan-200 mb-1">
+                  {visitedCountries.length}{" "}
+                  <span className="text-sm font-sans font-normal text-cyan-500/60">/ 195</span>
+                </span>
+                <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-cyan-500/60">
+                  {t("dashboard.stats.countries", "Countries")}
+                </span>
+              </div>
+              <div className="flex flex-col items-center justify-center border-r border-cyan-500/20">
+                <span className="text-3xl font-mono tracking-tight font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-cyan-200 mb-1">
+                  {percentage}%
+                </span>
+                <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-cyan-500/60">
+                  {t("dashboard.stats.world", "World")}
+                </span>
+              </div>
+              <div className="flex flex-col items-center justify-center">
+                <span className="text-3xl font-mono tracking-tight font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-cyan-200 mb-1">
+                  {totalTrips}
+                </span>
+                <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-cyan-500/60">
+                  {t("atlas.stats.trips", "Trips")}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Action Buttons (Not Exported) */}
+      <div className="mt-8 flex gap-4 w-full max-w-lg justify-center">
+        <button
+          onClick={handleNativeShare}
+          disabled={isExporting}
+          className="flex-1 flex flex-col items-center justify-center py-4 bg-slate-800/50 hover:bg-slate-700/50 border border-white/10 backdrop-blur-md rounded-2xl transition-colors gap-2 text-white/80 disabled:opacity-50"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+            />
+          </svg>
+          <span className="text-xs font-semibold tracking-wider uppercase">
+            {t("atlas.share.btn_share", "Chia sẻ")}
+          </span>
+        </button>
+        <button
+          onClick={() => handleDownload()}
+          disabled={isExporting}
+          className="flex-1 flex flex-col items-center justify-center py-4 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50 rounded-2xl transition-all gap-2 shadow-[0_0_30px_rgba(6,182,212,0.3)] backdrop-blur-md disabled:opacity-50"
+        >
+          {isExporting ? (
+            <svg className="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          ) : (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              />
+            </svg>
+          )}
+          <span className="text-xs font-semibold tracking-wider uppercase">
+            {t("atlas.share.btn_save", "Tải ảnh")}
+          </span>
+        </button>
+      </div>
+    </div>
+  );
+}

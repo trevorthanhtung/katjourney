@@ -77,6 +77,18 @@
           "title": "Hapus Akun",
           "desc": "Hapus akun & data secara permanen"
         }
+      },
+      "temperature": {
+        "title": "Suhu",
+        "desc": "Satuan suhu pilihan"
+      },
+      "distance": {
+        "title": "Jarak",
+        "desc": "Ditampilkan dalam kilometer atau mil"
+      },
+      "optimizeRoute": {
+        "title": "Optimalkan rute",
+        "desc": "Secara otomatis mengambil titik awal/akhir sebagai akomodasi"
       }
     },
     "language": {
@@ -119,7 +131,8 @@
       "techTitle": "Teknologi & Lisensi",
       "techDesc1": "KAT Journey dibangun menggunakan React, Vite, Dexie, dan Supabase. Sistem ini hanya menggunakan Supabase untuk sinkronisasi dan berbagi ketika Anda aktif login.",
       "techDesc2": "Kami ingin mengucapkan terima kasih yang tulus kepada para penulis dan komunitas open-source yang telah menemani proyek ini.",
-      "madeBy": "dibuat oleh"
+      "madeBy": "dibuat oleh",
+      "techDesc3": "UI and features inspired by TREK & Stippl."
     },
     "languageView": {
       "desc": "Pilih bahasa tampilan untuk KAT Journey."
@@ -234,6 +247,10 @@
       "syncSuccess": "Data sudah yang terbaru.",
       "syncSuccessCloud": "Data berhasil disinkronkan ke Cloud!",
       "syncFailed": "Gagal menyinkronkan: "
+    },
+    "section": {
+      "system": "Sistem",
+      "info": "Informasi & Dukungan"
     }
   },
   "welcomeScreen": {
@@ -372,7 +389,8 @@
       "onAllJourneys": "Pada semua perjalanan",
       "distance": "Jarak",
       "km": "km",
-      "noFlights": "Belum ada penerbangan"
+      "noFlights": "Belum ada penerbangan",
+      "world": "Dunia"
     },
     "widgets": {
       "timezones": "Zona Waktu",
@@ -393,7 +411,17 @@
       "travelers": "Pelancong",
       "destinations": "Destinasi",
       "daysLeft": "HARI LAGI"
-    }
+    },
+    "emptyTitle": "Belum ada perjalanan",
+    "emptyDesc": "Rencanakan secara detail, kemasi barang bawaan Anda, dan kelola pengeluaran Anda dengan cerdas untuk perjalanan berikutnya.",
+    "emptyFeature1": "Jadwal",
+    "emptyFeature1Desc": "Detailnya setiap hari",
+    "emptyFeature2": "Pengeluaran",
+    "emptyFeature2Desc": "Bagi tagihannya",
+    "emptyFeature3": "Mempersiapkan",
+    "emptyFeature3Desc": "Bagasi & barang bawaan",
+    "emptyCreateBtn": "Buat perjalanan pertama Anda",
+    "trips": "Perjalanan"
   },
   "archive": {
     "title": "Kenangan",
@@ -444,7 +472,8 @@
       "Desember"
     ],
     "dateFmt": "{{day}} {{month}} {{year}}",
-    "currencyLabel": "Mata Uang Dasar"
+    "currencyLabel": "Mata Uang Dasar",
+    "addDestination": "Tambah destinasi"
   },
   "toast": {
     "invalidFileFormat": "Format file KAT Journey tidak valid.",
@@ -617,7 +646,10 @@
     "viewReview": "Lihat Ulasan",
     "viewSummary": "Lihat Ringkasan",
     "weatherError": "Tidak dapat memuat cuaca",
-    "writeJournal": "Tulis Jurnal"
+    "writeJournal": "Tulis Jurnal",
+    "hero": {
+      "destinations_other": "{{location}} & {{count}} lainnya"
+    }
   },
   "trips": {
     "exampleLocation": "Cth: Phu Quoc"
@@ -822,7 +854,28 @@
     "statusCompleted": "Selesai",
     "statusPending": "Belum selesai",
     "valueYes": "Ya",
-    "valueNo": "Tidak"
+    "valueNo": "Tidak",
+    "includeJournals": "Termasuk buletin",
+    "includeChecklist": "Termasuk daftar persiapan",
+    "includeBackup": "Termasuk rencana cadangan",
+    "includeDocs": "Termasuk dokumen & pemesanan",
+    "docWarning": "Dokumen mungkin berisi kode pemesanan, tiket, nomor telepon, atau tautan pribadi. Hanya aktifkan jika Anda benar-benar memercayai penerima tautan.",
+    "pinProtect": "Dilindungi oleh kode PIN",
+    "pinDesc": "Pemirsa harus memasukkan PIN yang benar untuk membuka",
+    "pinReady": "Kode PIN sudah siap",
+    "pinError": "Silakan masukkan keempat digit tersebut",
+    "creatingLink": "Membuat tautan...",
+    "joinTrip": "Bergabunglah dalam perjalanan \"{{trip}}\" bersama saya di KAT Journey!",
+    "syncingChanges": "Secara otomatis menyinkronkan perubahan terbaru...",
+    "autoSyncLast": "Sinkronisasi otomatis bila ada perubahan. Terakhir kali:",
+    "justNow": "Baru saja selesai",
+    "syncing": "Menyinkronkan...",
+    "syncData": "Sinkronisasi data",
+    "turningOff": "Mematikan...",
+    "turnOff": "Matikan berbagi",
+    "viewer": "Penonton",
+    "noMembersTitle": "Belum ada anggota",
+    "noMembersDesc": "Tambahkan anggota untuk membagi biaya, menyiapkan bagasi, dan menyimpan peran dalam perjalanan."
   },
   "weather": {
     "packingRain": "Hujan di tujuan Anda, jangan lupa payung!",
@@ -845,25 +898,25 @@
     "today": "Hari ini",
     "currentTemp": "Saat ini: {{temp}}°",
     "outdoorIdealTitle": "Cuaca ideal untuk aktivitas luar ruangan",
-    "outdoorIdealDesc": "Cerah dan langit bersih. Cocok untuk pantai, hiking, camping, atau fotografi. Jangan lupa tabir surya!",
+    "outdoorIdealDesc": "Cerah dan langit bersih. Cocok untuk pergi ke pantai, mendaki gunung, berkemah, atau fotografi luar ruangan. Jangan lupa tabir surya dan kacamata hitam!",
     "coolPleasantTitle": "Cuaca sejuk dan menyenangkan",
-    "coolPleasantDesc": "Mendung dan sejuk, tidak terlalu panas. Cocok untuk jalan-jalan di kota tua atau pasar malam.",
-    "foggyTitle": "Cuaca berkabut, hati-hati di jalan gunung",
-    "foggyDesc": "Udara dingin dengan kabut indah. Cocok untuk kafe romantis dan hot pot. Jika berkendara, nyalakan lampu peringatan.",
+    "coolPleasantDesc": "Berawan dan sejuk, tidak terlalu panas. Bagus untuk berjalan-jalan di kota tua, pasar malam, atau jalan-jalan tanpa merasa kelelahan.",
+    "foggyTitle": "Cuaca berkabut, hati-hati di jalur pegunungan",
+    "foggyDesc": "Udara dingin dengan kabut yang indah. Sempurna untuk kafe romantis dan hot pot. Jika mengemudi, gunakan lampu peringatan dan berkendara perlahan.",
     "rainyTitle": "Hujan, beralih ke aktivitas dalam ruangan",
-    "rainyDesc": "Basah dan hujan. Prioritaskan museum, taman bermain indoor, akuarium, kafe, atau membuat suvenir.",
-    "stormTitle": "Badai petir berbahaya, tetap di dalam",
-    "stormDesc": "Cuaca buruk dengan badai petir berbahaya. Hindari berperahu, berenang, atau ke hutan.",
+    "rainyDesc": "Basah dan hujan. Anda harus memprioritaskan mengunjungi museum, taman hiburan dalam ruangan, akuarium, kafe, atau membuat suvenir.",
+    "stormTitle": "Badai petir berbahaya, tetap di dalam ruangan",
+    "stormDesc": "Cuaca buruk dengan badai petir yang berbahaya. Hindari berperahu, berenang, atau pergi ke hutan. Beli makanan dan mainkan permainan papan atau tonton film di kamar.",
     "normalTitle": "Cuaca bagus untuk liburan",
-    "normalDesc": "Kondisi cuaca normal. Ikuti jadwal untuk merencanakan aktivitas.",
+    "normalDesc": "Kondisi cuaca normal. Ikuti jadwal harian untuk merencanakan aktivitas Anda dengan masuk akal.",
     "uvLow": "Rendah",
     "uvMedium": "Sedang",
     "uvHigh": "Tinggi",
     "uvVeryHigh": "Sangat Tinggi",
     "uvExtreme": "Ekstrem",
     "currentWeather": "Cuaca Saat Ini",
-    "high": "Tertinggi",
-    "low": "Terendah",
+    "high": "Maks",
+    "low": "Min",
     "compareLocation": "Bandingkan dengan lokasi Anda",
     "yourLocation": "Lokasi Anda",
     "sameTemp": "Sama dengan lokasi Anda",
@@ -1338,7 +1391,8 @@
     "catEntertainment": "Hiburan",
     "catPreparation": "Persiapan",
     "catOther": "Lainnya",
-    "catCustom": "Lainnya..."
+    "catCustom": "Lainnya...",
+    "baseCurrency": "(Koin asli)"
   },
   "more": {
     "workspaceTitle": "Ruang Perjalanan",
@@ -1495,7 +1549,13 @@
     "bannerDirectEdit": "Edit Langsung",
     "bannerSuggestMode": "Mode Saran",
     "bannerDirectEditDesc": "Peran \"{{role}}\": Anda memiliki izin untuk mengedit langsung bagian yang ditugaskan.",
-    "bannerSuggestModeDesc": "Perubahan Anda akan dikirim ke pemilik perjalanan untuk ditinjau."
+    "bannerSuggestModeDesc": "Perubahan Anda akan dikirim ke pemilik perjalanan untuk ditinjau.",
+    "headerShare": "Membagikan",
+    "switchUser": "Pilih pengguna lagi",
+    "exit": "KELUAR",
+    "secureData": "Data dibagikan dengan aman melalui KAT Journey.",
+    "sharedUser": "Orang yang dibagikan",
+    "closeBanner": "Tutup pemberitahuan"
   },
   "trip": {
     "upcoming": "Akan datang",
@@ -1503,12 +1563,68 @@
     "past": "Berlalu",
     "status": "Status",
     "journey": "Perjalanan",
-    "completed": "Selesai"
+    "completed": "Selesai",
+    "locationAndOthers": "{{location}} & {{count}} lainnya"
   },
   "journal": {
     "titleError": "Silakan masukkan judul.",
     "contentError": "Silakan masukkan konten.",
-    "defaultTitle": "Jurnal perjalanan"
+    "defaultTitle": "Jurnal perjalanan",
+    "title": "Buletin perjalanan",
+    "subtitle": "Simpan emosi, cerita, dan momen berkesan.",
+    "tabPosts": "Buletin",
+    "tabChat": "Mengobrol",
+    "postBtn": "Posting artikel",
+    "statPosts": "Artikel diposting",
+    "statPostsCount": "artikel",
+    "statPostsEmpty": "Belum ada postingan",
+    "statMood": "emosi terbaru",
+    "statLastWrite": "Rekaman terbaru",
+    "emptyDesc": "Abadikan momen agar perjalanan memiliki cerita tersendiri.",
+    "formTitleAdd": "Posting artikel buletin",
+    "formTitleEdit": "Edit artikel buletin",
+    "cancel": "Membatalkan",
+    "submit": "Posting artikel",
+    "dateLabel": "Tanggal dicatat",
+    "titleLabel": "Judul artikel *",
+    "titlePlaceholder": "Contoh: Hari yang mengesankan di Vung Tau",
+    "locLoading": "Mengambil posisi...",
+    "locCurrent": "Tinggal",
+    "locRemove": "Hapus lokasi",
+    "locAttach": "Ketuk untuk melampirkan lokasi",
+    "locUnknown": "Lokasi tidak diketahui",
+    "moodLabel": "Perasaan hari ini",
+    "contentLabel": "Ceritamu *",
+    "contentPlaceholder": "Rekam emosi, cerita, makanan lezat, atau momen tak terlupakan...",
+    "imgUploading": "Memuat foto...",
+    "imgAttach": "Lampirkan gambar",
+    "promptTitle": "Saran untuk menulis cepat",
+    "menuEdit": "Memperbaiki",
+    "menuDelete": "Menghapus",
+    "delConfirmTitle": "Hapus postingan ini?",
+    "delConfirmDesc": "Artikel tersebut tidak akan muncul lagi di buletin. Setelah dihapus, tindakan tersebut tidak dapat dibatalkan.",
+    "delConfirmBtn": "Hapus postingan",
+    "emptyTitle": "Belum ada postingan",
+    "emptySubtitle": "Mulailah dengan perasaan, tempat yang pernah Anda kunjungi, atau momen yang ingin Anda kenang.",
+    "writeNow": "Rekam sekarang →",
+    "reactionBtn": "Lepaskan emosi",
+    "mood_good": "Seru",
+    "mood_okay": "Tenang",
+    "mood_great": "Bersemangat",
+    "mood_very_bad": "Lelah",
+    "mood_bad": "Kejutan",
+    "mood_default": "Berkesan",
+    "promptEmpty1": "Apa yang paling ingin kamu ingat hari ini?",
+    "promptEmpty2": "Apakah ada momen yang ingin Anda abadikan?",
+    "promptEmpty3": "Hidangan, tujuan, atau orang yang Anda temui?",
+    "promptEmpty4": "Apa yang membuat perjalanan ini berbeda?",
+    "promptSugg1": "Hal yang paling ingin kuingat",
+    "promptSugg2": "Hidangan yang mengesankan",
+    "promptSugg3": "Orang yang Anda temui",
+    "promptSugg4": "Momen bahagia",
+    "promptSugg5": "Sesuatu yang ingin kuingat selamanya",
+    "promptPrefix": "Menyarankan:",
+    "swipe": "Geser secara horizontal ›"
   },
   "pwa": {
     "newVersion": "Versi baru tersedia!",
@@ -1576,5 +1692,54 @@
     "itinerary": "Itinerary",
     "expenses": "Expenses",
     "prepAndDocs": "Preparation & Docs"
+  },
+  "sharedVia": "Dibagikan melalui",
+  "madeBy": "Dibuat oleh",
+  "atlas": {
+    "stats": {
+      "trips": "Perjalanan",
+      "places": "Tempat",
+      "cities": "Kota",
+      "days": "Hari",
+      "lastTrip": "Perjalanan Terakhir",
+      "tripsIn": "Perjalanan di",
+      "first": "Pertama",
+      "latest": "Terbaru"
+    },
+    "tooltip": {
+      "trip": "Perjalanan",
+      "trips": "Perjalanan",
+      "places": "Tempat",
+      "firstTrip": "Perjalanan Pertama",
+      "lastTrip": "Perjalanan Terakhir",
+      "hoangsa": "Kepulauan Hoàng Sa",
+      "truongsa": "Kepulauan Trường Sa",
+      "vietnam": "Vietnam"
+    },
+    "share": {
+      "error": "Terjadi kesalahan saat membuat gambar. Silakan coba lagi nanti.",
+      "text": "Lihat peta perjalanan saya di KAT Journey!",
+      "btn_share": "Bagikan",
+      "btn_save": "Simpan Gambar",
+      "fallback": "Tidak dapat membagikan, otomatis beralih ke unduh gambar..."
+    }
+  },
+  "chat": {
+    "title": "Obrolan Grup",
+    "emptyTitle": "Belum ada pesan",
+    "emptySubtitle": "Jadilah orang pertama yang menyapa di obrolan grup!",
+    "inputPlaceholder": "Masukkan pesan...",
+    "connectedAs": "Anda terhubung sebagai:",
+    "openBtn": "Buka obrolan",
+    "tripCreator": "Pencipta perjalanan",
+    "loading": "Memuat pesan...",
+    "headerTitle": "Dialog Perjalanan",
+    "chattingAs": "Mengobrol:",
+    "today": "Hari ini",
+    "yesterday": "Kemarin"
+  },
+  "offline": {
+    "title": "Anda sedang luring",
+    "subtitle": "- Beberapa fitur memerlukan koneksi jaringan"
   }
 }

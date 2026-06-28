@@ -108,7 +108,7 @@ import { SharedTripPinGate } from "./components/SharedTripPinGate";
 import { SharedTripIdentityModal } from "./components/SharedTripIdentityModal";
 
 export default function SharedTripScreen({ token }: { token: string }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   useTheme();
   const {
     enteredPin,
@@ -321,7 +321,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
         // Add to front
         list.unshift({
           token,
-          title: data.trip.title || data.trip.name || "Chuyến đi không tên",
+          title: data.trip.title || data.trip.name || t("share.unnamedTrip", "Chuyến đi không tên"),
           date: dateStr,
           timestamp: Date.now(),
         });
@@ -1094,7 +1094,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     activities={activities}
                     changeRequests={changeRequests}
                     members={members}
-                    guestName={currentUser?.name || "Khách"}
+                    guestName={currentUser?.name || t("common.guest", "Khách")}
                     expenses={expenses}
                     backupPlans={backupPlans}
                     trip={trip}
@@ -1149,13 +1149,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 </div>
 
                 {/* 2. Weather Forecast Widget */}
-                <WeatherWidget
-                  destination={trip.destination || trip.location}
-                  latitude={trip.latitude}
-                  longitude={trip.longitude}
-                  days={tripDays.length || 3}
-                  startDate={trip.startDate}
-                />
+                <WeatherWidget trip={trip} days={Math.max(3, tripDays.length)} />
 
                 {/* 3. Shared General Backup Plans Widget */}
                 {data.includeBackupPlans && (
@@ -1378,7 +1372,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               checklist={checklist}
               expenses={expenses}
               changeRequests={changeRequests}
-              guestName={currentUser?.name || "Khách"}
+              guestName={currentUser?.name || t("common.guest", "Khách")}
             />
           )}
 
@@ -1393,7 +1387,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 changeRequests={changeRequests}
                 members={members}
                 events={activities}
-                guestName={currentUser?.name || "Khách"}
+                guestName={currentUser?.name || t("common.guest", "Khách")}
               />
             )}
 
@@ -1447,7 +1441,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     checklist={checklist}
                     changeRequests={changeRequests}
                     members={members}
-                    guestName={currentUser?.name || "Khách"}
+                    guestName={currentUser?.name || t("common.guest", "Khách")}
                   />
                 )}
 
@@ -1465,7 +1459,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     mode={documentsMode}
                     documents={travelDocuments}
                     changeRequests={changeRequests}
-                    guestName={currentUser?.name || "Khách"}
+                    guestName={currentUser?.name || t("common.guest", "Khách")}
                   />
                 )}
             </div>
@@ -1480,7 +1474,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 mode={journalsMode}
                 journals={journals}
                 changeRequests={changeRequests}
-                guestName={currentUser?.name || "Khách"}
+                guestName={currentUser?.name || t("common.guest", "Khách")}
                 members={members}
                 renderChatBox={
                   currentUser
@@ -1499,8 +1493,39 @@ export default function SharedTripScreen({ token }: { token: string }) {
         </div>
 
         {/* Footer */}
-        <div className="mt-8 text-center pb-8">
-          <p className="text-[13px] font-medium text-slate-400">{t("sharedScreen.secureData")}</p>
+        <div className="mt-12 text-center pb-12 flex flex-col items-center gap-4">
+          <a
+            href="https://katjourney.vercel.app"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center justify-center gap-2.5 rounded-full bg-white px-5 py-2.5 shadow-[0_2px_8px_rgb(0,0,0,0.06)] border border-slate-100 hover:shadow-[0_4px_16px_rgb(0,0,0,0.08)] transition-all cursor-pointer group active:scale-95 dark:bg-[#111A31] dark:border-slate-800"
+          >
+            <div className="w-6 h-6 rounded flex items-center justify-center shrink-0 bg-white border border-slate-200 dark:border-slate-700 dark:bg-slate-800 overflow-hidden">
+              <img
+                src="/asset/favicons/favicon-32x32.png"
+                alt="KAT"
+                className="w-4 h-4 object-contain"
+              />
+            </div>
+            <span className="text-[15px] font-medium text-slate-500 dark:text-slate-400">
+              {t("sharedVia")}{" "}
+              <strong className="font-extrabold text-kat-dark dark:text-white">KAT Journey</strong>
+            </span>
+          </a>
+
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-[13px] font-medium text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5 mt-1">
+              {t("madeBy")}{" "}
+              <a
+                href="https://tranthanhtung-trevor.vercel.app/"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-slate-600 dark:hover:text-slate-300 transition-colors font-bold text-slate-500 dark:text-slate-400 hover:underline"
+              >
+                thanhtungg.
+              </a>
+            </p>
+          </div>
         </div>
       </main>
 
@@ -1657,7 +1682,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           backupPlans={backupPlans}
           changeRequests={changeRequests}
           mode={backupPlansMode || (canRequestEdit ? "request_edit" : "view")}
-          guestName={currentUser?.name || "Khách"}
+          guestName={currentUser?.name || t("common.guest", "Khách")}
         />
       )}
 

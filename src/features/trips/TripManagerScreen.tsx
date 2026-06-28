@@ -22,6 +22,7 @@ import { TypedDeleteConfirmModal, BottomSheet } from "../../components/ui";
 import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
 import { GamificationStats, TimezonesWidget } from "./components/DashboardWidgets";
 import { HeroTripCard } from "./components/HeroTripCard";
+import { AtlasScreen } from "../atlas/AtlasScreen";
 
 function getTripDurationText(trip: Trip, t: any) {
   const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
@@ -385,6 +386,7 @@ export function TripManagerScreen({
   const { t } = useTranslation();
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [tripToDelete, setTripToDelete] = useState<Trip | null>(null);
+  const [isAtlasOpen, setIsAtlasOpen] = useState(false);
   const [filterTab, setFilterTab] = useState<"planned" | "archived" | "completed">("planned");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
@@ -647,17 +649,7 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-kat-primary dark:
             {filterTab === "planned" && (
               <>
                 {/* Gamification Stats */}
-                <GamificationStats
-                  totalTrips={trips.length}
-                  totalDays={trips.reduce((acc, t) => {
-                    const s = new Date(t.startDate);
-                    const e = new Date(t.endDate);
-                    if (isNaN(s.getTime()) || isNaN(e.getTime())) return acc;
-                    return (
-                      acc + Math.ceil(Math.abs(e.getTime() - s.getTime()) / (1000 * 3600 * 24)) + 1
-                    );
-                  }, 0)}
-                />
+                <GamificationStats trips={trips} onAtlasClick={() => setIsAtlasOpen(true)} />
 
                 {/* All Future Trips List */}
                 <div className="space-y-4">
@@ -746,6 +738,20 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-kat-primary dark:
         onClose={() => setTripToDelete(null)}
         onConfirm={executeDeleteTrip}
       />
+
+      {isAtlasOpen && (
+        <AtlasScreen
+          isOpen={isAtlasOpen}
+          onClose={() => setIsAtlasOpen(false)}
+          totalTrips={trips.length}
+          totalDays={trips.reduce((acc, t) => {
+            const s = new Date(t.startDate);
+            const e = new Date(t.endDate);
+            if (isNaN(s.getTime()) || isNaN(e.getTime())) return acc;
+            return acc + Math.ceil(Math.abs(e.getTime() - s.getTime()) / (1000 * 3600 * 24)) + 1;
+          }, 0)}
+        />
+      )}
     </div>
   );
 }
