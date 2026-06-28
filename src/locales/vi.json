@@ -390,15 +390,7 @@
     "startDateError": "Vui lòng chọn ngày bắt đầu.",
     "endDateError": "Vui lòng chọn ngày kết thúc.",
     "dateCompareError": "Ngày kết thúc không thể trước ngày bắt đầu.",
-    "daysOfWeek": [
-      "CN",
-      "T2",
-      "T3",
-      "T4",
-      "T5",
-      "T6",
-      "T7"
-    ],
+    "daysOfWeek": ["CN", "T2", "T3", "T4", "T5", "T6", "T7"],
     "months": [
       "Tháng 1",
       "Tháng 2",
@@ -1100,7 +1092,7 @@
   },
   "packing": {
     "pageTitle": "Chuẩn bị hành lý",
-    "pageSubtitle": "Chuẩn bị đủ những món cần mang theo cho chuyến đi.",
+    "pageSubtitle": "Chuẩn bị đầy đủ hành trang cho chuyến đi.",
     "progressTitle": "Tiến độ chuẩn bị",
     "packedCount": "Đã xếp {{completed}} / {{total}} món",
     "addItem": "Thêm món chuẩn bị",
@@ -1213,7 +1205,7 @@
   },
   "expenses": {
     "pageTitle": "Chi phí",
-    "pageSubtitle": "Theo dõi chi tiêu, khoản đã trả và phần cần chia trong chuyến đi.",
+    "pageSubtitle": "Quản lý chi tiêu và chia sẻ chi phí trong chuyến đi.",
     "addExpense": "Thêm khoản chi",
     "totalTrip": "Tổng chi phí chuyến đi",
     "sharedTrip": "Chi chung chuyến đi",
@@ -1461,7 +1453,7 @@
     "permSuggestCost": "Đề xuất thêm chi phí",
     "permSuggestTrip": "Đề xuất sửa lịch trình",
     "rolesHelpTitle": "Thông tin các vai trò",
-    "rolesHelpSubtitle": "Mỗi thành viên có trách nhiệm khác nhau để cùng vận hành chuyến đi",
+    "rolesHelpSubtitle": "Mỗi người một vai trò để cùng làm nên chuyến đi trọn vẹn",
     "roleLabel": "Vai trò trong chuyến đi"
   },
   "journal": {

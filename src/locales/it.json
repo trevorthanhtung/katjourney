@@ -392,15 +392,7 @@
     "startDateError": "Per favore, scegli una data di inizio.",
     "endDateError": "Per favore, scegli una data di fine.",
     "dateCompareError": "La data di fine non può precedere la data d'inizio.",
-    "daysOfWeek": [
-      "Dom",
-      "Lun",
-      "Mar",
-      "Mer",
-      "Gio",
-      "Ven",
-      "Sab"
-    ],
+    "daysOfWeek": ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"],
     "months": [
       "Gennaio",
       "Febbraio",
@@ -1099,7 +1091,7 @@
   },
   "packing": {
     "pageTitle": "Lista bagagli",
-    "pageSubtitle": "Prepara tutto il necessario per il viaggio.",
+    "pageSubtitle": "Prepara tutti i bagagli per il viaggio.",
     "progressTitle": "Avanzamento",
     "packedCount": "Đã xếp {{completed}} / {{total}} món",
     "addItem": "Aggiungi articolo",
@@ -1212,7 +1204,7 @@
   },
   "expenses": {
     "pageTitle": "Spese",
-    "pageSubtitle": "Tieni traccia di spese, pagamenti e divisioni.",
+    "pageSubtitle": "Gestisci le spese e dividi i costi durante il viaggio.",
     "addExpense": "Aggiungi",
     "totalTrip": "Spese Totali",
     "sharedTrip": "Spese Condivise",
@@ -1460,7 +1452,7 @@
     "permSuggestCost": "Suggerisci spese",
     "permSuggestTrip": "Suggerisci modifiche",
     "rolesHelpTitle": "Informazioni sui ruoli",
-    "rolesHelpSubtitle": "Ogni membro ha responsabilità diverse",
+    "rolesHelpSubtitle": "Ogni membro ha un ruolo per la riuscita del viaggio.",
     "roleLabel": "Ruolo nel viaggio"
   },
   "sharedScreen": {

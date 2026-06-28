@@ -392,15 +392,7 @@
     "startDateError": "Please select a start date.",
     "endDateError": "Please select an end date.",
     "dateCompareError": "End date cannot be before start date.",
-    "daysOfWeek": [
-      "Sun",
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri",
-      "Sat"
-    ],
+    "daysOfWeek": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     "months": [
       "January",
       "February",
@@ -1215,7 +1207,7 @@
   },
   "expenses": {
     "pageTitle": "Expenses",
-    "pageSubtitle": "Track spending, payments, and splitting during the trip.",
+    "pageSubtitle": "Manage expenses and split costs during the trip.",
     "addExpense": "Add Expense",
     "totalTrip": "Total Trip Expenses",
     "sharedTrip": "Shared Expenses",
@@ -1463,7 +1455,7 @@
     "permSuggestCost": "Suggest adding expenses",
     "permSuggestTrip": "Suggest editing itinerary",
     "rolesHelpTitle": "Role Information",
-    "rolesHelpSubtitle": "Each member has different responsibilities to run the trip",
+    "rolesHelpSubtitle": "Each member plays a role in making the trip a success.",
     "roleLabel": "Trip role"
   },
   "journal": {

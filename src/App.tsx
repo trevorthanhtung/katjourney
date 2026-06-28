@@ -1,5 +1,5 @@
 import { useLiveQuery } from "dexie-react-hooks";
-
+import { useViewTransition } from "./hooks/useViewTransition";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Link01Icon,
@@ -26,11 +26,21 @@ import {
   CheckIcon,
   CloudIcon,
   RefreshIcon,
-  Airplane01Icon
+  Airplane01Icon,
 } from "@hugeicons/core-free-icons";
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { ChecklistItem, db, EventItem, Expense, JournalEntry, Member, PackingItem, Trip } from "./db";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ChecklistItem,
+  db,
+  EventItem,
+  Expense,
+  JournalEntry,
+  Member,
+  PackingItem,
+  Trip,
+} from "./db";
 
 // Components & Helpers
 import { FormCard, ScreenTitle, BottomSheet } from "./components/ui";
@@ -40,15 +50,27 @@ import { GlobalToast } from "./components/ui/ToastManager";
 import { useTripReminders } from "./hooks/useTripReminders";
 import { useMediaQuery } from "./hooks/useMediaQuery";
 import { useModalHistory } from "./hooks/useModalHistory";
+import { useAppNavigation } from "./hooks/useAppNavigation";
+import { useTripData } from "./hooks/useTripData";
 import { ReloadPrompt } from "./components/ReloadPrompt";
 
 // Screens
 import { HomeScreen } from "./features/home/HomeScreen";
-const TimelineScreen = React.lazy(() => import("./features/timeline/TimelineScreen").then(m => ({ default: m.TimelineScreen })));
-const ExpensesScreen = React.lazy(() => import("./features/expenses/ExpensesScreen").then(m => ({ default: m.ExpensesScreen })));
-const ChecklistScreen = React.lazy(() => import("./features/checklist/ChecklistScreen").then(m => ({ default: m.ChecklistScreen })));
-const MoreScreen = React.lazy(() => import("./features/more/MoreScreen").then(m => ({ default: m.MoreScreen })));
-const TripForm = React.lazy(() => import("./features/more/MoreScreen").then(m => ({ default: m.TripForm })));
+const TimelineScreen = React.lazy(() =>
+  import("./features/timeline/TimelineScreen").then((m) => ({ default: m.TimelineScreen }))
+);
+const ExpensesScreen = React.lazy(() =>
+  import("./features/expenses/ExpensesScreen").then((m) => ({ default: m.ExpensesScreen }))
+);
+const ChecklistScreen = React.lazy(() =>
+  import("./features/checklist/ChecklistScreen").then((m) => ({ default: m.ChecklistScreen }))
+);
+const MoreScreen = React.lazy(() =>
+  import("./features/more/MoreScreen").then((m) => ({ default: m.MoreScreen }))
+);
+const TripForm = React.lazy(() =>
+  import("./features/more/MoreScreen").then((m) => ({ default: m.TripForm }))
+);
 import { TripManagerScreen } from "./features/trips/TripManagerScreen";
 import { ArchiveGallery } from "./features/archive/ArchiveGallery";
 
@@ -76,69 +98,98 @@ const NavButton = React.forwardRef<
     icon: any;
     label: string;
   }
->((({ isActive, onClick, icon: Icon, label }, ref) => {
+>(({ isActive, onClick, icon: Icon, label }, ref) => {
   return (
-    <button
+    <motion.button
       ref={ref}
+      layout
       onClick={onClick}
       aria-label={`Đi tới ${label}`}
       className={classNames(
-        "relative flex items-center justify-center rounded-full transition-[color,background-color,width,padding,gap,transform] duration-200 ease-out overflow-hidden motion-press z-10",
-        isActive 
-          ? "text-kat-dark px-2.5 min-[340px]:px-3 min-[390px]:px-5 h-[40px] min-[340px]:h-[44px] min-[390px]:h-[48px] gap-1 min-[340px]:gap-1.5 min-[390px]:gap-2 font-extrabold" 
+        "relative flex items-center justify-center rounded-full z-10 motion-press",
+        isActive
+          ? "text-kat-dark px-2.5 min-[340px]:px-3 min-[390px]:px-5 h-[40px] min-[340px]:h-[44px] min-[390px]:h-[48px] gap-1 min-[340px]:gap-1.5 min-[390px]:gap-2 font-extrabold"
           : "text-kat-dark opacity-50 hover:opacity-75 w-10 min-[340px]:w-11 min-[390px]:w-12 h-10 min-[340px]:h-11 min-[390px]:h-12"
       )}
+      transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
     >
-      <HugeiconsIcon 
-        icon={Icon} 
-        className={classNames(
-          "shrink-0 transition-transform duration-200 ease-out", 
-          isActive ? "scale-105" : "scale-100",
-          "h-[18px] w-[18px] min-[340px]:h-[19px] min-[340px]:w-[19px] min-[390px]:h-[22px] min-[390px]:w-[22px]"
-        )} 
-      />
-      {isActive && <span className="text-[10px] min-[340px]:text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap">{label}</span>}
-    </button>
+      {isActive && (
+        <motion.div
+          layoutId="nav-indicator"
+          className="absolute inset-0 rounded-full bg-white dark:bg-slate-800 shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45 dark:border-slate-700/50"
+          initial={false}
+          transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+          style={{ zIndex: -1 }}
+        />
+      )}
+      <motion.div layout className="shrink-0 relative z-10 flex items-center justify-center">
+        <HugeiconsIcon
+          icon={Icon}
+          className={classNames(
+            "transition-transform duration-200 ease-out",
+            isActive ? "scale-105" : "scale-100",
+            "h-[18px] w-[18px] min-[340px]:h-[19px] min-[340px]:w-[19px] min-[390px]:h-[22px] min-[390px]:w-[22px]"
+          )}
+        />
+      </motion.div>
+      <AnimatePresence>
+        {isActive && (
+          <motion.span
+            layout
+            initial={{ opacity: 0, scale: 0.8, width: 0 }}
+            animate={{ opacity: 1, scale: 1, width: "auto" }}
+            exit={{ opacity: 0, scale: 0.8, width: 0 }}
+            transition={{ duration: 0.2 }}
+            className="text-[10px] min-[340px]:text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap overflow-hidden z-10"
+          >
+            {label}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </motion.button>
   );
-}));
+});
 NavButton.displayName = "NavButton";
 
 function App() {
+  const { startViewTransition } = useViewTransition();
   const { t } = useTranslation();
   useTheme();
   const isOnline = useNetworkStatus();
   const [showSplash, setShowSplash] = useState(true);
   const [isSplashFading, setIsSplashFading] = useState(false);
-  const [activeTab, setActiveTabInternal] = useState<"home" | "timeline" | "expenses" | "checklist" | "more">(() => {
-    const saved = localStorage.getItem("kat_active_tab");
-    return (saved as any) || "home";
-  });
-  const [, startTransition] = React.useTransition();
-  const setActiveTab = React.useCallback((tab: "home" | "timeline" | "expenses" | "checklist" | "more") => {
-    startTransition(() => {
-      setActiveTabInternal(tab);
-    });
-  }, []);
+  const {
+    activeTab,
+    setActiveTab,
+    moreSection,
+    setMoreSection,
+    selectedTripId,
+    setSelectedTripId,
+    isManagingTrips,
+    setIsManagingTrips,
+    isViewingArchive,
+    setIsViewingArchive,
+    navigateToMore,
+    lastHistoryStateRef,
+  } = useAppNavigation();
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isRemindersOpen, setIsRemindersOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const [moreSection, setMoreSection] = useState<"overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents">(() => {
-    const saved = localStorage.getItem("kat_more_section");
-    return (saved as any) || "overview";
-  });
+  // moreSection managed by useAppNavigation
   const [isAppInboxOpen, setIsAppInboxOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [settingsInitialView, setSettingsInitialView] = useState<"menu" | "auth" | "privacy" | "about" | "donate">("menu");
+  const [settingsInitialView, setSettingsInitialView] = useState<
+    "menu" | "auth" | "privacy" | "about" | "donate"
+  >("menu");
 
-  const [expenseInitialAddState, setExpenseInitialAddState] = useState<{ date: string; eventId: number } | undefined>(undefined);
+  const [expenseInitialAddState, setExpenseInitialAddState] = useState<
+    { date: string; eventId: number } | undefined
+  >(undefined);
 
   const areBarsVisible = useScrollBarVisibility(768);
 
-  // 2027 Bottom Navigation Bar animation system
-  const [indicatorStyle, setIndicatorStyle] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
-  const buttonsRef = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+  // 2027 Bottom Navigation Bar animation system (Refactored to Framer Motion layoutId)
 
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
@@ -156,13 +207,22 @@ function App() {
 
   React.useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      // Chỉ tự động đóng Popover nhắc nhở trên Desktop. 
+      // Chỉ tự động đóng Popover nhắc nhở trên Desktop.
       // Trên Mobile (khi dùng BottomSheet), BottomSheet sẽ tự bắt sự kiện bấm ra ngoài thông qua Backdrop overlay.
       // Nếu không, sự kiện mousedown sẽ làm BottomSheet unmount trước khi click kịp xảy ra!
-      if (isRemindersOpen && isDesktop && remindersRef.current && !remindersRef.current.contains(event.target as Node)) {
+      if (
+        isRemindersOpen &&
+        isDesktop &&
+        remindersRef.current &&
+        !remindersRef.current.contains(event.target as Node)
+      ) {
         setIsRemindersOpen(false);
       }
-      if (isUserMenuOpen && userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+      if (
+        isUserMenuOpen &&
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
         setIsUserMenuOpen(false);
       }
     }
@@ -199,33 +259,26 @@ function App() {
     }
   }, [isAuthenticated, authLoading, provider]);
 
-  const tripsRaw = useLiveQuery(async () => (await db.trips.toArray()).filter(t => !t.isDeleted && t.status !== 'archived'));
-  const allTripsRaw = useLiveQuery(async () => (await db.trips.toArray()).filter(t => !t.isDeleted));
-  const tripsLoading = tripsRaw === undefined || allTripsRaw === undefined;
-  const trips = tripsRaw ?? [];
-  const [selectedTripId, setSelectedTripId] = useState<number | null>(() => {
-    const saved = localStorage.getItem("kat_selected_trip_id");
-    return saved ? Number(saved) : null;
-  });
   const [isCreatingTrip, setIsCreatingTrip] = useState(false);
-  const [isManagingTrips, setIsManagingTrips] = useState<boolean>(() => {
-    const savedTripId = localStorage.getItem("kat_selected_trip_id");
-    const savedManaging = localStorage.getItem("kat_is_managing_trips");
-    // If we have a saved trip and were not managing trips, restore to trip view
-    if (savedTripId && savedManaging === "false") return false;
-    return true;
-  });
-  const [isViewingArchive, setIsViewingArchive] = useState<boolean>(() => {
-    return localStorage.getItem("kat_is_viewing_archive") === "true";
-  });
+  const {
+    allTripsRaw,
+    tripsLoading,
+    trips,
+    tripId,
+    trip,
+    isReadOnly,
+    members,
+    events,
+    expenses,
+    checklist,
+    journals,
+    packingItems,
+    travelDocuments,
+    backupPlans,
+    tripDataLoading,
+  } = useTripData(selectedTripId, isCreatingTrip, isManagingTrips, isViewingArchive);
 
-  React.useEffect(() => {
-    localStorage.setItem("kat_active_tab", activeTab);
-  }, [activeTab]);
-
-  React.useEffect(() => {
-    localStorage.setItem("kat_more_section", moreSection);
-  }, [moreSection]);
+  // Local storage sync managed by useAppNavigation
 
   // Vòng đời màn hình Splash (2027 Premium Motion transition)
   React.useEffect(() => {
@@ -241,46 +294,35 @@ function App() {
     }
   }, [authLoading, tripsLoading]);
 
-  React.useEffect(() => {
-    localStorage.setItem("kat_is_viewing_archive", String(isViewingArchive));
-  }, [isViewingArchive]);
-
-  React.useEffect(() => {
-    if (selectedTripId !== null) {
-      localStorage.setItem("kat_selected_trip_id", String(selectedTripId));
-    } else {
-      localStorage.removeItem("kat_selected_trip_id");
-    }
-  }, [selectedTripId]);
-
-  React.useEffect(() => {
-    localStorage.setItem("kat_is_managing_trips", String(isManagingTrips));
-  }, [isManagingTrips]);
-
   // Synchronize global modals with browser back button
 
   useModalHistory(isSearchOpen, () => setIsSearchOpen(false), "search-modal");
-  useModalHistory(isRemindersOpen && !isDesktop, () => setIsRemindersOpen(false), "reminders-modal");
+  useModalHistory(
+    isRemindersOpen && !isDesktop,
+    () => setIsRemindersOpen(false),
+    "reminders-modal"
+  );
   useModalHistory(isAppInboxOpen, () => setIsAppInboxOpen(false), "inbox-modal");
   useModalHistory(isCreatingTrip, () => setIsCreatingTrip(false), "create-trip-modal");
   useModalHistory(isSettingsOpen, () => setIsSettingsOpen(false), "settings-modal");
   useModalHistory(isLogoutConfirmOpen, () => setIsLogoutConfirmOpen(false), "logout-modal");
 
-  // View history state synchronization
-  const isPopStateRef = React.useRef(false);
-  const lastHistoryStateRef = React.useRef<any>(null);
-  const historyDepthRef = React.useRef(0);
+  // History ref managed by useAppNavigation
 
   // Initialize deep links for query param based modals
   React.useEffect(() => {
     // We can still clear legacy dangling hashes to be safe
     if (window.location.hash) {
-      window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search);
+      window.history.replaceState(
+        window.history.state,
+        "",
+        window.location.pathname + window.location.search
+      );
     }
-    
+
     const url = new URL(window.location.href);
     const modalParam = url.searchParams.get("modal");
-    
+
     if (modalParam) {
       // Create a base history entry so hitting back closes the modal instead of exiting app
       const baseUrl = new URL(window.location.href);
@@ -309,117 +351,7 @@ function App() {
     }
   }, []);
 
-  React.useEffect(() => {
-    const view = isViewingArchive ? "archive" : (isManagingTrips || !selectedTripId ? "manager" : "trip");
-    const initialState = {
-      view,
-      tripId: selectedTripId,
-      activeTab,
-      moreSection
-    };
-    window.history.replaceState(initialState, "");
-    lastHistoryStateRef.current = initialState;
-
-    const handlePopState = (event: PopStateEvent) => {
-      if (event.state?.isModal) return;
-
-      const state = event.state;
-      if (!state) return;
-
-      isPopStateRef.current = true;
-
-      if (state.view === "manager") {
-        setIsManagingTrips(true);
-        setIsViewingArchive(false);
-        setSelectedTripId(null);
-      } else if (state.view === "archive") {
-        setIsViewingArchive(true);
-        setIsManagingTrips(false);
-        setSelectedTripId(null);
-      } else if (state.view === "trip") {
-        setIsManagingTrips(false);
-        setIsViewingArchive(false);
-        if (state.tripId !== undefined) setSelectedTripId(state.tripId);
-        if (state.activeTab !== undefined) setActiveTab(state.activeTab);
-        if (state.moreSection !== undefined) setMoreSection(state.moreSection);
-      }
-
-      lastHistoryStateRef.current = state;
-
-      setTimeout(() => {
-        isPopStateRef.current = false;
-      }, 0);
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  React.useEffect(() => {
-    if (isPopStateRef.current) return;
-
-    const view = isViewingArchive ? "archive" : (isManagingTrips || !selectedTripId ? "manager" : "trip");
-    const currentState = {
-      view,
-      tripId: selectedTripId,
-      activeTab,
-      moreSection
-    };
-
-    const prevState = lastHistoryStateRef.current;
-    if (!prevState) return;
-
-    const viewChanged = prevState.view !== currentState.view;
-    const tripChanged = prevState.tripId !== currentState.tripId;
-    const tabChanged = prevState.activeTab !== currentState.activeTab;
-    const sectionChanged = prevState.moreSection !== currentState.moreSection;
-
-    if (!viewChanged && !tripChanged && !tabChanged && !sectionChanged) {
-      return;
-    }
-
-    const goingBackToManager = viewChanged && currentState.view === "manager" && prevState.view !== "manager";
-    const goingBackToArchive = viewChanged && currentState.view === "archive" && prevState.view === "trip";
-    const goingBackToMoreOverview = sectionChanged && currentState.moreSection === "overview" && prevState.moreSection !== "overview";
-
-    if (goingBackToManager || goingBackToArchive || goingBackToMoreOverview) {
-      if (historyDepthRef.current > 0) {
-        historyDepthRef.current--;
-        window.history.back();
-        lastHistoryStateRef.current = currentState;
-        return;
-      }
-    }
-
-    let shouldPush = false;
-
-    if (viewChanged || tripChanged) {
-      shouldPush = true;
-    } else if (currentState.view === "trip") {
-      if (tabChanged) {
-        if (currentState.activeTab === "more" && currentState.moreSection !== "overview") {
-          shouldPush = true;
-        } else {
-          shouldPush = false;
-        }
-      } else if (sectionChanged) {
-        if (currentState.moreSection !== "overview") {
-          shouldPush = true;
-        } else {
-          shouldPush = false;
-        }
-      }
-    }
-
-    if (shouldPush) {
-      window.history.pushState(currentState, "");
-      historyDepthRef.current++;
-    } else {
-      window.history.replaceState(currentState, "");
-    }
-
-    lastHistoryStateRef.current = currentState;
-  }, [isManagingTrips, isViewingArchive, selectedTripId, activeTab, moreSection]);
+  // History sync managed by useAppNavigation
   const [successToast, setSuccessToast] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -439,101 +371,26 @@ function App() {
       (window as any).showToastGlobal = undefined;
     };
   }, [showToast]);
-  
-  const tripId = isCreatingTrip || isManagingTrips || isViewingArchive ? null : (selectedTripId ?? trips[0]?.id ?? null);
 
   // If trips have loaded and selectedTripId no longer exists (deleted), fall back to manager
   React.useEffect(() => {
     if (!tripsLoading && !isManagingTrips && !isViewingArchive && selectedTripId !== null) {
-      const exists = (allTripsRaw ?? []).some(t => t.id === selectedTripId);
+      const exists = (allTripsRaw ?? []).some((t) => t.id === selectedTripId);
       if (!exists) {
         setSelectedTripId(null);
         setIsManagingTrips(true);
       }
     }
   }, [tripsLoading, allTripsRaw, selectedTripId, isManagingTrips, isViewingArchive]);
-
-  useEffect(() => {
-    const updateIndicator = () => {
-      const activeButton = buttonsRef.current[activeTab];
-      const container = containerRef.current;
-      if (activeButton && container) {
-        const rect = activeButton.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        if (rect.width > 0) {
-          setIndicatorStyle({
-            left: rect.left - containerRect.left,
-            width: rect.width
-          });
-        }
-      }
-    };
-
-    updateIndicator();
-
-    // Setup ResizeObserver to track size changes of container and active/inactive buttons
-    let resizeObserver: ResizeObserver | null = null;
-    if (containerRef.current && typeof ResizeObserver !== "undefined") {
-      resizeObserver = new ResizeObserver(() => {
-        updateIndicator();
-      });
-      resizeObserver.observe(containerRef.current);
-      Object.values(buttonsRef.current).forEach((btn) => {
-        if (btn) resizeObserver?.observe(btn);
-      });
-    }
-
-    // Multi-stage timers to ensure correct layout calculations
-    const timers = [
-      setTimeout(updateIndicator, 30),
-      setTimeout(updateIndicator, 100),
-      setTimeout(updateIndicator, 300),
-      setTimeout(updateIndicator, 600)
-    ];
-
-    window.addEventListener("resize", updateIndicator);
-    window.addEventListener("focus", updateIndicator);
-    document.addEventListener("visibilitychange", updateIndicator);
-
-    return () => {
-      window.removeEventListener("resize", updateIndicator);
-      window.removeEventListener("focus", updateIndicator);
-      document.removeEventListener("visibilitychange", updateIndicator);
-      timers.forEach(clearTimeout);
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
-    };
-  }, [activeTab, isManagingTrips, tripId, tripsLoading]);
-  const trip = useLiveQuery(async () => {
-    if (!tripId) return undefined;
-    const t = await db.trips.get(tripId);
-    return t && !t.isDeleted ? t : undefined;
-  }, [tripId]);
-  const isReadOnly = trip?.status === 'archived';
-  const members = useLiveQuery(async () => tripId ? (await db.members.where("tripId").equals(tripId).toArray()).filter(m => !m.isDeleted) : [], [tripId]);
-  const events = useLiveQuery(async () => tripId ? (await db.events.where("tripId").equals(tripId).toArray()).filter(e => !e.isDeleted) : [], [tripId]);
-  const expenses = useLiveQuery(async () => tripId ? (await db.expenses.where("tripId").equals(tripId).toArray()).filter(e => !e.isDeleted) : [], [tripId]);
-  const checklist = useLiveQuery(async () => tripId ? (await db.checklist.where("tripId").equals(tripId).toArray()).filter(c => !c.isDeleted) : [], [tripId]);
-  const journals = useLiveQuery(async () => tripId ? (await db.journals.where("tripId").equals(tripId).toArray()).filter(j => !j.isDeleted) : [], [tripId]);
-  const packingItems = useLiveQuery(async () => tripId ? (await db.packingItems.where("tripId").equals(tripId).toArray()).filter(p => !p.isDeleted) : [], [tripId]);
-  const travelDocuments = useLiveQuery(async () => tripId ? (await db.travelDocuments.where("tripId").equals(tripId).toArray()).filter(d => !d.isDeleted) : [], [tripId]);
-  const backupPlans = useLiveQuery(async () => tripId ? (await db.backupPlans.where("tripId").equals(tripId).toArray()).filter(b => !b.isDeleted) : [], [tripId]);
-
-  // Khi tripId có giá trị, chờ tất cả data sẵn sàng trước khi render để tránh flash
-  const tripDataLoading = tripId !== null && (
-    trip === undefined ||
-    members === undefined ||
-    events === undefined ||
-    expenses === undefined ||
-    checklist === undefined ||
-    journals === undefined ||
-    packingItems === undefined ||
-    travelDocuments === undefined ||
-    backupPlans === undefined
-  );
   const { pendingRequests, activeToken } = useShareChangeRequests(trip);
-  const reminders = useTripReminders({ trip, checklist: checklist ?? [], travelDocuments: travelDocuments ?? [], events: events ?? [], backupPlans: backupPlans ?? [], pendingRequestsCount: pendingRequests.length });
+  const reminders = useTripReminders({
+    trip,
+    checklist: checklist ?? [],
+    travelDocuments: travelDocuments ?? [],
+    events: events ?? [],
+    backupPlans: backupPlans ?? [],
+    pendingRequestsCount: pendingRequests.length,
+  });
 
   // --- BADGING API INTEGRATION ---
   useEffect(() => {
@@ -550,8 +407,11 @@ function App() {
     }
   }, [reminders.length]);
 
-  const sharedExpenses = (expenses ?? []).filter(e => e.splitType !== "personal");
-  const totalSharedExpense = sharedExpenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const sharedExpenses = (expenses ?? []).filter((e) => e.splitType !== "personal");
+  const totalSharedExpense = sharedExpenses.reduce(
+    (sum, item) => sum + Number(item.amount || 0),
+    0
+  );
   const totalExpense = (expenses ?? []).reduce((sum, item) => sum + Number(item.amount || 0), 0);
   const perPerson = (members ?? []).length ? totalSharedExpense / (members ?? []).length : 0;
 
@@ -577,25 +437,26 @@ function App() {
       trip.shareIncludeDocuments,
       trip.shareUsePinProtection,
       trip.sharePin,
-      (members ?? []).map(m => `${m.id}-${m.updatedAt || ""}`).join(","),
-      (events ?? []).map(e => `${e.id}-${e.updatedAt || ""}`).join(","),
-      trip.shareIncludeExpenses ?? true ? (expenses ?? []).map(e => `${e.id}-${e.updatedAt || ""}`).join(",") : "",
-      trip.shareIncludeChecklist ?? true ? (checklist ?? []).map(c => `${c.id}-${c.updatedAt || ""}`).join(",") : "",
-      trip.shareIncludeJournals ?? true ? (journals ?? []).map(j => `${j.id}-${j.updatedAt || ""}`).join(",") : "",
-      trip.shareIncludeBackupPlans ?? true ? (backupPlans ?? []).map(b => `${b.id}-${b.updatedAt || ""}`).join(",") : "",
-      trip.shareIncludeDocuments ?? false ? (travelDocuments ?? []).map(d => `${d.id}-${d.updatedAt || ""}`).join(",") : "",
+      (members ?? []).map((m) => `${m.id}-${m.updatedAt || ""}`).join(","),
+      (events ?? []).map((e) => `${e.id}-${e.updatedAt || ""}`).join(","),
+      (trip.shareIncludeExpenses ?? true)
+        ? (expenses ?? []).map((e) => `${e.id}-${e.updatedAt || ""}`).join(",")
+        : "",
+      (trip.shareIncludeChecklist ?? true)
+        ? (checklist ?? []).map((c) => `${c.id}-${c.updatedAt || ""}`).join(",")
+        : "",
+      (trip.shareIncludeJournals ?? true)
+        ? (journals ?? []).map((j) => `${j.id}-${j.updatedAt || ""}`).join(",")
+        : "",
+      (trip.shareIncludeBackupPlans ?? true)
+        ? (backupPlans ?? []).map((b) => `${b.id}-${b.updatedAt || ""}`).join(",")
+        : "",
+      (trip.shareIncludeDocuments ?? false)
+        ? (travelDocuments ?? []).map((d) => `${d.id}-${d.updatedAt || ""}`).join(",")
+        : "",
     ];
     return parts.join("|");
-  }, [
-    trip,
-    members,
-    events,
-    expenses,
-    checklist,
-    journals,
-    backupPlans,
-    travelDocuments,
-  ]);
+  }, [trip, members, events, expenses, checklist, journals, backupPlans, travelDocuments]);
 
   React.useEffect(() => {
     if (!trip || !trip.shareToken || isReadOnly) {
@@ -641,10 +502,7 @@ function App() {
   }, [currentFingerprint, trip, isReadOnly]);
   // --- END AUTO SYNC ---
 
-  function navigateToMore(section: "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents") {
-    setMoreSection(section);
-    setActiveTab("more");
-  }
+  // navigateToMore managed by useAppNavigation
 
   function renderReminderItems() {
     if (reminders.length === 0) {
@@ -654,43 +512,53 @@ function App() {
             <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" strokeWidth={3} />
           </div>
           <p className="text-[14px] font-bold text-kat-dark">Tuyệt vời! Không có nhắc nhở</p>
-          <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5">Hành trình của bạn đã sẵn sàng.</p>
+          <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
+            Hành trình của bạn đã sẵn sàng.
+          </p>
         </div>
       );
     }
 
     return reminders.map((rem) => {
       let icon = Notification01Icon;
-      let colorClasses = "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-100/50 dark:border-slate-700/50";
-      
+      let colorClasses =
+        "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-100/50 dark:border-slate-700/50";
+
       switch (rem.tab) {
         case "timeline":
           icon = Calendar01Icon;
-          colorClasses = "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/30";
+          colorClasses =
+            "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/30";
           break;
         case "checklist":
           icon = CheckListIcon;
-          colorClasses = "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/30";
+          colorClasses =
+            "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/30";
           break;
         case "expenses":
           icon = WalletCardsIcon;
-          colorClasses = "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/30";
+          colorClasses =
+            "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/30";
           break;
         case "documents":
           icon = File01Icon;
-          colorClasses = "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/30";
+          colorClasses =
+            "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/30";
           break;
         case "journal":
           icon = Globe02Icon;
-          colorClasses = "bg-violet-50 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400 border border-violet-100/50 dark:border-violet-900/30";
+          colorClasses =
+            "bg-violet-50 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400 border border-violet-100/50 dark:border-violet-900/30";
           break;
         case "wrapped":
           icon = SparklesIcon;
-          colorClasses = "bg-sky-50 dark:bg-sky-950/20 text-sky-600 dark:text-sky-400 border border-sky-100/50 dark:border-sky-900/30";
+          colorClasses =
+            "bg-sky-50 dark:bg-sky-950/20 text-sky-600 dark:text-sky-400 border border-sky-100/50 dark:border-sky-900/30";
           break;
         case "share_requests" as any:
           icon = NotificationBubbleIcon;
-          colorClasses = "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/30";
+          colorClasses =
+            "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/30";
           break;
       }
 
@@ -705,20 +573,20 @@ function App() {
                 // Điều này ngăn useModalHistory gọi history.back() khi unmount,
                 // tránh xung đột state React với lịch sử trình duyệt.
                 window.history.replaceState(
-                  lastHistoryStateRef.current || window.history.state, 
-                  "", 
+                  lastHistoryStateRef.current || window.history.state,
+                  "",
                   window.location.pathname + window.location.search
                 );
               }
               setIsRemindersOpen(false);
-              
+
               // Chờ xíu để modal kịp animate/unmount trước khi đổi view
               setTimeout(() => {
                 action();
               }, 10);
             };
 
-            if (rem.tab === "share_requests" as any) {
+            if (rem.tab === ("share_requests" as any)) {
               handleNavigation(() => setIsAppInboxOpen(true));
             } else if (rem.tab === "documents" || rem.tab === "journal" || rem.tab === "wrapped") {
               const targetTab = rem.tab;
@@ -730,7 +598,12 @@ function App() {
           }}
         >
           {/* Leading Icon */}
-          <div className={classNames("flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-sm", colorClasses)}>
+          <div
+            className={classNames(
+              "flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-sm",
+              colorClasses
+            )}
+          >
             <HugeiconsIcon icon={icon} className="h-5 w-5" />
           </div>
 
@@ -742,7 +615,10 @@ function App() {
           </div>
 
           {/* Trailing Icon */}
-          <HugeiconsIcon icon={ChevronRightIcon} className="h-4.5 w-4.5 shrink-0 text-slate-400 dark:text-slate-500" />
+          <HugeiconsIcon
+            icon={ChevronRightIcon}
+            className="h-4.5 w-4.5 shrink-0 text-slate-400 dark:text-slate-500"
+          />
         </button>
       );
     });
@@ -750,11 +626,13 @@ function App() {
 
   if (isShareRoute && shareToken) {
     return (
-      <React.Suspense fallback={
-        <div className="flex min-h-screen items-center justify-center bg-white">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/30 border-t-kat-primary"></div>
-        </div>
-      }>
+      <React.Suspense
+        fallback={
+          <div className="flex min-h-screen items-center justify-center bg-white">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/30 border-t-kat-primary"></div>
+          </div>
+        }
+      >
         <GlobalToast />
         <SharedTripScreen token={shareToken} />
       </React.Suspense>
@@ -764,664 +642,878 @@ function App() {
   return (
     <>
       {showSplash && <SplashScreen isFading={isSplashFading} />}
-      
+
       {showWelcome && !isShareRoute ? (
-        <div 
+        <div
           className={classNames(
             "fixed inset-0 z-[100]",
             showSplash && "transition-all duration-500 ease-out",
-            showSplash ? (isSplashFading ? "scale-100 opacity-100" : "scale-[0.96] opacity-0") : "scale-100 opacity-100"
+            showSplash
+              ? isSplashFading
+                ? "scale-100 opacity-100"
+                : "scale-[0.96] opacity-0"
+              : "scale-100 opacity-100"
           )}
           style={{
-            transitionTimingFunction: showSplash ? "var(--motion-ease-spring-soft)" : undefined
+            transitionTimingFunction: showSplash ? "var(--motion-ease-spring-soft)" : undefined,
           }}
         >
           <WelcomeScreen onDismiss={() => setShowWelcome(false)} />
         </div>
       ) : (
-        <div 
+        <div
           className={classNames(
             "font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg",
             showSplash && "transition-all duration-500 ease-out",
             showSplash && (isSplashFading ? "scale-100 opacity-100" : "scale-[0.96] opacity-0")
           )}
-          style={{
-            transitionTimingFunction: showSplash ? "var(--motion-ease-spring-soft)" : undefined,
-            "--sticky-header-offset": areBarsVisible ? "60px" : "0px",
-          "--sticky-header-offset-md": areBarsVisible ? "68px" : "0px",
-        } as React.CSSProperties}
-      >
-      <header className={`sticky top-0 z-40 px-2.5 min-[390px]:px-4 pb-3 pt-3 glass-panel-header shadow-[0_4px_24px_rgba(3,13,46,0.05)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`} style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))", paddingLeft: "max(0.625rem, env(safe-area-inset-left))", paddingRight: "max(0.625rem, env(safe-area-inset-right))" }}>
-        <GlobalToast />
-        <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="flex items-center gap-1.5 min-[390px]:gap-2 select-none shrink-0">
-              <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden lg:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
-              <h1 className="text-[17px] min-[390px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap shrink-0">KAT Journey</h1>
-            </div>
-            
-            {/* Desktop Navigation */}
-            {!isManagingTrips && tripId && (
-              <div className="hidden lg:flex ml-6 gap-2 bg-slate-100/50 dark:bg-white/5 backdrop-blur-md p-1.5 rounded-full border border-slate-200/50 dark:border-white/10 shadow-sm">
-                <button 
-                  onClick={() => setActiveTab("home")}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "home" ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10" : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10")}
-                >
-                  {t('nav.home')}
-                </button>
-                <button 
-                  onClick={() => setActiveTab("timeline")}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "timeline" ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10" : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10")}
-                >
-                  {t('nav.timeline')}
-                </button>
-                <button 
-                  onClick={() => setActiveTab("expenses")}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "expenses" ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10" : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10")}
-                >
-                  {t('nav.expenses')}
-                </button>
-                <button 
-                  onClick={() => setActiveTab("checklist")}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "checklist" ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10" : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10")}
-                >
-                  {t('nav.checklist')}
-                </button>
-                <button 
-                  onClick={() => {
-                    setMoreSection("overview");
-                    setActiveTab("more");
-                  }}
-                  className={classNames("px-5 py-2 rounded-full text-[14px] transition-all", activeTab === "more" ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10" : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10")}
-                >
-                  {t('nav.more')}
-                </button>
-              </div>
-            )}
-          </div>
-          
-          <div className="flex items-center gap-2 md:gap-3">
-            {isAutoBackingUp && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 animate-pulse shrink-0" title={t("common.autoSavingTooltip")}>
-                <HugeiconsIcon icon={CloudIcon} className="w-3.5 h-3.5 animate-spin shrink-0" />
-                <span className="text-[10px] font-black uppercase tracking-wider hidden sm:inline">{t("common.savingBadge")}</span>
-              </div>
-            )}
-
-            <button
-              onClick={() => setIsImportModalOpen(true)}
-              className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
-              title="Xem chuyến đi qua link chia sẻ"
-              aria-label="Xem chuyến đi qua link chia sẻ"
-            >
-              <HugeiconsIcon 
-                icon={Link01Icon} 
-                className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5" 
-              />
-            </button>
-
-            {!isManagingTrips && tripId ? (
-              <>
-                <button
-                  onClick={() => setIsSearchOpen(true)}
-                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
-                  title="Tìm trong chuyến đi"
-                  aria-label={t("search.placeholder")}
-                >
-                  <HugeiconsIcon icon={Search01Icon} className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5" />
-                </button>
-
-                <div className="relative" ref={remindersRef}>
-                  <button
-                    onClick={() => setIsRemindersOpen(!isRemindersOpen)}
-                    className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
-                    title={t("reminders.title")}
-                    aria-label={t("reminders.title")}
-                  >
-                    {reminders.length > 0 ? (
-                      <HugeiconsIcon icon={NotificationBubbleIcon} className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5 text-amber-500 animate-pulse" />
-                    ) : (
-                      <HugeiconsIcon icon={Notification01Icon} className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5" />
-                    )}
-                  </button>
-                  {reminders.length > 0 && (
-                    <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 min-[390px]:h-4 min-[390px]:w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] min-[390px]:text-[10px] font-black text-white ring-2 ring-white pointer-events-none">
-                      {reminders.length}
-                    </span>
-                  )}
-
-                  {/* Popover on Desktop (md and up) */}
-                  {isRemindersOpen && isDesktop && (
-                    <>
-                      {/* Desktop overlay backdrop to close popover on click outside */}
-                      
-                      <div className="absolute right-0 mt-2.5 z-50 w-[360px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-floating overflow-hidden animate-fadeIn">
-                        {/* Popover Header */}
-                        <div className="px-5 py-4 border-b border-slate-150/60 dark:border-slate-800/80 bg-white dark:bg-slate-900">
-                          <h4 className="text-[14.5px] font-bold text-kat-dark leading-snug">{t("reminders.title")}</h4>
-                          <p className="text-[11.5px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 leading-normal">{t("reminders.subtitle")}</p>
-                        </div>
-                        
-                        {/* Popover Content */}
-                        <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[400px] overflow-y-auto custom-scrollbar">
-                          {renderReminderItems()}
-                        </div>
-                      </div>
-                    </>
-                  )}
+          style={
+            {
+              transitionTimingFunction: showSplash ? "var(--motion-ease-spring-soft)" : undefined,
+              "--sticky-header-offset": areBarsVisible ? "60px" : "0px",
+              "--sticky-header-offset-md": areBarsVisible ? "68px" : "0px",
+            } as React.CSSProperties
+          }
+        >
+          <header
+            className={`sticky top-0 z-40 px-2.5 min-[390px]:px-4 pb-3 pt-3 glass-panel-header shadow-[0_4px_24px_rgba(3,13,46,0.05)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent transition-transform duration-200 ease-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`}
+            style={{
+              paddingTop: "calc(0.75rem + env(safe-area-inset-top))",
+              paddingLeft: "max(0.625rem, env(safe-area-inset-left))",
+              paddingRight: "max(0.625rem, env(safe-area-inset-right))",
+            }}
+          >
+            <GlobalToast />
+            <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="flex items-center gap-1.5 min-[390px]:gap-2 select-none shrink-0">
+                  <img
+                    src="/asset/logo.png"
+                    alt="KAT Journey Logo"
+                    className="hidden lg:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm"
+                  />
+                  <h1 className="text-[17px] min-[390px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap shrink-0">
+                    KAT Journey
+                  </h1>
                 </div>
 
+                {/* Desktop Navigation */}
+                {!isManagingTrips && tripId && (
+                  <div className="hidden lg:flex ml-6 gap-2 bg-slate-100/50 dark:bg-white/5 backdrop-blur-md p-1.5 rounded-full border border-slate-200/50 dark:border-white/10 shadow-sm">
+                    <button
+                      onClick={() => setActiveTab("home")}
+                      className={classNames(
+                        "px-5 py-2 rounded-full text-[14px] transition-all",
+                        activeTab === "home"
+                          ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+                          : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
+                      )}
+                    >
+                      {t("nav.home")}
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("timeline")}
+                      className={classNames(
+                        "px-5 py-2 rounded-full text-[14px] transition-all",
+                        activeTab === "timeline"
+                          ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+                          : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
+                      )}
+                    >
+                      {t("nav.timeline")}
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("expenses")}
+                      className={classNames(
+                        "px-5 py-2 rounded-full text-[14px] transition-all",
+                        activeTab === "expenses"
+                          ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+                          : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
+                      )}
+                    >
+                      {t("nav.expenses")}
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("checklist")}
+                      className={classNames(
+                        "px-5 py-2 rounded-full text-[14px] transition-all",
+                        activeTab === "checklist"
+                          ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+                          : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
+                      )}
+                    >
+                      {t("nav.checklist")}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setMoreSection("overview");
+                        setActiveTab("more");
+                      }}
+                      className={classNames(
+                        "px-5 py-2 rounded-full text-[14px] transition-all",
+                        activeTab === "more"
+                          ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+                          : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
+                      )}
+                    >
+                      {t("nav.more")}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 md:gap-3">
+                {isAutoBackingUp && (
+                  <div
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 animate-pulse shrink-0"
+                    title={t("common.autoSavingTooltip")}
+                  >
+                    <HugeiconsIcon icon={CloudIcon} className="w-3.5 h-3.5 animate-spin shrink-0" />
+                    <span className="text-[10px] font-black uppercase tracking-wider hidden sm:inline">
+                      {t("common.savingBadge")}
+                    </span>
+                  </div>
+                )}
+
                 <button
-                  onClick={() => {
-                    setIsManagingTrips(true);
-                    setIsViewingArchive(false);
-                  }}
+                  onClick={() => setIsImportModalOpen(true)}
                   className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
-                  title="Quay lại danh sách chuyến đi"
-                  aria-label="Quay lại danh sách chuyến đi"
+                  title="Xem chuyến đi qua link chia sẻ"
+                  aria-label="Xem chuyến đi qua link chia sẻ"
                 >
-                  <HugeiconsIcon icon={Home01Icon} className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5" />
-                </button>
-              </>
-            ) : (
-              <div className="relative" ref={userMenuRef}>
-                <button
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full overflow-hidden bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 hover:bg-white dark:hover:bg-white/10 hover:text-slate-800 dark:hover:text-white hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
-                  title={t('userMenu.accountMenu')}
-                  aria-label={t('userMenu.accountMenu')}
-                >
-                  {isAuthenticated && user && provider === "google" ? (
-                     user.photoURL ? (
-                       <img src={user.photoURL} alt="Avatar" className="h-full w-full object-cover" />
-                     ) : ( 
-                       <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[11px] min-[390px]:text-[13px]">
-                         {user.displayName ? user.displayName.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() : "G"}
-                       </div>
-                     )
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-transparent text-slate-500 dark:text-slate-400">
-                      <HugeiconsIcon 
-                        icon={UserIcon} 
-                        className="h-4 w-4 min-[390px]:h-[18px] min-[390px]:w-[18px]" 
-                      />
-                    </div>
-                  )}
+                  <HugeiconsIcon
+                    icon={Link01Icon}
+                    className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5"
+                  />
                 </button>
 
-                {isUserMenuOpen && (
+                {!isManagingTrips && tripId ? (
                   <>
-                    <div className="absolute right-0 mt-2 z-50 w-52 rounded-2xl bg-white dark:bg-kat-surface border border-slate-200/80 dark:border-kat-border shadow-floating p-1.5 animate-fadeIn">
-                      <div className="px-3.5 py-2.5 border-b border-slate-100/80 dark:border-slate-800/60">
-                        <p className="text-[13px] font-black text-kat-dark truncate text-left">
-                          {isAuthenticated && user ? (
-                            provider === "guest" ? t('userMenu.guest') : (user.displayName || t('userMenu.anonymous'))
-                          ) : (
-                            t('userMenu.notLoggedIn')
-                          )}
-                        </p>
-                        {isAuthenticated && user && provider !== "guest" && user.email ? (
-                          <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
-                            {user.email}
-                          </p>
-                        ) : (!isAuthenticated || !user) && (
-                          <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
-                            {t('userMenu.loginToSync')}
-                          </p>
-                        )}
-                      </div>
+                    <button
+                      onClick={() => setIsSearchOpen(true)}
+                      className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
+                      title="Tìm trong chuyến đi"
+                      aria-label={t("search.placeholder")}
+                    >
+                      <HugeiconsIcon
+                        icon={Search01Icon}
+                        className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5"
+                      />
+                    </button>
 
-                      {isAuthenticated && user ? (
-                        provider === "guest" ? (
-                          <>
-                            <div className="py-1 space-y-0.5">
-                              <button
-                                onClick={() => {
-                                  setIsUserMenuOpen(false);
-                                  setSettingsInitialView("auth");
-                                  setIsSettingsOpen(true);
-                                }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                              >
-                                <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400 shrink-0" />
-                                {t('userMenu.profileAndAccount')}
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setIsUserMenuOpen(false);
-                                  setSettingsInitialView("menu");
-                                  setIsSettingsOpen(true);
-                                }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                              >
-                                <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 text-slate-400 shrink-0" />
-                                {t('userMenu.appSettings')}
-                              </button>
-                            </div>
-                            <div className="border-t border-slate-100/80 dark:border-slate-800/60 pt-1 mt-1">
-                              <button
-                                onClick={() => {
-                                  setIsUserMenuOpen(false);
-                                  setIsLogoutConfirmOpen(true);
-                                }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
-                              >
-                                <HugeiconsIcon icon={Logout01Icon} className="w-4 h-4 text-rose-500 shrink-0" />
-                                {t('userMenu.exitGuest')}
-                              </button>
-                            </div>
-                          </>
+                    <div className="relative" ref={remindersRef}>
+                      <button
+                        onClick={() => setIsRemindersOpen(!isRemindersOpen)}
+                        className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
+                        title={t("reminders.title")}
+                        aria-label={t("reminders.title")}
+                      >
+                        {reminders.length > 0 ? (
+                          <HugeiconsIcon
+                            icon={NotificationBubbleIcon}
+                            className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5 text-amber-500 animate-pulse"
+                          />
                         ) : (
-                          <>
-                            <div className="py-1 space-y-0.5">
-                              <button
-                                onClick={() => {
-                                  setIsUserMenuOpen(false);
-                                  setSettingsInitialView("auth");
-                                  setIsSettingsOpen(true);
-                                }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                              >
-                                <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400 shrink-0" />
-                                {t('userMenu.profileAndAccount')}
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setIsUserMenuOpen(false);
-                                  setSettingsInitialView("menu");
-                                  setIsSettingsOpen(true);
-                                }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                              >
-                                <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 text-slate-400 shrink-0" />
-                                {t('userMenu.appSettings')}
-                              </button>
-                            </div>
-                            <div className="border-t border-slate-100/80 dark:border-slate-800/60 pt-1 mt-1">
-                              <button
-                                onClick={() => {
-                                  setIsUserMenuOpen(false);
-                                  setIsLogoutConfirmOpen(true);
-                                }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
-                              >
-                                <HugeiconsIcon icon={Logout01Icon} className="w-4 h-4 text-rose-500 shrink-0" />
-                                {t('userMenu.logout')}
-                              </button>
-                            </div>
-                          </>
-                        )
-                      ) : (
+                          <HugeiconsIcon
+                            icon={Notification01Icon}
+                            className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5"
+                          />
+                        )}
+                      </button>
+                      {reminders.length > 0 && (
+                        <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 min-[390px]:h-4 min-[390px]:w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] min-[390px]:text-[10px] font-black text-white ring-2 ring-white pointer-events-none">
+                          {reminders.length}
+                        </span>
+                      )}
+
+                      {/* Popover on Desktop (md and up) */}
+                      {isRemindersOpen && isDesktop && (
                         <>
-                          <div className="py-1 space-y-0.5">
-                            <button
-                              onClick={() => {
-                                setIsUserMenuOpen(false);
-                                setSettingsInitialView("auth");
-                                setIsSettingsOpen(true);
-                              }}
-                              className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                            >
-                              <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400 shrink-0" />
-                              {t('userMenu.loginRegister')}
-                            </button>
-                            <button
-                              onClick={() => {
-                                setIsUserMenuOpen(false);
-                                setSettingsInitialView("menu");
-                                setIsSettingsOpen(true);
-                              }}
-                              className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                            >
-                              <HugeiconsIcon icon={Settings01Icon} className="w-4 h-4 text-slate-400 shrink-0" />
-                              {t('userMenu.appSettings')}
-                            </button>
+                          {/* Desktop overlay backdrop to close popover on click outside */}
+
+                          <div className="absolute right-0 mt-2.5 z-50 w-[360px] rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-floating overflow-hidden animate-fadeIn">
+                            {/* Popover Header */}
+                            <div className="px-5 py-4 border-b border-slate-150/60 dark:border-slate-800/80 bg-white dark:bg-slate-900">
+                              <h4 className="text-[14.5px] font-bold text-kat-dark leading-snug">
+                                {t("reminders.title")}
+                              </h4>
+                              <p className="text-[11.5px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 leading-normal">
+                                {t("reminders.subtitle")}
+                              </p>
+                            </div>
+
+                            {/* Popover Content */}
+                            <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[400px] overflow-y-auto custom-scrollbar">
+                              {renderReminderItems()}
+                            </div>
                           </div>
                         </>
                       )}
                     </div>
+
+                    <button
+                      onClick={() => {
+                        setIsManagingTrips(true);
+                        setIsViewingArchive(false);
+                      }}
+                      className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
+                      title="Quay lại danh sách chuyến đi"
+                      aria-label="Quay lại danh sách chuyến đi"
+                    >
+                      <HugeiconsIcon
+                        icon={Home01Icon}
+                        className="h-4 w-4 min-[390px]:h-4.5 min-[390px]:w-4.5"
+                      />
+                    </button>
                   </>
+                ) : (
+                  <div className="relative" ref={userMenuRef}>
+                    <button
+                      onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                      className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full overflow-hidden bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 hover:bg-white dark:hover:bg-white/10 hover:text-slate-800 dark:hover:text-white hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
+                      title={t("userMenu.accountMenu")}
+                      aria-label={t("userMenu.accountMenu")}
+                    >
+                      {isAuthenticated && user && provider === "google" ? (
+                        user.photoURL ? (
+                          <img
+                            src={user.photoURL}
+                            alt="Avatar"
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[11px] min-[390px]:text-[13px]">
+                            {user.displayName
+                              ? user.displayName
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .slice(0, 2)
+                                  .join("")
+                                  .toUpperCase()
+                              : "G"}
+                          </div>
+                        )
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-transparent text-slate-500 dark:text-slate-400">
+                          <HugeiconsIcon
+                            icon={UserIcon}
+                            className="h-4 w-4 min-[390px]:h-[18px] min-[390px]:w-[18px]"
+                          />
+                        </div>
+                      )}
+                    </button>
+
+                    {isUserMenuOpen && (
+                      <>
+                        <div className="absolute right-0 mt-2 z-50 w-52 rounded-2xl bg-white dark:bg-kat-surface border border-slate-200/80 dark:border-kat-border shadow-floating p-1.5 animate-fadeIn">
+                          <div className="px-3.5 py-2.5 border-b border-slate-100/80 dark:border-slate-800/60">
+                            <p className="text-[13px] font-black text-kat-dark truncate text-left">
+                              {isAuthenticated && user
+                                ? provider === "guest"
+                                  ? t("userMenu.guest")
+                                  : user.displayName || t("userMenu.anonymous")
+                                : t("userMenu.notLoggedIn")}
+                            </p>
+                            {isAuthenticated && user && provider !== "guest" && user.email ? (
+                              <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
+                                {user.email}
+                              </p>
+                            ) : (
+                              (!isAuthenticated || !user) && (
+                                <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
+                                  {t("userMenu.loginToSync")}
+                                </p>
+                              )
+                            )}
+                          </div>
+
+                          {isAuthenticated && user ? (
+                            provider === "guest" ? (
+                              <>
+                                <div className="py-1 space-y-0.5">
+                                  <button
+                                    onClick={() => {
+                                      setIsUserMenuOpen(false);
+                                      setSettingsInitialView("auth");
+                                      setIsSettingsOpen(true);
+                                    }}
+                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                  >
+                                    <HugeiconsIcon
+                                      icon={UserIcon}
+                                      className="w-4 h-4 text-slate-400 shrink-0"
+                                    />
+                                    {t("userMenu.profileAndAccount")}
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setIsUserMenuOpen(false);
+                                      setSettingsInitialView("menu");
+                                      setIsSettingsOpen(true);
+                                    }}
+                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                  >
+                                    <HugeiconsIcon
+                                      icon={Settings01Icon}
+                                      className="w-4 h-4 text-slate-400 shrink-0"
+                                    />
+                                    {t("userMenu.appSettings")}
+                                  </button>
+                                </div>
+                                <div className="border-t border-slate-100/80 dark:border-slate-800/60 pt-1 mt-1">
+                                  <button
+                                    onClick={() => {
+                                      setIsUserMenuOpen(false);
+                                      setIsLogoutConfirmOpen(true);
+                                    }}
+                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
+                                  >
+                                    <HugeiconsIcon
+                                      icon={Logout01Icon}
+                                      className="w-4 h-4 text-rose-500 shrink-0"
+                                    />
+                                    {t("userMenu.exitGuest")}
+                                  </button>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <div className="py-1 space-y-0.5">
+                                  <button
+                                    onClick={() => {
+                                      setIsUserMenuOpen(false);
+                                      setSettingsInitialView("auth");
+                                      setIsSettingsOpen(true);
+                                    }}
+                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                  >
+                                    <HugeiconsIcon
+                                      icon={UserIcon}
+                                      className="w-4 h-4 text-slate-400 shrink-0"
+                                    />
+                                    {t("userMenu.profileAndAccount")}
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setIsUserMenuOpen(false);
+                                      setSettingsInitialView("menu");
+                                      setIsSettingsOpen(true);
+                                    }}
+                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                  >
+                                    <HugeiconsIcon
+                                      icon={Settings01Icon}
+                                      className="w-4 h-4 text-slate-400 shrink-0"
+                                    />
+                                    {t("userMenu.appSettings")}
+                                  </button>
+                                </div>
+                                <div className="border-t border-slate-100/80 dark:border-slate-800/60 pt-1 mt-1">
+                                  <button
+                                    onClick={() => {
+                                      setIsUserMenuOpen(false);
+                                      setIsLogoutConfirmOpen(true);
+                                    }}
+                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
+                                  >
+                                    <HugeiconsIcon
+                                      icon={Logout01Icon}
+                                      className="w-4 h-4 text-rose-500 shrink-0"
+                                    />
+                                    {t("userMenu.logout")}
+                                  </button>
+                                </div>
+                              </>
+                            )
+                          ) : (
+                            <>
+                              <div className="py-1 space-y-0.5">
+                                <button
+                                  onClick={() => {
+                                    setIsUserMenuOpen(false);
+                                    setSettingsInitialView("auth");
+                                    setIsSettingsOpen(true);
+                                  }}
+                                  className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                >
+                                  <HugeiconsIcon
+                                    icon={UserIcon}
+                                    className="w-4 h-4 text-slate-400 shrink-0"
+                                  />
+                                  {t("userMenu.loginRegister")}
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setIsUserMenuOpen(false);
+                                    setSettingsInitialView("menu");
+                                    setIsSettingsOpen(true);
+                                  }}
+                                  className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                >
+                                  <HugeiconsIcon
+                                    icon={Settings01Icon}
+                                    className="w-4 h-4 text-slate-400 shrink-0"
+                                  />
+                                  {t("userMenu.appSettings")}
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 )}
               </div>
-          )}
-        </div>
-        </div>
-      </header>
+            </div>
+          </header>
 
-      {!isOnline && (
-        <div className="bg-amber-500 text-white px-4 py-2 flex items-center justify-center gap-2 shadow-sm animate-fadeIn z-40 relative">
-          <HugeiconsIcon icon={WifiOffIcon} className="w-4 h-4 shrink-0" />
-          <div className="text-[13px] font-bold">
-            {t("offline.title")} <span className="hidden sm:inline font-medium">{t("offline.subtitle")}</span>
-          </div>
-        </div>
-      )}
-
-      {syncProps.hasCloudVersion && (
-        <div className="max-w-[1120px] mx-auto mt-4 mb-2 px-4 sm:px-6">
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/35 dark:to-indigo-950/35 border border-blue-100/40 dark:border-blue-900/40 shadow-sm p-3 sm:py-2.5 sm:px-4 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
-            {/* Background decorative blob */}
-            <div className="absolute -right-6 -top-6 w-20 h-20 bg-blue-500/5 dark:bg-blue-400/5 rounded-full blur-xl"></div>
-            <div className="absolute -left-6 -bottom-6 w-20 h-20 bg-indigo-500/5 dark:bg-indigo-400/5 rounded-full blur-xl"></div>
-
-            <div className="relative flex items-center gap-2.5 z-10 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center shrink-0 border border-blue-50 dark:border-slate-700/50 text-blue-600 dark:text-blue-450">
-                <HugeiconsIcon icon={CloudIcon} className="w-4.5 h-4.5" />
-              </div>
-              <div className="min-w-0">
-                <h3 className="text-[13.5px] font-extrabold text-slate-800 dark:text-slate-200 leading-tight">{t("sync.foundUpdate", "Đã tìm thấy bản cập nhật mới")}</h3>
-                <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5 font-semibold leading-none truncate hidden sm:block">{t("sync.foundUpdateDesc", "Có dữ liệu mới nhất từ thiết bị khác của bạn.")}</p>
+          {!isOnline && (
+            <div className="bg-amber-500 text-white px-4 py-2 flex items-center justify-center gap-2 shadow-sm animate-fadeIn z-40 relative">
+              <HugeiconsIcon icon={WifiOffIcon} className="w-4 h-4 shrink-0" />
+              <div className="text-[13px] font-bold">
+                {t("offline.title")}{" "}
+                <span className="hidden sm:inline font-medium">{t("offline.subtitle")}</span>
               </div>
             </div>
-            
-            <button
-              onClick={async () => {
-                try {
-                  await syncProps.restoreNow("merge");
-                  syncProps.setHasCloudVersion(false);
-                  showToast(t("sync.syncSuccess", "Đã cập nhật dữ liệu mới từ thiết bị khác."));
-                } catch (e: any) {
-                  showToast(t("sync.syncFail", "Khôi phục thất bại: ") + e.message);
-                }
-              }}
-              disabled={syncProps.isSyncing}
-              className="relative z-10 shrink-0 px-4 py-2 rounded-lg bg-blue-600 text-white text-[12.5px] font-bold hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-1.5 disabled:opacity-70 disabled:pointer-events-none"
-            >
-              {syncProps.isSyncing ? (
-                <>
-                  <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5 animate-spin" />
-                  {t("common.processing", "Đang xử lý…")}
-                </>
-              ) : (
-                <>
-                  <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5" />
-                  {t("sync.syncNow", "Đồng bộ ngay")}
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      )}
+          )}
 
-      {isReadOnly && !isManagingTrips && !isViewingArchive && !isCreatingTrip && (
-        <div className="max-w-[1120px] mx-auto mt-4 px-4 md:px-6 animate-fadeIn">
-          <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-stone-100/80 dark:bg-stone-800/40 border border-stone-200/70 dark:border-stone-700/50">
-            <HugeiconsIcon icon={LockIcon} className="w-3.5 h-3.5 text-stone-400 dark:text-stone-500 shrink-0" strokeWidth={2.5} />
-            <p className="text-[12.5px] text-stone-500 dark:text-stone-400 leading-snug">
-              {t("common.archivedBanner")}
-            </p>
-          </div>
-        </div>
-      )}
+          {syncProps.hasCloudVersion && (
+            <div className="max-w-[1120px] mx-auto mt-4 mb-2 px-4 sm:px-6">
+              <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/35 dark:to-indigo-950/35 border border-blue-100/40 dark:border-blue-900/40 shadow-sm p-3 sm:py-2.5 sm:px-4 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
+                {/* Background decorative blob */}
+                <div className="absolute -right-6 -top-6 w-20 h-20 bg-blue-500/5 dark:bg-blue-400/5 rounded-full blur-xl"></div>
+                <div className="absolute -left-6 -bottom-6 w-20 h-20 bg-indigo-500/5 dark:bg-indigo-400/5 rounded-full blur-xl"></div>
 
-      <main className={classNames(
-        "mx-auto flex flex-1 w-full max-w-[1120px] flex-col",
-        (!isManagingTrips && tripId) ? "pb-24 md:pb-12" : (isManagingTrips && trips?.length === 0 && !isViewingArchive && !isCreatingTrip) ? "pb-0" : "pb-12"
-      )}>
-        <div className={classNames(
-          "flex-1 px-4 md:px-6 flex flex-col",
-          (isManagingTrips && trips?.length === 0 && !isViewingArchive && !isCreatingTrip) ? "py-0" : "py-6 md:py-8"
-        )}>
-          {tripsLoading ? (
-            <div className="flex items-center justify-center py-32">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
-            </div>
-          ) : isViewingArchive ? (
-            <div key="archive" className="motion-page-enter">
-              <ArchiveGallery
-                onBack={() => { setIsViewingArchive(false); setIsManagingTrips(true); }}
-                onOpenTrip={(id) => {
-                  setSelectedTripId(id);
-                  setIsViewingArchive(false);
-                  setIsManagingTrips(false);
-                }}
-              />
-            </div>
-          ) : isManagingTrips || !tripId ? (
-            <div key="manager" className={classNames("motion-page-enter", (isManagingTrips && trips?.length === 0) ? "flex-1 flex flex-col" : "")}>
-              <TripManagerScreen
-                trips={trips}
-                onOpenTrip={(id) => {
-                  setSelectedTripId(id);
-                  setIsManagingTrips(false);
-                }}
-                onCreateNew={() => {
-                  setIsCreatingTrip(true);
-                }}
-                onOpenArchive={() => {
-                  setIsManagingTrips(false);
-                  setIsViewingArchive(true);
-                }}
-                onShowToast={showToast}
-              />
-            </div>
-          ) : tripDataLoading ? (
-            <div className="flex items-center justify-center py-20">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
-            </div>
-          ) : trip && tripId ? (
-            <div key={activeTab} className="motion-page-enter">
-              {activeTab === "home" && <HomeScreen trip={trip} members={members ?? []} events={events ?? []} expenses={expenses ?? []} checklist={checklist ?? []} travelDocuments={travelDocuments ?? []} totalExpense={totalExpense} perPerson={perPerson} onNavigateTab={setActiveTab} onNavigateMore={navigateToMore} onOpenInbox={() => setIsAppInboxOpen(true)} isReadOnly={isReadOnly} />}
-              <React.Suspense fallback={<div className="flex items-center justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div></div>}>
-                {activeTab === "timeline" && <TimelineScreen trip={trip} events={events ?? []} expenses={expenses ?? []} onAddExpense={(date, eventId) => { setExpenseInitialAddState({ date, eventId }); setActiveTab("expenses"); }} isReadOnly={isReadOnly} />}
-                {activeTab === "expenses" && <ExpensesScreen expenses={expenses ?? []} members={members ?? []} totalExpense={totalExpense} perPerson={perPerson} tripId={tripId} events={events ?? []} initialAddState={expenseInitialAddState} onClearInitialAddState={() => setExpenseInitialAddState(undefined)} isReadOnly={isReadOnly} />}
-                {activeTab === "checklist" && <ChecklistScreen checklist={checklist ?? []} tripId={tripId} isReadOnly={isReadOnly} />}
-                {activeTab === "more" && <MoreScreen trip={trip} members={members ?? []} events={events ?? []} expenses={expenses ?? []} checklist={checklist ?? []} journals={journals ?? []} packingItems={packingItems ?? []} travelDocuments={travelDocuments ?? []} onTripDeleted={() => { setSelectedTripId(null); setIsManagingTrips(true); showToast("Đã xóa chuyến đi khỏi danh sách."); }} onTripSelected={setSelectedTripId} onShowToast={showToast} section={moreSection} setSection={setMoreSection} onOpenInbox={() => setIsAppInboxOpen(true)} isReadOnly={isReadOnly} onOpenSettings={(view) => { setSettingsInitialView(view ?? "menu"); setIsSettingsOpen(true); }} isAutoSyncing={isAutoSyncing} lastSyncedAt={lastSyncedAt} />}
-              </React.Suspense>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center py-20">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-500"></div>
+                <div className="relative flex items-center gap-2.5 z-10 min-w-0">
+                  <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center shrink-0 border border-blue-50 dark:border-slate-700/50 text-blue-600 dark:text-blue-450">
+                    <HugeiconsIcon icon={CloudIcon} className="w-4.5 h-4.5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-[13.5px] font-extrabold text-slate-800 dark:text-slate-200 leading-tight">
+                      {t("sync.foundUpdate", "Đã tìm thấy bản cập nhật mới")}
+                    </h3>
+                    <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5 font-semibold leading-none truncate hidden sm:block">
+                      {t("sync.foundUpdateDesc", "Có dữ liệu mới nhất từ thiết bị khác của bạn.")}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={async () => {
+                    try {
+                      await syncProps.restoreNow("merge");
+                      syncProps.setHasCloudVersion(false);
+                      showToast(t("sync.syncSuccess", "Đã cập nhật dữ liệu mới từ thiết bị khác."));
+                    } catch (e: any) {
+                      showToast(t("sync.syncFail", "Khôi phục thất bại: ") + e.message);
+                    }
+                  }}
+                  disabled={syncProps.isSyncing}
+                  className="relative z-10 shrink-0 px-4 py-2 rounded-lg bg-blue-600 text-white text-[12.5px] font-bold hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-1.5 disabled:opacity-70 disabled:pointer-events-none"
+                >
+                  {syncProps.isSyncing ? (
+                    <>
+                      <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5 animate-spin" />
+                      {t("common.processing", "Đang xử lý…")}
+                    </>
+                  ) : (
+                    <>
+                      <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5" />
+                      {t("sync.syncNow", "Đồng bộ ngay")}
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           )}
-        </div>
-      </main>
 
+          {isReadOnly && !isManagingTrips && !isViewingArchive && !isCreatingTrip && (
+            <div className="max-w-[1120px] mx-auto mt-4 px-4 md:px-6 animate-fadeIn">
+              <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-stone-100/80 dark:bg-stone-800/40 border border-stone-200/70 dark:border-stone-700/50">
+                <HugeiconsIcon
+                  icon={LockIcon}
+                  className="w-3.5 h-3.5 text-stone-400 dark:text-stone-500 shrink-0"
+                  strokeWidth={2.5}
+                />
+                <p className="text-[12.5px] text-stone-500 dark:text-stone-400 leading-snug">
+                  {t("common.archivedBanner")}
+                </p>
+              </div>
+            </div>
+          )}
 
-
-      {!isManagingTrips && tripId && (
-        <nav className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}>
-          <div ref={containerRef} className="relative flex h-[56px] min-[390px]:h-[60px] items-center justify-between px-2">
-            {/* Active Indicator Slide Pill */}
-            {indicatorStyle.width > 0 && (
-              <div 
-                className="absolute top-[6px] bottom-[6px] rounded-full bg-white dark:bg-slate-800 transition-[left,width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45 dark:border-slate-700/50"
-                style={{
-                  left: `${indicatorStyle.left}px`,
-                  width: `${indicatorStyle.width}px`
-                }}
-              />
+          <main
+            className={classNames(
+              "mx-auto flex flex-1 w-full max-w-[1120px] flex-col",
+              !isManagingTrips && tripId
+                ? "pb-24 md:pb-12"
+                : isManagingTrips && trips?.length === 0 && !isViewingArchive && !isCreatingTrip
+                  ? "pb-0"
+                  : "pb-12"
             )}
-            <NavButton
-              ref={(el) => { buttonsRef.current["home"] = el; }}
-              isActive={activeTab === "home"}
-              onClick={() => setActiveTab("home")}
-              icon={Home01Icon}
-              label={t('nav.home')}
-            />
-            <NavButton
-              ref={(el) => { buttonsRef.current["timeline"] = el; }}
-              isActive={activeTab === "timeline"}
-              onClick={() => setActiveTab("timeline")}
-              icon={CompassIcon}
-              label={t('nav.timeline')}
-            />
-            <NavButton
-              ref={(el) => { buttonsRef.current["expenses"] = el; }}
-              isActive={activeTab === "expenses"}
-              onClick={() => setActiveTab("expenses")}
-              icon={WalletCardsIcon}
-              label={t('nav.expenses')}
-            />
-            <NavButton
-              ref={(el) => { buttonsRef.current["checklist"] = el; }}
-              isActive={activeTab === "checklist"}
-              onClick={() => setActiveTab("checklist")}
-              icon={CheckListIcon}
-              label={t('nav.checklist')}
-            />
-            <NavButton
-              ref={(el) => { buttonsRef.current["more"] = el; }}
-              isActive={activeTab === "more"}
-              onClick={() => {
-                setMoreSection("overview");
-                setActiveTab("more");
-              }}
-              icon={Menu01Icon}
-              label={t('nav.more')}
-            />
-          </div>
-        </nav>
-      )}
+          >
+            <div
+              className={classNames(
+                "flex-1 px-4 md:px-6 flex flex-col",
+                isManagingTrips && trips?.length === 0 && !isViewingArchive && !isCreatingTrip
+                  ? "py-0"
+                  : "py-6 md:py-8"
+              )}
+            >
+              {tripsLoading ? (
+                <div className="flex items-center justify-center py-32">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
+                </div>
+              ) : isViewingArchive ? (
+                <div key="archive" className="motion-page-enter">
+                  <ArchiveGallery
+                    onBack={() => {
+                      startViewTransition(() => {
+                        setIsViewingArchive(false);
+                        setIsManagingTrips(true);
+                      });
+                    }}
+                    onOpenTrip={(id) => {
+                      startViewTransition(() => {
+                        setSelectedTripId(id);
+                        setIsViewingArchive(false);
+                        setIsManagingTrips(false);
+                      });
+                    }}
+                  />
+                </div>
+              ) : isManagingTrips || !tripId ? (
+                <div
+                  key="manager"
+                  className={classNames(
+                    "motion-page-enter",
+                    isManagingTrips && trips?.length === 0 ? "flex-1 flex flex-col" : ""
+                  )}
+                >
+                  <TripManagerScreen
+                    trips={trips}
+                    onOpenTrip={(id) => {
+                      startViewTransition(() => {
+                        setSelectedTripId(id);
+                        setIsManagingTrips(false);
+                      });
+                    }}
+                    onCreateNew={() => {
+                      setIsCreatingTrip(true);
+                    }}
+                    onOpenArchive={() => {
+                      startViewTransition(() => {
+                        setIsManagingTrips(false);
+                        setIsViewingArchive(true);
+                      });
+                    }}
+                    onShowToast={showToast}
+                  />
+                </div>
+              ) : tripDataLoading ? (
+                <div className="flex items-center justify-center py-20">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
+                </div>
+              ) : trip && tripId ? (
+                <div key={activeTab} className="motion-page-enter">
+                  {activeTab === "home" && (
+                    <HomeScreen
+                      trip={trip}
+                      members={members ?? []}
+                      events={events ?? []}
+                      expenses={expenses ?? []}
+                      checklist={checklist ?? []}
+                      travelDocuments={travelDocuments ?? []}
+                      totalExpense={totalExpense}
+                      perPerson={perPerson}
+                      onNavigateTab={setActiveTab}
+                      onNavigateMore={navigateToMore}
+                      onOpenInbox={() => setIsAppInboxOpen(true)}
+                      isReadOnly={isReadOnly}
+                    />
+                  )}
+                  <React.Suspense
+                    fallback={
+                      <div className="flex items-center justify-center py-20">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
+                      </div>
+                    }
+                  >
+                    {activeTab === "timeline" && (
+                      <TimelineScreen
+                        trip={trip}
+                        events={events ?? []}
+                        expenses={expenses ?? []}
+                        onAddExpense={(date, eventId) => {
+                          setExpenseInitialAddState({ date, eventId });
+                          setActiveTab("expenses");
+                        }}
+                        isReadOnly={isReadOnly}
+                      />
+                    )}
+                    {activeTab === "expenses" && (
+                      <ExpensesScreen
+                        expenses={expenses ?? []}
+                        members={members ?? []}
+                        totalExpense={totalExpense}
+                        perPerson={perPerson}
+                        tripId={tripId}
+                        events={events ?? []}
+                        initialAddState={expenseInitialAddState}
+                        onClearInitialAddState={() => setExpenseInitialAddState(undefined)}
+                        isReadOnly={isReadOnly}
+                      />
+                    )}
+                    {activeTab === "checklist" && (
+                      <ChecklistScreen
+                        checklist={checklist ?? []}
+                        tripId={tripId}
+                        isReadOnly={isReadOnly}
+                      />
+                    )}
+                    {activeTab === "more" && (
+                      <MoreScreen
+                        trip={trip}
+                        members={members ?? []}
+                        events={events ?? []}
+                        expenses={expenses ?? []}
+                        checklist={checklist ?? []}
+                        journals={journals ?? []}
+                        packingItems={packingItems ?? []}
+                        travelDocuments={travelDocuments ?? []}
+                        onTripDeleted={() => {
+                          setSelectedTripId(null);
+                          setIsManagingTrips(true);
+                          showToast("Đã xóa chuyến đi khỏi danh sách.");
+                        }}
+                        onTripSelected={setSelectedTripId}
+                        onShowToast={showToast}
+                        section={moreSection}
+                        setSection={setMoreSection}
+                        onOpenInbox={() => setIsAppInboxOpen(true)}
+                        isReadOnly={isReadOnly}
+                        onOpenSettings={(view) => {
+                          setSettingsInitialView(view ?? "menu");
+                          setIsSettingsOpen(true);
+                        }}
+                        isAutoSyncing={isAutoSyncing}
+                        lastSyncedAt={lastSyncedAt}
+                      />
+                    )}
+                  </React.Suspense>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center py-20">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-500"></div>
+                </div>
+              )}
+            </div>
+          </main>
 
-      {successToast && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-[420px] motion-toast-enter">
-          <div className="bg-kat-dark dark:bg-slate-800 text-white px-5 py-3 rounded-2xl shadow-floating flex items-center justify-between gap-4 border border-slate-200/20 dark:border-slate-700/50">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="flex h-5.5 w-5.5 shrink-0 items-center justify-center rounded-full bg-kat-primary/20 text-kat-primary">
-                <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" strokeWidth={3.5} />
+          {!isManagingTrips && tripId && (
+            <nav
+              className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium lg:hidden transition-transform duration-200 ease-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`}
+              style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
+            >
+              <div className="relative flex h-[56px] min-[390px]:h-[60px] items-center justify-between px-2">
+                <NavButton
+                  isActive={activeTab === "home"}
+                  onClick={() => setActiveTab("home")}
+                  icon={Home01Icon}
+                  label={t("nav.home")}
+                />
+                <NavButton
+                  isActive={activeTab === "timeline"}
+                  onClick={() => setActiveTab("timeline")}
+                  icon={CompassIcon}
+                  label={t("nav.timeline")}
+                />
+                <NavButton
+                  isActive={activeTab === "expenses"}
+                  onClick={() => setActiveTab("expenses")}
+                  icon={WalletCardsIcon}
+                  label={t("nav.expenses")}
+                />
+                <NavButton
+                  isActive={activeTab === "checklist"}
+                  onClick={() => setActiveTab("checklist")}
+                  icon={CheckListIcon}
+                  label={t("nav.checklist")}
+                />
+                <NavButton
+                  isActive={activeTab === "more"}
+                  onClick={() => {
+                    setMoreSection("overview");
+                    setActiveTab("more");
+                  }}
+                  icon={Menu01Icon}
+                  label={t("nav.more")}
+                />
               </div>
-              <span className="text-[14px] font-bold tracking-wide text-sand dark:text-slate-200">Đã tạo chuyến đi thành công</span>
+            </nav>
+          )}
+
+          {successToast && (
+            <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-[420px] motion-toast-enter">
+              <div className="bg-kat-dark dark:bg-slate-800 text-white px-5 py-3 rounded-2xl shadow-floating flex items-center justify-between gap-4 border border-slate-200/20 dark:border-slate-700/50">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex h-5.5 w-5.5 shrink-0 items-center justify-center rounded-full bg-kat-primary/20 text-kat-primary">
+                    <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" strokeWidth={3.5} />
+                  </div>
+                  <span className="text-[14px] font-bold tracking-wide text-sand dark:text-slate-200">
+                    Đã tạo chuyến đi thành công
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <button
+                    onClick={() => {
+                      setSelectedTripId(successToast);
+                      setIsManagingTrips(false);
+                      setSuccessToast(null);
+                    }}
+                    className="text-kat-primary font-extrabold text-[14px] hover:text-kat-teal/80 transition-colors whitespace-nowrap"
+                  >
+                    Xem chi tiết
+                  </button>
+                  <button
+                    onClick={() => setSuccessToast(null)}
+                    className="text-slate-400 hover:text-white p-1 transition-colors"
+                  >
+                    <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-3 shrink-0">
-              <button 
-                onClick={() => {
-                  setSelectedTripId(successToast);
-                  setIsManagingTrips(false);
-                  setSuccessToast(null);
+          )}
+
+          {toastMessage && (
+            <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-[400px] pointer-events-none motion-toast-enter">
+              <div className="bg-kat-dark dark:bg-slate-800 text-white px-5 py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 border border-slate-200/10 dark:border-slate-700/50">
+                <span className="text-[14px] font-bold text-center leading-snug text-white dark:text-slate-200">
+                  {toastMessage}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {(syncProps.isSyncing || syncProps.isAutoSyncingUI) && (
+            <div className="fixed bottom-24 md:bottom-6 right-6 z-50 animate-fadeIn pointer-events-none">
+              <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/90 text-white shadow-lg backdrop-blur-sm border border-white/10 text-[12px] font-bold">
+                <HugeiconsIcon
+                  icon={RefreshIcon}
+                  className="w-3.5 h-3.5 animate-spin text-kat-teal shrink-0"
+                />
+                <span>Đang đồng bộ từ Cloud…</span>
+              </div>
+            </div>
+          )}
+
+          {tripId && (
+            <TripSearchModal
+              tripId={tripId}
+              isOpen={isSearchOpen}
+              onClose={() => setIsSearchOpen(false)}
+              onNavigateTab={setActiveTab}
+              onNavigateMore={navigateToMore}
+            />
+          )}
+
+          {/* Bottom Sheet on Mobile only */}
+          {isRemindersOpen && !isDesktop && (
+            <BottomSheet
+              isOpen={isRemindersOpen}
+              onClose={() => setIsRemindersOpen(false)}
+              title={t("reminders.title")}
+              subtitle={t("reminders.subtitle")}
+            >
+              <div className="divide-y divide-slate-100 dark:divide-slate-800 -mx-5 -mb-4 mt-1 border-t border-slate-100 dark:border-slate-800/80">
+                {renderReminderItems()}
+              </div>
+            </BottomSheet>
+          )}
+
+          {tripId && (
+            <ShareChangeRequestsSheet
+              isOpen={isAppInboxOpen}
+              onClose={() => setIsAppInboxOpen(false)}
+              token={activeToken ?? ""}
+              requests={pendingRequests}
+              members={members ?? []}
+            />
+          )}
+
+          {isCreatingTrip && (
+            <React.Suspense fallback={null}>
+              <TripForm
+                isOpen={isCreatingTrip}
+                onClose={() => setIsCreatingTrip(false)}
+                onSaved={(id) => {
+                  setIsCreatingTrip(false);
+                  setSuccessToast(id);
+                  setTimeout(() => setSuccessToast(null), 4000);
                 }}
-                className="text-kat-primary font-extrabold text-[14px] hover:text-kat-teal/80 transition-colors whitespace-nowrap"
-              >
-                Xem chi tiết
-              </button>
-              <button onClick={() => setSuccessToast(null)} className="text-slate-400 hover:text-white p-1 transition-colors">
-                <HugeiconsIcon icon={Cancel01Icon} className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+              />
+            </React.Suspense>
+          )}
 
-      {toastMessage && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-[400px] pointer-events-none motion-toast-enter">
-          <div className="bg-kat-dark dark:bg-slate-800 text-white px-5 py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 border border-slate-200/10 dark:border-slate-700/50">
-            <span className="text-[14px] font-bold text-center leading-snug text-white dark:text-slate-200">{toastMessage}</span>
-          </div>
-        </div>
-      )}
-
-      {(syncProps.isSyncing || syncProps.isAutoSyncingUI) && (
-        <div className="fixed bottom-24 md:bottom-6 right-6 z-50 animate-fadeIn pointer-events-none">
-          <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/90 text-white shadow-lg backdrop-blur-sm border border-white/10 text-[12px] font-bold">
-            <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5 animate-spin text-kat-teal shrink-0" />
-            <span>Đang đồng bộ từ Cloud…</span>
-          </div>
-        </div>
-      )}
-
-      {tripId && (
-        <TripSearchModal 
-          tripId={tripId}
-          isOpen={isSearchOpen}
-          onClose={() => setIsSearchOpen(false)}
-          onNavigateTab={setActiveTab}
-          onNavigateMore={navigateToMore}
-        />
-      )}
-
-      {/* Bottom Sheet on Mobile only */}
-      {isRemindersOpen && !isDesktop && (
-        <BottomSheet
-          isOpen={isRemindersOpen}
-          onClose={() => setIsRemindersOpen(false)}
-          title={t("reminders.title")}
-          subtitle={t("reminders.subtitle")}
-        >
-          <div className="divide-y divide-slate-100 dark:divide-slate-800 -mx-5 -mb-4 mt-1 border-t border-slate-100 dark:border-slate-800/80">
-            {renderReminderItems()}
-          </div>
-        </BottomSheet>
-      )}
-
-      {tripId && (
-        <ShareChangeRequestsSheet
-          isOpen={isAppInboxOpen}
-          onClose={() => setIsAppInboxOpen(false)}
-          token={activeToken ?? ''}
-          requests={pendingRequests}
-          members={members ?? []}
-        />
-      )}
-
-      {isCreatingTrip && (
-        <React.Suspense fallback={null}>
-          <TripForm
-            isOpen={isCreatingTrip}
-            onClose={() => setIsCreatingTrip(false)}
-            onSaved={(id) => {
-              setIsCreatingTrip(false);
-              setSuccessToast(id);
-              setTimeout(() => setSuccessToast(null), 4000);
+          <SettingsSheet
+            isOpen={isSettingsOpen}
+            onClose={() => setIsSettingsOpen(false)}
+            initialView={settingsInitialView}
+            syncProps={syncProps}
+            onTripSelected={(id) => {
+              setSelectedTripId(id);
+              setIsManagingTrips(false);
             }}
           />
-        </React.Suspense>
-      )}
 
-      <SettingsSheet
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        initialView={settingsInitialView}
-        syncProps={syncProps}
-        onTripSelected={(id) => {
-          setSelectedTripId(id);
-          setIsManagingTrips(false);
-        }}
-      />
+          <BottomSheet
+            isOpen={isLogoutConfirmOpen}
+            onClose={() => setIsLogoutConfirmOpen(false)}
+            title={t("userMenu.logoutConfirmTitle")}
+          >
+            <div className="space-y-5">
+              <div className="rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-800/80 p-4 text-[13.5px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed text-left">
+                <Trans i18nKey="userMenu.logoutConfirmMessage">
+                  Bạn sắp đăng xuất khỏi thiết bị này. Đừng lo, toàn bộ dữ liệu đã sao lưu trên{" "}
+                  <strong className="font-bold text-slate-800 dark:text-slate-100">Cloud</strong>{" "}
+                  vẫn được giữ{" "}
+                  <strong className="font-bold text-slate-800 dark:text-slate-100">an toàn</strong>.
+                </Trans>
+              </div>
 
-      <BottomSheet
-        isOpen={isLogoutConfirmOpen}
-        onClose={() => setIsLogoutConfirmOpen(false)}
-        title={t('userMenu.logoutConfirmTitle')}
-      >
-        <div className="space-y-5">
-          <div className="rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-800/80 p-4 text-[13.5px] text-slate-600 dark:text-slate-300 font-medium leading-relaxed text-left">
-            <Trans i18nKey="userMenu.logoutConfirmMessage">
-              Bạn sắp đăng xuất khỏi thiết bị này. Đừng lo, toàn bộ dữ liệu đã sao lưu trên <strong className="font-bold text-slate-800 dark:text-slate-100">Cloud</strong> vẫn được giữ <strong className="font-bold text-slate-800 dark:text-slate-100">an toàn</strong>.
-            </Trans>
-          </div>
+              <div className="pt-2 flex flex-col sm:flex-row gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsLogoutConfirmOpen(false)}
+                  className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200 motion-press"
+                >
+                  {t("common.cancel")}
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setIsLogoutConfirmOpen(false);
+                    localStorage.removeItem("kat_journey_welcome_viewed");
+                    localStorage.removeItem("kat_auth_mode");
+                    setShowWelcome(true);
+                    await signOutUser();
+                  }}
+                  className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 active:scale-[0.98] transition-all duration-200 motion-press"
+                >
+                  <HugeiconsIcon icon={Logout01Icon} className="h-5 w-5" />
+                  {t("userMenu.logoutButton")}
+                </button>
+              </div>
+            </div>
+          </BottomSheet>
 
-          <div className="pt-2 flex flex-col sm:flex-row gap-3">
-            <button
-              type="button"
-              onClick={() => setIsLogoutConfirmOpen(false)}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200 motion-press"
-            >
-              {t('common.cancel')}
-            </button>
-            <button
-              type="button"
-              onClick={async () => {
-                setIsLogoutConfirmOpen(false);
-                localStorage.removeItem("kat_journey_welcome_viewed");
-                localStorage.removeItem("kat_auth_mode");
-                setShowWelcome(true);
-                await signOutUser();
-              }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] bg-rose-600 border border-rose-700 px-6 font-bold text-white hover:bg-rose-700 active:scale-[0.98] transition-all duration-200 motion-press"
-            >
-              <HugeiconsIcon icon={Logout01Icon} className="h-5 w-5" />
-              {t('userMenu.logoutButton')}
-            </button>
-          </div>
-        </div>
-      </BottomSheet>
-
-      <ImportTripSheet
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
-        showToast={showToast}
-      />
-
+          <ImportTripSheet
+            isOpen={isImportModalOpen}
+            onClose={() => setIsImportModalOpen(false)}
+            showToast={showToast}
+          />
         </div>
       )}
 

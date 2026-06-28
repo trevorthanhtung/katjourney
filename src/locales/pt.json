@@ -392,15 +392,7 @@
     "startDateError": "Por favor, escolha uma data de início.",
     "endDateError": "Por favor, escolha uma data de fim.",
     "dateCompareError": "A data de fim não pode ser anterior à de início.",
-    "daysOfWeek": [
-      "Dom",
-      "Seg",
-      "Ter",
-      "Qua",
-      "Qui",
-      "Sex",
-      "Sáb"
-    ],
+    "daysOfWeek": ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
     "months": [
       "Janeiro",
       "Fevereiro",
@@ -1117,7 +1109,7 @@
   },
   "packing": {
     "pageTitle": "Lista de Bagagem",
-    "pageSubtitle": "Arrume tudo o que precisa para a viagem.",
+    "pageSubtitle": "Prepare todas as bagagens para a viagem.",
     "progressTitle": "Progresso",
     "packedCount": "Đã xếp {{completed}} / {{total}} món",
     "addItem": "Adicionar item",
@@ -1230,7 +1222,7 @@
   },
   "expenses": {
     "pageTitle": "Despesas",
-    "pageSubtitle": "Acompanhe gastos, pagamentos e divisões.",
+    "pageSubtitle": "Gerencie despesas e divida os custos durante a viagem.",
     "addExpense": "Adicionar",
     "totalTrip": "Despesas Totais",
     "sharedTrip": "Despesas Compartilhadas",
@@ -1478,7 +1470,7 @@
     "permSuggestCost": "Sugerir despesas",
     "permSuggestTrip": "Sugerir mudanças",
     "rolesHelpTitle": "Informações sobre funções",
-    "rolesHelpSubtitle": "Cada membro tem diferentes responsabilidades",
+    "rolesHelpSubtitle": "Cada membro tem um papel para o sucesso da viagem.",
     "roleLabel": "Função na viagem"
   },
   "journal": {

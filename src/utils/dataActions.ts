@@ -1,4 +1,5 @@
 import { db } from "../db";
+import { deleteCurrentUser, signOutUser } from "../services/authService";
 
 /**
  * Xóa toàn bộ PWA cache (service worker caches).
@@ -20,7 +21,6 @@ export async function clearTemporaryFiles(): Promise<void> {
 export async function executeDeleteAccount(): Promise<void> {
   // 1. Xóa tài khoản trên Auth nếu người dùng đã đăng nhập
   try {
-    const { deleteCurrentUser } = await import("../services/authService");
     await deleteCurrentUser();
     console.log("[DataActions] Account deleted successfully.");
   } catch (error: any) {
@@ -73,7 +73,6 @@ export async function executeFactoryReset(): Promise<void> {
 
   // 4. Đăng xuất Auth (nếu có)
   try {
-    const { signOutUser } = await import("../services/authService");
     await signOutUser();
   } catch (_) {
     // ignore nếu chưa init hoặc user chưa đăng nhập

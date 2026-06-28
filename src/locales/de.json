@@ -392,15 +392,7 @@
     "startDateError": "Bitte wähle ein Startdatum.",
     "endDateError": "Bitte wähle ein Enddatum.",
     "dateCompareError": "Das Enddatum kann nicht vor dem Startdatum liegen.",
-    "daysOfWeek": [
-      "So",
-      "Mo",
-      "Di",
-      "Mi",
-      "Do",
-      "Fr",
-      "Sa"
-    ],
+    "daysOfWeek": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
     "months": [
       "Januar",
       "Februar",
@@ -1117,7 +1109,7 @@
   },
   "packing": {
     "pageTitle": "Packliste",
-    "pageSubtitle": "Packen Sie alles ein, was Sie brauchen.",
+    "pageSubtitle": "Packe alles, was du für die Reise brauchst.",
     "progressTitle": "Packfortschritt",
     "packedCount": "Đã xếp {{completed}} / {{total}} món",
     "addItem": "Artikel hinzufügen",
@@ -1230,7 +1222,7 @@
   },
   "expenses": {
     "pageTitle": "Ausgaben",
-    "pageSubtitle": "Ausgaben, Zahlungen und Aufteilungen verfolgen.",
+    "pageSubtitle": "Verwalte Ausgaben und teile die Kosten während der Reise.",
     "addExpense": "Hinzufügen",
     "totalTrip": "Gesamtausgaben",
     "sharedTrip": "Geteilte Ausgaben",
@@ -1478,7 +1470,7 @@
     "permSuggestCost": "Ausgaben vorschlagen",
     "permSuggestTrip": "Änderungen vorschlagen",
     "rolesHelpTitle": "Rolleninformationen",
-    "rolesHelpSubtitle": "Jedes Mitglied hat unterschiedliche Aufgaben",
+    "rolesHelpSubtitle": "Jedes Mitglied trägt zum Erfolg der Reise bei.",
     "roleLabel": "Rolle auf der Reise"
   },
   "journal": {

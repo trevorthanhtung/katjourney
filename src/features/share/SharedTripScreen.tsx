@@ -33,14 +33,36 @@ import {
   GitBranchIcon,
   CheckIcon,
   ChevronDownIcon,
-  InformationCircleIcon
+  InformationCircleIcon,
 } from "@hugeicons/core-free-icons";
 import { RolesHelpSheet } from "../../components/RolesHelpSheet";
 import { getViewShareData } from "../../services/cloudShareService";
-import { formatDate, classNames, getTripTiming, formatMoney, formatMoneyCompact, daysBetween, formatDateShort } from "../../utils/helpers";
-import { EventItem, Expense, ChecklistItem, Member, JournalEntry, TravelDocument, BackupPlan } from "../../db";
+import {
+  formatDate,
+  classNames,
+  getTripTiming,
+  formatMoney,
+  formatMoneyCompact,
+  daysBetween,
+  formatDateShort,
+} from "../../utils/helpers";
+import {
+  EventItem,
+  Expense,
+  ChecklistItem,
+  Member,
+  JournalEntry,
+  TravelDocument,
+  BackupPlan,
+} from "../../db";
 import { SharedActivitiesSection } from "./components/SharedActivitiesSection";
-import { SharedExpensesSection, SharedChecklistSection, SharedJournalsSection, SharedDocumentsSection, SharedMembersSection } from "./components/SharedSections";
+import {
+  SharedExpensesSection,
+  SharedChecklistSection,
+  SharedJournalsSection,
+  SharedDocumentsSection,
+  SharedMembersSection,
+} from "./components/SharedSections";
 import { getIdentity, saveIdentity, UserIdentity } from "../../services/identityService";
 import { getAvatarSvg } from "../../utils/avatars";
 import { ChatBox } from "./components/ChatBox";
@@ -74,17 +96,43 @@ interface SharedData {
 
 import { useTheme } from "../../hooks/useTheme";
 import { useSharedTrip } from "../../hooks/useSharedTrip";
+import { useSharedTripAuth } from "./hooks/useSharedTripAuth";
+import { useSharedTripNavigation } from "./hooks/useSharedTripNavigation";
+import { useSharedTripIdentity } from "./hooks/useSharedTripIdentity";
 
 export default function SharedTripScreen({ token }: { token: string }) {
   const { t } = useTranslation();
   useTheme();
-  const [enteredPin, setEnteredPin] = useState<string | null>(null);
+  const {
+    enteredPin,
+    pinInput,
+    pinError,
+    setPinError,
+    handlePinInput,
+    handlePinBackspace,
+    confirmPin,
+  } = useSharedTripAuth();
   const { data, error, errorCode, loading } = useSharedTrip(token, enteredPin);
-  const [identityChecked, setIdentityChecked] = useState(false);
-  const [currentUser, setCurrentUser] = useState<UserIdentity | null>(null);
+  const {
+    identityChecked,
+    setIdentityChecked,
+    currentUser,
+    setCurrentUser,
+    showIdentityModal,
+    setShowIdentityModal,
+    step,
+    setStep,
+    isBannerVisible,
+    setIsBannerVisible,
+    switchUser,
+  } = useSharedTripIdentity(data);
 
   // Weather states
-  const { forecast, loading: weatherLoading, error: weatherError } = useWeather(
+  const {
+    forecast,
+    loading: weatherLoading,
+    error: weatherError,
+  } = useWeather(
     data?.trip?.destination || data?.trip?.location,
     data?.trip?.latitude,
     data?.trip?.longitude,
@@ -96,15 +144,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
   // Packing tip based on GPS vs destination temp
   const packingTip = usePackingTip(forecast, myForecast);
 
-  const [showIdentityModal, setShowIdentityModal] = useState(false);
-
   const areBarsVisible = useScrollBarVisibility(1024);
-  
+
   // Identity Modal state
-  const [pinInput, setPinInput] = useState("");
-  const [pinError, setPinError] = useState(false);
-  const [step, setStep] = useState<"pin" | "identity">("pin");
-  const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [isGlobalBackupOpen, setIsGlobalBackupOpen] = useState(false);
   const [isRolesHelpOpen, setIsRolesHelpOpen] = useState(false);
   const [memberSearchQuery, setMemberSearchQuery] = useState("");
@@ -112,31 +154,70 @@ export default function SharedTripScreen({ token }: { token: string }) {
   const renderRoleIcons = (role: string) => {
     const roles = (role || "Người đồng hành")
       .split(",")
-      .map(r => r.trim().toLowerCase())
+      .map((r) => r.trim().toLowerCase())
       .filter(Boolean);
 
     return (
       <div className="flex items-center gap-1 flex-wrap justify-end">
         {roles.map((roleLower, i) => {
-          if (roleLower === "trưởng nhóm" || roleLower === "trưởng đoàn" || roleLower === "người đại diện" || roleLower === "leader") {
-            return <span key={i} title={t("roles.roleLeader")} className="shrink-0"><HugeiconsIcon icon={CrownIcon} className="h-3.5 w-3.5 text-amber-500" /></span>;
+          if (
+            roleLower === "trưởng nhóm" ||
+            roleLower === "trưởng đoàn" ||
+            roleLower === "người đại diện" ||
+            roleLower === "leader"
+          ) {
+            return (
+              <span key={i} title={t("roles.roleLeader")} className="shrink-0">
+                <HugeiconsIcon icon={CrownIcon} className="h-3.5 w-3.5 text-amber-500" />
+              </span>
+            );
           }
           if (roleLower === "quản lý chi phí") {
-            return <span key={i} title={t("roles.roleCostManager")} className="shrink-0"><HugeiconsIcon icon={Wallet01Icon} className="h-3.5 w-3.5 text-emerald-500" /></span>;
+            return (
+              <span key={i} title={t("roles.roleCostManager")} className="shrink-0">
+                <HugeiconsIcon icon={Wallet01Icon} className="h-3.5 w-3.5 text-emerald-500" />
+              </span>
+            );
           }
           if (roleLower === "tài xế") {
-            return <span key={i} title={t("roles.roleDriver")} className="shrink-0"><HugeiconsIcon icon={Car01Icon} className="h-3.5 w-3.5 text-blue-500" /></span>;
+            return (
+              <span key={i} title={t("roles.roleDriver")} className="shrink-0">
+                <HugeiconsIcon icon={Car01Icon} className="h-3.5 w-3.5 text-blue-500" />
+              </span>
+            );
           }
           if (roleLower === "dẫn đường") {
-            return <span key={i} title={t("roles.roleNavigator")} className="shrink-0"><HugeiconsIcon icon={CompassIcon} className="h-3.5 w-3.5 text-sky-500" /></span>;
+            return (
+              <span key={i} title={t("roles.roleNavigator")} className="shrink-0">
+                <HugeiconsIcon icon={CompassIcon} className="h-3.5 w-3.5 text-sky-500" />
+              </span>
+            );
           }
           if (roleLower === "hành lý") {
-            return <span key={i} title={t("roles.roleLuggage")} className="shrink-0"><HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 text-indigo-500" /></span>;
+            return (
+              <span key={i} title={t("roles.roleLuggage")} className="shrink-0">
+                <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 text-indigo-500" />
+              </span>
+            );
           }
-          if (!roleLower || roleLower === "người đồng hành" || roleLower === "bạn đồng hành" || roleLower === "companion" || roleLower === "member") {
-            return <span key={i} title={t("roles.roleCompanion")} className="shrink-0"><HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5 text-slate-400" /></span>;
+          if (
+            !roleLower ||
+            roleLower === "người đồng hành" ||
+            roleLower === "bạn đồng hành" ||
+            roleLower === "companion" ||
+            roleLower === "member"
+          ) {
+            return (
+              <span key={i} title={t("roles.roleCompanion")} className="shrink-0">
+                <HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5 text-slate-400" />
+              </span>
+            );
           }
-          return <span key={i} title={roleLower} className="shrink-0"><HugeiconsIcon icon={BadgeCheckIcon} className="h-3.5 w-3.5 text-teal-500" /></span>;
+          return (
+            <span key={i} title={roleLower} className="shrink-0">
+              <HugeiconsIcon icon={BadgeCheckIcon} className="h-3.5 w-3.5 text-teal-500" />
+            </span>
+          );
         })}
       </div>
     );
@@ -145,14 +226,15 @@ export default function SharedTripScreen({ token }: { token: string }) {
   // Chat state
   const [showChatBox, setShowChatBox] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<string>("");
-  const [checklistSubTab, setChecklistSubTab] = useState<"checklist" | "documents">("checklist");
-  const [hasInitializedTab, setHasInitializedTab] = useState(false);
-
-  // 2027 Bottom Navigation Bar animation system
-  const [indicatorStyle, setIndicatorStyle] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
-  const buttonsRef = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+  const {
+    activeTab,
+    setActiveTab,
+    checklistSubTab,
+    setChecklistSubTab,
+    indicatorStyle,
+    containerRef,
+    setButtonRef,
+  } = useSharedTripNavigation(data, currentUser);
 
   // Dynamic robots tag for SharedTripScreen to prevent SEO indexing of shared trips
   useEffect(() => {
@@ -167,34 +249,6 @@ export default function SharedTripScreen({ token }: { token: string }) {
       }
     };
   }, []);
-
-  useEffect(() => {
-    const updateIndicator = () => {
-      if (!activeTab) {
-        setIndicatorStyle({ left: 0, width: 0 });
-        return;
-      }
-      const activeButton = buttonsRef.current[activeTab];
-      const container = containerRef.current;
-      if (activeButton && container) {
-        const rect = activeButton.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        setIndicatorStyle({
-          left: rect.left - containerRect.left,
-          width: rect.width
-        });
-      }
-    };
-
-    updateIndicator();
-    const timer = setTimeout(updateIndicator, 60);
-
-    window.addEventListener("resize", updateIndicator);
-    return () => {
-      window.removeEventListener("resize", updateIndicator);
-      clearTimeout(timer);
-    };
-  }, [activeTab]);
   const [selectedRoadmapDay, setSelectedRoadmapDay] = useState<string>("");
   const [isRoadmapFormOpen, setIsRoadmapFormOpen] = useState(false);
   const [isRoadmapDayPickerOpen, setIsRoadmapDayPickerOpen] = useState(false);
@@ -210,10 +264,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
       } else {
         delete currentRoadmaps[roadmapEditDay];
       }
-      
+
       const { updateSharedTripRoadmaps } = await import("../../services/sharedTripEditService");
       await updateSharedTripRoadmaps(token, currentRoadmaps);
-      
+
       setIsRoadmapFormOpen(false);
     } catch (err) {
       console.error("Error saving trip:", err);
@@ -221,11 +275,13 @@ export default function SharedTripScreen({ token }: { token: string }) {
     }
   };
 
-
-
   const tripDays = data?.trip ? daysBetween(data.trip.startDate, data.trip.endDate) : [];
-  const eventDays = data?.activities ? Array.from(new Set(data.activities.map((e: any) => e.date))) : [];
-  const days = Array.from(new Set([...tripDays, ...eventDays])).filter(Boolean).sort() as string[];
+  const eventDays = data?.activities
+    ? Array.from(new Set(data.activities.map((e: any) => e.date)))
+    : [];
+  const days = Array.from(new Set([...tripDays, ...eventDays]))
+    .filter(Boolean)
+    .sort() as string[];
 
   useEffect(() => {
     if (days.length > 0 && !selectedRoadmapDay) {
@@ -234,33 +290,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
   }, [days, selectedRoadmapDay]);
 
   useEffect(() => {
-    if (data && data.trip) {
-      const saved = getIdentity(data.trip.id);
-      const pendingSwap = localStorage.getItem("kat_pending_swap_" + data.trip.id) === "true";
-      
-      if (!saved || pendingSwap) {
-        setShowIdentityModal(true);
-        setStep("identity");
-      } else {
-        const member = data.members?.find((m: any) => m.name === saved.name);
-        if (member) {
-          saved.role = member.role;
-          saveIdentity(saved, data.trip.id);
-        }
-        setCurrentUser(saved);
-        setIdentityChecked(true);
-        setIsBannerVisible(true);
-      }
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (errorCode === 'invalid_pin' && enteredPin) {
+    if (errorCode === "invalid_pin" && enteredPin) {
       setPinError(true);
     }
   }, [errorCode, enteredPin]);
-
-
 
   useEffect(() => {
     if (data && data.trip) {
@@ -268,25 +301,26 @@ export default function SharedTripScreen({ token }: { token: string }) {
         const savedRaw = localStorage.getItem("kat_recent_shared_trips");
         let list = savedRaw ? JSON.parse(savedRaw) : [];
         if (!Array.isArray(list)) list = [];
-        
+
         // Remove existing item with same token
         list = list.filter((item: any) => item.token !== token);
-        
+
         // Format date display
-        const dateParts = data.trip.startDate ? data.trip.startDate.split('-') : [];
-        const dateStr = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}` : (data.trip.startDate || "");
-        
+        const dateParts = data.trip.startDate ? data.trip.startDate.split("-") : [];
+        const dateStr =
+          dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}` : data.trip.startDate || "";
+
         // Add to front
         list.unshift({
           token,
           title: data.trip.title || data.trip.name || "Chuyến đi không tên",
           date: dateStr,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
-        
+
         // Keep max 3
         list = list.slice(0, 3);
-        
+
         localStorage.setItem("kat_recent_shared_trips", JSON.stringify(list));
       } catch (e) {
         console.error("Error saving recent shared trip", e);
@@ -294,42 +328,39 @@ export default function SharedTripScreen({ token }: { token: string }) {
     }
   }, [data, token]);
 
-  useEffect(() => {
-    if (data && !hasInitializedTab) {
-      const hasChecklist = Boolean(data.includeChecklist);
-      const hasDocuments = Boolean(data.includeDocuments);
-
-      if (hasChecklist) {
-        setChecklistSubTab("checklist");
-      } else if (hasDocuments) {
-        setChecklistSubTab("documents");
-      }
-
-      // Default active tab initialization (always default to "activities" which is always visible)
-      setActiveTab("activities");
-      setHasInitializedTab(true);
-    }
-  }, [data, hasInitializedTab, currentUser]);
-
   // Stats
   const totalExpense = React.useMemo(() => {
     if (!data) return 0;
     const expenses = data.expenses || [];
     const changeRequests = data.changeRequests || [];
-    const list = expenses.filter((e: any) => !e.isDeleted).map((item: any) => {
-      const pendingDelete = changeRequests.some((r: any) => r.section === 'expenses' && r.action === 'delete' && String(r.targetId) === String(item.id));
-      const updateReq = changeRequests.find((r: any) => r.section === 'expenses' && r.action === 'update' && String(r.targetId) === String(item.id));
-      
-      if (updateReq) {
-        return { ...item, ...updateReq.after };
-      }
-      if (pendingDelete) {
-        return { ...item, isPendingDelete: true };
-      }
-      return item;
-    });
+    const list = expenses
+      .filter((e: any) => !e.isDeleted)
+      .map((item: any) => {
+        const pendingDelete = changeRequests.some(
+          (r: any) =>
+            r.section === "expenses" &&
+            r.action === "delete" &&
+            String(r.targetId) === String(item.id)
+        );
+        const updateReq = changeRequests.find(
+          (r: any) =>
+            r.section === "expenses" &&
+            r.action === "update" &&
+            String(r.targetId) === String(item.id)
+        );
 
-    const pendingCreates = changeRequests.filter((r: any) => r.section === 'expenses' && r.action === 'create' && r.status === 'pending');
+        if (updateReq) {
+          return { ...item, ...updateReq.after };
+        }
+        if (pendingDelete) {
+          return { ...item, isPendingDelete: true };
+        }
+        return item;
+      });
+
+    const pendingCreates = changeRequests.filter(
+      (r: any) => r.section === "expenses" && r.action === "create" && r.status === "pending"
+    );
     pendingCreates.forEach((r: any) => {
       list.push({ ...r.after } as any);
     });
@@ -342,12 +373,14 @@ export default function SharedTripScreen({ token }: { token: string }) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white dark:bg-[#0A1124] flex-col gap-4">
         <div className="h-10 w-10 animate-spin rounded-full border-4 border-kat-primary/30 border-t-kat-primary"></div>
-        <p className="text-slate-500 dark:text-slate-400 font-bold animate-pulse">{t("share.loadingTrip")}</p>
+        <p className="text-slate-500 dark:text-slate-400 font-bold animate-pulse">
+          {t("share.loadingTrip")}
+        </p>
       </div>
     );
   }
 
-  const isPinRequired = errorCode === 'invalid_pin' || error === 'Mã PIN không đúng.';
+  const isPinRequired = errorCode === "invalid_pin" || error === "Mã PIN không đúng.";
 
   if (error || !data) {
     if (!isPinRequired) {
@@ -358,7 +391,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
               <HugeiconsIcon icon={SecurityWarningIcon} className="h-10 w-10" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-200">{t("share.cannotAccessTrip")}</h2>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-200">
+                {t("share.cannotAccessTrip")}
+              </h2>
               <p className="text-base text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
                 {t("share.linkNotExist")}
               </p>
@@ -367,7 +402,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               </p>
             </div>
             <button
-              onClick={() => window.location.href = "/"}
+              onClick={() => (window.location.href = "/")}
               className="inline-flex min-h-[44px] w-fit items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 py-2.5 font-bold shadow-sm hover:bg-[#0a1a5c] dark:hover:brightness-110 active:scale-95 transition-all focus:outline-none"
             >
               {t("share.backToHome")}
@@ -410,24 +445,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     value={pinInput[i] || ""}
                     onChange={(e) => {
                       const val = e.target.value.replace(/\D/g, "");
-                      const arr = pinInput.split("").slice(0, 4);
-                      arr[i] = val;
-                      const newPin = arr.join("").slice(0, 4);
-                      setPinInput(newPin);
-                      setPinError(false);
-                      if (val && i < 3) {
-                        const next = document.getElementById(`share-pin-digit-${i+1}`);
-                        next?.focus();
-                      }
-                      if (newPin.length === 4) {
-                        setEnteredPin(newPin);
-                      }
+                      handlePinInput(val, i);
                     }}
                     onKeyDown={(e) => {
-                      if (e.key === "Backspace" && !pinInput[i] && i > 0) {
-                        const prev = document.getElementById(`share-pin-digit-${i-1}`);
-                        prev?.focus();
-                      }
+                      handlePinBackspace(e.key, i);
                     }}
                     className={classNames(
                       "w-12 h-12 rounded-xl border-2 text-center text-[20px] font-black focus:ring-2 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
@@ -439,15 +460,13 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 ))}
               </div>
               {pinError && (
-                <p className="text-center text-xs font-bold text-rose-500">{t("share.pinIncorrect")}</p>
+                <p className="text-center text-xs font-bold text-rose-500">
+                  {t("share.pinIncorrect")}
+                </p>
               )}
               <button
                 disabled={pinInput.length < 4}
-                onClick={() => {
-                  if (pinInput.length === 4) {
-                    setEnteredPin(pinInput);
-                  }
-                }}
+                onClick={confirmPin}
                 className="w-full rounded-[16px] bg-kat-dark dark:bg-kat-primary py-3 text-[14px] font-black text-white dark:text-slate-950 transition-all active:scale-[0.98] shadow-sm hover:bg-[#0a1a5c] dark:hover:brightness-110 disabled:opacity-50 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 disabled:pointer-events-none"
               >
                 {t("share.confirmPin")}
@@ -459,20 +478,19 @@ export default function SharedTripScreen({ token }: { token: string }) {
     );
   }
 
-  const { 
-    trip: rawTrip, 
-    activities = [], 
-    members = [], 
-    expenses = [], 
-    checklist = [], 
-    journals = [], 
-    backupPlans = [], 
+  const {
+    trip: rawTrip,
+    activities = [],
+    members = [],
+    expenses = [],
+    checklist = [],
+    journals = [],
+    backupPlans = [],
     travelDocuments = [],
-    changeRequests = []
+    changeRequests = [],
   } = data;
 
-  const trip = rawTrip ? { ...rawTrip, title: rawTrip.title || rawTrip.name } : {} as any;
-
+  const trip = rawTrip ? { ...rawTrip, title: rawTrip.title || rawTrip.name } : ({} as any);
 
   const isDayTrip = trip.startDate === trip.endDate;
   let durationText = t("share.sameDay");
@@ -494,25 +512,24 @@ export default function SharedTripScreen({ token }: { token: string }) {
   // Status-aware hero gradient (matches HomeScreen logic)
   const status = timing.status;
   const currentCode = forecast?.current?.weathercode;
-  const fallbackBg = status === "past"
-    ? "linear-gradient(135deg, #2D1B4E 0%, #4A2C6E 50%, #6B3A8A 100%)"
-    : status === "active"
-    ? "linear-gradient(135deg, #0F4C81 0%, #1565C0 55%, #1976D2 100%)"
-    : "linear-gradient(135deg, #1A3A5C 0%, #1E4976 55%, #2460A7 100%)";
+  const fallbackBg =
+    status === "past"
+      ? "linear-gradient(135deg, #2D1B4E 0%, #4A2C6E 50%, #6B3A8A 100%)"
+      : status === "active"
+        ? "linear-gradient(135deg, #0F4C81 0%, #1565C0 55%, #1976D2 100%)"
+        : "linear-gradient(135deg, #1A3A5C 0%, #1E4976 55%, #2460A7 100%)";
 
-  const heroBg = (forecast && currentCode != null)
-    ? getWeatherGradient(currentCode)
-    : fallbackBg;
+  const heroBg = forecast && currentCode != null ? getWeatherGradient(currentCode) : fallbackBg;
 
   const checklistTotal = checklist.length;
   const checklistDone = checklist.filter((c: any) => c.completed).length;
   const checklistPercent = checklistTotal ? Math.round((checklistDone / checklistTotal) * 100) : 0;
 
-  let canRequestEdit = (data.mode === 'edit' || data.mode === 'request_edit') && !data.revoked;
+  let canRequestEdit = (data.mode === "edit" || data.mode === "request_edit") && !data.revoked;
   if (currentUser?.isGuest && !currentUser?.canEdit) {
     canRequestEdit = false;
   }
-  if (data.trip?.status === 'archived') {
+  if (data.trip?.status === "archived") {
     canRequestEdit = false;
   }
 
@@ -522,11 +539,18 @@ export default function SharedTripScreen({ token }: { token: string }) {
   // Helper to translate comma-separated roles for display
   const getTranslatedRoles = (roleStr: string) => {
     if (!roleStr) return "";
-    return roleStr.split(",")
-      .map(r => r.trim())
-      .map(r => {
+    return roleStr
+      .split(",")
+      .map((r) => r.trim())
+      .map((r) => {
         const lower = r.toLowerCase();
-        if (lower === "trưởng nhóm" || lower === "trưởng đoàn" || lower === "leader" || lower === "người đại diện") return t("roles.roleLeader");
+        if (
+          lower === "trưởng nhóm" ||
+          lower === "trưởng đoàn" ||
+          lower === "leader" ||
+          lower === "người đại diện"
+        )
+          return t("roles.roleLeader");
         if (lower === "quản lý chi phí") return t("roles.roleCostManager");
         if (lower === "tài xế") return t("roles.roleDriver");
         if (lower === "dẫn đường") return t("roles.roleNavigator");
@@ -538,74 +562,110 @@ export default function SharedTripScreen({ token }: { token: string }) {
   };
 
   // Mode for Activities (Lịch trình) - Driver or Trưởng nhóm has direct edit
-  const activitiesMode = (
-    isOwnerOrAdmin || 
-    userRoleLower.includes("tài xế") || 
-    userRoleLower.includes("dẫn đường") || 
-    userRoleLower.includes("trưởng nhóm") || 
-    userRoleLower.includes("trưởng đoàn") || 
+  const activitiesMode =
+    isOwnerOrAdmin ||
+    userRoleLower.includes("tài xế") ||
+    userRoleLower.includes("dẫn đường") ||
+    userRoleLower.includes("trưởng nhóm") ||
+    userRoleLower.includes("trưởng đoàn") ||
     userRoleLower.includes("leader")
-  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+      ? "edit"
+      : canRequestEdit
+        ? "request_edit"
+        : "view";
 
   // Mode for Expenses (Chi phí) - Cost Manager or Trưởng nhóm has direct edit
-  const expensesMode = (
-    isOwnerOrAdmin || 
-    userRoleLower.includes("quản lý chi phí") || 
-    userRoleLower.includes("trưởng nhóm") || 
-    userRoleLower.includes("trưởng đoàn") || 
+  const expensesMode =
+    isOwnerOrAdmin ||
+    userRoleLower.includes("quản lý chi phí") ||
+    userRoleLower.includes("trưởng nhóm") ||
+    userRoleLower.includes("trưởng đoàn") ||
     userRoleLower.includes("leader")
-  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+      ? "edit"
+      : canRequestEdit
+        ? "request_edit"
+        : "view";
 
   // Mode for Checklist (Chuẩn bị) - Trưởng nhóm has direct edit
-  const checklistMode = (
-    isOwnerOrAdmin || 
-    userRoleLower.includes("trưởng nhóm") || 
-    userRoleLower.includes("trưởng đoàn") || 
+  const checklistMode =
+    isOwnerOrAdmin ||
+    userRoleLower.includes("trưởng nhóm") ||
+    userRoleLower.includes("trưởng đoàn") ||
     userRoleLower.includes("leader")
-  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+      ? "edit"
+      : canRequestEdit
+        ? "request_edit"
+        : "view";
 
   // Mode for Backup Plans - Driver or Leader has direct edit
-  const backupPlansMode = (
-    isOwnerOrAdmin || 
-    userRoleLower.includes("tài xế") || 
-    userRoleLower.includes("dẫn đường") || 
-    userRoleLower.includes("trưởng nhóm") || 
-    userRoleLower.includes("trưởng đoàn") || 
+  const backupPlansMode =
+    isOwnerOrAdmin ||
+    userRoleLower.includes("tài xế") ||
+    userRoleLower.includes("dẫn đường") ||
+    userRoleLower.includes("trưởng nhóm") ||
+    userRoleLower.includes("trưởng đoàn") ||
     userRoleLower.includes("leader")
-  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+      ? "edit"
+      : canRequestEdit
+        ? "request_edit"
+        : "view";
 
   // Mode for Documents (Tài liệu)
-  const documentsMode = (
-    isOwnerOrAdmin || 
-    userRoleLower.includes("trưởng nhóm") || 
-    userRoleLower.includes("trưởng đoàn") || 
+  const documentsMode =
+    isOwnerOrAdmin ||
+    userRoleLower.includes("trưởng nhóm") ||
+    userRoleLower.includes("trưởng đoàn") ||
     userRoleLower.includes("leader")
-  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+      ? "edit"
+      : canRequestEdit
+        ? "request_edit"
+        : "view";
 
   // Mode for Members (Thành viên)
-  const membersMode = (
-    isOwnerOrAdmin || 
-    userRoleLower.includes("trưởng nhóm") || 
-    userRoleLower.includes("trưởng đoàn") || 
+  const membersMode =
+    isOwnerOrAdmin ||
+    userRoleLower.includes("trưởng nhóm") ||
+    userRoleLower.includes("trưởng đoàn") ||
     userRoleLower.includes("leader")
-  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+      ? "edit"
+      : canRequestEdit
+        ? "request_edit"
+        : "view";
 
   // Mode for Journals (Bản tin)
-  const journalsMode = (
-    isOwnerOrAdmin || 
-    userRoleLower.includes("trưởng nhóm") || 
-    userRoleLower.includes("trưởng đoàn") || 
+  const journalsMode =
+    isOwnerOrAdmin ||
+    userRoleLower.includes("trưởng nhóm") ||
+    userRoleLower.includes("trưởng đoàn") ||
     userRoleLower.includes("leader")
-  ) ? "edit" : (canRequestEdit ? "request_edit" : "view");
+      ? "edit"
+      : canRequestEdit
+        ? "request_edit"
+        : "view";
 
   // Navigation Tabs construction (always show enabled categories even if they are empty)
   const tabsList = [
-    {id: "activities", label: t("share.activities"), show: true, icon: RouteIcon },
-    {id: "journals", label: t("share.journals"), show: Boolean(data?.includeJournals), icon: GlobeIcon },
-    {id: "expenses", label: t("share.expenses"), show: Boolean(data?.includeExpenses), icon: Wallet01Icon },
-    {id: "checklist", label: t("share.checklist"), show: Boolean(data?.includeChecklist || data?.includeDocuments), icon: CheckmarkCircle02Icon },
-    {id: "members", label: t("share.members"), show: true, icon: UserGroupIcon },
-  ].filter(t => t.show);
+    { id: "activities", label: t("share.activities"), show: true, icon: RouteIcon },
+    {
+      id: "journals",
+      label: t("share.journals"),
+      show: Boolean(data?.includeJournals),
+      icon: GlobeIcon,
+    },
+    {
+      id: "expenses",
+      label: t("share.expenses"),
+      show: Boolean(data?.includeExpenses),
+      icon: Wallet01Icon,
+    },
+    {
+      id: "checklist",
+      label: t("share.checklist"),
+      show: Boolean(data?.includeChecklist || data?.includeDocuments),
+      icon: CheckmarkCircle02Icon,
+    },
+    { id: "members", label: t("share.members"), show: true, icon: UserGroupIcon },
+  ].filter((t) => t.show);
 
   if (showIdentityModal) {
     return (
@@ -648,95 +708,110 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
           <div className="mt-6 flex-1 min-h-0 flex flex-col">
             <div className="space-y-3 flex-1 min-h-0 flex flex-col">
-                {/* Search Bar */}
-                <div className="relative shrink-0">
-                  <input
-                    type="text"
-                    value={memberSearchQuery}
-                    onChange={(e) => setMemberSearchQuery(e.target.value)}
-                    placeholder={t("share.searchMember")}
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl text-[14px] font-semibold text-kat-dark placeholder:text-slate-400 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-none focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 focus:bg-white dark:focus:bg-slate-800 transition-all duration-200"
-                  />
-                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                    <HugeiconsIcon icon={Search01Icon} className="w-4 h-4" />
-                  </div>
-                  {memberSearchQuery && (
-                    <button
-                      onClick={() => setMemberSearchQuery("")}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1"
-                    >
-                      <HugeiconsIcon icon={Cancel01Icon} className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+              {/* Search Bar */}
+              <div className="relative shrink-0">
+                <input
+                  type="text"
+                  value={memberSearchQuery}
+                  onChange={(e) => setMemberSearchQuery(e.target.value)}
+                  placeholder={t("share.searchMember")}
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl text-[14px] font-semibold text-kat-dark placeholder:text-slate-400 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-none focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 focus:bg-white dark:focus:bg-slate-800 transition-all duration-200"
+                />
+                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <HugeiconsIcon icon={Search01Icon} className="w-4 h-4" />
                 </div>
+                {memberSearchQuery && (
+                  <button
+                    onClick={() => setMemberSearchQuery("")}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1"
+                  >
+                    <HugeiconsIcon icon={Cancel01Icon} className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
 
-                <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60 border border-slate-100 dark:border-slate-800/60 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 custom-scrollbar">
-                  {(() => {
-                    const filteredMembers = members.filter((m: Member) => {
-                      const roleLower = (m.role || "").trim().toLowerCase();
-                      const matchesSearch = memberSearchQuery.trim() === "" ||
-                        m.name.toLowerCase().includes(memberSearchQuery.toLowerCase());
-                      return matchesSearch && !(
+              <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60 border border-slate-100 dark:border-slate-800/60 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 custom-scrollbar">
+                {(() => {
+                  const filteredMembers = members.filter((m: Member) => {
+                    const roleLower = (m.role || "").trim().toLowerCase();
+                    const matchesSearch =
+                      memberSearchQuery.trim() === "" ||
+                      m.name.toLowerCase().includes(memberSearchQuery.toLowerCase());
+                    return (
+                      matchesSearch &&
+                      !(
                         roleLower === "trưởng nhóm" ||
                         roleLower === "trưởng đoàn" ||
                         roleLower === "người đại diện" ||
                         roleLower === "leader"
-                      );
-                    });
+                      )
+                    );
+                  });
 
-                    if (filteredMembers.length === 0) {
-                      return (
-                        <div className="p-8 text-center text-slate-400 dark:text-slate-500 select-none">
-                          <HugeiconsIcon icon={Search01Icon} className="w-8 h-8 mx-auto mb-2 text-slate-350 dark:text-slate-600" />
-                          <p className="text-xs font-semibold">{t("share.memberNotFound")}</p>
-                        </div>
-                      );
-                    }
+                  if (filteredMembers.length === 0) {
+                    return (
+                      <div className="p-8 text-center text-slate-400 dark:text-slate-500 select-none">
+                        <HugeiconsIcon
+                          icon={Search01Icon}
+                          className="w-8 h-8 mx-auto mb-2 text-slate-350 dark:text-slate-600"
+                        />
+                        <p className="text-xs font-semibold">{t("share.memberNotFound")}</p>
+                      </div>
+                    );
+                  }
 
-                    return filteredMembers.map((m: Member) => (
-                      <button
-                        key={m.id}
-                        onClick={() => {
-                          const guest = { name: m.name, role: m.role, isGuest: true, canEdit: true };
-                          saveIdentity(guest, trip.id);
-                          localStorage.removeItem("kat_pending_swap_" + trip.id);
-                          setCurrentUser(guest);
-                          setShowIdentityModal(false);
-                          setIdentityChecked(true);
-                          setIsBannerVisible(true);
-                        }}
-                        className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"
-                      >
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700">
-                          {m.avatar ? getAvatarSvg(m.avatar, "w-full h-full") : <HugeiconsIcon icon={UserGroupIcon} className="h-4 w-4 text-slate-400" />}
-                        </div>
-                        <div className="flex items-center justify-between flex-1 pr-1">
-                          <span className="text-[14px] font-bold text-slate-800 dark:text-slate-200">{m.name}</span>
-                          {renderRoleIcons(m.role || "")}
-                        </div>
-                      </button>
-                    ));
-                  })()}
-                </div>
-                
-                <button
-                  onClick={() => {
-                    const guest = { name: "Người xem", isGuest: true, canEdit: false };
-                    saveIdentity(guest, trip.id);
-                    localStorage.removeItem("kat_pending_swap_" + trip.id);
-                    setCurrentUser(guest);
-                    setShowIdentityModal(false);
-                    setIdentityChecked(true);
-                    setIsBannerVisible(true);
-                  }}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors border border-slate-100 dark:border-slate-800/60 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 shrink-0"
-                >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-400">
-                    <HugeiconsIcon icon={GlobeIcon} className="h-4 w-4" />
-                  </div>
-                  <span className="text-[14px] font-bold text-slate-600 dark:text-slate-300">{t("share.justWantToView")}</span>
-                </button>
+                  return filteredMembers.map((m: Member) => (
+                    <button
+                      key={m.id}
+                      onClick={() => {
+                        const guest = { name: m.name, role: m.role, isGuest: true, canEdit: true };
+                        saveIdentity(guest, trip.id);
+                        localStorage.removeItem("kat_pending_swap_" + trip.id);
+                        setCurrentUser(guest);
+                        setShowIdentityModal(false);
+                        setIdentityChecked(true);
+                        setIsBannerVisible(true);
+                      }}
+                      className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"
+                    >
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700">
+                        {m.avatar ? (
+                          getAvatarSvg(m.avatar, "w-full h-full")
+                        ) : (
+                          <HugeiconsIcon icon={UserGroupIcon} className="h-4 w-4 text-slate-400" />
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between flex-1 pr-1">
+                        <span className="text-[14px] font-bold text-slate-800 dark:text-slate-200">
+                          {m.name}
+                        </span>
+                        {renderRoleIcons(m.role || "")}
+                      </div>
+                    </button>
+                  ));
+                })()}
               </div>
+
+              <button
+                onClick={() => {
+                  const guest = { name: "Người xem", isGuest: true, canEdit: false };
+                  saveIdentity(guest, trip.id);
+                  localStorage.removeItem("kat_pending_swap_" + trip.id);
+                  setCurrentUser(guest);
+                  setShowIdentityModal(false);
+                  setIdentityChecked(true);
+                  setIsBannerVisible(true);
+                }}
+                className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors border border-slate-100 dark:border-slate-800/60 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 shrink-0"
+              >
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-400">
+                  <HugeiconsIcon icon={GlobeIcon} className="h-4 w-4" />
+                </div>
+                <span className="text-[14px] font-bold text-slate-600 dark:text-slate-300">
+                  {t("share.justWantToView")}
+                </span>
+              </button>
+            </div>
           </div>
         </div>
         <RolesHelpSheet isOpen={isRolesHelpOpen} onClose={() => setIsRolesHelpOpen(false)} />
@@ -745,68 +820,98 @@ export default function SharedTripScreen({ token }: { token: string }) {
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-kat-bg dark:bg-[#0A1124]"
-      style={{
-        "--sticky-header-offset": areBarsVisible ? "60px" : "0px",
-        "--sticky-header-offset-md": areBarsVisible ? "68px" : "0px",
-      } as React.CSSProperties}
+      style={
+        {
+          "--sticky-header-offset": areBarsVisible ? "60px" : "0px",
+          "--sticky-header-offset-md": areBarsVisible ? "68px" : "0px",
+        } as React.CSSProperties
+      }
     >
       {/* Banner */}
-      {(isBannerVisible && currentUser && currentUser.canEdit && (userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí") || canRequestEdit)) && (
-        <div className={classNames(
-          "py-2.5 px-4 shadow-md select-none border-b",
-          (userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí"))
-            ? "text-emerald-900 border-emerald-200/50 bg-gradient-to-r from-emerald-50 via-emerald-100/80 to-teal-50/50 dark:text-white dark:border-white/5 dark:bg-gradient-to-r dark:from-[#003830] dark:via-[#005c56] dark:to-[#004c43]"
-            : "text-sky-900 border-sky-200/50 bg-gradient-to-r from-sky-50 via-sky-100/80 to-indigo-50/50 dark:text-white dark:border-white/5 dark:bg-gradient-to-r dark:from-[#0a122c] dark:via-[#0f1d4a] dark:to-[#161330]"
-        )}>
-          <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2.5 text-[12px] font-bold text-slate-800 dark:text-white/90">
-              <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
-                <HugeiconsIcon icon={PencilEdit01Icon} className="h-3 w-3" />
+      {isBannerVisible &&
+        currentUser &&
+        currentUser.canEdit &&
+        (userRoleLower.includes("tài xế") ||
+          userRoleLower.includes("dẫn đường") ||
+          userRoleLower.includes("quản lý chi phí") ||
+          canRequestEdit) && (
+          <div
+            className={classNames(
+              "py-2.5 px-4 shadow-md select-none border-b",
+              userRoleLower.includes("tài xế") ||
+                userRoleLower.includes("dẫn đường") ||
+                userRoleLower.includes("quản lý chi phí")
+                ? "text-emerald-900 border-emerald-200/50 bg-gradient-to-r from-emerald-50 via-emerald-100/80 to-teal-50/50 dark:text-white dark:border-white/5 dark:bg-gradient-to-r dark:from-[#003830] dark:via-[#005c56] dark:to-[#004c43]"
+                : "text-sky-900 border-sky-200/50 bg-gradient-to-r from-sky-50 via-sky-100/80 to-indigo-50/50 dark:text-white dark:border-white/5 dark:bg-gradient-to-r dark:from-[#0a122c] dark:via-[#0f1d4a] dark:to-[#161330]"
+            )}
+          >
+            <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2.5 text-[12px] font-bold text-slate-800 dark:text-white/90">
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
+                  <HugeiconsIcon icon={PencilEdit01Icon} className="h-3 w-3" />
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span
+                    className={classNames(
+                      "px-1.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border border-white/10",
+                      userRoleLower.includes("tài xế") ||
+                        userRoleLower.includes("dẫn đường") ||
+                        userRoleLower.includes("quản lý chi phí")
+                        ? "bg-kat-teal/20 text-kat-teal"
+                        : "bg-amber-500/20 text-amber-300"
+                    )}
+                  >
+                    {userRoleLower.includes("tài xế") ||
+                    userRoleLower.includes("dẫn đường") ||
+                    userRoleLower.includes("quản lý chi phí")
+                      ? t("sharedScreen.bannerDirectEdit")
+                      : t("sharedScreen.bannerSuggestMode")}
+                  </span>
+                  <span className="text-white/85 font-medium">
+                    {userRoleLower.includes("tài xế") ||
+                    userRoleLower.includes("dẫn đường") ||
+                    userRoleLower.includes("quản lý chi phí")
+                      ? t("sharedScreen.bannerDirectEditDesc", {
+                          role: getTranslatedRoles(currentUser?.role || ""),
+                        })
+                      : t("sharedScreen.bannerSuggestModeDesc")}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className={classNames(
-                  "px-1.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border border-white/10",
-                  (userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí"))
-                    ? "bg-kat-teal/20 text-kat-teal"
-                    : "bg-amber-500/20 text-amber-300"
-                )}>
-                  {userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí")
-                    ? t("sharedScreen.bannerDirectEdit")
-                    : t("sharedScreen.bannerSuggestMode")
-                  }
-                </span>
-                <span className="text-white/85 font-medium">
-                  {userRoleLower.includes("tài xế") || userRoleLower.includes("dẫn đường") || userRoleLower.includes("quản lý chi phí")
-                    ? t("sharedScreen.bannerDirectEditDesc", { role: getTranslatedRoles(currentUser?.role || "") })
-                    : t("sharedScreen.bannerSuggestModeDesc")
-                  }
-                </span>
-              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsBannerVisible(false);
+                }}
+                className="text-slate-400 hover:text-slate-700 dark:text-white/40 dark:hover:text-white/85 p-1 rounded-full transition-colors cursor-pointer shrink-0"
+                title={t("sharedScreen.closeBanner")}
+              >
+                <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
+              </button>
             </div>
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsBannerVisible(false);
-              }}
-              className="text-slate-400 hover:text-slate-700 dark:text-white/40 dark:hover:text-white/85 p-1 rounded-full transition-colors cursor-pointer shrink-0"
-              title={t("sharedScreen.closeBanner")}
-            >
-              <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
-            </button>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Header */}
-      <header className={`sticky top-0 z-40 bg-white/55 supports-[backdrop-filter]:bg-white/45 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 dark:bg-[#0A1124]/60 dark:supports-[backdrop-filter]:bg-[#0A1124]/45 dark:border-slate-800/80 px-2.5 min-[390px]:px-4 pb-3 pt-3 shadow-[0_4px_24px_rgba(3,13,46,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.2)] transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`} style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}>
+      <header
+        className={`sticky top-0 z-40 bg-white/55 supports-[backdrop-filter]:bg-white/45 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 dark:bg-[#0A1124]/60 dark:supports-[backdrop-filter]:bg-[#0A1124]/45 dark:border-slate-800/80 px-2.5 min-[390px]:px-4 pb-3 pt-3 shadow-[0_4px_24px_rgba(3,13,46,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.2)] transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`}
+        style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}
+      >
         <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
           <div className="flex items-center gap-1.5 min-[390px]:gap-2 select-none shrink-0">
-            <img src="/asset/logo.png" alt="KAT Journey Logo" className="hidden md:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm" />
-            <h1 className="text-[17px] min-[390px]:text-[20px] font-extrabold tracking-tight text-kat-dark dark:text-white whitespace-nowrap shrink-0">KAT Journey</h1>
+            <img
+              src="/asset/logo.png"
+              alt="KAT Journey Logo"
+              className="hidden md:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm"
+            />
+            <h1 className="text-[17px] min-[390px]:text-[20px] font-extrabold tracking-tight text-kat-dark dark:text-white whitespace-nowrap shrink-0">
+              KAT Journey
+            </h1>
             <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 border border-indigo-100 dark:bg-indigo-950/30 dark:border-indigo-900/40 px-1.5 min-[390px]:px-2 py-0.5 text-[10px] font-bold text-indigo-600 dark:text-indigo-350 whitespace-nowrap shrink-0">
-              <HugeiconsIcon icon={Share01Icon} className="h-3 w-3 shrink-0" /> {t("sharedScreen.headerShare")}
+              <HugeiconsIcon icon={Share01Icon} className="h-3 w-3 shrink-0" />{" "}
+              {t("sharedScreen.headerShare")}
             </span>
           </div>
           <div className="flex items-center gap-1.5 min-[390px]:gap-2 shrink-0">
@@ -826,7 +931,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               </button>
             )}
             <button
-              onClick={() => window.location.href = "/"}
+              onClick={() => (window.location.href = "/")}
               className="flex items-center justify-center min-h-[34px] min-[390px]:min-h-[38px] text-[12px] min-[390px]:text-[13px] font-black text-white dark:text-slate-950 bg-[#030D2E] dark:bg-white hover:bg-[#0a1a5c] dark:hover:bg-slate-100 px-4 rounded-xl shadow-sm transition-all active:scale-[0.97] whitespace-nowrap shrink-0"
             >
               {t("sharedScreen.exit")}
@@ -837,45 +942,69 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
       {/* Main Content */}
       <main className="max-w-[1120px] mx-auto px-2.5 min-[390px]:px-4 pt-6 pb-20 lg:pb-6 space-y-6">
-        
         {/* Hero Card */}
-        <section 
+        <section
           className="relative rounded-[32px] p-6 text-white overflow-hidden shadow-xl border border-white/5 group hover:shadow-2xl hover:scale-[1.002] transition-all duration-500 ease-out motion-weather-bg"
           style={{ background: heroBg }}
         >
           {/* Subtle World Map Watermark */}
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
-          
+
           <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="space-y-4">
               <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-md">
-                ● {status === "past" ? t("trip.past") : status === "active" ? t("trip.ongoing") : t("trip.upcoming")}
+                ●{" "}
+                {status === "past"
+                  ? t("trip.past")
+                  : status === "active"
+                    ? t("trip.ongoing")
+                    : t("trip.upcoming")}
               </span>
               <h2 className="text-[28px] font-black leading-tight tracking-tight drop-shadow-sm">
                 {trip.title}
               </h2>
               <div className="flex flex-wrap gap-2.5">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90 max-w-full">
-                  <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-white/70 shrink-0" />
-                  <span className="truncate">{trip.destination || t("share.unknownDestination")}</span>
+                  <HugeiconsIcon
+                    icon={Location01Icon}
+                    className="h-3.5 w-3.5 text-white/70 shrink-0"
+                  />
+                  <span className="truncate">
+                    {trip.destination || t("share.unknownDestination")}
+                  </span>
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90 max-w-full">
-                  <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-white/70 shrink-0" />
-                  <span className="truncate">{isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}</span>
+                  <HugeiconsIcon
+                    icon={Calendar01Icon}
+                    className="h-3.5 w-3.5 text-white/70 shrink-0"
+                  />
+                  <span className="truncate">
+                    {isDayTrip
+                      ? formatDate(trip.startDate)
+                      : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
+                  </span>
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90 max-w-full">
-                  <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-white/70 shrink-0" />
+                  <HugeiconsIcon
+                    icon={Clock01Icon}
+                    className="h-3.5 w-3.5 text-white/70 shrink-0"
+                  />
                   <span className="truncate">{durationText}</span>
                 </span>
                 {trip.mediaLink && (
-                  <a href={trip.mediaLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/20 px-3 py-1 text-[12px] font-bold backdrop-blur-md border border-sky-400/30 shadow-inner text-sky-100 hover:bg-sky-500/30 transition-colors max-w-full">
+                  <a
+                    href={trip.mediaLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/20 px-3 py-1 text-[12px] font-bold backdrop-blur-md border border-sky-400/30 shadow-inner text-sky-100 hover:bg-sky-500/30 transition-colors max-w-full"
+                  >
                     <HugeiconsIcon icon={Link02Icon} className="h-3 w-3 shrink-0" />
                     <span className="truncate">{t("share.originalPhotos")}</span>
                   </a>
                 )}
               </div>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row lg:flex-col items-stretch gap-3 shrink-0 w-full lg:w-[250px]">
               {/* Timing box with Progress Bar */}
               <div className="flex flex-col items-stretch justify-center rounded-2xl bg-white/10 px-4 py-3 border border-white/20 flex-1 lg:flex-none lg:w-full text-center shrink-0 min-h-[64px]">
@@ -885,92 +1014,112 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 <p className="mt-1 text-[17px] sm:text-[19px] font-black text-white drop-shadow-sm tracking-tight leading-none text-center">
                   {timing.label}
                 </p>
-                {status === "active" && (() => {
-                  let progressPercent = 0;
-                  try {
-                    const start = new Date(trip.startDate).getTime();
-                    const end = new Date(trip.endDate).getTime();
-                    const now = new Date().getTime();
-                    if (end > start) {
-                      progressPercent = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
+                {status === "active" &&
+                  (() => {
+                    let progressPercent = 0;
+                    try {
+                      const start = new Date(trip.startDate).getTime();
+                      const end = new Date(trip.endDate).getTime();
+                      const now = new Date().getTime();
+                      if (end > start) {
+                        progressPercent = Math.min(
+                          100,
+                          Math.max(0, ((now - start) / (end - start)) * 100)
+                        );
+                      }
+                    } catch (e) {
+                      console.error(e);
                     }
-                  } catch (e) {
-                    console.error(e);
-                  }
-                  return (
-                    <div className="mt-2.5 w-full space-y-1 text-left z-10">
-                      <div className="flex items-center justify-between text-[8px] font-bold text-white/70">
-                        <span>{t("share.depart")}</span>
-                        <span>{t("share.onGoing")}</span>
-                        <span>{t("share.end")}</span>
+                    return (
+                      <div className="mt-2.5 w-full space-y-1 text-left z-10">
+                        <div className="flex items-center justify-between text-[8px] font-bold text-white/70">
+                          <span>{t("share.depart")}</span>
+                          <span>{t("share.onGoing")}</span>
+                          <span>{t("share.end")}</span>
+                        </div>
+                        <div className="relative h-1.5 w-full rounded-full bg-white/15 overflow-hidden border border-white/10">
+                          <div
+                            className="absolute top-0 bottom-0 left-0 rounded-full bg-gradient-to-r from-teal-300 to-emerald-300 shadow-[0_0_6px_rgba(110,231,183,0.4)] transition-all duration-500"
+                            style={{ width: `${progressPercent}%` }}
+                          />
+                          <div
+                            className="absolute top-1/2 -translate-y-1/2 airplane-flight transition-all duration-500"
+                            style={{ left: `calc(${progressPercent}% - 6px)` }}
+                          >
+                            <svg
+                              viewBox="0 0 24 24"
+                              className="w-2.5 h-2.5 fill-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)] -rotate-45"
+                            >
+                              <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
+                            </svg>
+                          </div>
+                        </div>
+                        <p className="text-[8.5px] text-right text-white/50 font-semibold leading-none">
+                          {t("trip.completed")} {Math.round(progressPercent)}%
+                        </p>
                       </div>
-                      <div className="relative h-1.5 w-full rounded-full bg-white/15 overflow-hidden border border-white/10">
-                        <div 
-                          className="absolute top-0 bottom-0 left-0 rounded-full bg-gradient-to-r from-teal-300 to-emerald-300 shadow-[0_0_6px_rgba(110,231,183,0.4)] transition-all duration-500"
-                          style={{ width: `${progressPercent}%` }}
-                        />
-                        <div 
-                          className="absolute top-1/2 -translate-y-1/2 airplane-flight transition-all duration-500"
-                          style={{ left: `calc(${progressPercent}% - 6px)` }}
-                        >
-                          <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 fill-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)] -rotate-45">
-                            <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
-                          </svg>
+                    );
+                  })()}
+                {status === "upcoming" &&
+                  (() => {
+                    let diffDays = 0;
+                    try {
+                      const start = new Date(trip.startDate).getTime();
+                      const now = new Date().getTime();
+                      diffDays = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
+                    } catch {}
+                    const maxCountdown = 30; // Scale relative to 30 days
+                    const progressPercent = Math.max(
+                      10,
+                      Math.min(100, (1 - diffDays / maxCountdown) * 100)
+                    );
+                    return (
+                      <div className="mt-2 w-full space-y-1 text-left z-10">
+                        <div className="relative h-1 w-full rounded-full bg-white/15 overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-amber-400/80 transition-all duration-500"
+                            style={{ width: `${progressPercent}%` }}
+                          />
                         </div>
                       </div>
-                      <p className="text-[8.5px] text-right text-white/50 font-semibold leading-none">
-                        {t("trip.completed")} {Math.round(progressPercent)}%
-                      </p>
-                    </div>
-                  );
-                })()}
-                {status === "upcoming" && (() => {
-                  let diffDays = 0;
-                  try {
-                    const start = new Date(trip.startDate).getTime();
-                    const now = new Date().getTime();
-                    diffDays = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
-                  } catch {}
-                  const maxCountdown = 30; // Scale relative to 30 days
-                  const progressPercent = Math.max(10, Math.min(100, (1 - (diffDays / maxCountdown)) * 100));
-                  return (
-                    <div className="mt-2 w-full space-y-1 text-left z-10">
-                      <div className="relative h-1 w-full rounded-full bg-white/15 overflow-hidden">
-                        <div 
-                          className="h-full rounded-full bg-amber-400/80 transition-all duration-500" 
-                          style={{ width: `${progressPercent}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })()}
+                    );
+                  })()}
               </div>
 
               {/* Weather Widget */}
               {weatherLoading ? (
-                 <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-3xl p-3 border border-white/20 animate-pulse flex-1 lg:flex-none lg:w-full">
-                   <div className="w-9 h-9 bg-white/20 rounded-xl shrink-0"></div>
-                   <div className="flex flex-col gap-2">
-                     <div className="w-14 h-3 bg-white/20 rounded-full"></div>
-                     <div className="w-10 h-3 bg-white/20 rounded-full"></div>
-                   </div>
-                 </div>
-              ) : (!trip.destination?.trim() && !trip.latitude) ? (
-                 <div className="flex items-center gap-2.5 bg-white/5 backdrop-blur-md rounded-3xl p-3 border border-white/10 flex-1 lg:flex-none lg:w-full">
-                   <HugeiconsIcon icon={Location01Icon} className="w-5 h-5 text-white/40 shrink-0" />
-                   <div className="flex flex-col gap-0.5 min-w-0">
-                     <span className="text-white/80 font-bold text-[11px]">{t("share.noDestination")}</span>
-                     <span className="text-white/50 text-[10px]">{t("share.addDestinationForWeather")}</span>
-                   </div>
-                 </div>
-              ) : (!trip.latitude || !trip.longitude) ? null : weatherError || !forecast ? (
-                 <div className="flex items-center gap-2.5 bg-red-500/20 backdrop-blur-md rounded-3xl p-3 border border-red-500/30 flex-1 lg:flex-none lg:w-full">
-                   <HugeiconsIcon icon={CloudRainWindIcon} className="w-5 h-5 text-white/60 shrink-0" />
-                   <div className="flex flex-col gap-1">
-                     <span className="text-white font-bold text-[11px]">{t("share.weatherError")}</span>
-                     <span className="text-white/70 text-[10px]">{t("share.connectionError")}</span>
-                   </div>
-                 </div>
+                <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-3xl p-3 border border-white/20 animate-pulse flex-1 lg:flex-none lg:w-full">
+                  <div className="w-9 h-9 bg-white/20 rounded-xl shrink-0"></div>
+                  <div className="flex flex-col gap-2">
+                    <div className="w-14 h-3 bg-white/20 rounded-full"></div>
+                    <div className="w-10 h-3 bg-white/20 rounded-full"></div>
+                  </div>
+                </div>
+              ) : !trip.destination?.trim() && !trip.latitude ? (
+                <div className="flex items-center gap-2.5 bg-white/5 backdrop-blur-md rounded-3xl p-3 border border-white/10 flex-1 lg:flex-none lg:w-full">
+                  <HugeiconsIcon icon={Location01Icon} className="w-5 h-5 text-white/40 shrink-0" />
+                  <div className="flex flex-col gap-0.5 min-w-0">
+                    <span className="text-white/80 font-bold text-[11px]">
+                      {t("share.noDestination")}
+                    </span>
+                    <span className="text-white/50 text-[10px]">
+                      {t("share.addDestinationForWeather")}
+                    </span>
+                  </div>
+                </div>
+              ) : !trip.latitude || !trip.longitude ? null : weatherError || !forecast ? (
+                <div className="flex items-center gap-2.5 bg-red-500/20 backdrop-blur-md rounded-3xl p-3 border border-red-500/30 flex-1 lg:flex-none lg:w-full">
+                  <HugeiconsIcon
+                    icon={CloudRainWindIcon}
+                    className="w-5 h-5 text-white/60 shrink-0"
+                  />
+                  <div className="flex flex-col gap-1">
+                    <span className="text-white font-bold text-[11px]">
+                      {t("share.weatherError")}
+                    </span>
+                    <span className="text-white/70 text-[10px]">{t("share.connectionError")}</span>
+                  </div>
+                </div>
               ) : (
                 <div
                   onClick={() => setWeatherModalOpen(true)}
@@ -984,7 +1133,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       </span>
                       <div className="flex flex-col ml-1 min-w-0 shrink">
                         <span className="mb-[-4px] flex items-center justify-center h-8 shrink-0">
-                          {getWeatherIcon(forecast.current?.weathercode || 0, "w-7 h-7 drop-shadow-md")}
+                          {getWeatherIcon(
+                            forecast.current?.weathercode || 0,
+                            "w-7 h-7 drop-shadow-md"
+                          )}
                         </span>
                         <span className="text-[10px] min-[360px]:text-[11px] font-extrabold text-white/95 uppercase tracking-normal mt-1 drop-shadow-sm truncate text-center">
                           {getWeatherText(forecast.current?.weathercode || 0)}
@@ -1003,9 +1155,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   </div>
 
                   {/* Divider - only visible when packingTip exists */}
-                  {packingTip && (
-                    <div className="h-px bg-white/15 w-full my-0.5" />
-                  )}
+                  {packingTip && <div className="h-px bg-white/15 w-full my-0.5" />}
 
                   {/* Packing Tip Block */}
                   {packingTip && (
@@ -1023,10 +1173,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
         {/* Quick Stats Grid */}
         <section
-          className={classNames(
-            "grid gap-3",
-            data.includeExpenses ? "grid-cols-3" : "grid-cols-2"
-          )}
+          className={classNames("grid gap-3", data.includeExpenses ? "grid-cols-3" : "grid-cols-2")}
         >
           {/* Card 1: Lịch trình */}
           <div
@@ -1037,23 +1184,29 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 : "border-slate-200/60 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/10"
             )}
           >
-            <div className={classNames(
-              "w-11 h-11 rounded-2xl flex items-center justify-center mb-3 border",
-              activities.length > 0
-                ? "bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/30"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700/50"
-            )}>
+            <div
+              className={classNames(
+                "w-11 h-11 rounded-2xl flex items-center justify-center mb-3 border",
+                activities.length > 0
+                  ? "bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/30"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700/50"
+              )}
+            >
               <HugeiconsIcon icon={RouteIcon} className="h-5 w-5" />
             </div>
-            <p className={classNames(
-              "text-[20px] sm:text-[22px] font-black leading-none mb-1",
-              activities.length > 0
-                ? "text-kat-dark dark:text-white"
-                : "text-slate-400 dark:text-slate-500"
-            )}>
+            <p
+              className={classNames(
+                "text-[20px] sm:text-[22px] font-black leading-none mb-1",
+                activities.length > 0
+                  ? "text-kat-dark dark:text-white"
+                  : "text-slate-400 dark:text-slate-500"
+              )}
+            >
               {activities.length}
             </p>
-            <p className="text-[11px] font-semibold text-slate-400 dark:text-kat-muted mt-1">{t("dashboard.itinerary")}</p>
+            <p className="text-[11px] font-semibold text-slate-400 dark:text-kat-muted mt-1">
+              {t("dashboard.itinerary")}
+            </p>
           </div>
 
           {/* Card 2: Chi phí (Conditional) */}
@@ -1066,37 +1219,45 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   : "border-slate-200/60 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/10"
               )}
             >
-              <div className={classNames(
-                "w-11 h-11 rounded-2xl flex items-center justify-center mb-3 border",
-                totalExpense > 0
-                  ? "bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/20 dark:border-amber-500/30"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700/50"
-              )}>
+              <div
+                className={classNames(
+                  "w-11 h-11 rounded-2xl flex items-center justify-center mb-3 border",
+                  totalExpense > 0
+                    ? "bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/20 dark:border-amber-500/30"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700/50"
+                )}
+              >
                 <HugeiconsIcon icon={Wallet01Icon} className="h-5 w-5" />
               </div>
               {(() => {
                 const formattedFull = formatMoney(totalExpense);
-                const formattedDisplay = totalExpense >= 10000000
-                  ? formatMoneyCompact(totalExpense)
-                  : formattedFull;
+                const formattedDisplay =
+                  totalExpense >= 10000000 ? formatMoneyCompact(totalExpense) : formattedFull;
                 let sizeClass = "text-[14px] min-[390px]:text-[16px] sm:text-[18px]";
                 if (formattedDisplay.length >= 13) {
-                  sizeClass = "text-[10px] min-[360px]:text-[11.5px] min-[390px]:text-[13.5px] sm:text-[18px]";
+                  sizeClass =
+                    "text-[10px] min-[360px]:text-[11.5px] min-[390px]:text-[13.5px] sm:text-[18px]";
                 } else if (formattedDisplay.length >= 10) {
-                  sizeClass = "text-[11.5px] min-[360px]:text-[13px] min-[390px]:text-[15px] sm:text-[18px]";
+                  sizeClass =
+                    "text-[11.5px] min-[360px]:text-[13px] min-[390px]:text-[15px] sm:text-[18px]";
                 }
                 return (
-                  <p className={classNames(
-                    `${sizeClass} font-black leading-none mb-1 px-0.5 whitespace-nowrap truncate w-full`,
-                    totalExpense > 0
-                      ? "text-kat-dark dark:text-white"
-                      : "text-slate-400 dark:text-slate-500"
-                  )} title={formattedFull}>
+                  <p
+                    className={classNames(
+                      `${sizeClass} font-black leading-none mb-1 px-0.5 whitespace-nowrap truncate w-full`,
+                      totalExpense > 0
+                        ? "text-kat-dark dark:text-white"
+                        : "text-slate-400 dark:text-slate-500"
+                    )}
+                    title={formattedFull}
+                  >
                     {formattedDisplay}
                   </p>
                 );
               })()}
-              <p className="text-[11px] font-semibold text-slate-400 dark:text-kat-muted mt-1">{t("dashboard.expenses")}</p>
+              <p className="text-[11px] font-semibold text-slate-400 dark:text-kat-muted mt-1">
+                {t("dashboard.expenses")}
+              </p>
             </div>
           )}
 
@@ -1109,23 +1270,29 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 : "border-slate-200/60 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/10"
             )}
           >
-            <div className={classNames(
-              "w-11 h-11 rounded-2xl flex items-center justify-center mb-3 border",
-              members.length > 0
-                ? "bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border-blue-500/20 dark:border-blue-500/30"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700/50"
-            )}>
+            <div
+              className={classNames(
+                "w-11 h-11 rounded-2xl flex items-center justify-center mb-3 border",
+                members.length > 0
+                  ? "bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border-blue-500/20 dark:border-blue-500/30"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700/50"
+              )}
+            >
               <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5" />
             </div>
-            <p className={classNames(
-              "text-[20px] sm:text-[22px] font-black leading-none mb-1",
-              members.length > 0
-                ? "text-kat-dark dark:text-white"
-                : "text-slate-400 dark:text-slate-500"
-            )}>
+            <p
+              className={classNames(
+                "text-[20px] sm:text-[22px] font-black leading-none mb-1",
+                members.length > 0
+                  ? "text-kat-dark dark:text-white"
+                  : "text-slate-400 dark:text-slate-500"
+              )}
+            >
               {members.length}
             </p>
-            <p className="text-[11px] font-semibold text-slate-400 dark:text-kat-muted mt-1">{t("dashboard.members")}</p>
+            <p className="text-[11px] font-semibold text-slate-400 dark:text-kat-muted mt-1">
+              {t("dashboard.members")}
+            </p>
           </div>
         </section>
 
@@ -1144,7 +1311,15 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-800/40"
                 )}
               >
-                <HugeiconsIcon icon={IconComponent} className={classNames("w-4 h-4", isActive ? "text-kat-dark dark:text-white" : "text-slate-500 dark:text-slate-400")} />
+                <HugeiconsIcon
+                  icon={IconComponent}
+                  className={classNames(
+                    "w-4 h-4",
+                    isActive
+                      ? "text-kat-dark dark:text-white"
+                      : "text-slate-500 dark:text-slate-400"
+                  )}
+                />
                 {tab.label}
               </button>
             );
@@ -1155,7 +1330,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
         <div className="space-y-6">
           {!activeTab && (
             <div className="text-center py-12 bg-white dark:bg-kat-surface rounded-3xl border border-slate-100 dark:border-kat-border/40 shadow-[0_2px_12px_rgba(3,13,46,0.02)] p-6 max-w-md mx-auto animate-fadeIn mt-4 flex flex-col items-center justify-center">
-              <HugeiconsIcon icon={CompassIcon} className="w-12 h-12 text-slate-350 mb-3 animate-bounce" />
+              <HugeiconsIcon
+                icon={CompassIcon}
+                className="w-12 h-12 text-slate-350 mb-3 animate-bounce"
+              />
               <h4 className="text-[16px] font-black text-kat-dark">{t("share.readyToExplore")}</h4>
               <p className="text-[12.5px] text-slate-400 dark:text-kat-muted font-bold mt-1.5 leading-relaxed">
                 {t("share.exploreDesc")}
@@ -1167,11 +1345,11 @@ export default function SharedTripScreen({ token }: { token: string }) {
               {/* Left Column: Activities & Backup Plans */}
               <div className="space-y-6">
                 {(activities.length > 0 || canRequestEdit) && (
-                  <SharedActivitiesSection 
-                    token={token} 
-                    mode={activitiesMode} 
+                  <SharedActivitiesSection
+                    token={token}
+                    mode={activitiesMode}
                     backupPlansMode={backupPlansMode}
-                    activities={activities} 
+                    activities={activities}
                     changeRequests={changeRequests}
                     members={members}
                     guestName={currentUser?.name || "Khách"}
@@ -1190,35 +1368,49 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-dark/5 dark:bg-slate-800/80 text-kat-dark">
                       <HugeiconsIcon icon={RouteIcon} className="h-4 w-4" />
                     </span>
-                    <h4 className="text-[15px] font-extrabold text-kat-dark">{t("share.tripInfo")}</h4>
+                    <h4 className="text-[15px] font-extrabold text-kat-dark">
+                      {t("share.tripInfo")}
+                    </h4>
                   </div>
-                  
+
                   <div className="space-y-3 text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/50 pt-3">
                     <div className="flex items-center justify-between border-b border-slate-100/40 dark:border-slate-800/20 pb-2.5">
                       <span className="flex items-center gap-2">
-                        <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />{t("share.location")}</span>
-                      <span className="font-black text-kat-dark">{trip.destination || trip.location || t("common.unknownLocation")}</span>
+                        <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
+                        {t("share.location")}
+                      </span>
+                      <span className="font-black text-kat-dark">
+                        {trip.destination || trip.location || t("common.unknownLocation")}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between border-b border-slate-100/40 dark:border-slate-800/20 pb-2.5">
                       <span className="flex items-center gap-2">
-                        <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-400" />{t("share.time")}</span>
+                        <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-400" />
+                        {t("share.time")}
+                      </span>
                       <span className="font-black text-kat-dark">
-                        {isDayTrip ? formatDate(trip.startDate) : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
+                        {isDayTrip
+                          ? formatDate(trip.startDate)
+                          : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
                       </span>
                     </div>
                     <div className="flex items-center justify-between pb-0.5">
                       <span className="flex items-center gap-2">
-                        <HugeiconsIcon icon={RouteIcon} className="h-4 w-4 text-slate-400" />{t("share.roadmapItems")}</span>
-                      <span className="font-black text-kat-dark">{activities.length} {t("share.itemsCount")}</span>
+                        <HugeiconsIcon icon={RouteIcon} className="h-4 w-4 text-slate-400" />
+                        {t("share.roadmapItems")}
+                      </span>
+                      <span className="font-black text-kat-dark">
+                        {activities.length} {t("share.itemsCount")}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 {/* 2. Weather Forecast Widget */}
-                <WeatherWidget 
-                  destination={trip.destination || trip.location} 
-                  latitude={trip.latitude} 
-                  longitude={trip.longitude} 
+                <WeatherWidget
+                  destination={trip.destination || trip.location}
+                  latitude={trip.latitude}
+                  longitude={trip.longitude}
                   days={tripDays.length || 3}
                   startDate={trip.startDate}
                 />
@@ -1232,39 +1424,54 @@ export default function SharedTripScreen({ token }: { token: string }) {
                           <HugeiconsIcon icon={GitBranchIcon} className="h-4 w-4" />
                         </span>
                         <div>
-                          <h4 className="text-[15px] font-extrabold text-kat-dark">{t("share.generalBackup")}</h4>
-                          <p className="text-[11px] text-slate-500/80 dark:text-slate-400 font-medium">{t("share.applyToWholeTrip")}</p>
+                          <h4 className="text-[15px] font-extrabold text-kat-dark">
+                            {t("share.generalBackup")}
+                          </h4>
+                          <p className="text-[11px] text-slate-500/80 dark:text-slate-400 font-medium">
+                            {t("share.applyToWholeTrip")}
+                          </p>
                         </div>
                       </div>
-                      
-                      {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length > 0 && (
+
+                      {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length >
+                        0 && (
                         <button
                           onClick={() => setIsGlobalBackupOpen(true)}
                           className="px-2.5 py-1 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 text-slate-600 dark:text-slate-400 font-bold text-[12px] hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                         >
-                          {t("share.view")} ({backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length})
+                          {t("share.view")} (
+                          {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length})
                         </button>
                       )}
                     </div>
 
                     {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).length > 0 ? (
                       <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1 scrollbar-none">
-                        {backupPlans.filter((p: BackupPlan) => !p.activityId && !p.date).map((plan: BackupPlan) => (
-                          <div key={plan.id} className="text-[13px] font-semibold text-kat-dark dark:text-slate-200 bg-slate-50/70 dark:bg-slate-800/40 rounded-xl px-3 py-2.5 border border-slate-100/50 dark:border-slate-700/40 flex items-center justify-between gap-2">
-                            <span className="truncate">{plan.title}</span>
-                            <button
-                              onClick={() => setIsGlobalBackupOpen(true)}
-                              className="text-indigo-650 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 shrink-0 text-[12px] font-bold"
+                        {backupPlans
+                          .filter((p: BackupPlan) => !p.activityId && !p.date)
+                          .map((plan: BackupPlan) => (
+                            <div
+                              key={plan.id}
+                              className="text-[13px] font-semibold text-kat-dark dark:text-slate-200 bg-slate-50/70 dark:bg-slate-800/40 rounded-xl px-3 py-2.5 border border-slate-100/50 dark:border-slate-700/40 flex items-center justify-between gap-2"
                             >
-                              {t("share.details")} &rarr;
-                            </button>
-                          </div>
-                        ))}
+                              <span className="truncate">{plan.title}</span>
+                              <button
+                                onClick={() => setIsGlobalBackupOpen(true)}
+                                className="text-indigo-650 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 shrink-0 text-[12px] font-bold"
+                              >
+                                {t("share.details")} &rarr;
+                              </button>
+                            </div>
+                          ))}
                       </div>
                     ) : (
                       <div className="text-center py-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl border border-dashed border-slate-200/60 dark:border-slate-700/40">
-                        <p className="text-[12.5px] font-bold text-slate-400 dark:text-slate-500">{t("share.noBackupPlans")}</p>
-                        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{t("share.backupPlansDesc")}</p>
+                        <p className="text-[12.5px] font-bold text-slate-400 dark:text-slate-500">
+                          {t("share.noBackupPlans")}
+                        </p>
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                          {t("share.backupPlansDesc")}
+                        </p>
                       </div>
                     )}
 
@@ -1274,7 +1481,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                         className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-indigo-200/80 dark:border-indigo-500/35 text-indigo-600 dark:text-indigo-400 font-bold text-[13px] hover:bg-indigo-50 dark:hover:bg-indigo-950/25 transition-colors motion-press cursor-pointer"
                       >
                         <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
-                        {backupPlansMode === 'edit' ? t("share.addPlan") : t("share.suggestPlan")}
+                        {backupPlansMode === "edit" ? t("share.addPlan") : t("share.suggestPlan")}
                       </button>
                     )}
                   </div>
@@ -1287,7 +1494,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400">
                         <HugeiconsIcon icon={RouteIcon} className="h-4 w-4" />
                       </span>
-                      <h4 className="text-[15px] font-extrabold text-kat-dark">{t("share.travelRoadmap")}</h4>
+                      <h4 className="text-[15px] font-extrabold text-kat-dark">
+                        {t("share.travelRoadmap")}
+                      </h4>
                     </div>
 
                     {/* Day selector custom pill */}
@@ -1307,7 +1516,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                 {t("share.viewingDay")}
                               </div>
                               <div className="text-[14.5px] font-extrabold text-kat-dark dark:text-slate-100">
-                                {selectedRoadmapDay ? `${t("share.day")} ${days.indexOf(selectedRoadmapDay) + 1} (${formatDateShort(selectedRoadmapDay)})` : t("share.selectDay")}
+                                {selectedRoadmapDay
+                                  ? `${t("share.day")} ${days.indexOf(selectedRoadmapDay) + 1} (${formatDateShort(selectedRoadmapDay)})`
+                                  : t("share.selectDay")}
                               </div>
                             </div>
                           </div>
@@ -1318,27 +1529,37 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       </div>
                     )}
 
-
                     {/* Roadmap details for selected day */}
                     {(() => {
                       const dayIndex = days.indexOf(selectedRoadmapDay);
-                      const dateParts = selectedRoadmapDay ? selectedRoadmapDay.split('-') : [];
-                      const dateLabel = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}` : selectedRoadmapDay;
+                      const dateParts = selectedRoadmapDay ? selectedRoadmapDay.split("-") : [];
+                      const dateLabel =
+                        dateParts.length === 3
+                          ? `${dateParts[2]}/${dateParts[1]}`
+                          : selectedRoadmapDay;
                       const mapUrl = (() => {
                         const manual = trip.dayRoadmaps?.[selectedRoadmapDay] || "";
                         if (manual) return manual;
-                        const dayActs = activities.filter((e: any) => e.date === selectedRoadmapDay);
-                        const travel = dayActs.find((e: any) => e.mapLink && (e.category === 'Di chuyển' || e.category === 'travel'));
+                        const dayActs = activities.filter(
+                          (e: any) => e.date === selectedRoadmapDay
+                        );
+                        const travel = dayActs.find(
+                          (e: any) =>
+                            e.mapLink && (e.category === "Di chuyển" || e.category === "travel")
+                        );
                         const fallback = !travel ? dayActs.find((e: any) => e.mapLink) : null;
                         return (travel || fallback)?.mapLink || "";
                       })();
                       const isAutoMap = !trip.dayRoadmaps?.[selectedRoadmapDay] && !!mapUrl;
-                      const isRoute = mapUrl && (mapUrl.includes("/maps/dir/") || mapUrl.includes("maps/dir"));
+                      const isRoute =
+                        mapUrl && (mapUrl.includes("/maps/dir/") || mapUrl.includes("maps/dir"));
 
                       return (
                         <div className="bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-kat-border/40 rounded-2xl p-3.5 space-y-3">
                           <div className="flex items-center justify-between text-[12px] font-semibold text-slate-400">
-                            <span>{t("timeline.dayN", { n: dayIndex + 1 })} ({dateLabel})</span>
+                            <span>
+                              {t("timeline.dayN", { n: dayIndex + 1 })} ({dateLabel})
+                            </span>
                             {activitiesMode === "edit" && (
                               <button
                                 type="button"
@@ -1349,7 +1570,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                 }}
                                 className="text-kat-teal hover:opacity-85 font-bold flex items-center gap-1 cursor-pointer"
                               >
-                                {mapUrl && <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />}
+                                {mapUrl && (
+                                  <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />
+                                )}
                                 {mapUrl ? t("share.edit") : t("share.add")}
                               </button>
                             )}
@@ -1377,7 +1600,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
                             </div>
                           ) : (
                             <div className="space-y-2 text-center py-2">
-                              <p className="text-[12.5px] font-semibold text-slate-400 dark:text-slate-500">{t("share.noRoadmap")}</p>
+                              <p className="text-[12.5px] font-semibold text-slate-400 dark:text-slate-500">
+                                {t("share.noRoadmap")}
+                              </p>
                               {activitiesMode === "edit" && (
                                 <button
                                   type="button"
@@ -1404,10 +1629,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
           )}
 
           {activeTab === "members" && (members.length > 0 || canRequestEdit) && (
-            <SharedMembersSection 
+            <SharedMembersSection
               token={token}
               mode={membersMode}
-              members={members} 
+              members={members}
               checklist={checklist}
               expenses={expenses}
               changeRequests={changeRequests}
@@ -1415,109 +1640,125 @@ export default function SharedTripScreen({ token }: { token: string }) {
             />
           )}
 
-          {activeTab === "expenses" && data.includeExpenses && (expenses.length > 0 || canRequestEdit) && (
-            <SharedExpensesSection 
-              trip={trip}
-              token={token} 
-              mode={expensesMode} 
-              expenses={expenses} 
-              changeRequests={changeRequests}
-              members={members}
-              events={activities}
-              guestName={currentUser?.name || "Khách"}
-            />
-          )}
+          {activeTab === "expenses" &&
+            data.includeExpenses &&
+            (expenses.length > 0 || canRequestEdit) && (
+              <SharedExpensesSection
+                trip={trip}
+                token={token}
+                mode={expensesMode}
+                expenses={expenses}
+                changeRequests={changeRequests}
+                members={members}
+                events={activities}
+                guestName={currentUser?.name || "Khách"}
+              />
+            )}
 
           {activeTab === "checklist" && (
             <div className="space-y-4">
               {/* Sub-tab switcher if both checklist and documents are shared and available */}
-              {Boolean(data.includeChecklist && (checklist.length > 0 || canRequestEdit)) && 
-               Boolean(data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit)) && (
-                <div className="flex justify-center">
-                  <div className="bg-slate-100/60 dark:bg-slate-800/60 p-1 rounded-xl inline-flex gap-1 border border-slate-200/40 dark:border-slate-700/50 shadow-inner">
-                    <button
-                      onClick={() => setChecklistSubTab("checklist")}
-                      className={classNames(
-                        "px-4 py-2 rounded-lg text-[13px] font-bold transition-all duration-200 cursor-pointer",
-                        checklistSubTab === "checklist"
-                          ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-slate-100 shadow-[0_2px_6px_rgba(3,13,46,0.06)]"
-                          : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-                      )}
-                    >
-                      {t("share.packing")}
-                    </button>
-                    <button
-                      onClick={() => setChecklistSubTab("documents")}
-                      className={classNames(
-                        "px-4 py-2 rounded-lg text-[13px] font-bold transition-all duration-200 cursor-pointer",
-                        checklistSubTab === "documents"
-                          ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-slate-100 shadow-[0_2px_6px_rgba(3,13,46,0.06)]"
-                          : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-                      )}
-                    >
-                      {t("share.documents")}
-                    </button>
+              {Boolean(data.includeChecklist && (checklist.length > 0 || canRequestEdit)) &&
+                Boolean(
+                  data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit)
+                ) && (
+                  <div className="flex justify-center">
+                    <div className="bg-slate-100/60 dark:bg-slate-800/60 p-1 rounded-xl inline-flex gap-1 border border-slate-200/40 dark:border-slate-700/50 shadow-inner">
+                      <button
+                        onClick={() => setChecklistSubTab("checklist")}
+                        className={classNames(
+                          "px-4 py-2 rounded-lg text-[13px] font-bold transition-all duration-200 cursor-pointer",
+                          checklistSubTab === "checklist"
+                            ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-slate-100 shadow-[0_2px_6px_rgba(3,13,46,0.06)]"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+                        )}
+                      >
+                        {t("share.packing")}
+                      </button>
+                      <button
+                        onClick={() => setChecklistSubTab("documents")}
+                        className={classNames(
+                          "px-4 py-2 rounded-lg text-[13px] font-bold transition-all duration-200 cursor-pointer",
+                          checklistSubTab === "documents"
+                            ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-slate-100 shadow-[0_2px_6px_rgba(3,13,46,0.06)]"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+                        )}
+                      >
+                        {t("share.documents")}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* Checklist content */}
-              {((checklistSubTab === "checklist" && data.includeChecklist && (checklist.length > 0 || canRequestEdit)) ||
-                (!data.includeDocuments || !(travelDocuments.length > 0 || canRequestEdit))) && 
-               data.includeChecklist && (checklist.length > 0 || canRequestEdit) && (
-                <SharedChecklistSection 
-                  tripId={trip.id}
-                  token={token} 
-                  mode={checklistMode} 
-                  checklist={checklist} 
-                  changeRequests={changeRequests}
-                  members={members}
-                  guestName={currentUser?.name || "Khách"}
-                />
-              )}
+              {((checklistSubTab === "checklist" &&
+                data.includeChecklist &&
+                (checklist.length > 0 || canRequestEdit)) ||
+                !data.includeDocuments ||
+                !(travelDocuments.length > 0 || canRequestEdit)) &&
+                data.includeChecklist &&
+                (checklist.length > 0 || canRequestEdit) && (
+                  <SharedChecklistSection
+                    tripId={trip.id}
+                    token={token}
+                    mode={checklistMode}
+                    checklist={checklist}
+                    changeRequests={changeRequests}
+                    members={members}
+                    guestName={currentUser?.name || "Khách"}
+                  />
+                )}
 
               {/* Documents content */}
-              {((checklistSubTab === "documents" && data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit)) ||
-                (!data.includeChecklist || !(checklist.length > 0 || canRequestEdit))) && 
-               data.includeDocuments && (travelDocuments.length > 0 || canRequestEdit) && (
-                <SharedDocumentsSection 
-                  tripId={trip.id}
-                  token={token} 
-                  mode={documentsMode} 
-                  documents={travelDocuments} 
-                  changeRequests={changeRequests}
-                  guestName={currentUser?.name || "Khách"}
-                />
-              )}
+              {((checklistSubTab === "documents" &&
+                data.includeDocuments &&
+                (travelDocuments.length > 0 || canRequestEdit)) ||
+                !data.includeChecklist ||
+                !(checklist.length > 0 || canRequestEdit)) &&
+                data.includeDocuments &&
+                (travelDocuments.length > 0 || canRequestEdit) && (
+                  <SharedDocumentsSection
+                    tripId={trip.id}
+                    token={token}
+                    mode={documentsMode}
+                    documents={travelDocuments}
+                    changeRequests={changeRequests}
+                    guestName={currentUser?.name || "Khách"}
+                  />
+                )}
             </div>
           )}
 
-          {activeTab === "journals" && data.includeJournals && (journals.length > 0 || canRequestEdit) && (
-            <SharedJournalsSection 
-              tripId={trip.id}
-              token={token} 
-              mode={journalsMode} 
-              journals={journals} 
-              changeRequests={changeRequests}
-              guestName={currentUser?.name || "Khách"}
-              members={members}
-              renderChatBox={currentUser ? () => (
-                <ChatBox 
-                  token={token} 
-                  currentUser={currentUser} 
-                  inline={true}
-                  isReadOnly={!canRequestEdit || data.trip.status === 'archived'}
-                />
-              ) : undefined}
-            />
-          )}
+          {activeTab === "journals" &&
+            data.includeJournals &&
+            (journals.length > 0 || canRequestEdit) && (
+              <SharedJournalsSection
+                tripId={trip.id}
+                token={token}
+                mode={journalsMode}
+                journals={journals}
+                changeRequests={changeRequests}
+                guestName={currentUser?.name || "Khách"}
+                members={members}
+                renderChatBox={
+                  currentUser
+                    ? () => (
+                        <ChatBox
+                          token={token}
+                          currentUser={currentUser}
+                          inline={true}
+                          isReadOnly={!canRequestEdit || data.trip.status === "archived"}
+                        />
+                      )
+                    : undefined
+                }
+              />
+            )}
         </div>
 
         {/* Footer */}
         <div className="mt-8 text-center pb-8">
-          <p className="text-[13px] font-medium text-slate-400">
-            {t("sharedScreen.secureData")}
-          </p>
+          <p className="text-[13px] font-medium text-slate-400">{t("sharedScreen.secureData")}</p>
         </div>
       </main>
 
@@ -1528,13 +1769,15 @@ export default function SharedTripScreen({ token }: { token: string }) {
         title={`${t("share.travelRoadmap")} - ${t("timeline.dayN", { n: days.indexOf(roadmapEditDay) + 1 })}`}
       >
         <div className="space-y-5 pb-4">
-          
           {/* Instruction card */}
           <div className="flex items-start gap-3 bg-kat-primary-soft border border-kat-teal border-opacity-20 rounded-2xl px-4 py-3">
             <HugeiconsIcon icon={RouteIcon} className="h-5 w-5 text-kat-teal shrink-0 mt-0.5" />
             <div>
               <p className="text-[13px] font-bold text-kat-dark">{t("share.pasteMapLink")}</p>
-              <p className="text-[12px] text-slate-500 font-medium mt-0.5 leading-relaxed" dangerouslySetInnerHTML={{ __html: t("share.mapInstruction") }} />
+              <p
+                className="text-[12px] text-slate-500 font-medium mt-0.5 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: t("share.mapInstruction") }}
+              />
             </div>
           </div>
 
@@ -1546,8 +1789,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
             <input
               type="url"
               value={roadmapInputLink}
-              onChange={e => setRoadmapInputLink(e.target.value)}
-              onPaste={e => {
+              onChange={(e) => setRoadmapInputLink(e.target.value)}
+              onPaste={(e) => {
                 const pasted = e.clipboardData.getData("text").trim();
                 if (pasted && pasted.startsWith("http")) {
                   // Đặt giá trị rồi auto-save sau 1 tick để state kịp cập nhật
@@ -1556,14 +1799,18 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     try {
                       const currentRoadmaps = { ...(trip.dayRoadmaps || {}) };
                       currentRoadmaps[roadmapEditDay] = pasted;
-                      
-                      const { updateSharedTripRoadmaps } = await import("../../services/sharedTripEditService");
+
+                      const { updateSharedTripRoadmaps } =
+                        await import("../../services/sharedTripEditService");
                       await updateSharedTripRoadmaps(token, currentRoadmaps);
-                      
+
                       setIsRoadmapFormOpen(false);
                     } catch (err) {
                       console.error("Error saving trip:", err);
-                      alert(t("share.saveTripError") || "Cannot save trip. Please check your network connection.");
+                      alert(
+                        t("share.saveTripError") ||
+                          "Cannot save trip. Please check your network connection."
+                      );
                     }
                   }, 50);
                 }
@@ -1613,23 +1860,31 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 }}
                 className={classNames(
                   "w-full flex items-center justify-between p-4 rounded-[16px] transition-all duration-200 active:scale-[0.98]",
-                  isSelected 
-                    ? "bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-100 dark:border-emerald-800/40 shadow-sm" 
+                  isSelected
+                    ? "bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-100 dark:border-emerald-800/40 shadow-sm"
                     : "bg-white hover:bg-slate-50 dark:bg-kat-surface hover:dark:bg-slate-800/40 border border-slate-100 hover:border-slate-200 dark:border-kat-border/40 hover:dark:border-kat-border/70"
                 )}
               >
                 <div className="flex items-center gap-3.5">
-                  <div className={classNames(
-                    "w-9 h-9 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors",
-                    isSelected ? "bg-emerald-600 text-white shadow-sm" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
-                  )}>
+                  <div
+                    className={classNames(
+                      "w-9 h-9 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors",
+                      isSelected
+                        ? "bg-emerald-600 text-white shadow-sm"
+                        : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+                    )}
+                  >
                     {idx + 1}
                   </div>
                   <div className="text-left">
-                    <div className={classNames(
-                      "text-[15px] font-extrabold",
-                      isSelected ? "text-emerald-900 dark:text-emerald-300" : "text-kat-dark dark:text-slate-100"
-                    )}>
+                    <div
+                      className={classNames(
+                        "text-[15px] font-extrabold",
+                        isSelected
+                          ? "text-emerald-900 dark:text-emerald-300"
+                          : "text-kat-dark dark:text-slate-100"
+                      )}
+                    >
                       {t("timeline.dayN", { n: idx + 1 })}
                     </div>
                     <div className="text-[12.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
@@ -1639,11 +1894,14 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 </div>
                 {isSelected && (
                   <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center">
-                    <HugeiconsIcon icon={CheckIcon} className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
+                    <HugeiconsIcon
+                      icon={CheckIcon}
+                      className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400"
+                    />
                   </div>
                 )}
               </button>
-            )
+            );
           })}
         </div>
       </BottomSheet>
@@ -1671,15 +1929,21 @@ export default function SharedTripScreen({ token }: { token: string }) {
       />
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`} style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}>
-        <div ref={containerRef} className="relative flex h-[56px] min-[390px]:h-[60px] items-center justify-between px-2">
+      <nav
+        className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium lg:hidden transition-transform duration-300 ease-in-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`}
+        style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
+      >
+        <div
+          ref={containerRef}
+          className="relative flex h-[56px] min-[390px]:h-[60px] items-center justify-between px-2"
+        >
           {/* Active Indicator Slide Pill */}
           {indicatorStyle.width > 0 && (
-            <div 
+            <div
               className="absolute top-[6px] bottom-[6px] rounded-full bg-white dark:bg-slate-800 transition-[left,width] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45 dark:border-slate-700/50"
               style={{
                 left: `${indicatorStyle.left}px`,
-                width: `${indicatorStyle.width}px`
+                width: `${indicatorStyle.width}px`,
               }}
             />
           )}
@@ -1689,24 +1953,28 @@ export default function SharedTripScreen({ token }: { token: string }) {
             return (
               <button
                 key={tab.id}
-                ref={(el) => { buttonsRef.current[tab.id] = el; }}
+                ref={setButtonRef(tab.id)}
                 onClick={() => setActiveTab(tab.id)}
                 className={classNames(
                   "relative flex items-center justify-center rounded-full transition-[color,background-color,width,padding,gap,transform] duration-200 ease-out overflow-hidden motion-press z-10",
-                  isActive 
-                    ? "text-kat-dark px-2.5 min-[340px]:px-3 min-[390px]:px-5 h-[40px] min-[340px]:h-[44px] min-[390px]:h-[48px] gap-1 min-[340px]:gap-1.5 min-[390px]:gap-2 font-extrabold" 
+                  isActive
+                    ? "text-kat-dark px-2.5 min-[340px]:px-3 min-[390px]:px-5 h-[40px] min-[340px]:h-[44px] min-[390px]:h-[48px] gap-1 min-[340px]:gap-1.5 min-[390px]:gap-2 font-extrabold"
                     : "text-kat-dark opacity-50 hover:opacity-75 w-10 min-[340px]:w-11 min-[390px]:w-12 h-10 min-[340px]:h-11 min-[390px]:h-12"
                 )}
               >
-                <HugeiconsIcon 
-                  icon={IconComponent} 
+                <HugeiconsIcon
+                  icon={IconComponent}
                   className={classNames(
-                    "shrink-0 transition-transform duration-200 ease-out", 
+                    "shrink-0 transition-transform duration-200 ease-out",
                     isActive ? "scale-105" : "scale-100",
                     "h-[18px] w-[18px] min-[340px]:h-[19px] min-[340px]:w-[19px] min-[390px]:h-[22px] min-[390px]:w-[22px]"
-                  )} 
+                  )}
                 />
-                {isActive && <span className="text-[10px] min-[340px]:text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap">{tab.label}</span>}
+                {isActive && (
+                  <span className="text-[10px] min-[340px]:text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap">
+                    {tab.label}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -1717,4 +1985,3 @@ export default function SharedTripScreen({ token }: { token: string }) {
     </div>
   );
 }
-

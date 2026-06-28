@@ -383,15 +383,7 @@
     "startDateError": "Mohon pilih tanggal mulai.",
     "endDateError": "Mohon pilih tanggal akhir.",
     "dateCompareError": "Tanggal akhir tidak boleh mendahului tanggal mulai.",
-    "daysOfWeek": [
-      "Min",
-      "Sen",
-      "Sel",
-      "Rab",
-      "Kam",
-      "Jum",
-      "Sab"
-    ],
+    "daysOfWeek": ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"],
     "months": [
       "Januari",
       "Februari",
@@ -1090,7 +1082,7 @@
   },
   "packing": {
     "pageTitle": "Daftar Barang Bawaan",
-    "pageSubtitle": "Siapkan semua yang Anda butuhkan.",
+    "pageSubtitle": "Siapkan semua barang bawaan untuk perjalanan.",
     "progressTitle": "Kemajuan",
     "packedCount": "Đã xếp {{completed}} / {{total}} món",
     "addItem": "Tambah barang",
@@ -1203,7 +1195,7 @@
   },
   "expenses": {
     "pageTitle": "Pengeluaran",
-    "pageSubtitle": "Lacak pengeluaran, pembayaran, dan pembagian.",
+    "pageSubtitle": "Kelola pengeluaran dan bagi biaya selama perjalanan.",
     "addExpense": "Tambah",
     "totalTrip": "Total Pengeluaran",
     "sharedTrip": "Pengeluaran Bersama",
@@ -1450,7 +1442,7 @@
     "permSuggestCost": "Saran pengeluaran",
     "permSuggestTrip": "Saran perubahan",
     "rolesHelpTitle": "Informasi Peran",
-    "rolesHelpSubtitle": "Setiap anggota memiliki tanggung jawab berbeda",
+    "rolesHelpSubtitle": "Setiap anggota berperan dalam kesuksesan perjalanan.",
     "roleLabel": "Peran perjalanan"
   },
   "sharedScreen": {
