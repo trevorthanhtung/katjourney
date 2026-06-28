@@ -577,21 +577,21 @@ export function TripManagerScreen({
                   <button
                     onClick={() => setFilterTab("planned")}
                     className={`px-5 py-1.5 rounded-full text-[13.5px] font-bold transition-all duration-300 
-${filterTab === "planned" ? "bg-white text-slate-900 dark:bg-kat-primary dark:text-[#030D2E] shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
+${filterTab === "planned" ? "bg-white text-slate-900 dark:bg-slate-700 dark:text-white shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
                   >
                     {t("dashboard.tabs.planned", "Kế hoạch")}
                   </button>
                   <button
                     onClick={() => setFilterTab("archived")}
                     className={`px-5 py-1.5 rounded-full text-[13.5px] font-bold transition-all duration-300 
-${filterTab === "archived" ? "bg-white text-slate-900 dark:bg-kat-primary dark:text-[#030D2E] shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
+${filterTab === "archived" ? "bg-white text-slate-900 dark:bg-slate-700 dark:text-white shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
                   >
                     {t("dashboard.tabs.archived", "Lưu trữ")}
                   </button>
                   <button
                     onClick={() => setFilterTab("completed")}
                     className={`px-5 py-1.5 rounded-full text-[13.5px] font-bold transition-all duration-300 
-${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-kat-primary dark:text-[#030D2E] shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
+${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:text-white shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
                   >
                     {t("dashboard.tabs.completed", "Đã qua")}
                   </button>
@@ -600,7 +600,7 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-kat-primary dark:
                 <div className="flex bg-slate-100/80 dark:bg-slate-800/70 p-1.5 rounded-full backdrop-blur-md gap-1">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`p-1.5 rounded-full transition-all duration-300 ${viewMode === "grid" ? "bg-white text-slate-900 dark:bg-kat-primary dark:text-[#030D2E] shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                    className={`p-1.5 rounded-full transition-all duration-300 ${viewMode === "grid" ? "bg-white text-slate-900 dark:bg-slate-700 dark:text-white shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
                     title={t("dashboard.viewMode.grid", "Grid View")}
                   >
                     <svg
@@ -621,7 +621,7 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-kat-primary dark:
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`p-1.5 rounded-full transition-all duration-300 ${viewMode === "list" ? "bg-white text-slate-900 dark:bg-kat-primary dark:text-[#030D2E] shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                    className={`p-1.5 rounded-full transition-all duration-300 ${viewMode === "list" ? "bg-white text-slate-900 dark:bg-slate-700 dark:text-white shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
                     title={t("dashboard.viewMode.list", "List View")}
                   >
                     <svg
