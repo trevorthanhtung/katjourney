@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "prompt",
-      includeAssets: ["asset/favicon.ico", "asset/apple-touch-icon.png"],
+      includeAssets: ["asset/favicons/favicon.ico", "asset/favicons/apple-touch-icon.png"],
       manifest: {
         lang: "vi",
         name: "KAT Journey",
@@ -21,19 +21,19 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "/asset/icon-192.png",
+            src: "/asset/pwa/icon-192.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "/asset/icon-512.png",
+            src: "/asset/pwa/icon-512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "/asset/maskable-icon-512.png",
+            src: "/asset/pwa/maskable-icon-512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
