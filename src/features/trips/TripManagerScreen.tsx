@@ -792,7 +792,7 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
           <div className="flex justify-center items-center shrink-0 px-1">
             <button
               onClick={onCreateNew}
-              className="flex items-center justify-center w-10 min-[340px]:w-11 min-[390px]:w-12 h-10 min-[340px]:h-11 min-[390px]:h-12 rounded-full bg-gradient-to-tr from-[#004E5A] to-[#00BFB7] text-white shadow-[0_4px_12px_rgba(0,191,183,0.3)] hover:brightness-110 active:scale-[0.92] transition-all motion-press"
+              className="flex items-center justify-center w-10 min-[340px]:w-11 min-[390px]:w-12 h-10 min-[340px]:h-11 min-[390px]:h-12 rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_4px_12px_rgba(3,13,46,0.18)] dark:shadow-[0_4px_12px_rgba(0,191,183,0.25)] hover:bg-kat-dark/90 dark:hover:brightness-110 active:scale-[0.92] transition-all motion-press"
               aria-label="Thêm chuyến đi"
             >
               <svg
