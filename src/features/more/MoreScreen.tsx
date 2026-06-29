@@ -9,6 +9,7 @@ import {
   Alert01Icon,
   AlertCircleIcon,
   ArrowLeft01Icon,
+  ArrowRight01Icon,
   AwardIcon,
   BookOpen01Icon,
   Calendar01Icon,
@@ -43,6 +44,7 @@ import {
   Note01Icon,
   PackageIcon,
   PencilEdit01Icon,
+  PlusSignIcon,
   Refresh01Icon,
   Route01Icon,
   Search01Icon,
@@ -404,37 +406,38 @@ function CalendarRangePicker({
 
   return (
     <div className="w-full">
-      {/* Trip type toggle */}
-      <div className="grid grid-cols-2 gap-2 mb-4">
+      {/* Sliding Pill Segmented Control */}
+      <div className="relative flex p-1.5 mb-6 bg-slate-100/80 dark:bg-slate-800/50 rounded-[20px] backdrop-blur-xl border border-slate-200/60 dark:border-white/5">
+        <div
+          className={classNames(
+            "absolute inset-y-1.5 w-[calc(50%-6px)] rounded-[16px] bg-white dark:bg-[#1a2336] shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] transition-all duration-300",
+            tripType === "multiDay" ? "translate-x-[calc(100%+12px)]" : "translate-x-0"
+          )}
+        />
         <button
           type="button"
           onClick={() => {
             onChangeTripType("dayTrip");
             setPickingEnd(false);
           }}
-          className={classNames(
-            "flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px] backdrop-blur-md",
-            tripType === "dayTrip"
-              ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary"
-              : "bg-white/50 dark:bg-[#0A0F1C]/40 ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 hover:bg-white/80 dark:hover:bg-white/5"
-          )}
+          className="relative z-10 flex flex-col items-center justify-center flex-1 py-2 sm:py-2.5 transition-colors"
         >
           <span
             className={classNames(
-              "text-[14px] font-bold",
+              "text-[14.5px] font-bold transition-colors duration-300",
               tripType === "dayTrip"
-                ? "text-kat-primary dark:text-kat-teal"
-                : "text-slate-700 dark:text-slate-350"
+                ? "text-kat-dark dark:text-white"
+                : "text-slate-500 dark:text-slate-400"
             )}
           >
             {t("tripForm.dayTripBtn")}
           </span>
           <span
             className={classNames(
-              "text-[11px] font-medium mt-0.5",
+              "text-[11.5px] font-semibold mt-0.5 transition-colors duration-300",
               tripType === "dayTrip"
-                ? "text-[#00BFB7]/80 dark:text-kat-teal/80"
-                : "text-slate-400 dark:text-slate-500"
+                ? "text-slate-500 dark:text-slate-400"
+                : "text-slate-400/70 dark:text-slate-500/70"
             )}
           >
             {t("tripForm.dayTripDesc")}
@@ -446,29 +449,24 @@ function CalendarRangePicker({
             onChangeTripType("multiDay");
             setPickingEnd(false);
           }}
-          className={classNames(
-            "flex flex-col items-start rounded-[14px] px-4 py-3 text-left transition-all min-h-[60px] backdrop-blur-md",
-            tripType === "multiDay"
-              ? "bg-[#00BFB7]/10 dark:bg-kat-teal/20 ring-2 ring-inset ring-kat-primary"
-              : "bg-white/50 dark:bg-[#0A0F1C]/40 ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 hover:bg-white/80 dark:hover:bg-white/5"
-          )}
+          className="relative z-10 flex flex-col items-center justify-center flex-1 py-2 sm:py-2.5 transition-colors"
         >
           <span
             className={classNames(
-              "text-[14px] font-bold",
+              "text-[14.5px] font-bold transition-colors duration-300",
               tripType === "multiDay"
-                ? "text-kat-primary dark:text-kat-teal"
-                : "text-slate-700 dark:text-slate-350"
+                ? "text-kat-dark dark:text-white"
+                : "text-slate-500 dark:text-slate-400"
             )}
           >
             {t("tripForm.multiDayBtn")}
           </span>
           <span
             className={classNames(
-              "text-[11px] font-medium mt-0.5",
+              "text-[11.5px] font-semibold mt-0.5 transition-colors duration-300",
               tripType === "multiDay"
-                ? "text-[#00BFB7]/80 dark:text-kat-teal/80"
-                : "text-slate-400 dark:text-slate-500"
+                ? "text-slate-500 dark:text-slate-400"
+                : "text-slate-400/70 dark:text-slate-500/70"
             )}
           >
             {t("tripForm.multiDayDesc")}
@@ -476,25 +474,53 @@ function CalendarRangePicker({
         </button>
       </div>
 
-      {/* Selected range display */}
-      <div className="mb-4 px-1">
-        {tripType === "dayTrip" ? (
-          <p className="text-[18px] font-extrabold text-kat-text">{fmtDisplay(startDate)}</p>
-        ) : (
-          <p className="text-[18px] font-extrabold text-kat-text">
-            {fmtDisplay(startDate)} <span className="text-kat-muted font-bold mx-1">—</span>{" "}
-            {fmtDisplay(effectiveEnd)}
-          </p>
-        )}
-        {tripType === "multiDay" && pickingEnd && (
-          <p className="text-[12px] text-kat-primary dark:text-kat-teal font-semibold mt-0.5 animate-pulse">
-            {t("tripForm.pickEndPrompt")}
-          </p>
-        )}
-      </div>
+      {/* Calendar Card */}
+      <div className="rounded-[24px] bg-white dark:bg-[#0A0F1C]/60 border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden flex flex-col">
+        {/* Date Summary Header */}
+        <div className="px-5 pt-4 pb-3 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
+          <div className="text-[18px] sm:text-[20px] font-black text-kat-dark dark:text-white flex items-center flex-wrap gap-2">
+            {tripType === "dayTrip" ? (
+              <span className="flex items-center gap-2">
+                <HugeiconsIcon icon={Calendar01Icon} size={20} className="text-kat-primary" />
+                {fmtDisplay(startDate)}
+              </span>
+            ) : (
+              <>
+                <span
+                  className={classNames(
+                    "flex items-center gap-2 transition-colors",
+                    !startDate && "text-slate-400"
+                  )}
+                >
+                  <HugeiconsIcon
+                    icon={Calendar01Icon}
+                    size={20}
+                    className={startDate ? "text-kat-primary" : "text-slate-400/60"}
+                  />
+                  {startDate
+                    ? fmtDisplay(startDate)
+                    : t("tripForm.pickStartPrompt", "Chọn ngày đi...")}
+                </span>
+                <HugeiconsIcon
+                  icon={ArrowRight01Icon}
+                  size={20}
+                  className="text-slate-400/60 mx-1"
+                />
+                <span
+                  className={classNames(
+                    "transition-colors",
+                    (!effectiveEnd || pickingEnd) && "text-kat-primary animate-pulse"
+                  )}
+                >
+                  {pickingEnd
+                    ? t("tripForm.pickEndPrompt", "Chọn ngày về...")
+                    : fmtDisplay(effectiveEnd)}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
 
-      {/* Calendar grid */}
-      <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md overflow-hidden">
         {/* Month navigation */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/10">
           <button
@@ -822,9 +848,15 @@ function TripForm({
               onClick={() => {
                 setForm((f) => ({ ...f, destinations: [...f.destinations, { name: "" }] }));
               }}
-              className="flex items-center justify-center w-full py-2.5 mt-2 border-2 border-dashed border-slate-200 dark:border-slate-700/50 rounded-xl text-[13.5px] font-semibold text-kat-primary hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+              className="group relative flex items-center justify-center w-full py-3 mt-3 rounded-2xl bg-slate-100/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/60 dark:border-white/5 text-[14px] font-bold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-kat-primary dark:hover:text-kat-teal hover:border-kat-primary/30 dark:hover:border-kat-teal/30 hover:shadow-sm active:scale-[0.98] transition-all duration-300 overflow-hidden"
             >
-              + {t("tripForm.addDestination", "Thêm điểm đến")}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 dark:via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out" />
+              <div className="relative z-10 flex items-center gap-1.5 drop-shadow-sm transition-transform duration-300 group-hover:scale-105">
+                <span className="text-[18px] leading-none mb-[2px] transition-transform duration-300 group-hover:rotate-90">
+                  +
+                </span>
+                {t("tripForm.addDestination", "Thêm điểm đến")}
+              </div>
             </button>
           </div>
         </div>

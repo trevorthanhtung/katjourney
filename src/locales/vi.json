@@ -470,7 +470,7 @@
       "Tháng 11",
       "Tháng 12"
     ],
-    "dateFmt": "{{day}} thg {{month}}, {{year}}",
+    "dateFmt": "{{day}} {{month}}, {{year}}",
     "currencyLabel": "Đơn vị tiền tệ",
     "addDestination": "Thêm điểm đến"
   },

@@ -107,11 +107,15 @@ export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
         <div
           className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border backdrop-blur-md text-[11px] font-bold tracking-widest uppercase shadow-sm ${
             isLive
-              ? "bg-black/40 border-yellow-500/30 text-yellow-400"
-              : "bg-black/30 border-white/20 text-white"
+              ? "bg-black/40 border-emerald-500/30 text-emerald-400"
+              : "bg-black/30 border-amber-500/30 text-amber-400"
           }`}
         >
-          {isLive && <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>}
+          {isLive ? (
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          ) : (
+            <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+          )}
           {isLive
             ? t("dashboard.hero.liveNow", "LIVE NOW")
             : t("dashboard.hero.upcoming", "UPCOMING")}
@@ -120,7 +124,7 @@ export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
 
       {/* Center Title */}
       <div className="absolute inset-0 flex items-center justify-center z-10 px-6">
-        <h2 className="text-white text-5xl sm:text-7xl lg:text-[90px] font-[900] tracking-tighter text-center leading-none drop-shadow-2xl group-hover:scale-105 transition-transform duration-700">
+        <h2 className="text-white text-5xl sm:text-7xl lg:text-[90px] font-[900] tracking-tighter text-center leading-tight drop-shadow-2xl group-hover:scale-105 transition-transform duration-700 py-4">
           {trip.title}
         </h2>
       </div>
@@ -135,24 +139,34 @@ export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
                 {t("dashboard.hero.buddies", "Buddies")}
               </span>
               <div className="flex -space-x-2">
-                {members.slice(0, 2).map((member, i) => {
-                  const bgColors = ["bg-indigo-500", "bg-rose-500", "bg-emerald-500"];
-                  const colorClass = bgColors[i % bgColors.length];
-                  return (
-                    <div
-                      key={member.id || i}
-                      className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full ${colorClass} flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50 overflow-hidden`}
-                    >
-                      {member.avatar
-                        ? getAvatarSvg(member.avatar, "w-full h-full")
-                        : member.name.charAt(0).toUpperCase()}
-                    </div>
-                  );
-                })}
-                {memberCount > 2 && (
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50">
-                    +{memberCount - 2}
+                {memberCount === 0 ? (
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-700/50 flex items-center justify-center text-white/50 border-2 border-black/50 overflow-hidden">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
                   </div>
+                ) : (
+                  <>
+                    {members.slice(0, 2).map((member, i) => {
+                      const bgColors = ["bg-indigo-500", "bg-rose-500", "bg-emerald-500"];
+                      const colorClass = bgColors[i % bgColors.length];
+                      return (
+                        <div
+                          key={member.id || i}
+                          className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full ${colorClass} flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50 overflow-hidden`}
+                        >
+                          {member.avatar
+                            ? getAvatarSvg(member.avatar, "w-full h-full")
+                            : member.name.charAt(0).toUpperCase()}
+                        </div>
+                      );
+                    })}
+                    {memberCount > 2 && (
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50">
+                        +{memberCount - 2}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
               <span className="text-[10px] sm:text-[11px] font-semibold text-white/70 mt-2 truncate w-full text-center px-1">
@@ -201,39 +215,68 @@ export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
                 {t("dashboard.hero.places", "Places")}
               </span>
               <div className="flex -space-x-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-500 flex items-center justify-center text-white border-2 border-black/50 overflow-hidden p-1 shadow-inner">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-full h-full drop-shadow-md"
-                  >
-                    <path
-                      d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
-                      fill="#93C5FD"
-                    />
-                    <path
-                      d="M12 21C16.9706 21 21 16.9706 21 12C21 11.0256 20.8451 10.0874 20.5582 9.2063C19.7891 9.71536 18.882 10 17.9259 10C15.2289 10 13 7.8203 13 5.18519C13 4.22554 13.2926 3.33618 13.8055 2.58557C13.2268 2.39659 12.6225 2.2963 12 2.2963C6.63842 2.2963 2.2963 6.63842 2.2963 12C2.2963 17.3616 6.63842 21.7037 12 21.7037V21Z"
-                      fill="#3B82F6"
-                    />
-                    <circle cx="8" cy="8" r="2" fill="#EFF6FF" />
-                  </svg>
-                </div>
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white border-2 border-black/50 overflow-hidden hidden sm:flex p-1 shadow-inner">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-full h-full drop-shadow-md"
-                  >
-                    <path d="M2 20H22L12 4L2 20Z" fill="#A7F3D0" />
-                    <path d="M12 4L22 20H12V4Z" fill="#10B981" />
-                    <path d="M7 20H17L12 12L7 20Z" fill="#047857" />
-                  </svg>
-                </div>
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-700 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50">
-                  +{eventCount > 2 ? eventCount - 2 : 0}
-                </div>
+                {eventCount === 0 ? (
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-700/50 flex items-center justify-center text-white/50 border-2 border-black/50 overflow-hidden p-1.5 shadow-inner">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="w-full h-full"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                  </div>
+                ) : (
+                  <>
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-500 flex items-center justify-center text-white border-2 border-black/50 overflow-hidden p-1 shadow-inner">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-full h-full drop-shadow-md"
+                      >
+                        <path
+                          d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
+                          fill="#93C5FD"
+                        />
+                        <path
+                          d="M12 21C16.9706 21 21 16.9706 21 12C21 11.0256 20.8451 10.0874 20.5582 9.2063C19.7891 9.71536 18.882 10 17.9259 10C15.2289 10 13 7.8203 13 5.18519C13 4.22554 13.2926 3.33618 13.8055 2.58557C13.2268 2.39659 12.6225 2.2963 12 2.2963C6.63842 2.2963 2.2963 6.63842 2.2963 12C2.2963 17.3616 6.63842 21.7037 12 21.7037V21Z"
+                          fill="#3B82F6"
+                        />
+                        <circle cx="8" cy="8" r="2" fill="#EFF6FF" />
+                      </svg>
+                    </div>
+                    {eventCount > 1 && (
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white border-2 border-black/50 overflow-hidden hidden sm:flex p-1 shadow-inner">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-full h-full drop-shadow-md"
+                        >
+                          <path d="M2 20H22L12 4L2 20Z" fill="#A7F3D0" />
+                          <path d="M12 4L22 20H12V4Z" fill="#10B981" />
+                          <path d="M7 20H17L12 12L7 20Z" fill="#047857" />
+                        </svg>
+                      </div>
+                    )}
+                    {eventCount > 2 && (
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-700 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50">
+                        +{eventCount - 2}
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
               <span className="text-[10px] sm:text-[11px] font-semibold text-white/70 mt-2 truncate px-1 w-full text-center">
                 {eventCount} {t("dashboard.hero.destinations", "Destinations")}

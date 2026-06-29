@@ -8,17 +8,17 @@ export function usePWAInstall() {
 
   useEffect(() => {
     // Check if app is running in standalone mode
-    const isStandaloneMode = 
-      window.matchMedia("(display-mode: standalone)").matches || 
+    const isStandaloneMode =
+      window.matchMedia("(display-mode: standalone)").matches ||
       (window.navigator as any).standalone === true;
-    
+
     setIsStandalone(isStandaloneMode);
 
     // Detect platform
     const userAgent = window.navigator.userAgent.toLowerCase();
     const isIos = /iphone|ipad|ipod/.test(userAgent);
     const isAndroid = /android/.test(userAgent);
-    
+
     if (isIos) {
       setPlatform("ios");
     } else if (isAndroid) {
@@ -53,9 +53,11 @@ export function usePWAInstall() {
       // Return true to indicate we should show the iOS guide BottomSheet
       return true;
     }
-    
+
     if (!deferredPrompt) {
       // If we don't have the prompt (e.g. Chrome on iOS, or already installed, or not fired yet)
+      // On Android, we should show the manual guide as a fallback.
+      if (platform === "android") return true;
       return false;
     }
 
@@ -65,12 +67,14 @@ export function usePWAInstall() {
       if (outcome === "accepted") {
         setDeferredPrompt(null);
         setIsInstallable(false);
-        return true;
       }
+      return false; // Native prompt was handled, no manual guide needed
     } catch (err) {
       console.error("PWA installation prompt failed:", err);
+      // Fallback to manual guide if prompt fails
+      if (platform === "android") return true;
     }
-    
+
     return false;
   };
 

@@ -796,7 +796,7 @@ export function BottomSheet({
     <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center p-0 sm:p-6">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 motion-modal-overlay bg-slate-900/35 backdrop-blur-sm touch-none"
+        className="absolute inset-0 motion-modal-overlay bg-slate-900/35 backdrop-blur-sm"
         onClick={onClose}
       />
 
@@ -806,10 +806,10 @@ export function BottomSheet({
         <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-kat-primary/10 dark:bg-[#00BFB7]/15 blur-[80px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3" />
 
         {/* Drag handle (mobile only) */}
-        <div className="relative z-10 flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 dark:bg-slate-700 sm:hidden touch-none" />
+        <div className="relative z-10 flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 dark:bg-slate-700 sm:hidden" />
 
         {/* Header */}
-        <div className="relative z-10 flex shrink-0 items-start justify-between border-b border-slate-200/60 dark:border-white/10 px-5 sm:px-6 py-3.5 sm:py-4 gap-3 touch-none bg-transparent">
+        <div className="relative z-10 flex shrink-0 items-start justify-between border-b border-slate-200/60 dark:border-white/10 px-5 sm:px-6 py-3.5 sm:py-4 gap-3 bg-transparent">
           <div className="pr-2 min-w-0 flex-1">
             <h3 className="text-[20px] sm:text-[22px] font-black bg-gradient-to-r from-kat-dark to-kat-primary dark:from-white dark:to-teal-300 bg-clip-text text-transparent drop-shadow-sm leading-snug truncate">
               {title}
@@ -844,7 +844,7 @@ export function BottomSheet({
 
         {/* Footer */}
         {footer && (
-          <div className="relative z-10 flex-none border-t border-slate-200/60 dark:border-white/10 bg-white dark:bg-[#0A0F1C]/40 dark:backdrop-blur-xl px-5 sm:px-6 py-3.5 sm:py-4 touch-none">
+          <div className="relative z-10 flex-none border-t border-slate-200/60 dark:border-white/10 bg-white dark:bg-[#0A0F1C]/40 dark:backdrop-blur-xl px-5 sm:px-6 py-3.5 sm:py-4">
             {footer}
           </div>
         )}

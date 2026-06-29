@@ -157,12 +157,12 @@ export function SettingsSheet({
 
   // PWA Install Assistant states
   const { isInstallable, isStandalone, platform, triggerInstall } = usePWAInstall();
-  const [isIosGuideOpen, setIsIosGuideOpen] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   const handleInstallPWA = async () => {
     const showGuide = await triggerInstall();
-    if (showGuide && platform === "ios") {
-      setIsIosGuideOpen(true);
+    if (showGuide) {
+      setIsGuideOpen(true);
     }
   };
 
@@ -2585,62 +2585,103 @@ export function SettingsSheet({
             </div>
 
             {/* Trip info */}
-            <div className="px-6 py-5 space-y-4">
-              <div className="rounded-2xl bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/30 p-4">
-                <p className="text-[11px] font-bold text-indigo-400 dark:text-indigo-500 uppercase tracking-wider mb-1">
-                  {t("settings.dialogs.importPreview.tripName")}
-                </p>
-                <p className="text-[18px] font-black text-kat-dark dark:text-slate-100 leading-tight">
-                  {importPreview.tripName}
-                </p>
-                {importPreview.exportedAt && (
-                  <p className="text-[11px] text-indigo-400 dark:text-indigo-500 font-medium mt-1">
-                    {t("settings.dialogs.importPreview.exportedAt")}{" "}
-                    {new Date(importPreview.exportedAt).toLocaleString("vi-VN")}
+            <div className="px-5 py-5 sm:px-6 space-y-5">
+              <div className="relative rounded-2xl bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100/50 dark:border-indigo-800/30 p-4 sm:p-5 overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-400/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <div className="relative z-10">
+                  <p className="text-[10px] sm:text-[11px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                    {t("settings.dialogs.importPreview.tripName")}
                   </p>
-                )}
+                  <p className="text-[18px] sm:text-[22px] font-black text-kat-dark dark:text-slate-100 leading-tight">
+                    {importPreview.tripName}
+                  </p>
+                  {importPreview.exportedAt && (
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-2 flex items-center gap-1.5">
+                      <HugeiconsIcon icon={Clock01Icon} className="w-3.5 h-3.5" />
+                      {t("settings.dialogs.importPreview.exportedAt")}{" "}
+                      {new Date(importPreview.exportedAt).toLocaleString("vi-VN")}
+                    </p>
+                  )}
+                </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-6 gap-2.5 sm:gap-3">
                 {[
                   {
                     label: t("settings.dialogs.importPreview.members"),
                     value: importPreview.memberCount,
+                    icon: UserIcon,
+                    color: "text-blue-500 dark:text-blue-400",
+                    bg: "bg-blue-50 dark:bg-blue-500/10",
+                    border: "border-blue-100/50 dark:border-blue-500/20",
                   },
                   {
                     label: t("settings.dialogs.importPreview.timeline"),
                     value: importPreview.eventCount,
+                    icon: Calendar01Icon,
+                    color: "text-emerald-500 dark:text-emerald-400",
+                    bg: "bg-emerald-50 dark:bg-emerald-500/10",
+                    border: "border-emerald-100/50 dark:border-emerald-500/20",
                   },
                   {
                     label: t("settings.dialogs.importPreview.expenses"),
                     value: importPreview.expenseCount,
+                    icon: Coins01Icon,
+                    color: "text-amber-500 dark:text-amber-400",
+                    bg: "bg-amber-50 dark:bg-amber-500/10",
+                    border: "border-amber-100/50 dark:border-amber-500/20",
                   },
                   {
                     label: t("settings.dialogs.importPreview.checklist"),
                     value: importPreview.checklistCount,
+                    icon: CheckIcon,
+                    color: "text-purple-500 dark:text-purple-400",
+                    bg: "bg-purple-50 dark:bg-purple-500/10",
+                    border: "border-purple-100/50 dark:border-purple-500/20",
                   },
                   {
                     label: t("settings.dialogs.importPreview.journal"),
                     value: importPreview.journalCount,
+                    icon: PencilEdit01Icon,
+                    color: "text-pink-500 dark:text-pink-400",
+                    bg: "bg-pink-50 dark:bg-pink-500/10",
+                    border: "border-pink-100/50 dark:border-pink-500/20",
                   },
-                ].map((item) => (
+                ].map((item, idx) => (
                   <div
                     key={item.label}
-                    className="rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-white/[0.04] p-3 text-center"
+                    className={`rounded-[16px] ${item.bg} border ${item.border} p-3 sm:p-4 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 ${idx < 3 ? "col-span-2" : "col-span-3"}`}
                   >
-                    <p className="text-[20px] font-black text-kat-dark dark:text-slate-100">
+                    <div
+                      className={`absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity ${item.color}`}
+                    >
+                      <HugeiconsIcon icon={item.icon} className="w-16 h-16" />
+                    </div>
+                    <div
+                      className={`flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-slate-800 shadow-sm mb-2 ${item.color}`}
+                    >
+                      <HugeiconsIcon icon={item.icon} className="w-4 h-4" />
+                    </div>
+                    <p className="text-[20px] sm:text-[24px] font-black text-kat-dark dark:text-slate-100 leading-none mb-1">
                       {item.value}
                     </p>
-                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">
+                    <p className="text-[9px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">
                       {item.label}
                     </p>
                   </div>
                 ))}
               </div>
 
-              <p className="text-[12px] text-slate-400 dark:text-slate-500 font-medium text-center leading-relaxed">
-                {t("settings.dialogs.importPreview.notice")}
-              </p>
+              <div className="flex items-start gap-3 bg-slate-50 dark:bg-slate-800/40 rounded-2xl p-4 border border-slate-100 dark:border-white/5">
+                <HugeiconsIcon
+                  icon={InformationCircleIcon}
+                  className="w-5 h-5 text-slate-400 shrink-0 mt-0.5"
+                />
+                <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                  {t("settings.dialogs.importPreview.notice")}
+                </p>
+              </div>
             </div>
 
             {/* Actions */}
@@ -2674,8 +2715,9 @@ export function SettingsSheet({
       )}
 
       <PWAInstallInstructionsSheet
-        isOpen={isIosGuideOpen}
-        onClose={() => setIsIosGuideOpen(false)}
+        isOpen={isGuideOpen}
+        onClose={() => setIsGuideOpen(false)}
+        platform={platform as "ios" | "android" | "other"}
       />
     </>
   );

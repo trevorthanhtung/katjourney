@@ -9,6 +9,7 @@ import { useAtlasStats } from "./useAtlasStats";
 import { numericToAlpha2 } from "../../lib/countryCodes";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShareMapModal } from "./ShareMapModal";
+import { useModalHistory } from "../../hooks/useModalHistory";
 
 interface AtlasScreenProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export function AtlasScreen({
   totalTrips: propsTotalTrips,
   totalDays,
 }: AtlasScreenProps) {
+  useModalHistory(isOpen, onClose, "atlas");
   const { t, i18n } = useTranslation();
   const globeRef = useRef<any>(null);
   const [dimensions, setDimensions] = useState({
@@ -275,15 +277,15 @@ export function AtlasScreen({
                 animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                 exit={{ opacity: 0, y: 30, scale: 0.95, filter: "blur(10px)" }}
                 transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="w-full max-w-[1000px] mx-auto bg-black/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-white/10 flex flex-col md:flex-row gap-2 relative shadow-[0_24px_64px_rgba(0,0,0,0.8)] md:h-[150px] items-stretch"
+                className="w-full max-w-[1000px] mx-auto bg-[#0a0a0a]/60 backdrop-blur-[40px] p-2 sm:p-3 rounded-[2.5rem] border border-white/10 flex flex-col md:flex-row gap-2 sm:gap-3 relative shadow-[0_32px_80px_-12px_rgba(0,0,0,0.8)] items-stretch ring-1 ring-white/5"
               >
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-sky-500/10 via-pink-500/5 to-transparent rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-sky-500/20 via-indigo-500/10 to-transparent rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
 
                 <button
                   onClick={() => setIsStatsExpanded(false)}
-                  className="absolute -top-3 -right-3 w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 hover:bg-slate-700 text-white backdrop-blur-xl border border-white/20 transition-all z-30 shadow-xl"
+                  className="absolute -top-4 -right-4 w-10 h-10 flex items-center justify-center rounded-full bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white backdrop-blur-xl border border-white/10 transition-all z-30 shadow-2xl hover:scale-110 active:scale-95"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -294,32 +296,39 @@ export function AtlasScreen({
                 </button>
 
                 {/* Hero Card: Countries */}
-                <div className="flex-shrink-0 flex flex-col justify-between p-4 md:p-5 bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 rounded-[1.5rem] w-full md:w-56 relative overflow-hidden group shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
-                  <div className="absolute inset-0 bg-sky-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+                <div className="flex-shrink-0 flex flex-col justify-between p-5 md:p-6 bg-white/[0.02] border border-white/10 hover:border-white/20 hover:bg-white/[0.04] rounded-[2rem] w-full md:w-[220px] relative overflow-hidden group shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl"></div>
+
                   <div className="relative z-10 flex flex-col">
-                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/50 mb-1">
-                      {t("dashboard.stats.countries", "Quốc gia")}
-                    </span>
-                    <span className="text-[10px] font-medium text-sky-400 tracking-wider">
-                      {((visitedCountries.length / 195) * 100).toFixed(1)}%{" "}
-                      {t("dashboard.stats.world", "World")}
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]"></div>
+                      <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/60">
+                        {t("dashboard.stats.countries", "Quốc gia")}
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-medium text-sky-400/90 tracking-wider">
+                      <span className="font-bold text-sky-300">
+                        {((visitedCountries.length / 195) * 100).toFixed(1)}%
+                      </span>{" "}
+                      {t("dashboard.stats.world", "Thế giới")}
                     </span>
                   </div>
-                  <div className="relative z-10 flex items-end justify-between mt-auto">
-                    <span className="text-5xl font-black text-white tracking-tighter leading-none drop-shadow-md">
+
+                  <div className="relative z-10 flex items-end justify-between mt-6">
+                    <span className="text-6xl sm:text-[72px] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 tracking-tighter leading-[0.8] drop-shadow-md">
                       {visitedCountries.length}
                     </span>
                     {visitedCountries.length > 0 && (
-                      <div className="flex -space-x-1.5 pb-1">
+                      <div className="flex -space-x-2 pb-1">
                         {visitedCountries.slice(0, 3).map((id, idx) => {
                           const alpha2 = numericToAlpha2[id];
                           if (!alpha2) return null;
                           return (
                             <img
                               key={id}
-                              src={`https://flagcdn.com/w20/${alpha2.toLowerCase()}.png`}
+                              src={`https://flagcdn.com/w40/${alpha2.toLowerCase()}.png`}
                               alt={alpha2}
-                              className="w-6 h-6 rounded-full object-cover border border-white/20 shadow-sm relative"
+                              className="w-8 h-8 rounded-full object-cover border-[1.5px] border-[#1a1a1a] shadow-lg relative"
                               style={{ zIndex: 3 - idx }}
                             />
                           );
@@ -329,8 +338,8 @@ export function AtlasScreen({
                   </div>
                 </div>
 
-                {/* Number Grid Cards */}
-                <div className="flex-1 grid grid-cols-2 lg:grid-cols-4 gap-2 z-10">
+                {/* Number Grid Cards (2x2 Bento) */}
+                <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-2 sm:gap-3 z-10 min-w-[200px]">
                   {[
                     { label: t("atlas.stats.trips", "Chuyến đi"), value: propsTotalTrips },
                     { label: t("atlas.stats.places", "Địa điểm"), value: totalPlaces },
@@ -339,12 +348,13 @@ export function AtlasScreen({
                   ].map((stat, i) => (
                     <div
                       key={i}
-                      className="flex flex-col items-center justify-center p-3 bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-[1.5rem] transition-all duration-300 group shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] h-full"
+                      className="flex flex-col items-center justify-center p-3 bg-white/[0.02] hover:bg-white/[0.04] border border-white/10 hover:border-white/20 rounded-[1.5rem] transition-all duration-300 group shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] h-full relative overflow-hidden"
                     >
-                      <span className="text-3xl lg:text-4xl font-extralight text-white mb-1 tabular-nums group-hover:scale-110 transition-transform duration-300 drop-shadow-md">
+                      <div className="absolute inset-0 bg-gradient-to-t from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <span className="text-3xl lg:text-[32px] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 mb-1 tabular-nums group-hover:scale-110 group-hover:from-sky-100 group-hover:to-sky-300 transition-all duration-300 drop-shadow-md">
                         {stat.value}
                       </span>
-                      <span className="text-[9px] font-medium uppercase tracking-[0.2em] text-white/40 text-center leading-tight">
+                      <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40 group-hover:text-white/60 text-center leading-tight transition-colors">
                         {stat.label}
                       </span>
                     </div>
@@ -352,21 +362,24 @@ export function AtlasScreen({
                 </div>
 
                 {/* Last Trip Card */}
-                <div className="flex-shrink-0 flex flex-col justify-between p-4 md:p-5 bg-sky-500/10 border border-sky-400/20 rounded-[1.5rem] w-full md:w-56 relative overflow-hidden group shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
-                  <div className="absolute inset-0 bg-gradient-to-br from-sky-400/20 via-transparent to-transparent opacity-50"></div>
+                <div className="flex-shrink-0 flex flex-col justify-between p-5 md:p-6 bg-white/[0.02] border border-white/10 hover:border-white/20 hover:bg-white/[0.04] rounded-[2rem] w-full md:w-[220px] relative overflow-hidden group shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-sky-400/5 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+                  <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-sky-500/10 rounded-full blur-[40px] pointer-events-none group-hover:scale-150 transition-transform duration-700"></div>
+
                   <div className="relative z-10 flex flex-col">
-                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-sky-200/60 mb-1">
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-sky-200/60 mb-1.5">
                       {t("atlas.stats.lastTrip", "Chuyến đi cuối")}
                     </span>
-                    <span className="text-sm md:text-base font-semibold text-white tracking-wide truncate max-w-full drop-shadow-md">
+                    <span className="text-base md:text-lg font-bold text-white tracking-wide truncate max-w-full drop-shadow-md leading-tight">
                       {translatedLastTrip}
                     </span>
                   </div>
-                  <div className="relative z-10 flex items-end justify-between mt-auto">
-                    <span className="text-[9px] font-medium uppercase tracking-[0.2em] text-sky-200/60 mb-1">
+
+                  <div className="relative z-10 flex items-end justify-between mt-6">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-sky-200/60 mb-2">
                       {t("atlas.stats.tripsIn", "Năm")} {new Date().getFullYear()}
                     </span>
-                    <span className="text-4xl font-light text-sky-300 tabular-nums drop-shadow-[0_0_15px_rgba(56,189,248,0.4)]">
+                    <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-sky-200 to-sky-500 tabular-nums drop-shadow-[0_0_20px_rgba(56,189,248,0.5)] leading-[0.8]">
                       {currentYearTrips}
                     </span>
                   </div>
@@ -379,58 +392,63 @@ export function AtlasScreen({
       {/* Floating Tooltip */}
       {tooltip && (
         <div
-          className={`fixed pointer-events-none z-[110] bg-white/10 backdrop-blur-3xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] rounded-2xl border border-white/20 transform -translate-x-1/2 -translate-y-[120%] ${tooltip.isVisited ? "p-5" : "px-4 py-2"}`}
+          className={`fixed pointer-events-none z-[110] bg-[#030712]/70 backdrop-blur-[40px] rounded-[1.5rem] border border-cyan-500/30 shadow-[0_20px_60px_-15px_rgba(6,182,212,0.4)] ring-1 ring-white/10 transform -translate-x-1/2 -translate-y-[120%] overflow-hidden ${tooltip.isVisited ? "p-5" : "px-4 py-2"}`}
           style={{ left: tooltipPos.x, top: tooltipPos.y, transition: "opacity 0.2s ease-out" }}
         >
+          {/* Ambient background glows */}
+          <div className="absolute -top-10 -left-10 w-24 h-24 bg-cyan-500/30 rounded-full blur-[40px]"></div>
+
           {tooltip.isVisited ? (
-            <div className="flex flex-col items-center min-w-[140px]">
-              <div className="absolute -top-10 bg-sky-500/20 w-20 h-20 blur-2xl rounded-full"></div>
-              <span className="text-lg font-medium text-white mb-3 tracking-wide relative z-10">
+            <div className="flex flex-col items-center min-w-[160px] relative z-10">
+              <span className="text-xl font-black text-white mb-4 tracking-widest drop-shadow-md">
                 {translatedTooltipName}
               </span>
 
-              <div className="grid grid-cols-2 gap-x-6 gap-y-3 w-full relative z-10">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-4 w-full">
                 <div className="flex flex-col items-center">
-                  <span className="text-2xl font-light text-white tabular-nums">
+                  <span className="text-[32px] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-cyan-300 tabular-nums leading-none mb-1 drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">
                     {tooltip.trips}
                   </span>
-                  <span className="text-[8px] font-medium uppercase tracking-[0.2em] text-white/50">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-100/60">
                     {t("atlas.stats.trips", "Trips")}
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <span className="text-2xl font-light text-white tabular-nums">
+                  <span className="text-[32px] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-cyan-300 tabular-nums leading-none mb-1 drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">
                     {tooltip.places}
                   </span>
-                  <span className="text-[8px] font-medium uppercase tracking-[0.2em] text-white/50">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-100/60">
                     {t("atlas.stats.places", "Places")}
                   </span>
                 </div>
 
-                <div className="col-span-2 w-full h-px bg-white/10 my-1"></div>
+                <div className="col-span-2 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent my-1"></div>
 
                 <div className="flex flex-col items-center">
-                  <span className="text-[8px] font-medium uppercase tracking-[0.2em] text-white/50 mb-0.5">
+                  <span className="text-[8px] font-bold uppercase tracking-[0.25em] text-cyan-100/40 mb-1">
                     {t("atlas.stats.first", "First")}
                   </span>
-                  <span className="text-xs font-medium text-white/90 tabular-nums">
+                  <span className="text-xs font-black text-white/90 tabular-nums tracking-wider">
                     {tooltip.firstTrip}
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <span className="text-[8px] font-medium uppercase tracking-[0.2em] text-white/50 mb-0.5">
+                  <span className="text-[8px] font-bold uppercase tracking-[0.25em] text-cyan-100/40 mb-1">
                     {t("atlas.stats.latest", "Latest")}
                   </span>
-                  <span className="text-xs font-medium text-white/90 tabular-nums">
+                  <span className="text-xs font-black text-white/90 tabular-nums tracking-wider">
                     {tooltip.lastTrip}
                   </span>
                 </div>
               </div>
             </div>
           ) : (
-            <span className="text-sm font-medium text-white/70 tracking-wide">
-              {translatedTooltipName}
-            </span>
+            <div className="relative z-10 flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-500"></div>
+              <span className="text-sm font-bold text-white/80 tracking-widest uppercase">
+                {translatedTooltipName}
+              </span>
+            </div>
           )}
         </div>
       )}

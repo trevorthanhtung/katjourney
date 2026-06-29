@@ -123,40 +123,49 @@ function TripCard({
     return (
       <div
         onClick={() => onOpenTrip(trip.id!)}
-        className={`group relative cursor-pointer flex flex-row overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-300 w-full h-24 motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+        className={`group relative cursor-pointer flex flex-row items-center p-1.5 sm:p-2 overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-300 w-full h-[104px] sm:h-[112px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
       >
-        {/* Left Side (Gradient & Title) */}
+        {/* Left Side (Gradient & Title) - Card in Card */}
         <div
-          className={`w-[35%] sm:w-[35%] lg:w-[30%] shrink-0 bg-gradient-to-r ${gradientClass} relative px-4 sm:px-6 flex flex-col justify-center`}
+          className={`w-[40%] sm:w-[35%] lg:w-[30%] h-full shrink-0 bg-gradient-to-br ${gradientClass} relative px-3 sm:px-5 flex flex-col justify-center rounded-[18px] sm:rounded-[20px] overflow-hidden shadow-inner`}
         >
           {/* Status Badge */}
-          <div className="absolute top-3 left-4 sm:left-6 flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm">
+          <div className="absolute top-2.5 left-3 sm:top-3 sm:left-4 flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm">
             <span className={`relative flex h-1.5 w-1.5 rounded-full ${statusColorClass}`}></span>
             {statusLabel}
           </div>
 
-          <h4 className="text-[18px] sm:text-[24px] font-bold text-white leading-tight truncate tracking-tight drop-shadow-sm mt-3">
+          <h4 className="text-[16px] sm:text-[22px] font-bold text-white leading-tight truncate tracking-tight drop-shadow-sm mt-4 sm:mt-3">
             {trip.title}
           </h4>
         </div>
 
         {/* Right Side (Stats) */}
-        <div className="flex-1 bg-white dark:bg-kat-surface flex flex-row items-center justify-between px-3 sm:px-6 min-w-0">
-          <div className="flex-1 flex flex-col items-center justify-center min-w-0 pr-2 sm:pr-4">
-            <span className="text-[12px] sm:text-[13px] font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap truncate w-full text-center">
+        <div className="flex-1 flex flex-row items-center justify-between px-2 sm:px-6 min-w-0 h-full">
+          <div className="flex-1 flex flex-col items-center justify-center min-w-0 pr-1 sm:pr-4">
+            <div className="flex items-center gap-1 sm:gap-1.5 justify-center text-slate-500 dark:text-slate-400 mb-0.5 sm:mb-1">
+              <HugeiconsIcon
+                icon={Calendar01Icon}
+                className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-70"
+              />
+            </div>
+            <span className="text-[11px] sm:text-[13px] font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap truncate w-full text-center">
               {dateDisplay
                 ? dateDisplay.split(" ➔ ").map((d, i, arr) => (
                     <span key={i}>
-                      {d} {i < arr.length - 1 && <span className="text-slate-300 mx-1">➔</span>}
+                      {d}{" "}
+                      {i < arr.length - 1 && (
+                        <span className="text-slate-300 dark:text-slate-600 mx-0.5 sm:mx-1">➔</span>
+                      )}
                     </span>
                   ))
                 : t("dashboard.card.openDates", "Open dates")}
             </span>
           </div>
 
-          <div className="h-10 w-px bg-slate-100 dark:bg-slate-800/80 mx-2 sm:mx-4 shrink-0"></div>
+          <div className="h-10 w-px bg-slate-100 dark:bg-slate-800/80 mx-1 sm:mx-4 shrink-0"></div>
 
-          <div className="grid grid-cols-3 shrink-0 w-[150px] sm:w-[200px] xl:w-[240px] gap-1 sm:gap-2">
+          <div className="grid grid-cols-3 shrink-0 w-[140px] sm:w-[200px] xl:w-[240px] gap-1 sm:gap-2">
             <div className="flex flex-col items-center min-w-0">
               <span className="text-[16px] sm:text-[18px] font-black text-kat-text dark:text-slate-200 leading-none truncate w-full text-center">
                 {daysTotal}
@@ -199,11 +208,11 @@ function TripCard({
   return (
     <div
       onClick={() => onOpenTrip(trip.id!)}
-      className={`group relative cursor-pointer flex flex-col overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 w-full h-[280px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+      className={`group relative cursor-pointer flex flex-col overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 w-full h-[290px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square motion-card-enter motion-delay-${Math.min(idx + 2, 10)} p-1.5 sm:p-2`}
     >
-      {/* Top Banner Area (Gradient) */}
+      {/* Top Banner Area (Gradient) - Card in Card */}
       <div
-        className={`flex-1 bg-gradient-to-br ${gradientClass} relative p-5 sm:p-6 flex flex-col justify-between overflow-hidden`}
+        className={`flex-1 bg-gradient-to-br ${gradientClass} relative p-4 sm:p-5 flex flex-col justify-between overflow-hidden rounded-[20px] shadow-inner`}
       >
         {/* Status Badge */}
         <div className="relative z-10 flex justify-start items-start shrink-0">
@@ -222,9 +231,10 @@ function TripCard({
       </div>
 
       {/* Bottom Info Area (White/Solid) */}
-      <div className="h-[120px] bg-white dark:bg-kat-surface flex flex-col justify-between p-5">
+      <div className="h-[120px] flex flex-col justify-between p-4 sm:p-5 bg-transparent">
         {/* Dates */}
-        <div className="text-center">
+        <div className="text-center flex flex-row items-center justify-center gap-1.5">
+          <HugeiconsIcon icon={Calendar01Icon} className="w-3.5 h-3.5 text-slate-400" />
           <span className="text-[12px] font-semibold text-slate-500 dark:text-slate-400">
             {dateDisplay || t("dashboard.card.openDates", "Open dates")}
           </span>
@@ -743,19 +753,17 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
         onConfirm={executeDeleteTrip}
       />
 
-      {isAtlasOpen && (
-        <AtlasScreen
-          isOpen={isAtlasOpen}
-          onClose={() => setIsAtlasOpen(false)}
-          totalTrips={trips.length}
-          totalDays={trips.reduce((acc, t) => {
-            const s = new Date(t.startDate);
-            const e = new Date(t.endDate);
-            if (isNaN(s.getTime()) || isNaN(e.getTime())) return acc;
-            return acc + Math.ceil(Math.abs(e.getTime() - s.getTime()) / (1000 * 3600 * 24)) + 1;
-          }, 0)}
-        />
-      )}
+      <AtlasScreen
+        isOpen={isAtlasOpen}
+        onClose={() => setIsAtlasOpen(false)}
+        totalTrips={trips.length}
+        totalDays={trips.reduce((acc, t) => {
+          const s = new Date(t.startDate);
+          const e = new Date(t.endDate);
+          if (isNaN(s.getTime()) || isNaN(e.getTime())) return acc;
+          return acc + Math.ceil(Math.abs(e.getTime() - s.getTime()) / (1000 * 3600 * 24)) + 1;
+        }, 0)}
+      />
 
       {/* Mobile Bottom Navigation (TripManagerScreen specific) */}
       {trips.length > 0 && (

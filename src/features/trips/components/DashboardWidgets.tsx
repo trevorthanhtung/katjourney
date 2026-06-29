@@ -36,42 +36,50 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
     return acc + Math.ceil(Math.abs(e.getTime() - s.getTime()) / (1000 * 3600 * 24)) + 1;
   }, 0);
 
+  const cardBaseClass =
+    "flex flex-col relative overflow-hidden bg-white/70 dark:bg-[#0A0F1C]/80 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 rounded-[2rem] p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_16px_48px_rgba(3,13,46,0.08)] dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.3)] hover:-translate-y-1 transition-all duration-500 min-h-[170px] group";
+
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
+      {/* ATLAS CARD */}
       <div
         onClick={onAtlasClick}
-        className={`flex flex-col relative overflow-hidden bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border rounded-[24px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 min-h-[120px] group ${onAtlasClick ? "cursor-pointer active:scale-[0.98]" : ""}`}
+        className={`${cardBaseClass} ${onAtlasClick ? "cursor-pointer active:scale-[0.98]" : ""}`}
       >
-        <div className="absolute -right-6 -top-6 w-24 h-24 bg-rose-50 dark:bg-rose-500/10 rounded-full blur-2xl group-hover:bg-rose-100 dark:group-hover:bg-rose-500/20 group-hover:scale-150 transition-all duration-700"></div>
-        <div className="flex items-center justify-between mb-3 relative z-10">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Atlas: {t("dashboard.stats.countries", "Quốc gia")}
-          </span>
-          <div className="w-8 h-8 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-500 border border-rose-100 dark:border-rose-500/20">
-            <HugeiconsIcon icon={EarthIcon} size={16} />
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-rose-500/10 dark:bg-rose-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+
+        <div className="flex flex-col h-full relative z-10">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-100 to-rose-50 dark:from-rose-500/20 dark:to-rose-500/5 flex items-center justify-center text-rose-500 border border-rose-200/50 dark:border-rose-500/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+              <HugeiconsIcon icon={EarthIcon} size={20} />
+            </div>
           </div>
-        </div>
-        <div className="mt-auto relative z-10">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight">
-              {visitedAlpha2s.length}
-            </span>
-            <span className="text-sm font-semibold text-slate-400">
-              {t("dashboard.stats.of195", "của 195")}
+
+          <div className="flex-1 flex flex-col justify-end">
+            <div className="flex items-baseline gap-1.5 mb-1">
+              <span className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-rose-500 dark:group-hover:text-rose-400 transition-colors duration-300">
+                {visitedAlpha2s.length}
+              </span>
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-500">/ 195</span>
+            </div>
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
+              Atlas: {t("dashboard.stats.countries", "Quốc gia")}
             </span>
           </div>
-          <div className="flex -space-x-1.5 mt-2 overflow-hidden h-6 items-center">
+
+          <div className="mt-4 flex -space-x-1.5 overflow-hidden h-6 items-center">
             {visitedAlpha2s.length === 0 && (
-              <span className="text-xs text-slate-400 italic">
+              <span className="text-[11px] font-semibold text-slate-400 italic">
                 {t("dashboard.stats.none", "Chưa có")}
               </span>
             )}
-            {visitedAlpha2s.slice(0, 5).map((alpha2) => (
+            {visitedAlpha2s.slice(0, 5).map((alpha2, idx) => (
               <img
                 key={alpha2}
                 src={`https://flagcdn.com/w40/${alpha2.toLowerCase()}.png`}
                 alt={alpha2}
-                className="w-5 h-5 rounded-full object-cover border-2 border-white dark:border-kat-surface shrink-0 shadow-sm"
+                className="w-6 h-6 rounded-full object-cover border-2 border-white dark:border-[#0A0F1C] shrink-0 shadow-sm relative"
+                style={{ zIndex: 5 - idx }}
                 title={alpha2}
               />
             ))}
@@ -79,67 +87,95 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
         </div>
       </div>
 
-      <div className="flex flex-col relative overflow-hidden bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border rounded-[24px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 min-h-[120px] group">
-        <div className="absolute -right-6 -top-6 w-24 h-24 bg-indigo-50 dark:bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-100 dark:group-hover:bg-indigo-500/20 group-hover:scale-150 transition-all duration-700"></div>
-        <div className="flex items-center justify-between mb-3 relative z-10">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            {t("dashboard.stats.totalTrips", "Tổng chuyến đi")}
-          </span>
-          <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500 border border-indigo-100 dark:border-indigo-500/20">
-            <HugeiconsIcon icon={Route01Icon} size={16} />
+      {/* TOTAL TRIPS CARD */}
+      <div className={cardBaseClass}>
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+
+        <div className="flex flex-col h-full relative z-10">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 dark:from-indigo-500/20 dark:to-indigo-500/5 flex items-center justify-center text-indigo-500 border border-indigo-200/50 dark:border-indigo-500/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+              <HugeiconsIcon icon={Route01Icon} size={20} />
+            </div>
           </div>
-        </div>
-        <div className="mt-auto relative z-10">
-          <div className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight">
-            {totalTrips}
+
+          <div className="flex-1 flex flex-col justify-end">
+            <div className="flex items-baseline gap-1.5 mb-1">
+              <span className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors duration-300">
+                {totalTrips}
+              </span>
+            </div>
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
+              {t("dashboard.stats.totalTrips", "Tổng chuyến đi")}
+            </span>
           </div>
-          <div className="text-[12px] font-semibold text-slate-400 mt-1">
-            {t("dashboard.stats.scheduled", "Đã lên lịch")}
+
+          <div className="mt-4">
+            <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+              {t("dashboard.stats.scheduled", "Đã lên lịch")}
+            </span>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col relative overflow-hidden bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border rounded-[24px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 min-h-[120px] group">
-        <div className="absolute -right-6 -top-6 w-24 h-24 bg-orange-50 dark:bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-100 dark:group-hover:bg-orange-500/20 group-hover:scale-150 transition-all duration-700"></div>
-        <div className="flex items-center justify-between mb-3 relative z-10">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            {t("dashboard.stats.daysTraveled", "Ngày vi vu")}
-          </span>
-          <div className="w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-orange-500 border border-orange-100 dark:border-orange-500/20">
-            <HugeiconsIcon icon={Calendar01Icon} size={16} />
+      {/* DAYS TRAVELED CARD */}
+      <div className={cardBaseClass}>
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-orange-500/10 dark:bg-orange-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+
+        <div className="flex flex-col h-full relative z-10">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-100 to-orange-50 dark:from-orange-500/20 dark:to-orange-500/5 flex items-center justify-center text-orange-500 border border-orange-200/50 dark:border-orange-500/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+              <HugeiconsIcon icon={Calendar01Icon} size={20} />
+            </div>
           </div>
-        </div>
-        <div className="mt-auto relative z-10">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight">
-              {totalDays}
-            </span>
-            <span className="text-sm font-semibold text-slate-400">
-              {t("dashboard.stats.daysLabel", "ngày")}
+
+          <div className="flex-1 flex flex-col justify-end">
+            <div className="flex items-baseline gap-1.5 mb-1">
+              <span className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors duration-300">
+                {totalDays}
+              </span>
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
+                {t("dashboard.stats.daysLabel", "ngày")}
+              </span>
+            </div>
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
+              {t("dashboard.stats.daysTraveled", "Ngày vi vu")}
             </span>
           </div>
-          <div className="text-[12px] font-semibold text-slate-400 mt-1">
-            {t("dashboard.stats.onAllJourneys", "Trên mọi hành trình")}
+
+          <div className="mt-4">
+            <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+              {t("dashboard.stats.onAllJourneys", "Trên mọi hành trình")}
+            </span>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col relative overflow-hidden bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border rounded-[24px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 min-h-[120px] group">
-        <div className="absolute -right-6 -top-6 w-24 h-24 bg-emerald-50 dark:bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-100 dark:group-hover:bg-emerald-500/20 group-hover:scale-150 transition-all duration-700"></div>
-        <div className="flex items-center justify-between mb-3 relative z-10">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            {t("dashboard.stats.destinations", "Điểm đến")}
-          </span>
-          <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-100 dark:border-emerald-500/20">
-            <HugeiconsIcon icon={MapsLocation01Icon} size={16} />
+      {/* DESTINATIONS CARD */}
+      <div className={cardBaseClass}>
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+
+        <div className="flex flex-col h-full relative z-10">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-500/20 dark:to-emerald-500/5 flex items-center justify-center text-emerald-500 border border-emerald-200/50 dark:border-emerald-500/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+              <HugeiconsIcon icon={MapsLocation01Icon} size={20} />
+            </div>
           </div>
-        </div>
-        <div className="mt-auto relative z-10">
-          <div className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white tracking-tight">
-            {trips.reduce((acc, t) => acc + (t.destinations?.length || 1), 0)}
+
+          <div className="flex-1 flex flex-col justify-end">
+            <div className="flex items-baseline gap-1.5 mb-1">
+              <span className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors duration-300">
+                {trips.reduce((acc, t) => acc + (t.destinations?.length || 1), 0)}
+              </span>
+            </div>
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
+              {t("dashboard.stats.destinations", "Điểm đến")}
+            </span>
           </div>
-          <div className="text-[12px] font-semibold text-slate-400 mt-1">
-            {t("dashboard.stats.explored", "Đã khám phá")}
+
+          <div className="mt-4">
+            <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+              {t("dashboard.stats.explored", "Đã khám phá")}
+            </span>
           </div>
         </div>
       </div>

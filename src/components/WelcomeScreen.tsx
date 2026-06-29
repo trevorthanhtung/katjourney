@@ -97,12 +97,12 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
 
   // PWA Install Assistant states
   const { isInstallable, isStandalone, platform, triggerInstall } = usePWAInstall();
-  const [isIosGuideOpen, setIsIosGuideOpen] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   const handleInstallPWA = async () => {
     const showGuide = await triggerInstall();
-    if (showGuide && platform === "ios") {
-      setIsIosGuideOpen(true);
+    if (showGuide) {
+      setIsGuideOpen(true);
     }
   };
 
@@ -677,8 +677,9 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
       )}
 
       <PWAInstallInstructionsSheet
-        isOpen={isIosGuideOpen}
-        onClose={() => setIsIosGuideOpen(false)}
+        isOpen={isGuideOpen}
+        onClose={() => setIsGuideOpen(false)}
+        platform={platform as "ios" | "android" | "other"}
       />
     </div>
   );
