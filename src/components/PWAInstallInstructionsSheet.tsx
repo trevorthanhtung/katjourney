@@ -47,11 +47,11 @@ export function PWAInstallInstructionsSheet({
         {/* Steps Content */}
         <div className="py-5 space-y-5 flex-1 select-text">
           {/* Step 1 */}
-          <div className="flex gap-4 items-start text-left">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40 text-amber-600 dark:text-amber-400 font-black shrink-0 text-[13px]">
+          <div className="flex gap-3.5 items-start text-left">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40 text-amber-600 dark:text-amber-400 font-black shrink-0 text-[13.5px] shadow-sm">
               1
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 pt-1">
               <p className="text-[14px] font-black text-kat-dark">
                 {isAndroid ? "Nhấn vào menu trình duyệt" : "Nhấn vào nút Chia sẻ (Share)"}
               </p>
@@ -87,11 +87,11 @@ export function PWAInstallInstructionsSheet({
           </div>
 
           {/* Step 2 */}
-          <div className="flex gap-4 items-start text-left">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-950/30 border border-teal-100 dark:border-teal-900/40 text-teal-600 dark:text-teal-400 font-black shrink-0 text-[13px]">
+          <div className="flex gap-3.5 items-start text-left">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-teal-50 dark:bg-teal-950/30 border border-teal-100 dark:border-teal-900/40 text-teal-600 dark:text-teal-400 font-black shrink-0 text-[13.5px] shadow-sm">
               2
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 pt-1">
               <p className="text-[14px] font-black text-kat-dark">
                 {isAndroid
                   ? 'Chọn "Thêm vào MH chính"'
@@ -130,11 +130,11 @@ export function PWAInstallInstructionsSheet({
           </div>
 
           {/* Step 3 */}
-          <div className="flex gap-4 items-start text-left">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 text-indigo-600 dark:text-indigo-400 font-black shrink-0 text-[13px]">
+          <div className="flex gap-3.5 items-start text-left">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 text-indigo-600 dark:text-indigo-400 font-black shrink-0 text-[13.5px] shadow-sm">
               3
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 pt-1">
               <p className="text-[14px] font-black text-kat-dark">Xác nhận thêm</p>
               <p className="text-[12.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">
                 {isAndroid ? (
