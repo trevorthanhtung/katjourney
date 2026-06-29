@@ -756,23 +756,52 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
 
       {/* Mobile Bottom Navigation (TripManagerScreen specific) */}
       <nav
-        className="fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium transition-transform duration-200 ease-out flex sm:hidden"
-        style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
+        className="fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] -translate-x-1/2 rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-floating-premium transition-transform duration-200 ease-out flex sm:hidden"
+        style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
       >
-        <div className="relative flex h-[56px] min-[390px]:h-[60px] items-center w-full">
-          {/* Left Group */}
-          <div className="flex flex-1 items-center justify-between pl-2 pr-6 min-[390px]:pr-8">
-            <NavButton
-              isActive={filterTab === "planned"}
+        <div className="relative flex h-[68px] items-center w-full px-1">
+          {/* 5-Column Grid for perfect symmetry */}
+          <div className="grid grid-cols-5 w-full h-full items-center justify-items-center">
+            {/* Tab 1: Kế hoạch */}
+            <button
               onClick={() => setFilterTab("planned")}
-              icon={Calendar01Icon}
-              label={t("dashboard.tabs.planned", "Kế hoạch")}
-              layoutIdPrefix="trip-nav"
-            />
-            <NavButton
-              isActive={filterTab === "archived"}
+              className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
+            >
+              <div
+                className={classNames(
+                  "flex items-center justify-center transition-all duration-300",
+                  filterTab === "planned"
+                    ? "text-kat-dark dark:text-white scale-110"
+                    : "text-gray-400 dark:text-gray-500"
+                )}
+              >
+                <HugeiconsIcon icon={Calendar01Icon} className="w-[22px] h-[22px]" />
+              </div>
+              <span
+                className={classNames(
+                  "text-[9px] font-bold transition-all duration-300",
+                  filterTab === "planned"
+                    ? "text-kat-dark dark:text-white opacity-100"
+                    : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
+                )}
+              >
+                {t("dashboard.tabs.planned", "Kế hoạch")}
+              </span>
+            </button>
+
+            {/* Tab 2: Lưu trữ */}
+            <button
               onClick={() => setFilterTab("archived")}
-              icon={
+              className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
+            >
+              <div
+                className={classNames(
+                  "flex items-center justify-center transition-all duration-300",
+                  filterTab === "archived"
+                    ? "text-kat-dark dark:text-white scale-110"
+                    : "text-gray-400 dark:text-gray-500"
+                )}
+              >
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -780,27 +809,113 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  className="w-[22px] h-[22px]"
                 >
                   <polyline points="21 8 21 21 3 21 3 8"></polyline>
                   <rect x="1" y="3" width="22" height="5"></rect>
                   <line x1="10" y1="12" x2="14" y2="12"></line>
                 </svg>
-              }
-              label={t("dashboard.tabs.archived", "Lưu trữ")}
-              layoutIdPrefix="trip-nav"
-            />
+              </div>
+              <span
+                className={classNames(
+                  "text-[9px] font-bold transition-all duration-300",
+                  filterTab === "archived"
+                    ? "text-kat-dark dark:text-white opacity-100"
+                    : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
+                )}
+              >
+                {t("dashboard.tabs.archived", "Lưu trữ")}
+              </span>
+            </button>
+
+            {/* Tab 3: Empty space for FAB */}
+            <div className="w-full h-full pointer-events-none" />
+
+            {/* Tab 4: Đã qua */}
+            <button
+              onClick={() => setFilterTab("completed")}
+              className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
+            >
+              <div
+                className={classNames(
+                  "flex items-center justify-center transition-all duration-300",
+                  filterTab === "completed"
+                    ? "text-kat-dark dark:text-white scale-110"
+                    : "text-gray-400 dark:text-gray-500"
+                )}
+              >
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-[22px] h-[22px]" />
+              </div>
+              <span
+                className={classNames(
+                  "text-[9px] font-bold transition-all duration-300",
+                  filterTab === "completed"
+                    ? "text-kat-dark dark:text-white opacity-100"
+                    : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
+                )}
+              >
+                {t("dashboard.tabs.completed", "Đã qua")}
+              </span>
+            </button>
+
+            {/* Tab 5: Đổi View */}
+            <button
+              onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+              className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
+            >
+              <div className="flex items-center justify-center transition-all duration-300 text-gray-400 dark:text-gray-500 hover:text-kat-dark dark:hover:text-white">
+                {viewMode === "grid" ? (
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                ) : (
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                )}
+              </div>
+              <span className="text-[9px] font-bold text-gray-400 dark:text-gray-500 opacity-0 h-0 transition-all duration-300">
+                View
+              </span>
+            </button>
           </div>
 
-          {/* Absolute Center FAB */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto">
+          {/* Absolute Center FAB - Floats prominently */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[60%] z-20 pointer-events-auto">
             <button
               onClick={onCreateNew}
-              className="flex items-center justify-center w-[44px] h-[44px] min-[390px]:w-[48px] min-[390px]:h-[48px] rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_4px_12px_rgba(3,13,46,0.18)] dark:shadow-[0_4px_12px_rgba(0,191,183,0.25)] hover:shadow-[0_6px_16px_rgba(3,13,46,0.25)] dark:hover:shadow-[0_6px_16px_rgba(0,191,183,0.35)] hover:scale-105 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-press"
+              className="flex items-center justify-center w-[54px] h-[54px] rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_8px_20px_rgba(3,13,46,0.3)] dark:shadow-[0_8px_20px_rgba(0,191,183,0.35)] hover:shadow-[0_12px_28px_rgba(3,13,46,0.4)] dark:hover:shadow-[0_12px_28px_rgba(0,191,183,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-press border-4 border-white dark:border-slate-900"
               aria-label="Thêm chuyến đi"
             >
               <svg
-                width="22"
-                height="22"
+                width="24"
+                height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -812,56 +927,6 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
             </button>
-          </div>
-
-          {/* Right Group */}
-          <div className="flex flex-1 items-center justify-between pr-2 pl-6 min-[390px]:pl-8">
-            <NavButton
-              isActive={filterTab === "completed"}
-              onClick={() => setFilterTab("completed")}
-              icon={CheckmarkCircle02Icon}
-              label={t("dashboard.tabs.completed", "Đã qua")}
-              layoutIdPrefix="trip-nav"
-            />
-            <NavButton
-              isActive={false}
-              onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-              icon={
-                viewMode === "grid" ? (
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="3" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="14" width="7" height="7"></rect>
-                    <rect x="3" y="14" width="7" height="7"></rect>
-                  </svg>
-                ) : (
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                  </svg>
-                )
-              }
-              label={viewMode === "grid" ? "Lưới" : "Danh sách"}
-              layoutIdPrefix="trip-nav"
-            />
           </div>
         </div>
       </nav>
