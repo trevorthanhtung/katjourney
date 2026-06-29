@@ -455,7 +455,7 @@ export function TripManagerScreen({
 
   return (
     <div
-      className={`mx-auto w-full max-w-[1120px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center py-0 md:py-0" : "py-6 pb-28 md:pt-4 md:pb-16"}`}
+      className={`mx-auto w-full max-w-[1120px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center py-0 md:py-0" : "py-6 pb-40 md:pt-4 md:pb-16"}`}
     >
       {trips.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-[32px] bg-white dark:bg-kat-surface p-6 sm:p-10 md:p-14 text-center border border-slate-200 dark:border-kat-border shadow-[0_20px_50px_rgba(0,191,183,0.06)] hover:shadow-[0_20px_50px_rgba(0,191,183,0.12)] hover:border-[#00BFB7]/40 dark:hover:border-[#00BFB7]/60 transition-all duration-500 mx-auto w-full max-w-[580px] relative overflow-hidden motion-page-enter motion-hover-lift">
@@ -760,7 +760,7 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
       {/* Mobile Bottom Navigation (TripManagerScreen specific) */}
       <nav
         className={`fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] -translate-x-1/2 rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-floating-premium transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex sm:hidden ${areBarsVisible ? "translate-y-0" : "translate-y-[150%]"}`}
-        style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
+        style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
       >
         <div className="relative flex h-[68px] items-center w-full px-1">
           {/* 5-Column Grid for perfect symmetry */}
