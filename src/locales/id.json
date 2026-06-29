@@ -369,7 +369,8 @@
     "tabs": {
       "planned": "Direncanakan",
       "archived": "Diarsipkan",
-      "completed": "Selesai"
+      "completed": "Masa Lalu",
+      "view": "Tampilan"
     },
     "card": {
       "openDates": "Tanggal belum pasti",

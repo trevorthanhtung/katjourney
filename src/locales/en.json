@@ -378,7 +378,8 @@
     "tabs": {
       "planned": "Planned",
       "archived": "Archived",
-      "completed": "Completed"
+      "completed": "Past",
+      "view": "View"
     },
     "card": {
       "openDates": "Open dates",

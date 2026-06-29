@@ -14,7 +14,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Trip, db, deleteTripCascade, Expense, ChecklistItem } from "../../db";
-import { formatDate, getTripTiming, formatMoneyCompact } from "../../utils/helpers";
+import { formatDate, getTripTiming, formatMoneyCompact, classNames } from "../../utils/helpers";
+import { useScrollBarVisibility } from "../../hooks/useScrollBarVisibility";
 const TripForm = React.lazy(() =>
   import("../more/MoreScreen").then((m) => ({ default: m.TripForm }))
 );
@@ -299,6 +300,7 @@ function TripList({
   viewMode = "grid",
 }: TripListProps) {
   const { t } = useTranslation();
+
   if (!items.length && !showCreateCard) return null;
 
   return (
@@ -385,6 +387,7 @@ export function TripManagerScreen({
   onShowToast?: (msg: string) => void;
 }) {
   const { t } = useTranslation();
+  const areBarsVisible = useScrollBarVisibility(768);
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [tripToDelete, setTripToDelete] = useState<Trip | null>(null);
   const [isAtlasOpen, setIsAtlasOpen] = useState(false);
@@ -756,7 +759,7 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
 
       {/* Mobile Bottom Navigation (TripManagerScreen specific) */}
       <nav
-        className="fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] -translate-x-1/2 rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-floating-premium transition-transform duration-200 ease-out flex sm:hidden"
+        className={`fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] -translate-x-1/2 rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-floating-premium transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex sm:hidden ${areBarsVisible ? "translate-y-0" : "translate-y-[150%]"}`}
         style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
       >
         <div className="relative flex h-[68px] items-center w-full px-1">
@@ -901,7 +904,7 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
                 )}
               </div>
               <span className="text-[9px] font-bold text-gray-400 dark:text-gray-500 opacity-0 h-0 transition-all duration-300">
-                View
+                {t("dashboard.tabs.view", "Hiển thị")}
               </span>
             </button>
           </div>

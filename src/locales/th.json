@@ -374,9 +374,10 @@
     "emptyFeature3Desc": "ของครบแน่นอน ไม่ตกหล่น",
     "emptyCreateBtn": "สร้างทริปแรกกันเลย",
     "tabs": {
-      "planned": "วางแผนไว้",
-      "archived": "เก็บถาวร",
-      "completed": "เสร็จสิ้น"
+      "planned": "วางแผน",
+      "archived": "ที่เก็บถาวร",
+      "completed": "ที่ผ่านมา",
+      "view": "มุมมอง"
     },
     "card": {
       "openDates": "ยังไม่กำหนดวัน",

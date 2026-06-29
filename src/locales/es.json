@@ -378,7 +378,8 @@
     "tabs": {
       "planned": "Planeado",
       "archived": "Archivado",
-      "completed": "Completado"
+      "completed": "Pasado",
+      "view": "Vista"
     },
     "card": {
       "openDates": "Fechas por confirmar",

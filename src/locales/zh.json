@@ -374,9 +374,10 @@
     "emptyFeature3Desc": "出门不再丢三落四",
     "emptyCreateBtn": "开启我的第一次旅行",
     "tabs": {
-      "planned": "计划中",
-      "archived": "已归档",
-      "completed": "已完成"
+      "planned": "计划",
+      "archived": "归档",
+      "completed": "过去",
+      "view": "视图"
     },
     "card": {
       "openDates": "未定日期",

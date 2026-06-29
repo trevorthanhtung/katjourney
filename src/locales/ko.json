@@ -376,7 +376,8 @@
     "tabs": {
       "planned": "계획됨",
       "archived": "보관됨",
-      "completed": "완료됨"
+      "completed": "과거",
+      "view": "보기"
     },
     "card": {
       "openDates": "날짜 미정",

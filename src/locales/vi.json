@@ -376,7 +376,8 @@
     "tabs": {
       "planned": "Kế hoạch",
       "archived": "Lưu trữ",
-      "completed": "Đã qua"
+      "completed": "Đã qua",
+      "view": "Hiển thị"
     },
     "card": {
       "openDates": "Chưa có ngày",

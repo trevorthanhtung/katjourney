@@ -374,9 +374,10 @@
     "emptyFeature3Desc": "準備リスト",
     "emptyCreateBtn": "最初の旅行を作成",
     "tabs": {
-      "planned": "計画中",
-      "archived": "アーカイブ済み",
-      "completed": "完了"
+      "planned": "予定",
+      "archived": "アーカイブ",
+      "completed": "過去",
+      "view": "表示"
     },
     "card": {
       "openDates": "日程未定",

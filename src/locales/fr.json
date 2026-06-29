@@ -376,9 +376,10 @@
     "emptyFeature3Desc": "Valises & articles",
     "emptyCreateBtn": "Créer le premier voyage",
     "tabs": {
-      "planned": "Planifié",
+      "planned": "Prévu",
       "archived": "Archivé",
-      "completed": "Terminé"
+      "completed": "Passé",
+      "view": "Vue"
     },
     "card": {
       "openDates": "Dates à confirmer",
