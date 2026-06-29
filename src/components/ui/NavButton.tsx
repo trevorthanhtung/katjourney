@@ -37,17 +37,7 @@ export const NavButton = React.forwardRef<
         />
       )}
       <motion.div layout className="shrink-0 relative z-10 flex items-center justify-center">
-        {typeof Icon === "function" || typeof Icon === "object" ? (
-          // If it's a hugeicon or react component
-          <HugeiconsIcon
-            icon={Icon}
-            className={classNames(
-              "transition-transform duration-200 ease-out",
-              isActive ? "scale-105" : "scale-100",
-              "h-[18px] w-[18px] min-[340px]:h-[19px] min-[340px]:w-[19px] min-[390px]:h-[22px] min-[390px]:w-[22px]"
-            )}
-          />
-        ) : (
+        {React.isValidElement(Icon) ? (
           // If it's inline svg
           <div
             className={classNames(
@@ -58,6 +48,16 @@ export const NavButton = React.forwardRef<
           >
             {Icon}
           </div>
+        ) : (
+          // If it's a hugeicon or icon object
+          <HugeiconsIcon
+            icon={Icon}
+            className={classNames(
+              "transition-transform duration-200 ease-out",
+              isActive ? "scale-105" : "scale-100",
+              "h-[18px] w-[18px] min-[340px]:h-[19px] min-[340px]:w-[19px] min-[390px]:h-[22px] min-[390px]:w-[22px]"
+            )}
+          />
         )}
       </motion.div>
       <AnimatePresence>
