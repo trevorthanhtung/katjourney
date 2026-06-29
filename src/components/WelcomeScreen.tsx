@@ -277,25 +277,25 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
           </button>
         </div>
 
-        {/* Mobile Top Logo (Since background covers mobile, we can show a nice white logo on mobile) */}
-        <div className="lg:hidden flex items-center justify-center w-full mt-4 mb-2 select-none relative z-10">
-          <div className="flex h-10 w-10 items-center justify-center shrink-0">
-            <img
-              src="/asset/logo.png"
-              alt="KAT Journey Logo"
-              className="h-full w-full rounded-xl object-contain shadow-sm border border-white/20"
-            />
-          </div>
-          <span className="ml-3 text-[22px] font-black tracking-tight text-white drop-shadow-md">
-            KAT Journey
-          </span>
-        </div>
-
         <div className="hidden lg:block h-2 w-full shrink-0 relative z-10" />
 
         {/* MIDDLE ACTIONS: Auth Card */}
         <div className="w-full max-w-[400px] mx-auto flex-1 flex flex-col justify-center">
           <div className="w-full p-6 sm:p-8 backdrop-blur-2xl bg-white/95 dark:bg-[#0F172A]/70 lg:backdrop-blur-none lg:bg-white dark:lg:bg-[#0F172A]/40 rounded-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.2)] lg:shadow-[0_2px_24px_rgba(3,13,46,0.07)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-white/20 dark:border-slate-800/80 flex flex-col items-center relative z-10 animate-scaleUp">
+            {/* Mobile Top Logo (Moved inside the card) */}
+            <div className="lg:hidden flex items-center justify-center w-full mb-6 select-none relative z-10">
+              <div className="flex h-11 w-11 items-center justify-center shrink-0">
+                <img
+                  src="/asset/logo.png"
+                  alt="KAT Journey Logo"
+                  className="h-full w-full rounded-[14px] object-contain shadow-sm border border-slate-200 dark:border-white/20"
+                />
+              </div>
+              <span className="ml-3 text-[26px] font-black tracking-tight text-kat-dark dark:text-white drop-shadow-none dark:drop-shadow-md">
+                KAT Journey
+              </span>
+            </div>
+
             {/* Onboarding Carousel (2027 Premium Swipeable) */}
             <div
               className="w-full overflow-x-hidden overflow-y-visible mb-4 relative cursor-grab active:cursor-grabbing select-none pt-2"
