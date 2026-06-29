@@ -759,40 +759,43 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
         className="fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium transition-transform duration-200 ease-out flex sm:hidden"
         style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
       >
-        <div className="relative flex h-[56px] min-[390px]:h-[60px] items-center justify-between px-2 w-full">
-          <NavButton
-            isActive={filterTab === "planned"}
-            onClick={() => setFilterTab("planned")}
-            icon={Calendar01Icon}
-            label={t("dashboard.tabs.planned", "Kế hoạch")}
-            layoutIdPrefix="trip-nav"
-          />
-          <NavButton
-            isActive={filterTab === "archived"}
-            onClick={() => setFilterTab("archived")}
-            icon={
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="21 8 21 21 3 21 3 8"></polyline>
-                <rect x="1" y="3" width="22" height="5"></rect>
-                <line x1="10" y1="12" x2="14" y2="12"></line>
-              </svg>
-            }
-            label={t("dashboard.tabs.archived", "Lưu trữ")}
-            layoutIdPrefix="trip-nav"
-          />
+        <div className="relative flex h-[56px] min-[390px]:h-[60px] items-center w-full">
+          {/* Left Group */}
+          <div className="flex flex-1 items-center justify-between pl-2 pr-6 min-[390px]:pr-8">
+            <NavButton
+              isActive={filterTab === "planned"}
+              onClick={() => setFilterTab("planned")}
+              icon={Calendar01Icon}
+              label={t("dashboard.tabs.planned", "Kế hoạch")}
+              layoutIdPrefix="trip-nav"
+            />
+            <NavButton
+              isActive={filterTab === "archived"}
+              onClick={() => setFilterTab("archived")}
+              icon={
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                  <rect x="1" y="3" width="22" height="5"></rect>
+                  <line x1="10" y1="12" x2="14" y2="12"></line>
+                </svg>
+              }
+              label={t("dashboard.tabs.archived", "Lưu trữ")}
+              layoutIdPrefix="trip-nav"
+            />
+          </div>
 
-          {/* Center FAB */}
-          <div className="flex justify-center items-center shrink-0 px-1">
+          {/* Absolute Center FAB */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto">
             <button
               onClick={onCreateNew}
-              className="flex items-center justify-center w-10 min-[340px]:w-11 min-[390px]:w-12 h-10 min-[340px]:h-11 min-[390px]:h-12 rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_4px_12px_rgba(3,13,46,0.18)] dark:shadow-[0_4px_12px_rgba(0,191,183,0.25)] hover:bg-kat-dark/90 dark:hover:brightness-110 active:scale-[0.92] transition-all motion-press"
+              className="flex items-center justify-center w-[44px] h-[44px] min-[390px]:w-[48px] min-[390px]:h-[48px] rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_4px_12px_rgba(3,13,46,0.18)] dark:shadow-[0_4px_12px_rgba(0,191,183,0.25)] hover:shadow-[0_6px_16px_rgba(3,13,46,0.25)] dark:hover:shadow-[0_6px_16px_rgba(0,191,183,0.35)] hover:scale-105 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-press"
               aria-label="Thêm chuyến đi"
             >
               <svg
@@ -811,52 +814,55 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
             </button>
           </div>
 
-          <NavButton
-            isActive={filterTab === "completed"}
-            onClick={() => setFilterTab("completed")}
-            icon={CheckmarkCircle02Icon}
-            label={t("dashboard.tabs.completed", "Đã qua")}
-            layoutIdPrefix="trip-nav"
-          />
-          <NavButton
-            isActive={false}
-            onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-            icon={
-              viewMode === "grid" ? (
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="3" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="14" width="7" height="7"></rect>
-                  <rect x="3" y="14" width="7" height="7"></rect>
-                </svg>
-              ) : (
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="8" y1="6" x2="21" y2="6"></line>
-                  <line x1="8" y1="12" x2="21" y2="12"></line>
-                  <line x1="8" y1="18" x2="21" y2="18"></line>
-                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                </svg>
-              )
-            }
-            label={viewMode === "grid" ? "Lưới" : "Danh sách"}
-            layoutIdPrefix="trip-nav"
-          />
+          {/* Right Group */}
+          <div className="flex flex-1 items-center justify-between pr-2 pl-6 min-[390px]:pl-8">
+            <NavButton
+              isActive={filterTab === "completed"}
+              onClick={() => setFilterTab("completed")}
+              icon={CheckmarkCircle02Icon}
+              label={t("dashboard.tabs.completed", "Đã qua")}
+              layoutIdPrefix="trip-nav"
+            />
+            <NavButton
+              isActive={false}
+              onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+              icon={
+                viewMode === "grid" ? (
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                ) : (
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                )
+              }
+              label={viewMode === "grid" ? "Lưới" : "Danh sách"}
+              layoutIdPrefix="trip-nav"
+            />
+          </div>
         </div>
       </nav>
     </div>
