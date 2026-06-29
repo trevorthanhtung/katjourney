@@ -199,14 +199,14 @@ function TripCard({
   return (
     <div
       onClick={() => onOpenTrip(trip.id!)}
-      className={`group relative cursor-pointer flex flex-col overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 w-full h-[260px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+      className={`group relative cursor-pointer flex flex-col overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 w-full h-[280px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
     >
       {/* Top Banner Area (Gradient) */}
       <div
-        className={`flex-1 bg-gradient-to-br ${gradientClass} relative p-6 flex flex-col justify-between overflow-hidden`}
+        className={`flex-1 bg-gradient-to-br ${gradientClass} relative p-5 sm:p-6 flex flex-col justify-between overflow-hidden`}
       >
         {/* Status Badge */}
-        <div className="relative z-10 flex justify-start items-start">
+        <div className="relative z-10 flex justify-start items-start shrink-0">
           <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider shadow-sm">
             <span className={`relative flex h-2 w-2 rounded-full ${statusColorClass}`}></span>
             {statusLabel}
@@ -214,8 +214,8 @@ function TripCard({
         </div>
 
         {/* Title */}
-        <div className="relative z-10 mt-auto">
-          <h4 className="text-[26px] sm:text-[30px] font-bold text-white leading-tight line-clamp-2 tracking-tight drop-shadow-sm">
+        <div className="relative z-10 mt-auto shrink-0 pb-1">
+          <h4 className="text-[24px] sm:text-[28px] font-bold text-white leading-tight line-clamp-2 tracking-tight drop-shadow-sm">
             {trip.title}
           </h4>
         </div>
