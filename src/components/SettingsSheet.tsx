@@ -989,32 +989,6 @@ export function SettingsSheet({
                       °{temperatureUnit}
                     </button>
                   </div>
-
-                  {/* Distance Unit */}
-                  <div className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-cyan-50 dark:hover:bg-cyan-500/10">
-                    <div className="flex items-center gap-4 relative z-10">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-100 to-cyan-50 text-cyan-600 shadow-inner dark:from-cyan-900/40 dark:to-cyan-800/20 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800/60 ring-1 ring-white/50 dark:ring-white/5 border border-cyan-200 dark:border-cyan-800/60 ring-1 ring-white/50 dark:ring-white/5">
-                        <HugeiconsIcon
-                          icon={Navigation02Icon}
-                          className="h-5 w-5 transition-transform group-hover:scale-110"
-                        />
-                      </div>
-                      <div className="min-w-0 text-left">
-                        <h4 className="text-[14px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-                          {t("settings.menu.distance.title", "Khoảng cách")}
-                        </h4>
-                        <p className="text-[11.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
-                          {t("settings.menu.distance.desc", "Hiển thị km hoặc dặm")}
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={toggleDistanceUnit}
-                      className="flex h-8 w-14 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm relative z-10 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors uppercase"
-                    >
-                      {distanceUnit}
-                    </button>
-                  </div>
                 </div>
               </div>
 
