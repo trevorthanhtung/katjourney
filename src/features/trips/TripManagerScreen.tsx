@@ -336,7 +336,7 @@ function TripList({
         {showCreateCard && (
           <div
             onClick={onCreateNew}
-            className={`group cursor-pointer flex ${viewMode === "list" ? "flex-col h-32" : "flex-col h-[260px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square"} items-center justify-center rounded-[24px] border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/40 active:scale-[0.97] transition-all duration-200 ease-out w-full motion-card-enter`}
+            className={`hidden sm:flex group cursor-pointer ${viewMode === "list" ? "flex-col h-32" : "flex-col h-[260px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square"} items-center justify-center rounded-[24px] border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/40 active:scale-[0.97] transition-all duration-200 ease-out w-full motion-card-enter`}
           >
             <div
               className={`rounded-full bg-slate-800 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all duration-300 ease-out shadow-sm ${viewMode === "list" ? "w-10 h-10 mb-2" : "w-14 h-14 mb-4"}`}
@@ -451,7 +451,7 @@ export function TripManagerScreen({
 
   return (
     <div
-      className={`mx-auto w-full max-w-[1120px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center py-0 md:py-0" : "py-6 md:pt-4 md:pb-16"}`}
+      className={`mx-auto w-full max-w-[1120px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center py-0 md:py-0" : "py-6 pb-28 md:pt-4 md:pb-16"}`}
     >
       {trips.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-[32px] bg-white dark:bg-kat-surface p-6 sm:p-10 md:p-14 text-center border border-slate-200 dark:border-kat-border shadow-[0_20px_50px_rgba(0,191,183,0.06)] hover:shadow-[0_20px_50px_rgba(0,191,183,0.12)] hover:border-[#00BFB7]/40 dark:hover:border-[#00BFB7]/60 transition-all duration-500 mx-auto w-full max-w-[580px] relative overflow-hidden motion-page-enter motion-hover-lift">
@@ -572,7 +572,7 @@ export function TripManagerScreen({
                 Hành trình
               </h2>
 
-              <div className="flex items-center justify-center w-full sm:w-auto gap-2">
+              <div className="hidden sm:flex items-center justify-center w-full sm:w-auto gap-2">
                 <div className="flex bg-slate-100/80 dark:bg-slate-800/70 p-1.5 rounded-full backdrop-blur-md gap-1">
                   <button
                     onClick={() => setFilterTab("planned")}
@@ -752,6 +752,118 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
           }, 0)}
         />
       )}
+
+      {/* Mobile Bottom Navigation (TripManagerScreen specific) */}
+      <nav className="flex sm:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-800/50 px-2 pb-[env(safe-area-inset-bottom)] pt-2 justify-around items-center h-[72px] motion-preset-slide-up">
+        <button
+          onClick={() => setFilterTab("planned")}
+          className={`flex flex-col items-center justify-center w-14 gap-1 ${filterTab === "planned" ? "text-[#00BFB7]" : "text-slate-400 dark:text-slate-500"}`}
+        >
+          <HugeiconsIcon
+            icon={Calendar01Icon}
+            size={22}
+            className={filterTab === "planned" ? "drop-shadow-md" : ""}
+          />
+          <span className="text-[10px] font-bold whitespace-nowrap">Kế hoạch</span>
+        </button>
+
+        <button
+          onClick={() => setFilterTab("archived")}
+          className={`flex flex-col items-center justify-center w-14 gap-1 ${filterTab === "archived" ? "text-[#00BFB7]" : "text-slate-400 dark:text-slate-500"}`}
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="21 8 21 21 3 21 3 8"></polyline>
+            <rect x="1" y="3" width="22" height="5"></rect>
+            <line x1="10" y1="12" x2="14" y2="12"></line>
+          </svg>
+          <span className="text-[10px] font-bold whitespace-nowrap">Lưu trữ</span>
+        </button>
+
+        {/* Center FAB */}
+        <div className="relative -top-5 flex justify-center w-14">
+          <button
+            onClick={onCreateNew}
+            className="flex items-center justify-center w-[56px] h-[56px] rounded-full bg-gradient-to-tr from-[#004E5A] to-[#00BFB7] text-white shadow-[0_8px_20px_rgba(0,191,183,0.35)] active:scale-[0.92] transition-transform motion-press z-10"
+          >
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+
+        <button
+          onClick={() => setFilterTab("completed")}
+          className={`flex flex-col items-center justify-center w-14 gap-1 ${filterTab === "completed" ? "text-[#00BFB7]" : "text-slate-400 dark:text-slate-500"}`}
+        >
+          <HugeiconsIcon
+            icon={CheckmarkCircle02Icon}
+            size={22}
+            className={filterTab === "completed" ? "drop-shadow-md" : ""}
+          />
+          <span className="text-[10px] font-bold whitespace-nowrap">Đã qua</span>
+        </button>
+
+        <button
+          onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+          className="flex flex-col items-center justify-center w-14 gap-1 text-slate-400 dark:text-slate-500"
+        >
+          {viewMode === "grid" ? (
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          ) : (
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+          )}
+          <span className="text-[10px] font-bold whitespace-nowrap">Đổi View</span>
+        </button>
+      </nav>
     </div>
   );
 }
