@@ -569,7 +569,7 @@ export function TripManagerScreen({
           <div className="xl:col-span-8 flex flex-col gap-6 lg:gap-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
               <h2 className="text-[26px] font-black text-kat-text tracking-tight motion-title-enter">
-                Chuyến đi
+                Hành trình
               </h2>
 
               <div className="flex items-center justify-center w-full sm:w-auto gap-2">
