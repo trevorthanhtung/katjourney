@@ -80,11 +80,11 @@ function TripCard({
 
   // Generate a random-looking gradient based on trip ID
   const gradients = [
-    "from-pink-500 to-rose-700",
-    "from-emerald-400 to-teal-600",
-    "from-blue-500 to-indigo-700",
-    "from-orange-400 to-red-600",
-    "from-purple-500 to-fuchsia-700",
+    "from-kat-primary to-kat-blue",
+    "from-amber-400 to-orange-500",
+    "from-teal-400 to-emerald-600",
+    "from-sky-400 to-blue-600",
+    "from-rose-400 to-pink-600",
   ];
   const gradientClass = gradients[(trip.id || 0) % gradients.length];
 

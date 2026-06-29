@@ -1074,7 +1074,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             <div className="text-center py-12 bg-white dark:bg-kat-surface rounded-3xl border border-slate-100 dark:border-kat-border/40 shadow-[0_2px_12px_rgba(3,13,46,0.02)] p-6 max-w-md mx-auto animate-fadeIn mt-4 flex flex-col items-center justify-center">
               <HugeiconsIcon
                 icon={CompassIcon}
-                className="w-12 h-12 text-slate-350 mb-3 animate-bounce"
+                className="w-12 h-12 text-slate-350 mb-3 animate-pulse"
               />
               <h4 className="text-[16px] font-black text-kat-dark">{t("share.readyToExplore")}</h4>
               <p className="text-[12.5px] text-slate-400 dark:text-kat-muted font-bold mt-1.5 leading-relaxed">

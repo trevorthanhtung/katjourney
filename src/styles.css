@@ -185,8 +185,8 @@ textarea,
   --motion-ease-soft-out: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --motion-ease-sharp: cubic-bezier(0.4, 0, 0.2, 1);
-  --motion-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1.1); /* Elastic spring physics */
-  --motion-ease-spring-soft: cubic-bezier(0.175, 0.885, 0.32, 1.15); /* Soft spring physics */
+  --motion-ease-spring: cubic-bezier(0.16, 1, 0.3, 1); /* Expo out instead of elastic */
+  --motion-ease-spring-soft: cubic-bezier(0.22, 1, 0.36, 1); /* Soft ease out */
   --motion-ease-snappy: cubic-bezier(0.23, 1, 0.32, 1); /* Emil Kowalski's snappy ease-out */
 
   --motion-duration-instant: 80ms;
@@ -724,7 +724,7 @@ textarea,
 }
 
 .animate-splash-progress {
-  animation: splash-progress-anim 2s cubic-bezier(0.34, 1.56, 0.64, 1.1) infinite;
+  animation: splash-progress-anim 2.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
 .animate-splash-neon {
@@ -801,10 +801,10 @@ textarea,
 }
 
 .airplane-flight {
-  animation: airplane-bounce 3s ease-in-out infinite alternate;
+  animation: airplane-float 4s ease-in-out infinite alternate;
 }
 
-@keyframes airplane-bounce {
+@keyframes airplane-float {
   0% {
     transform: translateY(0px) rotate(0deg);
   }
@@ -866,8 +866,8 @@ textarea,
 ::view-transition-new(root) {
   animation-duration: 0.3s;
   animation-fill-mode: both;
-  /* Spring physics-like easing by Emil Kowalski */
-  animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /* Smooth expo easing */
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 ::view-transition-old(root) {

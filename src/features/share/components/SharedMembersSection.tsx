@@ -431,31 +431,31 @@ export function SharedMembersSection({
             } else if (member.isPendingDelete) {
               cardBg =
                 "bg-gradient-to-br from-rose-50/40 via-white to-white border-rose-200/80 opacity-80 dark:from-rose-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "border-l-4 border-l-rose-500";
+              borderAccent = "";
             } else if (isLeader) {
               cardBg =
                 "bg-gradient-to-br from-amber-50/30 via-white to-white border-slate-200/60 dark:from-amber-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "border-l-4 border-l-amber-500";
+              borderAccent = "";
             } else if (isCost) {
               cardBg =
                 "bg-gradient-to-br from-emerald-50/30 via-white to-white border-slate-200/60 dark:from-emerald-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "border-l-4 border-l-emerald-500";
+              borderAccent = "";
             } else if (isDriver) {
               cardBg =
                 "bg-gradient-to-br from-blue-50/30 via-white to-white border-slate-200/60 dark:from-blue-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "border-l-4 border-l-blue-500";
+              borderAccent = "";
             } else if (isGuide) {
               cardBg =
                 "bg-gradient-to-br from-sky-50/30 via-white to-white border-slate-200/60 dark:from-sky-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "border-l-4 border-l-sky-500";
+              borderAccent = "";
             } else if (isLuggage) {
               cardBg =
                 "bg-gradient-to-br from-indigo-50/30 via-white to-white border-slate-200/60 dark:from-indigo-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "border-l-4 border-l-indigo-500";
+              borderAccent = "";
             } else if (member.isGroupLeader) {
               cardBg =
                 "bg-gradient-to-br from-teal-50/30 via-white to-white border-slate-200/60 dark:from-teal-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "border-l-4 border-l-teal-500";
+              borderAccent = "";
             }
 
             const renderRoleBadge = (roleStr: string) => {
