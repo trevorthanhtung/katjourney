@@ -10,6 +10,10 @@
   h5,
   h6 {
     font-family: "Bricolage Grotesque", sans-serif;
+    font-variation-settings:
+      "wdth" 100,
+      "opsz" 14; /* Variable font tweaks for headings */
+    letter-spacing: -0.015em;
   }
 }
 

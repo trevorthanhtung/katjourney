@@ -801,7 +801,7 @@ export function BottomSheet({
       />
 
       {/* Sheet / Dialog */}
-      <div className="relative z-10 flex w-full flex-col max-h-[90vh] sm:max-h-[min(720px,calc(100vh-48px))] motion-sheet-dialog sm:motion-modal-dialog rounded-t-[32px] sm:rounded-[24px] bg-white dark:bg-[#0A0F1C]/90 dark:backdrop-blur-3xl pb-safe shadow-[0_8px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.4)] sm:mx-auto sm:w-full sm:max-w-[600px] overflow-hidden border border-slate-200/60 dark:border-white/10">
+      <div className="relative z-10 flex w-full flex-col max-h-[90vh] sm:max-h-[min(720px,calc(100vh-48px))] motion-sheet-dialog sm:motion-modal-dialog rounded-t-[32px] sm:rounded-[24px] bg-white/90 dark:bg-[#0A0F1C]/85 backdrop-blur-3xl pb-safe shadow-[0_8px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.4)] sm:mx-auto sm:w-full sm:max-w-[600px] overflow-hidden border border-slate-200/60 dark:border-white/10">
         {/* Ambient glow inside modal */}
         <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-kat-primary/10 dark:bg-[#00BFB7]/15 blur-[80px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3" />
 
@@ -809,7 +809,7 @@ export function BottomSheet({
         <div className="relative z-10 flex shrink-0 h-1.5 w-12 mx-auto mt-3 mb-1 rounded-full bg-slate-200 dark:bg-slate-700 sm:hidden touch-none" />
 
         {/* Header */}
-        <div className="relative z-10 flex shrink-0 items-start justify-between border-b border-slate-200/60 dark:border-white/10 px-5 sm:px-6 py-3.5 sm:py-4 gap-3 touch-none bg-white dark:bg-transparent">
+        <div className="relative z-10 flex shrink-0 items-start justify-between border-b border-slate-200/60 dark:border-white/10 px-5 sm:px-6 py-3.5 sm:py-4 gap-3 touch-none bg-transparent">
           <div className="pr-2 min-w-0 flex-1">
             <h3 className="text-[20px] sm:text-[22px] font-black bg-gradient-to-r from-kat-dark to-kat-primary dark:from-white dark:to-teal-300 bg-clip-text text-transparent drop-shadow-sm leading-snug truncate">
               {title}
