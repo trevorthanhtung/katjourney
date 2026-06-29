@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-export type ThemeMode = 'light' | 'dark' | 'system';
+export type ThemeMode = "light" | "dark" | "system";
 
 export function useTheme() {
   const [theme, setThemeState] = useState<ThemeMode>(() => {
-    if (typeof window === 'undefined') return 'system';
-    const saved = localStorage.getItem('kat_theme');
-    if (saved === 'light' || saved === 'dark' || saved === 'system') {
+    if (typeof window === "undefined") return "system";
+    const saved = localStorage.getItem("kat_theme");
+    if (saved === "light" || saved === "dark" || saved === "system") {
       return saved as ThemeMode;
     }
-    return 'system';
+    return "system";
   });
 
   useEffect(() => {
@@ -17,40 +17,44 @@ export function useTheme() {
 
     const applyTheme = (mode: ThemeMode) => {
       let isDark = false;
-      if (mode === 'system') {
-        isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (mode === "system") {
+        isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       } else {
-        isDark = mode === 'dark';
+        isDark = mode === "dark";
       }
 
       if (isDark) {
-        root.setAttribute('data-theme', 'dark');
-        root.classList.add('dark');
-        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#0A1124');
+        root.setAttribute("data-theme", "dark");
+        root.classList.add("dark");
+        document
+          .querySelectorAll('meta[name="theme-color"]')
+          .forEach((m) => m.setAttribute("content", "#0A0F1C"));
       } else {
-        root.removeAttribute('data-theme');
-        root.classList.remove('dark');
-        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#F8FAFC');
+        root.removeAttribute("data-theme");
+        root.classList.remove("dark");
+        document
+          .querySelectorAll('meta[name="theme-color"]')
+          .forEach((m) => m.setAttribute("content", "#F8FAFC"));
       }
     };
 
     applyTheme(theme);
 
     // Listen for system changes if system theme is selected
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = () => {
-      if (theme === 'system') {
-        applyTheme('system');
+      if (theme === "system") {
+        applyTheme("system");
       }
     };
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme]);
 
   const setTheme = (mode: ThemeMode) => {
     setThemeState(mode);
-    localStorage.setItem('kat_theme', mode);
+    localStorage.setItem("kat_theme", mode);
   };
 
   return { theme, setTheme };
