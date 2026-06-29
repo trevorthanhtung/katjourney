@@ -173,6 +173,20 @@ function App() {
     lastHistoryStateRef,
   } = useAppNavigation();
 
+  // Handle PWA Shortcuts
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const shortcut = params.get("shortcut");
+    if (shortcut === "new_trip") {
+      setIsManagingTrips(true);
+      setIsCreatingTrip(true);
+      window.history.replaceState(null, "", window.location.pathname);
+    } else if (shortcut === "archive") {
+      setIsViewingArchive(true);
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, [setIsManagingTrips, setIsViewingArchive]);
+
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isRemindersOpen, setIsRemindersOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -285,6 +299,20 @@ function App() {
     backupPlans,
     tripDataLoading,
   } = useTripData(selectedTripId, isCreatingTrip, isManagingTrips, isViewingArchive);
+
+  // Handle PWA Shortcuts
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const shortcut = params.get("shortcut");
+    if (shortcut === "new_trip") {
+      setIsManagingTrips(true);
+      setIsCreatingTrip(true);
+      window.history.replaceState(null, "", window.location.pathname);
+    } else if (shortcut === "archive") {
+      setIsViewingArchive(true);
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, [setIsManagingTrips, setIsViewingArchive]);
 
   // Local storage sync managed by useAppNavigation
 

@@ -39,6 +39,22 @@ export default defineConfig({
             purpose: "maskable",
           },
         ],
+        shortcuts: [
+          {
+            name: "Tạo chuyến đi mới",
+            short_name: "Tạo chuyến đi",
+            description: "Lên kế hoạch chuyến đi mới trên KAT Journey",
+            url: "/?shortcut=new_trip",
+            icons: [{ src: "/asset/pwa/icon-192.png", sizes: "192x192" }],
+          },
+          {
+            name: "Lưu trữ chuyến đi",
+            short_name: "Lưu trữ",
+            description: "Xem các chuyến đi đã lưu trữ",
+            url: "/?shortcut=archive",
+            icons: [{ src: "/asset/pwa/icon-192.png", sizes: "192x192" }],
+          },
+        ],
       },
       workbox: {
         maximumFileSizeToCacheInBytes: 5000000,
