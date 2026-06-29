@@ -11,8 +11,9 @@ export const NavButton = React.forwardRef<
     icon: any;
     label: string;
     layoutIdPrefix?: string;
+    compact?: boolean;
   }
->(({ isActive, onClick, icon: Icon, label, layoutIdPrefix = "nav" }, ref) => {
+>(({ isActive, onClick, icon: Icon, label, layoutIdPrefix = "nav", compact = false }, ref) => {
   return (
     <motion.button
       ref={ref}
@@ -22,7 +23,12 @@ export const NavButton = React.forwardRef<
       className={classNames(
         "relative flex items-center justify-center rounded-full z-10 motion-press",
         isActive
-          ? "text-kat-dark px-2.5 min-[340px]:px-3 min-[390px]:px-5 h-[40px] min-[340px]:h-[44px] min-[390px]:h-[48px] gap-1 min-[340px]:gap-1.5 min-[390px]:gap-2 font-extrabold"
+          ? classNames(
+              "text-kat-dark h-[40px] min-[340px]:h-[44px] min-[390px]:h-[48px] font-extrabold",
+              compact
+                ? "px-2.5 min-[340px]:px-3 min-[390px]:px-3.5 gap-1 min-[340px]:gap-1"
+                : "px-2.5 min-[340px]:px-3 min-[390px]:px-5 gap-1 min-[340px]:gap-1.5 min-[390px]:gap-2"
+            )
           : "text-kat-dark opacity-50 hover:opacity-75 w-10 min-[340px]:w-11 min-[390px]:w-12 h-10 min-[340px]:h-11 min-[390px]:h-12"
       )}
       transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}

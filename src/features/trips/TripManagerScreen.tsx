@@ -756,13 +756,14 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
 
       {/* Mobile Bottom Navigation (TripManagerScreen specific) */}
       <nav
-        className="fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium transition-transform duration-200 ease-out flex sm:hidden"
+        className="fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium transition-transform duration-200 ease-out flex sm:hidden"
         style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
       >
         <div className="relative flex h-[56px] min-[390px]:h-[60px] items-center w-full">
           {/* Left Group */}
-          <div className="flex flex-1 items-center justify-between pl-2 pr-6 min-[390px]:pr-8">
+          <div className="flex flex-1 items-center justify-between pl-1.5 pr-3 min-[390px]:pr-4">
             <NavButton
+              compact
               isActive={filterTab === "planned"}
               onClick={() => setFilterTab("planned")}
               icon={Calendar01Icon}
@@ -770,6 +771,7 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
               layoutIdPrefix="trip-nav"
             />
             <NavButton
+              compact
               isActive={filterTab === "archived"}
               onClick={() => setFilterTab("archived")}
               icon={
@@ -792,10 +794,10 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
           </div>
 
           {/* Absolute Center FAB */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-auto">
             <button
               onClick={onCreateNew}
-              className="flex items-center justify-center w-[44px] h-[44px] min-[390px]:w-[48px] min-[390px]:h-[48px] rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_4px_12px_rgba(3,13,46,0.18)] dark:shadow-[0_4px_12px_rgba(0,191,183,0.25)] hover:shadow-[0_6px_16px_rgba(3,13,46,0.25)] dark:hover:shadow-[0_6px_16px_rgba(0,191,183,0.35)] hover:scale-105 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-press"
+              className="flex items-center justify-center w-[46px] h-[46px] min-[390px]:w-[50px] min-[390px]:h-[50px] rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_4px_16px_rgba(3,13,46,0.25)] dark:shadow-[0_4px_16px_rgba(0,191,183,0.3)] hover:shadow-[0_6px_20px_rgba(3,13,46,0.35)] dark:hover:shadow-[0_6px_20px_rgba(0,191,183,0.45)] hover:scale-105 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-press"
               aria-label="Thêm chuyến đi"
             >
               <svg
@@ -815,8 +817,9 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
           </div>
 
           {/* Right Group */}
-          <div className="flex flex-1 items-center justify-between pr-2 pl-6 min-[390px]:pl-8">
+          <div className="flex flex-1 items-center justify-between pr-1.5 pl-3 min-[390px]:pl-4">
             <NavButton
+              compact
               isActive={filterTab === "completed"}
               onClick={() => setFilterTab("completed")}
               icon={CheckmarkCircle02Icon}
@@ -824,6 +827,7 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
               layoutIdPrefix="trip-nav"
             />
             <NavButton
+              compact
               isActive={false}
               onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
               icon={
