@@ -40,7 +40,7 @@
 }
 
 :root {
-  --kat-bg: #f8fafc;
+  --kat-bg: #f3f6fb;
   --kat-surface: #ffffff;
   --kat-text: #030d2e;
   --kat-muted: #64748b;
@@ -48,7 +48,7 @@
   --kat-border-rgb: 226 232 240;
 
   --kat-primary: #00bfb7;
-  --kat-primary-usable: #00afa8;
+  --kat-primary-usable: #007671;
   --kat-primary-soft: rgba(0, 191, 183, 0.1);
 
   --kat-hero-start: #030d2e;
