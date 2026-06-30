@@ -360,17 +360,18 @@ export function TimezonesWidget() {
               {/* Highlighted First Timezone */}
               <div className="flex items-center justify-between group relative p-4.5 rounded-[20px] bg-indigo-500/5 dark:bg-indigo-500/10 border border-indigo-500/15 dark:border-indigo-500/10 shadow-inner">
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[22px] font-black text-slate-850 dark:text-slate-100 tracking-tight leading-none truncate">
-                      {tzName(timezones[0])}
-                    </span>
-                    <span className="inline-flex items-center justify-center rounded-md px-1.5 py-0.5 text-[10px] font-extrabold bg-indigo-100 dark:bg-indigo-950/60 text-indigo-650 dark:text-indigo-400 tracking-wide uppercase shrink-0">
+                  <div className="text-[22px] font-black text-slate-850 dark:text-slate-100 tracking-tight leading-tight truncate">
+                    {tzName(timezones[0])}
+                  </div>
+                  <div className="text-[12px] font-bold text-slate-450 dark:text-slate-500 mt-2.5 flex items-center flex-wrap gap-2 leading-none">
+                    <span className="inline-flex items-center justify-center rounded-md px-1.5 py-0.5 text-[9.5px] font-extrabold bg-indigo-100 dark:bg-indigo-950/60 text-indigo-650 dark:text-indigo-400 tracking-wide uppercase shrink-0">
                       {getRelativeOffsetLabel(timezones[0])}
                     </span>
-                  </div>
-                  <div className="text-[12px] font-bold text-slate-450 dark:text-slate-500 mt-2 flex items-center gap-1.5 leading-none">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                    {tzOffsetString(timezones[0])}
+                    <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-800" />
+                    <span className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+                      {tzOffsetString(timezones[0])}
+                    </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5 shrink-0 pl-3">
@@ -399,16 +400,19 @@ export function TimezonesWidget() {
                       className="flex items-center justify-between group relative p-3.5 rounded-[18px] bg-white/30 dark:bg-slate-900/10 border border-slate-200/30 dark:border-white/[0.02] hover:border-slate-300/50 dark:hover:border-white/10 transition-all duration-300 shadow-soft"
                     >
                       <div className="min-w-0 flex-1 pr-3">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[14.5px] font-extrabold text-slate-700 dark:text-slate-200 truncate">
-                            {tzName(tz)}
-                          </span>
-                          <span className="text-[10px] font-bold text-slate-450 dark:text-slate-500">
-                            {getRelativeOffsetLabel(tz)}
-                          </span>
+                        <div className="text-[14.5px] font-extrabold text-slate-700 dark:text-slate-200 truncate">
+                          {tzName(tz)}
                         </div>
-                        <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mt-1">
-                          {tzOffsetString(tz)}
+                        <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mt-1.5 flex items-center flex-wrap gap-1.5">
+                          <span>{tzOffsetString(tz)}</span>
+                          {getRelativeOffsetLabel(tz) && (
+                            <>
+                              <span className="w-0.5 h-0.5 rounded-full bg-slate-300 dark:bg-slate-700" />
+                              <span className="text-[10px] font-bold text-slate-450 dark:text-slate-500">
+                                {getRelativeOffsetLabel(tz)}
+                              </span>
+                            </>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
