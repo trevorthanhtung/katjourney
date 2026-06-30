@@ -409,7 +409,8 @@
       "london": "London",
       "noTimezonesSelected": "No timezones selected",
       "searchTimezone": "Search timezone...",
-      "noTimezonesFound": "No timezones found"
+      "noTimezonesFound": "No timezones found",
+      "localTime": "Local time"
     },
     "hero": {
       "upcoming": "UPCOMING",

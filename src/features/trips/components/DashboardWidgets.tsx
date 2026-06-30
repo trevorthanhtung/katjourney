@@ -232,6 +232,30 @@ export function TimezonesWidget() {
     }
   };
 
+  const getRelativeOffset = (tz: string) => {
+    try {
+      const date = new Date();
+      const tzString = date.toLocaleString("en-US", { timeZone: tz });
+      const localString = date.toLocaleString("en-US");
+      const tzDate = new Date(tzString);
+      const localDate = new Date(localString);
+      const diffHrs = Math.round((tzDate.getTime() - localDate.getTime()) / 3600000);
+      if (diffHrs === 0) return "Local time";
+      const sign = diffHrs > 0 ? "+" : "";
+      return `${sign}${diffHrs}h`;
+    } catch (e) {
+      return "";
+    }
+  };
+
+  const getRelativeOffsetLabel = (tz: string) => {
+    const offset = getRelativeOffset(tz);
+    if (offset === "Local time") {
+      return t("dashboard.widgets.localTime", "Local time");
+    }
+    return offset ? `${offset}` : "";
+  };
+
   const tzTime = (date: Date, tz: string) => {
     try {
       return date.toLocaleTimeString("en-US", {
@@ -308,69 +332,95 @@ export function TimezonesWidget() {
 
   return (
     <>
-      <div className="bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] w-full relative">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2 text-slate-400">
-            <HugeiconsIcon icon={Clock01Icon} size={16} />
-            <span className="text-[12px] font-black uppercase tracking-wider">
+      <div className="relative overflow-hidden w-full rounded-[28px] border border-slate-200/50 dark:border-white/5 bg-white/40 dark:bg-slate-900/20 backdrop-blur-md p-6 shadow-soft transition-all duration-300">
+        <div className="flex items-center justify-between mb-5.5">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 shadow-sm">
+              <HugeiconsIcon icon={Clock01Icon} size={15} />
+            </div>
+            <span className="text-[12px] font-extrabold uppercase tracking-wider text-slate-450 dark:text-slate-405">
               {t("dashboard.widgets.timezones", "Timezones")}
             </span>
           </div>
           <button
             onClick={() => setIsAdding(true)}
-            className="text-slate-400 hover:text-kat-primary transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 hover:text-[#00BFB7] dark:hover:text-[#00BFB7] hover:bg-slate-200/80 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all shadow-sm cursor-pointer"
           >
-            <HugeiconsIcon icon={EarthIcon} size={18} />
+            <HugeiconsIcon icon={EarthIcon} size={17} />
           </button>
         </div>
 
         <div className="flex flex-col">
           {timezones.length === 0 ? (
-            <div className="text-center text-slate-400 text-[13px] py-4">
+            <div className="text-center text-slate-400 dark:text-slate-500 text-[13px] py-4 font-bold">
               {t("dashboard.widgets.noTimezonesSelected", "No timezones selected")}
             </div>
           ) : (
             <>
               {/* Highlighted First Timezone */}
-              <div className="flex flex-col group relative">
-                <div className="text-[24px] font-bold text-kat-text dark:text-slate-100 tracking-tight leading-tight">
-                  {tzName(timezones[0])}
+              <div className="flex items-center justify-between group relative p-4.5 rounded-[20px] bg-indigo-500/5 dark:bg-indigo-500/10 border border-indigo-500/15 dark:border-indigo-500/10 shadow-inner">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[22px] font-black text-slate-850 dark:text-slate-100 tracking-tight leading-none truncate">
+                      {tzName(timezones[0])}
+                    </span>
+                    <span className="inline-flex items-center justify-center rounded-md px-1.5 py-0.5 text-[10px] font-extrabold bg-indigo-100 dark:bg-indigo-950/60 text-indigo-650 dark:text-indigo-400 tracking-wide uppercase shrink-0">
+                      {getRelativeOffsetLabel(timezones[0])}
+                    </span>
+                  </div>
+                  <div className="text-[12px] font-bold text-slate-450 dark:text-slate-500 mt-2 flex items-center gap-1.5 leading-none">
+                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+                    {tzOffsetString(timezones[0])}
+                  </div>
                 </div>
-                <div className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 mt-1">
-                  {tzTime(time, timezones[0])}
+                <div className="flex items-center gap-2.5 shrink-0 pl-3">
+                  <span className="text-[24px] font-black text-indigo-600 dark:text-indigo-400 tracking-tight font-mono">
+                    {tzTime(time, timezones[0])}
+                  </span>
+                  <button
+                    onClick={() => removeTimezone(0)}
+                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 transition-all p-1.5 hover:bg-rose-500/10 rounded-full shrink-0 cursor-pointer"
+                    title={t("common.remove", "Remove")}
+                  >
+                    <HugeiconsIcon icon={Cancel01Icon} size={15} />
+                  </button>
                 </div>
-                <button
-                  onClick={() => removeTimezone(0)}
-                  className="absolute top-1 right-0 opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all p-2"
-                  title={t("common.remove", "Remove")}
-                >
-                  <HugeiconsIcon icon={Cancel01Icon} size={16} />
-                </button>
               </div>
 
-              {timezones.length > 1 && (
-                <div className="h-px w-full bg-slate-100 dark:bg-slate-800/60 my-5"></div>
-              )}
+              {timezones.length > 1 && <div className="h-3" />}
 
               {/* Other Timezones List */}
-              <div className="space-y-4">
+              <div className="space-y-2.5">
                 {timezones.slice(1).map((tz, index) => {
                   const actualIndex = index + 1;
                   return (
-                    <div key={tz} className="flex items-center justify-between group relative">
-                      <div className="text-[15px] font-semibold text-kat-text dark:text-slate-200">
-                        {tzName(tz)}
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="text-[15px] font-medium text-slate-500 dark:text-slate-400 group-hover:opacity-0 transition-opacity">
-                          {tzTime(time, tz)}
+                    <div
+                      key={tz}
+                      className="flex items-center justify-between group relative p-3.5 rounded-[18px] bg-white/30 dark:bg-slate-900/10 border border-slate-200/30 dark:border-white/[0.02] hover:border-slate-300/50 dark:hover:border-white/10 transition-all duration-300 shadow-soft"
+                    >
+                      <div className="min-w-0 flex-1 pr-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[14.5px] font-extrabold text-slate-700 dark:text-slate-200 truncate">
+                            {tzName(tz)}
+                          </span>
+                          <span className="text-[10px] font-bold text-slate-450 dark:text-slate-500">
+                            {getRelativeOffsetLabel(tz)}
+                          </span>
                         </div>
+                        <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mt-1">
+                          {tzOffsetString(tz)}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-[15.5px] font-extrabold text-slate-650 dark:text-slate-300 font-mono">
+                          {tzTime(time, tz)}
+                        </span>
                         <button
                           onClick={() => removeTimezone(actualIndex)}
-                          className="absolute right-0 opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all p-1 bg-white dark:bg-kat-surface"
+                          className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 transition-all p-1.5 hover:bg-rose-500/10 rounded-full shrink-0 cursor-pointer"
                           title={t("common.remove", "Remove")}
                         >
-                          <HugeiconsIcon icon={Cancel01Icon} size={16} />
+                          <HugeiconsIcon icon={Cancel01Icon} size={14} />
                         </button>
                       </div>
                     </div>
