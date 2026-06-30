@@ -291,7 +291,7 @@
     }
   },
   "splash": {
-    "subtitle": "Khám phá & Kỷ niệm"
+    "subtitle": "Khám phá & Lưu trữ"
   },
   "userMenu": {
     "guest": "Khách",
@@ -423,12 +423,12 @@
     "trips": "Chuyến đi"
   },
   "archive": {
-    "title": "Kỷ niệm",
+    "title": "Lưu trữ",
     "back": "Quay lại",
-    "savedTrips": "{{count}} chuyến đi đã lưu giữ",
-    "noTripsDesc": "Các chuyến đi đã kết thúc và được lưu giữ.",
-    "emptyTitle": "Chưa có kỷ niệm nào",
-    "emptyDesc": "Những chuyến đi đã kết thúc sẽ xuất hiện ở đây để bạn ôn lại.",
+    "savedTrips": "{{count}} chuyến đi đã lưu trữ",
+    "noTripsDesc": "Các chuyến đi đã kết thúc và được lưu trữ.",
+    "emptyTitle": "Chưa có chuyến đi lưu trữ nào",
+    "emptyDesc": "Những chuyến đi đã kết thúc sẽ xuất hiện ở đây để bạn xem lại.",
     "tripCount": "{{count}} chuyến đi",
     "unknownYear": "Chưa rõ năm"
   },
@@ -1412,9 +1412,9 @@
     "deleteModalConfirm": "Xóa vĩnh viễn chuyến đi",
     "deleteModalMatch": "XÓA",
     "deleteModalInput": "Nhập XÓA",
-    "archiveModalTitle": "Đóng gói kỷ niệm?",
-    "archiveModalDesc": "Hành trình này sẽ được đóng gói và đưa vào góc <b>Kỷ niệm</b>. Mọi dữ liệu sẽ được chuyển sang chế độ <b>chỉ xem</b> để lưu giữ nguyên vẹn những khoảnh khắc của bạn.",
-    "archiveModalConfirm": "Đồng ý đóng gói",
+    "archiveModalTitle": "Lưu trữ chuyến đi?",
+    "archiveModalDesc": "Hành trình này sẽ được chuyển vào mục <b>Lưu trữ</b>. Mọi dữ liệu sẽ được chuyển sang chế độ <b>chỉ xem</b> để lưu giữ nguyên vẹn thông tin của bạn.",
+    "archiveModalConfirm": "Đồng ý lưu trữ",
     "unarchiveModalTitle": "Mở khóa chuyến đi?",
     "unarchiveModalDesc": "Chuyến đi sẽ được <b>mở khóa trở lại</b>. Bạn có thể tiếp tục lên lịch trình, đăng bài viết bản tin và quản lý chi phí như bình thường.",
     "unarchiveModalConfirm": "Tiếp tục hành trình",
@@ -1506,7 +1506,19 @@
     "addPrivate": "Thêm giấy tờ cá nhân",
     "editPrivate": "Sửa giấy tờ cá nhân",
     "suggestDeleteTitle": "Đề xuất xóa tài liệu?",
-    "suggestDeleteDesc": "Bạn đang gửi đề xuất xóa tài liệu này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn."
+    "suggestDeleteDesc": "Bạn đang gửi đề xuất xóa tài liệu này. Chủ chuyến đi sẽ xem và xét duyệt đề xuất của bạn.",
+    "typeInsurance": "Bảo hiểm du lịch",
+    "typeVisa": "Visa / Hộ chiếu",
+    "typeTour": "Vé tham quan",
+    "placeholderTitleVisa": "VD: Hộ chiếu cá nhân, Visa Schengen...",
+    "placeholderCodeVisa": "VD: Số hộ chiếu, Số Visa...",
+    "placeholderNoteVisa": "VD: Địa chỉ đại sứ quán, thông tin liên lạc...",
+    "placeholderTitleInsurance": "VD: Bảo hiểm du lịch...",
+    "placeholderCodeInsurance": "VD: Số hợp đồng bảo hiểm...",
+    "placeholderNoteInsurance": "VD: Hotline cứu hộ khẩn cấp toàn cầu...",
+    "placeholderTitleTour": "VD: Vé Universal Studio, Tour lặn biển...",
+    "placeholderCodeTour": "VD: Mã vé QR, Booking ID...",
+    "placeholderNoteTour": "VD: Điểm hẹn tập trung, thời gian đón..."
   },
   "roles": {
     "roleLeader": "Trưởng nhóm",

@@ -222,6 +222,15 @@ export function SettingsSheet({
   );
   useModalHistory(isImportPreviewOpen, () => setIsImportPreviewOpen(false), "import-preview");
 
+  useModalHistory(
+    isOpen && view !== "menu" && view !== "auth",
+    () => {
+      setView("menu");
+      setErrorMsg(null);
+    },
+    `settings-${view}`
+  );
+
   useEffect(() => {
     if (user) {
       setNewName(user.displayName || "");
@@ -633,9 +642,9 @@ export function SettingsSheet({
       : null;
 
     return (
-      <div className="border-t border-slate-200/60 dark:border-slate-800/60 pt-5 mt-4 space-y-4 text-left animate-fadeIn">
+      <div className="border-t border-slate-200/50 dark:border-white/5 pt-5 mt-4 space-y-4 text-left animate-fadeIn">
         <div className="flex items-center gap-3 mb-1 px-1">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50/70 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 border border-indigo-100/40 dark:border-indigo-900/30 shrink-0">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-900/30 shadow-inner shrink-0">
             <HugeiconsIcon
               icon={CloudIcon}
               className={`w-5 h-5 ${isSyncing || isAutoBackingUp ? "animate-spin" : ""}`}
@@ -645,14 +654,14 @@ export function SettingsSheet({
             <h4 className="text-[15.5px] font-black text-kat-dark dark:text-slate-200">
               {t("settings.auth.dataSync")}
             </h4>
-            <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold">
+            <p className="text-[12px] text-slate-500 dark:text-slate-400 font-bold">
               {t("settings.auth.dataSyncDesc")}
             </p>
           </div>
         </div>
 
         {hasCloudVersion && (
-          <div className="rounded-[22px] bg-amber-50 dark:bg-amber-950/15 border border-amber-200/60 dark:border-amber-900/30 p-4 text-[13.5px] text-amber-900 dark:text-amber-400 font-bold leading-relaxed flex items-start gap-3 animate-fadeIn">
+          <div className="rounded-[22px] bg-amber-500/10 dark:bg-amber-950/20 border border-amber-500/20 dark:border-amber-900/30 p-4 text-[13.5px] text-amber-800 dark:text-amber-400 font-bold leading-relaxed flex items-start gap-3 animate-fadeIn shadow-sm">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5">
               <HugeiconsIcon icon={AlertCircleIcon} className="w-4 h-4" />
             </div>
@@ -661,7 +670,7 @@ export function SettingsSheet({
         )}
 
         {syncError && (
-          <div className="rounded-[22px] bg-rose-50 dark:bg-rose-950/15 border border-rose-200/60 dark:border-rose-900/30 p-4 text-[13.5px] text-rose-900 dark:text-rose-400 font-bold leading-relaxed flex items-start gap-3 animate-fadeIn">
+          <div className="rounded-[22px] bg-rose-500/10 dark:bg-rose-950/20 border border-rose-500/20 dark:border-rose-900/30 p-4 text-[13.5px] text-rose-855 dark:text-rose-400 font-bold leading-relaxed flex items-start gap-3 animate-fadeIn shadow-sm">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-100 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 shrink-0 mt-0.5">
               <HugeiconsIcon icon={AlertCircleIcon} className="w-4 h-4" />
             </div>
@@ -670,7 +679,7 @@ export function SettingsSheet({
         )}
 
         {syncSuccess && (
-          <div className="rounded-[22px] bg-emerald-50 dark:bg-emerald-950/15 border border-emerald-200/60 dark:border-emerald-900/30 p-4 text-[13.5px] text-emerald-900 dark:text-emerald-400 font-bold leading-relaxed flex items-start gap-3 animate-fadeIn">
+          <div className="rounded-[22px] bg-emerald-500/10 dark:bg-emerald-950/20 border border-emerald-500/20 dark:border-emerald-900/30 p-4 text-[13.5px] text-emerald-855 dark:text-emerald-400 font-bold leading-relaxed flex items-start gap-3 animate-fadeIn shadow-sm">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 shrink-0 mt-0.5">
               <HugeiconsIcon icon={CheckIcon} className="w-4 h-4" strokeWidth={3.5} />
             </div>
@@ -679,49 +688,49 @@ export function SettingsSheet({
         )}
 
         {!user ? (
-          <div className="rounded-[22px] bg-amber-50/50 dark:bg-amber-950/20 border border-amber-100/70 dark:border-amber-900/30 p-4 text-[13.5px] text-amber-800 dark:text-amber-400 font-bold leading-relaxed shadow-soft">
+          <div className="rounded-[22px] bg-amber-500/10 dark:bg-amber-950/20 border border-amber-500/20 dark:border-amber-900/30 p-4 text-[13.5px] text-amber-800 dark:text-amber-400 font-bold leading-relaxed shadow-sm">
             {t("settings.auth.loginToSync")}
           </div>
         ) : (
           <>
-            <div className="bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-white/[0.04] rounded-[22px] p-4.5 flex justify-between items-center text-[13.5px] font-bold text-slate-500 dark:text-slate-400 min-h-[60px] shadow-soft">
-              <span className="text-slate-500 dark:text-slate-400 font-bold">
+            <div className="bg-white/40 dark:bg-slate-900/30 border border-slate-200/50 dark:border-white/5 rounded-[22px] p-4.5 flex justify-between items-center text-[13.5px] font-bold text-slate-500 dark:text-slate-400 min-h-[60px] shadow-soft relative overflow-hidden">
+              <span className="text-slate-500 dark:text-slate-450 font-bold">
                 {t("settings.auth.lastSync")}
               </span>
               {lastBackupAt && backupTimeStr && backupDateStr ? (
                 <div className="flex gap-2 items-center">
-                  <div className="inline-flex items-center gap-1.5 font-black text-kat-dark dark:text-slate-200 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/[0.04] px-3.5 py-1.5 rounded-full text-[13px]">
+                  <div className="inline-flex items-center gap-1.5 font-black text-slate-700 dark:text-slate-200 bg-white/70 dark:bg-slate-800/80 border border-slate-200/50 dark:border-white/5 px-3.5 py-1.5 rounded-full text-[13px] shadow-sm">
                     <HugeiconsIcon
                       icon={Clock01Icon}
-                      className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0"
+                      className="w-3.5 h-3.5 text-slate-455 dark:text-slate-500 shrink-0"
                     />
                     <span>{backupTimeStr}</span>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 font-black text-kat-dark dark:text-slate-200 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/[0.04] px-3.5 py-1.5 rounded-full text-[13px]">
+                  <div className="inline-flex items-center gap-1.5 font-black text-slate-700 dark:text-slate-200 bg-white/70 dark:bg-slate-800/80 border border-slate-200/50 dark:border-white/5 px-3.5 py-1.5 rounded-full text-[13px] shadow-sm">
                     <HugeiconsIcon
                       icon={Calendar01Icon}
-                      className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0"
+                      className="w-3.5 h-3.5 text-slate-455 dark:text-slate-500 shrink-0"
                     />
                     <span>{backupDateStr}</span>
                   </div>
                 </div>
               ) : (
-                <span className="font-black text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/[0.04] px-4 py-1.5 rounded-full text-[13px]">
+                <span className="font-black text-slate-500 dark:text-slate-450 bg-white/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-white/5 px-4 py-1.5 rounded-full text-[13px]">
                   {t("settings.auth.neverSynced")}
                 </span>
               )}
             </div>
 
-            <div className="flex items-center justify-between p-4.5 rounded-[22px] border border-slate-200 dark:border-white/[0.04] bg-white dark:bg-slate-800/50 min-h-[76px] shadow-soft">
+            <div className="flex items-center justify-between p-4.5 rounded-[22px] border border-slate-200/50 dark:border-white/5 bg-white/40 dark:bg-slate-900/30 min-h-[76px] shadow-soft">
               <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100/40 dark:border-indigo-900/30 shrink-0">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-900/30 shadow-inner shrink-0">
                   <HugeiconsIcon icon={CloudIcon} className="w-5 h-5" />
                 </div>
                 <div className="text-left pr-2">
                   <span className="text-[14px] font-black text-kat-dark dark:text-slate-200">
                     {t("settings.auth.autoBackupCloud")}
                   </span>
-                  <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 leading-normal">
+                  <p className="text-[12px] text-slate-500 dark:text-slate-400 font-bold mt-0.5 leading-normal">
                     {t("settings.auth.autoBackupDesc")}
                   </p>
                 </div>
@@ -733,7 +742,7 @@ export function SettingsSheet({
                 aria-checked={autoBackupEnabled}
                 onClick={() => setAutoBackupEnabled(!autoBackupEnabled)}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  autoBackupEnabled ? "bg-kat-primary" : "bg-slate-200 dark:bg-slate-700"
+                  autoBackupEnabled ? "bg-[#00BFB7]" : "bg-slate-200 dark:bg-slate-700"
                 }`}
               >
                 <span
@@ -750,7 +759,7 @@ export function SettingsSheet({
           <button
             onClick={handleSync}
             disabled={!user || isSyncing}
-            className="w-full flex items-center justify-center gap-2.5 h-13 rounded-[20px] bg-kat-primary text-white hover:bg-kat-primary-usable active:scale-[0.97] transition-all font-black text-[15px] shadow-[0_4px_14px_rgba(0,191,183,0.25)] hover:shadow-[0_6px_20px_rgba(0,191,183,0.4)] disabled:opacity-50 disabled:active:scale-100 disabled:shadow-none shrink-0 motion-press"
+            className="w-full flex items-center justify-center gap-2.5 h-13 rounded-[20px] bg-[#00BFB7] hover:bg-[#00A19D] active:scale-[0.97] transition-all font-black text-[15px] text-slate-950 shadow-[0_4px_14px_rgba(0,191,183,0.2)] hover:shadow-[0_6px_20px_rgba(0,191,183,0.35)] disabled:opacity-40 disabled:active:scale-100 disabled:shadow-none shrink-0 cursor-pointer"
           >
             {isSyncing ? (
               <>
@@ -834,14 +843,20 @@ export function SettingsSheet({
     }
   };
 
+  const handleSheetClose = () => {
+    if (view !== "menu" && view !== "auth") {
+      setView("menu");
+      setErrorMsg(null);
+    } else {
+      onClose();
+    }
+  };
+
   const renderHeaderAction = () => {
     if (view !== "menu" && view !== "auth") {
       return (
         <button
-          onClick={() => {
-            setView("menu");
-            setErrorMsg(null);
-          }}
+          onClick={handleSheetClose}
           className="flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700/60 focus:outline-none"
           title="Quay lại"
           aria-label="Quay lại"
@@ -857,7 +872,7 @@ export function SettingsSheet({
     <>
       <BottomSheet
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleSheetClose}
         title={renderTitle()}
         subtitle={renderSubtitle()}
         headerAction={renderHeaderAction()}
@@ -1504,14 +1519,14 @@ export function SettingsSheet({
                 </>
               ) : (
                 <div className="space-y-6">
-                  {/* Unified User Info Card with Edit Display Name support */}
-                  <div className="flex items-center gap-4.5 p-5 rounded-[24px] bg-gradient-to-br from-white to-[#F8FAFC]/80 dark:from-slate-900/60 dark:to-slate-900/40 border border-slate-200 dark:border-slate-800 shadow-soft hover:shadow-md transition-all duration-350">
+                  <div className="flex items-center gap-4.5 p-5 rounded-[24px] bg-white/50 dark:bg-slate-900/30 backdrop-blur-md border border-slate-200/50 dark:border-white/5 shadow-soft hover:shadow-md transition-all duration-350 relative overflow-hidden">
+                    <div className="absolute -right-6 -top-6 w-20 h-20 bg-indigo-500/[0.02] dark:bg-indigo-500/[0.04] rounded-full blur-xl pointer-events-none" />
                     {provider === "google" ? (
                       user.photoURL ? (
                         <img
                           src={user.photoURL}
                           alt={user.displayName || "Avatar"}
-                          className="h-14 w-14 rounded-full border border-slate-200/80 dark:border-white/[0.04] object-cover shadow-sm shrink-0 ring-2 ring-slate-100 dark:ring-slate-900"
+                          className="h-14 w-14 rounded-full border border-slate-200/85 dark:border-white/[0.04] object-cover shadow-sm shrink-0 ring-2 ring-slate-100 dark:ring-slate-900"
                         />
                       ) : (
                         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-lg shadow-inner shrink-0">
@@ -1534,7 +1549,7 @@ export function SettingsSheet({
                           type="text"
                           value={newName}
                           onChange={(e) => setNewName(e.target.value)}
-                          className="flex-1 h-10 px-3 text-[14.5px] font-bold text-slate-800 dark:text-slate-200 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-kat-teal/40 min-w-0"
+                          className="flex-1 h-10 px-3 text-[14.5px] font-bold text-slate-800 dark:text-slate-200 rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:border-kat-teal focus:ring-1 focus:ring-kat-teal/40 min-w-0"
                           placeholder={t("settings.authView.displayName")}
                           autoFocus
                           onKeyDown={(e) => {
@@ -1619,11 +1634,11 @@ export function SettingsSheet({
 
                   {provider === "guest" && (
                     <>
-                      <div className="p-4 rounded-[22px] bg-kat-primary-soft dark:bg-cyan-950/15 border border-[#00BFB7]/25 dark:border-[#00BFB7]/20 text-left flex items-start gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#00BFB7]/15 dark:bg-[#00BFB7]/10 text-kat-primary-usable dark:text-cyan-400 shrink-0 mt-0.5">
+                      <div className="p-4 rounded-[22px] bg-gradient-to-br from-cyan-500/10 to-teal-500/5 dark:from-cyan-950/20 dark:to-teal-950/10 border border-cyan-500/20 dark:border-cyan-500/15 text-left flex items-start gap-3 shadow-inner">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-500/10 dark:bg-cyan-500/25 text-kat-primary-usable dark:text-cyan-400 shrink-0 mt-0.5 shadow-sm">
                           <HugeiconsIcon icon={InformationCircleIcon} className="w-4 h-4" />
                         </div>
-                        <p className="text-[13px] font-semibold leading-relaxed text-slate-650 dark:text-slate-300">
+                        <p className="text-[13px] font-bold leading-relaxed text-slate-650 dark:text-slate-350">
                           {t("settings.authView.guestNotice1")}
                           <strong className="font-extrabold text-slate-800 dark:text-slate-200">
                             {t("settings.authView.safe")}
@@ -1641,7 +1656,7 @@ export function SettingsSheet({
                         <button
                           onClick={handleGoogleSignIn}
                           disabled={actionLoading !== null}
-                          className="w-full flex items-center justify-center gap-3 h-13 rounded-[20px] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-900 active:scale-[0.98] transition-all font-bold text-[14.5px] text-slate-800 dark:text-slate-200 shadow-sm hover:shadow-md disabled:opacity-60 relative overflow-hidden"
+                          className="w-full flex items-center justify-center gap-3 h-13 rounded-[20px] border border-slate-200/50 dark:border-white/5 bg-white/80 dark:bg-slate-900/40 hover:bg-slate-50 dark:hover:bg-slate-800/80 active:scale-[0.98] transition-all font-black text-[14.5px] text-slate-800 dark:text-slate-200 shadow-[0_4px_16px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.04)] disabled:opacity-60 relative overflow-hidden cursor-pointer"
                         >
                           {actionLoading === "google" ? (
                             <HugeiconsIcon
@@ -1657,11 +1672,11 @@ export function SettingsSheet({
                         <button
                           onClick={handleBackupAllData}
                           disabled={actionLoading !== null}
-                          className="w-full flex items-center justify-center gap-2.5 h-11.5 rounded-[16px] border border-slate-200/60 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 text-slate-650 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 active:scale-[0.98] transition-all font-bold text-[13px] disabled:opacity-60 shadow-sm"
+                          className="w-full flex items-center justify-center gap-2.5 h-11.5 rounded-[16px] border border-dashed border-slate-200/80 dark:border-slate-800 bg-slate-50/20 dark:bg-slate-800/20 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 active:scale-[0.98] transition-all font-bold text-[13px] disabled:opacity-60 shadow-sm cursor-pointer"
                         >
                           <HugeiconsIcon
                             icon={Download01Icon}
-                            className="h-4.5 w-4.5 text-slate-500 shrink-0"
+                            className="h-4.5 w-4.5 text-slate-400 dark:text-slate-500 shrink-0"
                           />
                           {t("settings.authView.manualBackup")}
                         </button>

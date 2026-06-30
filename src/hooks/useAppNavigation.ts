@@ -13,16 +13,11 @@ export function useAppNavigation() {
     const saved = localStorage.getItem("kat_active_tab");
     return (saved as any) || "home";
   });
-  const setActiveTab = useCallback(
-    (tab: TabType) => {
-      startViewTransition(() => {
-        startTransition(() => {
-          setActiveTabInternal(tab);
-        });
-      });
-    },
-    [startViewTransition]
-  );
+  const setActiveTab = useCallback((tab: TabType) => {
+    startTransition(() => {
+      setActiveTabInternal(tab);
+    });
+  }, []);
 
   const [moreSection, setMoreSection] = useState<MoreSectionType>(() => {
     const saved = localStorage.getItem("kat_more_section");
@@ -81,6 +76,17 @@ export function useAppNavigation() {
       if (event.state?.isModal) return;
       const state = event.state;
       if (!state) return;
+
+      const prevState = lastHistoryStateRef.current;
+      const viewChanged = prevState?.view !== state.view;
+      const tripChanged = prevState?.tripId !== state.tripId;
+      const tabChanged = prevState?.activeTab !== state.activeTab;
+      const sectionChanged = prevState?.moreSection !== state.moreSection;
+
+      if (prevState && !viewChanged && !tripChanged && !tabChanged && !sectionChanged) {
+        return;
+      }
+
       isPopStateRef.current = true;
 
       startViewTransition(() => {
@@ -209,6 +215,7 @@ export function useAppNavigation() {
     setActiveTab,
     moreSection,
     setMoreSection: setMoreSectionAnimated,
+    setMoreSectionRaw: setMoreSection,
     selectedTripId,
     setSelectedTripId: setSelectedTripIdAnimated,
     isManagingTrips,

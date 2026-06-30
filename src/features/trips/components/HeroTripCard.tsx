@@ -3,6 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Trip, db } from "../../../db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { getAvatarSvg } from "../../../utils/avatars";
+import { motion } from "framer-motion";
+import { springInteraction } from "../../../lib/motion";
+
 const HERO_IMAGES = [
   "https://images.unsplash.com/photo-1433086966358-54859d0ed716?q=80&w=1200&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=1200&auto=format&fit=crop",
@@ -83,7 +86,10 @@ export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
   const eDate = formatMonthDate(trip.endDate);
 
   return (
-    <div
+    <motion.div
+      whileHover={{ scale: 1.015 }}
+      whileTap={{ scale: 0.985 }}
+      transition={springInteraction}
       onClick={() => onOpenTrip(trip.id!)}
       className="relative w-full h-[320px] sm:h-[400px] lg:h-[500px] rounded-[32px] overflow-hidden cursor-pointer group shadow-[0_8px_30px_rgba(0,0,0,0.12)] mb-8"
     >
@@ -123,8 +129,8 @@ export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
       </div>
 
       {/* Center Title */}
-      <div className="absolute inset-0 flex items-center justify-center z-10 px-6">
-        <h2 className="text-white text-5xl sm:text-7xl lg:text-[90px] font-[900] tracking-tighter text-center leading-tight drop-shadow-2xl group-hover:scale-105 transition-transform duration-700 py-4">
+      <div className="absolute inset-0 flex items-center justify-center z-10 px-6 pb-28 sm:pb-32 lg:pb-36">
+        <h2 className="text-white text-5xl sm:text-7xl lg:text-[90px] font-[900] tracking-tighter text-center leading-tight drop-shadow-2xl group-hover:scale-105 transition-transform duration-700">
           {trip.title}
         </h2>
       </div>
@@ -285,6 +291,6 @@ export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

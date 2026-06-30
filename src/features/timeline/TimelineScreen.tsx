@@ -170,7 +170,7 @@ const ActivityCard = React.memo(function ActivityCard({
         <button
           onClick={toggleComplete}
           className={classNames(
-            "flex h-11 w-11 items-center justify-center rounded-full shadow-sm ring-4 ring-[#F8FAFC] dark:ring-[#0A1124] transition-all duration-200 motion-press",
+            "flex h-11 w-11 items-center justify-center rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.06)] ring-[3px] ring-[#F8FAFC] dark:ring-[#0A1124] transition-all duration-200 motion-press",
             item.completed
               ? "bg-emerald-500 text-white hover:bg-emerald-600"
               : `${category.bgColor} border hover:scale-105`
@@ -188,7 +188,7 @@ const ActivityCard = React.memo(function ActivityCard({
       {/* Card Body */}
       <div
         onClick={onEdit}
-        className="min-w-0 flex-1 rounded-2xl bg-white dark:bg-kat-surface p-4 shadow-sm border border-slate-100 dark:border-kat-border hover:shadow-md hover:border-slate-200 dark:hover:border-kat-border cursor-pointer transition-all duration-200 motion-press"
+        className="min-w-0 flex-1 rounded-2xl bg-white dark:bg-kat-surface p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_6px_24px_rgba(0,0,0,0.03)] border border-slate-100/80 dark:border-kat-border/60 hover:shadow-[0_4px_20px_rgba(0,0,0,0.07),0_1px_3px_rgba(0,0,0,0.04)] hover:border-slate-200/80 dark:hover:border-kat-border cursor-pointer transition-all duration-300 ease-out motion-press"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
@@ -238,7 +238,7 @@ const ActivityCard = React.memo(function ActivityCard({
 
             {/* Notes */}
             {item.notes && (
-              <p className="mt-2.5 whitespace-pre-wrap text-[13.5px] leading-relaxed text-slate-600 dark:text-slate-300 bg-slate-50/70 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-100 dark:border-kat-border/40 font-medium">
+              <p className="mt-2.5 whitespace-pre-wrap text-[13.5px] leading-relaxed text-slate-600 dark:text-slate-300 bg-slate-50/50 dark:bg-slate-800/30 p-3 rounded-xl border border-slate-100/60 dark:border-kat-border/30 font-medium">
                 {item.notes}
               </p>
             )}
@@ -247,7 +247,7 @@ const ActivityCard = React.memo(function ActivityCard({
             {(item.mapLink || item.location) && (
               <div className="mt-3 space-y-2" onClick={(e) => e.stopPropagation()}>
                 {getEmbedMapUrl(item.mapLink || item.location || "", item.location) && (
-                  <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm bg-slate-100 relative min-h-[160px]">
+                  <div className="w-full overflow-hidden rounded-2xl border border-slate-200/60 dark:border-slate-700/40 shadow-[0_2px_12px_rgba(0,0,0,0.04)] bg-slate-100 dark:bg-slate-800/40 relative min-h-[160px]">
                     <div className="absolute inset-0 flex items-center justify-center text-slate-400">
                       <span className="text-[12px] font-medium animate-pulse">
                         {t("timeline.loadingMap")}
@@ -270,7 +270,7 @@ const ActivityCard = React.memo(function ActivityCard({
                     (item.mapLink.includes("/maps/dir/") || item.mapLink.includes("maps/dir"));
                   return (
                     <a
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-[13px] font-bold text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 text-[13px] font-bold text-emerald-600 dark:text-emerald-400 border border-emerald-100/80 dark:border-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-200"
                       href={
                         ensureAbsoluteUrl(item.mapLink) ||
                         `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location || "")}`
@@ -299,7 +299,7 @@ const ActivityCard = React.memo(function ActivityCard({
                   onOpenBackup?.();
                 }}
                 className={classNames(
-                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] font-bold border transition-colors motion-press",
+                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] font-bold border shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all duration-200 motion-press",
                   backupCount && backupCount > 0
                     ? "bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
                     : "bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-kat-border/40 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
@@ -335,7 +335,7 @@ const ActivityCard = React.memo(function ActivityCard({
                       e.stopPropagation();
                       onAddExpense();
                     }}
-                    className="flex items-center gap-1 px-2 py-1.5 rounded-lg border border-dashed border-slate-300 dark:border-slate-700/60 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-[12px] font-bold transition-colors"
+                    className="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-dashed border-slate-200 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40 text-[12px] font-bold transition-all duration-200"
                   >
                     <HugeiconsIcon icon={Add01Icon} className="w-3.5 h-3.5" />
                     {t("timeline.addExpense")}
@@ -1006,7 +1006,7 @@ export function TimelineScreen({
   };
 
   return (
-    <div className="mx-auto max-w-[1120px] px-1 md:px-0">
+    <div className="mx-auto max-w-[1280px] px-1 md:px-0">
       {/* Title Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>

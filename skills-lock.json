@@ -79,6 +79,12 @@
       "skillPath": ".claude/skills/flow/SKILL.md",
       "computedHash": "0058628576ac08ac0aa0f612a97f09c1551b505b279726aadd1a6cd72fb47989"
     },
+    "framer-motion-animator": {
+      "source": "patricio0312rev/skills",
+      "sourceType": "github",
+      "skillPath": "frontend/framer-motion-animator/SKILL.md",
+      "computedHash": "22a8401fab0cdf32d5c153b98aba5e95435a479810896879535dc7ac3710efbe"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
@@ -108,6 +114,12 @@
       "sourceType": "github",
       "skillPath": "skills/mobile-offline-support/SKILL.md",
       "computedHash": "c0025f471485833eca5ddc516c7e87484b1317bc1c2c7416fb3837246359ad9d"
+    },
+    "motion-framer": {
+      "source": "freshtechbro/claudedesignskills",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/motion-framer/SKILL.md",
+      "computedHash": "b18cf4fbfd179942f73d770f3f1d4597ea512fbdf67b2aa03f01cfd726558b6e"
     },
     "pwa-development": {
       "source": "alinaqi/claude-bootstrap",

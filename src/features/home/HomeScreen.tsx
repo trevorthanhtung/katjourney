@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { springInteraction } from "../../lib/motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   UserGroupIcon,
@@ -51,15 +53,18 @@ function QuickAction({
   onClick: () => void;
 }) {
   return (
-    <button
-      className="flex flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-100 transition-[transform,box-shadow,border-color] duration-200 ease-out motion-press md:motion-hover-lift hover:border-[#00BFB7]/30 hover:shadow-[0_8px_20px_rgba(0,191,183,0.06)] active:scale-[0.97] w-full"
+    <motion.button
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      transition={springInteraction}
+      className="flex flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white dark:bg-slate-800 p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-100 dark:border-slate-700 transition-[box-shadow,border-color] duration-200 ease-out hover:border-[#00BFB7]/30 hover:shadow-[0_8px_20px_rgba(0,191,183,0.06)] w-full group"
       onClick={onClick}
     >
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary-soft text-kat-primary transition-transform duration-300 group-hover:scale-110">
         {icon}
       </div>
-      <span className="text-[14px] font-bold text-slate-700">{label}</span>
-    </button>
+      <span className="text-[14px] font-bold text-slate-700 dark:text-slate-300">{label}</span>
+    </motion.button>
   );
 }
 
@@ -273,12 +278,12 @@ export function HomeScreen({
 
     return (
       <div
-        className="mb-6 relative z-10 rounded-[32px] p-6 text-white shadow-xl border border-white/5 group hover:shadow-2xl hover:scale-[1.002] transition-all duration-500 ease-out motion-weather-bg"
+        className="mb-6 relative z-10 rounded-[32px] p-6 text-white shadow-[0_8px_40px_rgba(0,0,0,0.25),0_0_0_1px_rgba(255,255,255,0.06)_inset] group hover:shadow-[0_16px_56px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.08)_inset] hover:scale-[1.002] transition-all duration-500 ease-out motion-weather-bg"
         style={{ background: bgGradient }}
       >
         <div className="absolute inset-0 rounded-[32px] overflow-hidden pointer-events-none">
           {/* Subtle World Map Watermark */}
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+          <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
 
           {/* Dynamic Weather Backdrops */}
           {forecast && currentCode != null && (
@@ -302,7 +307,7 @@ export function HomeScreen({
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-5">
           <div className="space-y-3 min-w-0 flex-1">
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-md">
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.12] px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-xl border border-white/[0.08] shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset]">
               ●{" "}
               {status === "past"
                 ? t("home.ended")
@@ -416,7 +421,7 @@ export function HomeScreen({
 
           <div className="flex flex-col sm:flex-row lg:flex-col items-stretch gap-3 shrink-0 w-full lg:w-[250px]">
             {/* Timing box with Progress Bar */}
-            <div className="flex flex-col items-stretch justify-center rounded-2xl bg-white/10 px-4 py-3 border border-white/20 flex-1 lg:flex-none lg:w-full text-center shrink-0 min-h-[64px]">
+            <div className="flex flex-col items-stretch justify-center rounded-2xl bg-white/[0.07] backdrop-blur-xl px-4 py-3 border border-white/[0.12] shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset,0_4px_24px_rgba(0,0,0,0.08)] flex-1 lg:flex-none lg:w-full text-center shrink-0 min-h-[64px]">
               <p className="text-[10px] font-semibold text-white/60 text-center">
                 {status === "past" ? t("home.status") : t("home.journey")}
               </p>
@@ -446,9 +451,9 @@ export function HomeScreen({
                         <span>{t("home.traveling")}</span>
                         <span>{t("home.end")}</span>
                       </div>
-                      <div className="relative h-1.5 w-full rounded-full bg-white/15 overflow-hidden border border-white/10">
+                      <div className="relative h-1.5 w-full rounded-full bg-white/[0.08] overflow-hidden border border-white/[0.06]">
                         <div
-                          className="absolute top-0 bottom-0 left-0 rounded-full bg-gradient-to-r from-teal-300 to-emerald-300 shadow-[0_0_6px_rgba(110,231,183,0.4)] transition-all duration-500"
+                          className="absolute top-0 bottom-0 left-0 rounded-full bg-gradient-to-r from-teal-300 via-cyan-300 to-sky-300 shadow-[0_0_8px_rgba(110,231,183,0.5),0_0_20px_rgba(110,231,183,0.15)] transition-all duration-500"
                           style={{ width: `${progressPercent}%` }}
                         />
                         <div
@@ -530,7 +535,7 @@ export function HomeScreen({
             ) : (
               <div
                 onClick={() => setWeatherModalOpen(true)}
-                className="flex flex-col items-stretch justify-center bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-3 gap-2 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
+                className="flex flex-col items-stretch justify-center bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-3xl p-3 gap-2 shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset,0_4px_24px_rgba(0,0,0,0.08)] hover:bg-white/[0.12] hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
               >
                 {/* Weather Info Block */}
                 <div className="flex items-center justify-between gap-2 w-full min-w-0">
@@ -1371,7 +1376,7 @@ export function HomeScreen({
 
   return (
     <>
-      <div className="space-y-4 md:space-y-6 animate-fadeIn mx-auto w-full max-w-[1120px]">
+      <div className="space-y-4 md:space-y-6 animate-fadeIn mx-auto w-full max-w-[1280px]">
         {renderHero()}
 
         {status === "past" && renderPastLayout()}

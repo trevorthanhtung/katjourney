@@ -1578,7 +1578,7 @@ function WrappedSection({
   }
 
   return (
-    <div className="mx-auto max-w-[1120px] px-1 md:px-0 space-y-6 md:space-y-8 pb-24">
+    <div className="mx-auto max-w-[1280px] px-1 md:px-0 space-y-6 md:space-y-8 pb-24">
       {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -1613,55 +1613,155 @@ function WrappedSection({
         </button>
       </div>
 
-      {/* Hero Recap Card */}
-      <section className="relative overflow-hidden rounded-[32px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border p-8 text-kat-text shadow-soft">
-        <div className="relative z-10 flex flex-col items-center text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary/10 text-kat-primary mb-4 ring-4 ring-kat-primary/5 border border-kat-primary/20">
-            <HugeiconsIcon icon={CompassIcon} className="h-6 w-6" />
-          </div>
-          <h2 className="text-[30px] md:text-[36px] font-black leading-tight tracking-tight text-kat-dark">
-            {data.trip.title}
-          </h2>
-          <div className="mt-4 flex flex-wrap justify-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
-              <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-kat-primary" />
-              {data.trip.location || t("more.noLocation")}
-            </span>
-            {data.trip.tripType === "dayTrip" || data.trip.startDate === data.trip.endDate ? (
-              <>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
-                  <HugeiconsIcon
-                    icon={Calendar01Icon}
-                    className="h-4 w-4 text-[#0081BE] dark:text-[#33A6DA]"
-                  />
-                  {formatDate(data.trip.startDate)}
+      {/* Bento Row 1: Hero Recap & Mood */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="lg:col-span-2 flex flex-col">
+          {/* Hero Recap Card */}
+          <section className="relative overflow-hidden rounded-[32px] bg-white/70 dark:bg-[#0E172A]/40 border border-slate-200/50 dark:border-white/5 p-8 text-kat-text shadow-[0_8px_30px_rgba(0,0,0,0.02)] flex-1 flex flex-col justify-center">
+            {/* Subtle ambient light behind the compass */}
+            <div className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-48 h-48 rounded-full bg-kat-primary/5 dark:bg-kat-primary/10 blur-[40px] pointer-events-none" />
+            <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-kat-primary/20 to-teal-400/20 text-kat-primary mb-4 ring-4 ring-kat-primary/5 border border-kat-primary/20 shadow-sm">
+                <HugeiconsIcon icon={CompassIcon} className="h-6 w-6" />
+              </div>
+              <h2 className="text-[30px] md:text-[36px] font-black leading-tight tracking-tight text-kat-dark dark:text-white">
+                {data.trip.title}
+              </h2>
+              <div className="mt-4 flex flex-wrap justify-center gap-2.5">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/50 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
+                  <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-kat-primary" />
+                  {data.trip.location || t("more.noLocation")}
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-kat-primary-soft border border-kat-primary/15 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable">
-                  <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5" />
-                  {t("more.wrappedDayTrip")}
-                </span>
-              </>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
-                <HugeiconsIcon
-                  icon={Calendar01Icon}
-                  className="h-4 w-4 text-[#0081BE] dark:text-[#33A6DA]"
-                />
-                {formatDate(data.trip.startDate)} – {formatDate(data.trip.endDate)}
-              </span>
-            )}
-          </div>
+                {data.trip.tripType === "dayTrip" || data.trip.startDate === data.trip.endDate ? (
+                  <>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/50 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
+                      <HugeiconsIcon
+                        icon={Calendar01Icon}
+                        className="h-4 w-4 text-[#0081BE] dark:text-[#33A6DA]"
+                      />
+                      {formatDate(data.trip.startDate)}
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-kat-primary-soft border border-kat-primary/15 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable">
+                      <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5" />
+                      {t("more.wrappedDayTrip")}
+                    </span>
+                  </>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50/50 dark:bg-slate-800/20 border border-slate-200/50 dark:border-slate-700/50 px-4 py-2 text-[14px] font-bold text-slate-700 dark:text-slate-300">
+                    <HugeiconsIcon
+                      icon={Calendar01Icon}
+                      className="h-4 w-4 text-[#0081BE] dark:text-[#33A6DA]"
+                    />
+                    {formatDate(data.trip.startDate)} – {formatDate(data.trip.endDate)}
+                  </span>
+                )}
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
+
+        <div className="lg:col-span-1 flex flex-col">
+          {/* Memory / Mood Section */}
+          {(() => {
+            const moodThemes: Record<
+              string,
+              { gradient: string; glow: string; iconColor: string }
+            > = {
+              great: {
+                // Hào hứng
+                gradient: "from-pink-500 via-rose-500 to-amber-500",
+                glow: "bg-rose-500/5 dark:bg-rose-500/10",
+                iconColor:
+                  "text-rose-500 bg-rose-500/10 dark:bg-rose-500/20 ring-rose-500/5 dark:ring-rose-500/10",
+              },
+              good: {
+                // Vui
+                gradient: "from-amber-500 via-orange-500 to-rose-500",
+                glow: "bg-amber-500/5 dark:bg-amber-500/10",
+                iconColor:
+                  "text-amber-500 bg-amber-500/10 dark:bg-amber-500/20 ring-amber-500/5 dark:ring-amber-500/10",
+              },
+              okay: {
+                // Bình yên
+                gradient: "from-emerald-400 via-teal-500 to-cyan-500",
+                glow: "bg-teal-500/5 dark:bg-teal-500/10",
+                iconColor:
+                  "text-teal-500 bg-teal-500/10 dark:bg-teal-500/20 ring-teal-500/5 dark:ring-teal-500/10",
+              },
+              bad: {
+                // Bất ngờ
+                gradient: "from-indigo-400 via-purple-500 to-pink-500",
+                glow: "bg-indigo-500/5 dark:bg-indigo-500/10",
+                iconColor:
+                  "text-indigo-500 bg-indigo-500/10 dark:bg-indigo-500/20 ring-indigo-500/5 dark:ring-indigo-500/10",
+              },
+              very_bad: {
+                // Mệt
+                gradient: "from-slate-400 via-zinc-500 to-blue-500",
+                glow: "bg-slate-500/5 dark:bg-slate-500/10",
+                iconColor:
+                  "text-slate-500 bg-slate-500/10 dark:bg-slate-500/20 ring-slate-500/5 dark:ring-slate-500/10",
+              },
+            };
+
+            const activeMoodKey = stats.mostCommonMood || "good";
+            const theme = moodThemes[activeMoodKey] || moodThemes.good;
+
+            return (
+              <div className="rounded-[32px] border border-slate-200/50 dark:border-white/5 bg-white/70 dark:bg-[#0E172A]/40 backdrop-blur-xl p-8 shadow-[0_8px_30px_rgba(0,0,0,0.02)] text-center flex flex-col items-center justify-center relative overflow-hidden flex-1">
+                <div
+                  className={`absolute -top-12 -right-12 w-32 h-32 rounded-full ${theme.glow} blur-[30px] pointer-events-none`}
+                />
+                <div
+                  className={`flex h-12 w-12 items-center justify-center rounded-full mb-4 ring-4 shrink-0 ${theme.iconColor}`}
+                >
+                  <HugeiconsIcon icon={SmilePlusIcon} className="h-6 w-6" />
+                </div>
+                <h3 className="text-[13px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2 shrink-0">
+                  {t("more.wrappedMoodTitle")}
+                </h3>
+                {mood ? (
+                  <div className="mt-2 flex flex-col items-center animate-fadeIn">
+                    <p
+                      className={`text-[32px] md:text-[36px] font-black bg-gradient-to-r ${theme.gradient} bg-clip-text text-transparent drop-shadow-sm`}
+                    >
+                      {mood}
+                    </p>
+                    <p className="mt-2 text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 text-center max-w-[280px] leading-relaxed">
+                      {t("more.wrappedMoodDesc")}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center mt-2">
+                    <p className="text-[16px] font-extrabold text-kat-dark mb-1.5">
+                      {t("more.wrappedNoMoodData")}
+                    </p>
+                    <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 mb-5 max-w-sm">
+                      {t("more.wrappedNoMoodDesc")}
+                    </p>
+                    <button
+                      onClick={() => setSection("journal")}
+                      className="flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 py-2.5 text-[14px] font-extrabold text-white dark:text-slate-950 hover:bg-kat-dark/95 dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] transition-all shadow-sm border border-transparent dark:border-kat-primary"
+                    >
+                      <HugeiconsIcon icon={BookOpen01Icon} className="h-4.5 w-4.5" />
+                      {t("more.wrappedPostFirstJournal")}
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+        </div>
+      </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+        <div className="rounded-[24px] border border-slate-200/50 dark:border-white/5 bg-white/70 dark:bg-[#0E172A]/40 backdrop-blur-md p-5 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-4 transition-all hover:scale-[1.015] hover:shadow-md duration-300">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
             <HugeiconsIcon icon={Sun01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
-            <span className="text-[28px] font-black text-kat-dark leading-none block">
+            <span className="text-[28px] font-black text-kat-dark dark:text-white leading-none block">
               {stats.totalDays}
             </span>
             <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">
@@ -1670,211 +1770,193 @@ function WrappedSection({
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+        <div className="rounded-[24px] border border-slate-200/50 dark:border-white/5 bg-white/70 dark:bg-[#0E172A]/40 backdrop-blur-md p-5 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-4 transition-all hover:scale-[1.015] hover:shadow-md duration-300">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary-soft text-kat-teal border border-kat-teal border-opacity-20">
             <HugeiconsIcon icon={Route01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
-            <span className="text-[28px] font-black text-kat-dark leading-none block">
+            <span className="text-[28px] font-black text-kat-dark dark:text-white leading-none block">
               {stats.activityCount}
             </span>
-            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-455 mt-1 block">
               {t("more.wrappedEvents")}
             </span>
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+        <div className="rounded-[24px] border border-slate-200/50 dark:border-white/5 bg-white/70 dark:bg-[#0E172A]/40 backdrop-blur-md p-5 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-4 transition-all hover:scale-[1.015] hover:shadow-md duration-300">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary/10 text-kat-primary border border-kat-primary/20">
             <HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
-            <span className="text-[28px] font-black text-kat-dark leading-none block">
+            <span className="text-[28px] font-black text-kat-dark dark:text-white leading-none block">
               {stats.checklistPercent}%
             </span>
-            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-455 mt-1 block">
               {t("more.wrappedPacking")}
             </span>
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-5 shadow-soft flex items-center gap-4 transition-all hover:shadow-md">
+        <div className="rounded-[24px] border border-slate-200/50 dark:border-white/5 bg-white/70 dark:bg-[#0E172A]/40 backdrop-blur-md p-5 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex items-center gap-4 transition-all hover:scale-[1.015] hover:shadow-md duration-300">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-kat-primary-soft text-kat-teal border border-kat-teal border-opacity-20">
             <HugeiconsIcon icon={BookOpen01Icon} className="h-6 w-6" />
           </div>
           <div className="min-w-0">
-            <span className="text-[28px] font-black text-kat-dark leading-none block">
+            <span className="text-[28px] font-black text-kat-dark dark:text-white leading-none block">
               {stats.journalCount}
             </span>
-            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-450 mt-1 block">
+            <span className="text-[12px] font-bold text-slate-500 dark:text-slate-455 mt-1 block">
               {t("more.wrappedJournals")}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Finance Recap */}
-      <div className="rounded-[32px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border p-8 text-kat-text shadow-soft relative overflow-hidden">
-        <div className="relative z-10">
-          <h3 className="text-[13px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
-            <HugeiconsIcon icon={WalletCardsIcon} className="h-5 w-5 text-kat-primary" />
-            {t("more.wrappedExpenseTitle")}
-          </h3>
+      {/* Bento Row 3: Finance Recap & Storytelling Stack */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="lg:col-span-2 flex flex-col">
+          {/* Finance Recap */}
+          <div className="rounded-[32px] bg-white/70 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-8 text-kat-text shadow-[0_8px_30px_rgba(0,0,0,0.02)] relative overflow-hidden flex-1 flex flex-col justify-center">
+            {/* Decorative corner glow */}
+            <div className="absolute -bottom-16 -left-16 w-36 h-36 rounded-full bg-emerald-500/5 dark:bg-emerald-500/10 blur-[40px] pointer-events-none" />
 
-          {data.expenses.length > 0 ? (
-            <div className="space-y-6">
-              <div>
-                <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">
-                  {t("more.wrappedTotalExpense")}
-                </p>
-                <p className="mt-1 text-[36px] font-black text-kat-dark leading-none">
-                  {formatMoney(stats.totalExpense)}
-                </p>
-              </div>
+            <div className="relative z-10">
+              <h3 className="text-[13px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
+                <HugeiconsIcon icon={WalletCardsIcon} className="h-5 w-5 text-kat-primary" />
+                {t("more.wrappedExpenseTitle")}
+              </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200/60 dark:border-slate-700/50 pt-6 max-w-md">
-                <div>
-                  <p className="text-[13px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider">
-                    {t("more.wrappedSharedExpense")}
-                  </p>
-                  <p className="mt-1 text-[18px] font-black text-kat-primary-usable">
-                    {formatMoney(sharedTotal)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[13px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider">
-                    {t("more.wrappedPersonalExpense")}
-                  </p>
-                  <p className="mt-1 text-[18px] font-black text-kat-dark">
-                    {formatMoney(personalTotal)}
-                  </p>
-                </div>
-              </div>
-
-              {data.members.length === 0 ? (
-                <div className="border-t border-slate-200/60 dark:border-slate-700/50 pt-6">
-                  <div className="rounded-2xl border border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/25 px-4 py-3.5 text-[13.5px] text-slate-500 dark:text-slate-400 font-semibold leading-relaxed">
-                    {t("more.wrappedNoMembersExpense")}
+              {data.expenses.length > 0 ? (
+                <div className="space-y-6">
+                  <div>
+                    <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">
+                      {t("more.wrappedTotalExpense")}
+                    </p>
+                    <p className="mt-2 text-[42px] md:text-[48px] font-black bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent leading-none tracking-tight">
+                      {formatMoney(stats.totalExpense)}
+                    </p>
                   </div>
-                </div>
-              ) : (
-                <>
-                  {stats.topPayer && (
-                    <div className="border-t border-slate-200/60 dark:border-slate-700/50 pt-6">
-                      <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">
-                        {t("more.wrappedTopPayer")}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl">
+                    <div className="bg-emerald-500/[0.04] dark:bg-emerald-500/[0.06] border border-emerald-500/10 dark:border-emerald-500/5 rounded-2xl p-4 flex flex-col justify-center">
+                      <p className="text-[11px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">
+                        {t("more.wrappedSharedExpense")}
                       </p>
-                      <p className="mt-1 text-[14.5px] font-medium leading-relaxed text-slate-600 dark:text-slate-350">
-                        <span className="font-extrabold text-kat-dark">{stats.topPayer.name}</span>{" "}
-                        {t("more.wrappedTopPayerDesc")}{" "}
-                        <span className="font-extrabold text-kat-primary-usable">
-                          {formatMoney(stats.topPayer.amount)}
-                        </span>
-                        .
+                      <p className="mt-2.5 text-[20px] font-black text-emerald-600 dark:text-emerald-400 leading-none">
+                        {formatMoney(sharedTotal)}
                       </p>
                     </div>
+                    <div className="bg-slate-500/[0.04] dark:bg-slate-500/[0.06] border border-slate-500/10 dark:border-slate-500/5 rounded-2xl p-4 flex flex-col justify-center">
+                      <p className="text-[11px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">
+                        {t("more.wrappedPersonalExpense")}
+                      </p>
+                      <p className="mt-2.5 text-[20px] font-black text-slate-700 dark:text-slate-200 leading-none">
+                        {formatMoney(personalTotal)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {data.members.length === 0 ? (
+                    <div className="max-w-xl">
+                      <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/25 px-4 py-3.5 text-[13.5px] text-slate-500 dark:text-slate-400 font-semibold leading-relaxed">
+                        {t("more.wrappedNoMembersExpense")}
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {stats.topPayer && (
+                        <div className="max-w-xl">
+                          <div className="rounded-2xl bg-amber-500/[0.04] dark:bg-amber-500/[0.08] border border-amber-500/15 dark:border-amber-500/10 p-4 flex items-start gap-3.5 shadow-sm">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-500 shadow-inner">
+                              <HugeiconsIcon icon={StarIcon} className="h-5.5 w-5.5" />
+                            </div>
+                            <div>
+                              <p className="text-[11px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider leading-none">
+                                {t("more.wrappedTopPayer")}
+                              </p>
+                              <p className="mt-2.5 text-[14px] font-medium leading-relaxed text-slate-600 dark:text-slate-350">
+                                <span className="font-extrabold text-slate-800 dark:text-white">
+                                  {stats.topPayer.name}
+                                </span>{" "}
+                                {t("more.wrappedTopPayerDesc")}{" "}
+                                <span className="font-extrabold text-amber-600 dark:text-amber-400">
+                                  {formatMoney(stats.topPayer.amount)}
+                                </span>
+                                .
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
-                </>
+                </div>
+              ) : (
+                <div className="text-center py-6 border border-slate-200/60 dark:border-slate-700/50 rounded-2xl bg-slate-50/40 dark:bg-slate-800/10">
+                  <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-450">
+                    {t("more.wrappedNoExpenseData")}
+                  </p>
+                </div>
               )}
             </div>
-          ) : (
-            <div className="text-center py-6 border border-slate-200/60 dark:border-slate-700/50 rounded-2xl bg-slate-50/40 dark:bg-slate-800/10">
-              <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-450">
-                {t("more.wrappedNoExpenseData")}
-              </p>
+          </div>
+        </div>
+
+        <div className="lg:col-span-1 flex flex-col gap-4">
+          {/* First Moment */}
+          <div className="rounded-[24px] border border-slate-200/50 dark:border-white/5 bg-white/70 dark:bg-[#0E172A]/40 backdrop-blur-md p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-all hover:scale-[1.015] hover:shadow-md duration-300 flex-1">
+            <div className="flex items-center gap-2 mb-3">
+              <HugeiconsIcon icon={Camera01Icon} className="h-5 w-5 text-amber-500" />
+              <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">
+                {t("more.wrappedFirstMoment")}
+              </h4>
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* Memory / Mood Section */}
-      <div className="rounded-[32px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-8 shadow-soft text-center flex flex-col items-center justify-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-500 mb-4 ring-4 ring-amber-500/5 dark:ring-amber-500/10">
-          <HugeiconsIcon icon={SmilePlusIcon} className="h-6 w-6" />
-        </div>
-        <h3 className="text-[13px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2">
-          {t("more.wrappedMoodTitle")}
-        </h3>
-        {mood ? (
-          <div className="mt-2 flex flex-col items-center animate-fadeIn">
-            <p className="text-[28px] md:text-[32px] font-black text-kat-dark dark:text-white">
-              {mood}
-            </p>
-            <p className="mt-2 text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 text-center max-w-[280px] leading-relaxed">
-              {t("more.wrappedMoodDesc")}
+            <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
+              {firstMomentText ||
+                "Chưa có dấu ấn đầu tiên. Hãy thêm hoạt động hoặc đăng bài viết để lưu lại khoảnh khắc mở đầu."}
             </p>
           </div>
-        ) : (
-          <div className="flex flex-col items-center mt-2">
-            <p className="text-[16px] font-extrabold text-kat-dark mb-1.5">
-              {t("more.wrappedNoMoodData")}
+
+          {/* Most Eventful Day */}
+          <div className="rounded-[24px] border border-slate-200/50 dark:border-white/5 bg-white/70 dark:bg-[#0E172A]/40 backdrop-blur-md p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-all hover:scale-[1.015] hover:shadow-md duration-300 flex-1">
+            <div className="flex items-center gap-2 mb-3">
+              <HugeiconsIcon icon={StarIcon} className="h-5 w-5 text-amber-500" />
+              <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">
+                {t("more.wrappedBusiestDay")}
+              </h4>
+            </div>
+            <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
+              {maxEventsDate ? (
+                <>
+                  <span className="font-extrabold text-amber-600 dark:text-amber-400">
+                    {formatDate(maxEventsDate)}
+                  </span>{" "}
+                  {t("more.wrappedBusiestDayDesc")}{" "}
+                  <span className="font-bold text-kat-dark">
+                    {maxEventsCount} {t("more.wrappedBusiestDayDesc2")}
+                  </span>
+                </>
+              ) : (
+                t("more.wrappedNoBusiestDay")
+              )}
             </p>
-            <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 mb-5 max-w-sm">
-              {t("more.wrappedNoMoodDesc")}
+          </div>
+
+          {/* Locations Visited */}
+          <div className="rounded-[24px] border border-slate-200/50 dark:border-white/5 bg-white/70 dark:bg-[#0E172A]/40 backdrop-blur-md p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col justify-between transition-all hover:scale-[1.015] hover:shadow-md duration-300 flex-1">
+            <div className="flex items-center gap-2 mb-3">
+              <HugeiconsIcon icon={MapsIcon} className="h-5 w-5 text-kat-primary" />
+              <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">
+                {t("more.wrappedLocations")}
+              </h4>
+            </div>
+            <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
+              {uniqueLocations.length > 0
+                ? uniqueLocations.join(", ")
+                : t("more.wrappedNoLocations")}
             </p>
-            <button
-              onClick={() => setSection("journal")}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 py-2.5 text-[14px] font-extrabold text-white dark:text-slate-950 hover:bg-kat-dark/95 dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] transition-all shadow-sm border border-transparent dark:border-kat-primary"
-            >
-              <HugeiconsIcon icon={BookOpen01Icon} className="h-4.5 w-4.5" />
-              {t("more.wrappedPostFirstJournal")}
-            </button>
           </div>
-        )}
-      </div>
-
-      {/* Storytelling Blocks */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* First Moment */}
-        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-soft flex flex-col justify-between">
-          <div className="flex items-center gap-2 mb-3">
-            <HugeiconsIcon icon={Camera01Icon} className="h-5 w-5 text-amber-500" />
-            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">
-              {t("more.wrappedFirstMoment")}
-            </h4>
-          </div>
-          <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
-            {firstMomentText ||
-              "Chưa có dấu ấn đầu tiên. Hãy thêm hoạt động hoặc đăng bài viết để lưu lại khoảnh khắc mở đầu."}
-          </p>
-        </div>
-
-        {/* Most Eventful Day */}
-        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-soft flex flex-col justify-between">
-          <div className="flex items-center gap-2 mb-3">
-            <HugeiconsIcon icon={StarIcon} className="h-5 w-5 text-amber-500" />
-            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">
-              {t("more.wrappedBusiestDay")}
-            </h4>
-          </div>
-          <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
-            {maxEventsDate ? (
-              <>
-                <span className="font-extrabold text-amber-600 dark:text-amber-400">
-                  {formatDate(maxEventsDate)}
-                </span>{" "}
-                {t("more.wrappedBusiestDayDesc")}{" "}
-                <span className="font-bold text-kat-dark">
-                  {maxEventsCount} {t("more.wrappedBusiestDayDesc2")}
-                </span>
-              </>
-            ) : (
-              t("more.wrappedNoBusiestDay")
-            )}
-          </p>
-        </div>
-
-        {/* Locations Visited */}
-        <div className="rounded-[24px] border border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface p-6 shadow-soft flex flex-col justify-between">
-          <div className="flex items-center gap-2 mb-3">
-            <HugeiconsIcon icon={MapsIcon} className="h-5 w-5 text-kat-primary" />
-            <h4 className="text-[13px] font-bold text-slate-500 dark:text-slate-400">
-              {t("more.wrappedLocations")}
-            </h4>
-          </div>
-          <p className="text-[14.5px] font-semibold text-slate-500 dark:text-slate-350 leading-relaxed">
-            {uniqueLocations.length > 0 ? uniqueLocations.join(", ") : t("more.wrappedNoLocations")}
-          </p>
         </div>
       </div>
     </div>
@@ -2024,33 +2106,46 @@ function MemberCardRow({
   const isLuggage = roleLower.includes("hành lý") || roleLower.includes("phụ trách hành lý");
 
   let cardBg =
-    "bg-gradient-to-br from-slate-50/20 via-white to-white border-slate-200/60 dark:from-slate-800/10 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-  let borderAccent = "border-l-4 border-l-slate-400";
+    "bg-gradient-to-br from-slate-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-slate-800/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+  let borderAccent = "border-l-[3.5px] border-l-slate-400";
+  let avatarRing = "ring-2 ring-slate-100 dark:ring-slate-800";
 
   if (isLeader) {
     cardBg =
-      "bg-gradient-to-br from-amber-50/30 via-white to-white border-slate-200/60 dark:from-amber-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-    borderAccent = "border-l-4 border-l-amber-500";
+      "bg-gradient-to-br from-amber-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-amber-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+    borderAccent = "border-l-[3.5px] border-l-amber-500";
+    avatarRing =
+      "ring-2 ring-amber-400/60 dark:ring-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.2)]";
   } else if (isCost) {
     cardBg =
-      "bg-gradient-to-br from-emerald-50/30 via-white to-white border-slate-200/60 dark:from-emerald-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-    borderAccent = "border-l-4 border-l-emerald-500";
+      "bg-gradient-to-br from-emerald-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-emerald-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+    borderAccent = "border-l-[3.5px] border-l-emerald-500";
+    avatarRing =
+      "ring-2 ring-emerald-400/60 dark:ring-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.2)]";
   } else if (isDriver) {
     cardBg =
-      "bg-gradient-to-br from-blue-50/30 via-white to-white border-slate-200/60 dark:from-blue-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-    borderAccent = "border-l-4 border-l-blue-500";
+      "bg-gradient-to-br from-blue-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-blue-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+    borderAccent = "border-l-[3.5px] border-l-blue-500";
+    avatarRing =
+      "ring-2 ring-blue-400/60 dark:ring-blue-500/40 shadow-[0_0_8px_rgba(59,130,246,0.2)]";
   } else if (isGuide) {
     cardBg =
-      "bg-gradient-to-br from-sky-50/30 via-white to-white border-slate-200/60 dark:from-sky-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-    borderAccent = "border-l-4 border-l-sky-500";
+      "bg-gradient-to-br from-sky-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-sky-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+    borderAccent = "border-l-[3.5px] border-l-sky-500";
+    avatarRing =
+      "ring-2 ring-sky-400/60 dark:ring-sky-500/40 shadow-[0_0_8px_rgba(14,165,233,0.2)]";
   } else if (isLuggage) {
     cardBg =
-      "bg-gradient-to-br from-indigo-50/30 via-white to-white border-slate-200/60 dark:from-indigo-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-    borderAccent = "border-l-4 border-l-indigo-500";
+      "bg-gradient-to-br from-indigo-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-indigo-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+    borderAccent = "border-l-[3.5px] border-l-indigo-500";
+    avatarRing =
+      "ring-2 ring-indigo-400/60 dark:ring-indigo-500/40 shadow-[0_0_8px_rgba(99,102,241,0.2)]";
   } else if (member.isGroupLeader) {
     cardBg =
-      "bg-gradient-to-br from-teal-50/30 via-white to-white border-slate-200/60 dark:from-teal-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-    borderAccent = "border-l-4 border-l-teal-500";
+      "bg-gradient-to-br from-teal-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-teal-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+    borderAccent = "border-l-[3.5px] border-l-teal-500";
+    avatarRing =
+      "ring-2 ring-teal-400/60 dark:ring-teal-500/40 shadow-[0_0_8px_rgba(20,184,166,0.2)]";
   }
 
   const renderRoleBadge = (roleStr: string) => {
@@ -2148,7 +2243,9 @@ function MemberCardRow({
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4 min-w-0 flex-1">
           {/* Avatar */}
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+          <div
+            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] ${avatarRing}`}
+          >
             {member.avatar ? (
               getAvatarSvg(member.avatar, "w-full h-full")
             ) : (
@@ -2167,10 +2264,16 @@ function MemberCardRow({
               {renderRoleBadge(member.role || "Người đồng hành")}
             </div>
             {member.phone && (
-              <p className="text-[13.5px] font-semibold text-slate-500">
-                {t("members.phonePrefix")}
-                <span className="text-kat-dark">{member.phone}</span>
-              </p>
+              <div className="mt-0.5">
+                <a
+                  href={`tel:${member.phone}`}
+                  className="inline-flex items-center gap-1.5 text-[13px] font-extrabold text-slate-500 hover:text-kat-teal dark:hover:text-kat-primary transition-colors leading-none"
+                  title={`Gọi ${member.name}`}
+                >
+                  <HugeiconsIcon icon={CallIcon} className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <span>{member.phone}</span>
+                </a>
+              </div>
             )}
             {member.group && (
               <div className="flex items-center gap-1.5 mt-0.5">
@@ -2194,7 +2297,7 @@ function MemberCardRow({
               </div>
             )}
             {member.note && (
-              <p className="text-[13px] font-medium text-slate-400 dark:text-slate-500 italic mt-1 bg-slate-50/70 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-100/50 dark:border-slate-700/30 break-words">
+              <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 italic mt-2.5 border-l-2 border-slate-200 dark:border-slate-700/60 pl-3 py-0.5 max-w-full break-words leading-relaxed">
                 "{member.note}"
               </p>
             )}
@@ -2265,24 +2368,27 @@ function MemberCardRow({
         <div className="flex flex-wrap gap-2 text-[12px]">
           <span
             className={classNames(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-all duration-200 hover:scale-[1.02] cursor-default",
               assignedTasksCount === 0
-                ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700/30 text-slate-400 dark:text-slate-500 font-semibold"
-                : "bg-sky-50/50 dark:bg-sky-950/20 border-sky-100 dark:border-sky-900/30 text-sky-700 dark:text-sky-400 font-bold"
+                ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-150 dark:border-white/5 text-slate-450 dark:text-slate-500 font-bold"
+                : "bg-sky-500/[0.04] dark:bg-sky-500/[0.08] border-sky-500/10 text-sky-650 dark:text-sky-400 font-extrabold"
             )}
           >
-            <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 shrink-0" />
+            <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 shrink-0 text-sky-500" />
             {assignedTasksCount} {t("members.taskCount")}
           </span>
           <span
             className={classNames(
-              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-extrabold shadow-sm border",
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-all duration-200 hover:scale-[1.02] cursor-default",
               totalSpent > 0
-                ? "bg-kat-teal-soft/30 dark:bg-kat-teal-soft/10 text-kat-teal dark:text-kat-primary-usable border-kat-teal/20"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700"
+                ? "bg-emerald-500/[0.04] dark:bg-emerald-500/[0.08] border-emerald-500/10 text-emerald-650 dark:text-emerald-400 font-extrabold"
+                : "bg-slate-50/50 dark:bg-slate-800/20 border-slate-150 dark:border-white/5 text-slate-450 dark:text-slate-500 font-bold"
             )}
           >
-            <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5 shrink-0" />
+            <HugeiconsIcon
+              icon={WalletCardsIcon}
+              className="h-3.5 w-3.5 shrink-0 text-emerald-500"
+            />
             {t("members.paidPrefix")}
             {formatMoney(totalSpent)}{" "}
             {paidExpensesCount > 0 && `(${paidExpensesCount} ${t("members.paidTimes")})`}
@@ -2720,7 +2826,7 @@ export function MoreScreen({
     ).length;
 
     return (
-      <div className="mx-auto max-w-[960px] space-y-6 pb-0 md:pb-8">
+      <div className="mx-auto max-w-[1280px] space-y-6 pb-0 md:pb-8">
         {/* Header / Title Row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -2756,49 +2862,49 @@ export function MoreScreen({
           {members.length ? (
             <div className="space-y-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="rounded-[20px] bg-white dark:bg-kat-surface border border-slate-200/60 dark:border-slate-800/60 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-transform hover:scale-[1.02]">
-                  <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-500 flex items-center justify-center mb-2">
+                <div className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-default">
+                  <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-2 border border-blue-500/20 shadow-inner">
                     <HugeiconsIcon icon={UserGroupIcon} className="w-5 h-5" />
                   </div>
-                  <span className="text-[20px] font-black text-kat-dark leading-none">
+                  <span className="text-[20px] font-black text-kat-dark dark:text-white leading-none">
                     {members.length}
                   </span>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">
+                  <span className="text-[10.5px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-wider mt-2">
                     {t("members.statMembers")}
                   </span>
                 </div>
 
-                <div className="rounded-[20px] bg-white dark:bg-kat-surface border border-slate-200/60 dark:border-slate-800/60 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-transform hover:scale-[1.02]">
-                  <div className="h-10 w-10 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-500 flex items-center justify-center mb-2">
+                <div className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-default">
+                  <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-2 border border-amber-500/20 shadow-inner">
                     <HugeiconsIcon icon={CheckmarkBadge01Icon} className="w-5 h-5" />
                   </div>
-                  <span className="text-[20px] font-black text-kat-dark leading-none">
+                  <span className="text-[20px] font-black text-kat-dark dark:text-white leading-none">
                     {membersWithTasks}
                   </span>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">
+                  <span className="text-[10.5px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-wider mt-2">
                     {t("members.statTasks")}
                   </span>
                 </div>
 
-                <div className="rounded-[20px] bg-white dark:bg-kat-surface border border-slate-200/60 dark:border-slate-800/60 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-transform hover:scale-[1.02]">
-                  <div className="h-10 w-10 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 flex items-center justify-center mb-2">
+                <div className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-default">
+                  <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-2 border border-emerald-500/20 shadow-inner">
                     <HugeiconsIcon icon={WalletCardsIcon} className="w-5 h-5" />
                   </div>
-                  <span className="text-[20px] font-black text-kat-dark leading-none">
+                  <span className="text-[20px] font-black text-kat-dark dark:text-white leading-none">
                     {membersWithExpenses}
                   </span>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">
+                  <span className="text-[10.5px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-wider mt-2">
                     {t("members.statPaid")}
                   </span>
                 </div>
 
-                <div className="rounded-[20px] bg-white dark:bg-kat-surface border border-slate-200/60 dark:border-slate-800/60 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-transform hover:scale-[1.02]">
+                <div className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-default">
                   <div
                     className={classNames(
-                      "h-10 w-10 rounded-full flex items-center justify-center mb-2",
+                      "h-10 w-10 rounded-xl flex items-center justify-center mb-2 border shadow-inner",
                       members.length >= 2
-                        ? "bg-teal-50 dark:bg-teal-900/20 text-teal-500"
-                        : "bg-slate-50 dark:bg-slate-800 text-slate-400"
+                        ? "bg-teal-500/10 text-teal-500 border-teal-500/20"
+                        : "bg-slate-50 dark:bg-slate-800 text-slate-400 border-slate-100 dark:border-slate-700"
                     )}
                   >
                     <HugeiconsIcon
@@ -2809,12 +2915,12 @@ export function MoreScreen({
                   <span
                     className={classNames(
                       "text-[14px] font-black leading-none",
-                      members.length >= 2 ? "text-kat-dark" : "text-slate-400"
+                      members.length >= 2 ? "text-kat-dark dark:text-white" : "text-slate-400"
                     )}
                   >
                     {members.length >= 2 ? t("members.statReady") : t("members.statNeedMore")}
                   </span>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">
+                  <span className="text-[10.5px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-wider mt-2">
                     {t("members.statSplit")}
                   </span>
                 </div>
@@ -2893,13 +2999,15 @@ export function MoreScreen({
                 <div className="flex flex-col gap-6">
                   {groups.map((g) => (
                     <div key={g.name} className="animate-fadeIn">
-                      <div className="flex items-center gap-2 mb-3 px-1">
-                        <HugeiconsIcon icon={UserGroupIcon} className="w-5 h-5 text-kat-teal" />
-                        <h3 className="text-[14px] font-bold text-slate-700 dark:text-slate-300">
-                          {g.name}
-                        </h3>
+                      <div className="flex items-center mb-3 px-1">
+                        <div className="inline-flex items-center gap-2 bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/50 dark:border-white/5 px-3.5 py-1.5 rounded-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.01)] select-none">
+                          <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 text-kat-teal" />
+                          <h3 className="text-[12.5px] font-extrabold text-slate-700 dark:text-slate-200 tracking-wide uppercase">
+                            {g.name}
+                          </h3>
+                        </div>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5">
                         {g.members.map((member) => (
                           <MemberCardRow
                             key={member.id}
@@ -2921,14 +3029,16 @@ export function MoreScreen({
                   {noGroup.length > 0 && (
                     <div className={groups.length > 0 ? "animate-fadeIn" : "animate-fadeIn"}>
                       {groups.length > 0 && (
-                        <div className="flex items-center gap-2 mb-3 px-1">
-                          <HugeiconsIcon icon={UserIcon} className="w-5 h-5 text-slate-400" />
-                          <h3 className="text-[14px] font-bold text-slate-700 dark:text-slate-300">
-                            {t("members.otherMembers")}
-                          </h3>
+                        <div className="flex items-center mb-3 px-1">
+                          <div className="inline-flex items-center gap-2 bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/50 dark:border-white/5 px-3.5 py-1.5 rounded-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.01)] select-none">
+                            <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400" />
+                            <h3 className="text-[12.5px] font-extrabold text-slate-700 dark:text-slate-200 tracking-wide uppercase">
+                              {t("members.otherMembers")}
+                            </h3>
+                          </div>
                         </div>
                       )}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5">
                         {noGroup.map((member) => (
                           <MemberCardRow
                             key={member.id}
@@ -3158,7 +3268,7 @@ export function MoreScreen({
   const tripDurationText = getTripDurationText();
 
   return (
-    <div className="mx-auto max-w-[800px] px-2 md:px-0">
+    <div className="mx-auto max-w-[1280px] px-2 md:px-0">
       <div className="flex flex-col gap-6 pb-0 md:pb-8">
         {/* Title Block */}
         <div>
@@ -3171,7 +3281,10 @@ export function MoreScreen({
         </div>
 
         {/* Hero chuyến đi compact hơn */}
-        <section className="relative overflow-hidden rounded-[28px] bg-white dark:bg-kat-surface border border-slate-200 dark:border-slate-800/80 p-5 md:p-6 text-kat-text shadow-soft">
+        <section className="relative overflow-hidden rounded-[28px] bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-white/5 p-5 md:p-6 text-kat-text shadow-soft">
+          {/* Ambient background glow */}
+          <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-kat-primary/5 dark:bg-kat-primary/10 blur-[40px] pointer-events-none" />
+
           <div
             className="absolute -right-6 -bottom-6 w-32 h-32 rotate-12 pointer-events-none z-0 flex items-center justify-center text-kat-primary"
             style={{ opacity: 0.04, color: "var(--kat-primary)" }}
@@ -3182,7 +3295,7 @@ export function MoreScreen({
           <div className="relative z-10 flex flex-col gap-4">
             {/* Header info */}
             <div>
-              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-550 dark:text-slate-450">
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-450">
                 {t("more.currentTrip")}
               </p>
               <h3 className="mt-1 break-words text-[24px] md:text-[28px] font-black leading-tight tracking-tight text-kat-dark dark:text-slate-200">
@@ -3191,38 +3304,38 @@ export function MoreScreen({
             </div>
 
             {/* Metadata tags */}
-            <div className="flex flex-wrap gap-2 text-[12.5px] font-bold text-slate-600 dark:text-slate-400">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/35 px-3 py-1.5">
+            <div className="flex flex-wrap gap-2 text-[12.5px] font-bold text-slate-650 dark:text-slate-355">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50/50 dark:bg-slate-800/45 border border-slate-200/60 dark:border-white/5 px-3.5 py-1.5 transition-all hover:bg-slate-100/50 dark:hover:bg-slate-800/80 duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
                 <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 {trip.location || t("more.noLocation")}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/35 px-3 py-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50/50 dark:bg-slate-800/45 border border-slate-200/60 dark:border-white/5 px-3.5 py-1.5 transition-all hover:bg-slate-100/50 dark:hover:bg-slate-800/80 duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
                 <HugeiconsIcon icon={Calendar01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 {trip.startDate === trip.endDate
                   ? formatDate(trip.startDate)
                   : `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}`}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/35 px-3 py-1.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50/50 dark:bg-slate-800/45 border border-slate-200/60 dark:border-white/5 px-3.5 py-1.5 transition-all hover:bg-slate-100/50 dark:hover:bg-slate-800/80 duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
                 <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                 {tripDurationText}
               </span>
             </div>
 
             {/* Compact inline stats pills */}
-            <div className="flex flex-wrap gap-2 pt-2.5 border-t border-slate-200/60 dark:border-slate-800/80 mt-1">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-kat-primary-soft dark:bg-kat-primary/10 border border-kat-primary/20 dark:border-kat-primary/30 px-3 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable dark:text-kat-primary">
+            <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100 dark:border-white/5 mt-1">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-kat-primary-soft dark:bg-kat-primary/10 border border-kat-primary/20 dark:border-kat-primary/30 px-3.5 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable dark:text-kat-primary transition-all hover:scale-[1.025] duration-200 cursor-default">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5" />
                 {members.length} {t("more.membersCount")}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0081BE]/8 dark:bg-[#0081BE]/10 border border-[#0081BE]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#0081BE]">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0081BE]/8 dark:bg-[#0081BE]/10 border border-[#0081BE]/15 px-3.5 py-1.5 text-[12.5px] font-extrabold text-[#0081BE] transition-all hover:scale-[1.025] duration-200 cursor-default">
                 <HugeiconsIcon icon={Route01Icon} className="h-3.5 w-3.5" />
                 {events.length} {t("more.eventsCount")}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/8 dark:bg-emerald-500/10 border border-emerald-500/15 px-3 py-1.5 text-[12.5px] font-extrabold text-emerald-600 dark:text-emerald-450">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-55/90 dark:bg-emerald-500/10 border border-emerald-500/15 px-3.5 py-1.5 text-[12.5px] font-extrabold text-emerald-600 dark:text-emerald-450 transition-all hover:scale-[1.025] duration-200 cursor-default">
                 <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5" />
                 {formatMoney(totalExpense)} {t("more.expensesCount")}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F89B02]/8 dark:bg-[#F89B02]/10 border border-[#F89B02]/15 px-3 py-1.5 text-[12.5px] font-extrabold text-[#F89B02]">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F89B02]/8 dark:bg-[#F89B02]/10 border border-[#F89B02]/15 px-3.5 py-1.5 text-[12.5px] font-extrabold text-[#F89B02] transition-all hover:scale-[1.025] duration-200 cursor-default">
                 <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5" />
                 {t("more.packingProgress")} {checklistPercent}%
               </span>
@@ -3235,7 +3348,7 @@ export function MoreScreen({
           <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">
             {t("more.sectionFeatures")}
           </h3>
-          <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
+          <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-3">
             <ActionCard
               icon={MapsIcon}
               title={t("more.featureTripInfo")}
@@ -3287,8 +3400,8 @@ export function MoreScreen({
           <h3 className="px-2 text-[15px] font-extrabold uppercase tracking-wider text-slate-400">
             {t("more.sectionData")}
           </h3>
-          <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3">
-            <div className="flex flex-col gap-2 md:col-span-2">
+          <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-3">
+            <div className="flex flex-col gap-2 sm:col-span-2 lg:col-span-3">
               <ActionCard
                 icon={DatabaseBackupIcon}
                 title={t("more.dataTripData")}
@@ -3721,31 +3834,28 @@ export function MoreScreen({
               </div>
             </>
           ) : (
-            <div className="space-y-5 animate-fadeIn">
-              {/* Success layout */}
-              <div className="flex items-center gap-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100/80 dark:border-emerald-900/30 p-3.5">
-                <HugeiconsIcon
-                  icon={CheckmarkCircle01Icon}
-                  className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0"
-                />
-                <span className="text-[14px] font-bold text-emerald-800 dark:text-emerald-300">
+            <div className="space-y-6 animate-fadeIn pb-2">
+              {/* Premium Success Layout */}
+              <div className="relative overflow-hidden flex items-center gap-3 rounded-[16px] bg-gradient-to-r from-emerald-500/10 via-emerald-400/5 to-transparent border border-emerald-500/20 py-2.5 px-3.5">
+                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white shadow-[0_0_12px_rgba(16,185,129,0.4)]">
+                  <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" />
+                </div>
+                <span className="text-[13.5px] font-bold text-emerald-800 dark:text-emerald-400 tracking-tight mt-0.5">
                   {t("share.linkCreated")}
                 </span>
               </div>
 
-              {/* Copy Link field inside an Input container with inline Copy button */}
-              <div className="relative flex items-center rounded-xl bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 px-3 py-2.5">
+              {/* Ultra-sleek Link Input container */}
+              <div className="group relative flex items-center rounded-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-1.5 pl-5 shadow-sm hover:border-sky-500/30 transition-all duration-300 min-h-[48px]">
                 <input
                   type="text"
                   readOnly
                   value={activeShareLink.url}
                   onClick={(e) => (e.target as HTMLInputElement).select()}
-                  className={classNames(
-                    "flex-1 bg-transparent border-none outline-none text-slate-600 dark:text-slate-300 text-[13.5px] font-medium truncate cursor-text",
-                    typeof navigator !== "undefined" && "share" in navigator ? "pr-20" : "pr-10"
-                  )}
+                  className="flex-1 bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 text-[13.5px] font-medium truncate cursor-text mr-2"
                 />
-                <div className="absolute right-2 flex items-center gap-1.5">
+                <div className="flex shrink-0 items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() => {
@@ -3753,16 +3863,16 @@ export function MoreScreen({
                       setCopiedLink(true);
                       setTimeout(() => setCopiedLink(false), 2000);
                     }}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all shadow-sm active:scale-95"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-100 hover:text-slate-800 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-all active:scale-95"
                     title="Sao chép link"
                   >
                     {copiedLink ? (
                       <HugeiconsIcon
                         icon={CheckIcon}
-                        className="h-4 w-4 text-emerald-500 dark:text-emerald-400"
+                        className="h-5 w-5 text-emerald-500 dark:text-emerald-400"
                       />
                     ) : (
-                      <HugeiconsIcon icon={CopyIcon} className="h-4 w-4" />
+                      <HugeiconsIcon icon={CopyIcon} className="h-4.5 w-4.5" />
                     )}
                   </button>
                   {typeof navigator !== "undefined" && "share" in navigator && (
@@ -3779,7 +3889,7 @@ export function MoreScreen({
                           console.log("Share failed or cancelled", err);
                         }
                       }}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-kat-dark dark:bg-kat-primary border border-kat-dark dark:border-kat-primary text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 transition-all shadow-sm active:scale-95"
+                      className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 hover:brightness-110 shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-all active:scale-95"
                       title="Chia sẻ qua hệ thống"
                     >
                       <HugeiconsIcon icon={Share01Icon} className="h-4 w-4" />
@@ -3788,44 +3898,47 @@ export function MoreScreen({
                 </div>
               </div>
 
-              {/* Status display */}
-              <div className="text-[12px] font-semibold flex items-center gap-2 bg-slate-50 dark:bg-slate-800/20 border border-slate-150/50 dark:border-slate-700/30 rounded-xl py-2 px-3 animate-fadeIn text-slate-600 dark:text-slate-400">
-                {isAutoSyncing ? (
-                  <>
+              {/* Status display with pulsing dot */}
+              <div className="flex items-center gap-3 bg-slate-50/80 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-700/50 rounded-2xl py-3.5 px-4 animate-fadeIn">
+                <div className="relative flex h-2.5 w-2.5 shrink-0">
+                  {isAutoSyncing ? (
                     <HugeiconsIcon
                       icon={Refresh01Icon}
-                      className="h-3.5 w-3.5 animate-spin text-sky-600 dark:text-sky-400"
+                      className="h-3.5 w-3.5 absolute -top-0.5 -left-0.5 animate-spin text-sky-600 dark:text-sky-400"
                     />
-                    <span className="text-sky-700 dark:text-sky-300">
-                      {t("share.syncingChanges")}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <HugeiconsIcon
-                      icon={CheckIcon}
-                      className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400"
-                    />
-                    <span className="text-emerald-700 dark:text-emerald-400">
+                  ) : (
+                    <>
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </>
+                  )}
+                </div>
+                <span className="text-[13px] font-semibold text-slate-600 dark:text-slate-400">
+                  {isAutoSyncing ? (
+                    t("share.syncingChanges")
+                  ) : (
+                    <>
                       {t("share.autoSyncLast")}{" "}
-                      {lastSyncedAt
-                        ? lastSyncedAt.toLocaleTimeString("vi-VN", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            second: "2-digit",
-                          })
-                        : t("share.justNow")}
-                    </span>
-                  </>
-                )}
+                      <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                        {lastSyncedAt
+                          ? lastSyncedAt.toLocaleTimeString("vi-VN", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                            })
+                          : t("share.justNow")}
+                      </span>
+                    </>
+                  )}
+                </span>
               </div>
 
               {/* Success actions */}
-              <div className="flex gap-3 flex-col sm:flex-row">
+              <div className="flex gap-3 flex-col sm:flex-row mt-2">
                 <button
                   type="button"
                   onClick={() => setIsShareModalOpen(false)}
-                  className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/40 py-3 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors min-h-[44px] text-[13.5px] focus:outline-none"
+                  className="flex-1 rounded-[16px] bg-slate-100 dark:bg-slate-800 py-3.5 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors min-h-[48px] text-[13.5px] focus:outline-none"
                 >
                   {t("share.close")}
                 </button>
@@ -3833,11 +3946,11 @@ export function MoreScreen({
                   type="button"
                   onClick={handleSyncLink}
                   disabled={syncLoading}
-                  className="flex-[2] rounded-xl bg-kat-dark/10 dark:bg-slate-800 border border-kat-dark/20 dark:border-slate-700 py-3 font-bold text-kat-dark dark:text-slate-200 hover:bg-kat-dark/20 dark:hover:bg-slate-700 active:scale-95 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none flex items-center justify-center gap-1.5"
+                  className="flex-[2] rounded-[16px] bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 hover:border-sky-500/30 py-3 font-bold text-slate-700 dark:text-slate-200 hover:text-sky-600 dark:hover:text-sky-400 active:scale-95 transition-all disabled:opacity-50 min-h-[48px] text-[13.5px] focus:outline-none flex items-center justify-center gap-2 shadow-sm"
                 >
                   <HugeiconsIcon
                     icon={Refresh01Icon}
-                    className={classNames("h-4 w-4", syncLoading && "animate-spin")}
+                    className={classNames("h-4.5 w-4.5", syncLoading && "animate-spin")}
                   />
                   {syncLoading ? t("share.syncing") : t("share.syncData")}
                 </button>
@@ -3845,7 +3958,7 @@ export function MoreScreen({
                   type="button"
                   onClick={handleRevokeLink}
                   disabled={shareLoading}
-                  className="flex-1 rounded-xl bg-transparent hover:bg-rose-50 dark:hover:bg-rose-950/20 text-rose-600 dark:text-rose-450 py-3 font-bold active:scale-95 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none"
+                  className="flex-1 rounded-[16px] bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-450 py-3.5 font-bold active:scale-95 transition-colors disabled:opacity-50 min-h-[48px] text-[13.5px] focus:outline-none"
                 >
                   {shareLoading ? t("share.turningOff") : t("share.turnOff")}
                 </button>
@@ -3882,7 +3995,7 @@ export function MoreScreen({
                 setIsArchiveConfirmOpen(false);
                 if (trip.id) {
                   await archiveTrip(trip.id);
-                  onShowToast?.("Đã kết thúc chuyến đi và đưa vào kỷ niệm.");
+                  onShowToast?.("Đã kết thúc và lưu trữ chuyến đi.");
                 }
               }}
               className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary border border-kat-dark dark:border-kat-primary px-6 font-bold text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-98 transition-all duration-200 shadow-[0_8px_24px_-8px_rgba(3,13,46,0.4)] dark:shadow-[0_8px_24px_-8px_rgba(0,191,183,0.3)]"

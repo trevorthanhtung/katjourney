@@ -3,13 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    font-family: "Bricolage Grotesque", sans-serif;
+    font-family: "Bricolage Grotesque Variable", sans-serif;
     font-variation-settings:
       "wdth" 100,
       "opsz" 14; /* Variable font tweaks for headings */
@@ -185,36 +188,40 @@ textarea,
 
 /* --- KAT JOURNEY MOTION SYSTEM --- */
 :root {
-  /* Motion Tokens */
-  --motion-ease-soft-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --motion-ease-sharp: cubic-bezier(0.4, 0, 0.2, 1);
-  --motion-ease-spring: cubic-bezier(0.16, 1, 0.3, 1); /* Expo out instead of elastic */
-  --motion-ease-spring-soft: cubic-bezier(0.22, 1, 0.36, 1); /* Soft ease out */
-  --motion-ease-snappy: cubic-bezier(0.23, 1, 0.32, 1); /* Emil Kowalski's snappy ease-out */
+  /* Motion Tokens (Emil Kowalski / animations.dev standard) */
+  --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* Strong UI ease-out */
+  --motion-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); /* On-screen movement */
+  --motion-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1); /* iOS drawer */
 
   --motion-duration-instant: 80ms;
-  --motion-duration-fast: 140ms;
-  --motion-duration-normal: 220ms;
-  --motion-duration-slow: 320ms;
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 200ms;
+  --motion-duration-slow: 300ms;
 }
 
-/* 1. Page/Tab Entry */
+/* 1. Page Transitions */
 .motion-page-enter {
-  animation: kat-page-enter var(--motion-duration-normal) var(--motion-ease-soft-out) backwards;
+  /* Disabled to prevent blinking and jittering */
 }
 
-/* 2. Card Entry */
+/* 2. Card Entries */
 .motion-card-enter {
-  animation: kat-card-enter var(--motion-duration-normal) var(--motion-ease-soft-out) both;
+  /* Disabled to prevent blinking and jittering */
 }
 
 /* 3. Press Motion */
 .motion-press {
-  transition: transform var(--motion-duration-fast) var(--motion-ease-snappy);
+  transition:
+    transform var(--motion-duration-fast) var(--motion-ease-out),
+    opacity var(--motion-duration-fast) var(--motion-ease-out);
 }
-.motion-press:active {
-  transform: scale(0.97);
+.motion-press:active,
+[class*="active\\:scale"]:active {
+  transform: scale(0.97) !important;
+  opacity: 0.85 !important;
+  transition:
+    transform var(--motion-duration-fast) var(--motion-ease-out),
+    opacity var(--motion-duration-fast) var(--motion-ease-out) !important;
 }
 
 /* Desktop Hover Lift */
@@ -230,27 +237,9 @@ textarea,
   }
 }
 
-/* 4. Modal / Sheet Entrance Animation */
-.motion-modal-overlay {
-  animation: kat-fade-in var(--motion-duration-fast) var(--motion-ease-soft-out) both;
-}
+/* 4. Modal / Sheet Entrance Animation - Migrated to Framer Motion */
 
-.motion-modal-dialog {
-  animation: kat-modal-enter var(--motion-duration-normal) var(--motion-ease-soft-out) both;
-}
-
-.motion-sheet-dialog {
-  animation: kat-sheet-enter var(--motion-duration-slow) var(--motion-ease-soft-out) both;
-}
-
-/* 5. Toast animations */
-.motion-toast-enter {
-  animation: kat-toast-enter var(--motion-duration-normal) var(--motion-ease-soft-out) both;
-}
-
-.motion-toast-exit {
-  animation: kat-toast-exit var(--motion-duration-fast) var(--motion-ease-sharp) both;
-}
+/* 5. Toast animations - Migrated to Framer Motion */
 
 /* 6. Form feedback / validation */
 .motion-error-shake {
@@ -351,49 +340,7 @@ textarea,
   }
 }
 
-@keyframes kat-modal-enter {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes kat-sheet-enter {
-  from {
-    opacity: 0;
-    transform: translateY(32px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes kat-toast-enter {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 24px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
-
-@keyframes kat-toast-exit {
-  from {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-  to {
-    opacity: 0;
-    transform: translate(-50%, 16px);
-  }
-}
+/* Modal and Toast keyframes migrated to Framer Motion */
 
 @keyframes kat-shake {
   0%,
@@ -451,10 +398,6 @@ textarea,
   .motion-page-enter,
   .motion-card-enter,
   .motion-title-enter,
-  .motion-modal-overlay,
-  .motion-modal-dialog,
-  .motion-sheet-dialog,
-  .motion-toast-enter,
   .motion-error-shake,
   .motion-error-enter {
     animation: none !important;

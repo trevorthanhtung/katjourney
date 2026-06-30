@@ -153,7 +153,17 @@ export interface TravelDocument {
   id?: number;
   tripId: number;
   title: string;
-  type?: "ticket" | "hotel" | "booking" | "contact" | "map" | "document" | "other";
+  type?:
+    | "ticket"
+    | "hotel"
+    | "booking"
+    | "contact"
+    | "map"
+    | "document"
+    | "insurance"
+    | "visa"
+    | "tour"
+    | "other";
   code?: string;
   date?: string;
   link?: string;

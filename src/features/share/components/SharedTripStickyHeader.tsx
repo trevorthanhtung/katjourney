@@ -24,7 +24,7 @@ export function SharedTripStickyHeader({
       }`}
       style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}
     >
-      <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
+      <div className="max-w-[1280px] mx-auto w-full flex items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
         <div className="flex items-center gap-1.5 min-[390px]:gap-2 select-none shrink-0">
           <img
             src="/asset/logo.png"

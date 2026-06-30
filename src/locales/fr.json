@@ -1523,7 +1523,19 @@
     "addPrivate": "Ajouter un document personnel",
     "editPrivate": "Modifier le document personnel",
     "suggestDeleteTitle": "Suggérer la suppression du document ?",
-    "suggestDeleteDesc": "Vous proposez de supprimer ce document. L'organisateur examinera votre proposition."
+    "suggestDeleteDesc": "Vous proposez de supprimer ce document. L'organisateur examinera votre proposition.",
+    "typeInsurance": "Travel Insurance",
+    "typeVisa": "Visa / Passport",
+    "typeTour": "Tour / Activity",
+    "placeholderTitleVisa": "e.g., Personal Passport, Schengen Visa...",
+    "placeholderCodeVisa": "e.g., Passport Number, Visa Number...",
+    "placeholderNoteVisa": "e.g., Embassy address, contact info...",
+    "placeholderTitleInsurance": "e.g., Travel Insurance...",
+    "placeholderCodeInsurance": "e.g., Policy Number...",
+    "placeholderNoteInsurance": "e.g., Global Emergency Hotline...",
+    "placeholderTitleTour": "e.g., Universal Studio Ticket, Diving Tour...",
+    "placeholderCodeTour": "e.g., QR Code, Booking ID...",
+    "placeholderNoteTour": "e.g., Meetup point, pickup time..."
   },
   "roles": {
     "roleLeader": "Leader",

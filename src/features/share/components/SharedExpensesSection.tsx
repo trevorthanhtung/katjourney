@@ -726,13 +726,24 @@ export function SharedExpensesSection({
       />
 
       {/* Expenses List */}
-      <section className="bg-kat-surface rounded-3xl border border-slate-200/60 dark:border-kat-border/40 p-5 shadow-sm mt-6 animate-fadeIn">
-        <div className="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-slate-800 pb-3">
-          <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={ReceiptTextIcon} className="h-5 w-5 text-amber-500" />
-            <h3 className="text-[16px] font-black text-kat-dark dark:text-white">
-              {t("expenses.expenseList")}
-            </h3>
+      <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden mt-6 animate-fadeIn">
+        {/* Ambient background glow */}
+        <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-amber-500/[0.03] dark:bg-amber-500/[0.05] blur-[30px] pointer-events-none" />
+
+        {/* Header */}
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80 mb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/30 shadow-inner">
+              <HugeiconsIcon icon={ReceiptTextIcon} className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-[16px] font-black text-slate-800 dark:text-slate-200">
+                {t("expenses.expenseList")}
+              </h3>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
+                Quản lý chi tiêu chung, chi tiêu cá nhân và thanh toán
+              </p>
+            </div>
           </div>
         </div>
         {mergedExpenses.length === 0 ? (

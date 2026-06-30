@@ -51,7 +51,7 @@ export function SharedTripBanner({
           : "text-sky-900 border-sky-200/50 bg-gradient-to-r from-sky-50 via-sky-100/80 to-indigo-50/50 dark:text-white dark:border-white/5 dark:bg-gradient-to-r dark:from-[#0a122c] dark:via-[#0f1d4a] dark:to-[#161330]"
       )}
     >
-      <div className="max-w-[1120px] mx-auto w-full flex items-center justify-between gap-4">
+      <div className="max-w-[1280px] mx-auto w-full flex items-center justify-between gap-4">
         <div className="flex items-center gap-2.5 text-[12px] font-bold text-slate-800 dark:text-white/90">
           <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-400">
             <HugeiconsIcon icon={PencilEdit01Icon} className="h-3 w-3" />

@@ -200,40 +200,37 @@ export function WeatherWidget({
             className="flex items-center justify-between px-5 pt-5 pb-3 w-full text-left transition-colors cursor-pointer"
             onClick={() => setWeatherModalOpen(true)}
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/10 dark:bg-sky-400/10 text-sky-500 dark:text-sky-400">
                 <HugeiconsIcon icon={CloudRainWindIcon} className="h-4 w-4" />
               </span>
-              <h4 className="text-[15px] font-extrabold text-kat-dark">
+              <h4 className="text-[15px] font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap">
                 {t("weather.weatherForecast")}
               </h4>
             </div>
 
-            <div className="flex items-center gap-2">
-              {trip.destinations && trip.destinations.length > 1 && (
-                <div className="flex items-center gap-1.5 bg-sky-500/10 dark:bg-sky-400/10 px-2 py-1 rounded-lg">
-                  <HugeiconsIcon
-                    icon={Location01Icon}
-                    size={12}
-                    className="text-sky-600 dark:text-sky-400"
-                  />
-                  <span className="text-[10px] font-bold text-sky-700 dark:text-sky-300 uppercase tracking-wider max-w-[80px] truncate">
-                    {activeDest.name}
-                  </span>
-                </div>
-              )}
-              <span className="text-[10.5px] font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 dark:bg-sky-400/10 px-2.5 py-1 rounded-lg uppercase tracking-wider">
-                {t("weather.days", { days })}
-              </span>
-            </div>
+            {trip.destinations && trip.destinations.length > 1 && (
+              <div className="flex items-center gap-1 bg-slate-100/70 dark:bg-slate-800/60 px-2 py-1 rounded-md shrink-0">
+                <HugeiconsIcon
+                  icon={Location01Icon}
+                  size={12}
+                  className="text-slate-500 dark:text-slate-400"
+                />
+                <span className="text-[10px] font-semibold text-slate-600 dark:text-slate-300 max-w-[80px] truncate">
+                  {activeDest.name}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Smart Packing Tip Banner */}
           {packingTip && (
             <div
-              className={`mx-4 mb-3 flex items-center gap-2.5 rounded-2xl border px-3.5 py-2.5 ${packingTip.color}`}
+              className={`mx-5 mb-3 flex items-center gap-2 rounded-xl px-3 py-2 ${packingTip.color.replace("border", "border-0").replace("rounded-2xl", "rounded-xl")}`}
             >
-              <p className="text-[12px] font-bold leading-snug">{packingTip.message}</p>
+              <p className="text-[11.5px] font-medium leading-relaxed opacity-90">
+                {packingTip.message}
+              </p>
             </div>
           )}
 
@@ -268,9 +265,9 @@ export function WeatherWidget({
                 <button
                   key={idx}
                   onClick={() => setWeatherModalOpen(true)}
-                  className="flex items-center justify-between py-3 last:pb-0 first:pt-0 group text-left w-full hover:bg-sky-50/30 dark:hover:bg-sky-950/20 transition-colors rounded-xl px-1 -mx-1"
+                  className="flex items-center justify-between py-2.5 last:pb-0 first:pt-0 group text-left w-full hover:bg-sky-50/30 dark:hover:bg-sky-950/20 transition-colors rounded-xl px-1 -mx-1"
                 >
-                  <span className="w-16 text-[13.5px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors shrink-0">
+                  <span className="w-16 text-[14px] font-medium text-slate-700 dark:text-slate-300 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors shrink-0">
                     {idx === 0 && !isFuture ? t("weather.today") : dayStr}
                   </span>
 

@@ -1622,7 +1622,19 @@
     "codeLabel": "确认码/代码",
     "copyCodeBtn": "复制代码",
     "featureTitle": "文件和预订",
-    "featureDesc": "保存门票、预订代码和重要信息，以便在需要时快速查找。"
+    "featureDesc": "保存门票、预订代码和重要信息，以便在需要时快速查找。",
+    "typeInsurance": "Travel Insurance",
+    "typeVisa": "Visa / Passport",
+    "typeTour": "Tour / Activity",
+    "placeholderTitleVisa": "e.g., Personal Passport, Schengen Visa...",
+    "placeholderCodeVisa": "e.g., Passport Number, Visa Number...",
+    "placeholderNoteVisa": "e.g., Embassy address, contact info...",
+    "placeholderTitleInsurance": "e.g., Travel Insurance...",
+    "placeholderCodeInsurance": "e.g., Policy Number...",
+    "placeholderNoteInsurance": "e.g., Global Emergency Hotline...",
+    "placeholderTitleTour": "e.g., Universal Studio Ticket, Diving Tour...",
+    "placeholderCodeTour": "e.g., QR Code, Booking ID...",
+    "placeholderNoteTour": "e.g., Meetup point, pickup time..."
   },
   "roles": {
     "roleLeader": "队长 (Leader)",

@@ -22,7 +22,7 @@ export function PWAInstallInstructionsSheet({
       {/* Click outside to close */}
       <div className="absolute inset-0 z-0" onClick={onClose} />
 
-      <div className="bg-white dark:bg-kat-surface w-full max-w-[420px] rounded-[30px] border border-slate-100 dark:border-kat-border/40 p-6 sm:p-7 shadow-floating relative z-10 animate-slideUp flex flex-col pb-safe">
+      <div className="bg-white dark:bg-kat-surface w-full max-w-[420px] rounded-[30px] border border-slate-100 dark:border-kat-border/40 p-6 sm:p-7 shadow-floating relative z-10 animate-slideUp flex flex-col mb-safe sm:mb-0">
         {/* Header */}
         <div className="flex items-center justify-between pb-4.5 border-b border-slate-100/80 dark:border-kat-border/40 shrink-0">
           <div className="flex flex-col text-left">
@@ -154,10 +154,10 @@ export function PWAInstallInstructionsSheet({
         </div>
 
         {/* Footer actions */}
-        <div className="pt-4 mt-2">
+        <div className="pt-2 mt-4">
           <button
             onClick={onClose}
-            className="w-full min-h-[44px] flex items-center justify-center rounded-xl font-bold bg-kat-dark dark:bg-kat-primary text-white dark:text-kat-dark hover:brightness-110 active:scale-[0.98] transition-all shadow-sm"
+            className="w-full min-h-[52px] flex items-center justify-center rounded-[18px] font-bold bg-slate-900 dark:bg-kat-primary text-white dark:text-kat-dark hover:bg-slate-800 active:scale-[0.98] transition-all shadow-md text-[15.5px]"
           >
             Đã hiểu
           </button>

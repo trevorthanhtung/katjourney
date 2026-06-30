@@ -481,13 +481,24 @@ export function SharedActivitiesSection({
 
   return (
     <>
-      <section className="bg-white dark:bg-kat-surface rounded-3xl border border-slate-200/50 dark:border-kat-border/40 p-5 md:p-6 shadow-[0_2px_12px_rgba(3,13,46,0.02)]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Route01Icon} className="w-5 h-5 text-[#00A19D]" />
-            <h3 className="text-[18px] font-black text-kat-dark tracking-tight">
-              {t("share.detailedSchedule")}
-            </h3>
+      <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 md:p-6 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden space-y-4">
+        {/* Ambient background glow */}
+        <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-teal-500/[0.03] dark:bg-teal-500/[0.05] blur-[30px] pointer-events-none" />
+
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100 dark:border-slate-800/80 mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 border border-teal-100/50 dark:border-teal-900/30 shadow-inner">
+              <HugeiconsIcon icon={Route01Icon} className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-[16px] font-black text-slate-800 dark:text-slate-200">
+                {t("share.detailedSchedule")}
+              </h3>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
+                Xem lộ trình hành trình và các địa điểm tham quan chi tiết
+              </p>
+            </div>
           </div>
           <div className="flex items-center justify-center sm:justify-start gap-2.5 shrink-0 select-none w-full sm:w-auto">
             <div className="flex bg-[#E2E8F0]/40 dark:bg-slate-900/60 border border-transparent dark:border-slate-800/40 p-1 rounded-xl">

@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Cancel01Icon, CheckmarkCircle02Icon, ChevronDownIcon } from "@hugeicons/core-free-icons";
 import {
@@ -188,7 +189,7 @@ export function WeatherDetailsModal({
 
     const uvRating = getUvRating(uvIndex);
 
-    return (
+    return createPortal(
       <div className="fixed inset-0 z-[60] flex items-end justify-center md:items-center p-0 md:p-4">
         {/* Dynamic Keyframes Injector */}
         <style>{`
@@ -416,7 +417,7 @@ export function WeatherDetailsModal({
 
           {/* Modal Scrollable Body */}
           <div
-            className="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar md:rounded-b-[32px]"
+            className="flex-1 min-h-0 overflow-y-auto p-5 space-y-5 custom-scrollbar md:rounded-b-[32px]"
             style={{ paddingBottom: "max(40px, calc(env(safe-area-inset-bottom) + 24px))" }}
           >
             {/* Smart Suggestion Banner */}
@@ -475,7 +476,7 @@ export function WeatherDetailsModal({
                       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
                         {/* Current location column */}
                         <div className="flex flex-col items-center gap-1.5 text-center">
-                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 line-clamp-1 max-w-full">
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 line-clamp-2 min-h-[28px] max-w-full">
                             {currentLocationName ?? t("weather.yourLocation")}
                           </span>
                           <div className="flex items-center justify-center h-8">
@@ -506,7 +507,7 @@ export function WeatherDetailsModal({
                         <div className="flex flex-col items-center gap-1 px-1">
                           <div className="w-px h-6 bg-slate-200 dark:bg-slate-700" />
                           <span
-                            className={`text-[10px] font-extrabold text-center whitespace-nowrap ${diffColor}`}
+                            className={`text-[10px] font-extrabold text-center leading-tight max-w-[70px] ${diffColor}`}
                           >
                             {diffLabel}
                           </span>
@@ -515,7 +516,7 @@ export function WeatherDetailsModal({
 
                         {/* Destination column */}
                         <div className="flex flex-col items-center gap-1.5 text-center">
-                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 line-clamp-1 max-w-full">
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 line-clamp-2 min-h-[28px] max-w-full">
                             {destination}
                           </span>
                           <div className="flex items-center justify-center h-8">
@@ -678,10 +679,11 @@ export function WeatherDetailsModal({
             </div>
           </div>
         </div>
-      </div>
+      </div>,
+      document.body
     );
   } catch (err: any) {
-    return (
+    return createPortal(
       <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
         <div className="bg-white dark:bg-kat-surface p-6 rounded-2xl max-w-sm w-full text-center border border-slate-100 dark:border-kat-border/40">
           <div className="text-red-500 mb-2">
@@ -711,7 +713,8 @@ export function WeatherDetailsModal({
             {t("common.close", "Đóng")}
           </button>
         </div>
-      </div>
+      </div>,
+      document.body
     );
   }
 }

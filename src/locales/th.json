@@ -1622,7 +1622,19 @@
     "codeLabel": "รหัสยืนยัน / รหัส",
     "copyCodeBtn": "คัดลอกรหัส",
     "featureTitle": "เอกสารและการจอง",
-    "featureDesc": "บันทึกตั๋ว รหัสการจอง และข้อมูลสำคัญเพื่อการค้นหาอย่างรวดเร็วเมื่อจำเป็น"
+    "featureDesc": "บันทึกตั๋ว รหัสการจอง และข้อมูลสำคัญเพื่อการค้นหาอย่างรวดเร็วเมื่อจำเป็น",
+    "typeInsurance": "Travel Insurance",
+    "typeVisa": "Visa / Passport",
+    "typeTour": "Tour / Activity",
+    "placeholderTitleVisa": "e.g., Personal Passport, Schengen Visa...",
+    "placeholderCodeVisa": "e.g., Passport Number, Visa Number...",
+    "placeholderNoteVisa": "e.g., Embassy address, contact info...",
+    "placeholderTitleInsurance": "e.g., Travel Insurance...",
+    "placeholderCodeInsurance": "e.g., Policy Number...",
+    "placeholderNoteInsurance": "e.g., Global Emergency Hotline...",
+    "placeholderTitleTour": "e.g., Universal Studio Ticket, Diving Tour...",
+    "placeholderCodeTour": "e.g., QR Code, Booking ID...",
+    "placeholderNoteTour": "e.g., Meetup point, pickup time..."
   },
   "roles": {
     "roleLeader": "หัวหน้าทริป (Leader)",

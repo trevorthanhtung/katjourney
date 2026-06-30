@@ -683,7 +683,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
       />
 
       {/* Main Content */}
-      <main className="max-w-[1120px] mx-auto px-2.5 min-[390px]:px-4 pt-6 pb-20 lg:pb-6 space-y-6">
+      <main className="max-w-[1280px] mx-auto px-2.5 min-[390px]:px-4 pt-6 pb-20 lg:pb-6 space-y-6">
         {/* Hero Card */}
         <section
           className="relative rounded-[32px] p-6 text-white overflow-hidden shadow-xl border border-white/5 group hover:shadow-2xl hover:scale-[1.002] transition-all duration-500 ease-out motion-weather-bg"

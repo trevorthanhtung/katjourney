@@ -31,18 +31,21 @@ export const NavButton = React.forwardRef<
             )
           : "text-kat-dark opacity-50 hover:opacity-75 w-10 min-[340px]:w-11 min-[390px]:w-12 h-10 min-[340px]:h-11 min-[390px]:h-12"
       )}
-      transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+      transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
     >
       {isActive && (
         <motion.div
           layoutId={`${layoutIdPrefix}-indicator`}
           className="absolute inset-0 rounded-full bg-white dark:bg-slate-800 shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/45 dark:border-slate-700/50"
           initial={false}
-          transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+          transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
           style={{ zIndex: -1 }}
         />
       )}
-      <motion.div layout className="shrink-0 relative z-10 flex items-center justify-center">
+      <motion.div
+        layout="position"
+        className="shrink-0 relative z-10 flex items-center justify-center"
+      >
         {React.isValidElement(Icon) ? (
           // If it's inline svg
           <div
@@ -66,15 +69,15 @@ export const NavButton = React.forwardRef<
           />
         )}
       </motion.div>
-      <AnimatePresence>
+      <AnimatePresence mode="popLayout">
         {isActive && (
           <motion.span
-            layout
-            initial={{ opacity: 0, scale: 0.8, width: 0 }}
-            animate={{ opacity: 1, scale: 1, width: "auto" }}
-            exit={{ opacity: 0, scale: 0.8, width: 0 }}
-            transition={{ duration: 0.2 }}
-            className="text-[10px] min-[340px]:text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap overflow-hidden z-10"
+            layout="position"
+            initial={{ opacity: 0, filter: "blur(4px)", scale: 0.8 }}
+            animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+            exit={{ opacity: 0, filter: "blur(4px)", scale: 0.8 }}
+            transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
+            className="text-[10px] min-[340px]:text-[12px] min-[390px]:text-[13px] font-bold whitespace-nowrap z-10"
           >
             {label}
           </motion.span>

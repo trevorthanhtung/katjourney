@@ -42,52 +42,59 @@ export function SharedTripIdentityModal({
   renderRoleIcons,
 }: SharedTripIdentityModalProps) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-slate-50 dark:bg-[#0A1124] p-4 animate-fadeIn overflow-hidden z-50">
-      <div className="w-full max-w-md max-h-[90dvh] rounded-[32px] bg-white dark:bg-kat-surface p-6 shadow-xl border border-slate-100 dark:border-slate-800/80 animate-scaleIn flex flex-col relative">
+    <div className="fixed inset-0 flex items-center justify-center bg-slate-100/90 dark:bg-[#060b19]/90 p-4 animate-fadeIn overflow-hidden z-50">
+      {/* Animated background glows */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-indigo-500/[0.08] dark:bg-indigo-500/[0.05] blur-[80px] animate-pulse pointer-events-none" />
+      <div
+        className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-teal-500/[0.08] dark:bg-teal-500/[0.05] blur-[80px] animate-pulse pointer-events-none"
+        style={{ animationDelay: "2s" }}
+      />
+
+      <div className="w-full max-w-md max-h-[90dvh] rounded-[32px] bg-white/85 dark:bg-slate-900/65 backdrop-blur-2xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] border border-white/50 dark:border-white/5 animate-scaleIn flex flex-col relative">
         {currentUser && (
           <button
             onClick={() => {
               localStorage.removeItem("kat_pending_swap_" + trip.id);
               setShowIdentityModal(false);
             }}
-            className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors z-10"
+            className="absolute top-5 right-5 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:scale-105 active:scale-95 transition-all z-10"
             title={t("common.close")}
           >
             <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
           </button>
         )}
         <div className="flex flex-col items-center text-center shrink-0">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 mb-4">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-900/30 shadow-inner mb-4">
             <HugeiconsIcon icon={UserGroupIcon} className="h-8 w-8" />
           </div>
 
-          <h2 className="text-[22px] font-extrabold text-kat-dark tracking-tight flex items-center justify-center gap-1.5">
+          <h2 className="text-[22px] font-black text-slate-800 dark:text-slate-100 tracking-tight flex items-center justify-center gap-1.5">
             <span>{t("share.whoAreYou")}</span>
             <button
               type="button"
               onClick={() => setIsRolesHelpOpen(true)}
-              className="text-slate-400 hover:text-kat-teal transition-colors p-1 flex items-center justify-center"
+              className="text-slate-400 hover:text-indigo-550 transition-colors p-1 flex items-center justify-center"
               title={t("roles.info") || "Role Information"}
             >
               <HugeiconsIcon icon={InformationCircleIcon} className="h-4.5 w-4.5" />
             </button>
           </h2>
-          <p className="mt-2 text-[14px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+          <p className="mt-2 text-[14px] text-slate-500 dark:text-slate-400 font-bold leading-relaxed">
             {t("share.selectYourName")}
           </p>
         </div>
 
         <div className="mt-6 flex-1 min-h-0 flex flex-col">
-          <div className="space-y-3 flex-1 min-h-0 flex flex-col">
+          <div className="space-y-4 flex-1 min-h-0 flex flex-col">
             <div className="relative shrink-0">
               <input
                 type="text"
                 value={memberSearchQuery}
                 onChange={(e) => setMemberSearchQuery(e.target.value)}
                 placeholder={t("share.searchMember")}
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl text-[14px] font-semibold text-kat-dark placeholder:text-slate-400 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-none focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 focus:bg-white dark:focus:bg-slate-800 transition-all duration-200"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-2xl text-[14px] font-semibold text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/15 focus:bg-white dark:focus:bg-slate-800 transition-all duration-200"
               />
-              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-450">
                 <HugeiconsIcon icon={Search01Icon} className="w-4 h-4" />
               </div>
               {memberSearchQuery && (
@@ -100,7 +107,7 @@ export function SharedTripIdentityModal({
               )}
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60 border border-slate-100 dark:border-slate-800/60 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 custom-scrollbar">
+            <div className="flex-1 min-h-0 overflow-y-auto pr-1 my-1 space-y-2.5 custom-scrollbar">
               {(() => {
                 const filteredMembers = members.filter((m: any) => {
                   const roleLower = (m.role || "").trim().toLowerCase();
@@ -120,12 +127,12 @@ export function SharedTripIdentityModal({
 
                 if (filteredMembers.length === 0) {
                   return (
-                    <div className="p-8 text-center text-slate-400 dark:text-slate-500 select-none">
+                    <div className="p-8 text-center text-slate-400 dark:text-slate-500 select-none bg-slate-50/20 dark:bg-slate-800/10 rounded-2xl border border-dashed border-slate-200/50 dark:border-slate-800/50">
                       <HugeiconsIcon
                         icon={Search01Icon}
                         className="w-8 h-8 mx-auto mb-2 text-slate-350 dark:text-slate-600"
                       />
-                      <p className="text-xs font-semibold">{t("share.memberNotFound")}</p>
+                      <p className="text-xs font-bold">{t("share.memberNotFound")}</p>
                     </div>
                   );
                 }
@@ -154,17 +161,20 @@ export function SharedTripIdentityModal({
                       setIdentityChecked(true);
                       setIsBannerVisible(true);
                     }}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors"
+                    className="flex w-full items-center gap-3 px-4 py-3 text-left rounded-[20px] bg-white/50 dark:bg-slate-800/30 border border-slate-200/50 dark:border-white/5 hover:border-slate-350 dark:hover:border-slate-700 hover:scale-[1.01] hover:shadow-[0_4px_12px_rgba(0,0,0,0.02)] transition-all active:scale-[0.99] cursor-pointer"
                   >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 shadow-sm shrink-0">
                       {m.avatar ? (
                         getAvatarSvg(m.avatar, "w-full h-full")
                       ) : (
-                        <HugeiconsIcon icon={UserGroupIcon} className="h-4 w-4 text-slate-400" />
+                        <HugeiconsIcon
+                          icon={UserGroupIcon}
+                          className="h-4.5 w-4.5 text-slate-400"
+                        />
                       )}
                     </div>
-                    <div className="flex items-center justify-between flex-1 pr-1">
-                      <span className="text-[14px] font-bold text-slate-800 dark:text-slate-200">
+                    <div className="flex items-center justify-between flex-1 pr-1 min-w-0">
+                      <span className="text-[14px] font-bold text-slate-800 dark:text-slate-200 truncate">
                         {m.name}
                       </span>
                       {renderRoleIcons(m.role || "")}
@@ -188,12 +198,12 @@ export function SharedTripIdentityModal({
                 setIdentityChecked(true);
                 setIsBannerVisible(true);
               }}
-              className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors border border-slate-100 dark:border-slate-800/60 rounded-2xl bg-slate-50/50 dark:bg-slate-800/30 shrink-0"
+              className="flex w-full items-center gap-3 px-4 py-3 text-left rounded-[20px] bg-indigo-500/[0.04] dark:bg-indigo-500/[0.02] border border-dashed border-indigo-200/60 dark:border-indigo-900/30 hover:border-indigo-400 hover:bg-indigo-500/[0.08] dark:hover:bg-indigo-500/[0.05] transition-all active:scale-[0.99] shrink-0 cursor-pointer"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-400">
-                <HugeiconsIcon icon={GlobeIcon} className="h-4 w-4" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 shrink-0 shadow-sm">
+                <HugeiconsIcon icon={GlobeIcon} className="h-4.5 w-4.5" />
               </div>
-              <span className="text-[14px] font-bold text-slate-600 dark:text-slate-300">
+              <span className="text-[14px] font-black text-indigo-650 dark:text-indigo-400">
                 {t("share.justWantToView")}
               </span>
             </button>

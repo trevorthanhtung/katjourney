@@ -31,6 +31,7 @@ import {
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
+import { pageVariants } from "./lib/motion";
 import {
   ChecklistItem,
   db,
@@ -104,6 +105,7 @@ function App() {
     setActiveTab,
     moreSection,
     setMoreSection,
+    setMoreSectionRaw,
     selectedTripId,
     setSelectedTripId,
     isManagingTrips,
@@ -113,6 +115,8 @@ function App() {
     navigateToMore,
     lastHistoryStateRef,
   } = useAppNavigation();
+
+  const deferredActiveTab = React.useDeferredValue(activeTab);
 
   // Handle PWA Shortcuts
   useEffect(() => {
@@ -142,7 +146,7 @@ function App() {
     { date: string; eventId: number } | undefined
   >(undefined);
 
-  const areBarsVisible = useScrollBarVisibility(768);
+  const areBarsVisible = useScrollBarVisibility(1024);
 
   // 2027 Bottom Navigation Bar animation system (Refactored to Framer Motion layoutId)
 
@@ -661,7 +665,7 @@ function App() {
             }}
           >
             <GlobalToast />
-            <div className="mx-auto flex max-w-[1120px] items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
+            <div className="mx-auto flex max-w-[1280px] items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
               <div className="flex items-center gap-3 shrink-0">
                 <div className="flex items-center gap-1.5 min-[390px]:gap-2 select-none shrink-0">
                   <img
@@ -676,65 +680,34 @@ function App() {
 
                 {/* Desktop Navigation */}
                 {!isManagingTrips && tripId && (
-                  <div className="hidden lg:flex ml-6 gap-2 bg-slate-100/50 dark:bg-white/5 backdrop-blur-md p-1.5 rounded-full border border-slate-200/50 dark:border-white/10 shadow-sm">
-                    <button
-                      onClick={() => setActiveTab("home")}
-                      className={classNames(
-                        "px-5 py-2 rounded-full text-[14px] transition-all",
-                        activeTab === "home"
-                          ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10"
-                          : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
-                      )}
-                    >
-                      {t("nav.home")}
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("timeline")}
-                      className={classNames(
-                        "px-5 py-2 rounded-full text-[14px] transition-all",
-                        activeTab === "timeline"
-                          ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10"
-                          : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
-                      )}
-                    >
-                      {t("nav.timeline")}
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("expenses")}
-                      className={classNames(
-                        "px-5 py-2 rounded-full text-[14px] transition-all",
-                        activeTab === "expenses"
-                          ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10"
-                          : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
-                      )}
-                    >
-                      {t("nav.expenses")}
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("checklist")}
-                      className={classNames(
-                        "px-5 py-2 rounded-full text-[14px] transition-all",
-                        activeTab === "checklist"
-                          ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10"
-                          : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
-                      )}
-                    >
-                      {t("nav.checklist")}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setMoreSection("overview");
-                        setActiveTab("more");
-                      }}
-                      className={classNames(
-                        "px-5 py-2 rounded-full text-[14px] transition-all",
-                        activeTab === "more"
-                          ? "bg-white dark:bg-white/15 text-kat-text dark:text-white font-bold shadow-sm ring-1 ring-black/5 dark:ring-white/10"
-                          : "text-slate-500 dark:text-slate-400 font-medium hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
-                      )}
-                    >
-                      {t("nav.more")}
-                    </button>
+                  <div className="hidden lg:flex ml-6 gap-2 bg-slate-100/50 dark:bg-white/5 backdrop-blur-md p-1.5 rounded-full border border-slate-200/50 dark:border-white/10 shadow-sm relative">
+                    {(["home", "timeline", "expenses", "checklist", "more"] as const).map((tab) => {
+                      const isActive = activeTab === tab;
+                      return (
+                        <button
+                          key={tab}
+                          onClick={() => {
+                            if (tab === "more") setMoreSectionRaw("overview");
+                            setActiveTab(tab as any);
+                          }}
+                          className={classNames(
+                            "relative px-5 py-2 rounded-full text-[14px] font-semibold transition-colors z-0",
+                            isActive
+                              ? "text-kat-text dark:text-white"
+                              : "text-slate-500 dark:text-slate-400 hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
+                          )}
+                        >
+                          {isActive && (
+                            <motion.div
+                              layoutId="desktop-nav-active-pill"
+                              className="absolute inset-0 bg-white dark:bg-white/15 rounded-full shadow-sm ring-1 ring-black/5 dark:ring-white/10 -z-10"
+                              transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
+                            />
+                          )}
+                          <span className="relative z-10">{t(`nav.${tab}`)}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -1056,7 +1029,7 @@ function App() {
           )}
 
           {syncProps.hasCloudVersion && (
-            <div className="max-w-[1120px] mx-auto mt-4 mb-2 px-4 sm:px-6">
+            <div className="max-w-[1280px] mx-auto mt-4 mb-2 px-4 sm:px-6">
               <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/35 dark:to-indigo-950/35 border border-blue-100/40 dark:border-blue-900/40 shadow-sm p-3 sm:py-2.5 sm:px-4 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
                 {/* Background decorative blob */}
                 <div className="absolute -right-6 -top-6 w-20 h-20 bg-blue-500/5 dark:bg-blue-400/5 rounded-full blur-xl"></div>
@@ -1106,7 +1079,7 @@ function App() {
           )}
 
           {isReadOnly && !isManagingTrips && !isViewingArchive && !isCreatingTrip && (
-            <div className="max-w-[1120px] mx-auto mt-4 px-4 md:px-6 animate-fadeIn">
+            <div className="max-w-[1280px] mx-auto mt-4 px-4 md:px-6 animate-fadeIn">
               <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-stone-100/80 dark:bg-stone-800/40 border border-stone-200/70 dark:border-stone-700/50">
                 <HugeiconsIcon
                   icon={LockIcon}
@@ -1122,7 +1095,7 @@ function App() {
 
           <main
             className={classNames(
-              "mx-auto flex flex-1 w-full max-w-[1120px] flex-col",
+              "mx-auto flex flex-1 w-full max-w-[1280px] flex-col",
               !isManagingTrips && tripId
                 ? "pb-24 md:pb-12"
                 : isManagingTrips && trips?.length === 0 && !isViewingArchive && !isCreatingTrip
@@ -1143,7 +1116,14 @@ function App() {
                   <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
                 </div>
               ) : isViewingArchive ? (
-                <div key="archive" className="motion-page-enter">
+                <motion.div
+                  key="archive"
+                  variants={pageVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  className="flex-1 flex flex-col"
+                >
                   <ArchiveGallery
                     onBack={() => {
                       startViewTransition(() => {
@@ -1159,12 +1139,15 @@ function App() {
                       });
                     }}
                   />
-                </div>
+                </motion.div>
               ) : isManagingTrips || !tripId ? (
-                <div
+                <motion.div
                   key="manager"
+                  variants={pageVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
                   className={classNames(
-                    "motion-page-enter",
                     isManagingTrips && trips?.length === 0 ? "flex-1 flex flex-col" : ""
                   )}
                 >
@@ -1187,103 +1170,112 @@ function App() {
                     }}
                     onShowToast={showToast}
                   />
-                </div>
+                </motion.div>
               ) : tripDataLoading ? (
                 <div className="flex items-center justify-center py-20">
                   <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
                 </div>
               ) : trip && tripId ? (
-                <div key={activeTab} className="motion-page-enter">
-                  {activeTab === "home" && (
-                    <HomeScreen
-                      trip={trip}
-                      members={members ?? []}
-                      events={events ?? []}
-                      expenses={expenses ?? []}
-                      checklist={checklist ?? []}
-                      travelDocuments={travelDocuments ?? []}
-                      totalExpense={totalExpense}
-                      perPerson={perPerson}
-                      onNavigateTab={setActiveTab}
-                      onNavigateMore={navigateToMore}
-                      onOpenInbox={() => setIsAppInboxOpen(true)}
-                      isReadOnly={isReadOnly}
-                      selectedDestIndex={selectedDestIndex}
-                      onSelectDestIndex={setSelectedDestIndex}
-                    />
-                  )}
-                  <React.Suspense
-                    fallback={
-                      <div className="flex items-center justify-center py-20">
-                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
-                      </div>
-                    }
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={deferredActiveTab}
+                    variants={pageVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="w-full origin-top flex-1 flex flex-col h-full"
                   >
-                    {activeTab === "timeline" && (
-                      <TimelineScreen
+                    {deferredActiveTab === "home" && (
+                      <HomeScreen
                         trip={trip}
+                        members={members ?? []}
                         events={events ?? []}
                         expenses={expenses ?? []}
-                        selectedDestIndex={selectedDestIndex}
-                        onSelectDestIndex={setSelectedDestIndex}
-                        onAddExpense={(date, eventId) => {
-                          setExpenseInitialAddState({ date, eventId });
-                          setActiveTab("expenses");
-                        }}
-                        isReadOnly={isReadOnly}
-                      />
-                    )}
-                    {activeTab === "expenses" && (
-                      <ExpensesScreen
-                        expenses={expenses ?? []}
-                        members={members ?? []}
+                        checklist={checklist ?? []}
+                        travelDocuments={travelDocuments ?? []}
                         totalExpense={totalExpense}
                         perPerson={perPerson}
-                        tripId={tripId}
-                        events={events ?? []}
-                        initialAddState={expenseInitialAddState}
-                        onClearInitialAddState={() => setExpenseInitialAddState(undefined)}
-                        isReadOnly={isReadOnly}
-                      />
-                    )}
-                    {activeTab === "checklist" && (
-                      <ChecklistScreen
-                        checklist={checklist ?? []}
-                        tripId={tripId}
-                        isReadOnly={isReadOnly}
-                      />
-                    )}
-                    {activeTab === "more" && (
-                      <MoreScreen
-                        trip={trip}
-                        members={members ?? []}
-                        events={events ?? []}
-                        expenses={expenses ?? []}
-                        checklist={checklist ?? []}
-                        journals={journals ?? []}
-                        packingItems={packingItems ?? []}
-                        travelDocuments={travelDocuments ?? []}
-                        onTripDeleted={() => {
-                          setSelectedTripId(null);
-                          setIsManagingTrips(true);
-                          showToast("Đã xóa chuyến đi khỏi danh sách.");
-                        }}
-                        onTripSelected={setSelectedTripId}
-                        onShowToast={showToast}
-                        section={moreSection}
-                        setSection={setMoreSection}
+                        onNavigateTab={setActiveTab}
+                        onNavigateMore={navigateToMore}
                         onOpenInbox={() => setIsAppInboxOpen(true)}
                         isReadOnly={isReadOnly}
-                        onOpenSettings={(view) => {
-                          setSettingsInitialView(view ?? "menu");
-                          setIsSettingsOpen(true);
-                        }}
-                        isAutoSyncing={isAutoSyncing}
-                        lastSyncedAt={lastSyncedAt}
+                        selectedDestIndex={selectedDestIndex}
+                        onSelectDestIndex={setSelectedDestIndex}
                       />
                     )}
-                  </React.Suspense>
-                </div>
+                    <React.Suspense
+                      fallback={
+                        <div className="flex items-center justify-center py-20">
+                          <div className="h-8 w-8 animate-spin rounded-full border-4 border-kat-primary/20 border-t-kat-primary"></div>
+                        </div>
+                      }
+                    >
+                      {deferredActiveTab === "timeline" && (
+                        <TimelineScreen
+                          trip={trip}
+                          events={events ?? []}
+                          expenses={expenses ?? []}
+                          selectedDestIndex={selectedDestIndex}
+                          onSelectDestIndex={setSelectedDestIndex}
+                          onAddExpense={(date, eventId) => {
+                            setExpenseInitialAddState({ date, eventId });
+                            setActiveTab("expenses");
+                          }}
+                          isReadOnly={isReadOnly}
+                        />
+                      )}
+                      {deferredActiveTab === "expenses" && (
+                        <ExpensesScreen
+                          expenses={expenses ?? []}
+                          members={members ?? []}
+                          totalExpense={totalExpense}
+                          perPerson={perPerson}
+                          tripId={tripId}
+                          events={events ?? []}
+                          initialAddState={expenseInitialAddState}
+                          onClearInitialAddState={() => setExpenseInitialAddState(undefined)}
+                          isReadOnly={isReadOnly}
+                        />
+                      )}
+                      {deferredActiveTab === "checklist" && (
+                        <ChecklistScreen
+                          checklist={checklist ?? []}
+                          tripId={tripId}
+                          isReadOnly={isReadOnly}
+                        />
+                      )}
+                      {deferredActiveTab === "more" && (
+                        <MoreScreen
+                          trip={trip}
+                          members={members ?? []}
+                          events={events ?? []}
+                          expenses={expenses ?? []}
+                          checklist={checklist ?? []}
+                          journals={journals ?? []}
+                          packingItems={packingItems ?? []}
+                          travelDocuments={travelDocuments ?? []}
+                          onTripDeleted={() => {
+                            setSelectedTripId(null);
+                            setIsManagingTrips(true);
+                            showToast("Đã xóa chuyến đi khỏi danh sách.");
+                          }}
+                          onTripSelected={setSelectedTripId}
+                          onShowToast={showToast}
+                          section={moreSection}
+                          setSection={setMoreSection}
+                          onOpenInbox={() => setIsAppInboxOpen(true)}
+                          isReadOnly={isReadOnly}
+                          onOpenSettings={(view) => {
+                            setSettingsInitialView(view ?? "menu");
+                            setIsSettingsOpen(true);
+                          }}
+                          isAutoSyncing={isAutoSyncing}
+                          lastSyncedAt={lastSyncedAt}
+                        />
+                      )}
+                    </React.Suspense>
+                  </motion.div>
+                </AnimatePresence>
               ) : (
                 <div className="flex items-center justify-center py-20">
                   <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-500"></div>
@@ -1325,7 +1317,7 @@ function App() {
                 <NavButton
                   isActive={activeTab === "more"}
                   onClick={() => {
-                    setMoreSection("overview");
+                    setMoreSectionRaw("overview");
                     setActiveTab("more");
                   }}
                   icon={Menu01Icon}

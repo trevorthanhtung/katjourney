@@ -63,6 +63,7 @@ import {
   ChevronDownIcon,
   Location01Icon,
   LocationOfflineIcon,
+  CallIcon,
 } from "@hugeicons/core-free-icons";
 import {
   Expense,
@@ -346,13 +347,24 @@ export function SharedMembersSection({
   }
 
   return (
-    <section className="bg-white dark:bg-kat-surface rounded-2xl border border-slate-200/60 dark:border-slate-800 p-5 shadow-sm space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-        <div className="flex items-center gap-2">
-          <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5 text-blue-500" />
-          <h3 className="text-[16px] font-black text-kat-dark dark:text-slate-200">
-            {t("members.membersTitle")}
-          </h3>
+    <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden space-y-4">
+      {/* Ambient background glow */}
+      <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-blue-500/[0.03] dark:bg-blue-500/[0.05] blur-[30px] pointer-events-none" />
+
+      {/* Header */}
+      <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/30 shadow-inner">
+            <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-[16px] font-black text-slate-800 dark:text-slate-200">
+              {t("members.membersTitle")}
+            </h3>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
+              Danh sách thành viên tham gia hành trình
+            </p>
+          </div>
         </div>
       </div>
 
@@ -421,41 +433,58 @@ export function SharedMembersSection({
               roleLower.includes("hành lý") || roleLower.includes("phụ trách hành lý");
 
             let cardBg =
-              "bg-gradient-to-br from-slate-50/20 via-white to-white border-slate-200/60 dark:from-slate-800/10 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-            let borderAccent = "border-l-4 border-l-slate-400";
+              "bg-gradient-to-br from-slate-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-slate-800/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+            let borderAccent = "border-l-[3.5px] border-l-slate-400";
+            let avatarRing = "ring-2 ring-slate-100 dark:ring-slate-800";
 
             if (member.isPendingCreate) {
               cardBg =
-                "bg-gradient-to-br from-sky-50/40 via-white to-white border-sky-200/80 dark:from-sky-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "border-l-4 border-l-sky-500";
+                "bg-gradient-to-br from-sky-50/40 via-white/80 to-white/70 border-sky-200/80 backdrop-blur-md dark:from-sky-950/15 dark:via-slate-900/30 dark:to-slate-900/40 dark:border-white/5";
+              borderAccent = "border-l-[3.5px] border-l-sky-500";
+              avatarRing =
+                "ring-2 ring-sky-400/60 dark:ring-sky-500/40 shadow-[0_0_8px_rgba(14,165,233,0.2)]";
             } else if (member.isPendingDelete) {
               cardBg =
-                "bg-gradient-to-br from-rose-50/40 via-white to-white border-rose-200/80 opacity-80 dark:from-rose-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "";
+                "bg-gradient-to-br from-rose-50/40 via-white/80 to-white/70 border-rose-200/80 opacity-80 backdrop-blur-md dark:from-rose-950/15 dark:via-slate-900/30 dark:to-slate-900/40 dark:border-white/5";
+              borderAccent = "border-l-[3.5px] border-l-rose-500";
+              avatarRing =
+                "ring-2 ring-rose-400/60 dark:ring-rose-500/40 shadow-[0_0_8px_rgba(244,63,94,0.2)]";
             } else if (isLeader) {
               cardBg =
-                "bg-gradient-to-br from-amber-50/30 via-white to-white border-slate-200/60 dark:from-amber-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "";
+                "bg-gradient-to-br from-amber-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-amber-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+              borderAccent = "border-l-[3.5px] border-l-amber-500";
+              avatarRing =
+                "ring-2 ring-amber-400/60 dark:ring-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.2)]";
             } else if (isCost) {
               cardBg =
-                "bg-gradient-to-br from-emerald-50/30 via-white to-white border-slate-200/60 dark:from-emerald-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "";
+                "bg-gradient-to-br from-emerald-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-emerald-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+              borderAccent = "border-l-[3.5px] border-l-emerald-500";
+              avatarRing =
+                "ring-2 ring-emerald-400/60 dark:ring-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.2)]";
             } else if (isDriver) {
               cardBg =
-                "bg-gradient-to-br from-blue-50/30 via-white to-white border-slate-200/60 dark:from-blue-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "";
+                "bg-gradient-to-br from-blue-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-blue-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+              borderAccent = "border-l-[3.5px] border-l-blue-500";
+              avatarRing =
+                "ring-2 ring-blue-400/60 dark:ring-blue-500/40 shadow-[0_0_8px_rgba(59,130,246,0.2)]";
             } else if (isGuide) {
               cardBg =
-                "bg-gradient-to-br from-sky-50/30 via-white to-white border-slate-200/60 dark:from-sky-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "";
+                "bg-gradient-to-br from-sky-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-sky-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+              borderAccent = "border-l-[3.5px] border-l-sky-500";
+              avatarRing =
+                "ring-2 ring-sky-400/60 dark:ring-sky-500/40 shadow-[0_0_8px_rgba(14,165,233,0.2)]";
             } else if (isLuggage) {
               cardBg =
-                "bg-gradient-to-br from-indigo-50/30 via-white to-white border-slate-200/60 dark:from-indigo-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "";
+                "bg-gradient-to-br from-indigo-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-indigo-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+              borderAccent = "border-l-[3.5px] border-l-indigo-500";
+              avatarRing =
+                "ring-2 ring-indigo-400/60 dark:ring-indigo-500/40 shadow-[0_0_8px_rgba(99,102,241,0.2)]";
             } else if (member.isGroupLeader) {
               cardBg =
-                "bg-gradient-to-br from-teal-50/30 via-white to-white border-slate-200/60 dark:from-teal-950/15 dark:via-kat-surface dark:to-kat-surface dark:border-kat-border";
-              borderAccent = "";
+                "bg-gradient-to-br from-teal-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-teal-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+              borderAccent = "border-l-[3.5px] border-l-teal-500";
+              avatarRing =
+                "ring-2 ring-teal-400/60 dark:ring-teal-500/40 shadow-[0_0_8px_rgba(20,184,166,0.2)]";
             }
 
             const renderRoleBadge = (roleStr: string) => {
@@ -557,7 +586,9 @@ export function SharedMembersSection({
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4 min-w-0 flex-1">
                     {/* Avatar */}
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+                    <div
+                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] ${avatarRing}`}
+                    >
                       {member.avatar ? (
                         getAvatarSvg(member.avatar, "w-full h-full")
                       ) : (
@@ -592,7 +623,7 @@ export function SharedMembersSection({
                           </span>
                         )}
                         {member.isPendingDelete && (
-                          <span className="inline-flex items-center rounded-full bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 px-2 py-0.5 text-[10px] font-bold text-rose-600 dark:text-rose-400 shrink-0 select-none">
+                          <span className="inline-flex items-center rounded-full bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 px-2 py-0.5 text-[10px] font-bold text-rose-600 dark:text-rose-450 shrink-0 select-none">
                             {t("members.suggestDelete")}
                           </span>
                         )}
@@ -619,13 +650,22 @@ export function SharedMembersSection({
                         </div>
                       )}
                       {member.phone && (
-                        <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
-                          {t("members.phonePrefix")}
-                          <span className="text-kat-dark dark:text-slate-300">{member.phone}</span>
-                        </p>
+                        <div className="mt-0.5">
+                          <a
+                            href={`tel:${member.phone}`}
+                            className="inline-flex items-center gap-1.5 text-[13px] font-extrabold text-slate-500 hover:text-kat-teal dark:hover:text-kat-primary transition-colors leading-none"
+                            title={`Gọi ${member.name}`}
+                          >
+                            <HugeiconsIcon
+                              icon={CallIcon}
+                              className="w-3.5 h-3.5 text-slate-400 shrink-0"
+                            />
+                            <span>{member.phone}</span>
+                          </a>
+                        </div>
                       )}
                       {member.note && (
-                        <p className="text-[13px] font-medium text-slate-400 dark:text-slate-400 italic mt-1 bg-slate-50/70 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-100/50 dark:border-slate-700/30 break-words">
+                        <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 italic mt-2.5 border-l-2 border-slate-200 dark:border-slate-700/60 pl-3 py-0.5 max-w-full break-words leading-relaxed">
                           "{member.note}"
                         </p>
                       )}
@@ -674,24 +714,30 @@ export function SharedMembersSection({
                   <div className="flex flex-wrap gap-2 text-[12px]">
                     <span
                       className={classNames(
-                        "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-all duration-200 hover:scale-[1.02] cursor-default",
                         assignedTasksCount === 0
-                          ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700/30 text-slate-400 dark:text-slate-500 font-semibold"
-                          : "bg-sky-50/50 dark:bg-sky-950/20 border-sky-100 dark:border-sky-900/30 text-sky-700 dark:text-sky-400 font-bold"
+                          ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-150 dark:border-white/5 text-slate-450 dark:text-slate-500 font-bold"
+                          : "bg-sky-500/[0.04] dark:bg-sky-500/[0.08] border-sky-500/10 text-sky-650 dark:text-sky-400 font-extrabold"
                       )}
                     >
-                      <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 shrink-0" />
+                      <HugeiconsIcon
+                        icon={Luggage01Icon}
+                        className="h-3.5 w-3.5 shrink-0 text-sky-500"
+                      />
                       {assignedTasksCount} {t("members.taskCount")}
                     </span>
                     <span
                       className={classNames(
-                        "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-colors",
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-all duration-200 hover:scale-[1.02] cursor-default",
                         totalSpent === 0
-                          ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-100 dark:border-slate-700/30 text-slate-400 dark:text-slate-500 font-semibold"
-                          : "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-bold"
+                          ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-150 dark:border-white/5 text-slate-450 dark:text-slate-500 font-bold"
+                          : "bg-emerald-500/[0.04] dark:bg-emerald-500/[0.08] border-emerald-500/10 text-emerald-650 dark:text-emerald-400 font-extrabold"
                       )}
                     >
-                      <HugeiconsIcon icon={Wallet01Icon} className="h-3.5 w-3.5 shrink-0" />
+                      <HugeiconsIcon
+                        icon={Wallet01Icon}
+                        className="h-3.5 w-3.5 shrink-0 text-emerald-500"
+                      />
                       {t("members.paidPrefix")}
                       {formatMoney(totalSpent)}{" "}
                       {paidExpensesCount > 0 && `(${paidExpensesCount} ${t("members.paidTimes")})`}
@@ -706,13 +752,15 @@ export function SharedMembersSection({
             <div className="flex flex-col gap-6">
               {groups.map((g) => (
                 <div key={g.name} className="animate-fadeIn">
-                  <div className="flex items-center gap-2 mb-3 px-1">
-                    <HugeiconsIcon icon={UserGroupIcon} className="w-5 h-5 text-blue-500" />
-                    <h3 className="text-[14.5px] font-bold text-slate-700 dark:text-slate-300">
-                      {g.name}
-                    </h3>
+                  <div className="flex items-center mb-3 px-1">
+                    <div className="inline-flex items-center gap-2 bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/50 dark:border-white/5 px-3.5 py-1.5 rounded-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.01)] select-none">
+                      <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 text-blue-500" />
+                      <h3 className="text-[12.5px] font-extrabold text-slate-700 dark:text-slate-200 tracking-wide uppercase">
+                        {g.name}
+                      </h3>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5">
                     {g.members.map(renderMemberCard)}
                   </div>
                 </div>
@@ -721,14 +769,16 @@ export function SharedMembersSection({
               {noGroup.length > 0 && (
                 <div className={groups.length > 0 ? "animate-fadeIn" : "animate-fadeIn"}>
                   {groups.length > 0 && (
-                    <div className="flex items-center gap-2 mb-3 px-1">
-                      <HugeiconsIcon icon={UserIcon} className="w-5 h-5 text-slate-400" />
-                      <h3 className="text-[14.5px] font-bold text-slate-700 dark:text-slate-300">
-                        {t("members.otherMembers")}
-                      </h3>
+                    <div className="flex items-center mb-3 px-1">
+                      <div className="inline-flex items-center gap-2 bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/50 dark:border-white/5 px-3.5 py-1.5 rounded-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.01)] select-none">
+                        <HugeiconsIcon icon={UserIcon} className="w-4 h-4 text-slate-400" />
+                        <h3 className="text-[12.5px] font-extrabold text-slate-700 dark:text-slate-200 tracking-wide uppercase">
+                          {t("members.otherMembers")}
+                        </h3>
+                      </div>
                     </div>
                   )}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5">
                     {noGroup.map(renderMemberCard)}
                   </div>
                 </div>

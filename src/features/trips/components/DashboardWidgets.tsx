@@ -37,14 +37,14 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
   }, 0);
 
   const cardBaseClass =
-    "flex flex-col relative overflow-hidden bg-white/70 dark:bg-[#0A0F1C]/80 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 rounded-[2rem] p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_16px_48px_rgba(3,13,46,0.08)] dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.3)] hover:-translate-y-1 transition-all duration-500 min-h-[170px] group";
+    "flex flex-col relative overflow-hidden bg-white/70 dark:bg-[#0A0F1C]/80 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 rounded-[2rem] p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_16px_48px_rgba(3,13,46,0.08)] dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.3)] hover:border-slate-300 dark:hover:border-white/20 hover:bg-white/90 dark:hover:bg-[#0A0F1C]/90 transition-all duration-500 min-h-[170px] group";
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
       {/* ATLAS CARD */}
       <div
         onClick={onAtlasClick}
-        className={`${cardBaseClass} ${onAtlasClick ? "cursor-pointer active:scale-[0.98]" : ""}`}
+        className={`${cardBaseClass} ${onAtlasClick ? "cursor-pointer motion-press" : ""}`}
       >
         <div className="absolute -right-10 -top-10 w-40 h-40 bg-rose-500/10 dark:bg-rose-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
 

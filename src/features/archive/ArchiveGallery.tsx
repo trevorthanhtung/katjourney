@@ -190,7 +190,7 @@ export function ArchiveGallery({
   // getTripDurationText and TripCard have been moved to the top level (outside ArchiveGallery) to prevent React unmounting/re-rendering animation bugs.
 
   return (
-    <div className="mx-auto w-full max-w-[1120px] px-4 py-6 md:px-6 md:pt-4 md:pb-16 motion-page-enter">
+    <div className="mx-auto w-full max-w-[1280px] px-4 py-6 md:px-6 md:pt-4 md:pb-16 motion-page-enter">
       {/* Header */}
       <div className="mb-8 flex items-center gap-4">
         <button

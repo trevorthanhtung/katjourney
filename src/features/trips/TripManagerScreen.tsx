@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { createPortal } from "react-dom";
+
 import { useTranslation } from "react-i18next";
+import { SegmentedControl } from "../../components/ui/SegmentedControl";
+import { useAuth } from "../../hooks/useAuth";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { motion } from "framer-motion";
+import { listContainerVariants, listItemVariants, springInteraction } from "../../lib/motion";
 import {
   Airplane01Icon,
   Calendar01Icon,
@@ -11,6 +17,10 @@ import {
   SparklesIcon,
   MapsIcon,
   CheckmarkCircle02Icon,
+  PlusSignIcon,
+  Archive02Icon,
+  DashboardSquare01Icon,
+  Menu01Icon,
 } from "@hugeicons/core-free-icons";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Trip, db, deleteTripCascade, Expense, ChecklistItem } from "../../db";
@@ -121,9 +131,13 @@ function TripCard({
 
   if (viewMode === "list") {
     return (
-      <div
+      <motion.div
+        variants={listItemVariants}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        transition={springInteraction}
         onClick={() => onOpenTrip(trip.id!)}
-        className={`group relative cursor-pointer flex flex-row items-center p-1.5 sm:p-2 overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-all duration-300 w-full h-[104px] sm:h-[112px] motion-card-enter motion-delay-${Math.min(idx + 2, 10)}`}
+        className={`group relative cursor-pointer flex flex-row items-center p-1.5 sm:p-2 overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition-shadow duration-300 w-full h-[104px] sm:h-[112px]`}
       >
         {/* Left Side (Gradient & Title) - Card in Card */}
         <div
@@ -141,50 +155,51 @@ function TripCard({
         </div>
 
         {/* Right Side (Stats) */}
-        <div className="flex-1 flex flex-row items-center justify-between px-2 sm:px-6 min-w-0 h-full">
-          <div className="flex-1 flex flex-col items-center justify-center min-w-0 pr-1 sm:pr-4">
-            <div className="flex items-center gap-1 sm:gap-1.5 justify-center text-slate-500 dark:text-slate-400 mb-0.5 sm:mb-1">
-              <HugeiconsIcon
-                icon={Calendar01Icon}
-                className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-70"
-              />
-            </div>
-            <span className="text-[11px] sm:text-[13px] font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap truncate w-full text-center">
-              {dateDisplay
-                ? dateDisplay.split(" ➔ ").map((d, i, arr) => (
-                    <span key={i}>
-                      {d}{" "}
-                      {i < arr.length - 1 && (
-                        <span className="text-slate-300 dark:text-slate-600 mx-0.5 sm:mx-1">➔</span>
-                      )}
+        <div className="flex-1 flex flex-col sm:flex-row items-center justify-center sm:justify-between px-1.5 sm:px-6 min-w-0 h-full py-1 sm:py-0">
+          <div className="flex w-full sm:flex-1 flex-row items-center justify-center min-w-0 mb-1 sm:mb-0 sm:pr-4 gap-1">
+            {dateDisplay ? (
+              <>
+                <span className="text-[11px] sm:text-[13px] font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                  {dateDisplay.split(" ➔ ")[0]}
+                </span>
+                {dateDisplay.split(" ➔ ")[1] && (
+                  <>
+                    <span className="text-slate-300 dark:text-slate-600 mx-0.5 sm:mx-1">➔</span>
+                    <span className="text-[11px] sm:text-[13px] font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                      {dateDisplay.split(" ➔ ")[1]}
                     </span>
-                  ))
-                : t("dashboard.card.openDates", "Open dates")}
-            </span>
+                  </>
+                )}
+              </>
+            ) : (
+              <span className="text-[11px] sm:text-[13px] font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                {t("dashboard.card.openDates", "Open dates")}
+              </span>
+            )}
           </div>
 
-          <div className="h-10 w-px bg-slate-100 dark:bg-slate-800/80 mx-1 sm:mx-4 shrink-0"></div>
+          <div className="hidden sm:block h-10 w-px bg-slate-100 dark:bg-slate-800/80 mx-1 sm:mx-4 shrink-0"></div>
 
-          <div className="grid grid-cols-3 shrink-0 w-[140px] sm:w-[200px] xl:w-[240px] gap-1 sm:gap-2">
+          <div className="grid grid-cols-3 w-full shrink-0 sm:w-[200px] xl:w-[240px] gap-0.5 sm:gap-2">
             <div className="flex flex-col items-center min-w-0">
-              <span className="text-[16px] sm:text-[18px] font-black text-kat-text dark:text-slate-200 leading-none truncate w-full text-center">
+              <span className="text-[14px] sm:text-[18px] font-black text-kat-text dark:text-slate-200 leading-none truncate w-full text-center">
                 {daysTotal}
               </span>
-              <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 truncate w-full text-center">
+              <span className="text-[7.5px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 sm:mt-1 truncate w-full text-center">
                 {t("dashboard.card.days", "NGÀY")}
               </span>
             </div>
-            <div className="flex flex-col items-center min-w-0">
-              <span className="text-[16px] sm:text-[18px] font-black text-kat-text dark:text-slate-200 leading-none truncate w-full text-center">
+            <div className="flex flex-col items-center min-w-0 border-x border-slate-100/60 dark:border-slate-800/60 sm:border-0">
+              <span className="text-[14px] sm:text-[18px] font-black text-kat-text dark:text-slate-200 leading-none truncate w-full text-center">
                 {memberCounts[trip.id!] || 1}
               </span>
-              <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 truncate w-full text-center">
+              <span className="text-[7.5px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 sm:mt-1 truncate w-full text-center">
                 {t("dashboard.card.buddies", "NGƯỜI")}
               </span>
             </div>
             <div className="flex flex-col items-center min-w-0">
               <span
-                className="text-[16px] sm:text-[18px] font-black text-kat-text dark:text-slate-200 leading-none truncate w-full text-center"
+                className="text-[14px] sm:text-[18px] font-black text-kat-text dark:text-slate-200 leading-none truncate w-full text-center"
                 title={
                   totalExpense > 0
                     ? formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND")
@@ -195,20 +210,24 @@ function TripCard({
                   ? formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND")
                   : "0"}
               </span>
-              <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 truncate w-full text-center">
+              <span className="text-[7.5px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 sm:mt-1 truncate w-full text-center">
                 {t("dashboard.card.expense", "CHI PHÍ")}
               </span>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div
+    <motion.div
+      variants={listItemVariants}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      transition={springInteraction}
       onClick={() => onOpenTrip(trip.id!)}
-      className={`group relative cursor-pointer flex flex-col overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 w-full h-[290px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square motion-card-enter motion-delay-${Math.min(idx + 2, 10)} p-1.5 sm:p-2`}
+      className={`group relative cursor-pointer flex flex-col overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-shadow duration-300 w-full h-[290px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square p-1.5 sm:p-2`}
     >
       {/* Top Banner Area (Gradient) - Card in Card */}
       <div
@@ -280,7 +299,7 @@ function TripCard({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -326,11 +345,14 @@ function TripList({
         )}
       </div>
 
-      <div
+      <motion.div
+        variants={listContainerVariants}
+        initial="hidden"
+        animate="visible"
         className={
           viewMode === "list"
             ? "flex flex-col gap-4 items-stretch w-full"
-            : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch"
+            : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch"
         }
       >
         {items.map((trip, idx) => (
@@ -347,9 +369,17 @@ function TripList({
         ))}
 
         {showCreateCard && (
-          <div
+          <motion.div
+            variants={listItemVariants}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            transition={springInteraction}
             onClick={onCreateNew}
-            className={`hidden sm:flex group cursor-pointer ${viewMode === "list" ? "flex-col h-32" : "flex-col h-[260px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square"} items-center justify-center rounded-[24px] border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/40 active:scale-[0.97] transition-all duration-200 ease-out w-full motion-card-enter`}
+            className={`hidden lg:flex group cursor-pointer ${
+              viewMode === "list"
+                ? "flex-col h-32"
+                : "flex-col h-[260px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square"
+            } items-center justify-center rounded-[24px] border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors duration-200 ease-out w-full`}
           >
             <div
               className={`rounded-full bg-slate-800 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all duration-300 ease-out shadow-sm ${viewMode === "list" ? "w-10 h-10 mb-2" : "w-14 h-14 mb-4"}`}
@@ -376,9 +406,9 @@ function TripList({
                 {t("dashboard.card.newTripDesc", "Plan a new trip from scratch")}
               </p>
             )}
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -397,7 +427,7 @@ export function TripManagerScreen({
   onShowToast?: (msg: string) => void;
 }) {
   const { t } = useTranslation();
-  const areBarsVisible = useScrollBarVisibility(768);
+  const areBarsVisible = useScrollBarVisibility(1024);
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [tripToDelete, setTripToDelete] = useState<Trip | null>(null);
   const [isAtlasOpen, setIsAtlasOpen] = useState(false);
@@ -465,114 +495,91 @@ export function TripManagerScreen({
 
   return (
     <div
-      className={`mx-auto w-full max-w-[1120px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center py-0 md:py-0" : "py-6 pb-40 md:pt-4 md:pb-16"}`}
+      className={`mx-auto w-full max-w-[1280px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center py-0 md:py-0" : "py-6 pb-40 md:pt-4 md:pb-16"}`}
     >
       {trips.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[32px] bg-white dark:bg-kat-surface p-6 sm:p-10 md:p-14 text-center border border-slate-200 dark:border-kat-border shadow-[0_20px_50px_rgba(0,191,183,0.06)] hover:shadow-[0_20px_50px_rgba(0,191,183,0.12)] hover:border-[#00BFB7]/40 dark:hover:border-[#00BFB7]/60 transition-all duration-500 mx-auto w-full max-w-[580px] relative overflow-hidden motion-page-enter motion-hover-lift">
-          {/* Ambient Background Glows */}
-          <div className="absolute -right-16 -top-16 w-64 h-64 bg-[#00BFB7]/10 blur-[80px] rounded-full pointer-events-none animate-pulse duration-[8000ms]" />
-          <div className="absolute -left-20 -bottom-20 w-72 h-72 bg-[#030D2E]/5 blur-[90px] rounded-full pointer-events-none animate-pulse duration-[6000ms]" />
+        <div className="flex flex-col items-center justify-center rounded-[32px] bg-white dark:bg-[#0A0F1C] p-8 sm:p-12 text-center border border-slate-200 dark:border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_50px_rgba(0,191,183,0.03)] mx-auto w-full max-w-[540px] relative overflow-hidden motion-page-enter">
+          {/* Subtle top gradient line */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00BFB7] to-transparent opacity-50" />
 
-          {/* Subtle Dot Grid Background */}
-          <div
-            className="absolute inset-0 pointer-events-none select-none z-0"
-            style={{
-              backgroundImage: "radial-gradient(#00BFB7 1px, transparent 1px)",
-              backgroundSize: "16px 16px",
-              opacity: 0.05,
-            }}
-          />
-
-          {/* Watermark Map Icon */}
-          <div
-            className="absolute -right-12 -top-12 w-48 h-48 pointer-events-none select-none rotate-12"
-            style={{ opacity: 0.04, color: "#00BFB7" }}
-          >
-            <HugeiconsIcon icon={MapsIcon} className="w-full h-full" />
-          </div>
-
-          {/* Branded Label tag */}
-          <div className="mb-5 inline-flex items-center gap-1.5 rounded-full bg-[#00BFB7]/10 px-3.5 py-1 text-[11px] font-black uppercase tracking-wider text-[#00AFA8] border border-[#00BFB7]/25 relative z-10">
-            <HugeiconsIcon
-              icon={SparklesIcon}
-              size={11}
-              className="animate-spin duration-[4000ms]"
-            />
-            Kat Journey
-          </div>
-
-          {/* Pulsing Glowing Airplane Card */}
-          <div className="mb-6 relative flex items-center justify-center relative z-10">
-            <div className="absolute w-32 h-32 rounded-full bg-[#00BFB7]/5 animate-ping duration-[4000ms] pointer-events-none" />
-            <div className="absolute w-24 h-24 rounded-full bg-[#00BFB7]/10 border border-[#00BFB7]/20 pointer-events-none animate-pulse duration-[3000ms]" />
-
-            <div className="relative flex h-20 w-20 items-center justify-center rounded-[24px] bg-gradient-to-br from-[#030D2E] via-[#004E5A] to-[#00BFB7] text-white shadow-[0_12px_32px_rgba(0,191,183,0.25)] border-2 border-white transform hover:rotate-[360deg] transition-transform duration-1000">
-              <HugeiconsIcon icon={Airplane01Icon} size={38} className="text-white -rotate-45" />
+          {/* Premium Icon Container */}
+          <div className="relative mb-8 flex items-center justify-center">
+            <div className="absolute inset-0 bg-[#00BFB7] rounded-full blur-[40px] opacity-10" />
+            <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-slate-700 shadow-inner">
+              <HugeiconsIcon
+                icon={Airplane01Icon}
+                size={42}
+                className="text-[#00BFB7] -rotate-45"
+              />
             </div>
           </div>
 
-          <h3 className="mb-2.5 text-[24px] sm:text-[28px] font-black text-kat-text tracking-tight relative z-10 leading-tight">
+          <h3 className="mb-3 text-[26px] sm:text-[30px] font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
             {t("dashboard.emptyTitle")}
           </h3>
-          <p className="mb-6 text-[14px] sm:text-[15.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed max-w-[380px] relative z-10">
+
+          <p className="mb-10 text-[15px] sm:text-[16px] text-slate-500 dark:text-slate-400 leading-relaxed max-w-[400px]">
             {t("dashboard.emptyDesc")}
           </p>
 
-          {/* Feature Showcase Grid */}
-          <div className="grid grid-cols-3 gap-3 w-full max-w-[460px] mb-8 relative z-10">
-            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#F8FAFC]/50 dark:bg-slate-800/40 border border-[#E2E8F0]/60 dark:border-slate-700/50 hover:bg-[#F8FAFC]/90 dark:hover:bg-slate-800/80 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
-              <div className="h-9 w-9 rounded-xl bg-[#0081BE]/8 dark:bg-[#38bdf8]/10 text-[#0081BE] dark:text-[#38bdf8] flex items-center justify-center mb-2 shadow-sm border border-[#0081BE]/10 dark:border-[#38bdf8]/20 group-hover/item:scale-110 transition-transform duration-300">
-                <HugeiconsIcon icon={Calendar01Icon} size={18} />
+          {/* Sleek Feature List */}
+          <div className="flex flex-col gap-3 w-full max-w-[420px] mb-10">
+            <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+              <div className="h-10 w-10 shrink-0 rounded-xl bg-[#0081BE]/10 text-[#0081BE] dark:text-[#38bdf8] flex items-center justify-center">
+                <HugeiconsIcon icon={Calendar01Icon} size={20} />
               </div>
-              <span className="text-[11.5px] font-black text-[#030D2E] dark:text-slate-100 tracking-tight">
-                {t("dashboard.emptyFeature1")}
-              </span>
-              <span className="text-[9.5px] text-slate-400 dark:text-slate-400 font-semibold mt-0.5">
-                {t("dashboard.emptyFeature1Desc")}
-              </span>
+              <div className="flex flex-col items-start text-left">
+                <span className="text-[14px] font-bold text-slate-900 dark:text-slate-100">
+                  {t("dashboard.emptyFeature1")}
+                </span>
+                <span className="text-[12px] text-slate-500 dark:text-slate-400 font-medium">
+                  {t("dashboard.emptyFeature1Desc")}
+                </span>
+              </div>
             </div>
 
-            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#F8FAFC]/50 dark:bg-slate-800/40 border border-[#E2E8F0]/60 dark:border-slate-700/50 hover:bg-[#F8FAFC]/90 dark:hover:bg-slate-800/80 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
-              <div className="h-9 w-9 rounded-xl bg-[#F89B02]/8 dark:bg-[#fbbf24]/10 text-[#F89B02] dark:text-[#fbbf24] flex items-center justify-center mb-2 shadow-sm border border-[#F89B02]/10 dark:border-[#fbbf24]/20 group-hover/item:scale-110 transition-transform duration-300">
-                <HugeiconsIcon icon={WalletCardsIcon} size={18} />
+            <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+              <div className="h-10 w-10 shrink-0 rounded-xl bg-[#F89B02]/10 text-[#F89B02] dark:text-[#fbbf24] flex items-center justify-center">
+                <HugeiconsIcon icon={WalletCardsIcon} size={20} />
               </div>
-              <span className="text-[11.5px] font-black text-[#030D2E] dark:text-slate-100 tracking-tight">
-                {t("dashboard.emptyFeature2")}
-              </span>
-              <span className="text-[9.5px] text-slate-400 dark:text-slate-400 font-semibold mt-0.5">
-                {t("dashboard.emptyFeature2Desc")}
-              </span>
+              <div className="flex flex-col items-start text-left">
+                <span className="text-[14px] font-bold text-slate-900 dark:text-slate-100">
+                  {t("dashboard.emptyFeature2")}
+                </span>
+                <span className="text-[12px] text-slate-500 dark:text-slate-400 font-medium">
+                  {t("dashboard.emptyFeature2Desc")}
+                </span>
+              </div>
             </div>
 
-            <div className="flex flex-col items-center justify-center p-3.5 rounded-2xl bg-[#F8FAFC]/50 dark:bg-slate-800/40 border border-[#E2E8F0]/60 dark:border-slate-700/50 hover:bg-[#F8FAFC]/90 dark:hover:bg-slate-800/80 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.01)] group/item">
-              <div className="h-9 w-9 rounded-xl bg-[#00BFB7]/8 dark:bg-[#2dd4bf]/10 text-[#00BFB7] dark:text-[#2dd4bf] flex items-center justify-center mb-2 shadow-sm border border-[#00BFB7]/10 dark:border-[#2dd4bf]/20 group-hover/item:scale-110 transition-transform duration-300">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} size={18} />
+            <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+              <div className="h-10 w-10 shrink-0 rounded-xl bg-[#00BFB7]/10 text-[#00BFB7] dark:text-[#2dd4bf] flex items-center justify-center">
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} size={20} />
               </div>
-              <span className="text-[11.5px] font-black text-[#030D2E] dark:text-slate-100 tracking-tight">
-                {t("dashboard.emptyFeature3")}
-              </span>
-              <span className="text-[9.5px] text-slate-400 dark:text-slate-400 font-semibold mt-0.5">
-                {t("dashboard.emptyFeature3Desc")}
-              </span>
+              <div className="flex flex-col items-start text-left">
+                <span className="text-[14px] font-bold text-slate-900 dark:text-slate-100">
+                  {t("dashboard.emptyFeature3")}
+                </span>
+                <span className="text-[12px] text-slate-500 dark:text-slate-400 font-medium">
+                  {t("dashboard.emptyFeature3Desc")}
+                </span>
+              </div>
             </div>
           </div>
 
           <button
             onClick={onCreateNew}
-            className="group flex h-12 sm:h-14 w-full items-center justify-center gap-2 rounded-[20px] bg-gradient-to-r from-[#030D2E] via-[#004E5A] to-[#00BFB7] text-white px-6 font-black text-[14.5px] sm:text-[15.5px] hover:brightness-[1.08] active:scale-[0.98] transition-all duration-300 relative z-10 shadow-[0_8px_30px_rgba(0,191,183,0.2)] hover:shadow-[0_12px_36px_rgba(0,191,183,0.35)] motion-press"
+            className="group flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#00BFB7] text-white px-6 font-bold text-[16px] hover:bg-[#00AFA8] active:scale-[0.98] transition-all duration-300 shadow-[0_8px_20px_rgba(0,191,183,0.25)]"
           >
-            <span className="text-[20px] leading-none group-hover:rotate-90 transition-transform duration-300 font-bold">
-              +
-            </span>
+            <HugeiconsIcon icon={PlusSignIcon} size={20} strokeWidth={2.5} />
             {t("dashboard.emptyCreateBtn")}
           </button>
 
           {archivedTripsCount > 0 && (
             <button
               onClick={onOpenArchive}
-              className="mt-3.5 flex h-12 sm:h-14 w-full items-center justify-center gap-2 rounded-[20px] border-2 border-[#00BFB7]/25 hover:border-[#00BFB7] bg-white dark:bg-kat-surface text-[#030D2E] dark:text-kat-text px-6 font-extrabold text-[14px] sm:text-[15px] active:scale-[0.98] hover:bg-slate-50/80 dark:hover:bg-kat-surface/80 transition-all duration-300 relative z-10 shadow-[0_4px_12px_rgba(3,13,46,0.02)] hover:shadow-[0_6px_16px_rgba(0,191,183,0.08)] motion-press"
+              className="mt-6 text-[14px] font-semibold text-slate-500 hover:text-[#00BFB7] transition-colors"
             >
-              <HugeiconsIcon icon={SparklesIcon} size={16} className="text-[#00BFB7] shrink-0" />
               Xem kỷ niệm chuyến đi ({archivedTripsCount})
             </button>
           )}
@@ -587,29 +594,19 @@ export function TripManagerScreen({
               </h2>
 
               <div className="hidden sm:flex items-center justify-center w-full sm:w-auto gap-2">
-                <div className="flex bg-slate-100/80 dark:bg-slate-800/70 p-1.5 rounded-full backdrop-blur-md gap-1">
-                  <button
-                    onClick={() => setFilterTab("planned")}
-                    className={`px-5 py-1.5 rounded-full text-[13.5px] font-bold transition-all duration-300 
-${filterTab === "planned" ? "bg-white text-slate-900 dark:bg-slate-700 dark:text-white shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
-                  >
-                    {t("dashboard.tabs.planned", "Kế hoạch")}
-                  </button>
-                  <button
-                    onClick={() => setFilterTab("archived")}
-                    className={`px-5 py-1.5 rounded-full text-[13.5px] font-bold transition-all duration-300 
-${filterTab === "archived" ? "bg-white text-slate-900 dark:bg-slate-700 dark:text-white shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
-                  >
-                    {t("dashboard.tabs.archived", "Lưu trữ")}
-                  </button>
-                  <button
-                    onClick={() => setFilterTab("completed")}
-                    className={`px-5 py-1.5 rounded-full text-[13.5px] font-bold transition-all duration-300 
-${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:text-white shadow-md" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"}`}
-                  >
-                    {t("dashboard.tabs.completed", "Đã qua")}
-                  </button>
-                </div>
+                <SegmentedControl
+                  options={[
+                    { id: "planned", label: t("dashboard.tabs.planned", "Kế hoạch") },
+                    { id: "archived", label: t("dashboard.tabs.archived", "Lưu trữ") },
+                    { id: "completed", label: t("dashboard.tabs.completed", "Đã qua") },
+                  ]}
+                  value={filterTab}
+                  onChange={(val) => setFilterTab(val as any)}
+                  layoutIdPrefix="trip-manager-tabs"
+                  className="rounded-full bg-slate-100/80 dark:bg-slate-800/70 p-1.5 backdrop-blur-md"
+                  buttonClassName="px-5 py-1.5 rounded-full"
+                  pillClassName="shadow-md rounded-full"
+                />
 
                 <div className="flex bg-slate-100/80 dark:bg-slate-800/70 p-1.5 rounded-full backdrop-blur-md gap-1">
                   <button
@@ -766,183 +763,131 @@ ${filterTab === "completed" ? "bg-white text-slate-900 dark:bg-slate-700 dark:te
       />
 
       {/* Mobile Bottom Navigation (TripManagerScreen specific) */}
-      {trips.length > 0 && (
-        <nav
-          className={`fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] -translate-x-1/2 rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-floating-premium transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex sm:hidden ${areBarsVisible ? "translate-y-0" : "translate-y-[150%]"}`}
-          style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
-        >
-          <div className="relative flex h-[68px] items-center w-full px-1">
-            {/* 5-Column Grid for perfect symmetry */}
-            <div className="grid grid-cols-5 w-full h-full items-center justify-items-center">
-              {/* Tab 1: Kế hoạch */}
-              <button
-                onClick={() => setFilterTab("planned")}
-                className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
-              >
-                <div
-                  className={classNames(
-                    "flex items-center justify-center transition-all duration-300",
-                    filterTab === "planned"
-                      ? "text-kat-dark dark:text-white scale-110"
-                      : "text-gray-400 dark:text-gray-500"
-                  )}
+      {trips.length > 0 &&
+        createPortal(
+          <nav
+            className={`fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] -translate-x-1/2 rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-floating-premium transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex lg:hidden ${areBarsVisible ? "translate-y-0" : "translate-y-[150%]"}`}
+            style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
+          >
+            <div className="relative flex h-[68px] items-center w-full px-1">
+              {/* 5-Column Grid for perfect symmetry */}
+              <div className="grid grid-cols-5 w-full h-full items-center justify-items-center">
+                {/* Tab 1: Kế hoạch */}
+                <button
+                  onClick={() => setFilterTab("planned")}
+                  className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
                 >
-                  <HugeiconsIcon icon={Calendar01Icon} className="w-[22px] h-[22px]" />
-                </div>
-                <span
-                  className={classNames(
-                    "text-[9px] font-bold transition-all duration-300",
-                    filterTab === "planned"
-                      ? "text-kat-dark dark:text-white opacity-100"
-                      : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
-                  )}
-                >
-                  {t("dashboard.tabs.planned", "Kế hoạch")}
-                </span>
-              </button>
-
-              {/* Tab 2: Lưu trữ */}
-              <button
-                onClick={() => setFilterTab("archived")}
-                className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
-              >
-                <div
-                  className={classNames(
-                    "flex items-center justify-center transition-all duration-300",
-                    filterTab === "archived"
-                      ? "text-kat-dark dark:text-white scale-110"
-                      : "text-gray-400 dark:text-gray-500"
-                  )}
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-[22px] h-[22px]"
+                  <div
+                    className={classNames(
+                      "flex items-center justify-center transition-all duration-300",
+                      filterTab === "planned"
+                        ? "text-kat-dark dark:text-white scale-110"
+                        : "text-gray-400 dark:text-gray-500"
+                    )}
                   >
-                    <polyline points="21 8 21 21 3 21 3 8"></polyline>
-                    <rect x="1" y="3" width="22" height="5"></rect>
-                    <line x1="10" y1="12" x2="14" y2="12"></line>
-                  </svg>
-                </div>
-                <span
-                  className={classNames(
-                    "text-[9px] font-bold transition-all duration-300",
-                    filterTab === "archived"
-                      ? "text-kat-dark dark:text-white opacity-100"
-                      : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
-                  )}
-                >
-                  {t("dashboard.tabs.archived", "Lưu trữ")}
-                </span>
-              </button>
+                    <HugeiconsIcon icon={Calendar01Icon} className="w-[22px] h-[22px]" />
+                  </div>
+                  <span
+                    className={classNames(
+                      "text-[9px] font-bold transition-all duration-300",
+                      filterTab === "planned"
+                        ? "text-kat-dark dark:text-white opacity-100"
+                        : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
+                    )}
+                  >
+                    {t("dashboard.tabs.planned", "Kế hoạch")}
+                  </span>
+                </button>
 
-              {/* Tab 3: Empty space for FAB */}
-              <div className="w-full h-full pointer-events-none" />
-
-              {/* Tab 4: Đã qua */}
-              <button
-                onClick={() => setFilterTab("completed")}
-                className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
-              >
-                <div
-                  className={classNames(
-                    "flex items-center justify-center transition-all duration-300",
-                    filterTab === "completed"
-                      ? "text-kat-dark dark:text-white scale-110"
-                      : "text-gray-400 dark:text-gray-500"
-                  )}
+                {/* Tab 2: Lưu trữ */}
+                <button
+                  onClick={() => setFilterTab("archived")}
+                  className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
                 >
-                  <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-[22px] h-[22px]" />
-                </div>
-                <span
-                  className={classNames(
-                    "text-[9px] font-bold transition-all duration-300",
-                    filterTab === "completed"
-                      ? "text-kat-dark dark:text-white opacity-100"
-                      : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
-                  )}
-                >
-                  {t("dashboard.tabs.completed", "Đã qua")}
-                </span>
-              </button>
+                  <div
+                    className={classNames(
+                      "flex items-center justify-center transition-all duration-300",
+                      filterTab === "archived"
+                        ? "text-kat-dark dark:text-white scale-110"
+                        : "text-gray-400 dark:text-gray-500"
+                    )}
+                  >
+                    <HugeiconsIcon icon={Archive02Icon} className="w-[22px] h-[22px]" />
+                  </div>
+                  <span
+                    className={classNames(
+                      "text-[9px] font-bold transition-all duration-300",
+                      filterTab === "archived"
+                        ? "text-kat-dark dark:text-white opacity-100"
+                        : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
+                    )}
+                  >
+                    {t("dashboard.tabs.archived", "Lưu trữ")}
+                  </span>
+                </button>
 
-              {/* Tab 5: Đổi View */}
-              <button
-                onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-                className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
-              >
-                <div className="flex items-center justify-center transition-all duration-300 text-gray-400 dark:text-gray-500 hover:text-kat-dark dark:hover:text-white">
-                  {viewMode === "grid" ? (
-                    <svg
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <line x1="8" y1="6" x2="21" y2="6"></line>
-                      <line x1="8" y1="12" x2="21" y2="12"></line>
-                      <line x1="8" y1="18" x2="21" y2="18"></line>
-                      <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                      <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                      <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                    </svg>
-                  ) : (
-                    <svg
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect x="3" y="3" width="7" height="7"></rect>
-                      <rect x="14" y="3" width="7" height="7"></rect>
-                      <rect x="14" y="14" width="7" height="7"></rect>
-                      <rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
-                  )}
-                </div>
-                <span className="text-[9px] font-bold text-gray-400 dark:text-gray-500 opacity-0 h-0 transition-all duration-300">
-                  {t("dashboard.tabs.view", "Hiển thị")}
-                </span>
-              </button>
+                {/* Tab 3: Empty space for FAB */}
+                <div className="w-full h-full pointer-events-none" />
+
+                {/* Tab 4: Đã qua */}
+                <button
+                  onClick={() => setFilterTab("completed")}
+                  className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
+                >
+                  <div
+                    className={classNames(
+                      "flex items-center justify-center transition-all duration-300",
+                      filterTab === "completed"
+                        ? "text-kat-dark dark:text-white scale-110"
+                        : "text-gray-400 dark:text-gray-500"
+                    )}
+                  >
+                    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-[22px] h-[22px]" />
+                  </div>
+                  <span
+                    className={classNames(
+                      "text-[9px] font-bold transition-all duration-300",
+                      filterTab === "completed"
+                        ? "text-kat-dark dark:text-white opacity-100"
+                        : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
+                    )}
+                  >
+                    {t("dashboard.tabs.completed", "Đã qua")}
+                  </span>
+                </button>
+
+                {/* Tab 5: Đổi View */}
+                <button
+                  onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+                  className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
+                >
+                  <div className="flex items-center justify-center transition-all duration-300 text-gray-400 dark:text-gray-500 hover:text-kat-dark dark:hover:text-white">
+                    {viewMode === "grid" ? (
+                      <HugeiconsIcon icon={Menu01Icon} className="w-[22px] h-[22px]" />
+                    ) : (
+                      <HugeiconsIcon icon={DashboardSquare01Icon} className="w-[22px] h-[22px]" />
+                    )}
+                  </div>
+                  <span className="text-[9px] font-bold text-gray-400 dark:text-gray-500 opacity-0 h-0 transition-all duration-300">
+                    {t("dashboard.tabs.view", "Hiển thị")}
+                  </span>
+                </button>
+              </div>
+
+              {/* Absolute Center FAB - Floats prominently */}
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[60%] z-20 pointer-events-auto">
+                <button
+                  onClick={onCreateNew}
+                  className="flex items-center justify-center w-[54px] h-[54px] rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_8px_20px_rgba(3,13,46,0.3)] dark:shadow-[0_8px_20px_rgba(0,191,183,0.35)] hover:shadow-[0_12px_28px_rgba(3,13,46,0.4)] dark:hover:shadow-[0_12px_28px_rgba(0,191,183,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-press border-4 border-white dark:border-slate-900"
+                  aria-label="Thêm chuyến đi"
+                >
+                  <HugeiconsIcon icon={PlusSignIcon} className="w-6 h-6" />
+                </button>
+              </div>
             </div>
-
-            {/* Absolute Center FAB - Floats prominently */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[60%] z-20 pointer-events-auto">
-              <button
-                onClick={onCreateNew}
-                className="flex items-center justify-center w-[54px] h-[54px] rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_8px_20px_rgba(3,13,46,0.3)] dark:shadow-[0_8px_20px_rgba(0,191,183,0.35)] hover:shadow-[0_12px_28px_rgba(3,13,46,0.4)] dark:hover:shadow-[0_12px_28px_rgba(0,191,183,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-press border-4 border-white dark:border-slate-900"
-                aria-label="Thêm chuyến đi"
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </nav>
-      )}
+          </nav>,
+          document.body
+        )}
     </div>
   );
 }

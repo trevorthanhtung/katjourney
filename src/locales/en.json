@@ -293,7 +293,7 @@
     }
   },
   "splash": {
-    "subtitle": "Explore & Memories"
+    "subtitle": "Explore & Archive"
   },
   "userMenu": {
     "guest": "Guest",
@@ -425,12 +425,12 @@
     "trips": "Trips"
   },
   "archive": {
-    "title": "Memories",
+    "title": "Archive",
     "back": "Back",
-    "savedTrips": "{{count}} saved trips",
-    "noTripsDesc": "Ended trips are stored here.",
-    "emptyTitle": "No memories yet",
-    "emptyDesc": "Ended trips will appear here for you to look back on.",
+    "savedTrips": "{{count}} archived trips",
+    "noTripsDesc": "Ended trips are archived here.",
+    "emptyTitle": "No archived trips yet",
+    "emptyDesc": "Ended trips will appear here.",
     "tripCount": "{{count}} trips",
     "unknownYear": "Unknown year"
   },
@@ -1414,8 +1414,8 @@
     "deleteModalConfirm": "Permanently delete trip",
     "deleteModalMatch": "DELETE",
     "deleteModalInput": "Type DELETE",
-    "archiveModalTitle": "Archive to Memories?",
-    "archiveModalDesc": "This trip will be packed and moved to <b>Memories</b>. All data will switch to <b>read-only</b> mode to keep your moments intact.",
+    "archiveModalTitle": "Archive trip?",
+    "archiveModalDesc": "This trip will be moved to <b>Archive</b>. All data will switch to <b>read-only</b> mode to keep your trip information intact.",
     "archiveModalConfirm": "Confirm archive",
     "unarchiveModalTitle": "Unlock trip?",
     "unarchiveModalDesc": "The trip will be <b>unlocked</b>. You can continue planning, posting journals, and managing expenses as usual.",
@@ -1508,7 +1508,19 @@
     "addPrivate": "Add personal document",
     "editPrivate": "Edit personal document",
     "suggestDeleteTitle": "Suggest deleting document?",
-    "suggestDeleteDesc": "You are proposing to delete this document. The trip owner will review your proposal."
+    "suggestDeleteDesc": "You are proposing to delete this document. The trip owner will review your proposal.",
+    "typeInsurance": "Travel Insurance",
+    "typeVisa": "Visa / Passport",
+    "typeTour": "Tour / Activity",
+    "placeholderTitleVisa": "e.g., Personal Passport, Schengen Visa...",
+    "placeholderCodeVisa": "e.g., Passport Number, Visa Number...",
+    "placeholderNoteVisa": "e.g., Embassy address, contact info...",
+    "placeholderTitleInsurance": "e.g., Travel Insurance...",
+    "placeholderCodeInsurance": "e.g., Policy Number...",
+    "placeholderNoteInsurance": "e.g., Global Emergency Hotline...",
+    "placeholderTitleTour": "e.g., Universal Studio Ticket, Diving Tour...",
+    "placeholderCodeTour": "e.g., QR Code, Booking ID...",
+    "placeholderNoteTour": "e.g., Meetup point, pickup time..."
   },
   "roles": {
     "roleLeader": "Leader",
