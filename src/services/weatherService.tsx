@@ -10,7 +10,7 @@ import {
   ThunderstormIcon,
   SnowIcon,
   ThermometerIcon,
-} from "../components/WeatherIcons";
+} from "../components/ui/WeatherIcons";
 
 export interface WeatherForecast {
   current?: {

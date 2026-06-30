@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TypedDeleteConfirmModal } from "./ui";
+import { TypedDeleteConfirmModal } from "../ui";
 
 type ConfirmDeleteTripDialogProps = {
   open: boolean;
@@ -13,7 +13,7 @@ export function ConfirmDeleteTripDialog({
   open,
   tripName,
   onClose,
-  onConfirm
+  onConfirm,
 }: ConfirmDeleteTripDialogProps) {
   const { t } = useTranslation();
   return (
@@ -23,11 +23,7 @@ export function ConfirmDeleteTripDialog({
       onConfirm={onConfirm}
       title={t("more.deleteModalTitle")}
       description={t("more.deleteModalDesc")}
-      warning={
-        <span className="font-bold">
-          {t("more.deleteModalWarning")}
-        </span>
-      }
+      warning={<span className="font-bold">{t("more.deleteModalWarning")}</span>}
       confirmLabel={t("more.deleteModalConfirm")}
       confirmationText={t("more.deleteModalMatch")}
       inputPlaceholder={t("more.deleteModalInput")}

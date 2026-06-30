@@ -18,7 +18,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { signInAsGuest, signInWithGoogle } from "../services/authService";
 import { usePWAInstall } from "../hooks/usePWAInstall";
-import { PWAInstallInstructionsSheet } from "./PWAInstallInstructionsSheet";
+import { PWAInstallInstructionsSheet } from "./modals/PWAInstallInstructionsSheet";
 
 interface WelcomeScreenProps {
   onDismiss: () => void;

@@ -62,13 +62,13 @@ import {
 } from "../services/authService";
 import { db } from "../db";
 import { clearTemporaryFiles } from "../utils/dataActions";
-import { DeleteAccountModal } from "./DeleteAccountModal";
-import { FactoryResetModal } from "./FactoryResetModal";
+import { DeleteAccountModal } from "./settings/DeleteAccountModal";
+import { FactoryResetModal } from "./settings/FactoryResetModal";
 import { useModalHistory } from "../hooks/useModalHistory";
 import { today, checklistSections, packingTripTypes, APP_VERSION } from "../utils/helpers";
 import { fetchExchangeRates, ExchangeRate } from "../services/currencyService";
 import { usePWAInstall } from "../hooks/usePWAInstall";
-import { PWAInstallInstructionsSheet } from "./PWAInstallInstructionsSheet";
+import { PWAInstallInstructionsSheet } from "./modals/PWAInstallInstructionsSheet";
 
 interface SettingsSheetProps {
   isOpen: boolean;

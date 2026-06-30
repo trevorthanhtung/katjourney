@@ -106,7 +106,7 @@ import {
   unarchiveTrip,
 } from "../../db";
 import { getAvatarSvg, getRandomAvatarId } from "../../utils/avatars";
-import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
+import { ConfirmDeleteTripDialog } from "../../components/modals/ConfirmDeleteTripDialog";
 import {
   checklistSections,
   createTripExport,
@@ -133,7 +133,7 @@ import {
   TypedDeleteConfirmModal,
   classNames,
 } from "../../components/ui";
-import { RolesHelpSheet } from "../../components/RolesHelpSheet";
+import { RolesHelpSheet } from "../../components/modals/RolesHelpSheet";
 import { JournalSection } from "../journal/JournalSection";
 import { TravelDocumentsSection } from "./TravelDocumentsSection";
 import { ChatBox } from "../share/components/ChatBox";

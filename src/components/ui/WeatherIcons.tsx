@@ -150,7 +150,13 @@ export function FogIcon({ className = "w-6 h-6" }: { className?: string }) {
         opacity="0.85"
       />
       {/* Fog lines overlay */}
-      <g stroke="currentColor" strokeOpacity="0.75" strokeWidth="3" strokeLinecap="round" filter="url(#glass-fog-shadow)">
+      <g
+        stroke="currentColor"
+        strokeOpacity="0.75"
+        strokeWidth="3"
+        strokeLinecap="round"
+        filter="url(#glass-fog-shadow)"
+      >
         <line x1="16" y1="36" x2="48" y2="36" />
         <line x1="10" y1="42" x2="54" y2="42" />
         <line x1="18" y1="48" x2="46" y2="48" />
@@ -186,7 +192,13 @@ export function RainIcon({ className = "w-6 h-6" }: { className?: string }) {
         filter="url(#glass-rain-shadow)"
       />
       {/* Glowing rain drops */}
-      <g stroke="url(#glass-rain-drop)" strokeWidth="3" strokeLinecap="round" opacity="0.9" filter="url(#glass-rain-shadow)">
+      <g
+        stroke="url(#glass-rain-drop)"
+        strokeWidth="3"
+        strokeLinecap="round"
+        opacity="0.9"
+        filter="url(#glass-rain-shadow)"
+      >
         <line x1="24" y1="46" x2="21" y2="54" />
         <line x1="32" y1="49" x2="29" y2="57" />
         <line x1="40" y1="46" x2="37" y2="54" />
@@ -223,7 +235,13 @@ export function DrizzleIcon({ className = "w-6 h-6" }: { className?: string }) {
         filter="url(#glass-drizzle-shadow)"
       />
       {/* Drops */}
-      <g stroke="url(#glass-drizzle-drop)" strokeWidth="2.5" strokeLinecap="round" opacity="0.85" filter="url(#glass-drizzle-shadow)">
+      <g
+        stroke="url(#glass-drizzle-drop)"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.85"
+        filter="url(#glass-drizzle-shadow)"
+      >
         <line x1="26" y1="46" x2="24" y2="52" />
         <line x1="38" y1="46" x2="36" y2="52" />
       </g>
@@ -391,7 +409,13 @@ export function WindIcon({ className = "w-6 h-6" }: { className?: string }) {
           <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#0F172A" floodOpacity="0.15" />
         </filter>
       </defs>
-      <g stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" fill="none" filter="url(#glass-wind-shadow)">
+      <g
+        stroke="currentColor"
+        strokeWidth="4.5"
+        strokeLinecap="round"
+        fill="none"
+        filter="url(#glass-wind-shadow)"
+      >
         <path d="M12 22h30a5 5 0 1 0-5-5" />
         <path d="M8 32h40a5 5 0 1 1-5 5" />
         <path d="M16 42h22a5 5 0 1 0-5-5" />
@@ -399,7 +423,3 @@ export function WindIcon({ className = "w-6 h-6" }: { className?: string }) {
     </svg>
   );
 }
-
-
-
-

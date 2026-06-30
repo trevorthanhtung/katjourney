@@ -19,7 +19,7 @@ import {
   ThermometerIcon,
   HumidityIcon,
   WindIcon,
-} from "../../components/WeatherIcons";
+} from "../../components/ui/WeatherIcons";
 import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
 import { useTemperatureUnit } from "../../hooks/useTemperatureUnit";
 import { useDistanceUnit } from "../../hooks/useDistanceUnit";

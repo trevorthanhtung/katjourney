@@ -46,7 +46,7 @@ import {
 // Components & Helpers
 import { FormCard, ScreenTitle, BottomSheet } from "./components/ui";
 import { classNames } from "./utils/helpers";
-import { TripSearchModal } from "./components/TripSearchModal";
+import { TripSearchModal } from "./components/modals/TripSearchModal";
 import { GlobalToast } from "./components/ui/ToastManager";
 import { useTripReminders } from "./hooks/useTripReminders";
 import { useMediaQuery } from "./hooks/useMediaQuery";
@@ -79,7 +79,7 @@ const SharedTripScreen = React.lazy(() => import("./features/share/SharedTripScr
 import { useShareChangeRequests } from "./hooks/useShareChangeRequests";
 import { ShareChangeRequestsSheet } from "./features/share/components/ShareChangeRequestsSheet";
 import { SettingsSheet } from "./components/SettingsSheet";
-import { ImportTripSheet } from "./components/ImportTripSheet";
+import { ImportTripSheet } from "./components/modals/ImportTripSheet";
 import { SplashScreen } from "./components/SplashScreen";
 import { ChatBox } from "./features/share/components/ChatBox";
 import { useAuth } from "./hooks/useAuth";

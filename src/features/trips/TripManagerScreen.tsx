@@ -30,7 +30,7 @@ const TripForm = React.lazy(() =>
   import("../more/MoreScreen").then((m) => ({ default: m.TripForm }))
 );
 import { TypedDeleteConfirmModal, BottomSheet } from "../../components/ui";
-import { ConfirmDeleteTripDialog } from "../../components/ConfirmDeleteTripDialog";
+import { ConfirmDeleteTripDialog } from "../../components/modals/ConfirmDeleteTripDialog";
 import { GamificationStats, TimezonesWidget } from "./components/DashboardWidgets";
 import { HeroTripCard } from "./components/HeroTripCard";
 import { AtlasScreen } from "../atlas/AtlasScreen";

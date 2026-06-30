@@ -35,7 +35,7 @@ import {
   ChevronDownIcon,
   InformationCircleIcon,
 } from "@hugeicons/core-free-icons";
-import { RolesHelpSheet } from "../../components/RolesHelpSheet";
+import { RolesHelpSheet } from "../../components/modals/RolesHelpSheet";
 import {} from "../../services/cloudShareService";
 import {
   formatDate,
