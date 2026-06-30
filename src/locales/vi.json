@@ -406,6 +406,12 @@
       "searchTimezone": "Tìm kiếm múi giờ...",
       "noTimezonesFound": "Không tìm thấy múi giờ nào",
       "localTime": "Giờ hiện tại",
+      "sameTimezone": "Cùng múi giờ",
+      "yesterday": "Hôm qua",
+      "today": "Hôm nay",
+      "tomorrow": "Ngày mai",
+      "ahead": "nhanh hơn",
+      "behind": "chậm hơn",
       "saigon": "Sài Gòn",
       "tokyo": "Tokyo",
       "london": "London"

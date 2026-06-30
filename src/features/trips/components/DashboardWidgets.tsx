@@ -184,7 +184,7 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
 }
 
 export function TimezonesWidget() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [time, setTime] = useState(new Date());
   const [timezones, setTimezones] = useState<string[]>([]);
   const [isAdding, setIsAdding] = useState(false);
@@ -254,6 +254,52 @@ export function TimezonesWidget() {
       return t("dashboard.widgets.localTime", "Local time");
     }
     return offset ? `${offset}` : "";
+  };
+
+  const getRelativeTimeLabel = (tz: string) => {
+    try {
+      const date = new Date();
+      const tzString = date.toLocaleString("en-US", { timeZone: tz });
+      const localString = date.toLocaleString("en-US");
+      const tzDate = new Date(tzString);
+      const localDate = new Date(localString);
+
+      const diffHrs = Math.round((tzDate.getTime() - localDate.getTime()) / 3600000);
+      if (diffHrs === 0) {
+        return t("dashboard.widgets.sameTimezone", "Cùng múi giờ");
+      }
+
+      const tzDay = new Date(tzDate.getFullYear(), tzDate.getMonth(), tzDate.getDate());
+      const localDay = new Date(localDate.getFullYear(), localDate.getMonth(), localDate.getDate());
+      const diffDays = Math.round((tzDay.getTime() - localDay.getTime()) / (1000 * 60 * 60 * 24));
+
+      let dayLabel = "";
+      if (diffDays === -1) {
+        dayLabel = t("dashboard.widgets.yesterday", "Hôm qua");
+      } else if (diffDays === 1) {
+        dayLabel = t("dashboard.widgets.tomorrow", "Ngày mai");
+      } else if (diffDays === 0) {
+        dayLabel = t("dashboard.widgets.today", "Hôm nay");
+      }
+
+      const hrsValue = Math.abs(diffHrs);
+      const aheadStr = t("dashboard.widgets.ahead", "nhanh hơn");
+      const behindStr = t("dashboard.widgets.behind", "chậm hơn");
+      const isEnglish = i18n.language?.startsWith("en");
+
+      const timeLabel =
+        diffHrs > 0
+          ? isEnglish
+            ? `${hrsValue}h ${aheadStr}`
+            : `${aheadStr} ${hrsValue}h`
+          : isEnglish
+            ? `${hrsValue}h ${behindStr}`
+            : `${behindStr} ${hrsValue}h`;
+
+      return dayLabel ? `${dayLabel}, ${timeLabel}` : timeLabel;
+    } catch (e) {
+      return "";
+    }
   };
 
   const tzTime = (date: Date, tz: string) => {
@@ -365,11 +411,10 @@ export function TimezonesWidget() {
                   </div>
                   <div className="text-[12px] font-bold text-slate-450 dark:text-slate-500 mt-2.5 flex items-center flex-wrap gap-2 leading-none">
                     <span className="inline-flex items-center justify-center rounded-md px-1.5 py-0.5 text-[9.5px] font-extrabold bg-indigo-100 dark:bg-indigo-950/60 text-indigo-650 dark:text-indigo-400 tracking-wide uppercase shrink-0">
-                      {getRelativeOffsetLabel(timezones[0])}
+                      {getRelativeTimeLabel(timezones[0])}
                     </span>
-                    <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-800" />
-                    <span className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+                    <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-850" />
+                    <span className="flex items-center gap-1 font-mono text-[11px] text-slate-400 dark:text-slate-500">
                       {tzOffsetString(timezones[0])}
                     </span>
                   </div>
@@ -403,16 +448,12 @@ export function TimezonesWidget() {
                         <div className="text-[14.5px] font-extrabold text-slate-700 dark:text-slate-200 truncate">
                           {tzName(tz)}
                         </div>
-                        <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mt-1.5 flex items-center flex-wrap gap-1.5">
-                          <span>{tzOffsetString(tz)}</span>
-                          {getRelativeOffsetLabel(tz) && (
-                            <>
-                              <span className="w-0.5 h-0.5 rounded-full bg-slate-300 dark:bg-slate-700" />
-                              <span className="text-[10px] font-bold text-slate-450 dark:text-slate-500">
-                                {getRelativeOffsetLabel(tz)}
-                              </span>
-                            </>
-                          )}
+                        <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mt-1.5 flex items-center flex-wrap gap-2 leading-none">
+                          <span className="font-mono">{tzOffsetString(tz)}</span>
+                          <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-800" />
+                          <span className="text-slate-450 dark:text-slate-400 font-extrabold bg-slate-100 dark:bg-slate-800/60 px-1.5 py-0.5 rounded-[6px] text-[10px]">
+                            {getRelativeTimeLabel(tz)}
+                          </span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
