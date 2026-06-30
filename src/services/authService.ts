@@ -10,25 +10,28 @@ export interface User {
 }
 
 /**
- * Maps a Supabase Auth User object to the custom Firebase-compatible User interface.
+ * Maps a Supabase Auth User object to the custom KatUser interface.
  */
 export function mapSupabaseUser(sbUser: any): User | null {
   if (!sbUser) return null;
-  
-  const isAnonymous = sbUser.is_anonymous || 
-                      !sbUser.app_metadata?.provider || 
-                      sbUser.app_metadata?.provider === "anonymous";
-                      
-  const isGoogle = sbUser.app_metadata?.provider === "google" || 
-                   sbUser.identities?.some((id: any) => id.provider === "google");
-  
+
+  const isAnonymous =
+    sbUser.is_anonymous ||
+    !sbUser.app_metadata?.provider ||
+    sbUser.app_metadata?.provider === "anonymous";
+
+  const isGoogle =
+    sbUser.app_metadata?.provider === "google" ||
+    sbUser.identities?.some((id: any) => id.provider === "google");
+
   return {
     uid: sbUser.id,
     email: sbUser.email || null,
-    displayName: sbUser.user_metadata?.full_name || 
-                 sbUser.user_metadata?.name || 
-                 sbUser.email?.split("@")[0] || 
-                 "Khách",
+    displayName:
+      sbUser.user_metadata?.full_name ||
+      sbUser.user_metadata?.name ||
+      sbUser.email?.split("@")[0] ||
+      "Khách",
     photoURL: sbUser.user_metadata?.avatar_url || null,
     isAnonymous: isAnonymous,
     providerData: isGoogle ? [{ providerId: "google.com" }] : [],
@@ -41,17 +44,20 @@ export function mapSupabaseUser(sbUser: any): User | null {
 export function getFriendlyAuthErrorMessage(error: any): string {
   if (!error) return "Đã xảy ra lỗi không xác định.";
   if (typeof error === "string") return error;
-  
+
   const message = error.message || "";
   const status = error.status;
-  
+
   if (message.includes("Invalid login credentials") || message.includes("invalid_credentials")) {
     return "Thông tin xác thực tài khoản không chính xác, vui lòng thử lại.";
   }
   if (message.includes("Email already in use") || message.includes("User already exists")) {
     return "Địa chỉ email này đã được sử dụng bởi một tài khoản khác.";
   }
-  if (message.includes("Password should be") || message.includes("Signup requires a valid password")) {
+  if (
+    message.includes("Password should be") ||
+    message.includes("Signup requires a valid password")
+  ) {
     return "Mật khẩu quá yếu. Mật khẩu cần có ít nhất 6 ký tự.";
   }
   if (message.includes("identity_already_exists") || message.includes("already linked")) {
@@ -60,7 +66,7 @@ export function getFriendlyAuthErrorMessage(error: any): string {
   if (status === 429 || message.includes("too many requests")) {
     return "Hệ thống đang quá tải hoặc bạn thao tác quá nhanh. Vui lòng thử lại sau.";
   }
-  
+
   return message || "Đã xảy ra lỗi trong quá trình xác thực.";
 }
 
@@ -84,29 +90,34 @@ export async function signInAsGuest(): Promise<User> {
  */
 export async function signInWithGoogle(): Promise<User> {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     const currentUser = session?.user;
-    
+
     if (currentUser && currentUser.is_anonymous) {
       console.log("[AuthService] Linking anonymous guest to Google account...", currentUser.id);
-      
+
       const { data, error } = await supabase.auth.linkIdentity({
         provider: "google",
         options: {
-          redirectTo: window.location.origin
-        }
+          redirectTo: window.location.origin,
+        },
       });
-      
+
       if (error) {
         // If Google account is already in use by another user record
-        if (error.message.includes("identity_already_exists") || error.message.includes("already linked")) {
+        if (
+          error.message.includes("identity_already_exists") ||
+          error.message.includes("already linked")
+        ) {
           console.log("[AuthService] Google account already linked, signing in directly...");
           const { error: oAuthError } = await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
               redirectTo: window.location.origin,
-              queryParams: { prompt: "select_account" }
-            }
+              queryParams: { prompt: "select_account" },
+            },
           });
           if (oAuthError) throw oAuthError;
           return null as any;
@@ -120,8 +131,8 @@ export async function signInWithGoogle(): Promise<User> {
         provider: "google",
         options: {
           redirectTo: window.location.origin,
-          queryParams: { prompt: "select_account" }
-        }
+          queryParams: { prompt: "select_account" },
+        },
       });
       if (error) throw error;
       return null as any;
@@ -137,9 +148,11 @@ export async function signInWithGoogle(): Promise<User> {
  */
 export async function signOutUser(): Promise<void> {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     const currentUser = session?.user;
-    
+
     if (currentUser && currentUser.is_anonymous) {
       console.log("[AuthService] Deleting anonymous user to clean up database...");
       try {
@@ -166,7 +179,7 @@ export async function updateUserDisplayName(name: string): Promise<void> {
     const { error } = await supabase.auth.updateUser({
       data: {
         full_name: name,
-      }
+      },
     });
     if (error) throw error;
     console.log("[AuthService] Display name updated successfully:", name);
@@ -181,7 +194,9 @@ export async function updateUserDisplayName(name: string): Promise<void> {
  */
 export async function getCurrentUser(): Promise<User | null> {
   try {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     return mapSupabaseUser(session?.user);
   } catch (error) {
     console.error("[AuthService] getCurrentUser error:", error);
@@ -199,7 +214,9 @@ export function observeAuthState(callback: (user: User | null) => void): () => v
   });
 
   // Listen to changes
-  const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((event, session) => {
     console.log(`[AuthService] Auth State Changed: ${event}`);
     callback(mapSupabaseUser(session?.user));
   });
@@ -212,7 +229,11 @@ export function observeAuthState(callback: (user: User | null) => void): () => v
 /**
  * Registers a new account using Email and Password.
  */
-export async function signUpWithEmailAndPassword(email: string, password: string, fullName: string): Promise<User> {
+export async function signUpWithEmailAndPassword(
+  email: string,
+  password: string,
+  fullName: string
+): Promise<User> {
   try {
     console.log("[AuthService] Registering user with email/password...");
     const { data, error } = await supabase.auth.signUp({
@@ -221,8 +242,8 @@ export async function signUpWithEmailAndPassword(email: string, password: string
       options: {
         data: {
           full_name: fullName,
-        }
-      }
+        },
+      },
     });
     if (error) throw error;
     if (!data.user) throw new Error("Đăng ký tài khoản thất bại.");
@@ -270,7 +291,9 @@ export async function deleteCurrentUser(): Promise<void> {
  * Ensures an anonymous user session is active.
  */
 export async function ensureAnonymousUser(): Promise<any> {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   if (session?.user) return session.user;
   const { data, error } = await supabase.auth.signInAnonymously();
   if (error) throw error;

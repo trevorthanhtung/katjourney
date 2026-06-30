@@ -15,7 +15,7 @@ export async function clearTemporaryFiles(): Promise<void> {
 }
 
 /**
- * Xóa tài khoản: xóa tài khoản trên Firebase Auth, xóa toàn bộ dữ liệu cục bộ và reload.
+ * Xóa tài khoản: xóa tài khoản trên Supabase Auth, xóa toàn bộ dữ liệu cục bộ và reload.
  * ⚠️ KHÔNG THỂ HOÀN TÁC.
  */
 export async function executeDeleteAccount(): Promise<void> {

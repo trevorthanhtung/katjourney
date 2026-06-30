@@ -1,16 +1,12 @@
-import { useState, useEffect } from 'react';
-import { showToast } from '../components/ui/ToastManager';
+import { useState, useEffect } from "react";
+import { showToast } from "../components/ui/ToastManager";
 
 const getNotificationSupport = () => {
-  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+  if (typeof window === "undefined" || typeof navigator === "undefined") {
     return false;
   }
 
-  return (
-    'Notification' in window &&
-    'serviceWorker' in navigator &&
-    window.isSecureContext
-  );
+  return "Notification" in window && "serviceWorker" in navigator && window.isSecureContext;
 };
 
 /** Wraps serviceWorker.ready with a timeout to avoid hanging in unsupported envs */
@@ -22,26 +18,26 @@ const getSWRegistration = (timeoutMs = 4000): Promise<ServiceWorkerRegistration 
 };
 
 export function useNotification() {
-  const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [permission, setPermission] = useState<NotificationPermission>("default");
   const [isSupported, setIsSupported] = useState(false);
   const [fcmToken] = useState<string | null>(null);
   const [isFcmLoading] = useState(false);
   const [enabled, setEnabledState] = useState(() => {
-    if (typeof localStorage !== 'undefined') {
-      return localStorage.getItem('kat_notifications_enabled') !== 'false';
+    if (typeof localStorage !== "undefined") {
+      return localStorage.getItem("kat_notifications_enabled") !== "false";
     }
     return true;
   });
 
   const setEnabled = (val: boolean) => {
     setEnabledState(val);
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('kat_notifications_enabled', val ? 'true' : 'false');
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("kat_notifications_enabled", val ? "true" : "false");
     }
   };
 
   const fetchFcmToken = async () => {
-    // Firebase Cloud Messaging is removed. Return null.
+    // Cloud Messaging is removed. Return null.
     return null;
   };
 
@@ -50,7 +46,7 @@ export function useNotification() {
     setIsSupported(supported);
 
     if (!supported) {
-      console.warn('Trình duyệt không hỗ trợ Web Push Notification');
+      console.warn("Trình duyệt không hỗ trợ Web Push Notification");
       return;
     }
 
@@ -60,8 +56,8 @@ export function useNotification() {
   const requestPermission = async () => {
     if (!getNotificationSupport()) {
       setIsSupported(false);
-      showToast('Trình duyệt hoặc môi trường hiện tại chưa hỗ trợ thông báo.', 'error');
-      return 'denied' as NotificationPermission;
+      showToast("Trình duyệt hoặc môi trường hiện tại chưa hỗ trợ thông báo.", "error");
+      return "denied" as NotificationPermission;
     }
 
     try {
@@ -69,36 +65,36 @@ export function useNotification() {
       setPermission(result);
       return result;
     } catch (error) {
-      console.error('Lỗi khi xin quyền thông báo:', error);
-      return 'denied' as NotificationPermission;
+      console.error("Lỗi khi xin quyền thông báo:", error);
+      return "denied" as NotificationPermission;
     }
   };
 
   const sendTestNotification = async () => {
-    if (permission !== 'granted') {
-      showToast('Chưa có quyền gửi thông báo!', 'error');
+    if (permission !== "granted") {
+      showToast("Chưa có quyền gửi thông báo!", "error");
       return;
     }
     if (!enabled) {
-      showToast('Thông báo ứng dụng hiện đang tắt trong cài đặt!', 'error');
+      showToast("Thông báo ứng dụng hiện đang tắt trong cài đặt!", "error");
       return;
     }
 
     try {
       const registration = await getSWRegistration();
       if (!registration) {
-        showToast('Service Worker chưa sẵn sàng — hãy thử trên Chrome/mobile thật.', 'error');
+        showToast("Service Worker chưa sẵn sàng — hãy thử trên Chrome/mobile thật.", "error");
         return;
       }
-      await registration.showNotification('KAT Journey', {
-        body: 'Thông báo hoạt động hoàn hảo!',
-        icon: '/asset/icon-192.png',
+      await registration.showNotification("KAT Journey", {
+        body: "Thông báo hoạt động hoàn hảo!",
+        icon: "/asset/icon-192.png",
         vibrate: [200, 100, 200],
-        badge: '/asset/icon-192.png'
+        badge: "/asset/icon-192.png",
       } as any);
     } catch (error) {
-      console.error('Lỗi khi gửi thông báo test:', error);
-      showToast('Lỗi: Không thể gửi thông báo test qua Service Worker.', 'error');
+      console.error("Lỗi khi gửi thông báo test:", error);
+      showToast("Lỗi: Không thể gửi thông báo test qua Service Worker.", "error");
     }
   };
 
@@ -111,6 +107,6 @@ export function useNotification() {
     setEnabled,
     fcmToken,
     isFcmLoading,
-    fetchFcmToken
+    fetchFcmToken,
   };
 }

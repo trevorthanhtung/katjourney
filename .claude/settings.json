@@ -1,5 +1,0 @@
-{
-  "hooks": {
-    "preTool": "bash .claude/hooks/block-dangerous-git.sh"
-  }
-}

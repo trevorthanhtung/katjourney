@@ -79,7 +79,6 @@ const SharedTripScreen = React.lazy(() => import("./features/share/SharedTripScr
 import { useShareChangeRequests } from "./hooks/useShareChangeRequests";
 import { ShareChangeRequestsSheet } from "./features/share/components/ShareChangeRequestsSheet";
 import { SettingsSheet } from "./components/SettingsSheet";
-import { WelcomeScreen } from "./components/WelcomeScreen";
 import { ImportTripSheet } from "./components/ImportTripSheet";
 import { SplashScreen } from "./components/SplashScreen";
 import { ChatBox } from "./features/share/components/ChatBox";
@@ -90,6 +89,7 @@ import { updateShareLink } from "./services/cloudShareService";
 import { useNetworkStatus } from "./hooks/useNetworkStatus";
 import { useScrollBarVisibility } from "./hooks/useScrollBarVisibility";
 import { useTheme } from "./hooks/useTheme";
+import { useAutoSync } from "./hooks/useAutoSync";
 
 import { NavButton } from "./components/ui/NavButton";
 
@@ -100,6 +100,13 @@ function App() {
   const isOnline = useNetworkStatus();
   const [showSplash, setShowSplash] = useState(true);
   const [isSplashFading, setIsSplashFading] = useState(false);
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handlePopState = () => setCurrentPath(window.location.pathname);
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
   const {
     activeTab,
     setActiveTab,
@@ -397,90 +404,17 @@ function App() {
   const perPerson = (members ?? []).length ? totalSharedExpense / (members ?? []).length : 0;
 
   // --- AUTO SYNC FOR SHARED TRIP ---
-  const [isAutoSyncing, setIsAutoSyncing] = useState(false);
-  const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
-  const lastSyncedFingerprintRef = React.useRef<string>("");
-
-  const currentFingerprint = React.useMemo(() => {
-    if (!trip) return "";
-    const parts = [
-      trip.title,
-      trip.location,
-      trip.startDate,
-      trip.endDate,
-      trip.tripType,
-      JSON.stringify(trip.dayRoadmaps || {}),
-      trip.status,
-      trip.shareIncludeExpenses,
-      trip.shareIncludeJournals,
-      trip.shareIncludeChecklist,
-      trip.shareIncludeBackupPlans,
-      trip.shareIncludeDocuments,
-      trip.shareUsePinProtection,
-      trip.sharePin,
-      (members ?? []).map((m) => `${m.id}-${m.updatedAt || ""}`).join(","),
-      (events ?? []).map((e) => `${e.id}-${e.updatedAt || ""}`).join(","),
-      (trip.shareIncludeExpenses ?? true)
-        ? (expenses ?? []).map((e) => `${e.id}-${e.updatedAt || ""}`).join(",")
-        : "",
-      (trip.shareIncludeChecklist ?? true)
-        ? (checklist ?? []).map((c) => `${c.id}-${c.updatedAt || ""}`).join(",")
-        : "",
-      (trip.shareIncludeJournals ?? true)
-        ? (journals ?? []).map((j) => `${j.id}-${j.updatedAt || ""}`).join(",")
-        : "",
-      (trip.shareIncludeBackupPlans ?? true)
-        ? (backupPlans ?? []).map((b) => `${b.id}-${b.updatedAt || ""}`).join(",")
-        : "",
-      (trip.shareIncludeDocuments ?? false)
-        ? (travelDocuments ?? []).map((d) => `${d.id}-${d.updatedAt || ""}`).join(",")
-        : "",
-    ];
-    return parts.join("|");
-  }, [trip, members, events, expenses, checklist, journals, backupPlans, travelDocuments]);
-
-  React.useEffect(() => {
-    if (!trip || !trip.shareToken || isReadOnly) {
-      lastSyncedFingerprintRef.current = "";
-      return;
-    }
-
-    if (!lastSyncedFingerprintRef.current) {
-      lastSyncedFingerprintRef.current = currentFingerprint;
-      return;
-    }
-
-    if (lastSyncedFingerprintRef.current === currentFingerprint) {
-      return;
-    }
-
-    lastSyncedFingerprintRef.current = currentFingerprint;
-
-    const timer = setTimeout(async () => {
-      setIsAutoSyncing(true);
-      try {
-        console.log("[AutoSync] Syncing changes...");
-        const options = {
-          mode: "request_edit" as const,
-          includeExpenses: trip.shareIncludeExpenses ?? true,
-          includeJournals: trip.shareIncludeJournals ?? true,
-          includeChecklist: trip.shareIncludeChecklist ?? true,
-          includeBackupPlans: trip.shareIncludeBackupPlans ?? true,
-          includeDocuments: trip.shareIncludeDocuments ?? false,
-          sharePin: trip.sharePin,
-        };
-        await updateShareLink(trip.id!, trip.shareToken!, options);
-        setLastSyncedAt(new Date());
-        console.log("[AutoSync] Sync successful.");
-      } catch (err) {
-        console.error("[AutoSync] Background sync failed:", err);
-      } finally {
-        setIsAutoSyncing(false);
-      }
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [currentFingerprint, trip, isReadOnly]);
+  const { isAutoSyncing, lastSyncedAt } = useAutoSync({
+    trip,
+    isReadOnly,
+    members,
+    events,
+    expenses,
+    checklist,
+    journals,
+    backupPlans,
+    travelDocuments,
+  });
   // --- END AUTO SYNC ---
 
   // navigateToMore managed by useAppNavigation
@@ -624,24 +558,7 @@ function App() {
     <>
       {showSplash && <SplashScreen isFading={isSplashFading} />}
 
-      {showWelcome && !isShareRoute ? (
-        <div
-          className={classNames(
-            "fixed inset-0 z-[100]",
-            showSplash && "transition-all duration-500 ease-out",
-            showSplash
-              ? isSplashFading
-                ? "scale-100 opacity-100"
-                : "scale-[0.96] opacity-0"
-              : "scale-100 opacity-100"
-          )}
-          style={{
-            transitionTimingFunction: showSplash ? "var(--motion-ease-spring-soft)" : undefined,
-          }}
-        >
-          <WelcomeScreen onDismiss={() => setShowWelcome(false)} />
-        </div>
-      ) : (
+      {!isShareRoute && (
         <div
           className={classNames(
             "font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg",
@@ -1435,7 +1352,7 @@ function App() {
             onClose={() => setIsSettingsOpen(false)}
             initialView={settingsInitialView}
             syncProps={syncProps}
-            onTripSelected={(id) => {
+            onTripSelected={(id: number | null) => {
               setSelectedTripId(id);
               setIsManagingTrips(false);
             }}

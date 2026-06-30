@@ -18,7 +18,7 @@ export default defineConfig({
         background_color: "#F8FAFC",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/",
+        start_url: "/app",
         icons: [
           {
             src: "/asset/pwa/icon-192.png",
@@ -108,21 +108,5 @@ export default defineConfig({
   ],
   esbuild: {
     drop: ["console", "debugger"],
-  },
-  build: {
-    chunkSizeWarningLimit: 1400,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          react: ["react", "react-dom"],
-          pdf: ["jspdf"],
-          excel: ["exceljs"],
-          ui: ["@hugeicons/react"],
-          animation: ["framer-motion"],
-          supabase: ["@supabase/supabase-js"],
-          db: ["dexie", "dexie-react-hooks"],
-        },
-      },
-    },
   },
 });

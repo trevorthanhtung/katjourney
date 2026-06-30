@@ -190,10 +190,10 @@ function JournalForm({
     if (hasError) return;
 
     const identity = getIdentity(tripId);
-    // Ưu tiên tên từ Firebase Auth (displayName đã set trong cài đặt)
-    const firebaseUser = await getCurrentUser();
-    const resolvedName = firebaseUser?.displayName || identity?.name || "Trưởng nhóm";
-    const resolvedId = firebaseUser?.uid || identity?.id || "lead";
+    // Ưu tiên tên từ Supabase Auth (displayName đã set trong cài đặt)
+    const authUser = await getCurrentUser();
+    const resolvedName = authUser?.displayName || identity?.name || "Trưởng nhóm";
+    const resolvedId = authUser?.uid || identity?.id || "lead";
 
     const now = new Date().toISOString();
     const payload = {
@@ -673,8 +673,8 @@ export function JournalSection({
 
   useEffect(() => {
     const identity = getIdentity(tripId);
-    getCurrentUser().then((firebaseUser) => {
-      setCurrentUserIdentity(firebaseUser?.displayName || identity?.name || "Trưởng nhóm");
+    getCurrentUser().then((authUser) => {
+      setCurrentUserIdentity(authUser?.displayName || identity?.name || "Trưởng nhóm");
     });
   }, [tripId]);
 
