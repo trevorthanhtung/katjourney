@@ -3,13 +3,14 @@ import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { fetchExchangeRates, ExchangeRate } from "../../services/currencyService";
 import { RefreshIcon, BitcoinEllipseIcon, TickDouble01Icon } from "@hugeicons/core-free-icons";
+import { getCurrencyLabel } from "../../constants/currencies";
 
 interface ExchangeRatesSettingsProps {
   setView: (view: any) => void;
 }
 
 export function ExchangeRatesSettings({ setView }: ExchangeRatesSettingsProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([]);
 
   useEffect(() => {
@@ -66,7 +67,7 @@ export function ExchangeRatesSettings({ setView }: ExchangeRatesSettingsProps) {
                     </div>
                     <div>
                       <span className="block text-[15px] font-black text-slate-800 dark:text-slate-200">
-                        {rate.currencyCode}
+                        {getCurrencyLabel(rate.currencyCode, i18n.language)}
                       </span>
                       <span className="block text-[12px] font-bold text-slate-400">
                         {t("settings.exchangeRatesView.unit")}
