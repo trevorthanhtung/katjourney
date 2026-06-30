@@ -2378,21 +2378,20 @@ export function SettingsSheet({
         title={t("settings.dialogs.cloudRestore.title")}
       >
         <div className="space-y-5 text-left">
-          <div className="rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 p-4 text-[13px] text-amber-900 dark:text-amber-350 font-bold leading-relaxed flex items-start gap-3">
-            <HugeiconsIcon
-              icon={AlertCircleIcon}
-              className="w-5 h-5 text-amber-600 shrink-0 mt-0.5"
-            />
-            <span>{t("settings.dialogs.cloudRestore.warning")}</span>
+          <div className="rounded-[22px] bg-amber-500/10 dark:bg-amber-950/20 border border-amber-500/20 dark:border-amber-900/30 p-4 text-[13px] text-amber-800 dark:text-amber-350 font-bold leading-relaxed flex items-start gap-3 shadow-inner">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 dark:bg-amber-500/25 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5 shadow-sm">
+              <HugeiconsIcon icon={AlertCircleIcon} className="w-4.5 h-4.5" />
+            </div>
+            <span className="pt-1 flex-1">{t("settings.dialogs.cloudRestore.warning")}</span>
           </div>
 
           <div className="space-y-3.5">
             {/* Option 1: Merge */}
             <label
-              className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-200 cursor-pointer select-none shadow-sm hover:shadow-md ${
+              className={`flex items-center gap-4 p-5 rounded-[22px] border transition-all duration-300 cursor-pointer select-none shadow-soft hover:shadow-md relative overflow-hidden ${
                 restoreMode === "merge"
-                  ? "border-indigo-600 dark:border-indigo-500 bg-indigo-50/30 dark:bg-indigo-950/20 ring-1 ring-indigo-500/20 dark:ring-indigo-500/30"
-                  : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/40 hover:bg-slate-50/50 dark:hover:bg-slate-800/60"
+                  ? "border-indigo-500/80 dark:border-indigo-500/85 bg-indigo-500/5 dark:bg-indigo-950/20 ring-1 ring-indigo-500/10 dark:ring-indigo-500/20"
+                  : "border-slate-200/50 dark:border-white/5 bg-white/40 dark:bg-slate-900/20 hover:bg-slate-50/60 dark:hover:bg-slate-800/40"
               }`}
             >
               <input
@@ -2404,47 +2403,47 @@ export function SettingsSheet({
                 className="sr-only"
               />
               <div
-                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border shadow-sm transition-colors ${
                   restoreMode === "merge"
-                    ? "bg-indigo-600 text-white border-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 dark:border-indigo-500/50"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/[0.04]"
+                    ? "bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:bg-indigo-500/25 dark:text-indigo-400 dark:border-indigo-500/20 shadow-inner"
+                    : "bg-slate-50 dark:bg-slate-800 text-slate-450 dark:text-slate-500 border-slate-200/80 dark:border-white/[0.03] shadow-sm"
                 }`}
               >
                 <HugeiconsIcon icon={GitMergeIcon} className="w-5.5 h-5.5" />
               </div>
               <div className="text-left min-w-0 flex-1">
                 <p
-                  className={`text-[14.5px] font-black leading-tight ${
+                  className={`text-[15px] font-black leading-tight ${
                     restoreMode === "merge"
-                      ? "text-indigo-950 dark:text-indigo-300"
-                      : "text-kat-dark"
+                      ? "text-indigo-650 dark:text-indigo-300"
+                      : "text-slate-800 dark:text-slate-200"
                   }`}
                 >
                   {t("settings.dialogs.cloudRestore.mergeTitle")}
                 </p>
-                <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-1 leading-normal">
+                <p className="text-[12px] text-slate-500 dark:text-slate-400 font-bold mt-1.5 leading-normal">
                   {t("settings.dialogs.cloudRestore.mergeDesc")}
                 </p>
               </div>
               <div
                 className={`h-5.5 w-5.5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200 ${
                   restoreMode === "merge"
-                    ? "border-indigo-600 dark:border-indigo-500 bg-white dark:bg-slate-900"
-                    : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+                    ? "border-indigo-500 dark:border-indigo-500 bg-white dark:bg-slate-950"
+                    : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-955"
                 }`}
               >
                 {restoreMode === "merge" && (
-                  <div className="h-3 w-3 rounded-full bg-indigo-600 dark:bg-indigo-500" />
+                  <div className="h-3 w-3 rounded-full bg-indigo-500 dark:bg-indigo-400" />
                 )}
               </div>
             </label>
 
             {/* Option 2: Replace */}
             <label
-              className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-200 cursor-pointer select-none shadow-sm hover:shadow-md ${
+              className={`flex items-center gap-4 p-5 rounded-[22px] border transition-all duration-300 cursor-pointer select-none shadow-soft hover:shadow-md relative overflow-hidden ${
                 restoreMode === "replace"
-                  ? "border-rose-600 dark:border-rose-500 bg-rose-50/30 dark:bg-rose-950/20 ring-1 ring-rose-500/20 dark:ring-rose-500/30"
-                  : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/40 hover:bg-slate-50/50 dark:hover:bg-slate-800/60"
+                  ? "border-rose-500/80 dark:border-rose-500/85 bg-rose-500/5 dark:bg-rose-950/20 ring-1 ring-rose-500/10 dark:ring-rose-500/20"
+                  : "border-slate-200/50 dark:border-white/5 bg-white/40 dark:bg-slate-900/20 hover:bg-slate-50/60 dark:hover:bg-slate-800/40"
               }`}
             >
               <input
@@ -2456,24 +2455,26 @@ export function SettingsSheet({
                 className="sr-only"
               />
               <div
-                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border shadow-sm transition-colors ${
                   restoreMode === "replace"
-                    ? "bg-rose-600 text-white border-rose-600 dark:bg-rose-500/20 dark:text-rose-450 dark:border-rose-500/50"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/[0.04]"
+                    ? "bg-rose-500/15 text-rose-500 border-rose-500/20 dark:bg-rose-500/25 dark:text-rose-400 dark:border-rose-500/20 shadow-inner"
+                    : "bg-slate-50 dark:bg-slate-800 text-slate-450 dark:text-slate-500 border-slate-200/80 dark:border-white/[0.03] shadow-sm"
                 }`}
               >
                 <HugeiconsIcon icon={Delete01Icon} className="w-5.5 h-5.5" />
               </div>
               <div className="text-left min-w-0 flex-1">
                 <p
-                  className={`text-[14.5px] font-black leading-tight ${
-                    restoreMode === "replace" ? "text-rose-950 dark:text-rose-300" : "text-kat-dark"
+                  className={`text-[15px] font-black leading-tight ${
+                    restoreMode === "replace"
+                      ? "text-rose-600 dark:text-rose-455"
+                      : "text-slate-800 dark:text-slate-200"
                   }`}
                 >
                   {t("settings.dialogs.cloudRestore.replaceTitle")}
                 </p>
-                <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-1 leading-normal">
-                  <span className="font-extrabold text-rose-650 dark:text-rose-400 uppercase tracking-wider block text-[10.5px] mb-0.5">
+                <p className="text-[12px] text-slate-500 dark:text-slate-400 font-bold mt-1.5 leading-normal">
+                  <span className="font-extrabold text-rose-600 dark:text-rose-400 uppercase tracking-wider block text-[10.5px] mb-0.5">
                     {t("settings.dialogs.cloudRestore.replaceWarning")}
                   </span>
                   {t("settings.dialogs.cloudRestore.replaceDesc")}
@@ -2482,12 +2483,12 @@ export function SettingsSheet({
               <div
                 className={`h-5.5 w-5.5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200 ${
                   restoreMode === "replace"
-                    ? "border-rose-600 dark:border-rose-500 bg-white dark:bg-slate-900"
-                    : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+                    ? "border-rose-500 dark:border-rose-500 bg-white dark:bg-slate-950"
+                    : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-955"
                 }`}
               >
                 {restoreMode === "replace" && (
-                  <div className="h-3 w-3 rounded-full bg-rose-600 dark:bg-rose-500" />
+                  <div className="h-3 w-3 rounded-full bg-rose-500 dark:bg-rose-400" />
                 )}
               </div>
             </label>
@@ -2497,17 +2498,17 @@ export function SettingsSheet({
             <button
               type="button"
               onClick={() => setIsRestoreConfirmOpen(false)}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100 dark:bg-slate-800 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-[0.98] transition-all duration-200 border border-transparent dark:border-slate-700 motion-press"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100/80 dark:bg-slate-800/80 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200 border border-transparent dark:border-white/5 cursor-pointer shadow-sm"
             >
               {t("settings.dialogs.cloudRestore.cancel")}
             </button>
             <button
               type="button"
               onClick={handleRestore}
-              className={`flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] text-white dark:text-slate-200 px-6 font-black active:scale-[0.98] transition-all duration-200 motion-press shadow-sm border border-transparent dark:border-white/[0.04] ${
+              className={`flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] px-6 font-black active:scale-[0.98] transition-all duration-200 shadow-sm border border-transparent dark:border-white/[0.04] cursor-pointer ${
                 restoreMode === "replace"
-                  ? "bg-rose-600 hover:bg-rose-700 hover:shadow-rose-100"
-                  : "bg-kat-dark dark:bg-slate-800 hover:bg-kat-dark dark:hover:bg-slate-700 bg-opacity-90 hover:shadow-indigo-100"
+                  ? "bg-rose-600 text-white hover:bg-rose-700 hover:shadow-[0_4px_16px_rgba(225,29,72,0.3)]"
+                  : "bg-[#00BFB7] text-slate-950 hover:bg-[#00A19D] hover:shadow-[0_4px_16px_rgba(0,191,183,0.3)]"
               }`}
             >
               {t("settings.dialogs.cloudRestore.continue")}
