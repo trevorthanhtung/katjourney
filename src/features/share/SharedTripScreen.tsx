@@ -63,7 +63,7 @@ import {
   SharedDocumentsSection,
   SharedMembersSection,
 } from "./components/SharedSections";
-import { getIdentity, saveIdentity, UserIdentity } from "../../services/identityService";
+import { getIdentity, saveIdentity, UserIdentity } from "../../utils/identityCache";
 import { getAvatarSvg } from "../../utils/avatars";
 import { ChatBox } from "./components/ChatBox";
 import { WeatherWidget } from "../timeline/WeatherWidget";
@@ -71,8 +71,8 @@ import { useWeather } from "../../hooks/useWeather";
 import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather";
 import { useScrollBarVisibility } from "../../hooks/useScrollBarVisibility";
 import { usePackingTip } from "../../hooks/usePackingTip";
-import { getWeatherIcon, getWeatherText, getWeatherGradient } from "../../services/weatherService";
-import { useTemperatureUnit } from "../../hooks/useTemperatureUnit";
+import { getWeatherIcon, getWeatherText, getWeatherGradient } from "../../utils/weatherUI";
+import { usePreferences } from "../../hooks/usePreferences";
 import { WeatherDetailsModal } from "../timeline/WeatherDetailsModal";
 import { BottomSheet, FormActions, Select } from "../../components/ui";
 import { SharedBackupPlansSheet } from "./components/SharedBackupPlansSheet";
@@ -147,7 +147,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   );
   const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
-  const { formatTemp } = useTemperatureUnit();
+  const { formatTemp } = usePreferences();
 
   // Packing tip based on GPS vs destination temp
   const packingTip = usePackingTip(forecast, myForecast);
@@ -273,7 +273,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
         delete currentRoadmaps[roadmapEditDay];
       }
 
-      const { updateSharedTripRoadmaps } = await import("../../services/sharedTripEditService");
+      const { updateSharedTripRoadmaps } = await import("../../services/cloudShareService");
       await updateSharedTripRoadmaps(token, currentRoadmaps);
 
       setIsRoadmapFormOpen(false);
@@ -321,7 +321,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
         // Add to front
         list.unshift({
           token,
-          title: data.trip.title || data.trip.name || t("share.unnamedTrip", "Chuyến đi không tên"),
+          title: data.trip.title || data.trip.name || t("share.unnamedTrip", "Unnamed Trip"),
           date: dateStr,
           timestamp: Date.now(),
         });
@@ -1094,7 +1094,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     activities={activities}
                     changeRequests={changeRequests}
                     members={members}
-                    guestName={currentUser?.name || t("common.guest", "Khách")}
+                    guestName={currentUser?.name || t("common.guest", "Guest")}
                     expenses={expenses}
                     backupPlans={backupPlans}
                     trip={trip}
@@ -1372,7 +1372,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               checklist={checklist}
               expenses={expenses}
               changeRequests={changeRequests}
-              guestName={currentUser?.name || t("common.guest", "Khách")}
+              guestName={currentUser?.name || t("common.guest", "Guest")}
             />
           )}
 
@@ -1387,7 +1387,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 changeRequests={changeRequests}
                 members={members}
                 events={activities}
-                guestName={currentUser?.name || t("common.guest", "Khách")}
+                guestName={currentUser?.name || t("common.guest", "Guest")}
               />
             )}
 
@@ -1441,7 +1441,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     checklist={checklist}
                     changeRequests={changeRequests}
                     members={members}
-                    guestName={currentUser?.name || t("common.guest", "Khách")}
+                    guestName={currentUser?.name || t("common.guest", "Guest")}
                   />
                 )}
 
@@ -1459,7 +1459,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     mode={documentsMode}
                     documents={travelDocuments}
                     changeRequests={changeRequests}
-                    guestName={currentUser?.name || t("common.guest", "Khách")}
+                    guestName={currentUser?.name || t("common.guest", "Guest")}
                   />
                 )}
             </div>
@@ -1474,7 +1474,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 mode={journalsMode}
                 journals={journals}
                 changeRequests={changeRequests}
-                guestName={currentUser?.name || t("common.guest", "Khách")}
+                guestName={currentUser?.name || t("common.guest", "Guest")}
                 members={members}
                 renderChatBox={
                   currentUser
@@ -1568,7 +1568,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       currentRoadmaps[roadmapEditDay] = pasted;
 
                       const { updateSharedTripRoadmaps } =
-                        await import("../../services/sharedTripEditService");
+                        await import("../../services/cloudShareService");
                       await updateSharedTripRoadmaps(token, currentRoadmaps);
 
                       setIsRoadmapFormOpen(false);
@@ -1682,7 +1682,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           backupPlans={backupPlans}
           changeRequests={changeRequests}
           mode={backupPlansMode || (canRequestEdit ? "request_edit" : "view")}
-          guestName={currentUser?.name || t("common.guest", "Khách")}
+          guestName={currentUser?.name || t("common.guest", "Guest")}
         />
       )}
 

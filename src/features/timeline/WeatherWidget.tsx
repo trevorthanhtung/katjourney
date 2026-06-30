@@ -2,11 +2,11 @@ import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { CloudRainWindIcon } from "@hugeicons/core-free-icons";
-import { getWeatherIcon } from "../../services/weatherService";
+import { getWeatherIcon } from "../../utils/weatherUI";
 import { useWeather } from "../../hooks/useWeather";
 import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather";
 import { WeatherDetailsModal } from "./WeatherDetailsModal";
-import { useTemperatureUnit } from "../../hooks/useTemperatureUnit";
+import { usePreferences } from "../../hooks/usePreferences";
 
 import { Trip } from "../../db";
 import { Location01Icon, Refresh01Icon } from "@hugeicons/core-free-icons";
@@ -107,7 +107,7 @@ export function WeatherWidget({
   const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
 
-  const { unit, formatTemp } = useTemperatureUnit();
+  const { temperatureUnit: unit, formatTemp } = usePreferences();
 
   // Compute packing tip
   const packingTip = (() => {

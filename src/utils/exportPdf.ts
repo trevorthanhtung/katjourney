@@ -117,9 +117,9 @@ export function exportTripPdf(data: TripData) {
 
   const infoItems: [string, string][] = [
     [i18n.t("export.tripName"), trip.title || "—"],
-    [i18n.t("export.location"), trip.location || "Chưa xác định"],
+    [i18n.t("export.location"), trip.location || i18n.t("export.unknownLocation")],
     [i18n.t("export.duration"), dateText],
-    ["Loại hình", typeText],
+    [i18n.t("export.tripType"), typeText],
   ];
 
   const colW = CONTENT_W / 2;
@@ -167,13 +167,13 @@ export function exportTripPdf(data: TripData) {
     checkSpace(10);
     doc.setFontSize(9);
     doc.setTextColor(...C_SLATE);
-    doc.text("Chưa có hoạt động nào trong lịch trình.", MARGIN_L, Y);
+    doc.text(i18n.t("export.noTimeline"), MARGIN_L, Y);
     Y += 10;
   } else {
     const tCols = [
-      { label: "Giờ", x: 0, w: 18 },
-      { label: "Hoạt động & Ghi chú", x: 18, w: 76 },
-      { label: "Địa điểm", x: 94, w: 64 },
+      { label: i18n.t("export.colTime"), x: 0, w: 18 },
+      { label: i18n.t("export.colActivityNotes"), x: 18, w: 76 },
+      { label: i18n.t("export.colLocation"), x: 94, w: 64 },
       { label: "Check", x: 158, w: 12 },
     ];
 
@@ -294,9 +294,16 @@ export function exportTripPdf(data: TripData) {
   const grandTotal = sharedTotal + personalTotal;
 
   const finRows = [
-    { label: "Chi chung (nhóm)", amount: formatMoney(sharedTotal, trip.defaultCurrency) },
-    { label: "Chi cá nhân", amount: formatMoney(personalTotal, trip.defaultCurrency) },
-    { label: "TỔNG CỘNG", amount: formatMoney(grandTotal, trip.defaultCurrency), isTotal: true },
+    { label: i18n.t("export.sharedGroup"), amount: formatMoney(sharedTotal, trip.defaultCurrency) },
+    {
+      label: i18n.t("export.personalExp"),
+      amount: formatMoney(personalTotal, trip.defaultCurrency),
+    },
+    {
+      label: i18n.t("export.totalLabel"),
+      amount: formatMoney(grandTotal, trip.defaultCurrency),
+      isTotal: true,
+    },
   ];
 
   // Table Header
@@ -308,8 +315,8 @@ export function exportTripPdf(data: TripData) {
 
   doc.setFontSize(9);
   doc.setTextColor(...C_SLATE);
-  doc.text("Hạng mục", MARGIN_L + 4, Y + 5.5);
-  doc.text("Số tiền", MARGIN_L + CONTENT_W / 2 + 4, Y + 5.5);
+  doc.text(i18n.t("export.colCategory"), MARGIN_L + 4, Y + 5.5);
+  doc.text(i18n.t("export.colAmount"), MARGIN_L + CONTENT_W / 2 + 4, Y + 5.5);
   Y += 8;
 
   finRows.forEach((row) => {
@@ -341,7 +348,7 @@ export function exportTripPdf(data: TripData) {
     checkSpace(10);
     doc.setFontSize(9);
     doc.setTextColor(...C_SLATE);
-    doc.text("Không có thông tin dự phòng nào.", MARGIN_L, Y);
+    doc.text(i18n.t("export.noBackupPlans"), MARGIN_L, Y);
     Y += 10;
   } else {
     validBackups.forEach((b) => {
@@ -374,7 +381,7 @@ export function exportTripPdf(data: TripData) {
     Y += 6;
     doc.setFontSize(10);
     doc.setTextColor(...C_NAVY);
-    doc.text("Thông tin giấy tờ / Đặt chỗ:", MARGIN_L, Y);
+    doc.text(i18n.t("export.docBookingInfo"), MARGIN_L, Y);
     Y += 6;
     validDocs.forEach((d) => {
       checkSpace(12);
@@ -440,7 +447,7 @@ export function exportItineraryPdf(data: TripData) {
   doc.setFontSize(18);
   doc.setTextColor(...C_WHITE);
   doc.setFont("Roboto", "normal");
-  doc.text("LỊCH TRÌNH CHUYẾN ĐI", MARGIN_L, 13);
+  doc.text(i18n.t("export.itineraryTitle", "TRIP ITINERARY"), MARGIN_L, 13);
 
   doc.setFontSize(10);
   doc.setFont("Roboto", "normal");
@@ -450,7 +457,10 @@ export function exportItineraryPdf(data: TripData) {
   doc.setFontSize(22);
   doc.setTextColor(...C_NAVY);
   doc.setFont("Roboto", "normal");
-  const titleLines = doc.splitTextToSize(trip.title || "Chuyến đi chưa đặt tên", CONTENT_W);
+  const titleLines = doc.splitTextToSize(
+    trip.title || i18n.t("export.untitledTrip", "Untitled trip"),
+    CONTENT_W
+  );
   doc.text(titleLines, MARGIN_L, Y);
   Y += titleLines.length * 8;
 
@@ -464,7 +474,7 @@ export function exportItineraryPdf(data: TripData) {
     ? formatDate(trip.startDate)
     : `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}`;
 
-  doc.text(`📍 ${trip.location || "Chưa xác định địa điểm"}`, MARGIN_L, Y);
+  doc.text(`📍 ${trip.location || i18n.t("export.unknownLocation")}`, MARGIN_L, Y);
   Y += 6;
   doc.text(`📅 ${dateText}`, MARGIN_L, Y);
   Y += 12;
@@ -477,13 +487,13 @@ export function exportItineraryPdf(data: TripData) {
   if (sortedEvents.length === 0) {
     doc.setFontSize(12);
     doc.setTextColor(...C_SLATE);
-    doc.text("Chưa có hoạt động nào trong lịch trình.", MARGIN_L, Y);
+    doc.text(i18n.t("export.noTimeline"), MARGIN_L, Y);
   } else {
     // Columns: [Giờ, Hoạt động, Địa điểm, Check]
     const tCols = [
-      { label: "Giờ", x: 0, w: 18 },
-      { label: "Hoạt động & Ghi chú", x: 18, w: 76 },
-      { label: "Địa điểm", x: 94, w: 64 },
+      { label: i18n.t("export.colTime"), x: 0, w: 18 },
+      { label: i18n.t("export.colActivityNotes"), x: 18, w: 76 },
+      { label: i18n.t("export.colLocation"), x: 94, w: 64 },
       { label: "Check", x: 158, w: 12 },
     ];
 
@@ -616,7 +626,11 @@ export function exportItineraryPdf(data: TripData) {
     doc.setLineWidth(0.3);
     doc.line(MARGIN_L, PAGE_BOTTOM + 5, PAGE_W - MARGIN_R, PAGE_BOTTOM + 5);
 
-    doc.text("Lịch trình tạo bởi KAT Journey", MARGIN_L, PAGE_BOTTOM + 10);
+    doc.text(
+      i18n.t("export.itineraryFooter", "Itinerary created by KAT Journey"),
+      MARGIN_L,
+      PAGE_BOTTOM + 10
+    );
     doc.text(`Trang ${i} / ${totalPages}`, PAGE_W - MARGIN_R, PAGE_BOTTOM + 10, { align: "right" });
   }
 

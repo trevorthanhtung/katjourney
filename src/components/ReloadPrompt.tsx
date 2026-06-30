@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { SystemUpdate01Icon, Download01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
+import { SystemUpdate01Icon, Download01Icon } from "@hugeicons/core-free-icons";
 
 export function ReloadPrompt({ hasBottomNav = false }: { hasBottomNav?: boolean }) {
   const { t } = useTranslation();
@@ -50,11 +50,14 @@ export function ReloadPrompt({ hasBottomNav = false }: { hasBottomNav?: boolean 
     if (!registration) return;
 
     // 1. Kiểm tra bản mới mỗi 60 phút
-    const interval = setInterval(() => {
-      registration.update().catch((err) => {
-        console.error("Periodic update check failed:", err);
-      });
-    }, 60 * 60 * 1000);
+    const interval = setInterval(
+      () => {
+        registration.update().catch((err) => {
+          console.error("Periodic update check failed:", err);
+        });
+      },
+      60 * 60 * 1000
+    );
 
     // 2. Kiểm tra bản mới khi người dùng quay trở lại tab app (focus)
     const handleFocus = () => {
@@ -90,21 +93,24 @@ export function ReloadPrompt({ hasBottomNav = false }: { hasBottomNav?: boolean 
   }
 
   return (
-    <div className={`fixed right-4 left-4 md:left-auto md:w-[380px] z-[9999] animate-slideUp transition-all duration-300 ${hasBottomNav ? "bottom-24 lg:bottom-6" : "bottom-6"}`}>
+    <div
+      className={`fixed right-4 left-4 md:left-auto md:w-[380px] z-[9999] animate-slideUp transition-all duration-300 ${hasBottomNav ? "bottom-24 lg:bottom-6" : "bottom-6"}`}
+    >
       <div className="backdrop-blur-xl bg-white/95 dark:bg-[#111A33]/90 border border-slate-200/50 dark:border-slate-800/60 shadow-[0_20px_50px_rgba(3,13,46,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.35)] rounded-[24px] p-5 flex flex-col gap-4.5 transition-all duration-300">
         <div className="flex items-start gap-3.5">
           <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500/10 to-emerald-500/10 border border-teal-500/20 dark:border-teal-500/30 text-kat-teal shrink-0 shadow-inner">
             <div className="absolute inset-0 rounded-2xl bg-kat-teal/5 animate-pulse" />
-            <HugeiconsIcon icon={needRefresh ? SystemUpdate01Icon : Download01Icon} className="w-5.5 h-5.5 text-kat-teal relative z-10 animate-pulse" />
+            <HugeiconsIcon
+              icon={needRefresh ? SystemUpdate01Icon : Download01Icon}
+              className="w-5.5 h-5.5 text-kat-teal relative z-10 animate-pulse"
+            />
           </div>
           <div className="flex-1 min-w-0">
             <h4 className="font-display text-[16px] font-black text-kat-dark dark:text-white tracking-tight leading-snug">
               {needRefresh ? t("pwa.newVersion") : t("pwa.offlineReady")}
             </h4>
             <p className="text-[12.5px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed font-medium">
-              {needRefresh
-                ? t("pwa.newVersionDesc")
-                : t("pwa.offlineReadyDesc")}
+              {needRefresh ? t("pwa.newVersionDesc") : t("pwa.offlineReadyDesc")}
             </p>
           </div>
         </div>

@@ -21,7 +21,7 @@ import { getEmbedMapUrl, ensureAbsoluteUrl, getMapFilterClass } from "../../../u
 import { useModalHistory } from "../../../hooks/useModalHistory";
 import { useBodyScrollLock } from "../../../hooks/useBodyScrollLock";
 
-import { submitChangeRequest } from "../../../services/sharedTripRequestService";
+import { submitChangeRequest } from "../../../services/cloudShareService";
 import { showToast } from "../../../components/ui/ToastManager";
 
 interface SharedBackupPlansSheetProps {
@@ -549,7 +549,7 @@ export function SharedBackupPlansSheet({
 
                             {plan.isPendingCreate && (
                               <span className="inline-flex items-center rounded-full bg-sky-50 border border-sky-100 px-2 py-0.5 text-[10px] font-bold text-sky-600 select-none animate-fadeIn">
-                                Đề xuất mới
+                                {t("share.newSuggestion", "Đề xuất mới")}
                               </span>
                             )}
                             {plan.isPendingUpdate && (
@@ -682,7 +682,7 @@ export function SharedBackupPlansSheet({
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1.5 text-[12.5px] font-black text-indigo-600 hover:text-indigo-700 transition-colors hover:underline truncate"
                                   >
-                                    Xem bản đồ
+                                    {t("share.viewMap", "Xem bản đồ")}
                                   </a>
                                 )}
                             </div>

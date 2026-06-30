@@ -1,0 +1,1051 @@
+
+================== src/features/trips/components\DashboardWidgets.tsx ==================
+import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { usePreferences } from "../../../hooks/usePreferences";
+import tzdbZones from "./timezones.json";
+import {
+  EarthIcon,
+  Route01Icon,
+  Calendar01Icon,
+  MapsLocation01Icon,
+  Exchange01Icon,
+  Clock01Icon,
+  RefreshIcon,
+  Cancel01Icon,
+  Search01Icon,
+} from "@hugeicons/core-free-icons";
+import { BottomSheet } from "../../../components/ui";
+import { Trip } from "../../../db";
+import { useAtlasStats } from "../../atlas/useAtlasStats";
+
+interface GamificationStatsProps {
+  trips: Trip[];
+  onAtlasClick?: () => void;
+}
+
+export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProps) {
+  const { t } = useTranslation();
+  const { distanceLabel } = usePreferences();
+  const { visitedAlpha2s } = useAtlasStats(trips);
+
+  const totalTrips = trips.length;
+  const totalDays = trips.reduce((acc, t) => {
+    const s = new Date(t.startDate);
+    const e = new Date(t.endDate);
+    if (isNaN(s.getTime()) || isNaN(e.getTime())) return acc;
+    return acc + Math.ceil(Math.abs(e.getTime() - s.getTime()) / (1000 * 3600 * 24)) + 1;
+  }, 0);
+
+  const cardBaseClass =
+    "flex flex-col relative overflow-hidden bg-white/70 dark:bg-[#0A0F1C]/80 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 rounded-[2rem] p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_16px_48px_rgba(3,13,46,0.08)] dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.3)] hover:border-slate-300 dark:hover:border-white/20 hover:bg-white/90 dark:hover:bg-[#0A0F1C]/90 transition-all duration-500 min-h-[170px] group";
+
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
+      {/* ATLAS CARD */}
+      <div
+        onClick={onAtlasClick}
+        className={`${cardBaseClass} ${onAtlasClick ? "cursor-pointer motion-press" : ""}`}
+      >
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-rose-500/10 dark:bg-rose-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+
+        <div className="flex flex-col h-full relative z-10">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-100 to-rose-50 dark:from-rose-500/20 dark:to-rose-500/5 flex items-center justify-center text-rose-500 border border-rose-200/50 dark:border-rose-500/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+              <HugeiconsIcon icon={EarthIcon} size={20} />
+            </div>
+          </div>
+
+          <div className="flex-1 flex flex-col justify-end">
+            <div className="flex items-baseline gap-1.5 mb-1">
+              <span className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-rose-500 dark:group-hover:text-rose-400 transition-colors duration-300">
+                {visitedAlpha2s.length}
+              </span>
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-500">/ 195</span>
+            </div>
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
+              Atlas: {t("dashboard.stats.countries", "Countries")}
+            </span>
+          </div>
+
+          <div className="mt-4 flex -space-x-1.5 overflow-hidden h-6 items-center">
+            {visitedAlpha2s.length === 0 && (
+              <span className="text-[11px] font-semibold text-slate-400 italic">
+                {t("dashboard.stats.none", "None")}
+              </span>
+            )}
+            {visitedAlpha2s.slice(0, 5).map((alpha2, idx) => (
+              <img
+                key={alpha2}
+                src={`https://flagcdn.com/w40/${alpha2.toLowerCase()}.png`}
+                alt={alpha2}
+                className="w-6 h-6 rounded-full object-cover border-2 border-white dark:border-[#0A0F1C] shrink-0 shadow-sm relative"
+                style={{ zIndex: 5 - idx }}
+                title={alpha2}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* TOTAL TRIPS CARD */}
+      <div className={cardBaseClass}>
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+
+        <div className="flex flex-col h-full relative z-10">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 dark:from-indigo-500/20 dark:to-indigo-500/5 flex items-center justify-center text-indigo-500 border border-indigo-200/50 dark:border-indigo-500/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+              <HugeiconsIcon icon={Route01Icon} size={20} />
+            </div>
+          </div>
+
+          <div className="flex-1 flex flex-col justify-end">
+            <div className="flex items-baseline gap-1.5 mb-1">
+              <span className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors duration-300">
+                {totalTrips}
+              </span>
+            </div>
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
+              {t("dashboard.stats.totalTrips", "Total trips")}
+            </span>
+          </div>
+
+          <div className="mt-4">
+            <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+              {t("dashboard.stats.scheduled", "Scheduled")}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* DAYS TRAVELED CARD */}
+      <div className={cardBaseClass}>
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-orange-500/10 dark:bg-orange-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+
+        <div className="flex flex-col h-full relative z-10">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-100 to-orange-50 dark:from-orange-500/20 dark:to-orange-500/5 flex items-center justify-center text-orange-500 border border-orange-200/50 dark:border-orange-500/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+              <HugeiconsIcon icon={Calendar01Icon} size={20} />
+            </div>
+          </div>
+
+          <div className="flex-1 flex flex-col justify-end">
+            <div className="flex items-baseline gap-1.5 mb-1">
+              <span className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors duration-300">
+                {totalDays}
+              </span>
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
+                {t("dashboard.stats.daysLabel", "days")}
+              </span>
+            </div>
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
+              {t("dashboard.stats.daysTraveled", "Days traveled")}
+            </span>
+          </div>
+
+          <div className="mt-4">
+            <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+              {t("dashboard.stats.onAllJourneys", "On all journeys")}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* DESTINATIONS CARD */}
+      <div className={cardBaseClass}>
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+
+        <div className="flex flex-col h-full relative z-10">
+          <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-500/20 dark:to-emerald-500/5 flex items-center justify-center text-emerald-500 border border-emerald-200/50 dark:border-emerald-500/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+              <HugeiconsIcon icon={MapsLocation01Icon} size={20} />
+            </div>
+          </div>
+
+          <div className="flex-1 flex flex-col justify-end">
+            <div className="flex items-baseline gap-1.5 mb-1">
+              <span className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors duration-300">
+                {trips.reduce((acc, t) => acc + (t.destinations?.length || 1), 0)}
+              </span>
+            </div>
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
+              {t("dashboard.stats.destinations", "Destinations")}
+            </span>
+          </div>
+
+          <div className="mt-4">
+            <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+              {t("dashboard.stats.explored", "Explored")}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function TimezonesWidget() {
+  const { t, i18n } = useTranslation();
+  const [time, setTime] = useState(new Date());
+  const [timezones, setTimezones] = useState<string[]>([]);
+  const [isAdding, setIsAdding] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Default timezones if none selected
+  const DEFAULT_TIMEZONES = ["Asia/Ho_Chi_Minh", "Asia/Tokyo", "Europe/London"];
+
+  useEffect(() => {
+    const saved = localStorage.getItem("kat_journey_timezones");
+    if (saved) {
+      try {
+        setTimezones(JSON.parse(saved));
+      } catch (e) {
+        setTimezones(DEFAULT_TIMEZONES);
+      }
+    } else {
+      setTimezones(DEFAULT_TIMEZONES);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (timezones.length > 0) {
+      localStorage.setItem("kat_journey_timezones", JSON.stringify(timezones));
+    }
+  }, [timezones]);
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const tzOffsetString = (tz: string) => {
+    try {
+      const date = new Date();
+      const tzString = date.toLocaleString("en-US", { timeZone: tz });
+      const utcString = date.toLocaleString("en-US", { timeZone: "UTC" });
+      const tzDate = new Date(tzString);
+      const utcDate = new Date(utcString);
+      const diffHrs = (tzDate.getTime() - utcDate.getTime()) / 3600000;
+      const sign = diffHrs >= 0 ? "+" : "";
+      return `GMT${sign}${diffHrs}`;
+    } catch (e) {
+      return "GMT";
+    }
+  };
+
+  const getRelativeOffset = (tz: string) => {
+    try {
+      const date = new Date();
+      const tzString = date.toLocaleString("en-US", { timeZone: tz });
+      const localString = date.toLocaleString("en-US");
+      const tzDate = new Date(tzString);
+      const localDate = new Date(localString);
+      const diffHrs = Math.round((tzDate.getTime() - localDate.getTime()) / 3600000);
+      if (diffHrs === 0) return "Local time";
+      const sign = diffHrs > 0 ? "+" : "";
+      return `${sign}${diffHrs}h`;
+    } catch (e) {
+      return "";
+    }
+  };
+
+  const getRelativeOffsetLabel = (tz: string) => {
+    const offset = getRelativeOffset(tz);
+    if (offset === "Local time") {
+      return t("dashboard.widgets.localTime", "Local time");
+    }
+    return offset ? `${offset}` : "";
+  };
+
+  const getRelativeTimeLabel = (tz: string) => {
+    try {
+      const date = new Date();
+      const tzString = date.toLocaleString("en-US", { timeZone: tz });
+      const localString = date.toLocaleString("en-US");
+      const tzDate = new Date(tzString);
+      const localDate = new Date(localString);
+
+      const diffHrs = Math.round((tzDate.getTime() - localDate.getTime()) / 3600000);
+      if (diffHrs === 0) {
+        return t("dashboard.widgets.sameTimezone", "Same timezone");
+      }
+
+      const tzDay = new Date(tzDate.getFullYear(), tzDate.getMonth(), tzDate.getDate());
+      const localDay = new Date(localDate.getFullYear(), localDate.getMonth(), localDate.getDate());
+      const diffDays = Math.round((tzDay.getTime() - localDay.getTime()) / (1000 * 60 * 60 * 24));
+
+      let dayLabel = "";
+      if (diffDays === -1) {
+        dayLabel = t("dashboard.widgets.yesterday", "Yesterday");
+      } else if (diffDays === 1) {
+        dayLabel = t("dashboard.widgets.tomorrow", "Tomorrow");
+      } else if (diffDays === 0) {
+        dayLabel = t("dashboard.widgets.today", "Today");
+      }
+
+      const hrsValue = Math.abs(diffHrs);
+      const aheadStr = t("dashboard.widgets.ahead", "ahead");
+      const behindStr = t("dashboard.widgets.behind", "behind");
+      const isEnglish = i18n.language?.startsWith("en");
+
+      const timeLabel =
+        diffHrs > 0
+          ? isEnglish
+            ? `${hrsValue}h ${aheadStr}`
+            : `${aheadStr} ${hrsValue}h`
+          : isEnglish
+            ? `${hrsValue}h ${behindStr}`
+            : `${behindStr} ${hrsValue}h`;
+
+      return dayLabel ? `${dayLabel}, ${timeLabel}` : timeLabel;
+    } catch (e) {
+      return "";
+    }
+  };
+
+  const tzTime = (date: Date, tz: string) => {
+    try {
+      return date.toLocaleTimeString("en-US", {
+        timeZone: tz,
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    } catch (e) {
+      return "--:--";
+    }
+  };
+
+  const tzName = (tz: string) => {
+    return tz.split("/").pop()?.replace(/_/g, " ") || tz;
+  };
+
+  // Search logic
+
+  const removeAccents = (str: string) => {
+    if (!str) return "";
+    return str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+  };
+
+  const POPULAR_TIMEZONES = [
+    "Asia/Ho_Chi_Minh",
+    "America/New_York",
+    "Europe/London",
+    "Asia/Tokyo",
+    "Australia/Sydney",
+    "Europe/Paris",
+    "Asia/Dubai",
+    "America/Los_Angeles",
+    "Asia/Singapore",
+    "Asia/Hong_Kong",
+  ];
+
+  const filteredTimezones = (tzdbZones as any[])
+    .filter((tzObj) => {
+      if (timezones.includes(tzObj.name)) return false;
+
+      if (!searchQuery.trim()) {
+        return POPULAR_TIMEZONES.includes(tzObj.name);
+      }
+
+      const q = removeAccents(searchQuery);
+      return (
+        removeAccents(tzObj.name).includes(q) ||
+        removeAccents(tzObj.countryName).includes(q) ||
+        removeAccents(tzObj.alternativeName).includes(q) ||
+        tzObj.mainCities.some((city: string) => removeAccents(city).includes(q))
+      );
+    })
+    .sort((a, b) => {
+      // If no search query, sort by our defined popular order
+      if (!searchQuery.trim()) {
+        return POPULAR_TIMEZONES.indexOf(a.name) - POPULAR_TIMEZONES.indexOf(b.name);
+      }
+      return 0; // Default sort for search results
+    });
+
+  const addTimezone = (tz: string) => {
+    setTimezones([...timezones, tz]);
+    setIsAdding(false);
+    setSearchQuery("");
+  };
+
+  const removeTimezone = (indexToRemove: number) => {
+    setTimezones(timezones.filter((_, i) => i !== indexToRemove));
+  };
+
+  return (
+    <>
+      <div className="relative overflow-hidden w-full rounded-[28px] border border-slate-200/50 dark:border-white/5 bg-white/40 dark:bg-slate-900/20 backdrop-blur-md p-6 shadow-soft transition-all duration-300">
+        <div className="flex items-center justify-between mb-5.5">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 shadow-sm">
+              <HugeiconsIcon icon={Clock01Icon} size={15} />
+            </div>
+            <span className="text-[12px] font-extrabold uppercase tracking-wider text-slate-450 dark:text-slate-405">
+              {t("dashboard.widgets.timezones", "Timezones")}
+            </span>
+          </div>
+          <button
+            onClick={() => setIsAdding(true)}
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 hover:text-[#00BFB7] dark:hover:text-[#00BFB7] hover:bg-slate-200/80 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all shadow-sm cursor-pointer"
+          >
+            <HugeiconsIcon icon={EarthIcon} size={17} />
+          </button>
+        </div>
+
+        <div className="flex flex-col">
+          {timezones.length === 0 ? (
+            <div className="text-center text-slate-400 dark:text-slate-500 text-[13px] py-4 font-bold">
+              {t("dashboard.widgets.noTimezonesSelected", "No timezones selected")}
+            </div>
+          ) : (
+            <>
+              {/* Highlighted First Timezone */}
+              <div className="flex items-center justify-between group relative p-4.5 rounded-[20px] bg-indigo-500/5 dark:bg-indigo-500/10 border border-indigo-500/15 dark:border-indigo-500/10 shadow-inner">
+                <div className="min-w-0 flex-1">
+                  <div className="text-[22px] font-black text-slate-850 dark:text-slate-100 tracking-tight leading-tight truncate">
+                    {tzName(timezones[0])}
+                  </div>
+                  <div className="text-[12px] font-bold text-slate-450 dark:text-slate-500 mt-2.5 flex items-center flex-wrap gap-2 leading-none">
+                    <span className="inline-flex items-center justify-center rounded-md px-1.5 py-0.5 text-[9.5px] font-extrabold bg-indigo-100 dark:bg-indigo-950/60 text-indigo-650 dark:text-indigo-400 tracking-wide uppercase shrink-0">
+                      {getRelativeTimeLabel(timezones[0])}
+                    </span>
+                    <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-850" />
+                    <span className="flex items-center gap-1 font-mono text-[11px] text-slate-400 dark:text-slate-500">
+                      {tzOffsetString(timezones[0])}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2.5 shrink-0 pl-3">
+                  <span className="text-[24px] font-black text-indigo-600 dark:text-indigo-400 tracking-tight font-mono">
+                    {tzTime(time, timezones[0])}
+                  </span>
+                  <button
+                    onClick={() => removeTimezone(0)}
+                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 transition-all p-1.5 hover:bg-rose-500/10 rounded-full shrink-0 cursor-pointer"
+                    title={t("common.remove", "Remove")}
+                  >
+                    <HugeiconsIcon icon={Cancel01Icon} size={15} />
+                  </button>
+                </div>
+              </div>
+
+              {timezones.length > 1 && <div className="h-3" />}
+
+              {/* Other Timezones List */}
+              <div className="space-y-2.5">
+                {timezones.slice(1).map((tz, index) => {
+                  const actualIndex = index + 1;
+                  return (
+                    <div
+                      key={tz}
+                      className="flex items-center justify-between group relative p-3.5 rounded-[18px] bg-white/30 dark:bg-slate-900/10 border border-slate-200/30 dark:border-white/[0.02] hover:border-slate-300/50 dark:hover:border-white/10 transition-all duration-300 shadow-soft"
+                    >
+                      <div className="min-w-0 flex-1 pr-3">
+                        <div className="text-[14.5px] font-extrabold text-slate-700 dark:text-slate-200 truncate">
+                          {tzName(tz)}
+                        </div>
+                        <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mt-1.5 flex items-center flex-wrap gap-2 leading-none">
+                          <span className="font-mono">{tzOffsetString(tz)}</span>
+                          <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-800" />
+                          <span className="text-slate-450 dark:text-slate-400 font-extrabold bg-slate-100 dark:bg-slate-800/60 px-1.5 py-0.5 rounded-[6px] text-[10px]">
+                            {getRelativeTimeLabel(tz)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-[15.5px] font-extrabold text-slate-650 dark:text-slate-300 font-mono">
+                          {tzTime(time, tz)}
+                        </span>
+                        <button
+                          onClick={() => removeTimezone(actualIndex)}
+                          className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 transition-all p-1.5 hover:bg-rose-500/10 rounded-full shrink-0 cursor-pointer"
+                          title={t("common.remove", "Remove")}
+                        >
+                          <HugeiconsIcon icon={Cancel01Icon} size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Timezone Selection Bottom Sheet */}
+      <BottomSheet
+        isOpen={isAdding}
+        onClose={() => setIsAdding(false)}
+        title={t("dashboard.widgets.timezones", "Timezones")}
+      >
+        <div className="flex flex-col h-[70vh] sm:h-[60vh]">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400">
+                <HugeiconsIcon icon={Search01Icon} size={16} />
+              </div>
+              <input
+                type="text"
+                autoFocus
+                placeholder={t("dashboard.widgets.searchTimezone", "Search timezone...")}
+                className="w-full bg-slate-50 dark:bg-[#2C2C2E] border border-transparent focus:border-kat-primary/30 rounded-xl pl-10 pr-4 py-3 text-[14px] text-slate-800 dark:text-slate-200 outline-none transition-colors"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="overflow-y-auto p-2 flex-1 pb-safe">
+            {filteredTimezones.length === 0 ? (
+              <div className="p-6 text-center text-slate-400 text-[14px]">
+                {t("dashboard.widgets.noTimezonesFound", "No timezones found")}
+              </div>
+            ) : (
+              filteredTimezones.map((tzObj) => {
+                const tz = tzObj.name;
+                return (
+                  <button
+                    key={tz}
+                    onClick={() => addTimezone(tz)}
+                    className="w-full flex items-center justify-between px-4 py-3 text-left text-[14px] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#2C2C2E] rounded-xl transition-colors"
+                  >
+                    <div className="flex-1 min-w-0 pr-4">
+                      <div className="font-medium text-kat-text dark:text-slate-200 truncate">
+                        {tzObj.mainCities.length > 0 ? tzObj.mainCities.join(", ") : tzName(tz)}
+                      </div>
+                      <div className="text-[11px] text-slate-400 mt-0.5 truncate">
+                        {tzObj.countryName} • {tz}
+                      </div>
+                    </div>
+                    <div className="text-[12px] font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md shrink-0">
+                      {tzOffsetString(tz)}
+                    </div>
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </BottomSheet>
+    </>
+  );
+}
+
+================== src/features/trips/components\HeroBanner.tsx ==================
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Calendar01Icon,
+  Location01Icon,
+  UserGroupIcon,
+  WalletCardsIcon,
+  Edit02Icon,
+  Link01Icon,
+  Copy01Icon,
+  Delete02Icon,
+} from "@hugeicons/core-free-icons";
+import { Trip } from "../../../db";
+import { getTripTiming, formatDate, formatMoneyCompact } from "../../../utils/helpers";
+
+interface HeroBannerProps {
+  trip: Trip;
+  memberCount: number;
+  totalExpense: number;
+  onOpenTrip: (id: number) => void;
+}
+
+export function HeroBanner({ trip, memberCount, totalExpense, onOpenTrip }: HeroBannerProps) {
+  const { t } = useTranslation();
+  const timing = getTripTiming(trip);
+
+  // Calculate days left or days traveled
+  const startDate = new Date(trip.startDate);
+  const endDate = new Date(trip.endDate);
+  const today = new Date();
+
+  let daysDiff = 0;
+  let daysLabel = "";
+
+  if (timing.status === "upcoming") {
+    daysDiff = Math.ceil((startDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
+    daysLabel = "DAYS LEFT";
+  } else if (timing.status === "active") {
+    daysDiff = Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+    daysLabel = "DAY";
+  } else {
+    daysDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) + 1;
+    daysLabel = "DAYS TOTAL";
+  }
+
+  // Generate a random-looking gradient based on trip ID
+  const gradients = [
+    "from-emerald-500/80 to-teal-900/90",
+    "from-blue-500/80 to-indigo-900/90",
+    "from-orange-500/80 to-red-900/90",
+    "from-fuchsia-500/80 to-purple-900/90",
+    "from-cyan-500/80 to-blue-900/90",
+  ];
+  const gradientClass = gradients[(trip.id || 0) % gradients.length];
+
+  // High quality travel image placeholder
+  const bgImage =
+    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&auto=format&fit=crop";
+
+  return (
+    <div
+      onClick={() => onOpenTrip(trip.id!)}
+      className="relative w-full h-[320px] sm:h-[380px] lg:h-[420px] rounded-[32px] overflow-hidden group cursor-pointer shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+    >
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      />
+
+      {/* Gradient Overlay for text readability */}
+      <div
+        className={`absolute inset-0 bg-gradient-to-t ${gradientClass} mix-blend-multiply opacity-60`}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
+
+      {/* Top Bar: LIVE NOW & Action buttons */}
+      <div className="absolute top-6 left-6 right-6 flex justify-between items-start z-10">
+        <div>
+          {timing.status === "active" && (
+            <div className="inline-flex items-center gap-1.5 bg-yellow-400/90 backdrop-blur-md text-yellow-950 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-100 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+              </span>
+              LIVE NOW
+            </div>
+          )}
+          {timing.status === "upcoming" && (
+            <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border border-white/20 shadow-lg">
+              <span className="relative flex h-2 w-2">
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span>
+              </span>
+              UPCOMING
+            </div>
+          )}
+        </div>
+
+        {/* Actions (Mock for now, normally stop propagation) */}
+        <div className="flex gap-2">
+          <button className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/20 hover:bg-white/30 transition-colors">
+            <HugeiconsIcon icon={Edit02Icon} size={16} />
+          </button>
+          <button className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/20 hover:bg-white/30 transition-colors">
+            <HugeiconsIcon icon={Link01Icon} size={16} />
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content (Title) */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none mt-8">
+        <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black text-white text-center tracking-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] px-6">
+          {trip.title}
+        </h2>
+      </div>
+
+      {/* Bottom Glass Bar: Stats */}
+      <div className="absolute bottom-6 left-6 right-6 h-auto min-h-[80px] bg-white/10 backdrop-blur-xl border border-white/20 rounded-[24px] p-4 flex flex-wrap lg:flex-nowrap items-center justify-between gap-4 z-10 shadow-xl overflow-hidden">
+        {/* Shine effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
+
+        {/* Block 1: Buddies */}
+        <div className="flex flex-col items-center flex-1 min-w-[80px]">
+          <div className="text-[10px] font-black text-white/70 uppercase tracking-wider mb-1">
+            BUDDIES
+          </div>
+          <div className="flex -space-x-2">
+            {[...Array(Math.min(memberCount, 3))].map((_, i) => (
+              <div
+                key={i}
+                className="w-8 h-8 rounded-full bg-kat-primary border-2 border-white/20 flex items-center justify-center text-white text-[12px] font-bold shadow-md"
+              >
+                <HugeiconsIcon icon={UserGroupIcon} size={14} />
+              </div>
+            ))}
+            {memberCount > 3 && (
+              <div className="w-8 h-8 rounded-full bg-slate-800 border-2 border-white/20 flex items-center justify-center text-white text-[11px] font-bold shadow-md">
+                +{memberCount - 3}
+              </div>
+            )}
+            {memberCount === 1 && (
+              <div className="text-[14px] font-black text-white drop-shadow-md ml-3">Solo</div>
+            )}
+          </div>
+        </div>
+
+        <div className="w-px h-10 bg-white/20 hidden lg:block" />
+
+        {/* Block 2: Dates */}
+        <div className="flex flex-col items-center flex-1 min-w-[120px]">
+          <div className="text-[10px] font-black text-white/70 uppercase tracking-wider mb-1">
+            TRIP DATES
+          </div>
+          <div className="flex items-center gap-3 text-white">
+            <div className="text-center">
+              <div className="text-xl sm:text-2xl font-black leading-none drop-shadow-md">
+                {formatDate(trip.startDate).split("/")[0]}
+              </div>
+              <div className="text-[10px] font-bold uppercase mt-0.5">
+                Thg {formatDate(trip.startDate).split("/")[1]}
+              </div>
+            </div>
+            <div className="w-4 h-px bg-white/40" />
+            <div className="text-center">
+              <div className="text-xl sm:text-2xl font-black leading-none drop-shadow-md">
+                {formatDate(trip.endDate).split("/")[0]}
+              </div>
+              <div className="text-[10px] font-bold uppercase mt-0.5">
+                Thg {formatDate(trip.endDate).split("/")[1]}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-px h-10 bg-white/20 hidden lg:block" />
+
+        {/* Block 3: Ongoing / Days Left */}
+        <div className="flex flex-col items-center flex-1 min-w-[100px]">
+          <div className="text-[10px] font-black text-white/70 uppercase tracking-wider mb-1">
+            {timing.status === "upcoming" ? "STARTING IN" : "TIMELINE"}
+          </div>
+          <div className="text-center text-white">
+            <div className="text-xl sm:text-2xl font-black leading-none drop-shadow-md">
+              {daysDiff > 0 ? daysDiff : 1}
+            </div>
+            <div className="text-[10px] font-bold uppercase mt-0.5">{daysLabel}</div>
+          </div>
+        </div>
+
+        <div className="w-px h-10 bg-white/20 hidden lg:block" />
+
+        {/* Block 4: Expense / Places */}
+        <div className="flex flex-col items-center flex-1 min-w-[100px]">
+          <div className="text-[10px] font-black text-white/70 uppercase tracking-wider mb-1">
+            EXPENSES
+          </div>
+          <div className="flex items-center gap-1.5 text-white">
+            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
+              <HugeiconsIcon icon={WalletCardsIcon} size={16} />
+            </div>
+            <div className="text-[14px] sm:text-[16px] font-black drop-shadow-md truncate max-w-[80px]">
+              {totalExpense > 0
+                ? formatMoneyCompact(totalExpense, trip.defaultCurrency || "VND")
+                : "0"}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+================== src/features/trips/components\HeroTripCard.tsx ==================
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Trip, db } from "../../../db";
+import { useLiveQuery } from "dexie-react-hooks";
+import { getAvatarSvg } from "../../../utils/avatars";
+import { motion } from "framer-motion";
+import { springInteraction } from "../../../lib/motion";
+
+const HERO_IMAGES = [
+  "https://images.unsplash.com/photo-1433086966358-54859d0ed716?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1200&auto=format&fit=crop",
+];
+
+interface HeroTripCardProps {
+  trip: Trip;
+  onOpenTrip: (id: number) => void;
+}
+
+export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
+  const { t } = useTranslation();
+  const [currentImageIdx, setCurrentImageIdx] = useState(0);
+
+  // Auto-cycle background images every 5 seconds
+  useEffect(() => {
+    // Preload the next image to prevent blank flashes
+    const preloadImage = new Image();
+    preloadImage.src = HERO_IMAGES[(currentImageIdx + 1) % HERO_IMAGES.length];
+
+    const timer = setInterval(() => {
+      setCurrentImageIdx((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [currentImageIdx]);
+
+  // Fetch real-time members for this trip
+  const members = useLiveQuery(
+    () => db.members.where("tripId").equals(trip.id!).toArray(),
+    [trip.id],
+    []
+  );
+  const memberCount = members.length;
+
+  const eventCount = useLiveQuery(
+    () => db.events.where("tripId").equals(trip.id!).count(),
+    [trip.id],
+    0
+  );
+
+  // Time logic
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const start = new Date(trip.startDate);
+  const end = new Date(trip.endDate);
+
+  let statusTitle = t("dashboard.hero.upcoming", "UPCOMING");
+  let statusValue = 0;
+  let statusUnit = t("dashboard.hero.daysLeft", "DAYS LEFT");
+  let isLive = false;
+
+  if (now >= start && now <= end) {
+    statusTitle = t("dashboard.hero.ongoing", "ONGOING");
+    statusValue = Math.ceil((end.getTime() - now.getTime()) / (1000 * 3600 * 24));
+    statusUnit = t("dashboard.hero.daysLeft", "DAYS LEFT");
+    isLive = true;
+  } else if (now < start) {
+    statusTitle = t("dashboard.hero.upcoming", "UPCOMING");
+    statusValue = Math.ceil((start.getTime() - now.getTime()) / (1000 * 3600 * 24));
+    statusUnit = t("dashboard.hero.daysLeft", "DAYS LEFT");
+  }
+
+  // Formatting dates
+  const formatMonthDate = (dateString: string) => {
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return { day: "-", month: "-" };
+    return {
+      day: d.getDate(),
+      month: d.toLocaleString("en-US", { month: "short" }).toUpperCase(),
+    };
+  };
+
+  const sDate = formatMonthDate(trip.startDate);
+  const eDate = formatMonthDate(trip.endDate);
+
+  return (
+    <motion.div
+      whileHover={{ scale: 1.015 }}
+      whileTap={{ scale: 0.985 }}
+      transition={springInteraction}
+      onClick={() => onOpenTrip(trip.id!)}
+      className="relative w-full h-[320px] sm:h-[400px] lg:h-[500px] rounded-[32px] overflow-hidden cursor-pointer group shadow-[0_8px_30px_rgba(0,0,0,0.12)] mb-8"
+    >
+      {/* Background Images Crossfade */}
+      {HERO_IMAGES.map((src, idx) => (
+        <div
+          key={idx}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+            idx === currentImageIdx ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <img src={src} alt="Terrain Background" className="w-full h-full object-cover" />
+        </div>
+      ))}
+
+      {/* Dark Overlay for contrast */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/80 group-hover:from-black/50 transition-all duration-500"></div>
+
+      {/* Top Left Badge */}
+      <div className="absolute top-6 left-6 z-10">
+        <div
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border backdrop-blur-md text-[11px] font-bold tracking-widest uppercase shadow-sm ${
+            isLive
+              ? "bg-black/40 border-emerald-500/30 text-emerald-400"
+              : "bg-black/30 border-amber-500/30 text-amber-400"
+          }`}
+        >
+          {isLive ? (
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          ) : (
+            <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+          )}
+          {isLive
+            ? t("dashboard.hero.liveNow", "LIVE NOW")
+            : t("dashboard.hero.upcoming", "UPCOMING")}
+        </div>
+      </div>
+
+      {/* Center Title */}
+      <div className="absolute inset-0 flex items-center justify-center z-10 px-6 pb-28 sm:pb-32 lg:pb-36">
+        <h2 className="text-white text-5xl sm:text-7xl lg:text-[90px] font-[900] tracking-tighter text-center leading-tight drop-shadow-2xl group-hover:scale-105 transition-transform duration-700">
+          {trip.title}
+        </h2>
+      </div>
+
+      {/* Bottom Glassmorphism Bar */}
+      <div className="absolute bottom-6 left-6 right-6 z-20">
+        <div className="bg-[#111111]/60 backdrop-blur-xl border border-white/10 rounded-[24px] p-4 sm:p-5">
+          <div className="flex flex-row items-center justify-between divide-x divide-white/10">
+            {/* Buddies */}
+            <div className="flex flex-col items-center flex-1 min-w-0">
+              <span className="text-[9px] sm:text-[11px] font-bold text-white/50 tracking-widest uppercase mb-2">
+                {t("dashboard.hero.buddies", "Buddies")}
+              </span>
+              <div className="flex -space-x-2">
+                {memberCount === 0 ? (
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-700/50 flex items-center justify-center text-white/50 border-2 border-black/50 overflow-hidden">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
+                  </div>
+                ) : (
+                  <>
+                    {members.slice(0, 2).map((member, i) => {
+                      const bgColors = ["bg-indigo-500", "bg-rose-500", "bg-emerald-500"];
+                      const colorClass = bgColors[i % bgColors.length];
+                      return (
+                        <div
+                          key={member.id || i}
+                          className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full ${colorClass} flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50 overflow-hidden`}
+                        >
+                          {member.avatar
+                            ? getAvatarSvg(member.avatar, "w-full h-full")
+                            : member.name.charAt(0).toUpperCase()}
+                        </div>
+                      );
+                    })}
+                    {memberCount > 2 && (
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50">
+                        +{memberCount - 2}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              <span className="text-[10px] sm:text-[11px] font-semibold text-white/70 mt-2 truncate w-full text-center px-1">
+                {memberCount} {t("dashboard.hero.travelers", "Travelers")}
+              </span>
+            </div>
+
+            {/* Trip Dates */}
+            <div className="flex flex-col items-center flex-1 min-w-0">
+              <span className="text-[9px] sm:text-[11px] font-bold text-white/50 tracking-widest uppercase mb-1">
+                {t("dashboard.hero.tripDates", "Trip Dates")}
+              </span>
+              <div className="flex items-center gap-1.5 sm:gap-4 text-white">
+                <div className="flex flex-col items-center">
+                  <span className="text-xl sm:text-3xl font-black leading-none">{sDate.day}</span>
+                  <span className="text-[9px] sm:text-[11px] font-bold text-white/70 uppercase">
+                    {sDate.month}
+                  </span>
+                </div>
+                <span className="text-white/30 text-sm sm:text-lg">→</span>
+                <div className="flex flex-col items-center">
+                  <span className="text-xl sm:text-3xl font-black leading-none">{eDate.day}</span>
+                  <span className="text-[9px] sm:text-[11px] font-bold text-white/70 uppercase">
+                    {eDate.month}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Ongoing / Status */}
+            <div className="flex flex-col items-center flex-1 min-w-0">
+              <span className="text-[9px] sm:text-[11px] font-bold text-white/50 tracking-widest uppercase mb-1 truncate px-1 w-full text-center">
+                {statusTitle}
+              </span>
+              <span className="text-xl sm:text-3xl font-black text-white leading-none">
+                {statusValue}
+              </span>
+              <span className="text-[9px] sm:text-[11px] font-semibold text-white/70 uppercase mt-1 truncate px-1 w-full text-center">
+                {statusUnit}
+              </span>
+            </div>
+
+            {/* Places */}
+            <div className="flex flex-col items-center flex-1 min-w-0">
+              <span className="text-[9px] sm:text-[11px] font-bold text-white/50 tracking-widest uppercase mb-2">
+                {t("dashboard.hero.places", "Places")}
+              </span>
+              <div className="flex -space-x-2">
+                {eventCount === 0 ? (
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-700/50 flex items-center justify-center text-white/50 border-2 border-black/50 overflow-hidden p-1.5 shadow-inner">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="w-full h-full"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                  </div>
+                ) : (
+                  <>
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-500 flex items-center justify-center text-white border-2 border-black/50 overflow-hidden p-1 shadow-inner">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-full h-full drop-shadow-md"
+                      >
+                        <path
+                          d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
+                          fill="#93C5FD"
+                        />
+                        <path
+                          d="M12 21C16.9706 21 21 16.9706 21 12C21 11.0256 20.8451 10.0874 20.5582 9.2063C19.7891 9.71536 18.882 10 17.9259 10C15.2289 10 13 7.8203 13 5.18519C13 4.22554 13.2926 3.33618 13.8055 2.58557C13.2268 2.39659 12.6225 2.2963 12 2.2963C6.63842 2.2963 2.2963 6.63842 2.2963 12C2.2963 17.3616 6.63842 21.7037 12 21.7037V21Z"
+                          fill="#3B82F6"
+                        />
+                        <circle cx="8" cy="8" r="2" fill="#EFF6FF" />
+                      </svg>
+                    </div>
+                    {eventCount > 1 && (
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white border-2 border-black/50 overflow-hidden hidden sm:flex p-1 shadow-inner">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-full h-full drop-shadow-md"
+                        >
+                          <path d="M2 20H22L12 4L2 20Z" fill="#A7F3D0" />
+                          <path d="M12 4L22 20H12V4Z" fill="#10B981" />
+                          <path d="M7 20H17L12 12L7 20Z" fill="#047857" />
+                        </svg>
+                      </div>
+                    )}
+                    {eventCount > 2 && (
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-700 flex items-center justify-center text-white text-[10px] sm:text-xs font-bold border-2 border-black/50">
+                        +{eventCount - 2}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              <span className="text-[10px] sm:text-[11px] font-semibold text-white/70 mt-2 truncate px-1 w-full text-center">
+                {eventCount} {t("dashboard.hero.destinations", "Destinations")}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}

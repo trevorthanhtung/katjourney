@@ -57,7 +57,7 @@ export function ShareMapModal({
       link.click();
     } catch (err) {
       console.error("Failed to export map:", err);
-      alert(t("atlas.share.error", "Có lỗi xảy ra khi tạo ảnh. Vui lòng thử lại sau."));
+      alert(t("atlas.share.error"));
     } finally {
       setIsExporting(false);
     }
@@ -84,7 +84,7 @@ export function ShareMapModal({
         if (navigator.canShare({ files: [file] })) {
           await navigator.share({
             title: "KAT Journey",
-            text: t("atlas.share.text", "Xem bản đồ du lịch của tôi trên KAT Journey!"),
+            text: t("atlas.share.text"),
             files: [file],
           });
           return;
@@ -95,7 +95,7 @@ export function ShareMapModal({
       await handleDownload(dataUrl);
     } catch (err) {
       console.error("Share failed", err);
-      alert(t("atlas.share.fallback", "Không thể chia sẻ, tự động chuyển sang tải ảnh..."));
+      alert(t("atlas.share.fallback"));
       handleDownload();
     } finally {
       setIsExporting(false);
@@ -167,7 +167,7 @@ export function ShareMapModal({
                   {visitedCountries.length}
                 </span>
                 <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/50">
-                  {t("dashboard.stats.countries", "Quốc gia")}
+                  {t("dashboard.stats.countries")}
                 </span>
               </div>
 
@@ -177,7 +177,7 @@ export function ShareMapModal({
                   {percentage}%
                 </span>
                 <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-200/70 relative z-10">
-                  {t("dashboard.stats.world", "Thế giới")}
+                  {t("dashboard.stats.world")}
                 </span>
               </div>
 
@@ -187,7 +187,7 @@ export function ShareMapModal({
                   {totalTrips}
                 </span>
                 <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/50">
-                  {t("atlas.stats.trips", "Chuyến đi")}
+                  {t("atlas.stats.trips")}
                 </span>
               </div>
             </div>
@@ -211,7 +211,7 @@ export function ShareMapModal({
             />
           </svg>
           <span className="text-xs font-semibold tracking-wider uppercase">
-            {t("atlas.share.btn_share", "Chia sẻ")}
+            {t("atlas.share.btn_share")}
           </span>
         </button>
         <button
@@ -246,7 +246,7 @@ export function ShareMapModal({
             </svg>
           )}
           <span className="text-xs font-semibold tracking-wider uppercase">
-            {t("atlas.share.btn_save", "Tải ảnh")}
+            {t("atlas.share.btn_save")}
           </span>
         </button>
       </div>

@@ -19,7 +19,7 @@ export const saveIdentity = (identity: UserIdentity, tripId: string | number) =>
 export const getIdentity = (tripId: string | number): UserIdentity | null => {
   const key = `kat_id_${tripId}`;
   if (memoryIdentity[key]) return memoryIdentity[key];
-  
+
   if (typeof window !== "undefined") {
     const saved = localStorage.getItem(key);
     if (saved) {

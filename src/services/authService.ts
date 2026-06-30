@@ -1,3 +1,4 @@
+import i18n from "../i18n";
 import { supabase } from "../lib/supabase";
 
 export interface User {
@@ -31,7 +32,7 @@ export function mapSupabaseUser(sbUser: any): User | null {
       sbUser.user_metadata?.full_name ||
       sbUser.user_metadata?.name ||
       sbUser.email?.split("@")[0] ||
-      "Khách",
+      i18n.t("auth.guest", "Guest"),
     photoURL: sbUser.user_metadata?.avatar_url || null,
     isAnonymous: isAnonymous,
     providerData: isGoogle ? [{ providerId: "google.com" }] : [],
@@ -42,32 +43,35 @@ export function mapSupabaseUser(sbUser: any): User | null {
  * Maps Supabase authentication errors to user-friendly Vietnamese messages.
  */
 export function getFriendlyAuthErrorMessage(error: any): string {
-  if (!error) return "Đã xảy ra lỗi không xác định.";
+  if (!error) return i18n.t("auth.errorUnknown", "An unknown error occurred.");
   if (typeof error === "string") return error;
 
   const message = error.message || "";
   const status = error.status;
 
   if (message.includes("Invalid login credentials") || message.includes("invalid_credentials")) {
-    return "Thông tin xác thực tài khoản không chính xác, vui lòng thử lại.";
+    return i18n.t("auth.errorInvalidCredentials", "Invalid credentials, please try again.");
   }
   if (message.includes("Email already in use") || message.includes("User already exists")) {
-    return "Địa chỉ email này đã được sử dụng bởi một tài khoản khác.";
+    return i18n.t("auth.errorEmailInUse", "This email is already in use.");
   }
   if (
     message.includes("Password should be") ||
     message.includes("Signup requires a valid password")
   ) {
-    return "Mật khẩu quá yếu. Mật khẩu cần có ít nhất 6 ký tự.";
+    return i18n.t("auth.errorWeakPassword", "Password too weak. Must be at least 6 characters.");
   }
   if (message.includes("identity_already_exists") || message.includes("already linked")) {
-    return "Tài khoản Google này đã được liên kết với một tài khoản khác.";
+    return i18n.t(
+      "auth.errorGoogleLinked",
+      "This Google account is already linked to another account."
+    );
   }
   if (status === 429 || message.includes("too many requests")) {
-    return "Hệ thống đang quá tải hoặc bạn thao tác quá nhanh. Vui lòng thử lại sau.";
+    return i18n.t("auth.errorTooManyRequests", "Too many requests. Please try again later.");
   }
 
-  return message || "Đã xảy ra lỗi trong quá trình xác thực.";
+  return message || i18n.t("auth.errorGeneral", "An authentication error occurred.");
 }
 
 /**
@@ -77,7 +81,8 @@ export async function signInAsGuest(): Promise<User> {
   try {
     const { data, error } = await supabase.auth.signInAnonymously();
     if (error) throw error;
-    if (!data.user) throw new Error("Đăng nhập ẩn danh thất bại.");
+    if (!data.user)
+      throw new Error(i18n.t("auth.errorAnonymousFailed", "Anonymous sign-in failed."));
     return mapSupabaseUser(data.user)!;
   } catch (error: any) {
     console.error("[AuthService] signInAsGuest error:", error);
@@ -246,7 +251,7 @@ export async function signUpWithEmailAndPassword(
       },
     });
     if (error) throw error;
-    if (!data.user) throw new Error("Đăng ký tài khoản thất bại.");
+    if (!data.user) throw new Error(i18n.t("auth.errorSignupFailed", "Sign up failed."));
     return mapSupabaseUser(data.user)!;
   } catch (error: any) {
     console.error("[AuthService] signUpWithEmailAndPassword error:", error);
@@ -265,7 +270,7 @@ export async function signInWithEmailAndPassword(email: string, password: string
       password,
     });
     if (error) throw error;
-    if (!data.user) throw new Error("Đăng nhập thất bại.");
+    if (!data.user) throw new Error(i18n.t("auth.errorSigninFailed", "Sign in failed."));
     return mapSupabaseUser(data.user)!;
   } catch (error: any) {
     console.error("[AuthService] signInWithEmailAndPassword error:", error);

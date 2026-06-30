@@ -1,12 +1,20 @@
 import ExcelJS from "exceljs";
 import i18n from "../i18n";
-import { formatDate, getChecklistStats, getPackingStats, safeFileName, today, TripData } from "./helpers";
+import {
+  formatDate,
+  getChecklistStats,
+  getPackingStats,
+  safeFileName,
+  today,
+  TripData,
+} from "./helpers";
 
 // ─────────────────────────────────────────────
 // EXCEL EXPORT — 4 SHEETS với ExcelJS
 // ─────────────────────────────────────────────
 export async function exportTripExcel(data: TripData) {
-  const { trip, members, events, expenses, checklist, packingItems, travelDocuments, backupPlans } = data;
+  const { trip, members, events, expenses, checklist, packingItems, travelDocuments, backupPlans } =
+    data;
 
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "KAT Journey";
@@ -18,25 +26,35 @@ export async function exportTripExcel(data: TripData) {
     pattern: "solid",
     fgColor: { argb: "FF2C3E50" }, // #2C3E50 dark navy
   };
-  const HEADER_FONT: Partial<ExcelJS.Font> = { bold: true, color: { argb: "FFFFFFFF" }, name: "Arial", size: 10 };
+  const HEADER_FONT: Partial<ExcelJS.Font> = {
+    bold: true,
+    color: { argb: "FFFFFFFF" },
+    name: "Arial",
+    size: 10,
+  };
   const LABEL_FILL: ExcelJS.Fill = {
     type: "pattern",
     pattern: "solid",
     fgColor: { argb: "FFECF0F1" }, // #ECF0F1 light grey
   };
-  const LABEL_FONT: Partial<ExcelJS.Font> = { bold: true, name: "Arial", size: 10, color: { argb: "FF2C3E50" } };
+  const LABEL_FONT: Partial<ExcelJS.Font> = {
+    bold: true,
+    name: "Arial",
+    size: 10,
+    color: { argb: "FF2C3E50" },
+  };
   const BODY_FONT: Partial<ExcelJS.Font> = { name: "Arial", size: 9 };
   const THIN_BORDER: Partial<ExcelJS.Borders> = {
-    top:    { style: "thin", color: { argb: "FFBDC3C7" } },
-    left:   { style: "thin", color: { argb: "FFBDC3C7" } },
+    top: { style: "thin", color: { argb: "FFBDC3C7" } },
+    left: { style: "thin", color: { argb: "FFBDC3C7" } },
     bottom: { style: "thin", color: { argb: "FFBDC3C7" } },
-    right:  { style: "thin", color: { argb: "FFBDC3C7" } },
+    right: { style: "thin", color: { argb: "FFBDC3C7" } },
   };
   const MONEY_FORMAT = '#,##0" ₫"';
   const PERCENT_FORMAT = "0%";
 
   function applyHeaderStyle(row: ExcelJS.Row) {
-    row.eachCell(cell => {
+    row.eachCell((cell) => {
       cell.fill = HEADER_FILL;
       cell.font = HEADER_FONT;
       cell.border = THIN_BORDER;
@@ -47,7 +65,7 @@ export async function exportTripExcel(data: TripData) {
 
   function applyBodyRow(row: ExcelJS.Row, altIdx: number) {
     const bgColor = altIdx % 2 === 0 ? "FFF8F9FA" : "FFFFFFFF";
-    row.eachCell({ includeEmpty: true }, cell => {
+    row.eachCell({ includeEmpty: true }, (cell) => {
       cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: bgColor } };
       cell.font = BODY_FONT;
       cell.border = THIN_BORDER;
@@ -84,8 +102,8 @@ export async function exportTripExcel(data: TripData) {
   // Calc stats
   const checklistStats = getChecklistStats(checklist);
   const packingStats = getPackingStats(packingItems);
-  const sharedExpenses = expenses.filter(e => e.splitType !== "personal" && !e.isDeleted);
-  const personalExpenses = expenses.filter(e => e.splitType === "personal" && !e.isDeleted);
+  const sharedExpenses = expenses.filter((e) => e.splitType !== "personal" && !e.isDeleted);
+  const personalExpenses = expenses.filter((e) => e.splitType === "personal" && !e.isDeleted);
   const sharedTotal = sharedExpenses.reduce((s, e) => s + Number(e.amount || 0), 0);
   const personalTotal = personalExpenses.reduce((s, e) => s + Number(e.amount || 0), 0);
   const grandTotal = sharedTotal + personalTotal;
@@ -113,16 +131,50 @@ export async function exportTripExcel(data: TripData) {
   ws1.addRow([]);
 
   // Info grid
-  const typeText = isDayTrip ? i18n.t("export.dayTrip") : (() => {
-    const d = Math.ceil(Math.abs(new Date(trip.endDate).getTime() - new Date(trip.startDate).getTime()) / 86400000) + 1;
-    return `${d} ${i18n.t("export.days")} ${d > 1 ? d - 1 : 0} ${i18n.t("export.nights")}`;
-  })();
+  const typeText = isDayTrip
+    ? i18n.t("export.dayTrip")
+    : (() => {
+        const d =
+          Math.ceil(
+            Math.abs(new Date(trip.endDate).getTime() - new Date(trip.startDate).getTime()) /
+              86400000
+          ) + 1;
+        return `${d} ${i18n.t("export.days")} ${d > 1 ? d - 1 : 0} ${i18n.t("export.nights")}`;
+      })();
 
-  const infoRows: [string, string | number, string | undefined, string | number | undefined, boolean | undefined, boolean | undefined][] = [
-    [i18n.t("export.tripName"), trip.title || "—",            i18n.t("export.location"),       trip.location || "—", undefined, undefined],
-    [i18n.t("export.duration"),      dateText,                     i18n.t("export.type"),      typeText, undefined, undefined],
-    [i18n.t("export.member"),     (members ?? []).length,        i18n.t("export.totalExpense"),   grandTotal, false, true],
-    ["Checklist",      `${checklistStats.completed}/${checklistStats.total} ${i18n.t("export.completed")}`, i18n.t("export.luggage"), `${packingStats.completed}/${packingStats.total} ${i18n.t("export.completed")}`, undefined, undefined],
+  const infoRows: [
+    string,
+    string | number,
+    string | undefined,
+    string | number | undefined,
+    boolean | undefined,
+    boolean | undefined,
+  ][] = [
+    [
+      i18n.t("export.tripName"),
+      trip.title || "—",
+      i18n.t("export.location"),
+      trip.location || "—",
+      undefined,
+      undefined,
+    ],
+    [i18n.t("export.duration"), dateText, i18n.t("export.type"), typeText, undefined, undefined],
+    [
+      i18n.t("export.member"),
+      (members ?? []).length,
+      i18n.t("export.totalExpense"),
+      grandTotal,
+      false,
+      true,
+    ],
+    [
+      "Checklist",
+      `${checklistStats.completed}/${checklistStats.total} ${i18n.t("export.completed")}`,
+      i18n.t("export.luggage"),
+      `${packingStats.completed}/${packingStats.total} ${i18n.t("export.completed")}`,
+      undefined,
+      undefined,
+    ],
   ];
 
   let altIdx = 0;
@@ -157,12 +209,19 @@ export async function exportTripExcel(data: TripData) {
   t2.fill = LABEL_FILL;
   ws2.getRow(1).height = 28;
 
-  const h2 = ws2.addRow(["STT", i18n.t("export.date"), i18n.t("export.time"), i18n.t("export.activity"), i18n.t("export.location"), i18n.t("export.status")]);
+  const h2 = ws2.addRow([
+    "STT",
+    i18n.t("export.date"),
+    i18n.t("export.time"),
+    i18n.t("export.activity"),
+    i18n.t("export.location"),
+    i18n.t("export.status"),
+  ]);
   applyHeaderStyle(h2);
   freezeRow(ws2, 2);
 
   const sortedEvents = [...events]
-    .filter(e => !e.isDeleted)
+    .filter((e) => !e.isDeleted)
     .sort((a, b) => a.date.localeCompare(b.date) || (a.time || "").localeCompare(b.time || ""));
 
   if (sortedEvents.length === 0) {
@@ -198,11 +257,18 @@ export async function exportTripExcel(data: TripData) {
   t3.fill = LABEL_FILL;
   ws3.getRow(1).height = 28;
 
-  const h3 = ws3.addRow(["STT", i18n.t("export.date"), i18n.t("export.type"), i18n.t("export.amount"), i18n.t("export.type"), i18n.t("export.payer")]);
+  const h3 = ws3.addRow([
+    "STT",
+    i18n.t("export.date"),
+    i18n.t("export.type"),
+    i18n.t("export.amount"),
+    i18n.t("export.type"),
+    i18n.t("export.payer"),
+  ]);
   applyHeaderStyle(h3);
   freezeRow(ws3, 2);
 
-  const allExpenses = expenses.filter(e => !e.isDeleted);
+  const allExpenses = expenses.filter((e) => !e.isDeleted);
   if (allExpenses.length === 0) {
     const r = ws3.addRow(["—", "—", i18n.t("export.noExpense"), 0, "—", "—"]);
     applyBodyRow(r, 0);
@@ -211,14 +277,16 @@ export async function exportTripExcel(data: TripData) {
     allExpenses.forEach((e, i) => {
       let description = e.description || e.category || "—";
       if (e.originalAmount && e.currency && e.currency !== "VND") {
-        description += ` (${new Intl.NumberFormat('en-US').format(e.originalAmount)} ${e.currency})`;
+        description += ` (${new Intl.NumberFormat("en-US").format(e.originalAmount)} ${e.currency})`;
       }
       const r = ws3.addRow([
         i + 1,
         e.date ? formatDate(e.date) : "—",
         description,
         Number(e.amount || 0),
-        e.splitType === "personal" ? i18n.t("export.personalExpense") : i18n.t("export.sharedExpense"),
+        e.splitType === "personal"
+          ? i18n.t("export.personalExpense")
+          : i18n.t("export.sharedExpense"),
         e.payer || "—",
       ]);
       applyBodyRow(r, i);
@@ -228,9 +296,9 @@ export async function exportTripExcel(data: TripData) {
     // Summary rows
     ws3.addRow([]);
     const sumRows: [string, number][] = [
-      [i18n.t("export.sharedExpense"),   sharedTotal],
+      [i18n.t("export.sharedExpense"), sharedTotal],
       [i18n.t("export.personalExpense"), personalTotal],
-      [i18n.t("export.grandTotal"),   grandTotal],
+      [i18n.t("export.grandTotal"), grandTotal],
     ];
     sumRows.forEach(([lbl, val], si) => {
       const r = ws3.addRow(["", "", lbl, val, "", ""]);
@@ -259,13 +327,20 @@ export async function exportTripExcel(data: TripData) {
   t4.fill = LABEL_FILL;
   ws4.getRow(1).height = 28;
 
-  const h4 = ws4.addRow(["STT", i18n.t("export.type"), i18n.t("export.docType"), "Booking Code", i18n.t("export.role"), i18n.t("export.status")]);
+  const h4 = ws4.addRow([
+    "STT",
+    i18n.t("export.type"),
+    i18n.t("export.docType"),
+    "Booking Code",
+    i18n.t("export.role"),
+    i18n.t("export.status"),
+  ]);
   applyHeaderStyle(h4);
   freezeRow(ws4, 2);
 
   // Packing items
-  const packings = packingItems.filter(p => !p.isDeleted);
-  const docsList = (travelDocuments ?? []).filter(d => !d.isDeleted);
+  const packings = packingItems.filter((p) => !p.isDeleted);
+  const docsList = (travelDocuments ?? []).filter((d) => !d.isDeleted);
 
   const docTypeLabels: Record<string, string> = {
     ticket: "Ticket",
@@ -283,10 +358,10 @@ export async function exportTripExcel(data: TripData) {
     const r = ws4.addRow(["—", "—", i18n.t("export.noActivity"), "—", "—", "—"]);
     applyBodyRow(r, 0);
   } else {
-    packings.forEach(p => {
+    packings.forEach((p) => {
       const r = ws4.addRow([
         rowIdx4 + 1,
-        `Hành lý — ${p.tripType || "Chung"}`,
+        i18n.t("export.packingLabel", { type: p.tripType || "General" }),
         p.title,
         "—",
         "—",
@@ -300,7 +375,7 @@ export async function exportTripExcel(data: TripData) {
       ws4.addRow([]); // spacer
     }
 
-    docsList.forEach(d => {
+    docsList.forEach((d) => {
       const r = ws4.addRow([
         rowIdx4 + 1,
         docTypeLabels[d.type || "other"] || "Other",

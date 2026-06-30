@@ -186,7 +186,7 @@ function TripCard({
                 {daysTotal}
               </span>
               <span className="text-[7.5px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 sm:mt-1 truncate w-full text-center">
-                {t("dashboard.card.days", "NGÀY")}
+                {t("dashboard.card.days", "DAYS")}
               </span>
             </div>
             <div className="flex flex-col items-center min-w-0 border-x border-slate-100/60 dark:border-slate-800/60 sm:border-0">
@@ -194,7 +194,7 @@ function TripCard({
                 {memberCounts[trip.id!] || 1}
               </span>
               <span className="text-[7.5px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 sm:mt-1 truncate w-full text-center">
-                {t("dashboard.card.buddies", "NGƯỜI")}
+                {t("dashboard.card.buddies", "PEOPLE")}
               </span>
             </div>
             <div className="flex flex-col items-center min-w-0">
@@ -211,7 +211,7 @@ function TripCard({
                   : "0"}
               </span>
               <span className="text-[7.5px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 sm:mt-1 truncate w-full text-center">
-                {t("dashboard.card.expense", "CHI PHÍ")}
+                {t("dashboard.card.expense", "EXPENSES")}
               </span>
             </div>
           </div>
@@ -269,7 +269,7 @@ function TripCard({
               {daysTotal}
             </span>
             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 truncate w-full px-1">
-              {t("dashboard.card.days", "NGÀY")}
+              {t("dashboard.card.days", "DAYS")}
             </span>
           </div>
           <div className="flex flex-col items-center min-w-0">
@@ -277,7 +277,7 @@ function TripCard({
               {memberCounts[trip.id!] || 1}
             </span>
             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 truncate w-full px-1">
-              {t("dashboard.card.buddies", "NGƯỜI")}
+              {t("dashboard.card.buddies", "PEOPLE")}
             </span>
           </div>
           <div className="flex flex-col items-center min-w-0">
@@ -294,7 +294,7 @@ function TripCard({
                 : "0"}
             </span>
             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 truncate w-full px-1">
-              {t("dashboard.card.expense", "CHI PHÍ")}
+              {t("dashboard.card.expense", "EXPENSES")}
             </span>
           </div>
         </div>
@@ -580,7 +580,9 @@ export function TripManagerScreen({
               onClick={onOpenArchive}
               className="mt-6 text-[14px] font-semibold text-slate-500 hover:text-[#00BFB7] transition-colors"
             >
-              Xem kỷ niệm chuyến đi ({archivedTripsCount})
+              {t("trips.viewMemories", "Xem kỷ niệm chuyến đi ({{count}})", {
+                count: archivedTripsCount,
+              })}
             </button>
           )}
         </div>
@@ -590,15 +592,15 @@ export function TripManagerScreen({
           <div className="xl:col-span-8 flex flex-col gap-6 lg:gap-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
               <h2 className="text-[26px] font-black text-kat-text tracking-tight motion-title-enter">
-                Hành trình
+                {t("trips.journey", "Hành trình")}
               </h2>
 
               <div className="hidden sm:flex items-center justify-center w-full sm:w-auto gap-2">
                 <SegmentedControl
                   options={[
-                    { id: "planned", label: t("dashboard.tabs.planned", "Kế hoạch") },
-                    { id: "archived", label: t("dashboard.tabs.archived", "Lưu trữ") },
-                    { id: "completed", label: t("dashboard.tabs.completed", "Đã qua") },
+                    { id: "planned", label: t("dashboard.tabs.planned", "Planned") },
+                    { id: "archived", label: t("dashboard.tabs.archived", "Archived") },
+                    { id: "completed", label: t("dashboard.tabs.completed", "Past") },
                   ]}
                   value={filterTab}
                   onChange={(val) => setFilterTab(val as any)}
@@ -697,7 +699,7 @@ export function TripManagerScreen({
                 {archivedTripsRaw.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-20 text-center">
                     <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">
-                      Không có chuyến đi nào được lưu trữ
+                      {t("trips.noArchived", "Không có chuyến đi nào được lưu trữ")}
                     </p>
                   </div>
                 )}
@@ -719,7 +721,7 @@ export function TripManagerScreen({
                 {pastTrips.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-20 text-center">
                     <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">
-                      Chưa có chuyến đi nào hoàn thành
+                      {t("trips.noCompleted", "Chưa có chuyến đi nào hoàn thành")}
                     </p>
                   </div>
                 )}
@@ -795,7 +797,7 @@ export function TripManagerScreen({
                         : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
                     )}
                   >
-                    {t("dashboard.tabs.planned", "Kế hoạch")}
+                    {t("dashboard.tabs.planned", "Planned")}
                   </span>
                 </button>
 
@@ -822,7 +824,7 @@ export function TripManagerScreen({
                         : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
                     )}
                   >
-                    {t("dashboard.tabs.archived", "Lưu trữ")}
+                    {t("dashboard.tabs.archived", "Archived")}
                   </span>
                 </button>
 
@@ -852,7 +854,7 @@ export function TripManagerScreen({
                         : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
                     )}
                   >
-                    {t("dashboard.tabs.completed", "Đã qua")}
+                    {t("dashboard.tabs.completed", "Past")}
                   </span>
                 </button>
 
@@ -869,7 +871,7 @@ export function TripManagerScreen({
                     )}
                   </div>
                   <span className="text-[9px] font-bold text-gray-400 dark:text-gray-500 opacity-0 h-0 transition-all duration-300">
-                    {t("dashboard.tabs.view", "Hiển thị")}
+                    {t("dashboard.tabs.view", "View")}
                   </span>
                 </button>
               </div>

@@ -1,3 +1,4 @@
+import i18n from "../../../i18n";
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -81,10 +82,10 @@ import {
   sumBy,
   getSettlementSuggestions,
 } from "../../../utils/helpers";
-import { submitChangeRequest } from "../../../services/sharedTripRequestService";
+import { submitChangeRequest } from "../../../services/cloudShareService";
 import { showToast } from "../../../components/ui/ToastManager";
-import { uploadJournalImage, uploadDocumentImage } from "../../../services/storageService";
-import { getIdentity } from "../../../services/identityService";
+import { processLocalImage } from "../../../services/storageService";
+import { getIdentity } from "../../../utils/identityCache";
 import {
   getCurrentPosition,
   reverseGeocode,
@@ -105,24 +106,24 @@ import { fetchExchangeRates, ExchangeRate } from "../../../services/currencyServ
 const classNames = (...classes: any[]) => classes.filter(Boolean).join(" ");
 
 const CATEGORIES = [
-  "Giấy tờ",
-  "Quần áo",
-  "Đồ cá nhân",
-  "Thiết bị điện tử",
-  "Thuốc & y tế",
-  "Tiền & ví",
-  "Đồ ăn nhẹ",
-  "Khác",
+  "documents",
+  "clothing",
+  "personal",
+  "electronics",
+  "medical",
+  "money",
+  "snacks",
+  "other",
 ] as const;
 const CATEGORY_ICONS: Record<string, any> = {
-  "Giấy tờ": FileCheckIcon,
-  "Quần áo": ShirtIcon,
-  "Đồ cá nhân": Briefcase01Icon,
-  "Thiết bị điện tử": PlugIcon,
-  "Thuốc & y tế": PillIcon,
-  "Tiền & ví": Wallet01Icon,
-  "Đồ ăn nhẹ": Bread01Icon,
-  Khác: PackageIcon,
+  documents: FileCheckIcon,
+  clothing: ShirtIcon,
+  personal: Briefcase01Icon,
+  electronics: PlugIcon,
+  medical: PillIcon,
+  money: Wallet01Icon,
+  snacks: Bread01Icon,
+  other: PackageIcon,
 };
 
 const moodBadgeClasses: Record<string, string> = {
@@ -189,7 +190,7 @@ export function SharedJournalsSection({
   const [activeReactionPopover, setActiveReactionPopover] = React.useState<string | number | null>(
     null
   );
-  const resolvedGuestName = guestName || "Khách";
+  const resolvedGuestName = guestName || i18n.t("auth.guest", "Guest");
 
   async function handleToggleReaction(entry: JournalEntry, emoji: string) {
     const reactions = { ...(entry.reactions || {}) };
@@ -240,7 +241,7 @@ export function SharedJournalsSection({
     if (!file) return;
     setUploading(true);
     try {
-      const url = await uploadJournalImage(file, tripId);
+      const url = await processLocalImage(file);
       setForm((prev) => ({ ...prev, imageUrl: url }));
       setDirty(true);
     } catch (err) {
@@ -346,7 +347,7 @@ export function SharedJournalsSection({
         latitude: form.latitude,
         longitude: form.longitude,
         authorId: identity?.id || "guest",
-        authorName: guestName || identity?.name || "Khách",
+        authorName: guestName || identity?.name || i18n.t("auth.guest", "Guest"),
         postedAt: now,
       };
       await submitChangeRequest(token, {
@@ -420,7 +421,7 @@ export function SharedJournalsSection({
                 {t("journal.title")}
               </h3>
               <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
-                Chia sẻ cảm xúc, nhật ký và khoảnh khắc đáng nhớ
+                {t("share.journalsDesc", "Chia sẻ cảm xúc, nhật ký và khoảnh khắc đáng nhớ")}
               </p>
             </div>
           </div>
@@ -705,7 +706,7 @@ export function SharedJournalsSection({
           ) : (
             <div className="space-y-4">
               <p className="text-center text-slate-400 text-sm font-medium py-4">
-                Chưa có bài viết nào.
+                {t("journal.noArticles", "Chưa có bài viết nào.")}
               </p>
             </div>
           )
@@ -792,7 +793,8 @@ export function SharedJournalsSection({
                 <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
                   <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                   <span>
-                    Đang ở <span className="font-bold text-kat-primary">{form.locationName}</span>
+                    {t("journal.locCurrent", "Đang ở")}
+                    <span className="font-bold text-kat-primary">{form.locationName}</span>
                   </span>
                   <button
                     type="button"
@@ -818,7 +820,7 @@ export function SharedJournalsSection({
                     className="flex items-center gap-1.5 text-[12.5px] font-bold text-slate-400 hover:text-kat-primary transition-colors focus:outline-none"
                   >
                     <HugeiconsIcon icon={LocationOfflineIcon} className="h-3.5 w-3.5" />
-                    <span>Nhấn để đính kèm vị trí</span>
+                    <span>{t("journal.attachLocation", "Nhấn để đính kèm vị trí")}</span>
                   </button>
                 </div>
               )}
@@ -933,7 +935,7 @@ export function SharedJournalsSection({
             <div className="pt-1">
               <span className="mb-2 block text-[12.5px] font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
                 <HugeiconsIcon icon={SparklesIcon} className="h-4 w-4 text-slate-500" />
-                Gợi ý viết nhanh
+                {t("journal.quickPrompt", "Gợi ý viết nhanh")}
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {promptSuggestions.map((prompt) => (

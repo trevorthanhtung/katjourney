@@ -18,6 +18,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { signInAsGuest, signInWithGoogle } from "../services/authService";
 import { usePWAInstall } from "../hooks/usePWAInstall";
+import { SUPPORTED_LANGUAGES } from "../constants/languages";
 import { PWAInstallInstructionsSheet } from "./modals/PWAInstallInstructionsSheet";
 
 interface WelcomeScreenProps {
@@ -463,7 +464,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                   {legalModal === "terms" && t("welcomeScreen.modal.termsTitle")}
                   {legalModal === "privacy" && t("welcomeScreen.modal.privacyTitle")}
                   {legalModal === "cookie" && t("welcomeScreen.modal.cookieTitle")}
-                  {legalModal === "language" && t("settings.menu.language.title", "Ngôn ngữ")}
+                  {legalModal === "language" && t("settings.menu.language.title", "Language")}
                 </h4>
               </div>
               <button
@@ -668,7 +669,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                 }`}
               >
                 {legalModal === "language"
-                  ? t("settings.actions.backToMenu", "Quay lại menu")
+                  ? t("settings.actions.backToMenu", "Back to menu")
                   : t("welcomeScreen.modal.agreeAndClose")}
               </button>
             </div>

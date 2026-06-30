@@ -1,0 +1,605 @@
+
+================== src/lib\countryCodes.ts ==================
+export const numericToAlpha2: Record<string, string> = {
+  "4": "AF",
+  "8": "AL",
+  "10": "AQ",
+  "12": "DZ",
+  "16": "AS",
+  "20": "AD",
+  "24": "AO",
+  "28": "AG",
+  "31": "AZ",
+  "32": "AR",
+  "36": "AU",
+  "40": "AT",
+  "44": "BS",
+  "48": "BH",
+  "50": "BD",
+  "51": "AM",
+  "52": "BB",
+  "56": "BE",
+  "60": "BM",
+  "64": "BT",
+  "68": "BO",
+  "70": "BA",
+  "72": "BW",
+  "74": "BV",
+  "76": "BR",
+  "84": "BZ",
+  "86": "IO",
+  "90": "SB",
+  "92": "VG",
+  "96": "BN",
+  "100": "BG",
+  "104": "MM",
+  "108": "BI",
+  "112": "BY",
+  "116": "KH",
+  "120": "CM",
+  "124": "CA",
+  "132": "CV",
+  "136": "KY",
+  "140": "CF",
+  "144": "LK",
+  "148": "TD",
+  "152": "CL",
+  "156": "CN",
+  "158": "TW",
+  "162": "CX",
+  "166": "CC",
+  "170": "CO",
+  "174": "KM",
+  "175": "YT",
+  "178": "CG",
+  "180": "CD",
+  "184": "CK",
+  "188": "CR",
+  "191": "HR",
+  "192": "CU",
+  "196": "CY",
+  "203": "CZ",
+  "204": "BJ",
+  "208": "DK",
+  "212": "DM",
+  "214": "DO",
+  "218": "EC",
+  "222": "SV",
+  "226": "GQ",
+  "231": "ET",
+  "232": "ER",
+  "233": "EE",
+  "234": "FO",
+  "238": "FK",
+  "239": "GS",
+  "242": "FJ",
+  "246": "FI",
+  "248": "AX",
+  "250": "FR",
+  "254": "GF",
+  "258": "PF",
+  "260": "TF",
+  "262": "DJ",
+  "266": "GA",
+  "268": "GE",
+  "270": "GM",
+  "275": "PS",
+  "276": "DE",
+  "288": "GH",
+  "292": "GI",
+  "296": "KI",
+  "300": "GR",
+  "304": "GL",
+  "308": "GD",
+  "312": "GP",
+  "316": "GU",
+  "320": "GT",
+  "324": "GN",
+  "328": "GY",
+  "332": "HT",
+  "334": "HM",
+  "336": "VA",
+  "340": "HN",
+  "344": "HK",
+  "348": "HU",
+  "352": "IS",
+  "356": "IN",
+  "360": "ID",
+  "364": "IR",
+  "368": "IQ",
+  "372": "IE",
+  "376": "IL",
+  "380": "IT",
+  "384": "CI",
+  "388": "JM",
+  "392": "JP",
+  "398": "KZ",
+  "400": "JO",
+  "404": "KE",
+  "408": "KP",
+  "410": "KR",
+  "414": "KW",
+  "417": "KG",
+  "418": "LA",
+  "422": "LB",
+  "426": "LS",
+  "428": "LV",
+  "430": "LR",
+  "434": "LY",
+  "438": "LI",
+  "440": "LT",
+  "442": "LU",
+  "446": "MO",
+  "450": "MG",
+  "454": "MW",
+  "458": "MY",
+  "462": "MV",
+  "466": "ML",
+  "470": "MT",
+  "474": "MQ",
+  "478": "MR",
+  "480": "MU",
+  "484": "MX",
+  "492": "MC",
+  "496": "MN",
+  "498": "MD",
+  "499": "ME",
+  "500": "MS",
+  "504": "MA",
+  "508": "MZ",
+  "512": "OM",
+  "516": "NA",
+  "520": "NR",
+  "524": "NP",
+  "528": "NL",
+  "531": "CW",
+  "533": "AW",
+  "534": "SX",
+  "535": "BQ",
+  "540": "NC",
+  "548": "VU",
+  "554": "NZ",
+  "558": "NI",
+  "562": "NE",
+  "566": "NG",
+  "570": "NU",
+  "574": "NF",
+  "578": "NO",
+  "580": "MP",
+  "581": "UM",
+  "583": "FM",
+  "584": "MH",
+  "585": "PW",
+  "586": "PK",
+  "591": "PA",
+  "598": "PG",
+  "600": "PY",
+  "604": "PE",
+  "608": "PH",
+  "612": "PN",
+  "616": "PL",
+  "620": "PT",
+  "624": "GW",
+  "626": "TL",
+  "630": "PR",
+  "634": "QA",
+  "638": "RE",
+  "642": "RO",
+  "643": "RU",
+  "646": "RW",
+  "652": "BL",
+  "654": "SH",
+  "659": "KN",
+  "660": "AI",
+  "662": "LC",
+  "663": "MF",
+  "666": "PM",
+  "670": "VC",
+  "674": "SM",
+  "678": "ST",
+  "682": "SA",
+  "686": "SN",
+  "688": "RS",
+  "690": "SC",
+  "694": "SL",
+  "702": "SG",
+  "703": "SK",
+  "704": "VN",
+  "705": "SI",
+  "706": "SO",
+  "710": "ZA",
+  "716": "ZW",
+  "724": "ES",
+  "728": "SS",
+  "729": "SD",
+  "732": "EH",
+  "740": "SR",
+  "744": "SJ",
+  "748": "SZ",
+  "752": "SE",
+  "756": "CH",
+  "760": "SY",
+  "762": "TJ",
+  "764": "TH",
+  "768": "TG",
+  "772": "TK",
+  "776": "TO",
+  "780": "TT",
+  "784": "AE",
+  "788": "TN",
+  "792": "TR",
+  "795": "TM",
+  "796": "TC",
+  "798": "TV",
+  "800": "UG",
+  "804": "UA",
+  "807": "MK",
+  "818": "EG",
+  "826": "GB",
+  "831": "GG",
+  "832": "JE",
+  "833": "IM",
+  "834": "TZ",
+  "840": "US",
+  "850": "VI",
+  "854": "BF",
+  "858": "UY",
+  "860": "UZ",
+  "862": "VE",
+  "876": "WF",
+  "882": "WS",
+  "887": "YE",
+  "894": "ZM",
+};
+
+================== src/lib\crypto.ts ==================
+import CryptoJS from "crypto-js";
+
+// Khóa bảo mật tự động sinh cho thiết bị
+const ENCRYPTION_KEY_NAME = "kat_journey_device_secret";
+let SECRET_KEY = typeof localStorage !== "undefined" ? localStorage.getItem(ENCRYPTION_KEY_NAME) : null;
+
+if (!SECRET_KEY && typeof localStorage !== "undefined") {
+  // Tạo khóa AES 256 bit ngẫu nhiên
+  SECRET_KEY = CryptoJS.lib.WordArray.random(256 / 8).toString();
+  localStorage.setItem(ENCRYPTION_KEY_NAME, SECRET_KEY);
+}
+
+// Các trường làm Index trong Dexie thì KHÔNG ĐƯỢC mã hóa
+const indexedFields = [
+  "id", "tripId", "title", "startDate", "endDate", "createdAt", 
+  "name", "date", "completed", "category", "payer", "section", 
+  "mood", "tripType", "type", "activityId"
+];
+
+const isIndexedField = (key: string) => indexedFields.includes(key);
+
+export const encryptObject = (obj: any) => {
+  if (!obj || typeof obj !== "object" || !SECRET_KEY) return obj;
+  
+  const encryptedObj: any = {};
+  for (const key of Object.keys(obj)) {
+    const val = obj[key];
+    if (isIndexedField(key) || val === undefined || val === null) {
+      encryptedObj[key] = val;
+    } else {
+      try {
+        const stringified = JSON.stringify(val);
+        // Add prefix để nhận biết field này đã được mã hóa
+        encryptedObj[key] = "ENC:" + CryptoJS.AES.encrypt(stringified, SECRET_KEY).toString();
+      } catch (e) {
+        encryptedObj[key] = val;
+      }
+    }
+  }
+  return encryptedObj;
+};
+
+export const decryptObject = (obj: any) => {
+  if (!obj || typeof obj !== "object" || !SECRET_KEY) return obj;
+  
+  const decryptedObj: any = {};
+  for (const key of Object.keys(obj)) {
+    const val = obj[key];
+    if (isIndexedField(key) || typeof val !== 'string' || !val.startsWith("ENC:")) {
+      decryptedObj[key] = val;
+    } else {
+      try {
+        const ciphertext = val.substring(4); // bỏ "ENC:"
+        const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
+        const decryptedStr = bytes.toString(CryptoJS.enc.Utf8);
+        if (decryptedStr) {
+          decryptedObj[key] = JSON.parse(decryptedStr);
+        } else {
+          decryptedObj[key] = val;
+        }
+      } catch (e) {
+        // Fallback nếu giải mã thất bại (có thể khóa bị đổi)
+        decryptedObj[key] = val;
+      }
+    }
+  }
+  return decryptedObj;
+};
+
+================== src/lib\motion.ts ==================
+import { Transition, Variants } from "framer-motion";
+
+// --- SPRING PRESETS (Snappy/Professional Focus) ---
+
+/**
+ * Very fast, no bounce. Ideal for UI elements that need to feel immediate and decisive.
+ */
+export const springSnappy: Transition = {
+  type: "tween",
+  ease: [0.16, 1, 0.3, 1],
+  duration: 0.25,
+};
+
+/**
+ * Slightly softer snappy spring, good for page transitions or larger layout shifts
+ * where immediate snapping might be too jarring.
+ */
+export const springSmooth: Transition = {
+  type: "tween",
+  ease: [0.25, 1, 0.5, 1],
+  duration: 0.35,
+};
+
+/**
+ * Fast spring specifically tuned for micro-interactions (hover, tap on cards/buttons).
+ */
+export const springInteraction: Transition = {
+  type: "tween",
+  ease: [0.16, 1, 0.3, 1],
+  duration: 0.2,
+};
+
+// --- TWEEN PRESETS ---
+
+export const tweenStandard: Transition = {
+  type: "tween",
+  ease: [0.23, 1, 0.32, 1], // Equivalent to --motion-ease-out
+  duration: 0.2,
+};
+
+export const tweenFast: Transition = {
+  type: "tween",
+  ease: [0.23, 1, 0.32, 1],
+  duration: 0.15,
+};
+
+// --- COMMON VARIANTS ---
+
+/**
+ * Standard page transition variants
+ */
+export const pageVariants: Variants = {
+  initial: {
+    opacity: 0,
+    y: 12,
+    scale: 0.99,
+    filter: "blur(4px)",
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: springSmooth,
+  },
+  exit: {
+    opacity: 0,
+    y: 8,
+    scale: 0.99,
+    filter: "blur(4px)",
+    transition: tweenFast,
+  },
+};
+
+/**
+ * Modal & Sheet Variants
+ */
+export const modalOverlayVariants: Variants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: tweenStandard },
+  exit: { opacity: 0, transition: tweenFast },
+};
+
+export const modalContentVariants: Variants = {
+  initial: { opacity: 0, scale: 0.96, y: 16 },
+  animate: { opacity: 1, scale: 1, y: 0, transition: springSnappy },
+  exit: { opacity: 0, scale: 0.96, y: 12, transition: tweenFast },
+};
+
+export const sheetContentVariants: Variants = {
+  initial: { opacity: 0, y: "100%" },
+  animate: { opacity: 1, y: 0, transition: springSnappy },
+  exit: { opacity: 0, y: "100%", transition: tweenFast },
+};
+
+/**
+ * List Stagger Variants
+ */
+export const listContainerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+export const listItemVariants: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: springSnappy,
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    transition: tweenFast,
+  },
+};
+
+================== src/lib\shareAuth.ts ==================
+import i18n from "../i18n";
+import { supabase } from './supabase';
+
+/**
+ * shareAuth.ts
+ * ------------
+ * Cấp quyền truy cập share link cho khách KHÔNG cần login Google.
+ *
+ * Quy trình mới (Sử dụng bảng share_access server-trusted):
+ *   1. signInAnonymously()  — khách tự đăng nhập ẩn danh, có auth.uid()
+ *   2. verify_share_access(token, pin)  — server kiểm tra token + PIN và tự động insert vào bảng share_access
+ *   3. RLS đọc bảng share_access thay vì JWT claim → chỉ cho phép đọc đúng token đó
+ *
+ * Nhờ vậy:
+ *   - Tránh việc Anonymous tự update user_metadata để bypass PIN
+ *   - Anonymous chưa verify → không có record trong share_access → RLS chặn
+ *   - Anonymous đã verify đúng token → có record trong share_access → đọc được share đó
+ */
+
+export interface VerifiedShare {
+  ok: boolean;
+  token: string;
+  mode: 'view' | 'edit' | 'request_edit';
+  ownerUid: string;
+  sourceTripId: string;
+  includeExpenses: boolean;
+  includeJournals: boolean;
+  includeChecklist: boolean;
+  includeBackupPlans: boolean;
+  includeDocuments: boolean;
+  hasPin: boolean;
+  trip: any;
+}
+
+export class ShareAuthError extends Error {
+  code: 'not_found' | 'invalid_pin' | 'auth_failed' | 'unknown';
+  constructor(code: ShareAuthError['code'], message: string) {
+    super(message);
+    this.code = code;
+    this.name = 'ShareAuthError';
+  }
+}
+
+/**
+ * Đảm bảo user có session (anonymous hoặc authenticated).
+ * Nếu chưa có session → signInAnonymously.
+ */
+async function ensureSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) return session;
+
+  // Đăng nhập ẩn danh (cần bật "Allow anonymous sign-ins" ở Supabase Dashboard)
+  const { data, error } = await supabase.auth.signInAnonymously();
+  if (error) {
+    throw new ShareAuthError('auth_failed', i18n.t("share.errorCreateSession", "Cannot create guest session: ") +  + error.message);
+  }
+  return data.session;
+}
+
+/**
+ * Verify share link + set JWT claim cho session hiện tại.
+ * Phải gọi TRƯỚC khi đọc bất kỳ share data nào.
+ *
+ * @returns metadata của share (mode, includes, trip)
+ */
+export async function verifyAndAuthShare(
+  token: string,
+  pin?: string | null
+): Promise<VerifiedShare> {
+  console.log("[verifyAndAuthShare] START", { token, pin });
+  // 1. Đảm bảo có session (anonymous nếu chưa login)
+  await ensureSession();
+
+  // 2. Gọi RPC verify_share_access để server kiểm tra token + PIN
+  console.log("[verifyAndAuthShare] Calling RPC with", { p_token: token, p_pin: pin ?? null });
+  const { data, error } = await supabase.rpc('verify_share_access', {
+    p_token: token,
+    p_pin: pin ?? null,
+  });
+  console.log("[verifyAndAuthShare] RPC Response", { data, error });
+
+  if (error) {
+    throw new ShareAuthError('unknown', i18n.t("share.errorServerVerify", "Server error verifying share: ") +  + error.message);
+  }
+
+  if (!data || data.error === 'share_not_found') {
+    throw new ShareAuthError('not_found', i18n.t("share.errorLinkNotFoundOrRevoked", "Share link does not exist or has been revoked."));
+  }
+  if (data.error === 'invalid_pin') {
+    throw new ShareAuthError('invalid_pin', i18n.t("share.errorInvalidPin", "Invalid PIN code."));
+  }
+  if (!data.ok) {
+    throw new ShareAuthError('unknown', i18n.t("share.errorCannotAccess", "Cannot access share link."));
+  }
+
+  // 3. (MỚI) Quyền truy cập giờ đã được cấp trên server (bằng cách insert vào bảng share_access)
+  // Không còn gọi supabase.auth.updateUser({ data: { share_token } }) từ client nữa
+  // để tránh lỗ hổng Anonymous tự update user_metadata (Bypass PIN).
+
+  let parsedTrip = data.trip;
+  if (typeof data.trip === 'string') {
+    try {
+      parsedTrip = JSON.parse(data.trip);
+    } catch (e) {
+      console.error("Failed to parse trip JSON string:", e);
+    }
+  }
+
+  return {
+    ok: true,
+    token: data.token,
+    mode: data.mode,
+    ownerUid: data.owner_uid,
+    sourceTripId: data.source_trip_id,
+    includeExpenses: data.include_expenses,
+    includeJournals: data.include_journals,
+    includeChecklist: data.include_checklist,
+    includeBackupPlans: data.include_backup_plans,
+    includeDocuments: data.include_documents,
+    hasPin: data.has_pin,
+    trip: parsedTrip,
+  };
+}
+
+/**
+ * clearShareClaim: Hiện tại không cần dùng vì không lưu trong JWT nữa.
+ * Nếu cần thu hồi quyền ngay lập tức khi rời trang, bạn có thể gọi 1 RPC xóa record trong share_access.
+ */
+export async function clearShareClaim() {
+  // Không còn lưu trong user_metadata nên không cần update.
+  // Nếu muốn, có thể gọi RPC để xóa access record:
+  // await supabase.rpc('remove_share_access', { p_token: token });
+}
+
+================== src/lib\supabase.ts ==================
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+export const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
+
+export const supabase = createClient(
+  supabaseUrl || "",
+  supabaseAnonKey || "",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+  }
+);
+// @ts-ignore
+window.supabase = supabase;
+

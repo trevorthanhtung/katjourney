@@ -80,10 +80,10 @@ import {
   sumBy,
   getSettlementSuggestions,
 } from "../../../utils/helpers";
-import { submitChangeRequest } from "../../../services/sharedTripRequestService";
+import { submitChangeRequest } from "../../../services/cloudShareService";
 import { showToast } from "../../../components/ui/ToastManager";
-import { uploadJournalImage, uploadDocumentImage } from "../../../services/storageService";
-import { getIdentity } from "../../../services/identityService";
+import { processLocalImage } from "../../../services/storageService";
+import { getIdentity } from "../../../utils/identityCache";
 import {
   getCurrentPosition,
   reverseGeocode,
@@ -104,63 +104,63 @@ import { fetchExchangeRates, ExchangeRate } from "../../../services/currencyServ
 const classNames = (...classes: any[]) => classes.filter(Boolean).join(" ");
 
 const CATEGORIES = [
-  "Giấy tờ",
-  "Quần áo",
-  "Đồ cá nhân",
-  "Thiết bị điện tử",
-  "Thuốc & y tế",
-  "Tiền & ví",
-  "Đồ ăn nhẹ",
-  "Khác",
+  "documents",
+  "clothing",
+  "personal",
+  "electronics",
+  "medical",
+  "money",
+  "snacks",
+  "other",
 ] as const;
 const CATEGORY_ICONS: Record<string, any> = {
-  "Giấy tờ": FileCheckIcon,
-  "Quần áo": ShirtIcon,
-  "Đồ cá nhân": Briefcase01Icon,
-  "Thiết bị điện tử": PlugIcon,
-  "Thuốc & y tế": PillIcon,
-  "Tiền & ví": Wallet01Icon,
-  "Đồ ăn nhẹ": Bread01Icon,
-  Khác: PackageIcon,
+  documents: FileCheckIcon,
+  clothing: ShirtIcon,
+  personal: Briefcase01Icon,
+  electronics: PlugIcon,
+  medical: PillIcon,
+  money: Wallet01Icon,
+  snacks: Bread01Icon,
+  other: PackageIcon,
 };
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  "Giấy tờ": {
+  documents: {
     bg: "bg-blue-50/70 dark:bg-blue-950/20",
     text: "text-blue-800 dark:text-blue-400",
     border: "border-blue-100 dark:border-blue-900/30",
   },
-  "Quần áo": {
+  clothing: {
     bg: "bg-orange-50/70 dark:bg-orange-950/20",
     text: "text-orange-800 dark:text-orange-400",
     border: "border-orange-100 dark:border-orange-900/30",
   },
-  "Đồ cá nhân": {
+  personal: {
     bg: "bg-teal-50/70 dark:bg-teal-950/20",
     text: "text-teal-800 dark:text-teal-400",
     border: "border-teal-100 dark:border-teal-900/30",
   },
-  "Thiết bị điện tử": {
+  electronics: {
     bg: "bg-purple-50/70 dark:bg-purple-950/20",
     text: "text-purple-800 dark:text-purple-400",
     border: "border-purple-100 dark:border-purple-900/30",
   },
-  "Thuốc & y tế": {
+  medical: {
     bg: "bg-green-50/70 dark:bg-green-950/20",
     text: "text-green-700 dark:text-green-400",
     border: "border-green-100 dark:border-green-900/30",
   },
-  "Tiền & ví": {
+  money: {
     bg: "bg-emerald-50/70 dark:bg-emerald-950/20",
     text: "text-emerald-800 dark:text-emerald-400",
     border: "border-emerald-100 dark:border-emerald-900/30",
   },
-  "Đồ ăn nhẹ": {
+  snacks: {
     bg: "bg-amber-50/70 dark:bg-amber-950/20",
     text: "text-amber-800 dark:text-amber-400",
     border: "border-amber-100 dark:border-amber-900/30",
   },
-  Khác: {
+  other: {
     bg: "bg-slate-100/70 dark:bg-slate-800/20",
     text: "text-slate-700 dark:text-slate-400",
     border: "border-slate-200 dark:border-slate-700/50",
@@ -187,14 +187,14 @@ export function SharedChecklistSection({
   const { t } = useTranslation();
   const catMap: Record<string, string> = useMemo(
     () => ({
-      "Giấy tờ": t("packing.catDocuments"),
-      "Quần áo": t("packing.catClothing"),
-      "Đồ cá nhân": t("packing.catPersonal"),
-      "Thiết bị điện tử": t("packing.catElectronics"),
-      "Thuốc & y tế": t("packing.catMedical"),
-      "Tiền & ví": t("packing.catMoney"),
-      "Đồ ăn nhẹ": t("packing.catSnacks"),
-      Khác: t("packing.catOther"),
+      documents: t("packing.catDocuments"),
+      clothing: t("packing.catClothing"),
+      personal: t("packing.catPersonal"),
+      electronics: t("packing.catElectronics"),
+      medical: t("packing.catMedical"),
+      money: t("packing.catMoney"),
+      snacks: t("packing.catSnacks"),
+      other: t("packing.catOther"),
     }),
     [t]
   );
@@ -237,7 +237,7 @@ export function SharedChecklistSection({
 
   const [form, setForm] = useState({
     title: "",
-    category: "Giấy tờ",
+    category: "documents",
     quantity: 1,
     assignedTo: "",
     priority: "normal" as "normal" | "important" | "required",
@@ -262,7 +262,7 @@ export function SharedChecklistSection({
         if (item) {
           setForm({
             title: item.title,
-            category: item.category || "Khác",
+            category: item.category || "other",
             quantity: item.quantity || 1,
             assignedTo: item.assignedTo || "",
             priority: item.priority || "normal",
@@ -272,7 +272,7 @@ export function SharedChecklistSection({
       } else {
         setForm({
           title: "",
-          category: "Giấy tờ",
+          category: "documents",
           quantity: 1,
           assignedTo: "",
           priority: "normal",
@@ -503,7 +503,7 @@ export function SharedChecklistSection({
     }
   }
 
-  // Group items by category (default fallback is "Khác")
+  // Group items by category (default fallback is "other")
   const groupedItems = CATEGORIES.reduce(
     (acc, cat) => {
       acc[cat] = [];
@@ -513,7 +513,8 @@ export function SharedChecklistSection({
   );
 
   displayedChecklist.forEach((item) => {
-    const cat = item.category && CATEGORIES.includes(item.category as any) ? item.category : "Khác";
+    const cat =
+      item.category && CATEGORIES.includes(item.category as any) ? item.category : "other";
     groupedItems[cat].push(item);
   });
 
@@ -534,7 +535,7 @@ export function SharedChecklistSection({
           <div className="flex items-center gap-2.5">
             {(() => {
               const IconComponent = CATEGORY_ICONS[catName] || PackageIcon;
-              const theme = CATEGORY_COLORS[catName] || CATEGORY_COLORS["Khác"];
+              const theme = CATEGORY_COLORS[catName] || CATEGORY_COLORS["other"];
               return (
                 <div
                   className={`flex items-center justify-center w-8 h-8 rounded-[10px] ${theme.bg} ${theme.text} border ${theme.border} shadow-inner`}
@@ -743,7 +744,7 @@ export function SharedChecklistSection({
                 {t("packing.pageTitle")}
               </h3>
               <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
-                Chuẩn bị hành lý và đồ dùng trước chuyến đi
+                {t("share.checklistDesc", "Chuẩn bị hành lý và đồ dùng trước chuyến đi")}
               </p>
             </div>
           </div>

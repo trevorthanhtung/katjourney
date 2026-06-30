@@ -28,9 +28,9 @@ export function SharedTripBanner({
     !isVisible ||
     !canEdit ||
     !(
-      userRoleLower.includes("tài xế") ||
-      userRoleLower.includes("dẫn đường") ||
-      userRoleLower.includes("quản lý chi phí") ||
+      userRoleLower.includes(t("share.roleDriver", "tài xế")) ||
+      userRoleLower.includes(t("share.roleNavigator", "dẫn đường")) ||
+      userRoleLower.includes(t("share.roleAccountant", "quản lý chi phí")) ||
       canRequestEdit
     )
   ) {
@@ -38,9 +38,9 @@ export function SharedTripBanner({
   }
 
   const isDirectEdit =
-    userRoleLower.includes("tài xế") ||
-    userRoleLower.includes("dẫn đường") ||
-    userRoleLower.includes("quản lý chi phí");
+    userRoleLower.includes(t("share.roleDriver", "tài xế")) ||
+    userRoleLower.includes(t("share.roleNavigator", "dẫn đường")) ||
+    userRoleLower.includes(t("share.roleAccountant", "quản lý chi phí"));
 
   return (
     <div

@@ -1,3 +1,4 @@
+import i18n from "../../i18n";
 import React, { useEffect, useRef, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -39,32 +40,32 @@ import {
   DeleteConfirmModal,
   classNames,
 } from "../../components/ui";
-import { uploadDocumentImage } from "../../services/storageService";
+import { processLocalImage } from "../../services/storageService";
 import { useModalHistory } from "../../hooks/useModalHistory";
 
 const typeOptions: Array<{ value: NonNullable<TravelDocument["type"]>; label: string }> = [
-  { value: "ticket", label: "Vé di chuyển" },
-  { value: "hotel", label: "Đặt phòng" },
-  { value: "booking", label: "Mã đặt chỗ" },
-  { value: "insurance", label: "Bảo hiểm du lịch" },
-  { value: "visa", label: "Visa / Hộ chiếu" },
+  { value: "ticket", label: i18n.t("documents.typeTicket", "Travel ticket") },
+  { value: "hotel", label: i18n.t("documents.typeHotel", "Hotel booking") },
+  { value: "booking", label: i18n.t("documents.typeBooking", "Booking code") },
+  { value: "insurance", label: i18n.t("documents.typeInsurance", "Travel insurance") },
+  { value: "visa", label: i18n.t("documents.typeVisa", "Visa / Passport") },
   { value: "tour", label: "Vé tham quan" },
   { value: "contact", label: "Liên hệ" },
   { value: "map", label: "Bản đồ" },
-  { value: "other", label: "Khác" },
+  { value: "other", label: i18n.t("common.other", "Other") },
 ];
 
 const typeLabels: Record<NonNullable<TravelDocument["type"]>, string> = {
-  ticket: "Vé di chuyển",
-  hotel: "Đặt phòng",
+  ticket: i18n.t("documents.typeTicket", "Travel ticket"),
+  hotel: i18n.t("documents.typeHotel", "Hotel booking"),
   booking: "Mã đặt chỗ",
-  insurance: "Bảo hiểm du lịch",
-  visa: "Visa / Hộ chiếu",
+  insurance: i18n.t("documents.typeInsurance", "Travel insurance"),
+  visa: i18n.t("documents.typeVisa", "Visa / Passport"),
   tour: "Vé tham quan",
-  document: "Khác",
+  document: i18n.t("common.other", "Other"),
   contact: "Liên hệ",
   map: "Bản đồ",
-  other: "Khác",
+  other: i18n.t("common.other", "Other"),
 };
 
 const typeIcons: Record<NonNullable<TravelDocument["type"]>, any> = {
@@ -230,7 +231,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
 
     try {
       if (selectedFile) {
-        finalAttachmentUrl = await uploadDocumentImage(selectedFile, String(tripId));
+        finalAttachmentUrl = await processLocalImage(selectedFile);
       }
 
       if (editing?.id) {

@@ -64,7 +64,7 @@ export function DonateSettings({ setView }: DonateSettingsProps) {
                     : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                 )}
               >
-                {t("settings.donateView.tabInternational", "Quốc tế")}
+                {t("settings.donateView.tabInternational", "International")}
               </button>
             </div>
 
@@ -115,11 +115,11 @@ export function DonateSettings({ setView }: DonateSettingsProps) {
                   >
                     <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                     <span className="relative z-10">
-                      {t("settings.donateView.supportPayPal", "Ủng hộ qua PayPal")}
+                      {t("settings.donateView.supportPayPal", "Support via PayPal")}
                     </span>
                   </a>
                   <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 italic">
-                    {t("settings.donateView.thankYou", "(Cảm ơn sự ủng hộ của bạn!)")}
+                    {t("settings.donateView.thankYou", "(Thank you for your support!)")}
                   </p>
                 </div>
               )}

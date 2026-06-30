@@ -1,0 +1,2340 @@
+
+================== src/hooks\useAppNavigation.ts ==================
+import { useState, useEffect, useCallback, useRef, useTransition } from "react";
+import { useViewTransition } from "./useViewTransition";
+
+type TabType = "home" | "timeline" | "expenses" | "checklist" | "more";
+type MoreSectionType =
+  "overview" | "journal" | "packing" | "wrapped" | "settings" | "members" | "documents";
+
+export function useAppNavigation() {
+  const { startViewTransition } = useViewTransition();
+  const [, startTransition] = useTransition();
+
+  const [activeTab, setActiveTabInternal] = useState<TabType>(() => {
+    const saved = localStorage.getItem("kat_active_tab");
+    return (saved as any) || "home";
+  });
+  const setActiveTab = useCallback((tab: TabType) => {
+    startTransition(() => {
+      setActiveTabInternal(tab);
+    });
+  }, []);
+
+  const [moreSection, setMoreSection] = useState<MoreSectionType>(() => {
+    const saved = localStorage.getItem("kat_more_section");
+    return (saved as any) || "overview";
+  });
+
+  const [selectedTripId, setSelectedTripId] = useState<number | null>(() => {
+    const saved = localStorage.getItem("kat_selected_trip_id");
+    return saved ? Number(saved) : null;
+  });
+
+  const [isManagingTrips, setIsManagingTrips] = useState<boolean>(() => {
+    const savedTripId = localStorage.getItem("kat_selected_trip_id");
+    const savedManaging = localStorage.getItem("kat_is_managing_trips");
+    if (savedTripId && savedManaging === "false") return false;
+    return true;
+  });
+
+  const [isViewingArchive, setIsViewingArchive] = useState<boolean>(() => {
+    return localStorage.getItem("kat_is_viewing_archive") === "true";
+  });
+
+  // Local Storage Sync
+  useEffect(() => localStorage.setItem("kat_active_tab", activeTab), [activeTab]);
+  useEffect(() => localStorage.setItem("kat_more_section", moreSection), [moreSection]);
+  useEffect(() => {
+    if (selectedTripId !== null)
+      localStorage.setItem("kat_selected_trip_id", String(selectedTripId));
+    else localStorage.removeItem("kat_selected_trip_id");
+  }, [selectedTripId]);
+  useEffect(
+    () => localStorage.setItem("kat_is_managing_trips", String(isManagingTrips)),
+    [isManagingTrips]
+  );
+  useEffect(
+    () => localStorage.setItem("kat_is_viewing_archive", String(isViewingArchive)),
+    [isViewingArchive]
+  );
+
+  // History State Sync
+  const isPopStateRef = useRef(false);
+  const lastHistoryStateRef = useRef<any>(null);
+  const historyDepthRef = useRef(0);
+
+  useEffect(() => {
+    const view = isViewingArchive
+      ? "archive"
+      : isManagingTrips || !selectedTripId
+        ? "manager"
+        : "trip";
+    const initialState = { view, tripId: selectedTripId, activeTab, moreSection };
+    window.history.replaceState(initialState, "");
+    lastHistoryStateRef.current = initialState;
+
+    const handlePopState = (event: PopStateEvent) => {
+      if (event.state?.isModal) return;
+      const state = event.state;
+      if (!state) return;
+
+      const prevState = lastHistoryStateRef.current;
+      const viewChanged = prevState?.view !== state.view;
+      const tripChanged = prevState?.tripId !== state.tripId;
+      const tabChanged = prevState?.activeTab !== state.activeTab;
+      const sectionChanged = prevState?.moreSection !== state.moreSection;
+
+      if (prevState && !viewChanged && !tripChanged && !tabChanged && !sectionChanged) {
+        return;
+      }
+
+      isPopStateRef.current = true;
+
+      startViewTransition(() => {
+        if (state.view === "manager") {
+          setIsManagingTrips(true);
+          setIsViewingArchive(false);
+          setSelectedTripId(null);
+        } else if (state.view === "archive") {
+          setIsViewingArchive(true);
+          setIsManagingTrips(false);
+          setSelectedTripId(null);
+        } else if (state.view === "trip") {
+          setIsManagingTrips(false);
+          setIsViewingArchive(false);
+          if (state.tripId !== undefined) setSelectedTripId(state.tripId);
+          if (state.activeTab !== undefined) setActiveTab(state.activeTab);
+          if (state.moreSection !== undefined) setMoreSection(state.moreSection);
+        }
+      });
+      lastHistoryStateRef.current = state;
+      setTimeout(() => {
+        isPopStateRef.current = false;
+      }, 0);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [startViewTransition, setActiveTab]);
+
+  useEffect(() => {
+    if (isPopStateRef.current) return;
+    const view = isViewingArchive
+      ? "archive"
+      : isManagingTrips || !selectedTripId
+        ? "manager"
+        : "trip";
+    const currentState = { view, tripId: selectedTripId, activeTab, moreSection };
+    const prevState = lastHistoryStateRef.current;
+    if (!prevState) return;
+
+    const viewChanged = prevState.view !== currentState.view;
+    const tripChanged = prevState.tripId !== currentState.tripId;
+    const tabChanged = prevState.activeTab !== currentState.activeTab;
+    const sectionChanged = prevState.moreSection !== currentState.moreSection;
+
+    if (!viewChanged && !tripChanged && !tabChanged && !sectionChanged) return;
+
+    const goingBackToManager =
+      viewChanged && currentState.view === "manager" && prevState.view !== "manager";
+    const goingBackToArchive =
+      viewChanged && currentState.view === "archive" && prevState.view === "trip";
+    const goingBackToMoreOverview =
+      sectionChanged &&
+      currentState.moreSection === "overview" &&
+      prevState.moreSection !== "overview";
+
+    if (goingBackToManager || goingBackToArchive || goingBackToMoreOverview) {
+      if (historyDepthRef.current > 0) {
+        historyDepthRef.current--;
+        window.history.back();
+        lastHistoryStateRef.current = currentState;
+        return;
+      }
+    }
+
+    let shouldPush = false;
+    if (viewChanged || tripChanged) {
+      shouldPush = true;
+    } else if (currentState.view === "trip") {
+      if (tabChanged) {
+        if (currentState.activeTab === "more" && currentState.moreSection !== "overview")
+          shouldPush = true;
+        else shouldPush = false;
+      } else if (sectionChanged) {
+        if (currentState.moreSection !== "overview") shouldPush = true;
+        else shouldPush = false;
+      }
+    }
+
+    if (shouldPush) {
+      window.history.pushState(currentState, "");
+      historyDepthRef.current++;
+    } else {
+      window.history.replaceState(currentState, "");
+    }
+    lastHistoryStateRef.current = currentState;
+  }, [isManagingTrips, isViewingArchive, selectedTripId, activeTab, moreSection]);
+
+  const setMoreSectionAnimated = useCallback(
+    (section: MoreSectionType) => {
+      startViewTransition(() => setMoreSection(section));
+    },
+    [startViewTransition]
+  );
+
+  const setSelectedTripIdAnimated = useCallback(
+    (id: number | null) => {
+      startViewTransition(() => setSelectedTripId(id));
+    },
+    [startViewTransition]
+  );
+
+  const setIsManagingTripsAnimated = useCallback(
+    (val: boolean) => {
+      startViewTransition(() => setIsManagingTrips(val));
+    },
+    [startViewTransition]
+  );
+
+  const setIsViewingArchiveAnimated = useCallback(
+    (val: boolean) => {
+      startViewTransition(() => setIsViewingArchive(val));
+    },
+    [startViewTransition]
+  );
+
+  function navigateToMore(section: MoreSectionType) {
+    startViewTransition(() => {
+      setMoreSection(section);
+      setActiveTabInternal("more");
+    });
+  }
+
+  return {
+    activeTab,
+    setActiveTab,
+    moreSection,
+    setMoreSection: setMoreSectionAnimated,
+    setMoreSectionRaw: setMoreSection,
+    selectedTripId,
+    setSelectedTripId: setSelectedTripIdAnimated,
+    isManagingTrips,
+    setIsManagingTrips: setIsManagingTripsAnimated,
+    isViewingArchive,
+    setIsViewingArchive: setIsViewingArchiveAnimated,
+    navigateToMore,
+    lastHistoryStateRef,
+  };
+}
+
+================== src/hooks\useAuth.ts ==================
+import { useState, useEffect } from "react";
+import type { User } from "../services/authService";
+import { observeAuthState } from "../services/authService";
+
+export interface UseAuthResult {
+  user: User | null;
+  loading: boolean;
+  isAuthenticated: boolean;
+  provider: "google" | "guest" | null;
+}
+
+export function useAuth(): UseAuthResult {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const unsubscribe = observeAuthState((currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const isAuthenticated = !!user;
+  
+  let provider: "google" | "guest" | null = null;
+  if (user) {
+    if (user.isAnonymous) {
+      provider = "guest";
+    } else {
+      const isGoogle = user.providerData.some((p) => p.providerId === "google.com");
+      provider = isGoogle ? "google" : null;
+    }
+  }
+
+  return {
+    user,
+    loading,
+    isAuthenticated,
+    provider,
+  };
+}
+
+================== src/hooks\useAutoSync.ts ==================
+import React, { useState, useEffect } from "react";
+import { updateShareLink } from "../services/cloudShareService";
+import {
+  Trip,
+  Member,
+  EventItem,
+  Expense,
+  ChecklistItem,
+  JournalEntry,
+  BackupPlan,
+  TravelDocument,
+} from "../db";
+
+export function useAutoSync({
+  trip,
+  isReadOnly,
+  members,
+  events,
+  expenses,
+  checklist,
+  journals,
+  backupPlans,
+  travelDocuments,
+}: {
+  trip?: Trip;
+  isReadOnly: boolean;
+  members?: Member[];
+  events?: EventItem[];
+  expenses?: Expense[];
+  checklist?: ChecklistItem[];
+  journals?: JournalEntry[];
+  backupPlans?: BackupPlan[];
+  travelDocuments?: TravelDocument[];
+}) {
+  const [isAutoSyncing, setIsAutoSyncing] = useState(false);
+  const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
+  const lastSyncedFingerprintRef = React.useRef<string>("");
+
+  const currentFingerprint = React.useMemo(() => {
+    if (!trip) return "";
+    const parts = [
+      trip.title,
+      trip.location,
+      trip.startDate,
+      trip.endDate,
+      trip.tripType,
+      JSON.stringify(trip.dayRoadmaps || {}),
+      trip.status,
+      trip.shareIncludeExpenses,
+      trip.shareIncludeJournals,
+      trip.shareIncludeChecklist,
+      trip.shareIncludeBackupPlans,
+      trip.shareIncludeDocuments,
+      trip.shareUsePinProtection,
+      trip.sharePin,
+      (members ?? []).map((m) => `${m.id}-${m.updatedAt || ""}`).join(","),
+      (events ?? []).map((e) => `${e.id}-${e.updatedAt || ""}`).join(","),
+      (trip.shareIncludeExpenses ?? true)
+        ? (expenses ?? []).map((e) => `${e.id}-${e.updatedAt || ""}`).join(",")
+        : "",
+      (trip.shareIncludeChecklist ?? true)
+        ? (checklist ?? []).map((c) => `${c.id}-${c.updatedAt || ""}`).join(",")
+        : "",
+      (trip.shareIncludeJournals ?? true)
+        ? (journals ?? []).map((j) => `${j.id}-${j.updatedAt || ""}`).join(",")
+        : "",
+      (trip.shareIncludeBackupPlans ?? true)
+        ? (backupPlans ?? []).map((b) => `${b.id}-${b.updatedAt || ""}`).join(",")
+        : "",
+      (trip.shareIncludeDocuments ?? false)
+        ? (travelDocuments ?? []).map((d) => `${d.id}-${d.updatedAt || ""}`).join(",")
+        : "",
+    ];
+    return parts.join("|");
+  }, [trip, members, events, expenses, checklist, journals, backupPlans, travelDocuments]);
+
+  useEffect(() => {
+    if (!trip || !trip.shareToken || isReadOnly) {
+      lastSyncedFingerprintRef.current = "";
+      return;
+    }
+
+    if (!lastSyncedFingerprintRef.current) {
+      lastSyncedFingerprintRef.current = currentFingerprint;
+      return;
+    }
+
+    if (lastSyncedFingerprintRef.current === currentFingerprint) {
+      return;
+    }
+
+    lastSyncedFingerprintRef.current = currentFingerprint;
+
+    const timer = setTimeout(async () => {
+      setIsAutoSyncing(true);
+      try {
+        console.log("[AutoSync] Syncing changes...");
+        const options = {
+          mode: "request_edit" as const,
+          includeExpenses: trip.shareIncludeExpenses ?? true,
+          includeJournals: trip.shareIncludeJournals ?? true,
+          includeChecklist: trip.shareIncludeChecklist ?? true,
+          includeBackupPlans: trip.shareIncludeBackupPlans ?? true,
+          includeDocuments: trip.shareIncludeDocuments ?? false,
+          sharePin: trip.sharePin,
+        };
+        await updateShareLink(trip.id!, trip.shareToken!, options);
+        setLastSyncedAt(new Date());
+        console.log("[AutoSync] Sync successful.");
+      } catch (err) {
+        console.error("[AutoSync] Background sync failed:", err);
+      } finally {
+        setIsAutoSyncing(false);
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [currentFingerprint, trip, isReadOnly]);
+
+  return { isAutoSyncing, lastSyncedAt };
+}
+
+================== src/hooks\useBodyScrollLock.ts ==================
+import { useEffect } from "react";
+
+let activeLockCount = 0;
+let originalScrollY = 0;
+
+export function useBodyScrollLock(isOpen: boolean) {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    activeLockCount++;
+    
+    if (activeLockCount === 1) {
+      originalScrollY = window.scrollY;
+      
+      // Save current inline styles
+      const originalPosition = document.body.style.position;
+      const originalTop = document.body.style.top;
+      const originalWidth = document.body.style.width;
+      const originalOverflow = document.body.style.overflow;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+
+      document.body.setAttribute("data-lock-position", originalPosition);
+      document.body.setAttribute("data-lock-top", originalTop);
+      document.body.setAttribute("data-lock-width", originalWidth);
+      document.body.setAttribute("data-lock-overflow", originalOverflow);
+      document.body.setAttribute("data-lock-html-overflow", originalHtmlOverflow);
+      document.body.setAttribute("data-lock-scroll-y", originalScrollY.toString());
+
+      // Lock scroll using gold standard iOS PWA technique
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${originalScrollY}px`;
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.setProperty("overflow", "hidden", "important");
+    }
+
+    return () => {
+      activeLockCount = Math.max(0, activeLockCount - 1);
+      
+      if (activeLockCount === 0) {
+        // Restore styles from saved values or default to empty
+        const originalPosition = document.body.getAttribute("data-lock-position") || "";
+        const originalTop = document.body.getAttribute("data-lock-top") || "";
+        const originalWidth = document.body.getAttribute("data-lock-width") || "";
+        const originalOverflow = document.body.getAttribute("data-lock-overflow") || "";
+        const originalHtmlOverflow = document.body.getAttribute("data-lock-html-overflow") || "";
+        const savedScrollY = parseInt(document.body.getAttribute("data-lock-scroll-y") || "0", 10);
+
+        document.body.style.position = originalPosition;
+        document.body.style.top = originalTop;
+        document.body.style.width = originalWidth;
+        document.body.style.overflow = originalOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+
+        // Clean attributes
+        document.body.removeAttribute("data-lock-position");
+        document.body.removeAttribute("data-lock-top");
+        document.body.removeAttribute("data-lock-width");
+        document.body.removeAttribute("data-lock-overflow");
+        document.body.removeAttribute("data-lock-html-overflow");
+        document.body.removeAttribute("data-lock-scroll-y");
+
+        // Scroll back
+        window.scrollTo(0, savedScrollY);
+      }
+    };
+  }, [isOpen]);
+}
+
+================== src/hooks\useCloudBackup.ts ==================
+import i18n from "../i18n";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useAuth } from "./useAuth";
+import { backupToCloud, restoreFromCloud, getLastBackupInfo } from "../services/cloudBackupService";
+import { supabase } from "../lib/supabase";
+
+export function useCloudBackup() {
+  const { user } = useAuth();
+  const [isBackingUp, setIsBackingUp] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
+  const [isSyncLoading, setIsSyncLoading] = useState(false);
+  const [isAutoBackingUp, setIsAutoBackingUp] = useState(false);
+  const [isAutoSyncingUI, setIsAutoSyncingUI] = useState(false);
+  const [lastBackupAt, setLastBackupAt] = useState<string | null>(null);
+  const [hasCloudVersion, setHasCloudVersion] = useState(false);
+
+  const lastInteractionRef = useRef<number>(Date.now());
+
+  const [autoBackupEnabled, setAutoBackupEnabledState] = useState(() => {
+    if (typeof localStorage !== "undefined") {
+      return localStorage.getItem("kat_journey_auto_backup_enabled") === "true";
+    }
+    return false;
+  });
+
+  const setAutoBackupEnabled = (enabled: boolean) => {
+    setAutoBackupEnabledState(enabled);
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("kat_journey_auto_backup_enabled", enabled ? "true" : "false");
+    }
+  };
+
+  const fetchBackupInfo = useCallback(async () => {
+    if (!user) {
+      setLastBackupAt(null);
+      setHasCloudVersion(false);
+      return;
+    }
+    try {
+      const info = await getLastBackupInfo();
+      const cloudTimeStr = info ? info.updatedAt : null;
+      setLastBackupAt(cloudTimeStr);
+
+      // Compare cloud time with local time to see if cloud has newer changes
+      if (cloudTimeStr && typeof localStorage !== "undefined") {
+        const localTimeStr = localStorage.getItem("kat_journey_local_updated_at");
+        const localTime = localTimeStr ? new Date(localTimeStr).getTime() : 0;
+        const cloudTime = new Date(cloudTimeStr).getTime();
+        
+        // If cloud is newer by more than 1 second (1000ms tolerance)
+        setHasCloudVersion(cloudTime - localTime > 1000);
+      } else {
+        setHasCloudVersion(false);
+      }
+    } catch (error) {
+      console.error("[useCloudBackup] Failed to get last backup info:", error);
+    }
+  }, [user]);
+
+  // Fetch last backup timestamp on initialization or user changes
+  useEffect(() => {
+    fetchBackupInfo();
+  }, [fetchBackupInfo]);
+
+  const backupNow = async () => {
+    if (!user) return;
+    setIsBackingUp(true);
+    try {
+      await backupToCloud();
+      await fetchBackupInfo();
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
+
+  const restoreNow = useCallback(async (mode: "merge" | "replace") => {
+    if (!user) return;
+    setIsRestoring(true);
+    try {
+      await restoreFromCloud(mode);
+      await fetchBackupInfo();
+    } finally {
+      setIsRestoring(false);
+    }
+  }, [user, fetchBackupInfo]);
+
+  // Keep refs up to date to prevent stale closures in the Realtime snapshot listener
+  const restoreNowRef = useRef(restoreNow);
+  const fetchBackupInfoRef = useRef(fetchBackupInfo);
+
+  useEffect(() => {
+    restoreNowRef.current = restoreNow;
+    fetchBackupInfoRef.current = fetchBackupInfo;
+  }, [restoreNow, fetchBackupInfo]);
+
+  // Track window keyboard/mouse/touch interaction for idle detection
+  useEffect(() => {
+    const handleInteraction = () => {
+      lastInteractionRef.current = Date.now();
+    };
+
+    window.addEventListener("keydown", handleInteraction, { passive: true });
+    window.addEventListener("mousedown", handleInteraction, { passive: true });
+    window.addEventListener("touchstart", handleInteraction, { passive: true });
+
+    return () => {
+      window.removeEventListener("keydown", handleInteraction);
+      window.removeEventListener("mousedown", handleInteraction);
+      window.removeEventListener("touchstart", handleInteraction);
+    };
+  }, []);
+
+  // Real-time Cloud listener
+  useEffect(() => {
+    if (!user) {
+      setHasCloudVersion(false);
+      return;
+    }
+
+    let isSubscribed = true;
+
+    console.log("[RealtimeSync] Subscribing to user backups channel for user:", user.uid);
+    const channel = supabase
+      .channel(`backup-changes-${user.uid}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "user_backups",
+          filter: `user_id=eq.${user.uid}`
+        },
+        async (payload) => {
+          if (!isSubscribed) return;
+          console.log("[RealtimeSync] Received database backup change payload:", payload);
+          
+          const row = payload.new as any;
+          if (!row || !row.data) return;
+
+          // Respect the kat_sync_in_progress lock
+          if (typeof localStorage !== "undefined" && localStorage.getItem("kat_sync_in_progress") === "true") {
+            console.log("[RealtimeSync] Sync already in progress, skipping snapshot");
+            return;
+          }
+
+          const cloudTimeStr = row.data.updatedAt || null;
+          if (!cloudTimeStr) return;
+
+          // Compare with local timestamp
+          const localTimeStr = typeof localStorage !== "undefined" ? localStorage.getItem("kat_journey_local_updated_at") : null;
+          
+          const localTime = localTimeStr ? new Date(localTimeStr).getTime() : 0;
+          const cloudTime = new Date(cloudTimeStr).getTime();
+
+          // Loop Prevention (Ping-Pong check)
+          if (cloudTime <= localTime) {
+            console.log("[RealtimeSync] Cloud data is older or equal to local data. Skipping.");
+            return;
+          }
+
+          console.log("[RealtimeSync] Detected new cloud data from another device! Cloud:", cloudTimeStr, "Local:", localTimeStr);
+          
+          // Set last backup time
+          setLastBackupAt(cloudTimeStr);
+
+          // Check if application is Idle
+          const now = Date.now();
+          const timeSinceLastLocalEdit = now - localTime;
+          const timeSinceLastInteraction = now - lastInteractionRef.current;
+
+          const isIdle = timeSinceLastLocalEdit >= 10000 && timeSinceLastInteraction >= 10000;
+
+          if (isIdle) {
+            // Auto Restore Ngầm
+            console.log("[RealtimeSync] Device is IDLE. Auto restoring (merge) from Cloud...");
+            setIsAutoSyncingUI(true);
+            try {
+              await restoreNowRef.current("merge");
+              if ((window as any).showToastGlobal) {
+                (window as any).showToastGlobal(i18n.t("sync.toastUpdatedFromOther", "Updated data from another device."));
+              }
+            } catch (err) {
+              console.error("[RealtimeSync] Auto restore failed:", err);
+            } finally {
+              setIsAutoSyncingUI(false);
+            }
+          } else {
+            // Active State: show warning banner
+            console.log("[RealtimeSync] Device is ACTIVE. Showing cloud updates banner.");
+            setHasCloudVersion(true);
+            if ((window as any).showToastGlobal) {
+              (window as any).showToastGlobal(i18n.t("sync.toastNewDataAvailable", "New data from another device. Tap Sync to download."));
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      isSubscribed = false;
+      console.log("[RealtimeSync] Unsubscribing from user backups channel");
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
+  /**
+   * Smart Sync:
+   * Compares local modification timestamp with cloud backup timestamp.
+   * Returns a sync status code:
+   * - "uploaded": local was newer, automatically backed up.
+   * - "prompt_restore": cloud is newer, caller should prompt user.
+   * - "up_to_date": timestamps match, data is up-to-date.
+   */
+  const syncData = async (): Promise<"uploaded" | "prompt_restore" | "up_to_date"> => {
+    if (!user) throw new Error(i18n.t("sync.errorLoginRequired", "Please sign in before syncing."));
+    
+    setIsSyncLoading(true);
+    try {
+      // 1. Fetch latest metadata from Cloud
+      const info = await getLastBackupInfo();
+      const cloudTimeStr = info ? info.updatedAt : null;
+      
+      // 2. Get local metadata timestamp
+      let localTimeStr = typeof localStorage !== "undefined" ? localStorage.getItem("kat_journey_local_updated_at") : null;
+      
+      // If local metadata is missing, set it to now
+      if (!localTimeStr && typeof localStorage !== "undefined") {
+        localTimeStr = new Date().toISOString();
+        localStorage.setItem("kat_journey_local_updated_at", localTimeStr);
+      }
+
+      const localTime = localTimeStr ? new Date(localTimeStr).getTime() : 0;
+      const cloudTime = cloudTimeStr ? new Date(cloudTimeStr).getTime() : 0;
+
+      // 3. Compare with a 1-second tolerance
+      const diff = localTime - cloudTime;
+
+      if (!cloudTimeStr || diff > 1000) {
+        // Local is newer or no cloud backup exists -> Backup
+        await backupNow();
+        return "uploaded";
+      } else if (diff < -1000) {
+        // Cloud is newer -> Prompt restore
+        setHasCloudVersion(true);
+        return "prompt_restore";
+      } else {
+        // Up to date
+        setHasCloudVersion(false);
+        return "up_to_date";
+      }
+    } finally {
+      setIsSyncLoading(false);
+    }
+  };
+
+  // Background Auto-Backup Loop
+  const autoBackupTimerRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!user || !autoBackupEnabled) {
+      if (autoBackupTimerRef.current) {
+        clearInterval(autoBackupTimerRef.current);
+        autoBackupTimerRef.current = null;
+      }
+      setIsAutoBackingUp(false);
+      return;
+    }
+
+    autoBackupTimerRef.current = setInterval(async () => {
+      // Don't auto-save if offline, or already backing up/restoring/syncing
+      if (!navigator.onLine || isBackingUp || isRestoring || isSyncLoading || isAutoBackingUp) {
+        return;
+      }
+
+      if (typeof localStorage === "undefined") return;
+
+      const localTimeStr = localStorage.getItem("kat_journey_local_updated_at");
+      if (!localTimeStr) return;
+
+      const localTime = new Date(localTimeStr).getTime();
+      const backupTime = lastBackupAt ? new Date(lastBackupAt).getTime() : 0;
+
+      // Check if local has newer changes than last backup time
+      if (localTime - backupTime > 1000) {
+        const timeSinceLastEdit = Date.now() - localTime;
+        
+        // Debounce: only auto backup if the user hasn't edited for at least 5 seconds
+        if (timeSinceLastEdit >= 5000) {
+          setIsAutoBackingUp(true);
+          try {
+            console.log("[AutoSync] Triggering background auto-backup...");
+            await backupToCloud();
+            await fetchBackupInfo();
+          } catch (error) {
+            console.error("[AutoSync] Background auto-backup failed:", error);
+          } finally {
+            setIsAutoBackingUp(false);
+          }
+        }
+      }
+    }, 2500);
+
+    return () => {
+      if (autoBackupTimerRef.current) {
+        clearInterval(autoBackupTimerRef.current);
+        autoBackupTimerRef.current = null;
+      }
+    };
+  }, [user, autoBackupEnabled, lastBackupAt, isBackingUp, isRestoring, isSyncLoading, isAutoBackingUp, fetchBackupInfo]);
+
+  // Trigger synchronization immediately when regaining internet connection
+  useEffect(() => {
+    const handleOnline = async () => {
+      console.log("[AutoSync] Device back online! Initiating sync check...");
+      if (user && autoBackupEnabled) {
+        if ((window as any).showToastGlobal) {
+          (window as any).showToastGlobal(i18n.t("sync.toastReconnected", "Back online. Syncing..."));
+        }
+        try {
+          const syncResult = await syncData();
+          if (syncResult === "uploaded") {
+            if ((window as any).showToastGlobal) {
+              (window as any).showToastGlobal(i18n.t("sync.toastAutoBackup", "Auto-backed up new data to Cloud."));
+            }
+          }
+        } catch (err) {
+          console.error("[AutoSync] Online sync failed:", err);
+        }
+      }
+    };
+
+    window.addEventListener("online", handleOnline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+    };
+  }, [user, autoBackupEnabled, syncData]);
+
+  const isSyncing = isBackingUp || isRestoring || isSyncLoading || isAutoSyncingUI;
+
+  return {
+    isSyncing,
+    isBackingUp,
+    isRestoring,
+    isAutoSyncingUI,
+    isAutoBackingUp,
+    lastBackupAt,
+    autoBackupEnabled,
+    hasCloudVersion,
+    setHasCloudVersion,
+    setAutoBackupEnabled,
+    backupNow,
+    restoreNow,
+    syncData,
+    refreshBackupInfo: fetchBackupInfo
+  };
+}
+
+================== src/hooks\useCurrentLocationWeather.ts ==================
+import i18n from "../i18n";
+﻿import { useState, useEffect } from "react";
+import { getCurrentPosition } from "../services/locationService";
+import { getWeatherForecast, WeatherForecast } from "../services/weatherService";
+
+interface CurrentLocationWeather {
+  forecast: WeatherForecast | null;
+  locationName: string | null;
+  loading: boolean;
+  error: boolean;
+}
+
+const SESSION_KEY = "kat_clw_cache";
+
+function loadCache(): { forecast: WeatherForecast; locationName: string; ts: number } | null {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Date.now() - parsed.ts > 15 * 60 * 1000) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export function useCurrentLocationWeather(): CurrentLocationWeather {
+  const [forecast, setForecast] = useState<WeatherForecast | null>(null);
+  const [locationName, setLocationName] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (localStorage.getItem("kat_gps_enabled") === "false") return;
+
+    const cached = loadCache();
+    if (cached) {
+      setForecast(cached.forecast);
+      setLocationName(cached.locationName);
+      return;
+    }
+
+    async function fetchCurrentWeather() {
+      setLoading(true);
+      try {
+        const pos = await getCurrentPosition();
+
+        // Reverse geocode using BigDataCloud
+        let locName = i18n.t("weather.currentLocation", "Current location");
+        try {
+          const geoRes = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${pos.latitude}&longitude=${pos.longitude}&localityLanguage=vi`
+          );
+          if (geoRes.ok) {
+            const geoData = await geoRes.json();
+            const parts: string[] = [];
+            if (geoData.locality) parts.push(geoData.locality);
+            else if (geoData.city) parts.push(geoData.city);
+            else if (geoData.principalSubdivision) parts.push(geoData.principalSubdivision);
+            if (geoData.countryName && parts.length === 0) parts.push(geoData.countryName);
+            locName = parts.join(", ") || i18n.t("weather.currentLocation", "Current location");
+          }
+        } catch { /* silent */ }
+
+        const weatherData = await getWeatherForecast(pos.latitude, pos.longitude, 1);
+
+        if (!isMounted) return;
+        if (weatherData) {
+          setForecast(weatherData);
+          setLocationName(locName);
+          try {
+            sessionStorage.setItem(SESSION_KEY, JSON.stringify({ forecast: weatherData, locationName: locName, ts: Date.now() }));
+          } catch { /* ignore */ }
+        } else {
+          setError(true);
+        }
+      } catch {
+        if (isMounted) setError(true);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+
+    fetchCurrentWeather();
+    return () => { isMounted = false; };
+  }, []);
+
+  return { forecast, locationName, loading, error };
+}
+
+================== src/hooks\useDistanceUnit.ts ==================
+import { useState, useEffect, useCallback } from "react";
+
+export function useDistanceUnit() {
+  const [unit, setUnit] = useState<"km" | "mi">(() => {
+    return (localStorage.getItem("kat_distance_unit") as "km" | "mi") || "km";
+  });
+
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "kat_distance_unit") {
+        setUnit((e.newValue as "km" | "mi") || "km");
+      }
+    };
+
+    const handleCustomChange = () => {
+      setUnit((localStorage.getItem("kat_distance_unit") as "km" | "mi") || "km");
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("kat_settings_changed", handleCustomChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("kat_settings_changed", handleCustomChange);
+    };
+  }, []);
+
+  /** Convert km to mi if needed, returns rounded number */
+  const formatDistance = useCallback(
+    (km: number) => {
+      if (unit === "mi") {
+        return Math.round(km * 0.621371);
+      }
+      return Math.round(km);
+    },
+    [unit]
+  );
+
+  /** Convert km/h to mph if needed, returns rounded number */
+  const formatSpeed = useCallback(
+    (kmh: number) => {
+      if (unit === "mi") {
+        return Math.round(kmh * 0.621371);
+      }
+      return Math.round(kmh);
+    },
+    [unit]
+  );
+
+  /** Returns the appropriate speed label: "km/h" or "mph" */
+  const speedLabel = unit === "mi" ? "mph" : "km/h";
+
+  /** Returns the appropriate distance label: "km" or "mi" */
+  const distanceLabel = unit;
+
+  return { unit, formatDistance, formatSpeed, speedLabel, distanceLabel };
+}
+
+================== src/hooks\useMediaQuery.ts ==================
+import { useState, useEffect } from "react";
+
+export function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.matchMedia(query).matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const media = window.matchMedia(query);
+    const listener = () => setMatches(media.matches);
+
+    // Initial check
+    setMatches(media.matches);
+
+    media.addEventListener("change", listener);
+    return () => media.removeEventListener("change", listener);
+  }, [query]);
+
+  return matches;
+}
+
+================== src/hooks\useModalHistory.ts ==================
+import { useEffect, useRef } from "react";
+
+/**
+ * A hook that syncs a modal's open state with the browser history hash.
+ * When the modal is open, a hash (e.g. #settings-modal) is pushed to history.
+ * If the user presses the browser or hardware back button, the hash is popped,
+ * which triggers onClose() to close the modal.
+ * If the user closes the modal manually (clicks Close/Cancel), history.back()
+ * is called programmatically to keep the history stack in sync.
+ * 
+ * @param isOpen Whether the modal is currently open.
+ * @param onClose Callback function to close the modal.
+ * @param modalHash The hash string to push (without the "#").
+ */
+export function useModalHistory(isOpen: boolean, onClose: () => void, modalHash: string) {
+  const isNavigatingRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+
+  // Always keep the ref updated with the latest callback
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    if (isOpen) {
+      const url = new URL(window.location.href);
+      const currentModal = url.searchParams.get("modal");
+      
+      // Push history state if not already on the target modal query param
+      if (currentModal !== modalHash) {
+        console.log(`[ModalHistory:${modalHash}] pushing param. current:`, currentModal);
+        url.searchParams.set("modal", modalHash);
+        window.history.pushState({ isModal: true, modalHash }, "", url.toString());
+      } else {
+        console.log(`[ModalHistory:${modalHash}] param already correct:`, currentModal);
+      }
+
+      const handlePopState = () => {
+        const currentUrl = new URL(window.location.href);
+        // If the param changed and is no longer the target param, close the modal
+        if (currentUrl.searchParams.get("modal") !== modalHash) {
+          isNavigatingRef.current = true;
+          onCloseRef.current();
+        }
+      };
+
+      window.addEventListener("popstate", handlePopState);
+      
+      return () => {
+        window.removeEventListener("popstate", handlePopState);
+        // If closed manually by clicking close button/outside, pop the param
+        const currentUrl = new URL(window.location.href);
+        console.log(`[ModalHistory:${modalHash}] cleanup. isNavigating:${isNavigatingRef.current} param:${currentUrl.searchParams.get("modal")} target:${modalHash}`);
+        if (!isNavigatingRef.current && currentUrl.searchParams.get("modal") === modalHash) {
+          console.log(`[ModalHistory:${modalHash}] calling history.back()`);
+          window.history.back();
+        }
+        isNavigatingRef.current = false;
+      };
+    }
+  }, [isOpen, modalHash]);
+}
+
+================== src/hooks\useNetworkStatus.ts ==================
+import { useState, useEffect } from "react";
+
+export function useNetworkStatus() {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  return isOnline;
+}
+
+================== src/hooks\useNotification.ts ==================
+import i18n from "../i18n";
+import { useState, useEffect } from "react";
+import { showToast } from "../components/ui/ToastManager";
+
+const getNotificationSupport = () => {
+  if (typeof window === "undefined" || typeof navigator === "undefined") {
+    return false;
+  }
+
+  return "Notification" in window && "serviceWorker" in navigator && window.isSecureContext;
+};
+
+/** Wraps serviceWorker.ready with a timeout to avoid hanging in unsupported envs */
+const getSWRegistration = (timeoutMs = 4000): Promise<ServiceWorkerRegistration | null> => {
+  return Promise.race([
+    navigator.serviceWorker.ready,
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
+  ]) as Promise<ServiceWorkerRegistration | null>;
+};
+
+export function useNotification() {
+  const [permission, setPermission] = useState<NotificationPermission>("default");
+  const [isSupported, setIsSupported] = useState(false);
+  const [fcmToken] = useState<string | null>(null);
+  const [isFcmLoading] = useState(false);
+  const [enabled, setEnabledState] = useState(() => {
+    if (typeof localStorage !== "undefined") {
+      return localStorage.getItem("kat_notifications_enabled") !== "false";
+    }
+    return true;
+  });
+
+  const setEnabled = (val: boolean) => {
+    setEnabledState(val);
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("kat_notifications_enabled", val ? "true" : "false");
+    }
+  };
+
+  const fetchFcmToken = async () => {
+    // Cloud Messaging is removed. Return null.
+    return null;
+  };
+
+  useEffect(() => {
+    const supported = getNotificationSupport();
+    setIsSupported(supported);
+
+    if (!supported) {
+      console.warn("Browser does not support Web Push Notification");
+      return;
+    }
+
+    setPermission(Notification.permission);
+  }, []);
+
+  const requestPermission = async () => {
+    if (!getNotificationSupport()) {
+      setIsSupported(false);
+      showToast(i18n.t("notifications.notSupported", "Notifications are not supported in this browser."), "error");
+      return "denied" as NotificationPermission;
+    }
+
+    try {
+      const result = await Notification.requestPermission();
+      setPermission(result);
+      return result;
+    } catch (error) {
+      console.error("Error requesting notification permission:", error);
+      return "denied" as NotificationPermission;
+    }
+  };
+
+  const sendTestNotification = async () => {
+    if (permission !== "granted") {
+      showToast(i18n.t("notifications.permissionDenied", "Notification permission not granted!"), "error");
+      return;
+    }
+    if (!enabled) {
+      showToast(i18n.t("notifications.disabledInSettings", "App notifications are disabled in settings!"), "error");
+      return;
+    }
+
+    try {
+      const registration = await getSWRegistration();
+      if (!registration) {
+        showToast(i18n.t("notifications.swNotReady", "Service Worker not ready — try on real Chrome/mobile."), "error");
+        return;
+      }
+      await registration.showNotification("KAT Journey", {
+        body: i18n.t("notifications.testSuccess", "Notifications working perfectly!"),
+        icon: "/asset/icon-192.png",
+        vibrate: [200, 100, 200],
+        badge: "/asset/icon-192.png",
+      } as any);
+    } catch (error) {
+      console.error("Error sending test notification:", error);
+      showToast(i18n.t("notifications.testFailed", "Error: Cannot send test notification via Service Worker."), "error");
+    }
+  };
+
+  return {
+    permission,
+    requestPermission,
+    sendTestNotification,
+    isSupported,
+    enabled,
+    setEnabled,
+    fcmToken,
+    isFcmLoading,
+    fetchFcmToken,
+  };
+}
+
+================== src/hooks\usePackingTip.ts ==================
+import { useTranslation } from "react-i18next";
+/**
+ * Tính gợi ý đồ đạc dựa trên so sánh thời tiết điểm đến vs vị trí hiện tại.
+ */
+export interface PackingTip {
+  emoji: string;
+  message: string;
+  color: string;
+}
+
+interface WeatherForecast {
+  current?: { temperature?: number; weathercode?: number };
+  temperature_2m_max?: number[];
+  temperature_2m_min?: number[];
+  weathercode?: number[];
+}
+
+function isRainy(code: number) {
+  return (
+    (code >= 51 && code <= 67) ||
+    (code >= 80 && code <= 82) ||
+    (code >= 95 && code <= 99)
+  );
+}
+
+export function usePackingTip(
+  forecast: WeatherForecast | null | undefined,
+  myForecast: WeatherForecast | null | undefined
+): PackingTip | null {
+  const { t } = useTranslation();
+  if (!forecast) return null;
+
+  const destCode =
+    forecast.current?.weathercode ?? forecast.weathercode?.[0] ?? 0;
+
+  // Rain tip should show regardless of myForecast or myCode
+  if (isRainy(destCode)) {
+    return {
+      emoji: "🌧️",
+      message: t("weather.packingRainShort"),
+      color: "bg-sky-500/15 border-sky-400/30 text-white",
+    };
+  }
+
+  // If myForecast is not available, we can't compare temperature differences
+  if (!myForecast) return null;
+
+  const destTemp =
+    forecast.current?.temperature ??
+    ((forecast.temperature_2m_max?.[0] ?? 0) +
+      (forecast.temperature_2m_min?.[0] ?? 0)) /
+      2;
+  const myTemp =
+    myForecast.current?.temperature ??
+    ((myForecast.temperature_2m_max?.[0] ?? 0) +
+      (myForecast.temperature_2m_min?.[0] ?? 0)) /
+      2;
+
+  const diff = destTemp - myTemp;
+
+  if (diff <= -7)
+    return {
+      emoji: "🧥",
+      message: t("weather.colderShort", { diff: Math.abs(Math.round(diff)) }),
+      color: "bg-white/15 border-white/25 text-white",
+    };
+  if (diff <= -4)
+    return {
+      emoji: "🧣",
+      message: t("weather.coolerShort", { diff: Math.abs(Math.round(diff)) }),
+      color: "bg-white/15 border-white/25 text-white",
+    };
+  if (diff >= 7)
+    return {
+      emoji: "☀️",
+      message: t("weather.hotterShort", { diff: Math.round(diff) }),
+      color: "bg-amber-500/15 border-amber-400/30 text-white",
+    };
+  if (diff >= 4)
+    return {
+      emoji: "🕶️",
+      message: t("weather.warmerShort", { diff: Math.round(diff) }),
+      color: "bg-orange-500/15 border-orange-400/30 text-white",
+    };
+
+  return null;
+}
+
+================== src/hooks\usePWAInstall.ts ==================
+import { useState, useEffect } from "react";
+
+export function usePWAInstall() {
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
+  const [platform, setPlatform] = useState<"ios" | "android" | "other">("other");
+
+  useEffect(() => {
+    // Check if app is running in standalone mode
+    const isStandaloneMode =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true;
+
+    setIsStandalone(isStandaloneMode);
+
+    // Detect platform
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const isIos = /iphone|ipad|ipod/.test(userAgent);
+    const isAndroid = /android/.test(userAgent);
+
+    if (isIos) {
+      setPlatform("ios");
+    } else if (isAndroid) {
+      setPlatform("android");
+    }
+
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt as any);
+
+    // iOS doesn't support beforeinstallprompt but is installable on Safari
+    if (isIos && !isStandaloneMode) {
+      setIsInstallable(true);
+    }
+
+    // Allow installation trigger for Android/Chrome testing even if prompt hasn't fired yet
+    if (isAndroid && !isStandaloneMode) {
+      setIsInstallable(true);
+    }
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt as any);
+    };
+  }, []);
+
+  const triggerInstall = async (): Promise<boolean> => {
+    if (platform === "ios") {
+      // Return true to indicate we should show the iOS guide BottomSheet
+      return true;
+    }
+
+    if (!deferredPrompt) {
+      // If we don't have the prompt (e.g. Chrome on iOS, or already installed, or not fired yet)
+      // On Android, we should show the manual guide as a fallback.
+      if (platform === "android") return true;
+      return false;
+    }
+
+    try {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        setDeferredPrompt(null);
+        setIsInstallable(false);
+      }
+      return false; // Native prompt was handled, no manual guide needed
+    } catch (err) {
+      console.error("PWA installation prompt failed:", err);
+      // Fallback to manual guide if prompt fails
+      if (platform === "android") return true;
+    }
+
+    return false;
+  };
+
+  return { isInstallable, isStandalone, platform, triggerInstall };
+}
+
+================== src/hooks\useScrollBarVisibility.ts ==================
+import { useState, useEffect } from "react";
+
+/**
+ * Ẩn/hiện top/bottom bar khi scroll trên mobile.
+ * @param desktopBreakpoint - chiều rộng (px) để luôn hiển thị bar. Mặc định 768.
+ */
+export function useScrollBarVisibility(desktopBreakpoint = 768) {
+  const [areBarsVisible, setAreBarsVisible] = useState(true);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    const updateScrollDirection = () => {
+      if (window.innerWidth >= desktopBreakpoint) {
+        setAreBarsVisible(true);
+        ticking = false;
+        return;
+      }
+
+      const scrollY = window.scrollY;
+
+      if (Math.abs(scrollY - lastScrollY) < 15) {
+        ticking = false;
+        return;
+      }
+
+      if (scrollY < 60) {
+        setAreBarsVisible(true);
+      } else if (scrollY > lastScrollY) {
+        setAreBarsVisible(false);
+      } else {
+        setAreBarsVisible(true);
+      }
+
+      lastScrollY = scrollY > 0 ? scrollY : 0;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollDirection);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [desktopBreakpoint]);
+
+  useEffect(() => {
+    document.body.classList.toggle("bars-hidden", !areBarsVisible);
+  }, [areBarsVisible]);
+
+  return areBarsVisible;
+}
+
+================== src/hooks\useShareChangeRequests.ts ==================
+import { useState, useEffect, useRef } from 'react';
+import { supabase } from '../lib/supabase';
+import { approveChangeRequest } from "../services/cloudShareService";
+import { Trip } from '../db';
+
+const processingReqs = new Set<string>();
+
+export interface AppChangeRequest {
+  id: string;
+  status: 'pending' | 'approved' | 'rejected' | 'auto_approved';
+  section: string;
+  action: 'create' | 'update' | 'delete';
+  targetId?: string;
+  before?: any;
+  after?: any;
+  requesterUid: string;
+  requesterName?: string;
+  createdAt: any;
+  reviewedAt?: any;
+  reviewedByUid?: string;
+}
+
+export function useShareChangeRequests(trip: Trip | undefined) {
+  const [pendingRequests, setPendingRequests] = useState<AppChangeRequest[]>([]);
+  const [activeToken, setActiveToken] = useState<string | null>(null);
+
+  // Keep trip ref updated to prevent stale closures
+  const tripRef = useRef(trip);
+  useEffect(() => {
+    tripRef.current = trip;
+  }, [trip]);
+
+  useEffect(() => {
+    if (!trip || !trip.shareToken) {
+      setActiveToken(null);
+      setPendingRequests([]);
+      return;
+    }
+
+    let isCancelled = false;
+    let channel: any = null;
+    const token = trip.shareToken;
+
+    const handleRequestsUpdate = async () => {
+      if (isCancelled) return;
+
+      // Owner phải đã login Google — nếu chưa login thì không có quyền xem
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        if (!isCancelled) {
+          setActiveToken(null);
+          setPendingRequests([]);
+        }
+        return;
+      }
+
+      const { data: list, error } = await supabase
+        .from('change_requests')
+        .select('*')
+        .eq('share_token', token)
+        .in('status', ['pending', 'auto_approved']);
+
+      if (error || !list || isCancelled) return;
+
+      const mappedReqs: AppChangeRequest[] = list.map((r: any) => ({
+        id: r.id,
+        status: r.status,
+        section: r.section,
+        action: r.action,
+        targetId: r.target_id,
+        before: r.before_data,
+        after: r.after_data,
+        requesterUid: r.requester_uid,
+        requesterName: r.requester_name,
+        createdAt: r.created_at,
+        reviewedAt: r.reviewed_at,
+        reviewedByUid: r.reviewed_by_uid
+      }));
+
+      // Auto-process auto_approved requests
+      const autoReqs = mappedReqs.filter(r => r.status === 'auto_approved');
+      autoReqs.forEach(async (req) => {
+        if (processingReqs.has(req.id)) return;
+        processingReqs.add(req.id);
+        try {
+          await approveChangeRequest(token, req.id);
+        } catch (e) {
+          console.error("Auto-approve failed:", e);
+        } finally {
+          setTimeout(() => {
+            processingReqs.delete(req.id);
+          }, 2000);
+        }
+      });
+
+      // Only show pending in UI
+      const pendingReqs = mappedReqs.filter(r => r.status === 'pending');
+      pendingReqs.sort((a, b) => {
+        const timeA = new Date(a.createdAt || 0).getTime();
+        const timeB = new Date(b.createdAt || 0).getTime();
+        return timeB - timeA;
+      });
+      
+      if (!isCancelled) {
+        setPendingRequests(pendingReqs);
+      }
+    };
+
+    async function initChangeRequestsListener() {
+      try {
+        // 1. Fetch parent share status
+        const { data: shareData, error: shareError } = await supabase
+          .from('public_shares')
+          .select('token, revoked')
+          .eq('token', token)
+          .maybeSingle();
+
+        if (shareError || !shareData || shareData.revoked) {
+          if (!isCancelled) {
+            setActiveToken(null);
+            setPendingRequests([]);
+          }
+          return;
+        }
+
+        if (isCancelled) return;
+
+        setActiveToken(shareData.token);
+        
+        // 2. Initial fetch and load
+        await handleRequestsUpdate();
+
+        // 3. Listen to realtime mutations on change requests and public shares
+        console.log("[useShareChangeRequests] Subscribing to realtime channel for token:", token);
+        channel = supabase.channel(`share-requests-${token}`)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'public_shares', filter: `token=eq.${token}` }, (payload) => {
+            const row = payload.new as any;
+            if (payload.eventType === 'DELETE' || !row || row.revoked) {
+              if (!isCancelled) {
+                setActiveToken(null);
+                setPendingRequests([]);
+              }
+            }
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'change_requests', filter: `share_token=eq.${token}` }, (payload) => {
+            console.log("[useShareChangeRequests] Change request event triggered:", payload.eventType);
+            handleRequestsUpdate();
+          })
+          .subscribe();
+
+      } catch (err) {
+        console.error("Error initializing edit request listener:", err);
+      }
+    }
+
+    initChangeRequestsListener();
+
+    return () => {
+      isCancelled = true;
+      if (channel) {
+        console.log("[useShareChangeRequests] Cleaning up realtime channel for token:", token);
+        supabase.removeChannel(channel);
+      }
+    };
+  }, [trip?.id, trip?.shareToken]);
+
+  return { pendingRequests, activeToken };
+}
+
+================== src/hooks\useSharedTrip.ts ==================
+import i18n from "../i18n";
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import { verifyAndAuthShare, clearShareClaim, ShareAuthError } from '../lib/shareAuth';
+
+export function useSharedTrip(token: string, pin?: string | null, retryCount: number = 0) {
+  const [data, setData] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isCancelled = false;
+    let channel: any = null;
+
+    async function setupSharedTrip() {
+      try {
+        setLoading(true);
+        setErrorCode(null);
+        setError(null);
+
+        // 1. SERVER-SIDE VERIFY: kiểm tra token + PIN, tự động ghi nhận vào bảng share_access
+        //    Sau bước này, RLS mới cho phép đọc data của token này dựa trên bảng share_access.
+        let shareData: any;
+        try {
+          const verified = await verifyAndAuthShare(token, pin);
+          // verified đã chứa metadata, dùng trực tiếp
+          shareData = {
+            token: verified.token,
+            revoked: false,
+            mode: verified.mode,
+            include_expenses: verified.includeExpenses,
+            include_journals: verified.includeJournals,
+            include_checklist: verified.includeChecklist,
+            include_backup_plans: verified.includeBackupPlans,
+            include_documents: verified.includeDocuments,
+            owner_uid: verified.ownerUid,
+            source_trip_id: verified.sourceTripId,
+            share_pin: verified.hasPin ? '***' : null,
+            trip: verified.trip,
+          };
+        } catch (e: any) {
+          if (e instanceof ShareAuthError) {
+            setError(e.message);
+            setErrorCode(e.code);
+          } else {
+            setError(e.message || i18n.t("share.errorLoadFailed", "Error loading shared data."));
+          }
+          setLoading(false);
+          return;
+        }
+
+        if (isCancelled) return;
+
+        // 2. Fetch subcollection rows concurrently
+        let membersRes, activitiesRes, expensesRes, checklistRes, journalsRes, backupPlansRes, documentsRes, requestsRes;
+        try {
+          [
+            membersRes,
+            activitiesRes,
+            expensesRes,
+            checklistRes,
+            journalsRes,
+            backupPlansRes,
+            documentsRes,
+            requestsRes
+          ] = await Promise.all([
+            supabase.from('share_members').select('data').eq('share_token', token),
+            supabase.from('share_activities').select('data').eq('share_token', token),
+            shareData.include_expenses ? supabase.from('share_expenses').select('data').eq('share_token', token) : { data: [] },
+            shareData.include_checklist ? supabase.from('share_checklist').select('data').eq('share_token', token) : { data: [] },
+            shareData.include_journals ? supabase.from('share_journals').select('data').eq('share_token', token) : { data: [] },
+            shareData.include_backup_plans ? supabase.from('share_backup_plans').select('data').eq('share_token', token) : { data: [] },
+            shareData.include_documents ? supabase.from('share_travel_documents').select('data').eq('share_token', token) : { data: [] },
+            supabase.from('change_requests').select('*').eq('share_token', token).in('status', ['pending', 'auto_approved'])
+          ]);
+        } catch (e: any) {
+          setError(e.message || i18n.t("share.errorLoadSubcollections", "Error loading shared sub-data."));
+          setLoading(false);
+          return;
+        }
+
+        if (isCancelled) return;
+
+        const sortedActivities = (activitiesRes.data?.map(d => d.data) || []).sort((a: any, b: any) => {
+          if (a.date !== b.date) return a.date.localeCompare(b.date);
+          return (a.time || "").localeCompare(b.time || "");
+        });
+
+        // 3. Set the combined state matching the previous NoSQL format
+        setData({
+          token: shareData.token,
+          revoked: shareData.revoked,
+          mode: shareData.mode,
+          includeExpenses: shareData.include_expenses,
+          includeJournals: shareData.include_journals,
+          includeChecklist: shareData.include_checklist,
+          includeBackupPlans: shareData.include_backup_plans,
+          includeDocuments: shareData.include_documents,
+          ownerUid: shareData.owner_uid,
+          sourceTripId: shareData.source_trip_id,
+          sharePin: shareData.share_pin,
+          trip: shareData.trip,
+          members: membersRes.data?.map(d => d.data) || [],
+          activities: sortedActivities,
+          expenses: expensesRes.data?.map(d => d.data) || [],
+          checklist: checklistRes.data?.map(d => d.data) || [],
+          journals: journalsRes.data?.map(d => d.data) || [],
+          backupPlans: backupPlansRes.data?.map(d => d.data) || [],
+          travelDocuments: documentsRes.data?.map(d => d.data) || [],
+          changeRequests: (requestsRes.data || []).map((r: any) => ({
+            id: r.id,
+            status: r.status,
+            section: r.section,
+            action: r.action,
+            targetId: r.target_id,
+            before: r.before_data,
+            after: r.after_data,
+            requesterUid: r.requester_uid,
+            requesterName: r.requester_name,
+            createdAt: r.created_at
+          }))
+        });
+
+        setLoading(false);
+
+        // Helper to merge list changes
+        const handleSubTableEvent = (key: string, payload: any, sortFn?: (a: any, b: any) => number) => {
+          const eventType = payload.eventType;
+          const row = (eventType === 'DELETE' ? payload.old : payload.new) as any;
+          if (!row) return;
+
+          setData((prev: any) => {
+            if (!prev) return prev;
+            let list = prev[key] || [];
+            const itemData = row.data;
+            if (!itemData) {
+              if (eventType === 'DELETE') {
+                list = list.filter((item: any) => String(item.id) !== String(row.id));
+              }
+              return { ...prev, [key]: list };
+            }
+
+            const itemId = String(itemData.id);
+
+            if (eventType === 'INSERT') {
+              if (!list.some((item: any) => String(item.id) === itemId)) {
+                list = [...list, itemData];
+              }
+            } else if (eventType === 'UPDATE') {
+              list = list.map((item: any) => String(item.id) === itemId ? itemData : item);
+            } else if (eventType === 'DELETE') {
+              list = list.filter((item: any) => String(item.id) !== itemId);
+            }
+
+            if (sortFn) {
+              list.sort(sortFn);
+            }
+
+            return { ...prev, [key]: list };
+          });
+        };
+
+        // 4. Listen in realtime for database updates
+        console.log("[useSharedTrip] Subscribing to realtime channel for token:", token);
+        channel = supabase.channel(`shared-trip-${token}`)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'public_shares', filter: `token=eq.${token}` }, (payload) => {
+            if (payload.eventType === 'DELETE' || (payload.new as any).revoked) {
+              setError(i18n.t("share.errorLinkRevoked", "Share link has been revoked by the creator."));
+              return;
+            }
+            const updated = payload.new as any;
+            setData((prev: any) => {
+              if (!prev) return prev;
+              return {
+                ...prev,
+                revoked: updated.revoked,
+                mode: updated.mode,
+                includeExpenses: updated.include_expenses,
+                includeJournals: updated.include_journals,
+                includeChecklist: updated.include_checklist,
+                includeBackupPlans: updated.include_backup_plans,
+                includeDocuments: updated.include_documents,
+                ownerUid: updated.owner_uid,
+                sourceTripId: updated.source_trip_id,
+                sharePin: updated.share_pin,
+                trip: updated.trip
+              };
+            });
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'share_members', filter: `share_token=eq.${token}` }, (payload) => {
+            handleSubTableEvent('members', payload);
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'share_activities', filter: `share_token=eq.${token}` }, (payload) => {
+            handleSubTableEvent('activities', payload, (a: any, b: any) => {
+              if (a.date !== b.date) return a.date.localeCompare(b.date);
+              return (a.time || "").localeCompare(b.time || "");
+            });
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'share_expenses', filter: `share_token=eq.${token}` }, (payload) => {
+            handleSubTableEvent('expenses', payload);
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'share_checklist', filter: `share_token=eq.${token}` }, (payload) => {
+            handleSubTableEvent('checklist', payload);
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'share_journals', filter: `share_token=eq.${token}` }, (payload) => {
+            handleSubTableEvent('journals', payload);
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'share_backup_plans', filter: `share_token=eq.${token}` }, (payload) => {
+            handleSubTableEvent('backupPlans', payload);
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'share_travel_documents', filter: `share_token=eq.${token}` }, (payload) => {
+            handleSubTableEvent('travelDocuments', payload);
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'change_requests', filter: `share_token=eq.${token}` }, (payload) => {
+            const eventType = payload.eventType;
+            const row = (eventType === 'DELETE' ? payload.old : payload.new) as any;
+            if (!row) return;
+
+            setData((prev: any) => {
+              if (!prev) return prev;
+              let list = prev.changeRequests || [];
+              
+              if (eventType === 'INSERT') {
+                const mapped = {
+                  id: row.id,
+                  status: row.status,
+                  section: row.section,
+                  action: row.action,
+                  targetId: row.target_id,
+                  before: row.before_data,
+                  after: row.after_data,
+                  requesterUid: row.requester_uid,
+                  requesterName: row.requester_name,
+                  createdAt: row.created_at
+                };
+                if (!list.some((r: any) => r.id === mapped.id)) {
+                  list = [...list, mapped];
+                }
+              } else if (eventType === 'UPDATE') {
+                list = list.map((r: any) => r.id === row.id ? {
+                  ...r,
+                  status: row.status,
+                  reviewedAt: row.reviewed_at,
+                  reviewedByUid: row.reviewed_by_uid
+                } : r);
+              } else if (eventType === 'DELETE') {
+                list = list.filter((r: any) => r.id !== row.id);
+              }
+
+              const filtered = list.filter((r: any) => r.status === 'pending' || r.status === 'auto_approved');
+              return { ...prev, changeRequests: filtered };
+            });
+          })
+          .subscribe();
+
+      } catch (err: any) {
+        if (!isCancelled) {
+          setError(err.message || i18n.t("share.errorLoadFailed", "Error loading shared data."));
+          setLoading(false);
+        }
+      }
+    }
+
+    setupSharedTrip();
+
+    return () => {
+      isCancelled = true;
+      if (channel) {
+        console.log("[useSharedTrip] Cleaning up realtime channel for token:", token);
+        supabase.removeChannel(channel);
+      }
+      // Xóa claim share_token khi rời trang share
+      clearShareClaim();
+    };
+  }, [token, pin, retryCount]);
+
+  return { data, error, errorCode, loading };
+}
+
+================== src/hooks\useTemperatureUnit.ts ==================
+import { useState, useEffect, useCallback } from "react";
+
+export function useTemperatureUnit() {
+  const [unit, setUnit] = useState<"C" | "F">(() => {
+    return (localStorage.getItem("kat_temperature_unit") as "C" | "F") || "C";
+  });
+
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "kat_temperature_unit") {
+        setUnit((e.newValue as "C" | "F") || "C");
+      }
+    };
+
+    const handleCustomChange = () => {
+      setUnit((localStorage.getItem("kat_temperature_unit") as "C" | "F") || "C");
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("kat_settings_changed", handleCustomChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("kat_settings_changed", handleCustomChange);
+    };
+  }, []);
+
+  const formatTemp = useCallback(
+    (celsius: number) => {
+      if (unit === "F") {
+        return Math.round((celsius * 9) / 5 + 32);
+      }
+      return Math.round(celsius);
+    },
+    [unit]
+  );
+
+  return { unit, formatTemp };
+}
+
+================== src/hooks\useTheme.ts ==================
+import { useState, useEffect } from "react";
+
+export type ThemeMode = "light" | "dark" | "system";
+
+export function useTheme() {
+  const [theme, setThemeState] = useState<ThemeMode>(() => {
+    if (typeof window === "undefined") return "system";
+    const saved = localStorage.getItem("kat_theme");
+    if (saved === "light" || saved === "dark" || saved === "system") {
+      return saved as ThemeMode;
+    }
+    return "system";
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+
+    const applyTheme = (mode: ThemeMode) => {
+      let isDark = false;
+      if (mode === "system") {
+        isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      } else {
+        isDark = mode === "dark";
+      }
+
+      if (isDark) {
+        root.setAttribute("data-theme", "dark");
+        root.classList.add("dark");
+        document
+          .querySelectorAll('meta[name="theme-color"]')
+          .forEach((m) => m.setAttribute("content", "#0A0F1C"));
+      } else {
+        root.removeAttribute("data-theme");
+        root.classList.remove("dark");
+        document
+          .querySelectorAll('meta[name="theme-color"]')
+          .forEach((m) => m.setAttribute("content", "#F8FAFC"));
+      }
+    };
+
+    applyTheme(theme);
+
+    // Listen for system changes if system theme is selected
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = () => {
+      if (theme === "system") {
+        applyTheme("system");
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, [theme]);
+
+  const setTheme = (mode: ThemeMode) => {
+    setThemeState(mode);
+    localStorage.setItem("kat_theme", mode);
+  };
+
+  return { theme, setTheme };
+}
+
+================== src/hooks\useTripData.ts ==================
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "../db";
+
+export function useTripData(
+  selectedTripId: number | null,
+  isCreatingTrip: boolean,
+  isManagingTrips: boolean,
+  isViewingArchive: boolean
+) {
+  const tripsRaw = useLiveQuery(async () =>
+    (await db.trips.toArray()).filter((t) => !t.isDeleted && t.status !== "archived")
+  );
+  const allTripsRaw = useLiveQuery(async () =>
+    (await db.trips.toArray()).filter((t) => !t.isDeleted)
+  );
+  const tripsLoading = tripsRaw === undefined || allTripsRaw === undefined;
+  const trips = tripsRaw ?? [];
+
+  const tripId =
+    isCreatingTrip || isManagingTrips || isViewingArchive
+      ? null
+      : (selectedTripId ?? trips[0]?.id ?? null);
+
+  const trip = useLiveQuery(async () => {
+    if (!tripId) return undefined;
+    const t = await db.trips.get(tripId);
+    return t && !t.isDeleted ? t : undefined;
+  }, [tripId]);
+
+  const isReadOnly = trip?.status === "archived";
+
+  const members = useLiveQuery(
+    async () =>
+      tripId
+        ? (await db.members.where("tripId").equals(tripId).toArray()).filter((m) => !m.isDeleted)
+        : [],
+    [tripId]
+  );
+  const events = useLiveQuery(
+    async () =>
+      tripId
+        ? (await db.events.where("tripId").equals(tripId).toArray()).filter((e) => !e.isDeleted)
+        : [],
+    [tripId]
+  );
+  const expenses = useLiveQuery(
+    async () =>
+      tripId
+        ? (await db.expenses.where("tripId").equals(tripId).toArray()).filter((e) => !e.isDeleted)
+        : [],
+    [tripId]
+  );
+  const checklist = useLiveQuery(
+    async () =>
+      tripId
+        ? (await db.checklist.where("tripId").equals(tripId).toArray()).filter((c) => !c.isDeleted)
+        : [],
+    [tripId]
+  );
+  const journals = useLiveQuery(
+    async () =>
+      tripId
+        ? (await db.journals.where("tripId").equals(tripId).toArray()).filter((j) => !j.isDeleted)
+        : [],
+    [tripId]
+  );
+  const packingItems = useLiveQuery(
+    async () =>
+      tripId
+        ? (await db.packingItems.where("tripId").equals(tripId).toArray()).filter(
+            (p) => !p.isDeleted
+          )
+        : [],
+    [tripId]
+  );
+  const travelDocuments = useLiveQuery(
+    async () =>
+      tripId
+        ? (await db.travelDocuments.where("tripId").equals(tripId).toArray()).filter(
+            (d) => !d.isDeleted
+          )
+        : [],
+    [tripId]
+  );
+  const backupPlans = useLiveQuery(
+    async () =>
+      tripId
+        ? (await db.backupPlans.where("tripId").equals(tripId).toArray()).filter(
+            (b) => !b.isDeleted
+          )
+        : [],
+    [tripId]
+  );
+
+  const tripDataLoading =
+    tripId !== null &&
+    (trip === undefined ||
+      members === undefined ||
+      events === undefined ||
+      expenses === undefined ||
+      checklist === undefined ||
+      journals === undefined ||
+      packingItems === undefined ||
+      travelDocuments === undefined ||
+      backupPlans === undefined);
+
+  return {
+    tripsRaw,
+    allTripsRaw,
+    tripsLoading,
+    trips,
+    tripId,
+    trip,
+    isReadOnly,
+    members,
+    events,
+    expenses,
+    checklist,
+    journals,
+    packingItems,
+    travelDocuments,
+    backupPlans,
+    tripDataLoading,
+  };
+}
+
+================== src/hooks\useTripReminders.ts ==================
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ChecklistItem, EventItem, Trip, BackupPlan, TravelDocument } from '../db';
+
+export interface TripReminder {
+  id: string;
+  text: string;
+  cta: string;
+  tab: 'timeline' | 'expenses' | 'checklist' | 'documents' | 'journal' | 'wrapped';
+  isImportant?: boolean;
+}
+
+interface UseTripRemindersProps {
+  trip?: Trip | null;
+  checklist: ChecklistItem[];
+  travelDocuments: TravelDocument[];
+  events: EventItem[];
+  backupPlans: BackupPlan[];
+  pendingRequestsCount?: number;
+}
+
+export function useTripReminders({ trip, checklist, travelDocuments, events, backupPlans, pendingRequestsCount }: UseTripRemindersProps) {
+  const { t } = useTranslation();
+  return useMemo(() => {
+    const reminders: TripReminder[] = [];
+    
+    if (!trip || !trip.startDate || !trip.endDate) return [];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const start = new Date(trip.startDate);
+    start.setHours(0, 0, 0, 0);
+    
+    const end = new Date(trip.endDate);
+    end.setHours(0, 0, 0, 0);
+    
+    const diffTime = start.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // 0. Pending share requests (Highest priority)
+    if (pendingRequestsCount && pendingRequestsCount > 0) {
+      reminders.push({
+        id: 'share_requests',
+        text: t('reminders.pendingRequests', { count: pendingRequestsCount }),
+        cta: t('reminders.viewRequests'),
+        tab: 'share_requests' as any,
+        isImportant: true
+      });
+    }
+
+    // 1. Sắp đi (1-3 ngày)
+    if (diffDays >= 1 && diffDays <= 3) {
+      reminders.push({
+        id: 'upcoming_trip',
+        text: t('reminders.upcomingTrip'),
+        cta: t('reminders.viewPrep'),
+        tab: 'checklist',
+        isImportant: true
+      });
+    }
+
+    // 2. Đang đi
+    if (today.getTime() >= start.getTime() && today.getTime() <= end.getTime()) {
+      reminders.push({
+        id: 'ongoing_trip',
+        text: t('reminders.ongoingTrip'),
+        cta: t('reminders.viewTimeline'),
+        tab: 'timeline',
+        isImportant: true
+      });
+    }
+
+    // 3. Checklist chưa xong
+    const uncompletedChecklist = checklist.filter(c => !c.completed).length;
+    if (uncompletedChecklist > 0) {
+      reminders.push({
+        id: 'checklist_pending',
+        text: t('reminders.checklistPending', { count: uncompletedChecklist }),
+        cta: t('reminders.viewPrep'),
+        tab: 'checklist'
+      });
+    }
+
+    // 4. Chưa có giấy tờ cho chuyến sắp đi
+    if (diffDays > 0 && travelDocuments.length === 0) {
+      reminders.push({
+        id: 'missing_docs',
+        text: t('reminders.missingDocs'),
+        cta: t('reminders.viewDocs'),
+        tab: 'documents'
+      });
+    }
+
+    // 5. Chưa có phương án dự phòng cho lịch trình
+    if (events.length > 0 && backupPlans.length === 0) {
+      reminders.push({
+        id: 'missing_backups',
+        text: t('reminders.missingBackups'),
+        cta: t('reminders.addBackup'),
+        tab: 'timeline'
+      });
+    }
+
+    // Ưu tiên important lên đầu
+    reminders.sort((a, b) => {
+      if (a.isImportant && !b.isImportant) return -1;
+      if (!a.isImportant && b.isImportant) return 1;
+      return 0;
+    });
+
+    return reminders.slice(0, 4);
+  }, [trip?.startDate, trip?.endDate, checklist, travelDocuments, events, backupPlans, pendingRequestsCount, t]);
+}
+
+================== src/hooks\useViewTransition.ts ==================
+import { flushSync } from "react-dom";
+
+/**
+ * A safe wrapper for the View Transition API that doesn't require React 19/Canary.
+ * It uses native document.startViewTransition and flushSync to ensure DOM updates
+ * are caught in the transition snapshot.
+ */
+export function useViewTransition() {
+  const startViewTransition = (updateCallback: () => void) => {
+    // Fallback for unsupported browsers
+    // @ts-ignore
+    if (!document.startViewTransition) {
+      updateCallback();
+      return;
+    }
+
+    // @ts-ignore
+    document.startViewTransition(() => {
+      flushSync(() => {
+        updateCallback();
+      });
+    });
+  };
+
+  return { startViewTransition };
+}
+
+================== src/hooks\useWeather.ts ==================
+import { useState, useEffect } from "react";
+import { getWeatherForecast, WeatherForecast, geocodeDestination } from "../services/weatherService";
+
+export function useWeather(destination?: string, latitude?: number, longitude?: number, days: number = 3, startDate?: string) {
+  const [loading, setLoading] = useState(false); // Default to false to avoid initial flashing if not fetching
+  const [error, setError] = useState(false);
+  const [forecast, setForecast] = useState<WeatherForecast | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    async function loadWeather() {
+      if (!destination && (!latitude || !longitude)) {
+        setError(true);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError(false);
+      
+      try {
+        let lat = latitude;
+        let lon = longitude;
+
+        if ((!lat || !lon) && destination) {
+          try {
+            const geocode = await geocodeDestination(destination);
+            if (geocode) {
+              lat = geocode.latitude;
+              lon = geocode.longitude;
+            }
+          } catch (e) {
+            console.error("Fallback geocoding failed", e);
+          }
+        }
+
+        if (!lat || !lon) {
+          if (isMounted) {
+            setError(true);
+            setLoading(false);
+          }
+          return;
+        }
+
+        const data = await getWeatherForecast(lat, lon, days, startDate);
+        if (!isMounted) return; // Ignore if unmounted
+        
+        if (!data) {
+          setError(true);
+          return;
+        }
+
+        setForecast(data);
+      } catch (e) {
+        console.error("Failed to load weather", e);
+        if (isMounted) setError(true);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+
+    // Only load if we have a valid destination or coords
+    if (destination || (latitude && longitude)) {
+      loadWeather();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [destination, latitude, longitude, days, startDate]);
+
+  return { loading, error, forecast };
+}

@@ -14,8 +14,8 @@ import {
   Location01Icon,
   GitBranchIcon,
 } from "@hugeicons/core-free-icons";
-import { useLiveQuery } from "dexie-react-hooks";
 import { useTranslation } from "react-i18next";
+import { useTripData } from "../../hooks/useTripData";
 import {
   db,
   EventItem,
@@ -48,52 +48,24 @@ export function TripSearchModal({
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Live query all trip data
-  const trip = useLiveQuery(async () => await db.trips.get(tripId), [tripId]);
-  const events =
-    useLiveQuery(
-      async () =>
-        (await db.events.where("tripId").equals(tripId).toArray()).filter((e) => !e.isDeleted),
-      [tripId]
-    ) ?? [];
-  const expenses =
-    useLiveQuery(
-      async () =>
-        (await db.expenses.where("tripId").equals(tripId).toArray()).filter((e) => !e.isDeleted),
-      [tripId]
-    ) ?? [];
-  const checklist =
-    useLiveQuery(
-      async () =>
-        (await db.checklist.where("tripId").equals(tripId).toArray()).filter((c) => !c.isDeleted),
-      [tripId]
-    ) ?? [];
-  const journals =
-    useLiveQuery(
-      async () =>
-        (await db.journals.where("tripId").equals(tripId).toArray()).filter((j) => !j.isDeleted),
-      [tripId]
-    ) ?? [];
-  const members =
-    useLiveQuery(
-      async () =>
-        (await db.members.where("tripId").equals(tripId).toArray()).filter((m) => !m.isDeleted),
-      [tripId]
-    ) ?? [];
-  const travelDocs =
-    useLiveQuery(
-      async () =>
-        (await db.travelDocuments.where("tripId").equals(tripId).toArray()).filter(
-          (t) => !t.isDeleted
-        ),
-      [tripId]
-    ) ?? [];
-  const backupPlans =
-    useLiveQuery(
-      async () =>
-        (await db.backupPlans.where("tripId").equals(tripId).toArray()).filter((b) => !b.isDeleted),
-      [tripId]
-    ) ?? [];
+  const {
+    trip,
+    events: rawEvents,
+    expenses: rawExpenses,
+    checklist: rawChecklist,
+    journals: rawJournals,
+    members: rawMembers,
+    travelDocuments,
+    backupPlans: rawBackupPlans,
+  } = useTripData(tripId, false, false, false);
+
+  const events = rawEvents ?? [];
+  const expenses = rawExpenses ?? [];
+  const checklist = rawChecklist ?? [];
+  const journals = rawJournals ?? [];
+  const members = rawMembers ?? [];
+  const travelDocs = travelDocuments ?? [];
+  const backupPlans = rawBackupPlans ?? [];
 
   // Focus input on mount
   useEffect(() => {
@@ -242,10 +214,10 @@ export function TripSearchModal({
           ) : totalResults === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
               <p className="text-[14px] font-extrabold text-slate-600 dark:text-slate-300">
-                Không tìm thấy kết quả
+                {t("search.noResults")}
               </p>
               <p className="text-[12.5px] font-semibold text-slate-400 dark:text-slate-500 mt-1">
-                Hãy thử tìm với từ khóa khác như tên địa điểm, người trả tiền, hoặc tên món đồ.
+                {t("search.noResultsHint")}
               </p>
             </div>
           ) : (
@@ -254,8 +226,8 @@ export function TripSearchModal({
               {matchedEvents.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                    <HugeiconsIcon icon={Calendar01Icon} className="w-3.5 h-3.5" /> Lịch trình (
-                    {matchedEvents.length})
+                    <HugeiconsIcon icon={Calendar01Icon} className="w-3.5 h-3.5" />{" "}
+                    {t("search.timeline")} ({matchedEvents.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedEvents.map((item) => (
@@ -320,19 +292,7 @@ export function TripSearchModal({
                         <div className="min-w-0 flex-1 pr-3">
                           <div className="flex items-center gap-1.5 mb-1">
                             <span className="text-[10.5px] font-bold text-kat-primary dark:text-kat-primary-usable bg-kat-primary-light dark:bg-kat-primary-soft/30 px-2 py-0.5 rounded-md border border-kat-primary/20 dark:border-kat-primary/30">
-                              {item.type === "food"
-                                ? "Ăn uống"
-                                : item.type === "place"
-                                  ? "Địa điểm thay thế"
-                                  : item.type === "transport"
-                                    ? "Di chuyển"
-                                    : item.type === "hotel"
-                                      ? "Lưu trú"
-                                      : item.type === "indoor"
-                                        ? "Trong nhà"
-                                        : item.type === "weather"
-                                          ? "Thời tiết xấu"
-                                          : "Khác"}
+                              {t(`backupPlans.type.${item.type}`)}
                             </span>
                           </div>
                           <p className="text-[14.5px] font-extrabold text-kat-dark truncate">
@@ -340,7 +300,9 @@ export function TripSearchModal({
                           </p>
                           <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-[12.5px] font-semibold text-slate-400 dark:text-slate-500">
                             {item.reason && (
-                              <span className="flex items-center gap-1">Khi: {item.reason}</span>
+                              <span className="flex items-center gap-1">
+                                {t("search.when")}: {item.reason}
+                              </span>
                             )}
                             {item.location && (
                               <span className="flex items-center gap-1">
@@ -376,8 +338,8 @@ export function TripSearchModal({
               {matchedExpenses.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                    <HugeiconsIcon icon={Wallet01Icon} className="w-3.5 h-3.5" /> Chi phí (
-                    {matchedExpenses.length})
+                    <HugeiconsIcon icon={Wallet01Icon} className="w-3.5 h-3.5" />{" "}
+                    {t("search.expenses")} ({matchedExpenses.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedExpenses.map((item) => (
@@ -391,14 +353,14 @@ export function TripSearchModal({
                       >
                         <div className="min-w-0 flex-1 pr-3">
                           <p className="text-[14.5px] font-extrabold text-kat-dark truncate">
-                            {item.description || "Chi tiêu"}
+                            {item.description || t("search.expenseDefault")}
                           </p>
                           <p className="text-[12.5px] font-semibold text-slate-400 dark:text-slate-500 mt-1">
-                            Người chi:{" "}
+                            {t("search.payer")}:{" "}
                             <span className="font-bold text-slate-600 dark:text-slate-300">
                               {item.payer}
                             </span>{" "}
-                            • Phân loại:{" "}
+                            • {t("search.category")}:{" "}
                             <span className="font-bold text-slate-600 dark:text-slate-300">
                               {item.category}
                             </span>
@@ -423,8 +385,8 @@ export function TripSearchModal({
               {matchedChecklist.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                    <HugeiconsIcon icon={CheckmarkCircle01Icon} className="w-3.5 h-3.5" /> Chuẩn bị
-                    ({matchedChecklist.length})
+                    <HugeiconsIcon icon={CheckmarkCircle01Icon} className="w-3.5 h-3.5" />{" "}
+                    {t("search.checklist")} ({matchedChecklist.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedChecklist.map((item) => (
@@ -441,7 +403,7 @@ export function TripSearchModal({
                             {item.title}
                           </p>
                           <p className="text-[12.5px] font-semibold text-slate-400 dark:text-slate-500 mt-1">
-                            Trạng thái:{" "}
+                            {t("search.status")}:{" "}
                             <span
                               className={
                                 item.completed
@@ -449,12 +411,12 @@ export function TripSearchModal({
                                   : "text-amber-500 font-bold"
                               }
                             >
-                              {item.completed ? "Đã chuẩn bị" : "Chưa chuẩn bị"}
+                              {item.completed ? t("search.prepared") : t("search.notPrepared")}
                             </span>
                             {item.assignedTo && (
                               <span>
                                 {" "}
-                                • Người phụ trách:{" "}
+                                • {t("search.assignee")}:{" "}
                                 <span className="font-bold text-slate-600 dark:text-slate-300">
                                   {item.assignedTo}
                                 </span>
@@ -476,8 +438,8 @@ export function TripSearchModal({
               {matchedDocs.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                    <HugeiconsIcon icon={File01Icon} className="w-3.5 h-3.5" /> Giấy tờ & Đặt chỗ (
-                    {matchedDocs.length})
+                    <HugeiconsIcon icon={File01Icon} className="w-3.5 h-3.5" />{" "}
+                    {t("search.documents")} ({matchedDocs.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedDocs.map((item) => (
@@ -496,13 +458,13 @@ export function TripSearchModal({
                           <p className="text-[12.5px] font-semibold text-slate-400 dark:text-slate-500 mt-1">
                             {item.code ? (
                               <span>
-                                Code:{" "}
+                                {t("search.code")}:{" "}
                                 <span className="font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-md">
                                   {item.code}
                                 </span>
                               </span>
                             ) : (
-                              "Không có Code"
+                              t("search.noCode")
                             )}
                           </p>
                         </div>
@@ -520,8 +482,8 @@ export function TripSearchModal({
               {matchedJournals.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                    <HugeiconsIcon icon={BookOpen01Icon} className="w-3.5 h-3.5" /> Bản tin (
-                    {matchedJournals.length})
+                    <HugeiconsIcon icon={BookOpen01Icon} className="w-3.5 h-3.5" />{" "}
+                    {t("search.journals")} ({matchedJournals.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedJournals.map((item) => (
@@ -535,7 +497,7 @@ export function TripSearchModal({
                       >
                         <div className="min-w-0 flex-1 pr-3">
                           <p className="text-[14.5px] font-extrabold text-kat-dark truncate">
-                            {item.title || "Bản tin chuyến đi"}
+                            {item.title || t("search.journalDefault")}
                           </p>
                           <p className="text-[12.5px] text-slate-400 dark:text-slate-500 font-semibold truncate mt-1">
                             {item.content}
@@ -555,8 +517,8 @@ export function TripSearchModal({
               {matchedMembers.length > 0 && (
                 <div>
                   <h5 className="flex items-center gap-1.5 px-1.5 mb-2 text-[12px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                    <HugeiconsIcon icon={UserGroupIcon} className="w-3.5 h-3.5" /> Thành viên (
-                    {matchedMembers.length})
+                    <HugeiconsIcon icon={UserGroupIcon} className="w-3.5 h-3.5" />{" "}
+                    {t("search.members")} ({matchedMembers.length})
                   </h5>
                   <div className="space-y-2">
                     {matchedMembers.map((item) => (
@@ -573,14 +535,14 @@ export function TripSearchModal({
                             {item.name}
                           </p>
                           <p className="text-[12.5px] font-semibold text-slate-500 mt-1">
-                            Vai trò:{" "}
+                            {t("search.role")}:{" "}
                             <span className="font-bold text-slate-600 dark:text-slate-300">
-                              {item.role || "Bạn đồng hành"}
+                              {item.role || t("search.companion")}
                             </span>
                             {item.phone && (
                               <span>
                                 {" "}
-                                • SĐT:{" "}
+                                • {t("search.phone")}:{" "}
                                 <span className="font-bold text-slate-600 dark:text-slate-300">
                                   {item.phone}
                                 </span>

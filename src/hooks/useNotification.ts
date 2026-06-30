@@ -1,3 +1,4 @@
+import i18n from "../i18n";
 import { useState, useEffect } from "react";
 import { showToast } from "../components/ui/ToastManager";
 
@@ -46,7 +47,7 @@ export function useNotification() {
     setIsSupported(supported);
 
     if (!supported) {
-      console.warn("Trình duyệt không hỗ trợ Web Push Notification");
+      console.warn("Browser does not support Web Push Notification");
       return;
     }
 
@@ -56,7 +57,10 @@ export function useNotification() {
   const requestPermission = async () => {
     if (!getNotificationSupport()) {
       setIsSupported(false);
-      showToast("Trình duyệt hoặc môi trường hiện tại chưa hỗ trợ thông báo.", "error");
+      showToast(
+        i18n.t("notifications.notSupported", "Notifications are not supported in this browser."),
+        "error"
+      );
       return "denied" as NotificationPermission;
     }
 
@@ -65,36 +69,54 @@ export function useNotification() {
       setPermission(result);
       return result;
     } catch (error) {
-      console.error("Lỗi khi xin quyền thông báo:", error);
+      console.error("Error requesting notification permission:", error);
       return "denied" as NotificationPermission;
     }
   };
 
   const sendTestNotification = async () => {
     if (permission !== "granted") {
-      showToast("Chưa có quyền gửi thông báo!", "error");
+      showToast(
+        i18n.t("notifications.permissionDenied", "Notification permission not granted!"),
+        "error"
+      );
       return;
     }
     if (!enabled) {
-      showToast("Thông báo ứng dụng hiện đang tắt trong cài đặt!", "error");
+      showToast(
+        i18n.t("notifications.disabledInSettings", "App notifications are disabled in settings!"),
+        "error"
+      );
       return;
     }
 
     try {
       const registration = await getSWRegistration();
       if (!registration) {
-        showToast("Service Worker chưa sẵn sàng — hãy thử trên Chrome/mobile thật.", "error");
+        showToast(
+          i18n.t(
+            "notifications.swNotReady",
+            "Service Worker not ready — try on real Chrome/mobile."
+          ),
+          "error"
+        );
         return;
       }
       await registration.showNotification("KAT Journey", {
-        body: "Thông báo hoạt động hoàn hảo!",
+        body: i18n.t("notifications.testSuccess", "Notifications working perfectly!"),
         icon: "/asset/icon-192.png",
         vibrate: [200, 100, 200],
         badge: "/asset/icon-192.png",
       } as any);
     } catch (error) {
-      console.error("Lỗi khi gửi thông báo test:", error);
-      showToast("Lỗi: Không thể gửi thông báo test qua Service Worker.", "error");
+      console.error("Error sending test notification:", error);
+      showToast(
+        i18n.t(
+          "notifications.testFailed",
+          "Error: Cannot send test notification via Service Worker."
+        ),
+        "error"
+      );
     }
   };
 

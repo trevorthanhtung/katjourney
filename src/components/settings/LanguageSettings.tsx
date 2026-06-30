@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { classNames } from "../ui";
+import { SUPPORTED_LANGUAGES } from "../../constants/languages";
 import { CheckIcon } from "@hugeicons/core-free-icons";
 
 interface LanguageSettingsProps {

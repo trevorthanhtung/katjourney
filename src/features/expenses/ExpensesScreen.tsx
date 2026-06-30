@@ -573,9 +573,9 @@ function ExpenseForm({
   );
 
   const categoryOptions = React.useMemo(() => {
-    const defaultCats = expenseCategories.filter((c) => c !== "Khác");
+    const defaultCats = expenseCategories.filter((c) => c !== "other");
     const uniqueUsedCats = Array.from(new Set(expenses.map((e) => e.category))).filter(
-      (c) => !defaultCats.includes(c) && c !== "Khác" && c !== "Khác..."
+      (c) => !defaultCats.includes(c) && c !== "other" && c !== "other..."
     );
     return [...defaultCats, ...uniqueUsedCats, "Khác..."];
   }, [expenses]);

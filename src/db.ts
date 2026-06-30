@@ -3,7 +3,7 @@ import { encryptObject, decryptObject } from "./lib/crypto";
 
 export type ChecklistSection = "Before Trip" | "During Trip" | "After Trip";
 export type JournalMood = "very_bad" | "bad" | "okay" | "good" | "great";
-export type PackingTripType = "Biển" | "Núi" | "Thành phố" | "Camping" | "Gia đình";
+export type PackingTripType = "beach" | "mountain" | "city" | "camping" | "family";
 
 export interface TripDestination {
   name: string;
@@ -290,6 +290,75 @@ export class KatJourneyDB extends Dexie {
       travelDocuments: "++id, tripId, type",
       backupPlans: "++id, tripId, activityId, date",
     });
+    this.version(8)
+      .stores({
+        trips: "++id, title, startDate, endDate, createdAt",
+        members: "++id, tripId, name",
+        events: "++id, tripId, date, completed",
+        expenses: "++id, tripId, category, payer",
+        checklist: "++id, tripId, section, completed",
+        journals: "++id, tripId, date, mood",
+        packingItems: "++id, tripId, tripType, completed",
+        travelDocuments: "++id, tripId, type",
+        backupPlans: "++id, tripId, activityId, date",
+      })
+      .upgrade(async (tx) => {
+        // Migrate expense categories from Vietnamese to English keys
+        const catMap: Record<string, string> = {
+          "Di chuyển": "transport",
+          "Vé máy bay": "flight",
+          "Ăn uống": "food",
+          "Lưu trú": "accommodation",
+          "Vé tham quan": "tickets",
+          "Mua sắm": "shopping",
+          "Vui chơi & Giải trí": "entertainment",
+          "Chuẩn bị hành lý": "packing",
+          Khác: "other",
+        };
+        await tx
+          .table("expenses")
+          .toCollection()
+          .modify((expense) => {
+            if (expense.category && catMap[expense.category]) {
+              expense.category = catMap[expense.category];
+            }
+          });
+
+        // Migrate packing trip types from Vietnamese to English keys
+        const typeMap: Record<string, string> = {
+          Biển: "beach",
+          Núi: "mountain",
+          "Thành phố": "city",
+          "Gia đình": "family",
+        };
+        await tx
+          .table("packingItems")
+          .toCollection()
+          .modify((item) => {
+            if (item.tripType && typeMap[item.tripType]) {
+              item.tripType = typeMap[item.tripType];
+            }
+          });
+
+        // Migrate checklist categories
+        const checkCatMap: Record<string, string> = {
+          "Giấy tờ": "documents",
+          "Quần áo": "clothing",
+          "Đồ cá nhân": "personal",
+          "Thiết bị điện tử": "electronics",
+          "Thuốc & y tế": "medical",
+          "Tiền & ví": "money",
+          "Đồ ăn nhẹ": "snacks",
+        };
+        await tx
+          .table("checklist")
+          .toCollection()
+          .modify((item) => {
+            if (item.category && checkCatMap[item.category]) {
+              item.category = checkCatMap[item.category];
+            }
+          });
+      });
   }
 }
 

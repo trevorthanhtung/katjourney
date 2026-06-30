@@ -80,10 +80,10 @@ import {
   sumBy,
   getSettlementSuggestions,
 } from "../../../utils/helpers";
-import { submitChangeRequest } from "../../../services/sharedTripRequestService";
+import { submitChangeRequest } from "../../../services/cloudShareService";
 import { showToast } from "../../../components/ui/ToastManager";
-import { uploadJournalImage, uploadDocumentImage } from "../../../services/storageService";
-import { getIdentity } from "../../../services/identityService";
+import { processLocalImage } from "../../../services/storageService";
+import { getIdentity } from "../../../utils/identityCache";
 import {
   getCurrentPosition,
   reverseGeocode,
@@ -104,24 +104,24 @@ import { fetchExchangeRates, ExchangeRate } from "../../../services/currencyServ
 const classNames = (...classes: any[]) => classes.filter(Boolean).join(" ");
 
 const CATEGORIES = [
-  "Giấy tờ",
-  "Quần áo",
-  "Đồ cá nhân",
-  "Thiết bị điện tử",
-  "Thuốc & y tế",
-  "Tiền & ví",
-  "Đồ ăn nhẹ",
-  "Khác",
+  "documents",
+  "clothing",
+  "personal",
+  "electronics",
+  "medical",
+  "money",
+  "snacks",
+  "other",
 ] as const;
 const CATEGORY_ICONS: Record<string, any> = {
-  "Giấy tờ": FileCheckIcon,
-  "Quần áo": ShirtIcon,
-  "Đồ cá nhân": Briefcase01Icon,
-  "Thiết bị điện tử": PlugIcon,
-  "Thuốc & y tế": PillIcon,
-  "Tiền & ví": Wallet01Icon,
-  "Đồ ăn nhẹ": Bread01Icon,
-  Khác: PackageIcon,
+  documents: FileCheckIcon,
+  clothing: ShirtIcon,
+  personal: Briefcase01Icon,
+  electronics: PlugIcon,
+  medical: PillIcon,
+  money: Wallet01Icon,
+  snacks: Bread01Icon,
+  other: PackageIcon,
 };
 
 export function SharedDocumentsSection({
@@ -276,7 +276,7 @@ export function SharedDocumentsSection({
 
     try {
       if (selectedFile) {
-        finalAttachmentUrl = await uploadDocumentImage(selectedFile, targetTripId);
+        finalAttachmentUrl = await processLocalImage(selectedFile);
       }
 
       if (editingDoc?.id) {
@@ -366,7 +366,7 @@ export function SharedDocumentsSection({
               {t("documents.featureTitle")}
             </h3>
             <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
-              Lưu trữ tài liệu du lịch, vé tàu xe, khách sạn
+              {t("share.docsDesc", "Lưu trữ tài liệu du lịch, vé tàu xe, khách sạn")}
             </p>
           </div>
         </div>
@@ -459,7 +459,7 @@ export function SharedDocumentsSection({
                         }
                       }}
                       className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800 active:scale-90 transition-all focus:outline-none"
-                      title="Tùy chọn"
+                      title={t("packing.options")}
                     >
                       <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
                     </button>
@@ -480,12 +480,13 @@ export function SharedDocumentsSection({
 
               {d.code && (
                 <div className="text-[12px] font-bold text-slate-400 mt-0.5">
-                  Mã: <span className="text-slate-600 dark:text-slate-300">{d.code}</span>
+                  {t("share.code", "Mã:")}{" "}
+                  <span className="text-slate-600 dark:text-slate-300">{d.code}</span>
                 </div>
               )}
               {d.date && (
                 <div className="text-[11.5px] font-semibold text-slate-400">
-                  Ngày:{" "}
+                  {t("share.date", "Ngày:")}{" "}
                   <span className="text-slate-500 dark:text-slate-350">{formatDate(d.date)}</span>
                 </div>
               )}
@@ -497,7 +498,7 @@ export function SharedDocumentsSection({
                   className="text-[11.5px] font-bold text-blue-500 dark:text-blue-400 hover:underline mt-0.5 w-fit"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  Link liên kết
+                  {t("share.link", "Link liên kết")}
                 </a>
               )}
 

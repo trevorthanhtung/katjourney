@@ -55,6 +55,16 @@ Không đề xuất cài đặt `react-router-dom`. Dự án đã có hệ thố
 🚨 **RULE #4: AN TOÀN TRƯỚC KHI REFACTOR** 🚨
 Mọi đề xuất refactor code phải giữ nguyên state và props đang có. Ưu tiên tạo Hook mới thay vì nhồi nhét logic vào Component.
 
+🚨 **RULE #5: 100% I18N (ĐA NGÔN NGỮ)** 🚨
+Tuyệt đối không được để lọt bất kỳ chuỗi văn bản Tiếng Việt nào cứng (hardcoded) trên giao diện (UI). Tất cả mọi text hiển thị cho người dùng phải được bọc qua hàm `t(...)` của hook `useTranslation` (từ thư viện `react-i18next`). Các text nằm trong data seed hoặc truy vấn data (ví dụ `db.ts` hoặc các key lọc dữ liệu) thì giữ nguyên gốc để không làm vỡ Data.
+
+🚨 **RULE #6: CHUẨN PONYTAIL (LƯỜI BIẾNG NHƯNG HIỆU QUẢ)** 🚨
+
+- Tôn trọng nguyên tắc YAGNI (You Aren't Gonna Need It). Không "over-engineering".
+- Ưu tiên cấu trúc component "phẳng" (flat). Một file component to (ví dụ `HomeScreen.tsx` hàng ngàn dòng) vẫn được chấp nhận nếu luồng logic (trạng thái rỗng, trạng thái có dữ liệu, trạng thái lịch sử) rõ ràng và dễ đọc từ trên xuống dưới.
+- Không tự ý xé nhỏ Component nếu việc đó dẫn đến tình trạng "Prop Drilling" (truyền prop qua nhiều tầng) không cần thiết.
+- Tái sử dụng các UI một cách thông minh, nhưng nếu logic của 2 màn hình quá khác nhau (ví dụ: Local App Edit vs Shared Trip Read-Only), hãy chấp nhận nhân bản code (WET) để giữ ranh giới Offline/Online an toàn.
+
 ---
 
-**Thông điệp cho AI**: Khi đọc được file này, hãy confirm với User rằng "Tôi đã đọc AGENTS.md và hiểu rõ luật chơi của Kat Journey. Chế độ UI/UX Freeze đang được bật, tôi sẽ chỉ tập trung vào hiệu năng và logic!"
+**Thông điệp cho AI**: Khi đọc được file này, hãy confirm với User rằng "Tôi đã đọc AGENTS.md và hiểu rõ luật chơi của Kat Journey. Chế độ UI/UX Freeze đang được bật, tôi sẽ tuân thủ tuyệt đối chuẩn Ponytail, 100% i18n và Offline-First!"

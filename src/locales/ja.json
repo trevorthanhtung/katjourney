@@ -319,7 +319,11 @@
     "unknownLocation": "場所が未設定",
     "archivedBanner": "終了した旅行です（閲覧のみ可能）。",
     "autoSavingTooltip": "自動保存中...",
-    "savingBadge": "保存中..."
+    "savingBadge": "保存中...",
+    "other": "その他",
+    "beforeTrip": "旅行前",
+    "duringTrip": "旅行中",
+    "afterTrip": "旅行後"
   },
   "sharedTrip": {
     "viewTitle": "共有された旅行を見る",
@@ -900,7 +904,8 @@
     "today": "今日",
     "currentTemp": "現在: {{temp}}°",
     "currentWeather": "現在の天気",
-    "sameTemp": "あなたがどこにいるかのように"
+    "sameTemp": "あなたがどこにいるかのように",
+    "currentLocation": "Current location"
   },
   "reminders": {
     "title": "要確認",
@@ -915,7 +920,20 @@
     "missingDocs": "この旅行には書類や予約情報がまだ追加されていません。",
     "viewDocs": "書類を見る",
     "missingBackups": "重要なアクティビティには代替プランを追加できます。",
-    "addBackup": "代替プランを追加"
+    "addBackup": "代替プランを追加",
+    "noIdDocsTitle": "No identity documents saved",
+    "noIdDocsDesc": "Save a copy of your passport, ID card, or tickets for easy offline access.",
+    "noIdDocsAction": "Add documents",
+    "weatherCheckTitle": "Check the weather",
+    "weatherCheckDesc": "Check the weather forecast before departing.",
+    "chargerCheckTitle": "Charge devices & power bank",
+    "chargerCheckDesc": "Charge your power bank, phone and pack your charger in carry-on luggage.",
+    "noMembersTitle": "No travel companions yet",
+    "noMembersDesc": "Add companions to track shared expenses and split costs.",
+    "noMembersAction": "Add companions",
+    "noExpensesTitle": "No group expenses recorded",
+    "noExpensesDesc": "Record shared expenses so the app auto-calculates the settlement for the group.",
+    "noExpensesAction": "Record expenses"
   },
   "search": {
     "placeholder": "旅行内を検索...",
@@ -923,7 +941,29 @@
     "emptySubtitle": "この旅行に保存されたすべてのメモ、計画、書類を検索します。",
     "noResults": "一致する結果が見つかりませんでした",
     "noResultsSubtitle": "別のキーワードで検索するか、入力間違いがないか確認してください。",
-    "close": "閉じる"
+    "close": "閉じる",
+    "noResultsHint": "Try searching with a different keyword like a place, payer, or item name.",
+    "timeline": "Timeline",
+    "backupPlans": "Backup Plans",
+    "when": "When",
+    "expenses": "Expenses",
+    "expenseDefault": "Expense",
+    "payer": "Payer",
+    "category": "Category",
+    "checklist": "Checklist",
+    "prepared": "Prepared",
+    "notPrepared": "Not prepared",
+    "assignee": "Assignee",
+    "status": "Status",
+    "documents": "Documents & Bookings",
+    "code": "Code",
+    "noCode": "No Code",
+    "journals": "Journals",
+    "journalDefault": "Trip Journal",
+    "members": "Members",
+    "role": "Role",
+    "companion": "Companion",
+    "phone": "Phone"
   },
   "trips": {
     "exampleLocation": "例: 沖縄県"
@@ -1316,7 +1356,13 @@
     "itemNameLabel": "持参する料理名 *",
     "emptyStateDetailed": "まだ項目はありません。準備を始めるための提案を入手してください。",
     "sharedTab": "共有",
-    "personalTab": "個人"
+    "personalTab": "個人",
+    "markItem": "Toggle packing item",
+    "type_beach": "ビーチ",
+    "type_mountain": "山",
+    "type_city": "都市",
+    "type_camping": "キャンプ",
+    "type_family": "家族"
   },
   "expenses": {
     "title": "費用",
@@ -1455,7 +1501,16 @@
     "catPreparation": "荷物の準備をする",
     "catOther": "他の",
     "catCustom": "他の...",
-    "baseCurrency": "(オリジナルコイン)"
+    "baseCurrency": "(オリジナルコイン)",
+    "cat_transport": "交通",
+    "cat_flight": "航空券",
+    "cat_food": "飲食",
+    "cat_accommodation": "宿泊",
+    "cat_tickets": "観光チケット",
+    "cat_shopping": "ショッピング",
+    "cat_entertainment": "娯楽",
+    "cat_packing": "荷造り",
+    "cat_other": "その他"
   },
   "more": {
     "title": "その他",
@@ -1655,7 +1710,8 @@
     "permSuggestTrip": "スケジュールの編集を提案",
     "rolesHelpTitle": "役割について",
     "rolesHelpSubtitle": "一人ひとりが役割を担って、最高の旅行を作り上げましょう。",
-    "roleLabel": "旅行での役割"
+    "roleLabel": "旅行での役割",
+    "member": "Member"
   },
   "journal": {
     "title": "旅行記",
@@ -1729,7 +1785,9 @@
     "headerTitle": "旅行のチャット",
     "chattingAs": "名前:",
     "today": "今日",
-    "yesterday": "昨日"
+    "yesterday": "昨日",
+    "errorLoginRequired": "Please sign in or open a valid share link before chatting.",
+    "errorSendFailed": "Cannot send message: "
   },
   "offline": {
     "title": "オフラインです",
@@ -1769,7 +1827,15 @@
     "foundUpdateDesc": "他のデバイスからの新しいデータがあります。",
     "syncNow": "今すぐ同期",
     "syncSuccess": "他のデバイスのデータと同期しました。",
-    "syncFail": "復元に失敗しました: "
+    "syncFail": "復元に失敗しました: ",
+    "errorLoginRequired": "Please sign in before syncing.",
+    "errorBackupFailed": "Backup error: ",
+    "errorLoginToRestore": "Please sign in to restore.",
+    "errorNoBackup": "No cloud backup found.",
+    "toastUpdatedFromOther": "Updated data from another device.",
+    "toastNewDataAvailable": "New data from another device. Tap Sync to download.",
+    "toastReconnected": "Back online. Syncing...",
+    "toastAutoBackup": "Auto-backed up new data to Cloud."
   },
   "export": {
     "reportTitle": "旅行レポート",
@@ -1821,7 +1887,21 @@
     "overview": "概要",
     "itinerary": "スケジュール",
     "expenses": "費用",
-    "prepAndDocs": "準備と書類"
+    "prepAndDocs": "準備と書類",
+    "unknownLocation": "Unknown",
+    "tripType": "Trip Type",
+    "noTimeline": "No activities in the itinerary.",
+    "colTime": "Time",
+    "colActivityNotes": "Activity & Notes",
+    "colLocation": "Location",
+    "sharedGroup": "Shared (Group)",
+    "personalExp": "Personal",
+    "totalLabel": "TOTAL",
+    "colCategory": "Category",
+    "colAmount": "Amount",
+    "noBackupPlans": "No backup plans.",
+    "docBookingInfo": "Documents / Booking Info:",
+    "packingLabel": "Packing — {{type}}"
   },
   "sharedVia": "共有元：",
   "madeBy": "作成者：",
@@ -1853,5 +1933,68 @@
       "btn_save": "画像を保存",
       "fallback": "共有できません。自動的に画像のダウンロードに切り替えます..."
     }
+  },
+  "pwaInstallSheet": {
+    "titleAndroid": "Install KAT Journey on Android",
+    "titleIOS": "Install KAT Journey on iPhone",
+    "subtitleAndroid": "Follow the simple steps below",
+    "subtitleIOS": "Follow these 3 extremely simple steps",
+    "step1Android": "Tap the browser menu",
+    "step1AndroidDesc": "Find the <b>3 dots (⋮)</b> icon usually located at the top right of Chrome or the bottom menu.",
+    "step1IOS": "Tap the Share button",
+    "step1IOSDesc": "Find the square icon with an upward arrow <icon></icon> on the Safari toolbar at the bottom of the screen.",
+    "step2Android": "Select \"Add to Home screen\"",
+    "step2IOS": "Select \"Add to Home Screen\"",
+    "step2AndroidDesc": "Find and tap the <b>Add to Home screen</b> option (or Install app).",
+    "step2IOSDesc": "Scroll down the share menu and tap the option with the plus icon <icon></icon>.",
+    "step3Title": "Confirm addition",
+    "step3AndroidDesc": "Tap the <b>\"Add\"</b> or \"Install\" button in the dialog that appears to complete.",
+    "step3IOSDesc": "Tap the <b>\"Add\"</b> button at the top right of the screen to complete.",
+    "gotIt": "Got it"
+  },
+  "backupPlans": {
+    "type": {
+      "food": "Food & Dining",
+      "place": "Alternative Place",
+      "transport": "Transport",
+      "hotel": "Accommodation",
+      "indoor": "Indoor Activity",
+      "weather": "Bad Weather"
+    }
+  },
+  "datePicker": {
+    "jan": "January",
+    "feb": "February",
+    "mar": "March",
+    "apr": "April",
+    "may": "May",
+    "jun": "June",
+    "jul": "July",
+    "aug": "August",
+    "sep": "September",
+    "oct": "October",
+    "nov": "November",
+    "dec": "December",
+    "selectRange": "Select date range",
+    "selectDate": "Select date",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "notifications": {
+    "upcomingTitle": "Coming up: {{title}}",
+    "upcomingBody": "At {{time}} at {{location}}",
+    "unknownLocation": "Unknown location"
+  },
+  "auth": {
+    "guest": "Guest",
+    "errorUnknown": "An unknown error occurred.",
+    "errorInvalidCredentials": "Invalid credentials, please try again.",
+    "errorEmailInUse": "This email is already in use.",
+    "errorWeakPassword": "Password too weak. Must be at least 6 characters.",
+    "errorGoogleLinked": "This Google account is already linked to another account.",
+    "errorTooManyRequests": "Too many requests. Please try again later.",
+    "errorGeneral": "An authentication error occurred.",
+    "errorAnonymousFailed": "Anonymous sign-in failed.",
+    "errorLoginRequired": "Please sign in."
   }
 }

@@ -36,66 +36,66 @@ import { useModalHistory } from "../../hooks/useModalHistory";
 import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
 
 const categoryI18nMap: Record<string, string> = {
-  "Giấy tờ": "packing.catDocuments",
-  "Quần áo": "packing.catClothing",
-  "Đồ cá nhân": "packing.catPersonal",
-  "Thiết bị điện tử": "packing.catElectronics",
-  "Thuốc & y tế": "packing.catMedical",
-  "Tiền & ví": "packing.catMoney",
-  "Đồ ăn nhẹ": "packing.catSnacks",
-  Khác: "packing.catOther",
+  documents: "packing.catDocuments",
+  clothing: "packing.catClothing",
+  personal: "packing.catPersonal",
+  electronics: "packing.catElectronics",
+  medical: "packing.catMedical",
+  money: "packing.catMoney",
+  snacks: "packing.catSnacks",
+  other: "packing.catOther",
 };
 
 const CATEGORIES = [
-  "Giấy tờ",
-  "Quần áo",
-  "Đồ cá nhân",
-  "Thiết bị điện tử",
-  "Thuốc & y tế",
-  "Tiền & ví",
-  "Đồ ăn nhẹ",
-  "Khác",
+  "documents",
+  "clothing",
+  "personal",
+  "electronics",
+  "medical",
+  "money",
+  "snacks",
+  "other",
 ];
 
 const CATEGORY_ICONS: Record<string, any> = {
-  "Giấy tờ": FileCheckIcon,
-  "Quần áo": TShirtIcon,
-  "Đồ cá nhân": SparklesIcon,
-  "Thiết bị điện tử": Plug01Icon,
-  "Thuốc & y tế": PillIcon,
-  "Tiền & ví": WalletCardsIcon,
-  "Đồ ăn nhẹ": Bread01Icon,
-  Khác: PackageIcon,
+  documents: FileCheckIcon,
+  clothing: TShirtIcon,
+  personal: SparklesIcon,
+  electronics: Plug01Icon,
+  medical: PillIcon,
+  money: WalletCardsIcon,
+  snacks: Bread01Icon,
+  other: PackageIcon,
 };
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  "Giấy tờ": { bg: "bg-blue-50/70", text: "text-blue-800", border: "border-blue-100" },
-  "Quần áo": { bg: "bg-orange-50/70", text: "text-orange-800", border: "border-orange-100" },
-  "Đồ cá nhân": { bg: "bg-teal-50/70", text: "text-teal-800", border: "border-teal-100" },
-  "Thiết bị điện tử": {
+  documents: { bg: "bg-blue-50/70", text: "text-blue-800", border: "border-blue-100" },
+  clothing: { bg: "bg-orange-50/70", text: "text-orange-800", border: "border-orange-100" },
+  personal: { bg: "bg-teal-50/70", text: "text-teal-800", border: "border-teal-100" },
+  electronics: {
     bg: "bg-purple-50/70",
     text: "text-purple-800",
     border: "border-purple-100",
   },
-  "Thuốc & y tế": { bg: "bg-green-50/70", text: "text-green-700", border: "border-green-100" },
-  "Tiền & ví": { bg: "bg-emerald-50/70", text: "text-emerald-800", border: "border-emerald-100" },
-  "Đồ ăn nhẹ": { bg: "bg-amber-50/70", text: "text-amber-800", border: "border-amber-100" },
-  Khác: { bg: "bg-slate-100/70", text: "text-slate-700", border: "border-slate-200" },
+  medical: { bg: "bg-green-50/70", text: "text-green-700", border: "border-green-100" },
+  money: { bg: "bg-emerald-50/70", text: "text-emerald-800", border: "border-emerald-100" },
+  snacks: { bg: "bg-amber-50/70", text: "text-amber-800", border: "border-amber-100" },
+  other: { bg: "bg-slate-100/70", text: "text-slate-700", border: "border-slate-200" },
 };
 
 const QUICK_SUGGESTIONS = [
-  { labelKey: "packing.catDocuments", titleKey: "packing.sugPassport", category: "Giấy tờ" },
-  { labelKey: "packing.catClothing", titleKey: "packing.sugClothes", category: "Quần áo" },
+  { labelKey: "packing.catDocuments", titleKey: "packing.sugPassport", category: "documents" },
+  { labelKey: "packing.catClothing", titleKey: "packing.sugClothes", category: "clothing" },
   {
     labelKey: "packing.catElectronics",
     titleKey: "packing.sugPowerBank",
-    category: "Thiết bị điện tử",
+    category: "electronics",
   },
-  { labelKey: "packing.catMedical", titleKey: "packing.sugMeds", category: "Thuốc & y tế" },
-  { labelKey: "packing.catPersonal", titleKey: "packing.sugToothbrush", category: "Đồ cá nhân" },
-  { labelKey: "packing.catMoney", titleKey: "packing.sugMoney", category: "Tiền & ví" },
-  { labelKey: "packing.catPersonal", titleKey: "packing.sugTowel", category: "Đồ cá nhân" },
-  { labelKey: "packing.catSnacks", titleKey: "packing.sugSnacks", category: "Đồ ăn nhẹ" },
+  { labelKey: "packing.catMedical", titleKey: "packing.sugMeds", category: "medical" },
+  { labelKey: "packing.catPersonal", titleKey: "packing.sugToothbrush", category: "personal" },
+  { labelKey: "packing.catMoney", titleKey: "packing.sugMoney", category: "money" },
+  { labelKey: "packing.catPersonal", titleKey: "packing.sugTowel", category: "personal" },
+  { labelKey: "packing.catSnacks", titleKey: "packing.sugSnacks", category: "snacks" },
 ];
 
 function ChecklistItemRow({
@@ -114,14 +114,14 @@ function ChecklistItemRow({
   const { t } = useTranslation();
   const catMap: Record<string, string> = React.useMemo(
     () => ({
-      "Giấy tờ": t("packing.catDocuments"),
-      "Quần áo": t("packing.catClothing"),
-      "Đồ cá nhân": t("packing.catPersonal"),
-      "Thiết bị điện tử": t("packing.catElectronics"),
-      "Thuốc & y tế": t("packing.catMedical"),
-      "Tiền & ví": t("packing.catMoney"),
-      "Đồ ăn nhẹ": t("packing.catSnacks"),
-      Khác: t("packing.catOther"),
+      documents: t("packing.catDocuments"),
+      clothing: t("packing.catClothing"),
+      personal: t("packing.catPersonal"),
+      electronics: t("packing.catElectronics"),
+      medical: t("packing.catMedical"),
+      money: t("packing.catMoney"),
+      snacks: t("packing.catSnacks"),
+      other: t("packing.catOther"),
     }),
     [t]
   );
@@ -210,7 +210,7 @@ function ChecklistItemRow({
           {/* Private Badge */}
           {item.isPrivate && (
             <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/20 text-purple-700 dark:text-purple-400 text-[10px] font-black border border-purple-100/50 dark:border-purple-900/30">
-              Cá nhân
+              {t("packing.private", "Cá nhân")}
             </span>
           )}
         </div>
@@ -226,7 +226,7 @@ function ChecklistItemRow({
             {item.assignedTo && (
               <p className="flex items-center gap-1 text-[11px] text-slate-400 dark:text-slate-500">
                 <HugeiconsIcon icon={UserIcon} className="h-3 w-3" />
-                Chuẩn bị:{" "}
+                {t("packing.preparedBy", "Chuẩn bị:")}{" "}
                 <span className="text-kat-dark dark:text-slate-300">{item.assignedTo}</span>
               </p>
             )}
@@ -298,14 +298,14 @@ export function ChecklistScreen({
   const { t } = useTranslation();
   const catMap: Record<string, string> = React.useMemo(
     () => ({
-      "Giấy tờ": t("packing.catDocuments"),
-      "Quần áo": t("packing.catClothing"),
-      "Đồ cá nhân": t("packing.catPersonal"),
-      "Thiết bị điện tử": t("packing.catElectronics"),
-      "Thuốc & y tế": t("packing.catMedical"),
-      "Tiền & ví": t("packing.catMoney"),
-      "Đồ ăn nhẹ": t("packing.catSnacks"),
-      Khác: t("packing.catOther"),
+      documents: t("packing.catDocuments"),
+      clothing: t("packing.catClothing"),
+      personal: t("packing.catPersonal"),
+      electronics: t("packing.catElectronics"),
+      medical: t("packing.catMedical"),
+      money: t("packing.catMoney"),
+      snacks: t("packing.catSnacks"),
+      other: t("packing.catOther"),
     }),
     [t]
   );
@@ -328,7 +328,7 @@ export function ChecklistScreen({
   useModalHistory(Boolean(itemToDelete), () => setItemToDelete(null), "delete-checklist-confirm");
 
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Giấy tờ");
+  const [category, setCategory] = useState("documents");
   const [quantity, setQuantity] = useState(1);
   const [assignedTo, setAssignedTo] = useState("");
   const [priority, setPriority] = useState<"normal" | "important" | "required">("normal");
@@ -359,7 +359,7 @@ export function ChecklistScreen({
   function openAddForm() {
     setEditingId(null);
     setTitle("");
-    setCategory("Giấy tờ");
+    setCategory("documents");
     setQuantity(1);
     setAssignedTo("");
     setPriority("normal");
@@ -374,7 +374,7 @@ export function ChecklistScreen({
   function openEditForm(item: ChecklistItem) {
     setEditingId(item.id!);
     setTitle(item.title);
-    setCategory(item.category || "Khác");
+    setCategory(item.category || "other");
     setQuantity(item.quantity || 1);
     setAssignedTo(item.assignedTo || "");
     setPriority(item.priority || "normal");
@@ -408,14 +408,14 @@ export function ChecklistScreen({
 
     if (editingId) {
       await db.checklist.update(editingId, itemData);
-      showToastMessage(`Đã cập nhật: ${title.trim()}`);
+      showToastMessage(`${t("common.updated", "Đã cập nhật:")} ${title.trim()}`);
     } else {
       await db.checklist.add({
         ...itemData,
         completed: false,
         createdAt: new Date().toISOString(),
       });
-      showToastMessage(`Đã thêm: ${title.trim()}`);
+      showToastMessage(`${t("common.added", "Đã thêm:")} ${title.trim()}`);
     }
 
     setIsFormOpen(false);
@@ -428,7 +428,10 @@ export function ChecklistScreen({
     );
 
     if (isDuplicate) {
-      showToastMessage(`"${sugTitle}" đã có trong danh sách`, "info");
+      showToastMessage(
+        `${sugTitle} ${t("packing.alreadyInList", "đã có trong danh sách")}`,
+        "info"
+      );
       return;
     }
 
@@ -444,7 +447,7 @@ export function ChecklistScreen({
       updatedAt: new Date().toISOString(),
     });
 
-    showToastMessage(`Đã thêm nhanh "${sugTitle}"`);
+    showToastMessage(`${t("packing.quickAdded", "Đã thêm nhanh")} ${sugTitle}`);
   }
 
   // Delete item
@@ -462,12 +465,14 @@ export function ChecklistScreen({
       const nextCompleted = !item.completed;
       await db.checklist.update(item.id, { completed: nextCompleted });
       showToastMessage(
-        nextCompleted ? `Đã chuẩn bị: ${item.title}` : `Chưa chuẩn bị: ${item.title}`
+        nextCompleted
+          ? `${t("packing.prepared", "Đã chuẩn bị:")} ${item.title}`
+          : `${t("packing.notPrepared", "Chưa chuẩn bị:")} ${item.title}`
       );
     }
   }
 
-  // Group items by category (default fallback is "Khác")
+  // Group items by category (default fallback is "other")
   const groupedItems = CATEGORIES.reduce(
     (acc, cat) => {
       acc[cat] = [];
@@ -477,7 +482,7 @@ export function ChecklistScreen({
   );
 
   checklist.forEach((item) => {
-    const cat = item.category && CATEGORIES.includes(item.category) ? item.category : "Khác";
+    const cat = item.category && CATEGORIES.includes(item.category) ? item.category : "other";
     groupedItems[cat].push(item);
   });
 
@@ -515,7 +520,7 @@ export function ChecklistScreen({
           <div className="flex items-center gap-2.5">
             {(() => {
               const IconComponent = CATEGORY_ICONS[catName] || PackageIcon;
-              const theme = CATEGORY_COLORS[catName] || CATEGORY_COLORS["Khác"];
+              const theme = CATEGORY_COLORS[catName] || CATEGORY_COLORS["other"];
               return (
                 <div
                   className={`flex items-center justify-center w-8 h-8 rounded-[10px] ${theme.bg} ${theme.text} border ${theme.border} shadow-inner`}
@@ -654,23 +659,24 @@ export function ChecklistScreen({
             {QUICK_SUGGESTIONS.map((sug) => {
               const added = isAdded(t(sug.titleKey));
               const sugColorMap: Record<string, string> = {
-                "Giấy tờ":
+                documents:
                   "bg-blue-500/[0.04] dark:bg-blue-500/[0.08] text-blue-700 dark:text-blue-400 border-blue-500/10 hover:border-blue-500/30 hover:bg-blue-500/10",
-                "Quần áo":
+                clothing:
                   "bg-orange-500/[0.04] dark:bg-orange-500/[0.08] text-orange-700 dark:text-orange-400 border-orange-500/10 hover:border-orange-500/30 hover:bg-orange-500/10",
-                "Đồ cá nhân":
+                personal:
                   "bg-teal-500/[0.04] dark:bg-teal-500/[0.08] text-teal-700 dark:text-teal-400 border-teal-500/10 hover:border-teal-500/30 hover:bg-teal-500/10",
-                "Thiết bị điện tử":
+                electronics:
                   "bg-purple-500/[0.04] dark:bg-purple-500/[0.08] text-purple-700 dark:text-purple-400 border-purple-500/10 hover:border-purple-500/30 hover:bg-purple-500/10",
-                "Thuốc & y tế":
+                medical:
                   "bg-green-500/[0.04] dark:bg-green-500/[0.08] text-green-700 dark:text-green-400 border-green-500/10 hover:border-green-500/30 hover:bg-green-500/10",
-                "Tiền & ví":
+                money:
                   "bg-emerald-500/[0.04] dark:bg-[#10B981]/[0.08] text-emerald-700 dark:text-emerald-400 border-emerald-500/10 hover:border-emerald-500/30 hover:bg-emerald-500/10",
-                "Đồ ăn nhẹ":
+                snacks:
                   "bg-amber-500/[0.04] dark:bg-amber-500/[0.08] text-amber-700 dark:text-amber-400 border-amber-500/10 hover:border-amber-500/30 hover:bg-amber-500/10",
-                Khác: "bg-slate-500/[0.04] dark:bg-slate-500/[0.08] text-slate-700 dark:text-slate-400 border-slate-500/10 hover:border-slate-500/30 hover:bg-slate-500/10",
+                other:
+                  "bg-slate-500/[0.04] dark:bg-slate-500/[0.08] text-slate-700 dark:text-slate-400 border-slate-500/10 hover:border-slate-500/30 hover:bg-slate-500/10",
               };
-              const sugColor = sugColorMap[sug.category] || sugColorMap["Khác"];
+              const sugColor = sugColorMap[sug.category] || sugColorMap["other"];
 
               return (
                 <button
@@ -737,23 +743,24 @@ export function ChecklistScreen({
                 {QUICK_SUGGESTIONS.map((sug) => {
                   const added = isAdded(t(sug.titleKey));
                   const sugColorMap: Record<string, string> = {
-                    "Giấy tờ":
+                    documents:
                       "bg-blue-500/[0.04] dark:bg-blue-500/[0.08] text-blue-700 dark:text-blue-400 border-blue-500/10 hover:border-blue-500/30 hover:bg-blue-500/10",
-                    "Quần áo":
+                    clothing:
                       "bg-orange-500/[0.04] dark:bg-orange-500/[0.08] text-orange-700 dark:text-orange-400 border-orange-500/10 hover:border-orange-500/30 hover:bg-orange-500/10",
-                    "Đồ cá nhân":
+                    personal:
                       "bg-teal-500/[0.04] dark:bg-teal-500/[0.08] text-teal-700 dark:text-teal-400 border-teal-500/10 hover:border-teal-500/30 hover:bg-teal-500/10",
-                    "Thiết bị điện tử":
+                    electronics:
                       "bg-purple-500/[0.04] dark:bg-purple-500/[0.08] text-purple-700 dark:text-purple-400 border-purple-500/10 hover:border-purple-500/30 hover:bg-purple-500/10",
-                    "Thuốc & y tế":
+                    medical:
                       "bg-green-500/[0.04] dark:bg-green-500/[0.08] text-green-700 dark:text-green-400 border-green-500/10 hover:border-green-500/30 hover:bg-green-500/10",
-                    "Tiền & ví":
+                    money:
                       "bg-emerald-500/[0.04] dark:bg-[#10B981]/[0.08] text-emerald-700 dark:text-emerald-400 border-emerald-500/10 hover:border-emerald-500/30 hover:bg-emerald-500/10",
-                    "Đồ ăn nhẹ":
+                    snacks:
                       "bg-amber-500/[0.04] dark:bg-amber-500/[0.08] text-amber-700 dark:text-amber-400 border-amber-500/10 hover:border-amber-500/30 hover:bg-amber-500/10",
-                    Khác: "bg-slate-500/[0.04] dark:bg-slate-500/[0.08] text-slate-700 dark:text-slate-400 border-slate-500/10 hover:border-slate-500/30 hover:bg-slate-500/10",
+                    other:
+                      "bg-slate-500/[0.04] dark:bg-slate-500/[0.08] text-slate-700 dark:text-slate-400 border-slate-500/10 hover:border-slate-500/30 hover:bg-slate-500/10",
                   };
-                  const sugColor = sugColorMap[sug.category] || sugColorMap["Khác"];
+                  const sugColor = sugColorMap[sug.category] || sugColorMap["other"];
 
                   return (
                     <button
@@ -894,7 +901,7 @@ export function ChecklistScreen({
                       icon={PackageIcon}
                       className="h-4 w-4 text-slate-500 dark:text-slate-400"
                     />
-                    Nhóm hành lý
+                    {t("packing.category", "Nhóm hành lý")}
                   </label>
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
                     {CATEGORIES.map((cat) => {

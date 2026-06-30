@@ -39,18 +39,18 @@ import {
   DatePicker,
   DeleteConfirmModal,
 } from "../../components/ui";
-import { getIdentity } from "../../services/identityService";
-import { uploadJournalImage } from "../../services/storageService";
+import { getIdentity } from "../../utils/identityCache";
+import { processLocalImage } from "../../services/storageService";
 import { getCurrentUser } from "../../services/authService";
 import { useModalHistory } from "../../hooks/useModalHistory";
 import { getCurrentPosition, reverseGeocode } from "../../services/locationService";
 
-const moodOptionList: Array<{ value: JournalMood; label: string }> = [
-  { value: "good", label: "Vui" },
-  { value: "okay", label: "Bình yên" },
-  { value: "great", label: "Hào hứng" },
-  { value: "very_bad", label: "Mệt" },
-  { value: "bad", label: "Bất ngờ" },
+const moodOptionList: Array<{ value: JournalMood; labelKey: string; defaultLabel: string }> = [
+  { value: "good", labelKey: "journal.moodGood", defaultLabel: "Vui" },
+  { value: "okay", labelKey: "journal.moodOkay", defaultLabel: "Bình yên" },
+  { value: "great", labelKey: "journal.moodGreat", defaultLabel: "Hào hứng" },
+  { value: "very_bad", labelKey: "journal.moodVeryBad", defaultLabel: "Mệt" },
+  { value: "bad", labelKey: "journal.moodBad", defaultLabel: "Bất ngờ" },
 ];
 
 const moodColorClasses: Record<JournalMood, string> = {
@@ -110,7 +110,7 @@ function JournalForm({
     if (!file) return;
     setUploading(true);
     try {
-      const url = await uploadJournalImage(file, tripId);
+      const url = await processLocalImage(file);
       setForm((prev) => ({ ...prev, imageUrl: url }));
       setDirty(true);
     } catch (err: any) {
@@ -668,7 +668,9 @@ export function JournalSection({
   const [prefilledContent, setPrefilledContent] = useState("");
   const [journalMode, setJournalMode] = useState<"posts" | "chat">("posts");
 
-  const [currentUserIdentity, setCurrentUserIdentity] = useState<string>("Trưởng nhóm");
+  const [currentUserIdentity, setCurrentUserIdentity] = useState<string>(
+    t("journal.leader", "Trưởng nhóm")
+  );
   const [activeReactionPopover, setActiveReactionPopover] = useState<number | null>(null);
 
   useEffect(() => {
@@ -1094,10 +1096,10 @@ export function JournalSection({
             <div className="shrink-0 pb-3 border-b border-slate-100/60 dark:border-slate-800/40">
               <h3 className="text-[13.5px] font-black text-kat-dark dark:text-white flex items-center gap-2 tracking-wide uppercase">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10B981] animate-pulse"></span>
-                Thành viên ({members.length})
+                {t("journal.membersCount", "Thành viên ({{count}})", { count: members.length })}
               </h3>
               <p className="text-[11px] text-slate-450 dark:text-slate-500 font-medium mt-0.5">
-                Đang ở trong phòng trò chuyện
+                {t("journal.inChatRoom", "Đang ở trong phòng trò chuyện")}
               </p>
             </div>
 

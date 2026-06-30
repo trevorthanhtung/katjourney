@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getIdentity, saveIdentity, UserIdentity } from "../../../services/identityService";
+import { getIdentity, saveIdentity, UserIdentity } from "../../../utils/identityCache";
 
 export function useSharedTripIdentity(data: any) {
   const [identityChecked, setIdentityChecked] = useState(false);

@@ -1,3 +1,4 @@
+import i18n from "../i18n";
 import { supabase } from "../lib/supabase";
 import { db } from "../db";
 import { APP_VERSION } from "../utils/helpers";
@@ -22,19 +23,19 @@ function mergeCollections(
   cloudData: SyncRecord[]
 ): { toAddOrUpdate: SyncRecord[] } {
   const localMap = new Map<number, SyncRecord>();
-  localData.forEach(item => {
+  localData.forEach((item) => {
     if (item.id !== undefined) localMap.set(item.id, item);
   });
 
   const cloudMap = new Map<number, SyncRecord>();
-  cloudData.forEach(item => {
+  cloudData.forEach((item) => {
     if (item.id !== undefined) cloudMap.set(item.id, item);
   });
 
   const toAddOrUpdate: SyncRecord[] = [];
   const allIds = new Set<number>([...localMap.keys(), ...cloudMap.keys()]);
 
-  allIds.forEach(id => {
+  allIds.forEach((id) => {
     const localRec = localMap.get(id);
     const cloudRec = cloudMap.get(id);
 
@@ -59,11 +60,13 @@ function mergeCollections(
  * Backup all local Dexie data to Supabase.
  */
 export async function backupToCloud(): Promise<void> {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const user = session?.user;
 
   if (!user) {
-    throw new Error("Vui lòng đăng nhập để thực hiện sao lưu.");
+    throw new Error(i18n.t("sync.errorLoginRequired", "Please sign in to back up."));
   }
 
   // 0. Garbage collect old tombstones (older than 30 days) from local Dexie database
@@ -78,13 +81,12 @@ export async function backupToCloud(): Promise<void> {
       db.journals,
       db.packingItems,
       db.travelDocuments,
-      db.backupPlans
+      db.backupPlans,
     ];
     for (const table of dbTables) {
-      await table.filter(item => 
-        item.isDeleted === true && 
-        (item.updatedAt || "") < thirtyDaysAgo
-      ).delete();
+      await table
+        .filter((item) => item.isDeleted === true && (item.updatedAt || "") < thirtyDaysAgo)
+        .delete();
     }
     console.log("[GarbageCollection] Successfully purged tombstones older than 30 days.");
   } catch (gcErr) {
@@ -101,7 +103,7 @@ export async function backupToCloud(): Promise<void> {
     journals,
     packingItems,
     travelDocuments,
-    backupPlans
+    backupPlans,
   ] = await Promise.all([
     db.trips.toArray(),
     db.members.toArray(),
@@ -111,7 +113,7 @@ export async function backupToCloud(): Promise<void> {
     db.journals.toArray(),
     db.packingItems.toArray(),
     db.travelDocuments.toArray(),
-    db.backupPlans.toArray()
+    db.backupPlans.toArray(),
   ]);
 
   // 2. Prepare the snapshot
@@ -127,21 +129,19 @@ export async function backupToCloud(): Promise<void> {
     journals: sanitizeData(journals),
     packingItems: sanitizeData(packingItems),
     travelDocuments: sanitizeData(travelDocuments),
-    backupPlans: sanitizeData(backupPlans)
+    backupPlans: sanitizeData(backupPlans),
   };
 
   // 3. Save backup snapshot in Supabase
-  const { error } = await supabase
-    .from("user_backups")
-    .upsert({
-      user_id: user.id,
-      data: snapshot,
-      app_version: APP_VERSION,
-      updated_at: backupTime
-    });
+  const { error } = await supabase.from("user_backups").upsert({
+    user_id: user.id,
+    data: snapshot,
+    app_version: APP_VERSION,
+    updated_at: backupTime,
+  });
 
   if (error) {
-    throw new Error("Lỗi khi sao lưu dữ liệu lên Supabase: " + error.message);
+    throw new Error(i18n.t("sync.errorBackupFailed", "Backup error: ") + +error.message);
   }
 
   // Update local timestamp so it matches the cloud backup timestamp exactly
@@ -154,7 +154,9 @@ export async function backupToCloud(): Promise<void> {
  * Fetch metadata of the latest backup from Supabase.
  */
 export async function getLastBackupInfo(): Promise<BackupInfo | null> {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const user = session?.user;
 
   if (!user) return null;
@@ -169,7 +171,7 @@ export async function getLastBackupInfo(): Promise<BackupInfo | null> {
 
   return {
     updatedAt: data.updated_at || "",
-    appVersion: data.app_version || "1.0.0"
+    appVersion: data.app_version || "1.0.0",
   };
 }
 
@@ -177,11 +179,13 @@ export async function getLastBackupInfo(): Promise<BackupInfo | null> {
  * Restore data from cloud using either 'merge' or 'replace' mode.
  */
 export async function restoreFromCloud(mode: "merge" | "replace"): Promise<void> {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const user = session?.user;
 
   if (!user) {
-    throw new Error("Vui lòng đăng nhập để thực hiện khôi phục.");
+    throw new Error(i18n.t("sync.errorLoginToRestore", "Please sign in to restore."));
   }
 
   const { data, error } = await supabase
@@ -191,7 +195,7 @@ export async function restoreFromCloud(mode: "merge" | "replace"): Promise<void>
     .maybeSingle();
 
   if (error || !data || !data.data) {
-    throw new Error("Không tìm thấy bản sao lưu nào trên Cloud.");
+    throw new Error(i18n.t("sync.errorNoBackup", "No cloud backup found."));
   }
 
   const snapshot = data.data as any;
@@ -203,76 +207,94 @@ export async function restoreFromCloud(mode: "merge" | "replace"): Promise<void>
   try {
     if (mode === "replace") {
       // Overwrite local first-party source of truth
-      await db.transaction("rw", [
-        db.trips,
-        db.members,
-        db.events,
-        db.expenses,
-        db.checklist,
-        db.journals,
-        db.packingItems,
-        db.travelDocuments,
-        db.backupPlans
-      ], async () => {
-        // Clear tables
-        await Promise.all([
-          db.trips.clear(),
-          db.members.clear(),
-          db.events.clear(),
-          db.expenses.clear(),
-          db.checklist.clear(),
-          db.journals.clear(),
-          db.packingItems.clear(),
-          db.travelDocuments.clear(),
-          db.backupPlans.clear()
-        ]);
+      await db.transaction(
+        "rw",
+        [
+          db.trips,
+          db.members,
+          db.events,
+          db.expenses,
+          db.checklist,
+          db.journals,
+          db.packingItems,
+          db.travelDocuments,
+          db.backupPlans,
+        ],
+        async () => {
+          // Clear tables
+          await Promise.all([
+            db.trips.clear(),
+            db.members.clear(),
+            db.events.clear(),
+            db.expenses.clear(),
+            db.checklist.clear(),
+            db.journals.clear(),
+            db.packingItems.clear(),
+            db.travelDocuments.clear(),
+            db.backupPlans.clear(),
+          ]);
 
-        // Populate with backup data
-        if (snapshot.trips && snapshot.trips.length > 0) await db.trips.bulkAdd(snapshot.trips);
-        if (snapshot.members && snapshot.members.length > 0) await db.members.bulkAdd(snapshot.members);
-        if (snapshot.events && snapshot.events.length > 0) await db.events.bulkAdd(snapshot.events);
-        if (snapshot.expenses && snapshot.expenses.length > 0) await db.expenses.bulkAdd(snapshot.expenses);
-        if (snapshot.checklist && snapshot.checklist.length > 0) await db.checklist.bulkAdd(snapshot.checklist);
-        if (snapshot.journals && snapshot.journals.length > 0) await db.journals.bulkAdd(snapshot.journals);
-        if (snapshot.packingItems && snapshot.packingItems.length > 0) await db.packingItems.bulkAdd(snapshot.packingItems);
-        if (snapshot.travelDocuments && snapshot.travelDocuments.length > 0) await db.travelDocuments.bulkAdd(snapshot.travelDocuments);
-        if (snapshot.backupPlans && snapshot.backupPlans.length > 0) await db.backupPlans.bulkAdd(snapshot.backupPlans);
-      });
+          // Populate with backup data
+          if (snapshot.trips && snapshot.trips.length > 0) await db.trips.bulkAdd(snapshot.trips);
+          if (snapshot.members && snapshot.members.length > 0)
+            await db.members.bulkAdd(snapshot.members);
+          if (snapshot.events && snapshot.events.length > 0)
+            await db.events.bulkAdd(snapshot.events);
+          if (snapshot.expenses && snapshot.expenses.length > 0)
+            await db.expenses.bulkAdd(snapshot.expenses);
+          if (snapshot.checklist && snapshot.checklist.length > 0)
+            await db.checklist.bulkAdd(snapshot.checklist);
+          if (snapshot.journals && snapshot.journals.length > 0)
+            await db.journals.bulkAdd(snapshot.journals);
+          if (snapshot.packingItems && snapshot.packingItems.length > 0)
+            await db.packingItems.bulkAdd(snapshot.packingItems);
+          if (snapshot.travelDocuments && snapshot.travelDocuments.length > 0)
+            await db.travelDocuments.bulkAdd(snapshot.travelDocuments);
+          if (snapshot.backupPlans && snapshot.backupPlans.length > 0)
+            await db.backupPlans.bulkAdd(snapshot.backupPlans);
+        }
+      );
     } else if (mode === "merge") {
       // Collision-free row-by-row merge based on updatedAt (Last Write Wins)
-      await db.transaction("rw", [
-        db.trips,
-        db.members,
-        db.events,
-        db.expenses,
-        db.checklist,
-        db.journals,
-        db.packingItems,
-        db.travelDocuments,
-        db.backupPlans
-      ], async () => {
-        const tables = [
-          { table: db.trips, data: snapshot.trips || [] },
-          { table: db.members, data: snapshot.members || [] },
-          { table: db.events, data: snapshot.events || [] },
-          { table: db.expenses, data: snapshot.expenses || [] },
-          { table: db.checklist, data: snapshot.checklist || [] },
-          { table: db.journals, data: snapshot.journals || [] },
-          { table: db.packingItems, data: snapshot.packingItems || [] },
-          { table: db.travelDocuments, data: snapshot.travelDocuments || [] },
-          { table: db.backupPlans, data: snapshot.backupPlans || [] }
-        ];
+      await db.transaction(
+        "rw",
+        [
+          db.trips,
+          db.members,
+          db.events,
+          db.expenses,
+          db.checklist,
+          db.journals,
+          db.packingItems,
+          db.travelDocuments,
+          db.backupPlans,
+        ],
+        async () => {
+          const tables = [
+            { table: db.trips, data: snapshot.trips || [] },
+            { table: db.members, data: snapshot.members || [] },
+            { table: db.events, data: snapshot.events || [] },
+            { table: db.expenses, data: snapshot.expenses || [] },
+            { table: db.checklist, data: snapshot.checklist || [] },
+            { table: db.journals, data: snapshot.journals || [] },
+            { table: db.packingItems, data: snapshot.packingItems || [] },
+            { table: db.travelDocuments, data: snapshot.travelDocuments || [] },
+            { table: db.backupPlans, data: snapshot.backupPlans || [] },
+          ];
 
-        for (const t of tables) {
-          const localData = await (t.table as unknown as { toArray(): Promise<SyncRecord[]> }).toArray();
-          const { toAddOrUpdate } = mergeCollections(localData, t.data as SyncRecord[]);
+          for (const t of tables) {
+            const localData = await (
+              t.table as unknown as { toArray(): Promise<SyncRecord[]> }
+            ).toArray();
+            const { toAddOrUpdate } = mergeCollections(localData, t.data as SyncRecord[]);
 
-          for (const item of toAddOrUpdate) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (t.table as any).put(item);
+            for (const item of toAddOrUpdate) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              await (t.table as any).put(item);
+            }
           }
         }
-      });
+      );
 
       // Auto backup in background to update cloud with merged results
       try {
@@ -286,7 +308,10 @@ export async function restoreFromCloud(mode: "merge" | "replace"): Promise<void>
 
     // After successful restore, update local metadata timestamp to match the cloud backup time
     if (typeof localStorage !== "undefined") {
-      localStorage.setItem("kat_journey_local_updated_at", snapshot.updatedAt || new Date().toISOString());
+      localStorage.setItem(
+        "kat_journey_local_updated_at",
+        snapshot.updatedAt || new Date().toISOString()
+      );
     }
   } finally {
     if (typeof localStorage !== "undefined") {

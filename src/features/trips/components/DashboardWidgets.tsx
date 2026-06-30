@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useDistanceUnit } from "../../../hooks/useDistanceUnit";
+import { usePreferences } from "../../../hooks/usePreferences";
 import tzdbZones from "./timezones.json";
 import {
   EarthIcon,
@@ -25,7 +25,7 @@ interface GamificationStatsProps {
 
 export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProps) {
   const { t } = useTranslation();
-  const { distanceLabel } = useDistanceUnit();
+  const { distanceLabel } = usePreferences();
   const { visitedAlpha2s } = useAtlasStats(trips);
 
   const totalTrips = trips.length;
@@ -63,14 +63,14 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500">/ 195</span>
             </div>
             <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
-              Atlas: {t("dashboard.stats.countries", "Quốc gia")}
+              Atlas: {t("dashboard.stats.countries", "Countries")}
             </span>
           </div>
 
           <div className="mt-4 flex -space-x-1.5 overflow-hidden h-6 items-center">
             {visitedAlpha2s.length === 0 && (
               <span className="text-[11px] font-semibold text-slate-400 italic">
-                {t("dashboard.stats.none", "Chưa có")}
+                {t("dashboard.stats.none", "None")}
               </span>
             )}
             {visitedAlpha2s.slice(0, 5).map((alpha2, idx) => (
@@ -105,13 +105,13 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
               </span>
             </div>
             <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
-              {t("dashboard.stats.totalTrips", "Tổng chuyến đi")}
+              {t("dashboard.stats.totalTrips", "Total trips")}
             </span>
           </div>
 
           <div className="mt-4">
             <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
-              {t("dashboard.stats.scheduled", "Đã lên lịch")}
+              {t("dashboard.stats.scheduled", "Scheduled")}
             </span>
           </div>
         </div>
@@ -134,17 +134,17 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
                 {totalDays}
               </span>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
-                {t("dashboard.stats.daysLabel", "ngày")}
+                {t("dashboard.stats.daysLabel", "days")}
               </span>
             </div>
             <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
-              {t("dashboard.stats.daysTraveled", "Ngày vi vu")}
+              {t("dashboard.stats.daysTraveled", "Days traveled")}
             </span>
           </div>
 
           <div className="mt-4">
             <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
-              {t("dashboard.stats.onAllJourneys", "Trên mọi hành trình")}
+              {t("dashboard.stats.onAllJourneys", "On all journeys")}
             </span>
           </div>
         </div>
@@ -168,13 +168,13 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
               </span>
             </div>
             <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
-              {t("dashboard.stats.destinations", "Điểm đến")}
+              {t("dashboard.stats.destinations", "Destinations")}
             </span>
           </div>
 
           <div className="mt-4">
             <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
-              {t("dashboard.stats.explored", "Đã khám phá")}
+              {t("dashboard.stats.explored", "Explored")}
             </span>
           </div>
         </div>
@@ -266,7 +266,7 @@ export function TimezonesWidget() {
 
       const diffHrs = Math.round((tzDate.getTime() - localDate.getTime()) / 3600000);
       if (diffHrs === 0) {
-        return t("dashboard.widgets.sameTimezone", "Cùng múi giờ");
+        return t("dashboard.widgets.sameTimezone", "Same timezone");
       }
 
       const tzDay = new Date(tzDate.getFullYear(), tzDate.getMonth(), tzDate.getDate());
@@ -275,16 +275,16 @@ export function TimezonesWidget() {
 
       let dayLabel = "";
       if (diffDays === -1) {
-        dayLabel = t("dashboard.widgets.yesterday", "Hôm qua");
+        dayLabel = t("dashboard.widgets.yesterday", "Yesterday");
       } else if (diffDays === 1) {
-        dayLabel = t("dashboard.widgets.tomorrow", "Ngày mai");
+        dayLabel = t("dashboard.widgets.tomorrow", "Tomorrow");
       } else if (diffDays === 0) {
-        dayLabel = t("dashboard.widgets.today", "Hôm nay");
+        dayLabel = t("dashboard.widgets.today", "Today");
       }
 
       const hrsValue = Math.abs(diffHrs);
-      const aheadStr = t("dashboard.widgets.ahead", "nhanh hơn");
-      const behindStr = t("dashboard.widgets.behind", "chậm hơn");
+      const aheadStr = t("dashboard.widgets.ahead", "ahead");
+      const behindStr = t("dashboard.widgets.behind", "behind");
       const isEnglish = i18n.language?.startsWith("en");
 
       const timeLabel =

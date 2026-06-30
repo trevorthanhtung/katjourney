@@ -18,38 +18,38 @@ export const checklistSections: import("../db").ChecklistSection[] = [
   "After Trip",
 ];
 export const sectionLabels: Record<import("../db").ChecklistSection, string> = {
-  "Before Trip": "Trước chuyến đi",
-  "During Trip": "Trong chuyến đi",
-  "After Trip": "Sau chuyến đi",
+  "Before Trip": i18n.t("common.beforeTrip", "Before Trip"),
+  "During Trip": i18n.t("common.duringTrip", "During Trip"),
+  "After Trip": i18n.t("common.afterTrip", "After Trip"),
 };
 export const expenseCategories = [
-  "Di chuyển",
-  "Vé máy bay",
-  "Ăn uống",
-  "Lưu trú",
-  "Vé tham quan",
-  "Mua sắm",
-  "Vui chơi & Giải trí",
-  "Chuẩn bị hành lý",
-  "Khác",
+  "transport",
+  "flight",
+  "food",
+  "accommodation",
+  "tickets",
+  "shopping",
+  "entertainment",
+  "packing",
+  "other",
 ];
 export const moods: JournalMood[] = ["very_bad", "bad", "okay", "good", "great"];
 export const moodLabels: Record<JournalMood, string> = {
-  very_bad: "Mệt",
-  bad: "Bất ngờ",
-  okay: "Bình yên",
-  good: "Vui",
-  great: "Hào hứng",
+  very_bad: i18n.t("journal.moodVeryBad", "Exhausted"),
+  bad: i18n.t("journal.moodBad", "Surprised"),
+  okay: i18n.t("journal.moodOkay", "Peaceful"),
+  good: i18n.t("journal.moodGood", "Happy"),
+  great: i18n.t("journal.moodGreat", "Excited"),
 };
 export const packingTripTypes: PackingTripType[] = [
-  "Biển",
-  "Núi",
-  "Thành phố",
-  "Camping",
-  "Gia đình",
+  "beach",
+  "mountain",
+  "city",
+  "camping",
+  "family",
 ];
 export const packingSuggestions: Record<PackingTripType, string[]> = {
-  Biển: [
+  beach: [
     "Đồ bơi",
     "Kem chống nắng",
     "Kính mát",
@@ -57,7 +57,7 @@ export const packingSuggestions: Record<PackingTripType, string[]> = {
     "Túi chống nước",
     "Khăn tắm nhanh khô",
   ],
-  Núi: [
+  mountain: [
     "Áo khoác nhẹ",
     "Giày trekking",
     "Bình nước",
@@ -65,7 +65,7 @@ export const packingSuggestions: Record<PackingTripType, string[]> = {
     "Đèn pin",
     "Băng cá nhân",
   ],
-  "Thành phố": [
+  city: [
     "Giày đi bộ",
     "Sạc dự phòng",
     "Túi đeo chéo",
@@ -73,8 +73,8 @@ export const packingSuggestions: Record<PackingTripType, string[]> = {
     "Thẻ/tiền mặt",
     "Danh sách quán muốn thử",
   ],
-  Camping: ["Lều", "Túi ngủ", "Đèn pin", "Bếp dã ngoại", "Dao đa năng", "Túi rác"],
-  "Gia đình": [
+  camping: ["Lều", "Túi ngủ", "Đèn pin", "Bếp dã ngoại", "Dao đa năng", "Túi rác"],
+  family: [
     "Giấy tờ tùy thân",
     "Thuốc cơ bản",
     "Đồ ăn nhẹ",

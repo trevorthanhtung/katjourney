@@ -3,12 +3,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Cancel01Icon, CheckmarkCircle02Icon, ChevronDownIcon } from "@hugeicons/core-free-icons";
-import {
-  WeatherForecast,
-  getWeatherIcon,
-  getWeatherText,
-  getWeatherGradient,
-} from "../../services/weatherService";
+import { getWeatherIcon, getWeatherText, getWeatherGradient } from "../../utils/weatherUI";
+import { WeatherForecast } from "../../services/weatherService";
 import {
   SunIcon,
   PartlyCloudyIcon,
@@ -21,8 +17,7 @@ import {
   WindIcon,
 } from "../../components/ui/WeatherIcons";
 import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
-import { useTemperatureUnit } from "../../hooks/useTemperatureUnit";
-import { useDistanceUnit } from "../../hooks/useDistanceUnit";
+import { usePreferences } from "../../hooks/usePreferences";
 
 interface WeatherDetailsModalProps {
   isOpen: boolean;
@@ -53,8 +48,7 @@ export function WeatherDetailsModal({
   const [animate, setAnimate] = useState(false);
   const [isDestDropdownOpen, setIsDestDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { formatTemp } = useTemperatureUnit();
-  const { formatSpeed, speedLabel } = useDistanceUnit();
+  const { formatTemp, formatSpeed, speedLabel } = usePreferences();
 
   useEffect(() => {
     if (isOpen) {
@@ -551,7 +545,7 @@ export function WeatherDetailsModal({
                 </h4>
 
                 <div className="flex overflow-x-auto gap-3 pb-2 pt-1 px-1 custom-scrollbar">
-                  {forecast.hourly.time?.map((timeStr, idx) => {
+                  {forecast.hourly.time?.map((timeStr: string, idx: number) => {
                     const hour = new Date(timeStr).getHours();
                     const temp = formatTemp(forecast.hourly?.temperature?.[idx] ?? 0);
                     const code = forecast.hourly?.weathercode?.[idx] ?? 0;
@@ -723,7 +717,7 @@ export function WeatherDetailsModal({
             onClick={onClose}
             className="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold rounded-xl transition-colors"
           >
-            {t("common.close", "Đóng")}
+            {t("common.close", "Close")}
           </button>
         </div>
       </div>,

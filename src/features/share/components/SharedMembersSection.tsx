@@ -82,10 +82,10 @@ import {
   sumBy,
   getSettlementSuggestions,
 } from "../../../utils/helpers";
-import { submitChangeRequest } from "../../../services/sharedTripRequestService";
+import { submitChangeRequest } from "../../../services/cloudShareService";
 import { showToast } from "../../../components/ui/ToastManager";
-import { uploadJournalImage, uploadDocumentImage } from "../../../services/storageService";
-import { getIdentity } from "../../../services/identityService";
+import { processLocalImage } from "../../../services/storageService";
+import { getIdentity } from "../../../utils/identityCache";
 import {
   getCurrentPosition,
   reverseGeocode,
@@ -106,24 +106,24 @@ import { fetchExchangeRates, ExchangeRate } from "../../../services/currencyServ
 const classNames = (...classes: any[]) => classes.filter(Boolean).join(" ");
 
 const CATEGORIES = [
-  "Giấy tờ",
-  "Quần áo",
-  "Đồ cá nhân",
-  "Thiết bị điện tử",
-  "Thuốc & y tế",
-  "Tiền & ví",
-  "Đồ ăn nhẹ",
-  "Khác",
+  "documents",
+  "clothing",
+  "personal",
+  "electronics",
+  "medical",
+  "money",
+  "snacks",
+  "other",
 ] as const;
 const CATEGORY_ICONS: Record<string, any> = {
-  "Giấy tờ": FileCheckIcon,
-  "Quần áo": ShirtIcon,
-  "Đồ cá nhân": Briefcase01Icon,
-  "Thiết bị điện tử": PlugIcon,
-  "Thuốc & y tế": PillIcon,
-  "Tiền & ví": Wallet01Icon,
-  "Đồ ăn nhẹ": Bread01Icon,
-  Khác: PackageIcon,
+  documents: FileCheckIcon,
+  clothing: ShirtIcon,
+  personal: Briefcase01Icon,
+  electronics: PlugIcon,
+  medical: PillIcon,
+  money: Wallet01Icon,
+  snacks: Bread01Icon,
+  other: PackageIcon,
 };
 
 interface LocalMember extends Member {
@@ -362,7 +362,7 @@ export function SharedMembersSection({
               {t("members.membersTitle")}
             </h3>
             <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
-              Danh sách thành viên tham gia hành trình
+              {t("share.membersDesc", "Danh sách thành viên tham gia hành trình")}
             </p>
           </div>
         </div>
@@ -492,7 +492,7 @@ export function SharedMembersSection({
                 .split(",")
                 .map((r) => r.trim())
                 .filter(Boolean);
-              if (roles.length === 0) roles.push("Người đồng hành");
+              if (roles.length === 0) roles.push(t("more.companion", "Người đồng hành"));
 
               return (
                 <div className="flex flex-wrap items-center gap-1.5 shrink-0">
@@ -644,7 +644,7 @@ export function SharedMembersSection({
                           </p>
                           {member.isGroupLeader && (
                             <span className="inline-flex items-center gap-1 rounded bg-teal-50 px-1.5 py-0.5 text-[10px] font-bold text-teal-600 border border-teal-100 dark:bg-teal-950/30 dark:border-teal-900/30 dark:text-teal-400 select-none">
-                              Đại diện
+                              {t("more.representative", "Đại diện")}
                             </span>
                           )}
                         </div>
@@ -654,7 +654,7 @@ export function SharedMembersSection({
                           <a
                             href={`tel:${member.phone}`}
                             className="inline-flex items-center gap-1.5 text-[13px] font-extrabold text-slate-500 hover:text-kat-teal dark:hover:text-kat-primary transition-colors leading-none"
-                            title={`Gọi ${member.name}`}
+                            title={`${t("more.call", "Gọi")} ${member.name}`}
                           >
                             <HugeiconsIcon
                               icon={CallIcon}

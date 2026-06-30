@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
-import { supabase } from '../lib/supabase';
-import { approveChangeRequest } from '../services/shareApprovalService';
-import { Trip } from '../db';
+import { useState, useEffect, useRef } from "react";
+import { supabase } from "../lib/supabase";
+import { approveChangeRequest } from "../services/cloudShareService";
+import { Trip } from "../db";
 
 const processingReqs = new Set<string>();
 
 export interface AppChangeRequest {
   id: string;
-  status: 'pending' | 'approved' | 'rejected' | 'auto_approved';
+  status: "pending" | "approved" | "rejected" | "auto_approved";
   section: string;
-  action: 'create' | 'update' | 'delete';
+  action: "create" | "update" | "delete";
   targetId?: string;
   before?: any;
   after?: any;
@@ -45,7 +45,9 @@ export function useShareChangeRequests(trip: Trip | undefined) {
       if (isCancelled) return;
 
       // Owner phải đã login Google — nếu chưa login thì không có quyền xem
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session?.user) {
         if (!isCancelled) {
           setActiveToken(null);
@@ -55,10 +57,10 @@ export function useShareChangeRequests(trip: Trip | undefined) {
       }
 
       const { data: list, error } = await supabase
-        .from('change_requests')
-        .select('*')
-        .eq('share_token', token)
-        .in('status', ['pending', 'auto_approved']);
+        .from("change_requests")
+        .select("*")
+        .eq("share_token", token)
+        .in("status", ["pending", "auto_approved"]);
 
       if (error || !list || isCancelled) return;
 
@@ -74,11 +76,11 @@ export function useShareChangeRequests(trip: Trip | undefined) {
         requesterName: r.requester_name,
         createdAt: r.created_at,
         reviewedAt: r.reviewed_at,
-        reviewedByUid: r.reviewed_by_uid
+        reviewedByUid: r.reviewed_by_uid,
       }));
 
       // Auto-process auto_approved requests
-      const autoReqs = mappedReqs.filter(r => r.status === 'auto_approved');
+      const autoReqs = mappedReqs.filter((r) => r.status === "auto_approved");
       autoReqs.forEach(async (req) => {
         if (processingReqs.has(req.id)) return;
         processingReqs.add(req.id);
@@ -94,13 +96,13 @@ export function useShareChangeRequests(trip: Trip | undefined) {
       });
 
       // Only show pending in UI
-      const pendingReqs = mappedReqs.filter(r => r.status === 'pending');
+      const pendingReqs = mappedReqs.filter((r) => r.status === "pending");
       pendingReqs.sort((a, b) => {
         const timeA = new Date(a.createdAt || 0).getTime();
         const timeB = new Date(b.createdAt || 0).getTime();
         return timeB - timeA;
       });
-      
+
       if (!isCancelled) {
         setPendingRequests(pendingReqs);
       }
@@ -110,9 +112,9 @@ export function useShareChangeRequests(trip: Trip | undefined) {
       try {
         // 1. Fetch parent share status
         const { data: shareData, error: shareError } = await supabase
-          .from('public_shares')
-          .select('token, revoked')
-          .eq('token', token)
+          .from("public_shares")
+          .select("token, revoked")
+          .eq("token", token)
           .maybeSingle();
 
         if (shareError || !shareData || shareData.revoked) {
@@ -126,30 +128,46 @@ export function useShareChangeRequests(trip: Trip | undefined) {
         if (isCancelled) return;
 
         setActiveToken(shareData.token);
-        
+
         // 2. Initial fetch and load
         await handleRequestsUpdate();
 
         // 3. Listen to realtime mutations on change requests and public shares
         console.log("[useShareChangeRequests] Subscribing to realtime channel for token:", token);
-        channel = supabase.channel(`share-requests-${token}`)
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'public_shares', filter: `token=eq.${token}` }, (payload) => {
-            const row = payload.new as any;
-            if (payload.eventType === 'DELETE' || !row || row.revoked) {
-              if (!isCancelled) {
-                setActiveToken(null);
-                setPendingRequests([]);
+        channel = supabase
+          .channel(`share-requests-${token}`)
+          .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "public_shares", filter: `token=eq.${token}` },
+            (payload) => {
+              const row = payload.new as any;
+              if (payload.eventType === "DELETE" || !row || row.revoked) {
+                if (!isCancelled) {
+                  setActiveToken(null);
+                  setPendingRequests([]);
+                }
               }
             }
-          })
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'change_requests', filter: `share_token=eq.${token}` }, (payload) => {
-            console.log("[useShareChangeRequests] Change request event triggered:", payload.eventType);
-            handleRequestsUpdate();
-          })
+          )
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "change_requests",
+              filter: `share_token=eq.${token}`,
+            },
+            (payload) => {
+              console.log(
+                "[useShareChangeRequests] Change request event triggered:",
+                payload.eventType
+              );
+              handleRequestsUpdate();
+            }
+          )
           .subscribe();
-
       } catch (err) {
-        console.error("Lỗi khởi tạo listener yêu cầu chỉnh sửa:", err);
+        console.error("Error initializing edit request listener:", err);
       }
     }
 

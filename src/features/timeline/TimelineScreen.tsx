@@ -760,15 +760,15 @@ export function TimelineScreen({
       await db.trips.update(trip.id!, { dayRoadmaps: currentRoadmaps });
       if (trip.shareToken) {
         try {
-          const { updateSharedTripRoadmaps } = await import("../../services/sharedTripEditService");
+          const { updateSharedTripRoadmaps } = await import("../../services/cloudShareService");
           await updateSharedTripRoadmaps(trip.shareToken, currentRoadmaps);
         } catch (shareErr) {
-          console.error("Lỗi khi đồng bộ lộ trình lên cloud:", shareErr);
+          console.error("Error syncing roadmap to cloud:", shareErr);
         }
       }
       setIsRoadmapFormOpen(false);
     } catch (err) {
-      console.error("Lỗi khi lưu lộ trình:", err);
+      console.error("Error saving roadmap:", err);
       alert(t("timeline.saveError"));
     }
   };
@@ -1198,7 +1198,7 @@ export function TimelineScreen({
                     {t("timeline.generalBackup")}
                   </h4>
                   <p className="text-[11px] text-slate-500/80 dark:text-slate-400 font-medium">
-                    {t("timeline.generalBackupDesc", "Áp dụng cho toàn bộ chuyến đi")}
+                    {t("timeline.generalBackupDesc", "Apply to whole trip")}
                   </p>
                 </div>
               </div>
@@ -1234,7 +1234,7 @@ export function TimelineScreen({
                         }}
                         className="text-[11px] font-bold text-kat-teal hover:underline whitespace-nowrap"
                       >
-                        {t("common.details", "Chi tiết")} &rarr;
+                        {t("common.details", "Details")} &rarr;
                       </button>
                     </div>
                   ))}
@@ -1250,7 +1250,7 @@ export function TimelineScreen({
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 text-indigo-600 dark:text-indigo-400 font-bold text-[13px] hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition-colors motion-press"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
-                {t("timeline.addTripBackupPlan", "Thêm phương án")}
+                {t("timeline.addTripBackupPlan", "Add alternative plan")}
               </button>
             )}
           </div>

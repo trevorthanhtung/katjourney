@@ -185,7 +185,7 @@ export function AtlasScreen({
               />
             </svg>
             <span className="text-sm font-semibold hidden sm:block">
-              {t("atlas.share.btn_share", "Chia sẻ")}
+              {t("atlas.share.btn_share")}
             </span>
           </button>
 
@@ -247,14 +247,14 @@ export function AtlasScreen({
                   <span className="text-white font-medium tracking-wide">
                     {visitedCountries.length}{" "}
                     <span className="text-white/60 text-[10px] uppercase tracking-[0.2em]">
-                      {t("dashboard.stats.countries", "Quốc gia")}
+                      {t("dashboard.stats.countries")}
                     </span>
                   </span>
                   <div className="w-1 h-1 rounded-full bg-white/30"></div>
                   <span className="text-white font-medium tracking-wide">
                     {propsTotalTrips}{" "}
                     <span className="text-white/60 text-[10px] uppercase tracking-[0.2em]">
-                      {t("atlas.stats.trips", "Chuyến đi")}
+                      {t("atlas.stats.trips")}
                     </span>
                   </span>
                 </div>
@@ -303,14 +303,14 @@ export function AtlasScreen({
                     <div className="flex items-center gap-2 mb-1.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]"></div>
                       <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/60">
-                        {t("dashboard.stats.countries", "Quốc gia")}
+                        {t("dashboard.stats.countries")}
                       </span>
                     </div>
                     <span className="text-[11px] font-medium text-sky-400/90 tracking-wider">
                       <span className="font-bold text-sky-300">
                         {((visitedCountries.length / 195) * 100).toFixed(1)}%
                       </span>{" "}
-                      {t("dashboard.stats.world", "Thế giới")}
+                      {t("dashboard.stats.world")}
                     </span>
                   </div>
 
@@ -341,10 +341,10 @@ export function AtlasScreen({
                 {/* Number Grid Cards (2x2 Bento) */}
                 <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-2 sm:gap-3 z-10 min-w-[200px]">
                   {[
-                    { label: t("atlas.stats.trips", "Chuyến đi"), value: propsTotalTrips },
-                    { label: t("atlas.stats.places", "Địa điểm"), value: totalPlaces },
-                    { label: t("atlas.stats.cities", "Thành phố"), value: totalCities },
-                    { label: t("atlas.stats.days", "Ngày"), value: totalDays },
+                    { label: t("atlas.stats.trips"), value: propsTotalTrips },
+                    { label: t("atlas.stats.places"), value: totalPlaces },
+                    { label: t("atlas.stats.cities"), value: totalCities },
+                    { label: t("atlas.stats.days"), value: totalDays },
                   ].map((stat, i) => (
                     <div
                       key={i}
@@ -368,7 +368,7 @@ export function AtlasScreen({
 
                   <div className="relative z-10 flex flex-col">
                     <span className="text-[10px] font-black uppercase tracking-[0.25em] text-sky-200/60 mb-1.5">
-                      {t("atlas.stats.lastTrip", "Chuyến đi cuối")}
+                      {t("atlas.stats.lastTrip")}
                     </span>
                     <span className="text-base md:text-lg font-bold text-white tracking-wide truncate max-w-full drop-shadow-md leading-tight">
                       {translatedLastTrip}
@@ -377,7 +377,7 @@ export function AtlasScreen({
 
                   <div className="relative z-10 flex items-end justify-between mt-6">
                     <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-sky-200/60 mb-2">
-                      {t("atlas.stats.tripsIn", "Năm")} {new Date().getFullYear()}
+                      {t("atlas.stats.tripsIn")} {new Date().getFullYear()}
                     </span>
                     <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-sky-200 to-sky-500 tabular-nums drop-shadow-[0_0_20px_rgba(56,189,248,0.5)] leading-[0.8]">
                       {currentYearTrips}
@@ -410,7 +410,7 @@ export function AtlasScreen({
                     {tooltip.trips}
                   </span>
                   <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-100/60">
-                    {t("atlas.stats.trips", "Trips")}
+                    {t("atlas.stats.trips")}
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
@@ -418,7 +418,7 @@ export function AtlasScreen({
                     {tooltip.places}
                   </span>
                   <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-100/60">
-                    {t("atlas.stats.places", "Places")}
+                    {t("atlas.stats.places")}
                   </span>
                 </div>
 
@@ -426,7 +426,7 @@ export function AtlasScreen({
 
                 <div className="flex flex-col items-center">
                   <span className="text-[8px] font-bold uppercase tracking-[0.25em] text-cyan-100/40 mb-1">
-                    {t("atlas.stats.first", "First")}
+                    {t("atlas.stats.first")}
                   </span>
                   <span className="text-xs font-black text-white/90 tabular-nums tracking-wider">
                     {tooltip.firstTrip}
@@ -434,7 +434,7 @@ export function AtlasScreen({
                 </div>
                 <div className="flex flex-col items-center">
                   <span className="text-[8px] font-bold uppercase tracking-[0.25em] text-cyan-100/40 mb-1">
-                    {t("atlas.stats.latest", "Latest")}
+                    {t("atlas.stats.latest")}
                   </span>
                   <span className="text-xs font-black text-white/90 tabular-nums tracking-wider">
                     {tooltip.lastTrip}

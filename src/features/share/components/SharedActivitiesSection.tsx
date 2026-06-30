@@ -1,3 +1,4 @@
+import i18n from "../../../i18n";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -29,7 +30,7 @@ import { createPortal } from "react-dom";
 import { EventItem, Member, Expense, BackupPlan, Trip } from "../../../db";
 import { classNames, formatDate, daysBetween } from "../../../utils/helpers";
 import { getEmbedMapUrl, ensureAbsoluteUrl, getMapFilterClass } from "../../../utils/mapUtils";
-import { submitChangeRequest } from "../../../services/sharedTripRequestService";
+import { submitChangeRequest } from "../../../services/cloudShareService";
 import { showToast } from "../../../components/ui/ToastManager";
 import {
   BottomSheet,
@@ -48,7 +49,7 @@ import { ActivityTimelineItem } from "./ActivityTimelineItem";
 const ACTIVITY_CATEGORIES = [
   {
     id: "transport",
-    label: "Di chuyển",
+    label: "transport",
     icon: Route01Icon,
     bgColor:
       "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/30",
@@ -57,7 +58,7 @@ const ACTIVITY_CATEGORIES = [
   },
   {
     id: "dining",
-    label: "Ăn uống",
+    label: "food",
     icon: Dish01Icon,
     bgColor:
       "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30",
@@ -75,7 +76,7 @@ const ACTIVITY_CATEGORIES = [
   },
   {
     id: "accommodation",
-    label: "Lưu trú",
+    label: "accommodation",
     icon: HotelIcon,
     bgColor:
       "bg-slate-100 dark:bg-slate-800 text-kat-dark dark:text-slate-200 border-slate-200 dark:border-slate-700/50",
@@ -84,7 +85,7 @@ const ACTIVITY_CATEGORIES = [
   },
   {
     id: "relaxation",
-    label: "Nghỉ ngơi",
+    label: i18n.t("timeline.typeRest", "Rest"),
     icon: Coffee01Icon,
     bgColor:
       "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30",
@@ -93,7 +94,7 @@ const ACTIVITY_CATEGORIES = [
   },
   {
     id: "shopping",
-    label: "Mua sắm",
+    label: "shopping",
     icon: ShoppingBag01Icon,
     bgColor:
       "bg-purple-50 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400 border-purple-100 dark:border-purple-900/30",
@@ -102,7 +103,7 @@ const ACTIVITY_CATEGORIES = [
   },
   {
     id: "other",
-    label: "Khác",
+    label: "other",
     icon: MoreHorizontalCircle01Icon,
     bgColor:
       "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-100 dark:border-slate-700/40",
@@ -496,7 +497,10 @@ export function SharedActivitiesSection({
                 {t("share.detailedSchedule")}
               </h3>
               <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
-                Xem lộ trình hành trình và các địa điểm tham quan chi tiết
+                {t(
+                  "share.activitiesDesc",
+                  "Xem lộ trình hành trình và các địa điểm tham quan chi tiết"
+                )}
               </p>
             </div>
           </div>
@@ -599,7 +603,7 @@ export function SharedActivitiesSection({
                               icon={Location01Icon}
                               className="w-3 h-3 text-emerald-600 dark:text-emerald-400"
                             />
-                            <span>Bản đồ</span>
+                            <span>{t("share.map", "Bản đồ")}</span>
                           </a>
                         )}
                       </div>
@@ -641,7 +645,7 @@ export function SharedActivitiesSection({
                               }}
                               className="text-[12.5px] font-extrabold text-[#00A19D] hover:underline cursor-pointer active:scale-95 transition-transform"
                             >
-                              + Đề xuất thêm
+                              {t("share.suggestMore", "+ Đề xuất thêm")}
                             </button>
                           )}
                         </div>
@@ -916,7 +920,7 @@ export function SharedActivitiesSection({
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 bg-emerald-50 dark:bg-emerald-950/20 px-2.5 py-1.5 rounded-lg border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors"
                 >
                   <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />
-                  Mở link kiểm tra &rarr;
+                  {t("share.openLink", "Mở link kiểm tra")} &rarr;
                 </a>
               </div>
             )}
@@ -978,8 +982,8 @@ export function SharedActivitiesSection({
       >
         <div className="space-y-4">
           <p className="text-[13.5px] font-semibold text-slate-500 pb-1">
-            Chọn một ngày cụ thể dưới đây để lọc xem chi tiết hoạt động hoặc chọn "
-            {t("share.allDays")}".
+            t("share.filterDayDesc", "Chọn một ngày cụ thể dưới đây để lọc xem chi tiết hoạt động
+            hoặc chọn") "{t("share.allDays")}".
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[60vh] overflow-y-auto pr-1 scrollbar-none pb-4">
@@ -1005,7 +1009,7 @@ export function SharedActivitiesSection({
                     : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
                 )}
               >
-                {mergedActivities.length} mục
+                {t("share.itemsCount", "{{count}} mục", { count: mergedActivities.length })}
               </span>
             </button>
 
@@ -1027,7 +1031,9 @@ export function SharedActivitiesSection({
                       : "bg-white dark:bg-kat-surface border-slate-200 dark:border-kat-border text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/40"
                   )}
                 >
-                  <span className="text-[13.5px] font-extrabold">Ngày {idx + 1}</span>
+                  <span className="text-[13.5px] font-extrabold">
+                    {t("share.dayX", "Ngày {{day}}", { day: idx + 1 })}
+                  </span>
                   <span
                     className={classNames(
                       "text-[10.5px] font-medium mt-0.5",

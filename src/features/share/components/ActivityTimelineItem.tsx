@@ -1,3 +1,4 @@
+import i18n from "../../../i18n";
 import React from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -223,7 +224,9 @@ export function ActivityTimelineItem({
             {getEmbedMapUrl(item.mapLink || item.location || "", item.location) && (
               <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm bg-slate-100 relative min-h-[160px]">
                 <div className="absolute inset-0 flex items-center justify-center text-slate-400">
-                  <span className="text-[12px] font-medium animate-pulse">Đang tải bản đồ...</span>
+                  <span className="text-[12px] font-medium animate-pulse">
+                    {i18n.t("common.loadingMap", "Loading map...")}
+                  </span>
                 </div>
                 <iframe
                   title="Google Maps Embed"

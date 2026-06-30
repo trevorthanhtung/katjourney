@@ -1,0 +1,2112 @@
+
+================== src/services\authService.ts ==================
+import i18n from "../i18n";
+import { supabase } from "../lib/supabase";
+
+export interface User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  isAnonymous: boolean;
+  providerData: { providerId: string }[];
+}
+
+/**
+ * Maps a Supabase Auth User object to the custom KatUser interface.
+ */
+export function mapSupabaseUser(sbUser: any): User | null {
+  if (!sbUser) return null;
+
+  const isAnonymous =
+    sbUser.is_anonymous ||
+    !sbUser.app_metadata?.provider ||
+    sbUser.app_metadata?.provider === "anonymous";
+
+  const isGoogle =
+    sbUser.app_metadata?.provider === "google" ||
+    sbUser.identities?.some((id: any) => id.provider === "google");
+
+  return {
+    uid: sbUser.id,
+    email: sbUser.email || null,
+    displayName:
+      sbUser.user_metadata?.full_name ||
+      sbUser.user_metadata?.name ||
+      sbUser.email?.split("@")[0] ||
+      i18n.t("auth.guest", "Guest"),
+    photoURL: sbUser.user_metadata?.avatar_url || null,
+    isAnonymous: isAnonymous,
+    providerData: isGoogle ? [{ providerId: "google.com" }] : [],
+  };
+}
+
+/**
+ * Maps Supabase authentication errors to user-friendly Vietnamese messages.
+ */
+export function getFriendlyAuthErrorMessage(error: any): string {
+  if (!error) return i18n.t("auth.errorUnknown", "An unknown error occurred.");
+  if (typeof error === "string") return error;
+
+  const message = error.message || "";
+  const status = error.status;
+
+  if (message.includes("Invalid login credentials") || message.includes("invalid_credentials")) {
+    return i18n.t("auth.errorInvalidCredentials", "Invalid credentials, please try again.");
+  }
+  if (message.includes("Email already in use") || message.includes("User already exists")) {
+    return i18n.t("auth.errorEmailInUse", "This email is already in use.");
+  }
+  if (
+    message.includes("Password should be") ||
+    message.includes("Signup requires a valid password")
+  ) {
+    return i18n.t("auth.errorWeakPassword", "Password too weak. Must be at least 6 characters.");
+  }
+  if (message.includes("identity_already_exists") || message.includes("already linked")) {
+    return i18n.t("auth.errorGoogleLinked", "This Google account is already linked to another account.");
+  }
+  if (status === 429 || message.includes("too many requests")) {
+    return i18n.t("auth.errorTooManyRequests", "Too many requests. Please try again later.");
+  }
+
+  return message || i18n.t("auth.errorGeneral", "An authentication error occurred.");
+}
+
+/**
+ * Signs in anonymously as a Guest.
+ */
+export async function signInAsGuest(): Promise<User> {
+  try {
+    const { data, error } = await supabase.auth.signInAnonymously();
+    if (error) throw error;
+    if (!data.user) throw new Error(i18n.t("auth.errorAnonymousFailed", "Anonymous sign-in failed."));
+    return mapSupabaseUser(data.user)!;
+  } catch (error: any) {
+    console.error("[AuthService] signInAsGuest error:", error);
+    throw new Error(getFriendlyAuthErrorMessage(error));
+  }
+}
+
+/**
+ * Signs in using Google OAuth with optional account linking for guest sessions.
+ */
+export async function signInWithGoogle(): Promise<User> {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    const currentUser = session?.user;
+
+    if (currentUser && currentUser.is_anonymous) {
+      console.log("[AuthService] Linking anonymous guest to Google account...", currentUser.id);
+
+      const { data, error } = await supabase.auth.linkIdentity({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+
+      if (error) {
+        // If Google account is already in use by another user record
+        if (
+          error.message.includes("identity_already_exists") ||
+          error.message.includes("already linked")
+        ) {
+          console.log("[AuthService] Google account already linked, signing in directly...");
+          const { error: oAuthError } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+              redirectTo: window.location.origin,
+              queryParams: { prompt: "select_account" },
+            },
+          });
+          if (oAuthError) throw oAuthError;
+          return null as any;
+        }
+        throw error;
+      }
+      return null as any;
+    } else {
+      console.log("[AuthService] Initiating standard Google Sign-In...");
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin,
+          queryParams: { prompt: "select_account" },
+        },
+      });
+      if (error) throw error;
+      return null as any;
+    }
+  } catch (error: any) {
+    console.error("[AuthService] signInWithGoogle error:", error);
+    throw new Error(getFriendlyAuthErrorMessage(error));
+  }
+}
+
+/**
+ * Signs out the user. If they are anonymous, deletes their guest account.
+ */
+export async function signOutUser(): Promise<void> {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    const currentUser = session?.user;
+
+    if (currentUser && currentUser.is_anonymous) {
+      console.log("[AuthService] Deleting anonymous user to clean up database...");
+      try {
+        await deleteCurrentUser();
+      } catch (delErr) {
+        console.warn("[AuthService] Self deletion failed, signing out:", delErr);
+        await supabase.auth.signOut();
+      }
+    } else {
+      await supabase.auth.signOut();
+      console.log("[AuthService] User signed out successfully.");
+    }
+  } catch (error: any) {
+    console.error("[AuthService] signOutUser error:", error);
+    throw new Error(getFriendlyAuthErrorMessage(error));
+  }
+}
+
+/**
+ * Updates the display name of the user.
+ */
+export async function updateUserDisplayName(name: string): Promise<void> {
+  try {
+    const { error } = await supabase.auth.updateUser({
+      data: {
+        full_name: name,
+      },
+    });
+    if (error) throw error;
+    console.log("[AuthService] Display name updated successfully:", name);
+  } catch (error: any) {
+    console.error("[AuthService] updateUserDisplayName error:", error);
+    throw new Error(getFriendlyAuthErrorMessage(error));
+  }
+}
+
+/**
+ * Gets the current logged in user.
+ */
+export async function getCurrentUser(): Promise<User | null> {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return mapSupabaseUser(session?.user);
+  } catch (error) {
+    console.error("[AuthService] getCurrentUser error:", error);
+    return null;
+  }
+}
+
+/**
+ * Observes active authentication state changes.
+ */
+export function observeAuthState(callback: (user: User | null) => void): () => void {
+  // Fire initial state
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    callback(mapSupabaseUser(session?.user));
+  });
+
+  // Listen to changes
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((event, session) => {
+    console.log(`[AuthService] Auth State Changed: ${event}`);
+    callback(mapSupabaseUser(session?.user));
+  });
+
+  return () => {
+    subscription.unsubscribe();
+  };
+}
+
+/**
+ * Registers a new account using Email and Password.
+ */
+export async function signUpWithEmailAndPassword(
+  email: string,
+  password: string,
+  fullName: string
+): Promise<User> {
+  try {
+    console.log("[AuthService] Registering user with email/password...");
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    });
+    if (error) throw error;
+    if (!data.user) throw new Error(i18n.t("auth.errorSignupFailed", "Sign up failed."));
+    return mapSupabaseUser(data.user)!;
+  } catch (error: any) {
+    console.error("[AuthService] signUpWithEmailAndPassword error:", error);
+    throw new Error(getFriendlyAuthErrorMessage(error));
+  }
+}
+
+/**
+ * Signs in using Email and Password.
+ */
+export async function signInWithEmailAndPassword(email: string, password: string): Promise<User> {
+  try {
+    console.log("[AuthService] Logging in user with email/password...");
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+    if (!data.user) throw new Error(i18n.t("auth.errorSigninFailed", "Sign in failed."));
+    return mapSupabaseUser(data.user)!;
+  } catch (error: any) {
+    console.error("[AuthService] signInWithEmailAndPassword error:", error);
+    throw new Error(getFriendlyAuthErrorMessage(error));
+  }
+}
+
+/**
+ * Deletes the current user via secure database RPC function.
+ */
+export async function deleteCurrentUser(): Promise<void> {
+  console.log("[AuthService] Attempting to delete current user...");
+  const { error } = await supabase.rpc("delete_user");
+  if (error) {
+    console.error("[AuthService] RPC delete_user failed, signing out as fallback:", error);
+    await supabase.auth.signOut();
+  } else {
+    await supabase.auth.signOut();
+  }
+}
+
+/**
+ * Ensures an anonymous user session is active.
+ */
+export async function ensureAnonymousUser(): Promise<any> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (session?.user) return session.user;
+  const { data, error } = await supabase.auth.signInAnonymously();
+  if (error) throw error;
+  return data.user;
+}
+
+================== src/services\chatService.ts ==================
+import i18n from "../i18n";
+import { supabase } from '../lib/supabase';
+import { UserIdentity } from './identityService';
+
+export interface ChatMessage {
+  id: string;
+  text: string;
+  senderId: string;
+  senderName: string;
+  senderRole?: string;
+  senderAvatar?: string;
+  createdAt: string;
+}
+
+export async function sendMessage(
+  token: string,
+  text: string,
+  identity: UserIdentity,
+  avatar?: string
+) {
+  // Guest cần session (anonymous) để RLS cho phép INSERT
+  const { data: { session } } = await supabase.auth.getSession();
+  let user = session?.user;
+  if (!user) {
+    // Thử đăng nhập ẩn danh nếu chưa có session
+    const { data: anonData, error: anonErr } = await supabase.auth.signInAnonymously();
+    if (anonErr || !anonData?.user) {
+      throw new Error(i18n.t("chat.errorLoginRequired", "Please sign in or open a valid share link before chatting."));
+    }
+    user = anonData.user;
+  }
+
+  const { error } = await supabase
+    .from('messages')
+    .insert({
+      share_token: token,
+      text: text.trim(),
+      sender_id: user.id,
+      sender_name: identity.name,
+      sender_role: identity.role || (identity.canEdit ? i18n.t("roles.member", "Member") : i18n.t("auth.guest", "Guest")),
+      sender_avatar: avatar || null
+    });
+
+  if (error) {
+    throw new Error(i18n.t("chat.errorSendFailed", "Cannot send message: ") +  + error.message);
+  }
+}
+
+export async function subscribeToMessages(
+  token: string,
+  onUpdate: (messages: ChatMessage[]) => void,
+  onError?: (error: any) => void
+) {
+  // 1. Fetch initial 100 messages
+  const { data: initialData, error: fetchError } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('share_token', token)
+    .order('created_at', { ascending: true })
+    .limit(100);
+
+  if (fetchError) {
+    console.error("Error loading initial messages:", fetchError);
+    if (onError) onError(fetchError);
+    return () => {};
+  }
+
+  let currentMessages: ChatMessage[] = (initialData || []).map((d: any) => ({
+    id: d.id,
+    text: d.text,
+    senderId: d.sender_id,
+    senderName: d.sender_name,
+    senderRole: d.sender_role,
+    senderAvatar: d.sender_avatar,
+    createdAt: d.created_at
+  }));
+
+  onUpdate(currentMessages);
+
+  // 2. Subscribe to realtime inserts
+  const channel = supabase
+    .channel(`messages-${token}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `share_token=eq.${token}`
+      },
+      (payload) => {
+        const newItem = payload.new as any;
+        if (!newItem) return;
+
+        const mapped: ChatMessage = {
+          id: newItem.id,
+          text: newItem.text,
+          senderId: newItem.sender_id,
+          senderName: newItem.sender_name,
+          senderRole: newItem.sender_role,
+          senderAvatar: newItem.sender_avatar,
+          createdAt: newItem.created_at
+        };
+
+        // Check if message already exists in list (avoid duplicate rendering)
+        if (!currentMessages.some(m => m.id === mapped.id)) {
+          currentMessages = [...currentMessages, mapped];
+          onUpdate(currentMessages);
+        }
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}
+
+================== src/services\cloudBackupService.ts ==================
+import i18n from "../i18n";
+import { supabase } from "../lib/supabase";
+import { db } from "../db";
+import { APP_VERSION } from "../utils/helpers";
+
+export interface BackupInfo {
+  updatedAt: string;
+  appVersion: string;
+}
+
+/**
+ * Deep-clones and removes `undefined` properties from an object/array,
+ * which standard JSON/Postgres does not support.
+ */
+function sanitizeData<T>(data: T): T {
+  return JSON.parse(JSON.stringify(data));
+}
+
+type SyncRecord = { id?: number; updatedAt?: string; isDeleted?: boolean; [key: string]: unknown };
+
+function mergeCollections(
+  localData: SyncRecord[],
+  cloudData: SyncRecord[]
+): { toAddOrUpdate: SyncRecord[] } {
+  const localMap = new Map<number, SyncRecord>();
+  localData.forEach(item => {
+    if (item.id !== undefined) localMap.set(item.id, item);
+  });
+
+  const cloudMap = new Map<number, SyncRecord>();
+  cloudData.forEach(item => {
+    if (item.id !== undefined) cloudMap.set(item.id, item);
+  });
+
+  const toAddOrUpdate: SyncRecord[] = [];
+  const allIds = new Set<number>([...localMap.keys(), ...cloudMap.keys()]);
+
+  allIds.forEach(id => {
+    const localRec = localMap.get(id);
+    const cloudRec = cloudMap.get(id);
+
+    if (!localRec && cloudRec) {
+      // Only in cloud
+      toAddOrUpdate.push(cloudRec);
+    } else if (localRec && cloudRec) {
+      // Conflict: compare updatedAt
+      const localTime = new Date(localRec.updatedAt || 0).getTime();
+      const cloudTime = new Date(cloudRec.updatedAt || 0).getTime();
+
+      if (cloudTime > localTime) {
+        toAddOrUpdate.push(cloudRec);
+      }
+    }
+  });
+
+  return { toAddOrUpdate };
+}
+
+/**
+ * Backup all local Dexie data to Supabase.
+ */
+export async function backupToCloud(): Promise<void> {
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+
+  if (!user) {
+    throw new Error(i18n.t("sync.errorLoginRequired", "Please sign in to back up."));
+  }
+
+  // 0. Garbage collect old tombstones (older than 30 days) from local Dexie database
+  try {
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const dbTables = [
+      db.trips,
+      db.members,
+      db.events,
+      db.expenses,
+      db.checklist,
+      db.journals,
+      db.packingItems,
+      db.travelDocuments,
+      db.backupPlans
+    ];
+    for (const table of dbTables) {
+      await table.filter(item => 
+        item.isDeleted === true && 
+        (item.updatedAt || "") < thirtyDaysAgo
+      ).delete();
+    }
+    console.log("[GarbageCollection] Successfully purged tombstones older than 30 days.");
+  } catch (gcErr) {
+    console.error("[GarbageCollection] Failed to purge old tombstones:", gcErr);
+  }
+
+  // 1. Fetch all local data from Dexie
+  const [
+    trips,
+    members,
+    events,
+    expenses,
+    checklist,
+    journals,
+    packingItems,
+    travelDocuments,
+    backupPlans
+  ] = await Promise.all([
+    db.trips.toArray(),
+    db.members.toArray(),
+    db.events.toArray(),
+    db.expenses.toArray(),
+    db.checklist.toArray(),
+    db.journals.toArray(),
+    db.packingItems.toArray(),
+    db.travelDocuments.toArray(),
+    db.backupPlans.toArray()
+  ]);
+
+  // 2. Prepare the snapshot
+  const backupTime = new Date().toISOString();
+  const snapshot = {
+    updatedAt: backupTime,
+    appVersion: APP_VERSION, // matches version in package.json
+    trips: sanitizeData(trips),
+    members: sanitizeData(members),
+    events: sanitizeData(events),
+    expenses: sanitizeData(expenses),
+    checklist: sanitizeData(checklist),
+    journals: sanitizeData(journals),
+    packingItems: sanitizeData(packingItems),
+    travelDocuments: sanitizeData(travelDocuments),
+    backupPlans: sanitizeData(backupPlans)
+  };
+
+  // 3. Save backup snapshot in Supabase
+  const { error } = await supabase
+    .from("user_backups")
+    .upsert({
+      user_id: user.id,
+      data: snapshot,
+      app_version: APP_VERSION,
+      updated_at: backupTime
+    });
+
+  if (error) {
+    throw new Error(i18n.t("sync.errorBackupFailed", "Backup error: ") +  + error.message);
+  }
+
+  // Update local timestamp so it matches the cloud backup timestamp exactly
+  if (typeof localStorage !== "undefined") {
+    localStorage.setItem("kat_journey_local_updated_at", backupTime);
+  }
+}
+
+/**
+ * Fetch metadata of the latest backup from Supabase.
+ */
+export async function getLastBackupInfo(): Promise<BackupInfo | null> {
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from("user_backups")
+    .select("updated_at, app_version")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (error || !data) return null;
+
+  return {
+    updatedAt: data.updated_at || "",
+    appVersion: data.app_version || "1.0.0"
+  };
+}
+
+/**
+ * Restore data from cloud using either 'merge' or 'replace' mode.
+ */
+export async function restoreFromCloud(mode: "merge" | "replace"): Promise<void> {
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+
+  if (!user) {
+    throw new Error(i18n.t("sync.errorLoginToRestore", "Please sign in to restore."));
+  }
+
+  const { data, error } = await supabase
+    .from("user_backups")
+    .select("data")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (error || !data || !data.data) {
+    throw new Error(i18n.t("sync.errorNoBackup", "No cloud backup found."));
+  }
+
+  const snapshot = data.data as any;
+
+  if (typeof localStorage !== "undefined") {
+    localStorage.setItem("kat_sync_in_progress", "true");
+  }
+
+  try {
+    if (mode === "replace") {
+      // Overwrite local first-party source of truth
+      await db.transaction("rw", [
+        db.trips,
+        db.members,
+        db.events,
+        db.expenses,
+        db.checklist,
+        db.journals,
+        db.packingItems,
+        db.travelDocuments,
+        db.backupPlans
+      ], async () => {
+        // Clear tables
+        await Promise.all([
+          db.trips.clear(),
+          db.members.clear(),
+          db.events.clear(),
+          db.expenses.clear(),
+          db.checklist.clear(),
+          db.journals.clear(),
+          db.packingItems.clear(),
+          db.travelDocuments.clear(),
+          db.backupPlans.clear()
+        ]);
+
+        // Populate with backup data
+        if (snapshot.trips && snapshot.trips.length > 0) await db.trips.bulkAdd(snapshot.trips);
+        if (snapshot.members && snapshot.members.length > 0) await db.members.bulkAdd(snapshot.members);
+        if (snapshot.events && snapshot.events.length > 0) await db.events.bulkAdd(snapshot.events);
+        if (snapshot.expenses && snapshot.expenses.length > 0) await db.expenses.bulkAdd(snapshot.expenses);
+        if (snapshot.checklist && snapshot.checklist.length > 0) await db.checklist.bulkAdd(snapshot.checklist);
+        if (snapshot.journals && snapshot.journals.length > 0) await db.journals.bulkAdd(snapshot.journals);
+        if (snapshot.packingItems && snapshot.packingItems.length > 0) await db.packingItems.bulkAdd(snapshot.packingItems);
+        if (snapshot.travelDocuments && snapshot.travelDocuments.length > 0) await db.travelDocuments.bulkAdd(snapshot.travelDocuments);
+        if (snapshot.backupPlans && snapshot.backupPlans.length > 0) await db.backupPlans.bulkAdd(snapshot.backupPlans);
+      });
+    } else if (mode === "merge") {
+      // Collision-free row-by-row merge based on updatedAt (Last Write Wins)
+      await db.transaction("rw", [
+        db.trips,
+        db.members,
+        db.events,
+        db.expenses,
+        db.checklist,
+        db.journals,
+        db.packingItems,
+        db.travelDocuments,
+        db.backupPlans
+      ], async () => {
+        const tables = [
+          { table: db.trips, data: snapshot.trips || [] },
+          { table: db.members, data: snapshot.members || [] },
+          { table: db.events, data: snapshot.events || [] },
+          { table: db.expenses, data: snapshot.expenses || [] },
+          { table: db.checklist, data: snapshot.checklist || [] },
+          { table: db.journals, data: snapshot.journals || [] },
+          { table: db.packingItems, data: snapshot.packingItems || [] },
+          { table: db.travelDocuments, data: snapshot.travelDocuments || [] },
+          { table: db.backupPlans, data: snapshot.backupPlans || [] }
+        ];
+
+        for (const t of tables) {
+          const localData = await (t.table as unknown as { toArray(): Promise<SyncRecord[]> }).toArray();
+          const { toAddOrUpdate } = mergeCollections(localData, t.data as SyncRecord[]);
+
+          for (const item of toAddOrUpdate) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (t.table as any).put(item);
+          }
+        }
+      });
+
+      // Auto backup in background to update cloud with merged results
+      try {
+        console.log("[SmartMerge] Triggering post-merge background backup...");
+        await backupToCloud();
+        return; // Fix infinite sync loop: backupToCloud already updated kat_journey_local_updated_at, skip reverting it
+      } catch (backupErr) {
+        console.error("[SmartMerge] Post-merge backup failed:", backupErr);
+      }
+    }
+
+    // After successful restore, update local metadata timestamp to match the cloud backup time
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("kat_journey_local_updated_at", snapshot.updatedAt || new Date().toISOString());
+    }
+  } finally {
+    if (typeof localStorage !== "undefined") {
+      localStorage.removeItem("kat_sync_in_progress");
+    }
+  }
+}
+
+================== src/services\cloudShareService.ts ==================
+import i18n from "../i18n";
+import { supabase } from "../lib/supabase";
+import { db as localDb } from "../db";
+import { decryptObject } from "../lib/crypto";
+
+export interface ShareOptions {
+  mode: "view" | "edit" | "request_edit";
+  includeExpenses: boolean;
+  includeJournals: boolean;
+  includeChecklist: boolean;
+  includeBackupPlans: boolean;
+  includeDocuments: boolean;
+  sharePin?: string;
+}
+
+/**
+ * Ensures Supabase is initialized.
+ */
+export async function ensureCloudShareReady() {
+  if (!supabase) {
+    throw new Error("Supabase client is not initialized.");
+  }
+}
+
+/**
+ * Creates a share link for a given trip.
+ * Generates a public snapshot in Supabase under `public_shares` and sub-tables.
+ */
+export async function createShareLink(
+  tripId: number,
+  options: ShareOptions
+): Promise<{ token: string; url: string }> {
+  await ensureCloudShareReady();
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) {
+    throw new Error(i18n.t("share.errorLoginRequired", "Please sign in before sharing."));
+  }
+
+  // 1. Fetch trip data from local Dexie and decrypt
+  const tripRaw = await localDb.trips.get(tripId);
+  if (!tripRaw) throw new Error(i18n.t("share.errorTripNotFound", "Local trip not found."));
+  const trip = decryptObject(tripRaw);
+
+  const membersRaw = await localDb.members.where("tripId").equals(tripId).toArray();
+  const members = membersRaw.map((m) => decryptObject(m));
+
+  const activitiesRaw = await localDb.events.where("tripId").equals(tripId).toArray();
+  const activities = activitiesRaw.map((a) => decryptObject(a));
+
+  // Conditionally fetch optional data
+  const expensesRaw = options.includeExpenses
+    ? await localDb.expenses.where("tripId").equals(tripId).toArray()
+    : [];
+  const expenses = expensesRaw.map((e) => decryptObject(e));
+
+  const checklistRaw = options.includeChecklist
+    ? await localDb.checklist.where("tripId").equals(tripId).toArray()
+    : [];
+  const checklist = checklistRaw.filter((c) => !c.isPrivate).map((c) => decryptObject(c));
+
+  const journalsRaw = options.includeJournals
+    ? await localDb.journals.where("tripId").equals(tripId).toArray()
+    : [];
+  const journals = journalsRaw.map((j) => decryptObject(j));
+
+  const backupPlansRaw = options.includeBackupPlans
+    ? await localDb.backupPlans.where("tripId").equals(tripId).toArray()
+    : [];
+  const backupPlans = backupPlansRaw.map((b) => decryptObject(b));
+
+  const travelDocumentsRaw = options.includeDocuments
+    ? await localDb.travelDocuments.where("tripId").equals(tripId).toArray()
+    : [];
+  const travelDocuments = travelDocumentsRaw
+    .filter((d) => !d.isPrivate)
+    .map((d) => decryptObject(d));
+
+  const randomUUID = () => {
+    if (typeof crypto !== "undefined" && crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0,
+        v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  };
+
+  // 2. Generate a secure token
+  const token = randomUUID().replace(/-/g, "") + Math.random().toString(36).substring(2, 10);
+
+  // 3. Parent public share row
+  console.log("[CloudShare] Attempting to set parent document in Supabase...");
+  const { error: parentError } = await supabase.from("public_shares").insert({
+    token,
+    owner_uid: user.id,
+    source_trip_id: String(tripId),
+    mode: options.mode,
+    revoked: false,
+    include_expenses: options.includeExpenses,
+    include_journals: options.includeJournals,
+    include_checklist: options.includeChecklist,
+    include_backup_plans: options.includeBackupPlans,
+    include_documents: options.includeDocuments,
+    share_pin: options.sharePin || null,
+    trip: {
+      id: String(trip.id),
+      name: trip.title,
+      destination: trip.location,
+      latitude: trip.latitude || null,
+      longitude: trip.longitude || null,
+      startDate: trip.startDate,
+      endDate: trip.endDate,
+      tripType: trip.tripType || "multiDay",
+      dayRoadmaps: trip.dayRoadmaps || null,
+      status: trip.status || "active",
+    },
+  });
+
+  if (parentError) {
+    throw new Error(i18n.t("share.errorCreateLink", "Cannot create share link: ") +  + parentError.message);
+  }
+
+  // 4. Update local trip with shareToken
+  await localDb.trips.update(tripId, { shareToken: token });
+
+  // 5. Bulk upload subcollection data
+  const now = new Date().toISOString();
+  const auditFields = {
+    created_at: now,
+    updated_at: now,
+    created_by_uid: user.id,
+    updated_by_uid: user.id,
+  };
+
+  const sanitize = (obj: any) => {
+    const newObj = { ...obj };
+    Object.keys(newObj).forEach((key) => {
+      if (newObj[key] === undefined) {
+        delete newObj[key];
+      }
+    });
+    return newObj;
+  };
+
+  const mapToTable = (list: any[]) =>
+    list.map((item) => ({
+      id: String(item.id),
+      share_token: token,
+      data: sanitize(item),
+      ...auditFields,
+    }));
+
+  const uploadChunks = async () => {
+    const promises = [];
+    if (members.length > 0)
+      promises.push(supabase.from("share_members").insert(mapToTable(members)));
+    if (activities.length > 0)
+      promises.push(supabase.from("share_activities").insert(mapToTable(activities)));
+    if (expenses.length > 0)
+      promises.push(supabase.from("share_expenses").insert(mapToTable(expenses)));
+    if (checklist.length > 0)
+      promises.push(supabase.from("share_checklist").insert(mapToTable(checklist)));
+    if (journals.length > 0)
+      promises.push(supabase.from("share_journals").insert(mapToTable(journals)));
+    if (backupPlans.length > 0)
+      promises.push(supabase.from("share_backup_plans").insert(mapToTable(backupPlans)));
+    if (travelDocuments.length > 0)
+      promises.push(supabase.from("share_travel_documents").insert(mapToTable(travelDocuments)));
+    await Promise.all(promises);
+  };
+
+  console.log("[CloudShare] Uploading shared items...");
+  await uploadChunks();
+  console.log("[CloudShare] Upload completed successfully.");
+
+  const url = `${window.location.origin}/share/${token}`;
+  return { token, url };
+}
+
+/**
+ * Updates an existing share link with current local data.
+ */
+export async function updateShareLink(
+  tripId: number,
+  token: string,
+  options: ShareOptions
+): Promise<void> {
+  await ensureCloudShareReady();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+
+  // Validate owner
+  const { data: shareData, error: fetchError } = await supabase
+    .from("public_shares")
+    .select("owner_uid")
+    .eq("token", token)
+    .maybeSingle();
+
+  if (fetchError || !shareData || shareData.owner_uid !== user.id) {
+    throw new Error(i18n.t("share.errorNoPermission", "You don't have permission to update this share link."));
+  }
+
+  // 1. Fetch trip data from local Dexie and decrypt
+  const tripRaw = await localDb.trips.get(tripId);
+  if (!tripRaw) throw new Error(i18n.t("share.errorTripNotFound", "Local trip not found."));
+  const trip = decryptObject(tripRaw);
+
+  const membersRaw = await localDb.members.where("tripId").equals(tripId).toArray();
+  const members = membersRaw.map((m) => decryptObject(m));
+
+  const activitiesRaw = await localDb.events.where("tripId").equals(tripId).toArray();
+  const activities = activitiesRaw.map((a) => decryptObject(a));
+
+  // Conditionally fetch optional data
+  const expensesRaw = options.includeExpenses
+    ? await localDb.expenses.where("tripId").equals(tripId).toArray()
+    : [];
+  const expenses = expensesRaw.map((e) => decryptObject(e));
+
+  const checklistRaw = options.includeChecklist
+    ? await localDb.checklist.where("tripId").equals(tripId).toArray()
+    : [];
+  const checklist = checklistRaw.filter((c) => !c.isPrivate).map((c) => decryptObject(c));
+
+  const journalsRaw = options.includeJournals
+    ? await localDb.journals.where("tripId").equals(tripId).toArray()
+    : [];
+  const journals = journalsRaw.map((j) => decryptObject(j));
+
+  const backupPlansRaw = options.includeBackupPlans
+    ? await localDb.backupPlans.where("tripId").equals(tripId).toArray()
+    : [];
+  const backupPlans = backupPlansRaw.map((b) => decryptObject(b));
+
+  const travelDocumentsRaw = options.includeDocuments
+    ? await localDb.travelDocuments.where("tripId").equals(tripId).toArray()
+    : [];
+  const travelDocuments = travelDocumentsRaw
+    .filter((d) => !d.isPrivate)
+    .map((d) => decryptObject(d));
+
+  console.log("[CloudShare] Attempting to update parent row...");
+  const { error: parentUpdateError } = await supabase
+    .from("public_shares")
+    .update({
+      mode: options.mode,
+      updated_at: new Date().toISOString(),
+      include_expenses: options.includeExpenses,
+      include_journals: options.includeJournals,
+      include_checklist: options.includeChecklist,
+      include_backup_plans: options.includeBackupPlans,
+      include_documents: options.includeDocuments,
+      share_pin: options.sharePin || null,
+      trip: {
+        id: String(trip.id),
+        name: trip.title,
+        destination: trip.location,
+        latitude: trip.latitude || null,
+        longitude: trip.longitude || null,
+        startDate: trip.startDate,
+        endDate: trip.endDate,
+        tripType: trip.tripType || "multiDay",
+        dayRoadmaps: trip.dayRoadmaps || null,
+        status: trip.status || "active",
+      },
+    })
+    .eq("token", token);
+
+  if (parentUpdateError) {
+    throw new Error(i18n.t("share.errorUpdatePublicShares", "Error updating public_shares: ") +  + parentUpdateError.message);
+  }
+
+  // 2. Clear old items
+  console.log("[CloudShare] Clearing existing items in cloud...");
+  await Promise.all([
+    supabase.from("share_members").delete().eq("share_token", token),
+    supabase.from("share_activities").delete().eq("share_token", token),
+    supabase.from("share_expenses").delete().eq("share_token", token),
+    supabase.from("share_checklist").delete().eq("share_token", token),
+    supabase.from("share_journals").delete().eq("share_token", token),
+    supabase.from("share_backup_plans").delete().eq("share_token", token),
+    supabase.from("share_travel_documents").delete().eq("share_token", token),
+  ]);
+
+  // 3. Insert new items
+  const now = new Date().toISOString();
+  const auditFields = {
+    created_at: now,
+    updated_at: now,
+    created_by_uid: user.id,
+    updated_by_uid: user.id,
+  };
+
+  const sanitize = (obj: any) => {
+    const newObj = { ...obj };
+    Object.keys(newObj).forEach((key) => {
+      if (newObj[key] === undefined) {
+        delete newObj[key];
+      }
+    });
+    return newObj;
+  };
+
+  const mapToTable = (list: any[]) =>
+    list.map((item) => ({
+      id: String(item.id),
+      share_token: token,
+      data: sanitize(item),
+      ...auditFields,
+    }));
+
+  const uploadChunks = async () => {
+    const promises = [];
+    if (members.length > 0)
+      promises.push(supabase.from("share_members").insert(mapToTable(members)));
+    if (activities.length > 0)
+      promises.push(supabase.from("share_activities").insert(mapToTable(activities)));
+    if (expenses.length > 0)
+      promises.push(supabase.from("share_expenses").insert(mapToTable(expenses)));
+    if (checklist.length > 0)
+      promises.push(supabase.from("share_checklist").insert(mapToTable(checklist)));
+    if (journals.length > 0)
+      promises.push(supabase.from("share_journals").insert(mapToTable(journals)));
+    if (backupPlans.length > 0)
+      promises.push(supabase.from("share_backup_plans").insert(mapToTable(backupPlans)));
+    if (travelDocuments.length > 0)
+      promises.push(supabase.from("share_travel_documents").insert(mapToTable(travelDocuments)));
+    await Promise.all(promises);
+  };
+
+  console.log("[CloudShare] Uploading updated shared items...");
+  await uploadChunks();
+  console.log("[CloudShare] Subcollections updates committed successfully.");
+}
+
+/**
+ * Revokes an existing share link by setting revoked = true.
+ */
+export async function revokeShareLink(tripId: number, token: string): Promise<void> {
+  await ensureCloudShareReady();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) return;
+
+  const { error } = await supabase
+    .from("public_shares")
+    .update({
+      revoked: true,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("token", token)
+    .eq("owner_uid", user.id);
+
+  if (!error) {
+    // Clear local shareToken
+    await localDb.trips.update(tripId, { shareToken: undefined });
+  }
+}
+
+================== src/services\currencyService.ts ==================
+export interface ExchangeRate {
+  currencyCode: string;
+  currencyName: string;
+  buy: number;
+  transfer: number;
+  sell: number;
+}
+
+const CACHE_KEY = "kat_journey_exchange_rates";
+const CACHE_EXPIRY_MS = 4 * 60 * 60 * 1000; // 4 hours
+
+export function sortExchangeRates(rates: ExchangeRate[]): ExchangeRate[] {
+  const priority = ["USD", "EUR", "JPY", "KRW"];
+  return [...rates].sort((a, b) => {
+    const idxA = priority.indexOf(a.currencyCode);
+    const idxB = priority.indexOf(b.currencyCode);
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+    return a.currencyCode.localeCompare(b.currencyCode);
+  });
+}
+
+export const FALLBACK_RATES: ExchangeRate[] = sortExchangeRates([
+  { currencyCode: "USD", currencyName: "USD", buy: 25000, transfer: 25400, sell: 25500 },
+  { currencyCode: "EUR", currencyName: "EUR", buy: 26500, transfer: 27000, sell: 27200 },
+  { currencyCode: "JPY", currencyName: "JPY", buy: 155, transfer: 160, sell: 165 },
+  { currencyCode: "SGD", currencyName: "SGD", buy: 18000, transfer: 18500, sell: 18800 },
+  { currencyCode: "THB", currencyName: "THB", buy: 680, transfer: 720, sell: 750 },
+  { currencyCode: "KRW", currencyName: "KRW", buy: 17, transfer: 18, sell: 19 },
+  { currencyCode: "CNY", currencyName: "CNY", buy: 3400, transfer: 3450, sell: 3500 },
+  { currencyCode: "AUD", currencyName: "AUD", buy: 16000, transfer: 16400, sell: 16600 },
+  { currencyCode: "CAD", currencyName: "CAD", buy: 17800, transfer: 18200, sell: 18400 },
+  { currencyCode: "GBP", currencyName: "GBP", buy: 31000, transfer: 31500, sell: 32000 },
+]);
+
+export async function fetchExchangeRates(): Promise<ExchangeRate[]> {
+  const cached = localStorage.getItem(CACHE_KEY);
+  if (cached) {
+    try {
+      const { data, timestamp } = JSON.parse(cached);
+      if (Date.now() - timestamp < CACHE_EXPIRY_MS) {
+        return sortExchangeRates(data);
+      }
+    } catch (e) {
+      console.warn("Failed to parse cached exchange rates", e);
+    }
+  }
+
+  // Use our local Vercel serverless function to proxy and cache Vietcombank exchange rates XML
+  const exchangeRatesUrl = "/api/exchange-rates";
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+
+  try {
+    const response = await fetch(exchangeRatesUrl, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) throw new Error("Failed to fetch exchange rates");
+    
+    const xmlText = await response.text();
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+    
+    const exrateNodes = xmlDoc.getElementsByTagName("Exrate");
+    const rates: ExchangeRate[] = [];
+    
+    for (let i = 0; i < exrateNodes.length; i++) {
+      const node = exrateNodes[i];
+      const currencyCode = node.getAttribute("CurrencyCode");
+      const currencyName = node.getAttribute("CurrencyName")?.trim() || "";
+      const buyStr = node.getAttribute("Buy")?.replace(/,/g, "") || "0";
+      const transferStr = node.getAttribute("Transfer")?.replace(/,/g, "") || "0";
+      const sellStr = node.getAttribute("Sell")?.replace(/,/g, "") || "0";
+      
+      if (currencyCode) {
+        rates.push({
+          currencyCode,
+          currencyName,
+          buy: parseFloat(buyStr) || 0,
+          transfer: parseFloat(transferStr) || 0,
+          sell: parseFloat(sellStr) || 0,
+        });
+      }
+    }
+
+    if (rates.length > 0) {
+      const sortedRates = sortExchangeRates(rates);
+      localStorage.setItem(
+        CACHE_KEY,
+        JSON.stringify({ data: sortedRates, timestamp: Date.now() })
+      );
+      return sortedRates;
+    }
+    
+    throw new Error("No exchange rates found in response");
+  } catch (error) {
+    clearTimeout(timeoutId);
+    console.error("Error fetching VCB exchange rates:", error);
+    // If API fails and we have cache (even expired), return it
+    if (cached) {
+      try {
+        return sortExchangeRates(JSON.parse(cached).data);
+      } catch (e) {
+        // ignore
+      }
+    }
+    return FALLBACK_RATES;
+  }
+}
+
+================== src/services\identityService.ts ==================
+export interface UserIdentity {
+  id?: string;
+  name: string;
+  isGuest: boolean;
+  canEdit: boolean;
+  role?: string;
+}
+
+let memoryIdentity: Record<string, UserIdentity> = {};
+
+export const saveIdentity = (identity: UserIdentity, tripId: string | number) => {
+  const key = `kat_id_${tripId}`;
+  memoryIdentity[key] = identity;
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, JSON.stringify(identity));
+  }
+};
+
+export const getIdentity = (tripId: string | number): UserIdentity | null => {
+  const key = `kat_id_${tripId}`;
+  if (memoryIdentity[key]) return memoryIdentity[key];
+  
+  if (typeof window !== "undefined") {
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        memoryIdentity[key] = parsed;
+        return parsed;
+      } catch (e) {
+        return null;
+      }
+    }
+  }
+  return null;
+};
+
+export const clearIdentity = (tripId: string | number) => {
+  const key = `kat_id_${tripId}`;
+  delete memoryIdentity[key];
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(key);
+  }
+};
+
+================== src/services\locationService.ts ==================
+export interface GeoLocation {
+  latitude: number;
+  longitude: number;
+}
+
+export interface GeocodeResult {
+  locality: string;
+  city: string;
+  countryName: string;
+  countryCode: string;
+  displayName: string;
+}
+
+const CURRENCY_MAP: Record<string, string> = {
+  "VN": "VND", // Vietnam
+  "TH": "THB", // Thailand
+  "JP": "JPY", // Japan
+  "KR": "KRW", // South Korea
+  "SG": "SGD", // Singapore
+  "MY": "MYR", // Malaysia
+  "ID": "IDR", // Indonesia
+  "PH": "PHP", // Philippines
+  "TW": "TWD", // Taiwan
+  "CN": "CNY", // China
+  "US": "USD", // United States
+  "EU": "EUR", // European Union
+  "GB": "GBP", // United Kingdom
+  "AU": "AUD", // Australia
+  "NZ": "NZD", // New Zealand
+  "HK": "HKD", // Hong Kong
+  "IN": "INR", // India
+  // Add more as needed
+};
+
+export async function getCurrentPosition(): Promise<GeoLocation> {
+  return new Promise((resolve, reject) => {
+    if (localStorage.getItem("kat_gps_enabled") === "false") {
+      reject(new Error("GPS is disabled by user setting"));
+      return;
+    }
+    if (!navigator.geolocation) {
+      reject(new Error("Geolocation is not supported by your browser"));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      (error) => {
+        reject(error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      }
+    );
+  });
+}
+
+export async function reverseGeocode(lat: number, lng: number): Promise<GeocodeResult> {
+  try {
+    const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=vi`);
+    if (!response.ok) throw new Error("Reverse geocoding failed");
+    
+    const data = await response.json();
+    
+    const locality = data.locality || "";
+    const city = data.city || data.principalSubdivision || "";
+    const countryName = data.countryName || "";
+    const countryCode = data.countryCode || "";
+    
+    // Construct a sensible display name like "Shinjuku, Tokyo" or "Quận 1, Hồ Chí Minh"
+    const parts = [];
+    if (locality) parts.push(locality);
+    if (city && city !== locality) parts.push(city);
+    
+    // If we only have country, use it
+    if (parts.length === 0 && countryName) {
+      parts.push(countryName);
+    }
+    
+    return {
+      locality,
+      city,
+      countryName,
+      countryCode,
+      displayName: parts.join(", "),
+    };
+  } catch (error) {
+    console.error("Geocoding error:", error);
+    throw error;
+  }
+}
+
+export function getCurrencyForCountry(countryCode: string): string {
+  return CURRENCY_MAP[countryCode.toUpperCase()] || "";
+}
+
+================== src/services\shareApprovalService.ts ==================
+import i18n from "../i18n";
+import { supabase } from '../lib/supabase';
+import { db as localDb } from '../db';
+import { ChangeRequestSection, ChangeRequestAction } from './sharedTripRequestService';
+
+function getTableName(collectionName: string): string {
+  const map: Record<string, string> = {
+    members: 'share_members',
+    activities: 'share_activities',
+    expenses: 'share_expenses',
+    checklist: 'share_checklist',
+    journals: 'share_journals',
+    backupPlans: 'share_backup_plans',
+    travelDocuments: 'share_travel_documents'
+  };
+  return map[collectionName] || `share_${collectionName}`;
+}
+
+export async function approveChangeRequest(token: string, requestId: string): Promise<void> {
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+
+  // 1. Validate Owner
+  const { data: shareData, error: shareError } = await supabase
+    .from('public_shares')
+    .select('owner_uid, source_trip_id')
+    .eq('token', token)
+    .maybeSingle();
+
+  if (shareError || !shareData) {
+    throw new Error(i18n.t("share.errorLinkNotFound", "Share link does not exist."));
+  }
+
+  if (shareData.owner_uid !== user.id) {
+    throw new Error(i18n.t("share.errorNoPermission", "This device no longer has permission to manage this share link."));
+  }
+
+  // 2. Claim change request atomically by updating its status
+  const { data: requestData, error: requestError } = await supabase
+    .from('change_requests')
+    .update({
+      status: 'approved',
+      reviewed_by_uid: user.id,
+      reviewed_at: new Date().toISOString()
+    })
+    .eq('id', requestId)
+    .eq('share_token', token)
+    .in('status', ['pending', 'auto_approved'])
+    .select('*')
+    .maybeSingle();
+
+  if (requestError || !requestData) {
+    throw new Error(i18n.t("share.errorRequestNotFound", "Request does not exist or has already been processed."));
+  }
+
+  const tripId = shareData.source_trip_id;
+  const trip = await localDb.trips.get(Number(tripId));
+
+  if (!trip) {
+    throw new Error(i18n.t("share.errorOriginalTripNotFound", "Original trip not found on this device."));
+  }
+
+  const section = requestData.section as ChangeRequestSection;
+  const action = requestData.action as ChangeRequestAction;
+  const targetId = requestData.target_id;
+  const afterData = requestData.after_data;
+
+  // 3. Apply to Dexie
+  const dexieTableMap: Record<ChangeRequestSection, any> = {
+    activities: localDb.events,
+    expenses: localDb.expenses,
+    checklist: localDb.checklist,
+    journals: localDb.journals,
+    backupPlans: localDb.backupPlans,
+    travelDocuments: localDb.travelDocuments,
+    members: localDb.members
+  };
+
+  const localTable = dexieTableMap[section];
+  let dexieId: number | string | undefined;
+
+  try {
+    if (action === 'create') {
+      const newItem = { ...afterData, tripId: Number(tripId) };
+      delete newItem.id; // ensure ID is auto-generated by Dexie
+      dexieId = await localTable.add(newItem);
+    } else if (action === 'update' && targetId) {
+      dexieId = Number(targetId) || targetId;
+      await localTable.update(dexieId, afterData);
+    } else if (action === 'delete' && targetId) {
+      dexieId = Number(targetId) || targetId;
+      await localTable.delete(dexieId);
+    }
+  } catch (err: any) {
+    throw new Error(i18n.t("share.errorUpdateOriginal", "Error updating original data: ") +  + err.message);
+  }
+
+  // 4. Apply to Supabase Public Snapshot
+  try {
+    const table = getTableName(section);
+    const docId = action === 'create' ? String(dexieId) : String(targetId);
+    
+    if (action === 'create') {
+      const now = new Date().toISOString();
+      await supabase
+        .from(table)
+        .insert({
+          id: docId,
+          share_token: token,
+          data: { ...afterData, id: dexieId, tripId: 0 },
+          created_at: now,
+          updated_at: now,
+          created_by_uid: user.id,
+          updated_by_uid: user.id
+        });
+    } else if (action === 'update') {
+      await supabase
+        .from(table)
+        .update({
+          data: afterData,
+          updated_at: new Date().toISOString(),
+          updated_by_uid: user.id
+        })
+        .eq('share_token', token)
+        .eq('id', docId);
+    } else if (action === 'delete') {
+      await supabase
+        .from(table)
+        .delete()
+        .eq('share_token', token)
+        .eq('id', docId);
+    }
+  } catch (err: any) {
+    throw new Error(i18n.t("share.errorSyncToSupabase", "Error syncing to Supabase: ") +  + err.message);
+  }
+}
+
+export async function rejectChangeRequest(token: string, requestId: string): Promise<void> {
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+
+  const { data: shareData, error: shareError } = await supabase
+    .from('public_shares')
+    .select('owner_uid')
+    .eq('token', token)
+    .maybeSingle();
+
+  if (shareError || !shareData || shareData.owner_uid !== user.id) {
+    throw new Error(i18n.t("share.errorNoPermission", "This device no longer has permission to manage this share link."));
+  }
+
+  const { error } = await supabase
+    .from('change_requests')
+    .update({
+      status: 'rejected',
+      reviewed_at: new Date().toISOString(),
+      reviewed_by_uid: user.id
+    })
+    .eq('id', requestId)
+    .eq('share_token', token);
+
+  if (error) {
+    throw new Error(i18n.t("share.errorRejectRequest", "Cannot reject request: ") +  + error.message);
+  }
+}
+
+================== src/services\sharedTripEditService.ts ==================
+import i18n from "../i18n";
+import { supabase } from '../lib/supabase';
+
+function getTableName(collectionName: string): string {
+  const map: Record<string, string> = {
+    members: 'share_members',
+    activities: 'share_activities',
+    expenses: 'share_expenses',
+    checklist: 'share_checklist',
+    journals: 'share_journals',
+    backupPlans: 'share_backup_plans',
+    travelDocuments: 'share_travel_documents'
+  };
+  return map[collectionName] || `share_${collectionName}`;
+}
+
+export async function addSharedDocument(token: string, collectionName: string, id: string, payload: any) {
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+  
+  const table = getTableName(collectionName);
+  const now = new Date().toISOString();
+  
+  const { error } = await supabase
+    .from(table)
+    .insert({
+      id: String(id),
+      share_token: token,
+      data: payload,
+      created_at: now,
+      updated_at: now,
+      created_by_uid: user.id,
+      updated_by_uid: user.id
+    });
+    
+  if (error) {
+    throw new Error(i18n.t("share.errorAddDocFailed", "Failed to add shared document: ") + error.message);
+  }
+}
+
+export async function updateSharedDocument(token: string, collectionName: string, id: string, payload: any) {
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+  
+  const table = getTableName(collectionName);
+  const now = new Date().toISOString();
+  
+  const { error } = await supabase
+    .from(table)
+    .update({
+      data: payload,
+      updated_at: now,
+      updated_by_uid: user.id
+    })
+    .eq('share_token', token)
+    .eq('id', String(id));
+    
+  if (error) {
+    throw new Error(i18n.t("share.errorUpdateDocFailed", "Failed to update shared document: ") + error.message);
+  }
+}
+
+export async function deleteSharedDocument(token: string, collectionName: string, id: string) {
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+  
+  const table = getTableName(collectionName);
+  
+  const { error } = await supabase
+    .from(table)
+    .delete()
+    .eq('share_token', token)
+    .eq('id', String(id));
+    
+  if (error) {
+    throw new Error(i18n.t("share.errorDeleteDocFailed", "Failed to delete shared document: ") + error.message);
+  }
+}
+
+export async function updateSharedTripRoadmaps(token: string, dayRoadmaps: Record<string, string>) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+
+  // Fetch current trip object
+  const { data, error: selectError } = await supabase
+    .from('public_shares')
+    .select('trip')
+    .eq('token', token)
+    .maybeSingle();
+
+  if (selectError || !data || !data.trip) {
+    throw new Error(i18n.t("share.errorLoadSharedTrip", "Cannot load shared trip: ") +  + (selectError?.message || "Data not found"));
+  }
+
+  const updatedTrip = { ...data.trip };
+  updatedTrip.dayRoadmaps = dayRoadmaps;
+
+  const { error: updateError } = await supabase
+    .from('public_shares')
+    .update({
+      trip: updatedTrip,
+      updated_at: new Date().toISOString()
+    })
+    .eq('token', token);
+
+  if (updateError) {
+    throw new Error(i18n.t("share.errorUpdateRoadmap", "Failed to update roadmap: ") +  + updateError.message);
+  }
+}
+
+================== src/services\sharedTripRequestService.ts ==================
+import i18n from "../i18n";
+import { supabase } from '../lib/supabase';
+
+export type ChangeRequestSection = 'activities' | 'expenses' | 'checklist' | 'journals' | 'backupPlans' | 'travelDocuments' | 'members';
+export type ChangeRequestAction = 'create' | 'update' | 'delete';
+
+export interface ChangeRequestPayload {
+  section: ChangeRequestSection;
+  action: ChangeRequestAction;
+  targetId?: string;
+  before?: Record<string, unknown>;
+  after?: Record<string, unknown>;
+  note?: string;
+  requesterName?: string;
+  status?: 'pending' | 'auto_approved';
+}
+
+export async function submitChangeRequest(token: string, payload: ChangeRequestPayload): Promise<void> {
+  // Guest cần session (anonymous) để RLS cho phép INSERT change_request
+  // (RLS mới yêu cầu JWT claim share_token phải khớp)
+  const { data: { session } } = await supabase.auth.getSession();
+  let user = session?.user;
+  if (!user) {
+    const { data: anonData, error: anonErr } = await supabase.auth.signInAnonymously();
+    if (anonErr || !anonData?.user) {
+      throw new Error(i18n.t("share.errorLoginOrOpenLink", "Please sign in or open a valid share link before submitting a request."));
+    }
+    user = anonData.user;
+  }
+
+  // Bỏ qua bước kiểm tra public_shares ở client vì:
+  // 1. RLS của bảng change_requests sẽ tự động chặn nếu user không có quyền (không có record trong share_access).
+  // 2. UI đã tự động ẩn các mục không được phép chỉnh sửa.
+  // Việc này giúp tránh lỗi không truy vấn được public_shares do thiếu RLS policy.
+
+  function removeUndefined(obj: any): any {
+    if (obj === undefined) return null;
+    if (typeof obj !== 'object' || obj === null) return obj;
+    if (Array.isArray(obj)) return obj.map(removeUndefined);
+    const newObj: any = {};
+    for (const key in obj) {
+      if (obj[key] !== undefined) {
+        newObj[key] = removeUndefined(obj[key]);
+      }
+    }
+    return newObj;
+  }
+
+  const sanitizedPayload = removeUndefined(payload);
+
+  const { error: insertError } = await supabase
+    .from('change_requests')
+    .insert({
+      share_token: token,
+      section: sanitizedPayload.section,
+      action: sanitizedPayload.action,
+      target_id: sanitizedPayload.targetId ? String(sanitizedPayload.targetId) : null,
+      before_data: sanitizedPayload.before || null,
+      after_data: sanitizedPayload.after || null,
+      note: sanitizedPayload.note || null,
+      requester_name: sanitizedPayload.requesterName || null,
+      requester_uid: user.id,
+      status: sanitizedPayload.status || 'pending',
+      created_at: new Date().toISOString()
+    });
+
+  if (insertError) {
+    throw new Error(i18n.t("share.errorSubmitRequestFailed", "Failed to submit edit request: ") +  + insertError.message);
+  }
+}
+
+================== src/services\storageService.ts ==================
+// 1. Hàm nén ảnh bằng Canvas (Max 800px, Quality 0.7)
+export const compressImage = (file: File): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX_WIDTH = 800;
+        const scaleSize = Math.min(1, MAX_WIDTH / img.width);
+        canvas.width = img.width * scaleSize;
+        canvas.height = img.height * scaleSize;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas 2d context not available"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        // Xuất ra định dạng WebP nén 70%
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error("Canvas to Blob failed"));
+          },
+          "image/webp",
+          0.7
+        );
+      };
+      img.onerror = () => reject(new Error("Image load failed"));
+    };
+    reader.onerror = () => reject(new Error("File read failed"));
+  });
+};
+
+// Helper to convert Blob to Base64
+const blobToBase64 = (blob: Blob): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
+
+// 2. Hàm xử lý ảnh Giấy tờ (Lưu trực tiếp dưới dạng Base64)
+export const uploadDocumentImage = async (file: File, tripId: string | number): Promise<string> => {
+  const compressedBlob = await compressImage(file);
+  // Chuyển thẳng ảnh thành chuỗi Base64
+  const base64Url = await blobToBase64(compressedBlob);
+  return base64Url;
+};
+
+// 3. Hàm xử lý Ảnh Nhật Ký (Lưu trực tiếp dưới dạng Base64)
+export const uploadJournalImage = async (file: File, tripId: string | number): Promise<string> => {
+  console.log("Compressing image...");
+  const compressedBlob = await compressImage(file);
+  console.log("Compression done, converting to Base64...");
+  // Chuyển thẳng ảnh thành chuỗi Base64
+  const base64Url = await blobToBase64(compressedBlob);
+  console.log("Base64 conversion complete.");
+  return base64Url;
+};
+
+================== src/services\weatherService.ts ==================
+
+export interface WeatherForecast {
+  current?: {
+    temperature: number;
+    weathercode: number;
+    is_day: number;
+    humidity?: number;
+    windspeed?: number;
+    apparent_temperature?: number;
+  };
+  time: string[];
+  weathercode: number[];
+  temperature_2m_max: number[];
+  temperature_2m_min: number[];
+  uv_index_max?: number[];
+  hourly?: {
+    time: string[];
+    temperature: number[];
+    weathercode: number[];
+    precipitation_probability: number[];
+  };
+}
+
+export interface GeocodingResult {
+  name: string;
+  latitude: number;
+  longitude: number;
+  admin1?: string;
+  country?: string;
+  country_code?: string;
+}
+
+const geocodeCache = new Map<string, GeocodingResult | null>();
+
+export async function searchLocation(query: string): Promise<GeocodingResult[]> {
+  if (!query || query.length < 2) return [];
+  try {
+    // Normalize string to remove accents since Open-Meteo geocoding struggles with some Vietnamese accents (like Đà Lạt)
+    const normalizedQuery = query
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .replace(/Đ/g, "D");
+    const res = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(normalizedQuery)}&count=5&language=vi&format=json`
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.results || [];
+  } catch (error) {
+    console.error("Geocoding search error:", error);
+    return [];
+  }
+}
+
+export async function geocodeDestination(destination: string): Promise<GeocodingResult | null> {
+  if (!destination || !destination.trim()) return null;
+
+  // We should cache geocoding results to avoid rate limits
+  const cacheKey = destination.toLowerCase().trim();
+
+  if (geocodeCache.has(cacheKey)) return geocodeCache.get(cacheKey) || null;
+
+  // Try localStorage first
+  try {
+    const stored = localStorage.getItem(`geo_${cacheKey}`);
+    if (stored !== null) {
+      const parsed = JSON.parse(stored);
+      geocodeCache.set(cacheKey, parsed);
+      return parsed;
+    }
+  } catch (e) {}
+
+  try {
+    const trimmedDest = destination.trim();
+    const normalizedQuery = trimmedDest
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .replace(/Đ/g, "D");
+    const res = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(normalizedQuery)}&count=1&language=vi&format=json`
+    );
+
+    if (!res.ok) {
+      console.warn("Geocoding API failed");
+      return null;
+    }
+    const data = await res.json();
+
+    if (data.results && data.results.length > 0) {
+      const result = {
+        name: data.results[0].name,
+        latitude: data.results[0].latitude,
+        longitude: data.results[0].longitude,
+      };
+      geocodeCache.set(cacheKey, result);
+
+      // Persist to localStorage
+      try {
+        localStorage.setItem(`geo_${cacheKey}`, JSON.stringify(result));
+      } catch (e) {}
+
+      return result;
+    }
+    geocodeCache.set(cacheKey, null);
+
+    // Cache the null result to avoid spamming
+    try {
+      localStorage.setItem(`geo_${cacheKey}`, JSON.stringify(null));
+    } catch (e) {}
+
+    return null;
+  } catch (error) {
+    console.error("Geocoding error:", error);
+    // Do not cache null on network errors so it can retry next time
+    return null;
+  }
+}
+
+const weatherCache = new Map<string, { timestamp: number; data: WeatherForecast | null }>();
+const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes
+
+export async function getWeatherForecast(
+  lat: number,
+  lon: number,
+  days: number = 3,
+  startDate?: string
+): Promise<WeatherForecast | null> {
+  const today = new Date().toISOString().split("T")[0];
+
+  // Open-Meteo free tier: max 16 days with forecast_days param
+  const MAX_FORECAST_DAYS = 16;
+
+  // Calculate how many days from today we need to fetch to cover startDate + days
+  let fetchDays = Math.max(3, days);
+  let daysUntilTrip = 0;
+  if (startDate && startDate > today) {
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const startMs = new Date(startDate + "T00:00:00").getTime();
+    const todayMs = new Date(today + "T00:00:00").getTime();
+    daysUntilTrip = Math.ceil((startMs - todayMs) / msPerDay);
+    fetchDays = daysUntilTrip + Math.max(days, 1);
+  }
+
+  // If the trip start is beyond what the API can provide, return null
+  if (fetchDays > MAX_FORECAST_DAYS || daysUntilTrip >= MAX_FORECAST_DAYS) return null;
+
+  const cacheKey = `${lat},${lon},${fetchDays}`;
+  const cached = weatherCache.get(cacheKey);
+
+  let dataToReturn: WeatherForecast | null = null;
+
+  // Force bypass memory cache if the cached data doesn't have current weather
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION && cached.data?.current) {
+    dataToReturn = cached.data;
+  } else {
+    // Try localStorage
+    try {
+      const stored = localStorage.getItem(`weather_${cacheKey}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Date.now() - parsed.timestamp < CACHE_DURATION && parsed.data?.current) {
+          weatherCache.set(cacheKey, parsed);
+          dataToReturn = parsed.data;
+        }
+      }
+    } catch (e) {}
+
+    // If still no valid data, fetch from API
+    if (!dataToReturn) {
+      try {
+        const res = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,is_day,weather_code,relative_humidity_2m,wind_speed_10m,apparent_temperature&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max&hourly=temperature_2m,weather_code,precipitation_probability&timezone=auto&forecast_days=${fetchDays}`
+        );
+        if (!res.ok) {
+          console.error("Open-Meteo API Error:", res.status, res.statusText);
+          // If rate limited, try to return stale cache from localStorage as a last resort
+          try {
+            const stored = localStorage.getItem(`weather_${cacheKey}`);
+            if (stored) {
+              const parsed = JSON.parse(stored);
+              if (parsed.data) {
+                return applyDaysLimit(parsed.data, days, fetchDays, daysUntilTrip);
+              }
+            }
+          } catch (e) {}
+          // If no stale cache, we DO NOT return null here. We let it fall through to the mock data.
+        } else {
+          const data = await res.json();
+          if (data.daily) {
+            // Map new API format to our internal format
+            const currentObj = data.current || data.current_weather || {};
+            const mappedCurrent = {
+              temperature: currentObj.temperature_2m ?? currentObj.temperature,
+              weathercode: currentObj.weather_code ?? currentObj.weathercode,
+              is_day: currentObj.is_day,
+              humidity: currentObj.relative_humidity_2m ?? currentObj.humidity,
+              windspeed: currentObj.wind_speed_10m ?? currentObj.windspeed,
+              apparent_temperature: currentObj.apparent_temperature,
+            };
+            const mappedDaily = {
+              time: data.daily.time,
+              weathercode: data.daily.weather_code ?? data.daily.weathercode,
+              temperature_2m_max: data.daily.temperature_2m_max,
+              temperature_2m_min: data.daily.temperature_2m_min,
+              uv_index_max: data.daily.uv_index_max,
+            };
+
+            // Slice hourly data to show next 24 hours
+            let mappedHourly = undefined;
+            if (data.hourly) {
+              const now = new Date();
+              const offset = now.getTimezoneOffset();
+              const localNow = new Date(now.getTime() - offset * 60 * 1000);
+              const currentHourStr = localNow.toISOString().substring(0, 13) + ":00";
+              let startIndex = data.hourly.time.findIndex((t: string) =>
+                t.startsWith(currentHourStr)
+              );
+              if (startIndex === -1) startIndex = 0;
+              const endIndex = startIndex + 24;
+
+              mappedHourly = {
+                time: data.hourly.time.slice(startIndex, endIndex),
+                temperature: (data.hourly.temperature_2m ?? data.hourly.temperature ?? []).slice(
+                  startIndex,
+                  endIndex
+                ),
+                weathercode: (data.hourly.weather_code ?? data.hourly.weathercode ?? []).slice(
+                  startIndex,
+                  endIndex
+                ),
+                precipitation_probability: (data.hourly.precipitation_probability ?? []).slice(
+                  startIndex,
+                  endIndex
+                ),
+              };
+            }
+
+            // Fallback mock hourly forecast if not available
+            if (!mappedHourly) {
+              const minTemp = mappedDaily.temperature_2m_min[0] ?? 20;
+              const maxTemp = mappedDaily.temperature_2m_max[0] ?? 30;
+              const wcode = mappedCurrent.weathercode ?? 0;
+
+              const times: string[] = [];
+              const temps: number[] = [];
+              const codes: number[] = [];
+              const precips: number[] = [];
+
+              const now = new Date();
+              for (let i = 0; i < 24; i++) {
+                const h = new Date(now.getTime() + i * 60 * 60 * 1000);
+                times.push(h.toISOString());
+                const hour = h.getHours();
+                const rad = ((hour - 5) / 24) * 2 * Math.PI;
+                const factor = (Math.sin(rad - Math.PI / 2) + 1) / 2; // 0 to 1
+                const temp = minTemp + factor * (maxTemp - minTemp);
+                temps.push(Math.round(temp));
+                codes.push(wcode);
+                const isRainy = (wcode >= 51 && wcode <= 67) || (wcode >= 80 && wcode <= 82);
+                const isStormy = wcode >= 95 && wcode <= 99;
+                precips.push(isStormy ? 90 : isRainy ? 75 : 10);
+              }
+              mappedHourly = {
+                time: times,
+                temperature: temps,
+                weathercode: codes,
+                precipitation_probability: precips,
+              };
+            }
+
+            const fullData = { ...mappedDaily, current: mappedCurrent, hourly: mappedHourly };
+            const cacheObj = { timestamp: Date.now(), data: fullData };
+            weatherCache.set(cacheKey, cacheObj);
+            try {
+              localStorage.setItem(`weather_${cacheKey}`, JSON.stringify(cacheObj));
+            } catch (e) {}
+            dataToReturn = fullData;
+          }
+        }
+      } catch (error) {
+        console.error("Weather forecast error:", error);
+        // Try stale cache on network error
+        try {
+          const stored = localStorage.getItem(`weather_${cacheKey}`);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.data) {
+              return applyDaysLimit(parsed.data, days, fetchDays, daysUntilTrip);
+            }
+          }
+        } catch (e) {}
+      }
+    }
+  }
+
+  if (!dataToReturn) {
+    return null;
+  }
+
+  return applyDaysLimit(dataToReturn, days, fetchDays, daysUntilTrip);
+}
+
+function applyDaysLimit(
+  dataToReturn: WeatherForecast | null,
+  days: number,
+  fetchDays: number,
+  startOffset: number = 0
+) {
+  if (!dataToReturn) return dataToReturn;
+
+  // startOffset = days from today until trip start
+  // We slice from startOffset to startOffset+days
+  const from = startOffset;
+  const to = from + days;
+
+  if (from > 0 || to < fetchDays) {
+    return {
+      // Don't expose current weather when displaying future days
+      current: from === 0 ? dataToReturn.current : undefined,
+      time: dataToReturn.time.slice(from, to),
+      weathercode: dataToReturn.weathercode.slice(from, to),
+      temperature_2m_max: dataToReturn.temperature_2m_max.slice(from, to),
+      temperature_2m_min: dataToReturn.temperature_2m_min.slice(from, to),
+      uv_index_max: dataToReturn.uv_index_max?.slice(from, to),
+      hourly: dataToReturn.hourly,
+    };
+  }
+
+  return dataToReturn;
+}
+
+// Map Tailwind w-N or w-[Npx] class to an approximate font-size class for emoji

@@ -112,7 +112,7 @@ export function SettingsMenu({
       <div className="mb-2 rounded-[24px] border border-slate-200/60 bg-white p-2 shadow-sm dark:border-white/[0.04] dark:bg-slate-800/40">
         <div className="px-4 pt-3 pb-2">
           <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-            {t("settings.section.system", "Hệ thống")}
+            {t("settings.section.system", "System")}
           </h3>
         </div>
 
@@ -182,10 +182,10 @@ export function SettingsMenu({
               </div>
               <div className="min-w-0 text-left">
                 <h4 className="text-[14px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                  {t("settings.menu.temperature.title", "Nhiệt độ")}
+                  {t("settings.menu.temperature.title", "Temperature")}
                 </h4>
                 <p className="text-[11.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
-                  {t("settings.menu.temperature.desc", "Đơn vị nhiệt độ ưu tiên")}
+                  {t("settings.menu.temperature.desc", "Preferred temperature unit")}
                 </p>
               </div>
             </div>
@@ -340,7 +340,7 @@ export function SettingsMenu({
       <div className="mb-2 rounded-[24px] border border-slate-200/60 bg-white p-2 shadow-sm dark:border-white/[0.04] dark:bg-slate-800/40">
         <div className="px-4 pt-3 pb-2">
           <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-            {t("settings.section.info", "Thông tin & Hỗ trợ")}
+            {t("settings.section.info", "Info & Support")}
           </h3>
         </div>
 

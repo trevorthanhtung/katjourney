@@ -38,8 +38,8 @@ import { useWeather } from "../../hooks/useWeather";
 import { useCurrentLocationWeather } from "../../hooks/useCurrentLocationWeather";
 import { usePackingTip } from "../../hooks/usePackingTip";
 import { useModalHistory } from "../../hooks/useModalHistory";
-import { getWeatherIcon, getWeatherGradient, getWeatherText } from "../../services/weatherService";
-import { useTemperatureUnit } from "../../hooks/useTemperatureUnit";
+import { getWeatherIcon, getWeatherGradient, getWeatherText } from "../../utils/weatherUI";
+import { usePreferences } from "../../hooks/usePreferences";
 import { WeatherDetailsModal } from "../timeline/WeatherDetailsModal";
 import { getAvatarSvg } from "../../utils/avatars";
 
@@ -142,7 +142,7 @@ export function HomeScreen({
   const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
   const [isDestDropdownOpen, setIsDestDropdownOpen] = useState(false);
-  const { formatTemp, unit } = useTemperatureUnit();
+  const { formatTemp, temperatureUnit: unit } = usePreferences();
   useModalHistory(weatherModalOpen, () => setWeatherModalOpen(false), "weather-modal");
 
   // Packing tip based on GPS vs destination temp
@@ -157,7 +157,7 @@ export function HomeScreen({
     events[0];
 
   const isDayTrip = trip.tripType === "dayTrip" || trip.startDate === trip.endDate;
-  let durationText = "Trong ngày";
+  let durationText = t("home.inDay", "Trong ngày");
   if (!isDayTrip) {
     try {
       const start = new Date(trip.startDate);
@@ -413,7 +413,7 @@ export function HomeScreen({
                   className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/20 px-3 py-1 text-[12px] font-bold backdrop-blur-md border border-sky-400/30 shadow-inner text-sky-100 hover:bg-sky-500/30 transition-colors"
                 >
                   <HugeiconsIcon icon={Link02Icon} className="h-3 w-3" />
-                  Kho Ảnh Gốc
+                  {t("home.originalPhotos", "Kho Ảnh Gốc")}
                 </a>
               )}
             </div>
@@ -609,13 +609,13 @@ export function HomeScreen({
                   {t("home.tripSummary")}
                 </h4>
                 <p className="text-[12.5px] font-medium text-amber-100/90 mt-1.5 leading-relaxed">
-                  Xem lại chi phí, hoạt động và những dấu ấn đáng nhớ.
+                  {t("home.summaryDesc", "Xem lại chi phí, hoạt động và những dấu ấn đáng nhớ.")}
                 </p>
                 <button
                   onClick={() => onNavigateMore("wrapped")}
                   className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-white/20 hover:bg-white/30 px-4 py-2 text-[13px] font-extrabold text-white transition-all motion-press"
                 >
-                  Xem tổng kết →
+                  {t("home.viewSummary", "Xem tổng kết")} →
                 </button>
               </div>
             </div>
@@ -640,7 +640,7 @@ export function HomeScreen({
                   onClick={() => onNavigateMore("journal")}
                   className="shrink-0 flex items-center justify-center rounded-xl bg-violet-50 dark:bg-violet-950/20 hover:bg-violet-100 dark:hover:bg-violet-900/30 text-violet-600 dark:text-violet-400 px-3.5 py-2 text-[12.5px] font-bold transition-all motion-press border border-violet-100 dark:border-violet-900/20"
                 >
-                  Đăng
+                  {t("home.post", "Đăng")}
                 </button>
               )}
             </div>
@@ -719,7 +719,7 @@ export function HomeScreen({
                           onClick={() => onNavigateTab("timeline")}
                           className="mt-1.5 text-[12.5px] font-bold text-kat-primary hover:text-kat-primary-usable transition-all motion-press text-left"
                         >
-                          Bổ sung lịch trình
+                          {t("home.addSchedule", "Bổ sung lịch trình")}
                         </button>
                       )}
                     </div>
@@ -828,7 +828,7 @@ export function HomeScreen({
                     className="mt-4 flex items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 hover:bg-kat-dark/90 dark:hover:brightness-110 border border-transparent dark:border-kat-primary px-5 py-3 text-[13.5px] font-black transition-[transform,background-color] duration-150 shadow-[0_4px_14px_rgba(3,13,46,0.18)] dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] active:scale-[0.97] motion-press"
                   >
                     <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" strokeWidth={2.5} />
-                    Thêm lịch trình
+                    {t("home.addSchedule", "Thêm lịch trình")}
                   </button>
                 )}
               </div>
@@ -900,7 +900,7 @@ export function HomeScreen({
                     className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-kat-primary text-kat-dark dark:text-slate-900 hover:brightness-105 px-4 py-2.5 text-[13px] font-black transition-[transform,filter] duration-150 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] active:scale-[0.97] motion-press"
                   >
                     <HugeiconsIcon icon={Briefcase01Icon} size={16} />
-                    Chuẩn bị hành lý
+                    {t("home.packLuggage", "Chuẩn bị hành lý")}
                   </button>
                 )}
               </div>
@@ -1029,7 +1029,7 @@ export function HomeScreen({
                       className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-extrabold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-press"
                     >
                       <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
-                      Thêm giấy tờ
+                      {t("home.addDoc", "Thêm giấy tờ")}
                     </button>
                   )}
                 </div>
@@ -1068,7 +1068,6 @@ export function HomeScreen({
       <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-start space-y-4 lg:space-y-0">
         {/* Left Column: Hôm nay focus & Giấy tờ quan trọng */}
         <div className="space-y-4 lg:space-y-6">
-          {/* Lịch trình hôm nay */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">
               {t("home.todaySchedule")}
@@ -1091,7 +1090,8 @@ export function HomeScreen({
                       onClick={() => onNavigateTab("timeline")}
                       className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/55 text-[12.5px] font-bold text-indigo-600 dark:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors motion-press"
                     >
-                      Xem phương án <HugeiconsIcon icon={ChevronRightIcon} size={14} />
+                      {t("home.viewBackup", "Xem phương án")}
+                      <HugeiconsIcon icon={ChevronRightIcon} size={14} />
                     </button>
                   </div>
                 </div>
@@ -1173,7 +1173,7 @@ export function HomeScreen({
               {idDocs.length > 0 ? (
                 <div className="space-y-3.5">
                   <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
-                    Tra cứu nhanh các thông tin vé hoặc đặt chỗ dưới đây:
+                    {t("home.quickLookup", "Tra cứu nhanh các thông tin vé hoặc đặt chỗ dưới đây:")}
                   </p>
                   <div className="divide-y divide-slate-100 dark:divide-slate-800/50">
                     {idDocs.map((doc) => (
@@ -1187,7 +1187,7 @@ export function HomeScreen({
                           </h5>
                           {doc.code && (
                             <p className="text-[11.5px] font-bold text-slate-400 mt-0.5">
-                              Mã: {doc.code}
+                              {t("home.code", "Mã:")} {doc.code}
                             </p>
                           )}
                         </div>
@@ -1195,7 +1195,7 @@ export function HomeScreen({
                           onClick={() => onNavigateMore("documents")}
                           className="shrink-0 text-[12.5px] font-extrabold text-kat-primary hover:text-kat-primary-usable transition-all motion-press"
                         >
-                          Chi tiết
+                          {t("home.details", "Chi tiết")}
                         </button>
                       </div>
                     ))}
@@ -1212,7 +1212,7 @@ export function HomeScreen({
                       className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-extrabold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-press"
                     >
                       <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
-                      {t("documents.addBtn", "Bổ sung giấy tờ")}
+                      {t("documents.addBtn", "Add Document")}
                     </button>
                   )}
                 </div>
@@ -1349,7 +1349,6 @@ export function HomeScreen({
             </div>
           </section>
 
-          {/* Lịch trình đã ghi */}
           <section className="space-y-4">
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">
               {t("home.recordedSchedule")}

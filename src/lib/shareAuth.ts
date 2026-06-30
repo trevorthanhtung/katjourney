@@ -1,4 +1,5 @@
-import { supabase } from './supabase';
+import i18n from "../i18n";
+import { supabase } from "./supabase";
 
 /**
  * shareAuth.ts
@@ -19,7 +20,7 @@ import { supabase } from './supabase';
 export interface VerifiedShare {
   ok: boolean;
   token: string;
-  mode: 'view' | 'edit' | 'request_edit';
+  mode: "view" | "edit" | "request_edit";
   ownerUid: string;
   sourceTripId: string;
   includeExpenses: boolean;
@@ -32,11 +33,11 @@ export interface VerifiedShare {
 }
 
 export class ShareAuthError extends Error {
-  code: 'not_found' | 'invalid_pin' | 'auth_failed' | 'unknown';
-  constructor(code: ShareAuthError['code'], message: string) {
+  code: "not_found" | "invalid_pin" | "auth_failed" | "unknown";
+  constructor(code: ShareAuthError["code"], message: string) {
     super(message);
     this.code = code;
-    this.name = 'ShareAuthError';
+    this.name = "ShareAuthError";
   }
 }
 
@@ -45,13 +46,18 @@ export class ShareAuthError extends Error {
  * Nếu chưa có session → signInAnonymously.
  */
 async function ensureSession() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   if (session) return session;
 
   // Đăng nhập ẩn danh (cần bật "Allow anonymous sign-ins" ở Supabase Dashboard)
   const { data, error } = await supabase.auth.signInAnonymously();
   if (error) {
-    throw new ShareAuthError('auth_failed', 'Không thể tạo phiên khách: ' + error.message);
+    throw new ShareAuthError(
+      "auth_failed",
+      i18n.t("share.errorCreateSession", "Cannot create guest session: ") + error.message
+    );
   }
   return data.session;
 }
@@ -72,24 +78,33 @@ export async function verifyAndAuthShare(
 
   // 2. Gọi RPC verify_share_access để server kiểm tra token + PIN
   console.log("[verifyAndAuthShare] Calling RPC with", { p_token: token, p_pin: pin ?? null });
-  const { data, error } = await supabase.rpc('verify_share_access', {
+  const { data, error } = await supabase.rpc("verify_share_access", {
     p_token: token,
     p_pin: pin ?? null,
   });
   console.log("[verifyAndAuthShare] RPC Response", { data, error });
 
   if (error) {
-    throw new ShareAuthError('unknown', 'Lỗi server khi verify share: ' + error.message);
+    throw new ShareAuthError(
+      "unknown",
+      i18n.t("share.errorServerVerify", "Server error verifying share: ") + error.message
+    );
   }
 
-  if (!data || data.error === 'share_not_found') {
-    throw new ShareAuthError('not_found', 'Link chia sẻ không tồn tại hoặc đã bị thu hồi.');
+  if (!data || data.error === "share_not_found") {
+    throw new ShareAuthError(
+      "not_found",
+      i18n.t("share.errorLinkNotFoundOrRevoked", "Share link does not exist or has been revoked.")
+    );
   }
-  if (data.error === 'invalid_pin') {
-    throw new ShareAuthError('invalid_pin', 'Mã PIN không đúng.');
+  if (data.error === "invalid_pin") {
+    throw new ShareAuthError("invalid_pin", i18n.t("share.errorInvalidPin", "Invalid PIN code."));
   }
   if (!data.ok) {
-    throw new ShareAuthError('unknown', 'Không thể truy cập link chia sẻ.');
+    throw new ShareAuthError(
+      "unknown",
+      i18n.t("share.errorCannotAccess", "Cannot access share link.")
+    );
   }
 
   // 3. (MỚI) Quyền truy cập giờ đã được cấp trên server (bằng cách insert vào bảng share_access)
@@ -97,7 +112,7 @@ export async function verifyAndAuthShare(
   // để tránh lỗ hổng Anonymous tự update user_metadata (Bypass PIN).
 
   let parsedTrip = data.trip;
-  if (typeof data.trip === 'string') {
+  if (typeof data.trip === "string") {
     try {
       parsedTrip = JSON.parse(data.trip);
     } catch (e) {

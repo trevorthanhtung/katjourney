@@ -44,21 +44,9 @@ const blobToBase64 = (blob: Blob): Promise<string> => {
   });
 };
 
-// 2. Hàm xử lý ảnh Giấy tờ (Lưu trực tiếp dưới dạng Base64)
-export const uploadDocumentImage = async (file: File, tripId: string | number): Promise<string> => {
+// 2. Hàm xử lý ảnh (Lưu trực tiếp dưới dạng Base64)
+export const processLocalImage = async (file: File): Promise<string> => {
   const compressedBlob = await compressImage(file);
-  // Chuyển thẳng ảnh thành chuỗi Base64
   const base64Url = await blobToBase64(compressedBlob);
-  return base64Url;
-};
-
-// 3. Hàm xử lý Ảnh Nhật Ký (Lưu trực tiếp dưới dạng Base64)
-export const uploadJournalImage = async (file: File, tripId: string | number): Promise<string> => {
-  console.log("Bắt đầu nén ảnh...");
-  const compressedBlob = await compressImage(file);
-  console.log("Nén xong, chuyển đổi thành Base64...");
-  // Chuyển thẳng ảnh thành chuỗi Base64
-  const base64Url = await blobToBase64(compressedBlob);
-  console.log("Hoàn tất chuyển đổi Base64.");
   return base64Url;
 };

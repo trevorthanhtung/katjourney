@@ -1,5 +1,6 @@
-import { supabase } from '../lib/supabase';
-import { UserIdentity } from './identityService';
+import i18n from "../i18n";
+import { supabase } from "../lib/supabase";
+import { UserIdentity } from "../utils/identityCache";
 
 export interface ChatMessage {
   id: string;
@@ -18,30 +19,37 @@ export async function sendMessage(
   avatar?: string
 ) {
   // Guest cần session (anonymous) để RLS cho phép INSERT
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   let user = session?.user;
   if (!user) {
     // Thử đăng nhập ẩn danh nếu chưa có session
     const { data: anonData, error: anonErr } = await supabase.auth.signInAnonymously();
     if (anonErr || !anonData?.user) {
-      throw new Error("Vui lòng đăng nhập hoặc mở link chia sẻ hợp lệ trước khi nhắn tin.");
+      throw new Error(
+        i18n.t(
+          "chat.errorLoginRequired",
+          "Please sign in or open a valid share link before chatting."
+        )
+      );
     }
     user = anonData.user;
   }
 
-  const { error } = await supabase
-    .from('messages')
-    .insert({
-      share_token: token,
-      text: text.trim(),
-      sender_id: user.id,
-      sender_name: identity.name,
-      sender_role: identity.role || (identity.canEdit ? "Thành viên" : "Khách"),
-      sender_avatar: avatar || null
-    });
+  const { error } = await supabase.from("messages").insert({
+    share_token: token,
+    text: text.trim(),
+    sender_id: user.id,
+    sender_name: identity.name,
+    sender_role:
+      identity.role ||
+      (identity.canEdit ? i18n.t("roles.member", "Member") : i18n.t("auth.guest", "Guest")),
+    sender_avatar: avatar || null,
+  });
 
   if (error) {
-    throw new Error("Không thể gửi tin nhắn: " + error.message);
+    throw new Error(i18n.t("chat.errorSendFailed", "Cannot send message: ") + +error.message);
   }
 }
 
@@ -52,14 +60,14 @@ export async function subscribeToMessages(
 ) {
   // 1. Fetch initial 100 messages
   const { data: initialData, error: fetchError } = await supabase
-    .from('messages')
-    .select('*')
-    .eq('share_token', token)
-    .order('created_at', { ascending: true })
+    .from("messages")
+    .select("*")
+    .eq("share_token", token)
+    .order("created_at", { ascending: true })
     .limit(100);
 
   if (fetchError) {
-    console.error("Lỗi khi tải tin nhắn ban đầu:", fetchError);
+    console.error("Error loading initial messages:", fetchError);
     if (onError) onError(fetchError);
     return () => {};
   }
@@ -71,7 +79,7 @@ export async function subscribeToMessages(
     senderName: d.sender_name,
     senderRole: d.sender_role,
     senderAvatar: d.sender_avatar,
-    createdAt: d.created_at
+    createdAt: d.created_at,
   }));
 
   onUpdate(currentMessages);
@@ -80,12 +88,12 @@ export async function subscribeToMessages(
   const channel = supabase
     .channel(`messages-${token}`)
     .on(
-      'postgres_changes',
+      "postgres_changes",
       {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'messages',
-        filter: `share_token=eq.${token}`
+        event: "INSERT",
+        schema: "public",
+        table: "messages",
+        filter: `share_token=eq.${token}`,
       },
       (payload) => {
         const newItem = payload.new as any;
@@ -98,11 +106,11 @@ export async function subscribeToMessages(
           senderName: newItem.sender_name,
           senderRole: newItem.sender_role,
           senderAvatar: newItem.sender_avatar,
-          createdAt: newItem.created_at
+          createdAt: newItem.created_at,
         };
 
         // Check if message already exists in list (avoid duplicate rendering)
-        if (!currentMessages.some(m => m.id === mapped.id)) {
+        if (!currentMessages.some((m) => m.id === mapped.id)) {
           currentMessages = [...currentMessages, mapped];
           onUpdate(currentMessages);
         }

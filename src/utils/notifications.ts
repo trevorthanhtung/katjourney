@@ -1,3 +1,4 @@
+import i18n from "../i18n";
 import { db, EventItem } from "../db";
 
 // Store notified event IDs to prevent duplicate alerts
@@ -65,10 +66,16 @@ export function startNotificationService() {
 
         // If event is coming up in the next 30 minutes, or just passed (within 10 mins)
         if (diffMinutes <= 30 && diffMinutes >= -10) {
-          const notif = new Notification(`Sắp tới giờ: ${event.title}`, {
-            body: `Vào lúc ${event.time} tại ${event.location || "Chưa rõ địa điểm"}`,
-            icon: "/asset/icon-192.png",
-          });
+          const notif = new Notification(
+            i18n.t("notifications.upcomingTitle", { title: event.title }),
+            {
+              body: i18n.t("notifications.upcomingBody", {
+                time: event.time,
+                location: event.location || i18n.t("notifications.unknownLocation"),
+              }),
+              icon: "/asset/icon-192.png",
+            }
+          );
 
           notif.onclick = () => {
             window.focus();

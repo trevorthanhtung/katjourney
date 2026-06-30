@@ -319,7 +319,11 @@
     "unknownLocation": "ไม่รู้ที่ไหน",
     "archivedBanner": "ทริปนี้จบไปแล้ว ดูได้อย่างเดียวนะแก้ไม่ได้แล้ว",
     "autoSavingTooltip": "กำลังเซฟอัตโนมัติ...",
-    "savingBadge": "กำลังเซฟ..."
+    "savingBadge": "กำลังเซฟ...",
+    "other": "อื่นๆ",
+    "beforeTrip": "ก่อนเดินทาง",
+    "duringTrip": "ระหว่างเดินทาง",
+    "afterTrip": "หลังเดินทาง"
   },
   "sharedTrip": {
     "viewTitle": "ดูทริปที่แชร์",
@@ -900,7 +904,8 @@
     "today": "วันนี้",
     "currentTemp": "ปัจจุบัน: {{temp}}°",
     "currentWeather": "สภาพอากาศปัจจุบัน",
-    "sameTemp": "เหมือนที่คุณอยู่"
+    "sameTemp": "เหมือนที่คุณอยู่",
+    "currentLocation": "Current location"
   },
   "reminders": {
     "title": "สิ่งที่ต้องทำ",
@@ -915,7 +920,20 @@
     "missingDocs": "ทริปนี้ยังไม่มีเอกสารหรือใบจองอะไรเลยนะ",
     "viewDocs": "จัดการเอกสาร",
     "missingBackups": "เตรียมทริปมาดีแค่ไหนก็พลาดได้ ใส่ Plan B ไว้หน่อยดีกว่า",
-    "addBackup": "เพิ่มแผนสำรอง"
+    "addBackup": "เพิ่มแผนสำรอง",
+    "noIdDocsTitle": "No identity documents saved",
+    "noIdDocsDesc": "Save a copy of your passport, ID card, or tickets for easy offline access.",
+    "noIdDocsAction": "Add documents",
+    "weatherCheckTitle": "Check the weather",
+    "weatherCheckDesc": "Check the weather forecast before departing.",
+    "chargerCheckTitle": "Charge devices & power bank",
+    "chargerCheckDesc": "Charge your power bank, phone and pack your charger in carry-on luggage.",
+    "noMembersTitle": "No travel companions yet",
+    "noMembersDesc": "Add companions to track shared expenses and split costs.",
+    "noMembersAction": "Add companions",
+    "noExpensesTitle": "No group expenses recorded",
+    "noExpensesDesc": "Record shared expenses so the app auto-calculates the settlement for the group.",
+    "noExpensesAction": "Record expenses"
   },
   "search": {
     "placeholder": "หาอะไรในทริปนี้ดี...",
@@ -923,7 +941,29 @@
     "emptySubtitle": "หาโน้ต แพลน เอกสาร ในทริปนี้ได้หมดเลย",
     "noResults": "หาไม่เจออะ",
     "noResultsSubtitle": "ลองเปลี่ยนคำ หรือพิมพ์ใหม่ดูมั้ย?",
-    "close": "ปิด"
+    "close": "ปิด",
+    "noResultsHint": "Try searching with a different keyword like a place, payer, or item name.",
+    "timeline": "Timeline",
+    "backupPlans": "Backup Plans",
+    "when": "When",
+    "expenses": "Expenses",
+    "expenseDefault": "Expense",
+    "payer": "Payer",
+    "category": "Category",
+    "checklist": "Checklist",
+    "prepared": "Prepared",
+    "notPrepared": "Not prepared",
+    "assignee": "Assignee",
+    "status": "Status",
+    "documents": "Documents & Bookings",
+    "code": "Code",
+    "noCode": "No Code",
+    "journals": "Journals",
+    "journalDefault": "Trip Journal",
+    "members": "Members",
+    "role": "Role",
+    "companion": "Companion",
+    "phone": "Phone"
   },
   "trips": {
     "exampleLocation": "เช่น เชียงใหม่"
@@ -1316,7 +1356,13 @@
     "itemNameLabel": "ชื่ออาหารที่จะนำมา *",
     "emptyStateDetailed": "ยังไม่มีรายการเลย รับคำแนะนำเพื่อเริ่มเตรียมตัว!",
     "sharedTab": "แบ่งปันแล้ว",
-    "personalTab": "รายบุคคล"
+    "personalTab": "รายบุคคล",
+    "markItem": "Toggle packing item",
+    "type_beach": "ชายหาด",
+    "type_mountain": "ภูเขา",
+    "type_city": "เมือง",
+    "type_camping": "แคมป์ปิ้ง",
+    "type_family": "ครอบครัว"
   },
   "expenses": {
     "title": "บัญชีรายจ่าย",
@@ -1455,7 +1501,16 @@
     "catPreparation": "เตรียมสัมภาระของคุณให้พร้อม",
     "catOther": "อื่น",
     "catCustom": "อื่น...",
-    "baseCurrency": "(เหรียญเดิม)"
+    "baseCurrency": "(เหรียญเดิม)",
+    "cat_transport": "การเดินทาง",
+    "cat_flight": "ตั๋วเครื่องบิน",
+    "cat_food": "อาหาร",
+    "cat_accommodation": "ที่พัก",
+    "cat_tickets": "ตั๋วท่องเที่ยว",
+    "cat_shopping": "ช้อปปิ้ง",
+    "cat_entertainment": "ความบันเทิง",
+    "cat_packing": "จัดกระเป๋า",
+    "cat_other": "อื่นๆ"
   },
   "more": {
     "title": "จัดการเพิ่มเติม",
@@ -1655,7 +1710,8 @@
     "permSuggestTrip": "ได้แค่เสนอไอเดียแก้ทริปแบบเจียมเนื้อเจียมตัว",
     "rolesHelpTitle": "มาทำความรู้จักตำแหน่งในแก๊งกัน",
     "rolesHelpSubtitle": "แบ่งหน้าที่กันทำ ทริปจะได้ราบรื่น ไม่วุ่นวาย!",
-    "roleLabel": "ตำแหน่งของคุณในแก๊ง"
+    "roleLabel": "ตำแหน่งของคุณในแก๊ง",
+    "member": "Member"
   },
   "journal": {
     "title": "ไดอารี่ทริป",
@@ -1729,7 +1785,9 @@
     "headerTitle": "เมาท์มอยหอยสังข์",
     "chattingAs": "ฉันคือ:",
     "today": "วันนี้",
-    "yesterday": "เมื่อวาน"
+    "yesterday": "เมื่อวาน",
+    "errorLoginRequired": "Please sign in or open a valid share link before chatting.",
+    "errorSendFailed": "Cannot send message: "
   },
   "offline": {
     "title": "เน็ตบึ้มจ้า",
@@ -1769,7 +1827,15 @@
     "foundUpdateDesc": "มีคนอัปเดตทริปในอุปกรณ์อื่นแหละ",
     "syncNow": "ดึงข้อมูลมาเดี๋ยวนี้",
     "syncSuccess": "ข้อมูลตรงกันเป๊ะแล้ว!",
-    "syncFail": "ว้า... ซิงค์ไม่ผ่านแฮะ: "
+    "syncFail": "ว้า... ซิงค์ไม่ผ่านแฮะ: ",
+    "errorLoginRequired": "Please sign in before syncing.",
+    "errorBackupFailed": "Backup error: ",
+    "errorLoginToRestore": "Please sign in to restore.",
+    "errorNoBackup": "No cloud backup found.",
+    "toastUpdatedFromOther": "Updated data from another device.",
+    "toastNewDataAvailable": "New data from another device. Tap Sync to download.",
+    "toastReconnected": "Back online. Syncing...",
+    "toastAutoBackup": "Auto-backed up new data to Cloud."
   },
   "export": {
     "reportTitle": "รายงานสรุปทริปฉบับสมบูรณ์",
@@ -1821,7 +1887,21 @@
     "overview": "ดูรวมๆ",
     "itinerary": "แพลนว่าไง",
     "expenses": "คิดบัญชี",
-    "prepAndDocs": "ของต้องมี"
+    "prepAndDocs": "ของต้องมี",
+    "unknownLocation": "Unknown",
+    "tripType": "Trip Type",
+    "noTimeline": "No activities in the itinerary.",
+    "colTime": "Time",
+    "colActivityNotes": "Activity & Notes",
+    "colLocation": "Location",
+    "sharedGroup": "Shared (Group)",
+    "personalExp": "Personal",
+    "totalLabel": "TOTAL",
+    "colCategory": "Category",
+    "colAmount": "Amount",
+    "noBackupPlans": "No backup plans.",
+    "docBookingInfo": "Documents / Booking Info:",
+    "packingLabel": "Packing — {{type}}"
   },
   "sharedVia": "แชร์ผ่าน",
   "madeBy": "สร้างโดย",
@@ -1853,5 +1933,68 @@
       "btn_save": "บันทึกรูปภาพ",
       "fallback": "ไม่สามารถแชร์ได้ จะสลับไปดาวน์โหลดรูปภาพโดยอัตโนมัติ..."
     }
+  },
+  "pwaInstallSheet": {
+    "titleAndroid": "Install KAT Journey on Android",
+    "titleIOS": "Install KAT Journey on iPhone",
+    "subtitleAndroid": "Follow the simple steps below",
+    "subtitleIOS": "Follow these 3 extremely simple steps",
+    "step1Android": "Tap the browser menu",
+    "step1AndroidDesc": "Find the <b>3 dots (⋮)</b> icon usually located at the top right of Chrome or the bottom menu.",
+    "step1IOS": "Tap the Share button",
+    "step1IOSDesc": "Find the square icon with an upward arrow <icon></icon> on the Safari toolbar at the bottom of the screen.",
+    "step2Android": "Select \"Add to Home screen\"",
+    "step2IOS": "Select \"Add to Home Screen\"",
+    "step2AndroidDesc": "Find and tap the <b>Add to Home screen</b> option (or Install app).",
+    "step2IOSDesc": "Scroll down the share menu and tap the option with the plus icon <icon></icon>.",
+    "step3Title": "Confirm addition",
+    "step3AndroidDesc": "Tap the <b>\"Add\"</b> or \"Install\" button in the dialog that appears to complete.",
+    "step3IOSDesc": "Tap the <b>\"Add\"</b> button at the top right of the screen to complete.",
+    "gotIt": "Got it"
+  },
+  "backupPlans": {
+    "type": {
+      "food": "Food & Dining",
+      "place": "Alternative Place",
+      "transport": "Transport",
+      "hotel": "Accommodation",
+      "indoor": "Indoor Activity",
+      "weather": "Bad Weather"
+    }
+  },
+  "datePicker": {
+    "jan": "January",
+    "feb": "February",
+    "mar": "March",
+    "apr": "April",
+    "may": "May",
+    "jun": "June",
+    "jul": "July",
+    "aug": "August",
+    "sep": "September",
+    "oct": "October",
+    "nov": "November",
+    "dec": "December",
+    "selectRange": "Select date range",
+    "selectDate": "Select date",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "notifications": {
+    "upcomingTitle": "Coming up: {{title}}",
+    "upcomingBody": "At {{time}} at {{location}}",
+    "unknownLocation": "Unknown location"
+  },
+  "auth": {
+    "guest": "Guest",
+    "errorUnknown": "An unknown error occurred.",
+    "errorInvalidCredentials": "Invalid credentials, please try again.",
+    "errorEmailInUse": "This email is already in use.",
+    "errorWeakPassword": "Password too weak. Must be at least 6 characters.",
+    "errorGoogleLinked": "This Google account is already linked to another account.",
+    "errorTooManyRequests": "Too many requests. Please try again later.",
+    "errorGeneral": "An authentication error occurred.",
+    "errorAnonymousFailed": "Anonymous sign-in failed.",
+    "errorLoginRequired": "Please sign in."
   }
 }

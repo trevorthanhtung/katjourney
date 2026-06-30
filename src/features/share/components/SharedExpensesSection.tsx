@@ -88,10 +88,10 @@ import {
   getGroupUnits,
   getMemberShareForExpense,
 } from "../../../utils/helpers";
-import { submitChangeRequest } from "../../../services/sharedTripRequestService";
+import { submitChangeRequest } from "../../../services/cloudShareService";
 import { showToast } from "../../../components/ui/ToastManager";
-import { uploadJournalImage, uploadDocumentImage } from "../../../services/storageService";
-import { getIdentity } from "../../../services/identityService";
+import { processLocalImage } from "../../../services/storageService";
+import { getIdentity } from "../../../utils/identityCache";
 import {
   getCurrentPosition,
   reverseGeocode,
@@ -114,24 +114,24 @@ import { ExpenseSummaryBoard } from "./ExpenseSummaryBoard";
 const classNames = (...classes: any[]) => classes.filter(Boolean).join(" ");
 
 const CATEGORIES = [
-  "Giấy tờ",
-  "Quần áo",
-  "Đồ cá nhân",
-  "Thiết bị điện tử",
-  "Thuốc & y tế",
-  "Tiền & ví",
-  "Đồ ăn nhẹ",
-  "Khác",
+  "documents",
+  "clothing",
+  "personal",
+  "electronics",
+  "medical",
+  "money",
+  "snacks",
+  "other",
 ] as const;
 const CATEGORY_ICONS: Record<string, any> = {
-  "Giấy tờ": FileCheckIcon,
-  "Quần áo": ShirtIcon,
-  "Đồ cá nhân": Briefcase01Icon,
-  "Thiết bị điện tử": PlugIcon,
-  "Thuốc & y tế": PillIcon,
-  "Tiền & ví": Wallet01Icon,
-  "Đồ ăn nhẹ": Bread01Icon,
-  Khác: PackageIcon,
+  documents: FileCheckIcon,
+  clothing: ShirtIcon,
+  personal: Briefcase01Icon,
+  electronics: PlugIcon,
+  medical: PillIcon,
+  money: Wallet01Icon,
+  snacks: Bread01Icon,
+  other: PackageIcon,
 };
 
 export function SharedExpensesSection({
@@ -165,42 +165,42 @@ export function SharedExpensesSection({
 
   const getCategoryDetails = (category: string) => {
     switch (category) {
-      case "Di chuyển":
+      case "transport":
         return {
           icon: RouteIcon,
           bg: "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border-blue-150/50 dark:border-blue-900/30",
         };
-      case "Vé máy bay":
+      case "flight":
         return {
           icon: Airplane01Icon,
           bg: "bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 border-indigo-150/50 dark:border-indigo-900/30",
         };
-      case "Ăn uống":
+      case "food":
         return {
           icon: KitchenUtensilsIcon,
           bg: "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border-rose-150/50 dark:border-rose-900/30",
         };
-      case "Lưu trú":
+      case "accommodation":
         return {
           icon: HotelIcon,
           bg: "bg-slate-100 dark:bg-slate-800 text-kat-dark dark:text-slate-200 border-slate-200 dark:border-slate-700/50",
         };
-      case "Vé tham quan":
+      case "tickets":
         return {
           icon: Ticket01Icon,
           bg: "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border-amber-150/50 dark:border-amber-900/30",
         };
-      case "Mua sắm":
+      case "shopping":
         return {
           icon: ShoppingBag01Icon,
           bg: "bg-purple-50 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400 border-purple-150/50 dark:border-purple-900/30",
         };
-      case "Vui chơi & Giải trí":
+      case "entertainment":
         return {
           icon: Gamepad2Icon,
           bg: "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-150/50 dark:border-emerald-900/30",
         };
-      case "Chuẩn bị hành lý":
+      case "packing":
         return {
           icon: SparklesIcon,
           bg: "bg-sky-50 dark:bg-sky-950/20 text-sky-600 dark:text-sky-400 border-sky-150/50 dark:border-sky-900/30",
@@ -224,25 +224,25 @@ export function SharedExpensesSection({
   }, [activeMenuId]);
 
   const categoryOptions = React.useMemo(() => {
-    const defaultCats = expenseCategories.filter((c) => c !== "Khác");
+    const defaultCats = expenseCategories.filter((c) => c !== "other");
     const uniqueUsedCats = Array.from(new Set(expenses.map((e) => e.category))).filter(
-      (c) => !defaultCats.includes(c) && c !== "Khác" && c !== "Khác..."
+      (c) => !defaultCats.includes(c) && c !== "other" && c !== "other..."
     );
-    return [...defaultCats, ...uniqueUsedCats, "Khác..."];
+    return [...defaultCats, ...uniqueUsedCats, "other..."];
   }, [expenses]);
 
   const catMap: Record<string, string> = React.useMemo(
     () => ({
-      "Di chuyển": t("expenses.catTransport"),
-      "Vé máy bay": t("expenses.catFlights"),
-      "Ăn uống": t("expenses.catFood"),
-      "Lưu trú": t("expenses.catAccommodation"),
-      "Vé tham quan": t("expenses.catTickets"),
-      "Mua sắm": t("expenses.catShopping"),
-      "Vui chơi & Giải trí": t("expenses.catEntertainment"),
-      "Chuẩn bị hành lý": t("expenses.catPreparation"),
-      Khác: t("expenses.catOther"),
-      "Khác...": t("expenses.catCustom"),
+      transport: t("expenses.catTransport"),
+      flight: t("expenses.catFlights"),
+      food: t("expenses.catFood"),
+      accommodation: t("expenses.catAccommodation"),
+      tickets: t("expenses.catTickets"),
+      shopping: t("expenses.catShopping"),
+      entertainment: t("expenses.catEntertainment"),
+      packing: t("expenses.catPreparation"),
+      other: t("expenses.catOther"),
+      "other...": t("expenses.catCustom"),
     }),
     [t]
   );
@@ -272,7 +272,7 @@ export function SharedExpensesSection({
     description: "",
     amount: "",
     payer: "",
-    category: categoryOptions[0] || "Di chuyển",
+    category: categoryOptions[0] || "transport",
     customCategory: "",
     splitType: "shared",
     splitMode: "perPerson",
@@ -394,13 +394,13 @@ export function SharedExpensesSection({
       if (editingId) {
         const item = expenses.find((e) => String(e.id) === editingId);
         if (item) {
-          const isCustom = !categoryOptions.includes(item.category) || item.category === "Khác...";
+          const isCustom = !categoryOptions.includes(item.category) || item.category === "other...";
           setForm({
             description: item.description,
             amount: String(item.amount),
             payer: item.payer || "",
-            category: isCustom ? "Khác..." : item.category,
-            customCategory: isCustom && item.category !== "Khác..." ? item.category : "",
+            category: isCustom ? "other..." : item.category,
+            customCategory: isCustom && item.category !== "other..." ? item.category : "",
             splitType: item.splitType ?? "shared",
             splitMode: item.splitMode ?? "perPerson",
             splitAmong: item.splitAmong ?? [],
@@ -427,7 +427,7 @@ export function SharedExpensesSection({
           description: "",
           amount: "",
           payer: members[0]?.name ?? "",
-          category: categoryOptions[0] || "Di chuyển",
+          category: categoryOptions[0] || "transport",
           customCategory: "",
           splitType: "shared",
           splitMode: "perPerson",
@@ -530,7 +530,7 @@ export function SharedExpensesSection({
       form.currency === "VND" ? amountVal : Math.round(amountVal * form.exchangeRate);
 
     let finalCategory = form.category;
-    if (form.category === "Khác...") {
+    if (form.category === "other...") {
       const trimmedCustom = form.customCategory.trim();
       if (!trimmedCustom) {
         newErrors.customCategory = t("expenses.errCategory");
@@ -741,7 +741,7 @@ export function SharedExpensesSection({
                 {t("expenses.expenseList")}
               </h3>
               <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
-                Quản lý chi tiêu chung, chi tiêu cá nhân và thanh toán
+                {t("share.expensesDesc", "Quản lý chi tiêu chung, chi tiêu cá nhân và thanh toán")}
               </p>
             </div>
           </div>
@@ -1092,7 +1092,7 @@ export function SharedExpensesSection({
                       labels={categoryLabels}
                     />
 
-                    {form.category === "Khác..." && (
+                    {form.category === "other..." && (
                       <div className="animate-fadeIn">
                         <Input
                           label={

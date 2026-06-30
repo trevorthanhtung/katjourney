@@ -1,4 +1,5 @@
-﻿import { useState, useEffect } from "react";
+import i18n from "../i18n";
+import { useState, useEffect } from "react";
 import { getCurrentPosition } from "../services/locationService";
 import { getWeatherForecast, WeatherForecast } from "../services/weatherService";
 
@@ -46,7 +47,7 @@ export function useCurrentLocationWeather(): CurrentLocationWeather {
         const pos = await getCurrentPosition();
 
         // Reverse geocode using BigDataCloud
-        let locName = "Vị trí hiện tại";
+        let locName = i18n.t("weather.currentLocation", "Current location");
         try {
           const geoRes = await fetch(
             `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${pos.latitude}&longitude=${pos.longitude}&localityLanguage=vi`
@@ -58,9 +59,11 @@ export function useCurrentLocationWeather(): CurrentLocationWeather {
             else if (geoData.city) parts.push(geoData.city);
             else if (geoData.principalSubdivision) parts.push(geoData.principalSubdivision);
             if (geoData.countryName && parts.length === 0) parts.push(geoData.countryName);
-            locName = parts.join(", ") || "Vị trí hiện tại";
+            locName = parts.join(", ") || i18n.t("weather.currentLocation", "Current location");
           }
-        } catch { /* silent */ }
+        } catch {
+          /* silent */
+        }
 
         const weatherData = await getWeatherForecast(pos.latitude, pos.longitude, 1);
 
@@ -69,8 +72,13 @@ export function useCurrentLocationWeather(): CurrentLocationWeather {
           setForecast(weatherData);
           setLocationName(locName);
           try {
-            sessionStorage.setItem(SESSION_KEY, JSON.stringify({ forecast: weatherData, locationName: locName, ts: Date.now() }));
-          } catch { /* ignore */ }
+            sessionStorage.setItem(
+              SESSION_KEY,
+              JSON.stringify({ forecast: weatherData, locationName: locName, ts: Date.now() })
+            );
+          } catch {
+            /* ignore */
+          }
         } else {
           setError(true);
         }
@@ -82,7 +90,9 @@ export function useCurrentLocationWeather(): CurrentLocationWeather {
     }
 
     fetchCurrentWeather();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return { forecast, locationName, loading, error };

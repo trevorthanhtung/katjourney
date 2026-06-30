@@ -321,7 +321,11 @@
     "unknownLocation": "Ubicación desconocida",
     "archivedBanner": "El viaje ha terminado — solo lectura, no se permiten ediciones.",
     "autoSavingTooltip": "Guardado automático...",
-    "savingBadge": "Guardando..."
+    "savingBadge": "Guardando...",
+    "other": "Otros",
+    "beforeTrip": "Antes del viaje",
+    "duringTrip": "Durante el viaje",
+    "afterTrip": "Después del viaje"
   },
   "sharedTrip": {
     "viewTitle": "Ver viaje compartido",
@@ -535,7 +539,29 @@
     "emptyTitle": "Ingresa palabras clave para buscar",
     "emptySubtitle": "Busca en todas las notas, planes y documentos de este viaje.",
     "noResults": "No se encontraron resultados",
-    "noResultsSubtitle": "Intenta buscar con otras palabras clave o verifica la ortografía."
+    "noResultsSubtitle": "Intenta buscar con otras palabras clave o verifica la ortografía.",
+    "noResultsHint": "Try searching with a different keyword like a place, payer, or item name.",
+    "timeline": "Timeline",
+    "backupPlans": "Backup Plans",
+    "when": "When",
+    "expenses": "Expenses",
+    "expenseDefault": "Expense",
+    "payer": "Payer",
+    "category": "Category",
+    "checklist": "Checklist",
+    "prepared": "Prepared",
+    "notPrepared": "Not prepared",
+    "assignee": "Assignee",
+    "status": "Status",
+    "documents": "Documents & Bookings",
+    "code": "Code",
+    "noCode": "No Code",
+    "journals": "Journals",
+    "journalDefault": "Trip Journal",
+    "members": "Members",
+    "role": "Role",
+    "companion": "Companion",
+    "phone": "Phone"
   },
   "home": {
     "nextActivity": "Próxima actividad",
@@ -668,7 +694,20 @@
     "viewDocs": "Ver documentos",
     "viewPrep": "Ver preparación",
     "viewRequests": "Ver solicitudes",
-    "viewTimeline": "Ver itinerario"
+    "viewTimeline": "Ver itinerario",
+    "noIdDocsTitle": "No identity documents saved",
+    "noIdDocsDesc": "Save a copy of your passport, ID card, or tickets for easy offline access.",
+    "noIdDocsAction": "Add documents",
+    "weatherCheckTitle": "Check the weather",
+    "weatherCheckDesc": "Check the weather forecast before departing.",
+    "chargerCheckTitle": "Charge devices & power bank",
+    "chargerCheckDesc": "Charge your power bank, phone and pack your charger in carry-on luggage.",
+    "noMembersTitle": "No travel companions yet",
+    "noMembersDesc": "Add companions to track shared expenses and split costs.",
+    "noMembersAction": "Add companions",
+    "noExpensesTitle": "No group expenses recorded",
+    "noExpensesDesc": "Record shared expenses so the app auto-calculates the settlement for the group.",
+    "noExpensesAction": "Record expenses"
   },
   "share": {
     "completedPercent": "Completado {{percent}}%",
@@ -943,7 +982,8 @@
     "showers": "Chubascos",
     "thunderstorm": "Tormentas",
     "mostlyCloudy": "Mayormente nublado",
-    "daysLeft": "{{days}} días restantes"
+    "daysLeft": "{{days}} días restantes",
+    "currentLocation": "Current location"
   },
   "timeline": {
     "catTransport": "Transporte",
@@ -1290,7 +1330,13 @@
     "itemPlaceholder": "Ej: Cepillo eléctrico",
     "sharedTab": "Compartido",
     "personalTab": "Personal",
-    "emptyPrivateDesc": "Añade tus artículos personales (solo tú puedes verlos) aquí"
+    "emptyPrivateDesc": "Añade tus artículos personales (solo tú puedes verlos) aquí",
+    "markItem": "Toggle packing item",
+    "type_beach": "Playa",
+    "type_mountain": "Montaña",
+    "type_city": "Ciudad",
+    "type_camping": "Camping",
+    "type_family": "Familia"
   },
   "expenses": {
     "pageTitle": "Gastos",
@@ -1393,7 +1439,16 @@
     "catPreparation": "Preparativos",
     "catOther": "Otro",
     "catCustom": "Otro...",
-    "baseCurrency": "(Moneda base)"
+    "baseCurrency": "(Moneda base)",
+    "cat_transport": "Transporte",
+    "cat_flight": "Vuelos",
+    "cat_food": "Comida y bebida",
+    "cat_accommodation": "Alojamiento",
+    "cat_tickets": "Entradas turísticas",
+    "cat_shopping": "Compras",
+    "cat_entertainment": "Entretenimiento",
+    "cat_packing": "Equipaje",
+    "cat_other": "Otros"
   },
   "more": {
     "workspaceTitle": "Espacio de viaje",
@@ -1556,7 +1611,8 @@
     "permSuggestTrip": "Sugerir cambios",
     "rolesHelpTitle": "Información de roles",
     "rolesHelpSubtitle": "Cada miembro tiene un rol para que el viaje sea un éxito.",
-    "roleLabel": "Rol en el viaje"
+    "roleLabel": "Rol en el viaje",
+    "member": "Member"
   },
   "journal": {
     "title": "Diario",
@@ -1630,7 +1686,9 @@
     "headerTitle": "Chat de Viaje",
     "chattingAs": "Chateando como:",
     "today": "Hoy",
-    "yesterday": "Ayer"
+    "yesterday": "Ayer",
+    "errorLoginRequired": "Please sign in or open a valid share link before chatting.",
+    "errorSendFailed": "Cannot send message: "
   },
   "offline": {
     "title": "Estás desconectado",
@@ -1670,7 +1728,15 @@
     "foundUpdateDesc": "Los últimos datos están disponibles desde tu otro dispositivo.",
     "syncNow": "Sincronizar ahora",
     "syncSuccess": "Actualizado con nuevos datos del otro dispositivo.",
-    "syncFail": "Error al restaurar: "
+    "syncFail": "Error al restaurar: ",
+    "errorLoginRequired": "Please sign in before syncing.",
+    "errorBackupFailed": "Backup error: ",
+    "errorLoginToRestore": "Please sign in to restore.",
+    "errorNoBackup": "No cloud backup found.",
+    "toastUpdatedFromOther": "Updated data from another device.",
+    "toastNewDataAvailable": "New data from another device. Tap Sync to download.",
+    "toastReconnected": "Back online. Syncing...",
+    "toastAutoBackup": "Auto-backed up new data to Cloud."
   },
   "export": {
     "reportTitle": "INFORME DEL VIAJE",
@@ -1722,7 +1788,21 @@
     "overview": "Resumen",
     "itinerary": "Itinerario",
     "expenses": "Gastos",
-    "prepAndDocs": "Preparación y Doc."
+    "prepAndDocs": "Preparación y Doc.",
+    "unknownLocation": "Unknown",
+    "tripType": "Trip Type",
+    "noTimeline": "No activities in the itinerary.",
+    "colTime": "Time",
+    "colActivityNotes": "Activity & Notes",
+    "colLocation": "Location",
+    "sharedGroup": "Shared (Group)",
+    "personalExp": "Personal",
+    "totalLabel": "TOTAL",
+    "colCategory": "Category",
+    "colAmount": "Amount",
+    "noBackupPlans": "No backup plans.",
+    "docBookingInfo": "Documents / Booking Info:",
+    "packingLabel": "Packing — {{type}}"
   },
   "sharedVia": "Compartido vía",
   "madeBy": "Hecho por",
@@ -1754,5 +1834,68 @@
       "btn_save": "Guardar imagen",
       "fallback": "No se puede compartir, cambiando automáticamente a descarga..."
     }
+  },
+  "pwaInstallSheet": {
+    "titleAndroid": "Install KAT Journey on Android",
+    "titleIOS": "Install KAT Journey on iPhone",
+    "subtitleAndroid": "Follow the simple steps below",
+    "subtitleIOS": "Follow these 3 extremely simple steps",
+    "step1Android": "Tap the browser menu",
+    "step1AndroidDesc": "Find the <b>3 dots (⋮)</b> icon usually located at the top right of Chrome or the bottom menu.",
+    "step1IOS": "Tap the Share button",
+    "step1IOSDesc": "Find the square icon with an upward arrow <icon></icon> on the Safari toolbar at the bottom of the screen.",
+    "step2Android": "Select \"Add to Home screen\"",
+    "step2IOS": "Select \"Add to Home Screen\"",
+    "step2AndroidDesc": "Find and tap the <b>Add to Home screen</b> option (or Install app).",
+    "step2IOSDesc": "Scroll down the share menu and tap the option with the plus icon <icon></icon>.",
+    "step3Title": "Confirm addition",
+    "step3AndroidDesc": "Tap the <b>\"Add\"</b> or \"Install\" button in the dialog that appears to complete.",
+    "step3IOSDesc": "Tap the <b>\"Add\"</b> button at the top right of the screen to complete.",
+    "gotIt": "Got it"
+  },
+  "backupPlans": {
+    "type": {
+      "food": "Food & Dining",
+      "place": "Alternative Place",
+      "transport": "Transport",
+      "hotel": "Accommodation",
+      "indoor": "Indoor Activity",
+      "weather": "Bad Weather"
+    }
+  },
+  "datePicker": {
+    "jan": "January",
+    "feb": "February",
+    "mar": "March",
+    "apr": "April",
+    "may": "May",
+    "jun": "June",
+    "jul": "July",
+    "aug": "August",
+    "sep": "September",
+    "oct": "October",
+    "nov": "November",
+    "dec": "December",
+    "selectRange": "Select date range",
+    "selectDate": "Select date",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "notifications": {
+    "upcomingTitle": "Coming up: {{title}}",
+    "upcomingBody": "At {{time}} at {{location}}",
+    "unknownLocation": "Unknown location"
+  },
+  "auth": {
+    "guest": "Guest",
+    "errorUnknown": "An unknown error occurred.",
+    "errorInvalidCredentials": "Invalid credentials, please try again.",
+    "errorEmailInUse": "This email is already in use.",
+    "errorWeakPassword": "Password too weak. Must be at least 6 characters.",
+    "errorGoogleLinked": "This Google account is already linked to another account.",
+    "errorTooManyRequests": "Too many requests. Please try again later.",
+    "errorGeneral": "An authentication error occurred.",
+    "errorAnonymousFailed": "Anonymous sign-in failed.",
+    "errorLoginRequired": "Please sign in."
   }
 }

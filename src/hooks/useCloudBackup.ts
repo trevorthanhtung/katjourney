@@ -1,3 +1,4 @@
+import i18n from "../i18n";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "./useAuth";
 import { backupToCloud, restoreFromCloud, getLastBackupInfo } from "../services/cloudBackupService";
@@ -45,7 +46,7 @@ export function useCloudBackup() {
         const localTimeStr = localStorage.getItem("kat_journey_local_updated_at");
         const localTime = localTimeStr ? new Date(localTimeStr).getTime() : 0;
         const cloudTime = new Date(cloudTimeStr).getTime();
-        
+
         // If cloud is newer by more than 1 second (1000ms tolerance)
         setHasCloudVersion(cloudTime - localTime > 1000);
       } else {
@@ -72,16 +73,19 @@ export function useCloudBackup() {
     }
   };
 
-  const restoreNow = useCallback(async (mode: "merge" | "replace") => {
-    if (!user) return;
-    setIsRestoring(true);
-    try {
-      await restoreFromCloud(mode);
-      await fetchBackupInfo();
-    } finally {
-      setIsRestoring(false);
-    }
-  }, [user, fetchBackupInfo]);
+  const restoreNow = useCallback(
+    async (mode: "merge" | "replace") => {
+      if (!user) return;
+      setIsRestoring(true);
+      try {
+        await restoreFromCloud(mode);
+        await fetchBackupInfo();
+      } finally {
+        setIsRestoring(false);
+      }
+    },
+    [user, fetchBackupInfo]
+  );
 
   // Keep refs up to date to prevent stale closures in the Realtime snapshot listener
   const restoreNowRef = useRef(restoreNow);
@@ -127,17 +131,20 @@ export function useCloudBackup() {
           event: "*",
           schema: "public",
           table: "user_backups",
-          filter: `user_id=eq.${user.uid}`
+          filter: `user_id=eq.${user.uid}`,
         },
         async (payload) => {
           if (!isSubscribed) return;
           console.log("[RealtimeSync] Received database backup change payload:", payload);
-          
+
           const row = payload.new as any;
           if (!row || !row.data) return;
 
           // Respect the kat_sync_in_progress lock
-          if (typeof localStorage !== "undefined" && localStorage.getItem("kat_sync_in_progress") === "true") {
+          if (
+            typeof localStorage !== "undefined" &&
+            localStorage.getItem("kat_sync_in_progress") === "true"
+          ) {
             console.log("[RealtimeSync] Sync already in progress, skipping snapshot");
             return;
           }
@@ -146,8 +153,11 @@ export function useCloudBackup() {
           if (!cloudTimeStr) return;
 
           // Compare with local timestamp
-          const localTimeStr = typeof localStorage !== "undefined" ? localStorage.getItem("kat_journey_local_updated_at") : null;
-          
+          const localTimeStr =
+            typeof localStorage !== "undefined"
+              ? localStorage.getItem("kat_journey_local_updated_at")
+              : null;
+
           const localTime = localTimeStr ? new Date(localTimeStr).getTime() : 0;
           const cloudTime = new Date(cloudTimeStr).getTime();
 
@@ -157,8 +167,13 @@ export function useCloudBackup() {
             return;
           }
 
-          console.log("[RealtimeSync] Detected new cloud data from another device! Cloud:", cloudTimeStr, "Local:", localTimeStr);
-          
+          console.log(
+            "[RealtimeSync] Detected new cloud data from another device! Cloud:",
+            cloudTimeStr,
+            "Local:",
+            localTimeStr
+          );
+
           // Set last backup time
           setLastBackupAt(cloudTimeStr);
 
@@ -176,7 +191,9 @@ export function useCloudBackup() {
             try {
               await restoreNowRef.current("merge");
               if ((window as any).showToastGlobal) {
-                (window as any).showToastGlobal("Đã cập nhật dữ liệu mới từ thiết bị khác.");
+                (window as any).showToastGlobal(
+                  i18n.t("sync.toastUpdatedFromOther", "Updated data from another device.")
+                );
               }
             } catch (err) {
               console.error("[RealtimeSync] Auto restore failed:", err);
@@ -188,7 +205,12 @@ export function useCloudBackup() {
             console.log("[RealtimeSync] Device is ACTIVE. Showing cloud updates banner.");
             setHasCloudVersion(true);
             if ((window as any).showToastGlobal) {
-              (window as any).showToastGlobal("Có dữ liệu mới từ thiết bị khác. Vui lòng bấm Đồng bộ để tải về.");
+              (window as any).showToastGlobal(
+                i18n.t(
+                  "sync.toastNewDataAvailable",
+                  "New data from another device. Tap Sync to download."
+                )
+              );
             }
           }
         }
@@ -211,17 +233,20 @@ export function useCloudBackup() {
    * - "up_to_date": timestamps match, data is up-to-date.
    */
   const syncData = async (): Promise<"uploaded" | "prompt_restore" | "up_to_date"> => {
-    if (!user) throw new Error("Vui lòng đăng nhập trước khi đồng bộ.");
-    
+    if (!user) throw new Error(i18n.t("sync.errorLoginRequired", "Please sign in before syncing."));
+
     setIsSyncLoading(true);
     try {
       // 1. Fetch latest metadata from Cloud
       const info = await getLastBackupInfo();
       const cloudTimeStr = info ? info.updatedAt : null;
-      
+
       // 2. Get local metadata timestamp
-      let localTimeStr = typeof localStorage !== "undefined" ? localStorage.getItem("kat_journey_local_updated_at") : null;
-      
+      let localTimeStr =
+        typeof localStorage !== "undefined"
+          ? localStorage.getItem("kat_journey_local_updated_at")
+          : null;
+
       // If local metadata is missing, set it to now
       if (!localTimeStr && typeof localStorage !== "undefined") {
         localTimeStr = new Date().toISOString();
@@ -282,7 +307,7 @@ export function useCloudBackup() {
       // Check if local has newer changes than last backup time
       if (localTime - backupTime > 1000) {
         const timeSinceLastEdit = Date.now() - localTime;
-        
+
         // Debounce: only auto backup if the user hasn't edited for at least 5 seconds
         if (timeSinceLastEdit >= 5000) {
           setIsAutoBackingUp(true);
@@ -305,7 +330,16 @@ export function useCloudBackup() {
         autoBackupTimerRef.current = null;
       }
     };
-  }, [user, autoBackupEnabled, lastBackupAt, isBackingUp, isRestoring, isSyncLoading, isAutoBackingUp, fetchBackupInfo]);
+  }, [
+    user,
+    autoBackupEnabled,
+    lastBackupAt,
+    isBackingUp,
+    isRestoring,
+    isSyncLoading,
+    isAutoBackingUp,
+    fetchBackupInfo,
+  ]);
 
   // Trigger synchronization immediately when regaining internet connection
   useEffect(() => {
@@ -313,13 +347,17 @@ export function useCloudBackup() {
       console.log("[AutoSync] Device back online! Initiating sync check...");
       if (user && autoBackupEnabled) {
         if ((window as any).showToastGlobal) {
-          (window as any).showToastGlobal("Đã kết nối mạng trở lại. Đang đồng bộ...");
+          (window as any).showToastGlobal(
+            i18n.t("sync.toastReconnected", "Back online. Syncing...")
+          );
         }
         try {
           const syncResult = await syncData();
           if (syncResult === "uploaded") {
             if ((window as any).showToastGlobal) {
-              (window as any).showToastGlobal("Đã tự động sao lưu dữ liệu mới lên Cloud.");
+              (window as any).showToastGlobal(
+                i18n.t("sync.toastAutoBackup", "Auto-backed up new data to Cloud.")
+              );
             }
           }
         } catch (err) {
@@ -350,6 +388,6 @@ export function useCloudBackup() {
     backupNow,
     restoreNow,
     syncData,
-    refreshBackupInfo: fetchBackupInfo
+    refreshBackupInfo: fetchBackupInfo,
   };
 }

@@ -17,7 +17,7 @@ export function getTripReminders({
   events,
   expenses,
   checklist,
-  travelDocuments = []
+  travelDocuments = [],
 }: {
   trip: Trip;
   members: Member[];
@@ -27,7 +27,7 @@ export function getTripReminders({
   travelDocuments?: TravelDocument[];
 }): TripReminder[] {
   const reminders: TripReminder[] = [];
-  
+
   if (!trip.startDate) return reminders;
 
   const start = new Date(`${trip.startDate}T00:00:00`).getTime();
@@ -36,7 +36,7 @@ export function getTripReminders({
 
   // Rule 1: Checklist items incomplete (Show only if trip is upcoming or active)
   if (now <= new Date(`${trip.endDate}T00:00:00`).getTime()) {
-    const uncompletedChecklist = checklist.filter(c => !c.completed).length;
+    const uncompletedChecklist = checklist.filter((c) => !c.completed).length;
     if (uncompletedChecklist > 0) {
       reminders.push({
         id: "checklist_incomplete",
@@ -44,7 +44,7 @@ export function getTripReminders({
         title: i18n.t("home.checklistIncompleteTitle"),
         description: i18n.t("home.checklistIncompleteDesc", { count: uncompletedChecklist }),
         actionLabel: i18n.t("home.prepareNow"),
-        onClickSection: "checklist"
+        onClickSection: "checklist",
       });
     } else if (checklist.length === 0) {
       reminders.push({
@@ -53,28 +53,29 @@ export function getTripReminders({
         title: i18n.t("home.checklistEmptyTitle"),
         description: i18n.t("home.checklistEmptyDesc"),
         actionLabel: i18n.t("home.createList"),
-        onClickSection: "checklist"
+        onClickSection: "checklist",
       });
     }
   }
 
   // Rule 2: Emergency documents or ID cards check
-  const idDocs = travelDocuments.filter(d => 
-    d.type === "document" || 
-    d.title.toLowerCase().includes("hộ chiếu") || 
-    d.title.toLowerCase().includes("passport") || 
-    d.title.toLowerCase().includes("cccd") || 
-    d.title.toLowerCase().includes("căn cước") || 
-    d.title.toLowerCase().includes("giấy tờ")
+  const idDocs = travelDocuments.filter(
+    (d) =>
+      d.type === "document" ||
+      d.title.toLowerCase().includes("hộ chiếu") ||
+      d.title.toLowerCase().includes("passport") ||
+      d.title.toLowerCase().includes("cccd") ||
+      d.title.toLowerCase().includes("căn cước") ||
+      d.title.toLowerCase().includes("giấy tờ")
   );
   if (idDocs.length === 0 && daysToStart >= 0) {
     reminders.push({
       id: "no_id_documents",
       type: "info",
-      title: "Chưa lưu giấy tờ tùy thân",
-      description: "Lưu bản sao Hộ chiếu, CCCD hoặc Vé xe/máy bay để tra cứu offline dễ dàng.",
-      actionLabel: "Thêm giấy tờ",
-      onClickSection: "documents"
+      title: i18n.t("reminders.noIdDocsTitle"),
+      description: i18n.t("reminders.noIdDocsDesc"),
+      actionLabel: i18n.t("reminders.noIdDocsAction"),
+      onClickSection: "documents",
     });
   }
 
@@ -83,16 +84,16 @@ export function getTripReminders({
     reminders.push({
       id: "weather_check",
       type: "info",
-      title: "Kiểm tra thời tiết",
-      description: "Kiểm tra dự báo thời tiết trước khi xuất phát.",
+      title: i18n.t("reminders.weatherCheckTitle"),
+      description: i18n.t("reminders.weatherCheckDesc"),
     });
-    
+
     if (daysToStart <= 1) {
       reminders.push({
         id: "charger_check",
         type: "warning",
-        title: "Sạc đầy pin & thiết bị",
-        description: "Sạc pin dự phòng, điện thoại và đóng gói bộ sạc vào hành lý xách tay.",
+        title: i18n.t("reminders.chargerCheckTitle"),
+        description: i18n.t("reminders.chargerCheckDesc"),
       });
     }
   }
@@ -102,20 +103,20 @@ export function getTripReminders({
     reminders.push({
       id: "no_members",
       type: "info",
-      title: "Chuyến đi chưa có bạn đồng hành",
-      description: "Thêm người đồng hành để cùng theo dõi chi phí và chia tiền.",
-      actionLabel: "Thêm người đồng hành",
-      onClickSection: "members"
+      title: i18n.t("reminders.noMembersTitle"),
+      description: i18n.t("reminders.noMembersDesc"),
+      actionLabel: i18n.t("reminders.noMembersAction"),
+      onClickSection: "members",
     });
   } else if (members.length > 1 && expenses.length === 0 && daysToStart < 0) {
     // Already traveling but no expenses logged yet
     reminders.push({
       id: "shared_expenses_empty",
       type: "info",
-      title: "Chưa ghi chép chi phí nhóm",
-      description: "Ghi lại các khoản chi chung để app tính toán tự động quyết toán tiền cho cả nhóm.",
-      actionLabel: "Ghi chi phí",
-      onClickSection: "expenses"
+      title: i18n.t("reminders.noExpensesTitle"),
+      description: i18n.t("reminders.noExpensesDesc"),
+      actionLabel: i18n.t("reminders.noExpensesAction"),
+      onClickSection: "expenses",
     });
   }
 

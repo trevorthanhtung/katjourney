@@ -319,7 +319,11 @@
     "unknownLocation": "Chưa xác định",
     "archivedBanner": "Chuyến đi đã kết thúc — chỉ xem, không chỉnh sửa.",
     "autoSavingTooltip": "Đang tự động sao lưu…",
-    "savingBadge": "Đang lưu…"
+    "savingBadge": "Đang lưu…",
+    "other": "Khác",
+    "beforeTrip": "Trước chuyến đi",
+    "duringTrip": "Trong chuyến đi",
+    "afterTrip": "Sau chuyến đi"
   },
   "sharedTrip": {
     "viewTitle": "Xem chuyến đi được chia sẻ",
@@ -907,7 +911,8 @@
     "showers": "Mưa rào",
     "thunderstorm": "Có dông bão",
     "mostlyCloudy": "Có mây",
-    "daysLeft": "Còn {{days}} ngày nữa"
+    "daysLeft": "Còn {{days}} ngày nữa",
+    "currentLocation": "Vị trí hiện tại"
   },
   "reminders": {
     "title": "Việc cần chú ý",
@@ -922,7 +927,20 @@
     "missingDocs": "Chưa có giấy tờ hoặc thông tin đặt chỗ nào cho chuyến đi này.",
     "viewDocs": "Xem giấy tờ",
     "missingBackups": "Bạn có thể thêm phương án dự phòng cho các hoạt động quan trọng.",
-    "addBackup": "Thêm dự phòng"
+    "addBackup": "Thêm dự phòng",
+    "noIdDocsTitle": "Chưa lưu giấy tờ tùy thân",
+    "noIdDocsDesc": "Lưu bản sao Hộ chiếu, CCCD hoặc Vé xe/máy bay để tra cứu offline dễ dàng.",
+    "noIdDocsAction": "Thêm giấy tờ",
+    "weatherCheckTitle": "Kiểm tra thời tiết",
+    "weatherCheckDesc": "Kiểm tra dự báo thời tiết trước khi xuất phát.",
+    "chargerCheckTitle": "Sạc đầy pin & thiết bị",
+    "chargerCheckDesc": "Sạc pin dự phòng, điện thoại và đóng gói bộ sạc vào hành lý xách tay.",
+    "noMembersTitle": "Chuyến đi chưa có bạn đồng hành",
+    "noMembersDesc": "Thêm người đồng hành để cùng theo dõi chi phí và chia tiền.",
+    "noMembersAction": "Thêm người đồng hành",
+    "noExpensesTitle": "Chưa ghi chép chi phí nhóm",
+    "noExpensesDesc": "Ghi lại các khoản chi chung để app tính toán tự động quyết toán tiền cho cả nhóm.",
+    "noExpensesAction": "Ghi chi phí"
   },
   "search": {
     "placeholder": "Tìm kiếm trong chuyến đi...",
@@ -930,7 +948,29 @@
     "emptySubtitle": "Tìm kiếm mọi ghi chép, kế hoạch, giấy tờ đã lưu trữ trong chuyến đi này.",
     "noResults": "Không tìm thấy kết quả phù hợp",
     "noResultsSubtitle": "Thử tìm kiếm bằng từ khóa khác hoặc kiểm tra lại chính tả.",
-    "close": "Đóng"
+    "close": "Đóng",
+    "noResultsHint": "Hãy thử tìm với từ khóa khác như tên địa điểm, người trả tiền, hoặc tên món đồ.",
+    "timeline": "Lịch trình",
+    "backupPlans": "Phương án dự phòng",
+    "when": "Khi",
+    "expenses": "Chi phí",
+    "expenseDefault": "Chi tiêu",
+    "payer": "Người chi",
+    "category": "Phân loại",
+    "checklist": "Chuẩn bị",
+    "prepared": "Đã chuẩn bị",
+    "notPrepared": "Chưa chuẩn bị",
+    "assignee": "Người phụ trách",
+    "status": "Trạng thái",
+    "documents": "Giấy tờ & Đặt chỗ",
+    "code": "Code",
+    "noCode": "Không có Code",
+    "journals": "Bản tin",
+    "journalDefault": "Bản tin chuyến đi",
+    "members": "Thành viên",
+    "role": "Vai trò",
+    "companion": "Bạn đồng hành",
+    "phone": "SĐT"
   },
   "trips": {
     "exampleLocation": "VD: Phú Quốc"
@@ -1280,7 +1320,13 @@
     "itemPlaceholder": "VD: Bàn chải điện",
     "sharedTab": "Chung",
     "personalTab": "Cá nhân",
-    "emptyPrivateDesc": "Thêm đồ dùng của riêng bạn (chỉ mình bạn thấy) tại đây"
+    "emptyPrivateDesc": "Thêm đồ dùng của riêng bạn (chỉ mình bạn thấy) tại đây",
+    "markItem": "Đánh dấu hành lý",
+    "type_beach": "Biển",
+    "type_mountain": "Núi",
+    "type_city": "Thành phố",
+    "type_camping": "Camping",
+    "type_family": "Gia đình"
   },
   "expenses": {
     "pageTitle": "Chi phí",
@@ -1383,7 +1429,16 @@
     "catPreparation": "Chuẩn bị hành lý",
     "catOther": "Khác",
     "catCustom": "Khác...",
-    "baseCurrency": "(Đồng tiền gốc)"
+    "baseCurrency": "(Đồng tiền gốc)",
+    "cat_transport": "Di chuyển",
+    "cat_flight": "Vé máy bay",
+    "cat_food": "Ăn uống",
+    "cat_accommodation": "Lưu trú",
+    "cat_tickets": "Vé tham quan",
+    "cat_shopping": "Mua sắm",
+    "cat_entertainment": "Vui chơi & Giải trí",
+    "cat_packing": "Chuẩn bị hành lý",
+    "cat_other": "Khác"
   },
   "more": {
     "workspaceTitle": "Không gian chuyến đi",
@@ -1546,7 +1601,8 @@
     "permSuggestTrip": "Đề xuất sửa lịch trình",
     "rolesHelpTitle": "Thông tin các vai trò",
     "rolesHelpSubtitle": "Mỗi người một vai trò để cùng làm nên chuyến đi trọn vẹn",
-    "roleLabel": "Vai trò trong chuyến đi"
+    "roleLabel": "Vai trò trong chuyến đi",
+    "member": "Thành viên"
   },
   "journal": {
     "title": "Bản tin hành trình",
@@ -1620,7 +1676,9 @@
     "headerTitle": "Hộp Thoại Chuyến Đi",
     "chattingAs": "Đang chat:",
     "today": "Hôm nay",
-    "yesterday": "Hôm qua"
+    "yesterday": "Hôm qua",
+    "errorLoginRequired": "Vui lòng đăng nhập hoặc mở link chia sẻ hợp lệ trước khi nhắn tin.",
+    "errorSendFailed": "Không thể gửi tin nhắn: "
   },
   "offline": {
     "title": "Bạn đang offline",
@@ -1660,7 +1718,15 @@
     "foundUpdateDesc": "Có dữ liệu mới nhất từ thiết bị khác của bạn.",
     "syncNow": "Đồng bộ ngay",
     "syncSuccess": "Đã cập nhật dữ liệu mới từ thiết bị khác.",
-    "syncFail": "Khôi phục thất bại: "
+    "syncFail": "Khôi phục thất bại: ",
+    "errorLoginRequired": "Vui lòng đăng nhập trước khi đồng bộ.",
+    "errorBackupFailed": "Lỗi khi sao lưu dữ liệu lên Supabase: ",
+    "errorLoginToRestore": "Vui lòng đăng nhập để thực hiện khôi phục.",
+    "errorNoBackup": "Không tìm thấy bản sao lưu nào trên Cloud.",
+    "toastUpdatedFromOther": "Đã cập nhật dữ liệu mới từ thiết bị khác.",
+    "toastNewDataAvailable": "Có dữ liệu mới từ thiết bị khác. Vui lòng bấm Đồng bộ để tải về.",
+    "toastReconnected": "Đã kết nối mạng trở lại. Đang đồng bộ...",
+    "toastAutoBackup": "Đã tự động sao lưu dữ liệu mới lên Cloud."
   },
   "export": {
     "reportTitle": "BÁO CÁO CHUYẾN ĐI",
@@ -1712,7 +1778,21 @@
     "overview": "Tổng quan",
     "itinerary": "Lịch trình",
     "expenses": "Chi phí",
-    "prepAndDocs": "Chuẩn bị & Tài liệu"
+    "prepAndDocs": "Chuẩn bị & Tài liệu",
+    "unknownLocation": "Chưa xác định",
+    "tripType": "Loại hình",
+    "noTimeline": "Chưa có hoạt động nào trong lịch trình.",
+    "colTime": "Giờ",
+    "colActivityNotes": "Hoạt động & Ghi chú",
+    "colLocation": "Địa điểm",
+    "sharedGroup": "Chi chung (nhóm)",
+    "personalExp": "Chi cá nhân",
+    "totalLabel": "TỔNG CỘNG",
+    "colCategory": "Hạng mục",
+    "colAmount": "Số tiền",
+    "noBackupPlans": "Không có thông tin dự phòng nào.",
+    "docBookingInfo": "Thông tin giấy tờ / Đặt chỗ:",
+    "packingLabel": "Hành lý — {{type}}"
   },
   "sharedVia": "Chia sẻ qua",
   "madeBy": "thực hiện bởi",
@@ -1744,5 +1824,68 @@
       "btn_save": "Tải ảnh",
       "fallback": "Không thể chia sẻ, tự động chuyển sang tải ảnh..."
     }
+  },
+  "pwaInstallSheet": {
+    "titleAndroid": "Cài đặt KAT Journey trên Android",
+    "titleIOS": "Cài đặt KAT Journey trên iPhone",
+    "subtitleAndroid": "Thực hiện theo các bước đơn giản dưới đây",
+    "subtitleIOS": "Thực hiện theo 3 bước cực kỳ đơn giản dưới đây",
+    "step1Android": "Nhấn vào menu trình duyệt",
+    "step1AndroidDesc": "Tìm biểu tượng <b>3 dấu chấm (⋮)</b> thường nằm ở góc trên bên phải của trình duyệt Chrome hoặc menu dưới cùng.",
+    "step1IOS": "Nhấn vào nút Chia sẻ (Share)",
+    "step1IOSDesc": "Tìm biểu tượng hình vuông có mũi tên chỉ lên <icon></icon> trên thanh công cụ Safari ở dưới cùng màn hình.",
+    "step2Android": "Chọn \"Thêm vào MH chính\"",
+    "step2IOS": "Chọn \"Thêm vào MH chính\" (Add to Home Screen)",
+    "step2AndroidDesc": "Tìm và nhấn vào tùy chọn <b>Thêm vào màn hình chính</b> (hoặc Cài đặt ứng dụng).",
+    "step2IOSDesc": "Cuộn menu chia sẻ xuống dưới và nhấn vào tùy chọn có biểu tượng dấu cộng <icon></icon>.",
+    "step3Title": "Xác nhận thêm",
+    "step3AndroidDesc": "Nhấn nút <b>\"Thêm\"</b> hoặc \"Cài đặt\" ở hộp thoại hiện ra để hoàn tất.",
+    "step3IOSDesc": "Nhấn nút <b>\"Thêm\" (Add)</b> ở góc trên bên phải màn hình để hoàn tất.",
+    "gotIt": "Đã hiểu"
+  },
+  "backupPlans": {
+    "type": {
+      "food": "Ăn uống",
+      "place": "Địa điểm thay thế",
+      "transport": "Di chuyển",
+      "hotel": "Lưu trú",
+      "indoor": "Trong nhà",
+      "weather": "Thời tiết xấu"
+    }
+  },
+  "datePicker": {
+    "jan": "Tháng 1",
+    "feb": "Tháng 2",
+    "mar": "Tháng 3",
+    "apr": "Tháng 4",
+    "may": "Tháng 5",
+    "jun": "Tháng 6",
+    "jul": "Tháng 7",
+    "aug": "Tháng 8",
+    "sep": "Tháng 9",
+    "oct": "Tháng 10",
+    "nov": "Tháng 11",
+    "dec": "Tháng 12",
+    "selectRange": "Chọn khoảng thời gian",
+    "selectDate": "Chọn ngày",
+    "cancel": "Hủy",
+    "save": "Lưu"
+  },
+  "notifications": {
+    "upcomingTitle": "Sắp tới giờ: {{title}}",
+    "upcomingBody": "Vào lúc {{time}} tại {{location}}",
+    "unknownLocation": "Chưa rõ địa điểm"
+  },
+  "auth": {
+    "guest": "Khách",
+    "errorUnknown": "Đã xảy ra lỗi không xác định.",
+    "errorInvalidCredentials": "Thông tin xác thực tài khoản không chính xác, vui lòng thử lại.",
+    "errorEmailInUse": "Địa chỉ email này đã được sử dụng bởi một tài khoản khác.",
+    "errorWeakPassword": "Mật khẩu quá yếu. Mật khẩu cần có ít nhất 6 ký tự.",
+    "errorGoogleLinked": "Tài khoản Google này đã được liên kết với một tài khoản khác.",
+    "errorTooManyRequests": "Hệ thống đang quá tải hoặc bạn thao tác quá nhanh. Vui lòng thử lại sau.",
+    "errorGeneral": "Đã xảy ra lỗi trong quá trình xác thực.",
+    "errorAnonymousFailed": "Đăng nhập ẩn danh thất bại.",
+    "errorLoginRequired": "Vui lòng đăng nhập."
   }
 }

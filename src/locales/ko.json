@@ -319,7 +319,11 @@
     "unknownLocation": "알 수 없는 위치",
     "archivedBanner": "종료된 여행입니다 (읽기 전용).",
     "autoSavingTooltip": "자동 저장 중...",
-    "savingBadge": "저장 중..."
+    "savingBadge": "저장 중...",
+    "other": "기타",
+    "beforeTrip": "여행 전",
+    "duringTrip": "여행 중",
+    "afterTrip": "여행 후"
   },
   "sharedTrip": {
     "viewTitle": "공유된 여행 보기",
@@ -900,7 +904,8 @@
     "today": "오늘",
     "currentTemp": "현재: {{temp}}°",
     "currentWeather": "현재 날씨",
-    "sameTemp": "당신이 있는 곳처럼"
+    "sameTemp": "당신이 있는 곳처럼",
+    "currentLocation": "Current location"
   },
   "reminders": {
     "title": "확인 필요",
@@ -915,7 +920,20 @@
     "missingDocs": "이 여행에는 아직 항공권이나 서류 정보가 등록되지 않았습니다.",
     "viewDocs": "서류 보기",
     "missingBackups": "중요한 일정에는 만약의 상황을 대비해 플랜 B를 추가해 둘 수 있습니다.",
-    "addBackup": "플랜 B 추가"
+    "addBackup": "플랜 B 추가",
+    "noIdDocsTitle": "No identity documents saved",
+    "noIdDocsDesc": "Save a copy of your passport, ID card, or tickets for easy offline access.",
+    "noIdDocsAction": "Add documents",
+    "weatherCheckTitle": "Check the weather",
+    "weatherCheckDesc": "Check the weather forecast before departing.",
+    "chargerCheckTitle": "Charge devices & power bank",
+    "chargerCheckDesc": "Charge your power bank, phone and pack your charger in carry-on luggage.",
+    "noMembersTitle": "No travel companions yet",
+    "noMembersDesc": "Add companions to track shared expenses and split costs.",
+    "noMembersAction": "Add companions",
+    "noExpensesTitle": "No group expenses recorded",
+    "noExpensesDesc": "Record shared expenses so the app auto-calculates the settlement for the group.",
+    "noExpensesAction": "Record expenses"
   },
   "search": {
     "placeholder": "여행 내에서 검색...",
@@ -923,7 +941,29 @@
     "emptySubtitle": "이 여행에 저장된 모든 메모, 계획, 서류를 빠르게 찾을 수 있습니다.",
     "noResults": "일치하는 결과가 없습니다",
     "noResultsSubtitle": "검색어를 변경하거나 맞춤법을 확인해 보세요.",
-    "close": "닫기"
+    "close": "닫기",
+    "noResultsHint": "Try searching with a different keyword like a place, payer, or item name.",
+    "timeline": "Timeline",
+    "backupPlans": "Backup Plans",
+    "when": "When",
+    "expenses": "Expenses",
+    "expenseDefault": "Expense",
+    "payer": "Payer",
+    "category": "Category",
+    "checklist": "Checklist",
+    "prepared": "Prepared",
+    "notPrepared": "Not prepared",
+    "assignee": "Assignee",
+    "status": "Status",
+    "documents": "Documents & Bookings",
+    "code": "Code",
+    "noCode": "No Code",
+    "journals": "Journals",
+    "journalDefault": "Trip Journal",
+    "members": "Members",
+    "role": "Role",
+    "companion": "Companion",
+    "phone": "Phone"
   },
   "trips": {
     "exampleLocation": "예: 제주도"
@@ -1316,7 +1356,13 @@
     "itemNameLabel": "가져갈 요리 이름 *",
     "emptyStateDetailed": "아직 항목이 없습니다. 준비를 시작하려면 제안을 받으세요!",
     "sharedTab": "공유됨",
-    "personalTab": "개인"
+    "personalTab": "개인",
+    "markItem": "Toggle packing item",
+    "type_beach": "해변",
+    "type_mountain": "산",
+    "type_city": "도시",
+    "type_camping": "캠핑",
+    "type_family": "가족"
   },
   "expenses": {
     "title": "경비 내역",
@@ -1455,7 +1501,16 @@
     "catPreparation": "수하물을 준비하세요",
     "catOther": "다른",
     "catCustom": "다른...",
-    "baseCurrency": "(원래 동전)"
+    "baseCurrency": "(원래 동전)",
+    "cat_transport": "교통",
+    "cat_flight": "항공권",
+    "cat_food": "음식",
+    "cat_accommodation": "숙박",
+    "cat_tickets": "관광 티켓",
+    "cat_shopping": "쇼핑",
+    "cat_entertainment": "오락",
+    "cat_packing": "짐 싸기",
+    "cat_other": "기타"
   },
   "more": {
     "title": "더보기",
@@ -1655,7 +1710,8 @@
     "permSuggestTrip": "일정 수정을 제안 가능",
     "rolesHelpTitle": "역할 가이드",
     "rolesHelpSubtitle": "모두가 역할을 나누어 완벽한 여행을 만들어 보세요.",
-    "roleLabel": "본인의 여행 역할"
+    "roleLabel": "본인의 여행 역할",
+    "member": "Member"
   },
   "journal": {
     "title": "여행기",
@@ -1729,7 +1785,9 @@
     "headerTitle": "여행 채팅방",
     "chattingAs": "내 이름:",
     "today": "오늘",
-    "yesterday": "어제"
+    "yesterday": "어제",
+    "errorLoginRequired": "Please sign in or open a valid share link before chatting.",
+    "errorSendFailed": "Cannot send message: "
   },
   "offline": {
     "title": "오프라인 상태입니다",
@@ -1769,7 +1827,15 @@
     "foundUpdateDesc": "다른 기기에서 업데이트한 최신 데이터가 있습니다.",
     "syncNow": "지금 동기화",
     "syncSuccess": "다른 기기의 데이터를 성공적으로 동기화했습니다.",
-    "syncFail": "복원 실패: "
+    "syncFail": "복원 실패: ",
+    "errorLoginRequired": "Please sign in before syncing.",
+    "errorBackupFailed": "Backup error: ",
+    "errorLoginToRestore": "Please sign in to restore.",
+    "errorNoBackup": "No cloud backup found.",
+    "toastUpdatedFromOther": "Updated data from another device.",
+    "toastNewDataAvailable": "New data from another device. Tap Sync to download.",
+    "toastReconnected": "Back online. Syncing...",
+    "toastAutoBackup": "Auto-backed up new data to Cloud."
   },
   "export": {
     "reportTitle": "여행 최종 리포트",
@@ -1821,7 +1887,21 @@
     "overview": "개요",
     "itinerary": "일정",
     "expenses": "비용 정산",
-    "prepAndDocs": "준비물 및 서류"
+    "prepAndDocs": "준비물 및 서류",
+    "unknownLocation": "Unknown",
+    "tripType": "Trip Type",
+    "noTimeline": "No activities in the itinerary.",
+    "colTime": "Time",
+    "colActivityNotes": "Activity & Notes",
+    "colLocation": "Location",
+    "sharedGroup": "Shared (Group)",
+    "personalExp": "Personal",
+    "totalLabel": "TOTAL",
+    "colCategory": "Category",
+    "colAmount": "Amount",
+    "noBackupPlans": "No backup plans.",
+    "docBookingInfo": "Documents / Booking Info:",
+    "packingLabel": "Packing — {{type}}"
   },
   "sharedVia": "공유됨:",
   "madeBy": "제작:",
@@ -1853,5 +1933,68 @@
       "btn_save": "이미지 저장",
       "fallback": "공유할 수 없습니다. 자동으로 이미지 다운로드로 전환합니다..."
     }
+  },
+  "pwaInstallSheet": {
+    "titleAndroid": "Install KAT Journey on Android",
+    "titleIOS": "Install KAT Journey on iPhone",
+    "subtitleAndroid": "Follow the simple steps below",
+    "subtitleIOS": "Follow these 3 extremely simple steps",
+    "step1Android": "Tap the browser menu",
+    "step1AndroidDesc": "Find the <b>3 dots (⋮)</b> icon usually located at the top right of Chrome or the bottom menu.",
+    "step1IOS": "Tap the Share button",
+    "step1IOSDesc": "Find the square icon with an upward arrow <icon></icon> on the Safari toolbar at the bottom of the screen.",
+    "step2Android": "Select \"Add to Home screen\"",
+    "step2IOS": "Select \"Add to Home Screen\"",
+    "step2AndroidDesc": "Find and tap the <b>Add to Home screen</b> option (or Install app).",
+    "step2IOSDesc": "Scroll down the share menu and tap the option with the plus icon <icon></icon>.",
+    "step3Title": "Confirm addition",
+    "step3AndroidDesc": "Tap the <b>\"Add\"</b> or \"Install\" button in the dialog that appears to complete.",
+    "step3IOSDesc": "Tap the <b>\"Add\"</b> button at the top right of the screen to complete.",
+    "gotIt": "Got it"
+  },
+  "backupPlans": {
+    "type": {
+      "food": "Food & Dining",
+      "place": "Alternative Place",
+      "transport": "Transport",
+      "hotel": "Accommodation",
+      "indoor": "Indoor Activity",
+      "weather": "Bad Weather"
+    }
+  },
+  "datePicker": {
+    "jan": "January",
+    "feb": "February",
+    "mar": "March",
+    "apr": "April",
+    "may": "May",
+    "jun": "June",
+    "jul": "July",
+    "aug": "August",
+    "sep": "September",
+    "oct": "October",
+    "nov": "November",
+    "dec": "December",
+    "selectRange": "Select date range",
+    "selectDate": "Select date",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "notifications": {
+    "upcomingTitle": "Coming up: {{title}}",
+    "upcomingBody": "At {{time}} at {{location}}",
+    "unknownLocation": "Unknown location"
+  },
+  "auth": {
+    "guest": "Guest",
+    "errorUnknown": "An unknown error occurred.",
+    "errorInvalidCredentials": "Invalid credentials, please try again.",
+    "errorEmailInUse": "This email is already in use.",
+    "errorWeakPassword": "Password too weak. Must be at least 6 characters.",
+    "errorGoogleLinked": "This Google account is already linked to another account.",
+    "errorTooManyRequests": "Too many requests. Please try again later.",
+    "errorGeneral": "An authentication error occurred.",
+    "errorAnonymousFailed": "Anonymous sign-in failed.",
+    "errorLoginRequired": "Please sign in."
   }
 }

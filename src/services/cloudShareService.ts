@@ -1,3 +1,4 @@
+import i18n from "../i18n";
 import { supabase } from "../lib/supabase";
 import { db as localDb } from "../db";
 import { decryptObject } from "../lib/crypto";
@@ -36,12 +37,12 @@ export async function createShareLink(
   } = await supabase.auth.getSession();
   const user = session?.user;
   if (!user) {
-    throw new Error("Vui lòng đăng nhập/đăng ký khách trước khi chia sẻ.");
+    throw new Error(i18n.t("share.errorLoginRequired", "Please sign in before sharing."));
   }
 
   // 1. Fetch trip data from local Dexie and decrypt
   const tripRaw = await localDb.trips.get(tripId);
-  if (!tripRaw) throw new Error("Không tìm thấy chuyến đi cục bộ.");
+  if (!tripRaw) throw new Error(i18n.t("share.errorTripNotFound", "Local trip not found."));
   const trip = decryptObject(tripRaw);
 
   const membersRaw = await localDb.members.where("tripId").equals(tripId).toArray();
@@ -121,7 +122,9 @@ export async function createShareLink(
   });
 
   if (parentError) {
-    throw new Error("Không thể tạo liên kết chia sẻ trên Supabase: " + parentError.message);
+    throw new Error(
+      i18n.t("share.errorCreateLink", "Cannot create share link: ") + +parentError.message
+    );
   }
 
   // 4. Update local trip with shareToken
@@ -194,7 +197,7 @@ export async function updateShareLink(
     data: { session },
   } = await supabase.auth.getSession();
   const user = session?.user;
-  if (!user) throw new Error("Vui lòng đăng nhập.");
+  if (!user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
 
   // Validate owner
   const { data: shareData, error: fetchError } = await supabase
@@ -204,12 +207,14 @@ export async function updateShareLink(
     .maybeSingle();
 
   if (fetchError || !shareData || shareData.owner_uid !== user.id) {
-    throw new Error("Bạn không có quyền cập nhật link chia sẻ này.");
+    throw new Error(
+      i18n.t("share.errorNoPermission", "You don't have permission to update this share link.")
+    );
   }
 
   // 1. Fetch trip data from local Dexie and decrypt
   const tripRaw = await localDb.trips.get(tripId);
-  if (!tripRaw) throw new Error("Không tìm thấy chuyến đi cục bộ.");
+  if (!tripRaw) throw new Error(i18n.t("share.errorTripNotFound", "Local trip not found."));
   const trip = decryptObject(tripRaw);
 
   const membersRaw = await localDb.members.where("tripId").equals(tripId).toArray();
@@ -274,7 +279,10 @@ export async function updateShareLink(
     .eq("token", token);
 
   if (parentUpdateError) {
-    throw new Error("Lỗi cập nhật bảng public_shares: " + parentUpdateError.message);
+    throw new Error(
+      i18n.t("share.errorUpdatePublicShares", "Error updating public_shares: ") +
+        +parentUpdateError.message
+    );
   }
 
   // 2. Clear old items
@@ -363,5 +371,396 @@ export async function revokeShareLink(tripId: number, token: string): Promise<vo
   if (!error) {
     // Clear local shareToken
     await localDb.trips.update(tripId, { shareToken: undefined });
+  }
+}
+
+// --- Consolidated from other services ---
+
+export async function approveChangeRequest(token: string, requestId: string): Promise<void> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+
+  // 1. Validate Owner
+  const { data: shareData, error: shareError } = await supabase
+    .from("public_shares")
+    .select("owner_uid, source_trip_id")
+    .eq("token", token)
+    .maybeSingle();
+
+  if (shareError || !shareData) {
+    throw new Error(i18n.t("share.errorLinkNotFound", "Share link does not exist."));
+  }
+
+  if (shareData.owner_uid !== user.id) {
+    throw new Error(
+      i18n.t(
+        "share.errorNoPermission",
+        "This device no longer has permission to manage this share link."
+      )
+    );
+  }
+
+  // 2. Claim change request atomically by updating its status
+  const { data: requestData, error: requestError } = await supabase
+    .from("change_requests")
+    .update({
+      status: "approved",
+      reviewed_by_uid: user.id,
+      reviewed_at: new Date().toISOString(),
+    })
+    .eq("id", requestId)
+    .eq("share_token", token)
+    .in("status", ["pending", "auto_approved"])
+    .select("*")
+    .maybeSingle();
+
+  if (requestError || !requestData) {
+    throw new Error(
+      i18n.t("share.errorRequestNotFound", "Request does not exist or has already been processed.")
+    );
+  }
+
+  const tripId = shareData.source_trip_id;
+  const trip = await localDb.trips.get(Number(tripId));
+
+  if (!trip) {
+    throw new Error(
+      i18n.t("share.errorOriginalTripNotFound", "Original trip not found on this device.")
+    );
+  }
+
+  const section = requestData.section as ChangeRequestSection;
+  const action = requestData.action as ChangeRequestAction;
+  const targetId = requestData.target_id;
+  const afterData = requestData.after_data;
+
+  // 3. Apply to Dexie
+  const dexieTableMap: Record<ChangeRequestSection, any> = {
+    activities: localDb.events,
+    expenses: localDb.expenses,
+    checklist: localDb.checklist,
+    journals: localDb.journals,
+    backupPlans: localDb.backupPlans,
+    travelDocuments: localDb.travelDocuments,
+    members: localDb.members,
+  };
+
+  const localTable = dexieTableMap[section];
+  let dexieId: number | string | undefined;
+
+  try {
+    if (action === "create") {
+      const newItem = { ...afterData, tripId: Number(tripId) };
+      delete newItem.id; // ensure ID is auto-generated by Dexie
+      dexieId = await localTable.add(newItem);
+    } else if (action === "update" && targetId) {
+      dexieId = Number(targetId) || targetId;
+      await localTable.update(dexieId, afterData);
+    } else if (action === "delete" && targetId) {
+      dexieId = Number(targetId) || targetId;
+      await localTable.delete(dexieId);
+    }
+  } catch (err: any) {
+    throw new Error(
+      i18n.t("share.errorUpdateOriginal", "Error updating original data: ") + +err.message
+    );
+  }
+
+  // 4. Apply to Supabase Public Snapshot
+  try {
+    const table = getTableName(section);
+    const docId = action === "create" ? String(dexieId) : String(targetId);
+
+    if (action === "create") {
+      const now = new Date().toISOString();
+      await supabase.from(table).insert({
+        id: docId,
+        share_token: token,
+        data: { ...afterData, id: dexieId, tripId: 0 },
+        created_at: now,
+        updated_at: now,
+        created_by_uid: user.id,
+        updated_by_uid: user.id,
+      });
+    } else if (action === "update") {
+      await supabase
+        .from(table)
+        .update({
+          data: afterData,
+          updated_at: new Date().toISOString(),
+          updated_by_uid: user.id,
+        })
+        .eq("share_token", token)
+        .eq("id", docId);
+    } else if (action === "delete") {
+      await supabase.from(table).delete().eq("share_token", token).eq("id", docId);
+    }
+  } catch (err: any) {
+    throw new Error(
+      i18n.t("share.errorSyncToSupabase", "Error syncing to Supabase: ") + +err.message
+    );
+  }
+}
+
+export async function rejectChangeRequest(token: string, requestId: string): Promise<void> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+
+  const { data: shareData, error: shareError } = await supabase
+    .from("public_shares")
+    .select("owner_uid")
+    .eq("token", token)
+    .maybeSingle();
+
+  if (shareError || !shareData || shareData.owner_uid !== user.id) {
+    throw new Error(
+      i18n.t(
+        "share.errorNoPermission",
+        "This device no longer has permission to manage this share link."
+      )
+    );
+  }
+
+  const { error } = await supabase
+    .from("change_requests")
+    .update({
+      status: "rejected",
+      reviewed_at: new Date().toISOString(),
+      reviewed_by_uid: user.id,
+    })
+    .eq("id", requestId)
+    .eq("share_token", token);
+
+  if (error) {
+    throw new Error(i18n.t("share.errorRejectRequest", "Cannot reject request: ") + +error.message);
+  }
+}
+
+function getTableName(collectionName: string): string {
+  const map: Record<string, string> = {
+    members: "share_members",
+    activities: "share_activities",
+    expenses: "share_expenses",
+    checklist: "share_checklist",
+    journals: "share_journals",
+    backupPlans: "share_backup_plans",
+    travelDocuments: "share_travel_documents",
+  };
+  return map[collectionName] || `share_${collectionName}`;
+}
+
+export async function addSharedDocument(
+  token: string,
+  collectionName: string,
+  id: string,
+  payload: any
+) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+
+  const table = getTableName(collectionName);
+  const now = new Date().toISOString();
+
+  const { error } = await supabase.from(table).insert({
+    id: String(id),
+    share_token: token,
+    data: payload,
+    created_at: now,
+    updated_at: now,
+    created_by_uid: user.id,
+    updated_by_uid: user.id,
+  });
+
+  if (error) {
+    throw new Error(
+      i18n.t("share.errorAddDocFailed", "Failed to add shared document: ") + error.message
+    );
+  }
+}
+
+export async function updateSharedDocument(
+  token: string,
+  collectionName: string,
+  id: string,
+  payload: any
+) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+
+  const table = getTableName(collectionName);
+  const now = new Date().toISOString();
+
+  const { error } = await supabase
+    .from(table)
+    .update({
+      data: payload,
+      updated_at: now,
+      updated_by_uid: user.id,
+    })
+    .eq("share_token", token)
+    .eq("id", String(id));
+
+  if (error) {
+    throw new Error(
+      i18n.t("share.errorUpdateDocFailed", "Failed to update shared document: ") + error.message
+    );
+  }
+}
+
+export async function deleteSharedDocument(token: string, collectionName: string, id: string) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user;
+  if (!user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+
+  const table = getTableName(collectionName);
+
+  const { error } = await supabase
+    .from(table)
+    .delete()
+    .eq("share_token", token)
+    .eq("id", String(id));
+
+  if (error) {
+    throw new Error(
+      i18n.t("share.errorDeleteDocFailed", "Failed to delete shared document: ") + error.message
+    );
+  }
+}
+
+export async function updateSharedTripRoadmaps(token: string, dayRoadmaps: Record<string, string>) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session?.user) throw new Error(i18n.t("auth.errorLoginRequired", "Please sign in."));
+
+  // Fetch current trip object
+  const { data, error: selectError } = await supabase
+    .from("public_shares")
+    .select("trip")
+    .eq("token", token)
+    .maybeSingle();
+
+  if (selectError || !data || !data.trip) {
+    throw new Error(
+      i18n.t("share.errorLoadSharedTrip", "Cannot load shared trip: ") +
+        +(selectError?.message || "Data not found")
+    );
+  }
+
+  const updatedTrip = { ...data.trip };
+  updatedTrip.dayRoadmaps = dayRoadmaps;
+
+  const { error: updateError } = await supabase
+    .from("public_shares")
+    .update({
+      trip: updatedTrip,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("token", token);
+
+  if (updateError) {
+    throw new Error(
+      i18n.t("share.errorUpdateRoadmap", "Failed to update roadmap: ") + +updateError.message
+    );
+  }
+}
+
+export type ChangeRequestSection =
+  | "activities"
+  | "expenses"
+  | "checklist"
+  | "journals"
+  | "backupPlans"
+  | "travelDocuments"
+  | "members";
+export type ChangeRequestAction = "create" | "update" | "delete";
+
+export interface ChangeRequestPayload {
+  section: ChangeRequestSection;
+  action: ChangeRequestAction;
+  targetId?: string;
+  before?: Record<string, unknown>;
+  after?: Record<string, unknown>;
+  note?: string;
+  requesterName?: string;
+  status?: "pending" | "auto_approved";
+}
+
+export async function submitChangeRequest(
+  token: string,
+  payload: ChangeRequestPayload
+): Promise<void> {
+  // Guest cần session (anonymous) để RLS cho phép INSERT change_request
+  // (RLS mới yêu cầu JWT claim share_token phải khớp)
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  let user = session?.user;
+  if (!user) {
+    const { data: anonData, error: anonErr } = await supabase.auth.signInAnonymously();
+    if (anonErr || !anonData?.user) {
+      throw new Error(
+        i18n.t(
+          "share.errorLoginOrOpenLink",
+          "Please sign in or open a valid share link before submitting a request."
+        )
+      );
+    }
+    user = anonData.user;
+  }
+
+  // Bỏ qua bước kiểm tra public_shares ở client vì:
+  // 1. RLS của bảng change_requests sẽ tự động chặn nếu user không có quyền (không có record trong share_access).
+  // 2. UI đã tự động ẩn các mục không được phép chỉnh sửa.
+  // Việc này giúp tránh lỗi không truy vấn được public_shares do thiếu RLS policy.
+
+  function removeUndefined(obj: any): any {
+    if (obj === undefined) return null;
+    if (typeof obj !== "object" || obj === null) return obj;
+    if (Array.isArray(obj)) return obj.map(removeUndefined);
+    const newObj: any = {};
+    for (const key in obj) {
+      if (obj[key] !== undefined) {
+        newObj[key] = removeUndefined(obj[key]);
+      }
+    }
+    return newObj;
+  }
+
+  const sanitizedPayload = removeUndefined(payload);
+
+  const { error: insertError } = await supabase.from("change_requests").insert({
+    share_token: token,
+    section: sanitizedPayload.section,
+    action: sanitizedPayload.action,
+    target_id: sanitizedPayload.targetId ? String(sanitizedPayload.targetId) : null,
+    before_data: sanitizedPayload.before || null,
+    after_data: sanitizedPayload.after || null,
+    note: sanitizedPayload.note || null,
+    requester_name: sanitizedPayload.requesterName || null,
+    requester_uid: user.id,
+    status: sanitizedPayload.status || "pending",
+    created_at: new Date().toISOString(),
+  });
+
+  if (insertError) {
+    throw new Error(
+      i18n.t("share.errorSubmitRequestFailed", "Failed to submit edit request: ") +
+        +insertError.message
+    );
   }
 }

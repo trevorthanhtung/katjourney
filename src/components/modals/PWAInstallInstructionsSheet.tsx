@@ -1,6 +1,7 @@
 import React from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
+import { useTranslation, Trans } from "react-i18next";
 
 interface PWAInstallInstructionsSheetProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export function PWAInstallInstructionsSheet({
   if (!isOpen) return null;
 
   const isAndroid = platform === "android";
+  const { t } = useTranslation();
 
   return (
     <div className="fixed inset-0 z-[200] flex items-end justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fadeIn">
@@ -27,12 +29,10 @@ export function PWAInstallInstructionsSheet({
         <div className="flex items-center justify-between pb-4.5 border-b border-slate-100/80 dark:border-kat-border/40 shrink-0">
           <div className="flex flex-col text-left">
             <h4 className="text-[17px] font-black text-kat-dark leading-snug">
-              {isAndroid ? "Cài đặt KAT Journey trên Android" : "Cài đặt KAT Journey trên iPhone"}
+              {isAndroid ? t("pwaInstallSheet.titleAndroid") : t("pwaInstallSheet.titleIOS")}
             </h4>
             <p className="text-[11px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5">
-              {isAndroid
-                ? "Thực hiện theo các bước đơn giản dưới đây"
-                : "Thực hiện theo 3 bước cực kỳ đơn giản dưới đây"}
+              {isAndroid ? t("pwaInstallSheet.subtitleAndroid") : t("pwaInstallSheet.subtitleIOS")}
             </p>
           </div>
           <button
@@ -53,34 +53,36 @@ export function PWAInstallInstructionsSheet({
             </div>
             <div className="space-y-1 pt-1">
               <p className="text-[14px] font-black text-kat-dark">
-                {isAndroid ? "Nhấn vào menu trình duyệt" : "Nhấn vào nút Chia sẻ (Share)"}
+                {isAndroid ? t("pwaInstallSheet.step1Android") : t("pwaInstallSheet.step1IOS")}
               </p>
               <p className="text-[12.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">
                 {isAndroid ? (
-                  <>
-                    Tìm biểu tượng{" "}
-                    <strong className="font-extrabold text-kat-dark">3 dấu chấm (⋮)</strong> thường
-                    nằm ở góc trên bên phải của trình duyệt Chrome hoặc menu dưới cùng.
-                  </>
+                  <Trans
+                    i18nKey="pwaInstallSheet.step1AndroidDesc"
+                    components={{ b: <strong className="font-extrabold text-kat-dark" /> }}
+                  />
                 ) : (
-                  <>
-                    Tìm biểu tượng hình vuông có mũi tên chỉ lên{" "}
-                    <span className="inline-flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-md p-1 px-1.5 align-middle mx-0.5 border border-slate-200/50 dark:border-kat-border/40">
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="14"
-                        height="14"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        className="text-blue-600 dark:text-blue-400"
-                        aria-hidden="true"
-                      >
-                        <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M12 2v14M12 2L8 6m4-4l4 4" />
-                      </svg>
-                    </span>{" "}
-                    trên thanh công cụ Safari ở dưới cùng màn hình.
-                  </>
+                  <Trans
+                    i18nKey="pwaInstallSheet.step1IOSDesc"
+                    components={{
+                      icon: (
+                        <span className="inline-flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-md p-1 px-1.5 align-middle mx-0.5 border border-slate-200/50 dark:border-kat-border/40">
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="14"
+                            height="14"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            className="text-blue-600 dark:text-blue-400"
+                            aria-hidden="true"
+                          >
+                            <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M12 2v14M12 2L8 6m4-4l4 4" />
+                          </svg>
+                        </span>
+                      ),
+                    }}
+                  />
                 )}
               </p>
             </div>
@@ -93,37 +95,35 @@ export function PWAInstallInstructionsSheet({
             </div>
             <div className="space-y-1 pt-1">
               <p className="text-[14px] font-black text-kat-dark">
-                {isAndroid
-                  ? 'Chọn "Thêm vào MH chính"'
-                  : 'Chọn "Thêm vào MH chính" (Add to Home Screen)'}
+                {isAndroid ? t("pwaInstallSheet.step2Android") : t("pwaInstallSheet.step2IOS")}
               </p>
               <p className="text-[12.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">
                 {isAndroid ? (
-                  <>
-                    Tìm và nhấn vào tùy chọn{" "}
-                    <strong className="font-extrabold text-kat-dark">
-                      Thêm vào màn hình chính
-                    </strong>{" "}
-                    (hoặc Cài đặt ứng dụng).
-                  </>
+                  <Trans
+                    i18nKey="pwaInstallSheet.step2AndroidDesc"
+                    components={{ b: <strong className="font-extrabold text-kat-dark" /> }}
+                  />
                 ) : (
-                  <>
-                    Cuộn menu chia sẻ xuống dưới và nhấn vào tùy chọn có biểu tượng dấu cộng{" "}
-                    <span className="inline-flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-md p-1 px-1.5 align-middle mx-0.5 border border-slate-200/50 dark:border-kat-border/40">
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="13"
-                        height="13"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        className="text-slate-800 dark:text-slate-200"
-                      >
-                        <path d="M12 5v14M5 12h14" />
-                      </svg>
-                    </span>
-                    .
-                  </>
+                  <Trans
+                    i18nKey="pwaInstallSheet.step2IOSDesc"
+                    components={{
+                      icon: (
+                        <span className="inline-flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-md p-1 px-1.5 align-middle mx-0.5 border border-slate-200/50 dark:border-kat-border/40">
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="13"
+                            height="13"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            className="text-slate-800 dark:text-slate-200"
+                          >
+                            <path d="M12 5v14M5 12h14" />
+                          </svg>
+                        </span>
+                      ),
+                    }}
+                  />
                 )}
               </p>
             </div>
@@ -135,18 +135,20 @@ export function PWAInstallInstructionsSheet({
               3
             </div>
             <div className="space-y-1 pt-1">
-              <p className="text-[14px] font-black text-kat-dark">Xác nhận thêm</p>
+              <p className="text-[14px] font-black text-kat-dark">
+                {t("pwaInstallSheet.step3Title")}
+              </p>
               <p className="text-[12.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">
                 {isAndroid ? (
-                  <>
-                    Nhấn nút <strong className="font-extrabold text-kat-dark">"Thêm"</strong> hoặc
-                    "Cài đặt" ở hộp thoại hiện ra để hoàn tất.
-                  </>
+                  <Trans
+                    i18nKey="pwaInstallSheet.step3AndroidDesc"
+                    components={{ b: <strong className="font-extrabold text-kat-dark" /> }}
+                  />
                 ) : (
-                  <>
-                    Nhấn nút <strong className="font-extrabold text-kat-dark">"Thêm" (Add)</strong>{" "}
-                    ở góc trên bên phải màn hình để hoàn tất.
-                  </>
+                  <Trans
+                    i18nKey="pwaInstallSheet.step3IOSDesc"
+                    components={{ b: <strong className="font-extrabold text-kat-dark" /> }}
+                  />
                 )}
               </p>
             </div>
@@ -159,7 +161,7 @@ export function PWAInstallInstructionsSheet({
             onClick={onClose}
             className="w-full min-h-[52px] flex items-center justify-center rounded-[18px] font-bold bg-slate-900 dark:bg-kat-primary text-white dark:text-kat-dark hover:bg-slate-800 active:scale-[0.98] transition-all shadow-md text-[15.5px]"
           >
-            Đã hiểu
+            {t("pwaInstallSheet.gotIt")}
           </button>
         </div>
       </div>

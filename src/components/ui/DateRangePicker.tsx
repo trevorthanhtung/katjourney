@@ -1,11 +1,23 @@
+import { BottomSheet } from "./BottomSheet";
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@hugeicons/core-free-icons";
-import { BottomSheet, classNames } from "./index";
+import { classNames } from "../../utils/helpers";
 
-const MONTHS = [
-  "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
-  "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"
+const getMonths = (t: any) => [
+  t("datePicker.jan"),
+  t("datePicker.feb"),
+  t("datePicker.mar"),
+  t("datePicker.apr"),
+  t("datePicker.may"),
+  t("datePicker.jun"),
+  t("datePicker.jul"),
+  t("datePicker.aug"),
+  t("datePicker.sep"),
+  t("datePicker.oct"),
+  t("datePicker.nov"),
+  t("datePicker.dec"),
 ];
 const DAYS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
 
@@ -53,18 +65,21 @@ export function DateRangePickerSheet({
   initialEndDate,
   mode,
 }: DateRangePickerSheetProps) {
+  const { t } = useTranslation();
+
   const [viewDate, setViewDate] = useState(new Date());
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  
+
   // Track hover for range styling during selection
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       const parsedStart = initialStartDate ? parseDate(initialStartDate) : new Date();
-      const parsedEnd = initialEndDate && mode === "range" ? parseDate(initialEndDate) : parsedStart;
-      
+      const parsedEnd =
+        initialEndDate && mode === "range" ? parseDate(initialEndDate) : parsedStart;
+
       setStartDate(parsedStart);
       setEndDate(parsedEnd);
       setViewDate(parsedStart || new Date());
@@ -125,7 +140,7 @@ export function DateRangePickerSheet({
 
   const startStr = startDate ? formatDate(startDate) : "";
   const endStr = endDate ? formatDate(endDate) : "";
-  
+
   // For highlighting
   let rangeStrings: string[] = [];
   if (startDate && endDate) {
@@ -138,7 +153,7 @@ export function DateRangePickerSheet({
     <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
-      title={mode === "range" ? "Chọn khoảng thời gian" : "Chọn ngày"}
+      title={mode === "range" ? t("datePicker.selectRange") : t("datePicker.selectDate")}
       footer={
         <div className="flex gap-3 w-full">
           <button
@@ -169,7 +184,7 @@ export function DateRangePickerSheet({
             <HugeiconsIcon icon={ChevronLeftIcon} size={20} className="text-slate-700" />
           </button>
           <div className="text-[16px] font-bold text-slate-800">
-            {MONTHS[month]} {year}
+            {getMonths(t)[month]} {year}
           </div>
           <button
             onClick={handleNextMonth}
@@ -194,12 +209,12 @@ export function DateRangePickerSheet({
             if (!day) {
               return <div key={`empty-${idx}`} />;
             }
-            
+
             const dateStr = formatDate(day);
             const isStart = startStr === dateStr;
             const isEnd = endStr === dateStr;
             const isSelectedSingle = mode === "single" && isStart;
-            
+
             const isInRange = rangeStrings.includes(dateStr);
             const isMiddle = isInRange && !isStart && !isEnd;
 
@@ -238,13 +253,22 @@ export function DateRangePickerSheet({
             }
 
             return (
-              <div 
+              <div
                 key={dateStr}
                 className={classNames(
                   "relative flex items-center justify-center h-10 w-full cursor-pointer",
-                  mode === "range" && (isStart || isEnd || isMiddle) && hoverDate && endDate === null ? "" : "",
-                  (isStart && endDate && !isEnd) ? "bg-gradient-to-r from-transparent to-[#00BFB7]/20" : "",
-                  (isEnd && startDate && !isStart) ? "bg-gradient-to-l from-transparent to-[#00BFB7]/20" : ""
+                  mode === "range" &&
+                    (isStart || isEnd || isMiddle) &&
+                    hoverDate &&
+                    endDate === null
+                    ? ""
+                    : "",
+                  isStart && endDate && !isEnd
+                    ? "bg-gradient-to-r from-transparent to-[#00BFB7]/20"
+                    : "",
+                  isEnd && startDate && !isStart
+                    ? "bg-gradient-to-l from-transparent to-[#00BFB7]/20"
+                    : ""
                 )}
                 onClick={() => handleDayClick(day)}
                 onMouseEnter={() => {
@@ -254,19 +278,37 @@ export function DateRangePickerSheet({
                 }}
               >
                 {/* Background spanning logic for range */}
-                {mode === "range" && (isStart || isEnd) && startDate && endDate && startDate !== endDate && (
-                  <div className={classNames(
-                    "absolute inset-0 bg-kat-teal/20",
-                    isStart ? "left-1/2 right-0" : "left-0 right-1/2"
-                  )} />
-                )}
-                
-                {mode === "range" && startDate && !endDate && hoverDate && hoverDate > startDate && (
-                   <div className={classNames(
-                    "absolute inset-0 bg-kat-teal/20",
-                    isStart ? "left-1/2 right-0" : isMiddle ? "" : (day === hoverDate ? "left-0 right-1/2" : "hidden")
-                  )} />
-                )}
+                {mode === "range" &&
+                  (isStart || isEnd) &&
+                  startDate &&
+                  endDate &&
+                  startDate !== endDate && (
+                    <div
+                      className={classNames(
+                        "absolute inset-0 bg-kat-teal/20",
+                        isStart ? "left-1/2 right-0" : "left-0 right-1/2"
+                      )}
+                    />
+                  )}
+
+                {mode === "range" &&
+                  startDate &&
+                  !endDate &&
+                  hoverDate &&
+                  hoverDate > startDate && (
+                    <div
+                      className={classNames(
+                        "absolute inset-0 bg-kat-teal/20",
+                        isStart
+                          ? "left-1/2 right-0"
+                          : isMiddle
+                            ? ""
+                            : day === hoverDate
+                              ? "left-0 right-1/2"
+                              : "hidden"
+                      )}
+                    />
+                  )}
 
                 <div
                   className={classNames(
