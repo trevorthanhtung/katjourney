@@ -169,7 +169,7 @@
         "restoreFailed": "恢复失败："
       },
       "fileRestore": {
-        "title": "恢复备份数据？",
+        "title": "是否恢复数据？",
         "warning": "这将更改当前应用数据。请确认备份文件无误。",
         "cancel": "取消",
         "restore": "确定恢复"

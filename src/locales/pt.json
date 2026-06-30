@@ -171,7 +171,7 @@
         "restoreFailed": "Falha na restauração: "
       },
       "fileRestore": {
-        "title": "Restaurar roteiro?",
+        "title": "Restaurar dados?",
         "warning": "Os dados atuais podem ser alterados após a importação do backup. Certifique-se de que seu arquivo é válido antes de prosseguir.",
         "cancel": "Cancelar",
         "restore": "Restaurar"

@@ -171,7 +171,7 @@
         "restoreFailed": "Error al restaurar: "
       },
       "fileRestore": {
-        "title": "¿Restaurar itinerario?",
+        "title": "¿Restaurar datos?",
         "warning": "Los datos actuales pueden cambiar después de importar la copia de seguridad. Asegúrese de que su archivo sea válido antes de continuar.",
         "cancel": "Cancelar",
         "restore": "Restaurar"

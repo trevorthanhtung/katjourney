@@ -63,8 +63,8 @@
           "desc": "Remove cache and non-essential files"
         },
         "restoreData": {
-          "title": "Restore Journeys",
-          "desc": "Import trips from backup file (.katjourney)"
+          "title": "Restore Data",
+          "desc": "Import data or trips from backup file (.katjourney)"
         }
       },
       "dangerZone": {
@@ -171,7 +171,7 @@
         "restoreFailed": "Restore failed: "
       },
       "fileRestore": {
-        "title": "Restore itinerary?",
+        "title": "Restore Data?",
         "warning": "Current data may be changed after importing the backup. Please make sure your file is valid before proceeding.",
         "cancel": "Cancel",
         "restore": "Restore"

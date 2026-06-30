@@ -767,7 +767,7 @@ export function TripManagerScreen({
         createPortal(
           <nav
             className={`fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] -translate-x-1/2 rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-floating-premium transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex lg:hidden ${areBarsVisible ? "translate-y-0" : "translate-y-[150%]"}`}
-            style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
+            style={{ bottom: "calc(0.5rem + var(--safe-bottom))" }}
           >
             <div className="relative flex h-[68px] items-center w-full px-1">
               {/* 5-Column Grid for perfect symmetry */}

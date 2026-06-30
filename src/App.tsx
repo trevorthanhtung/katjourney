@@ -659,9 +659,9 @@ function App() {
           <header
             className={`sticky top-0 z-40 px-2.5 min-[390px]:px-4 pb-3 pt-3 glass-panel-header shadow-[0_4px_24px_rgba(3,13,46,0.05)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent transition-transform duration-200 ease-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`}
             style={{
-              paddingTop: "calc(0.75rem + env(safe-area-inset-top))",
-              paddingLeft: "max(0.625rem, env(safe-area-inset-left))",
-              paddingRight: "max(0.625rem, env(safe-area-inset-right))",
+              paddingTop: "calc(0.75rem + var(--safe-top))",
+              paddingLeft: "max(0.625rem, var(--safe-left))",
+              paddingRight: "max(0.625rem, var(--safe-right))",
             }}
           >
             <GlobalToast />
@@ -1287,7 +1287,7 @@ function App() {
           {!isManagingTrips && tripId && (
             <nav
               className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium lg:hidden transition-transform duration-200 ease-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`}
-              style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
+              style={{ bottom: "calc(0.5rem + var(--safe-bottom))" }}
             >
               <div className="relative flex h-[56px] min-[390px]:h-[60px] items-center justify-between px-2">
                 <NavButton

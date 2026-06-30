@@ -171,7 +171,7 @@
         "restoreFailed": "Échec de la restauration : "
       },
       "fileRestore": {
-        "title": "Restaurer l'itinéraire ?",
+        "title": "Restaurer les données ?",
         "warning": "Les données actuelles peuvent être modifiées après l'importation de la sauvegarde. Veuillez vous assurer que votre fichier est valide avant de continuer.",
         "cancel": "Annuler",
         "restore": "Restaurer"

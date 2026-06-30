@@ -171,7 +171,7 @@
         "restoreFailed": "Wiederherstellung fehlgeschlagen: "
       },
       "fileRestore": {
-        "title": "Reiseroute wiederherstellen?",
+        "title": "Daten wiederherstellen?",
         "warning": "Die aktuellen Daten können sich nach dem Importieren des Backups ändern. Bitte stellen Sie sicher, dass Ihre Datei gültig ist, bevor Sie fortfahren.",
         "cancel": "Abbrechen",
         "restore": "Wiederherstellen"

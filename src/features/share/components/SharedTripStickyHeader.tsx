@@ -22,7 +22,7 @@ export function SharedTripStickyHeader({
       className={`sticky top-0 z-40 bg-white/55 supports-[backdrop-filter]:bg-white/45 backdrop-blur-2xl backdrop-saturate-150 border-b border-white/40 dark:bg-[#0A1124]/60 dark:supports-[backdrop-filter]:bg-[#0A1124]/45 dark:border-slate-800/80 px-2.5 min-[390px]:px-4 pb-3 pt-3 shadow-[0_4px_24px_rgba(3,13,46,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.2)] transition-transform duration-300 ease-in-out ${
         areBarsVisible ? "translate-y-0" : "-translate-y-full"
       }`}
-      style={{ paddingTop: "calc(0.75rem + env(safe-area-inset-top))" }}
+      style={{ paddingTop: "calc(0.75rem + var(--safe-top))" }}
     >
       <div className="max-w-[1280px] mx-auto w-full flex items-center justify-between h-9 md:h-11 gap-1.5 min-[390px]:gap-2">
         <div className="flex items-center gap-1.5 min-[390px]:gap-2 select-none shrink-0">

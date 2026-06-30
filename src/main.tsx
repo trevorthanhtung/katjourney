@@ -7,8 +7,10 @@ import "./styles.css";
 import "./i18n";
 import { startNotificationService } from "./utils/notifications";
 import { MotionConfig } from "framer-motion";
+import { patchIOSSafeArea } from "./utils/iosPatch";
 
 startNotificationService();
+patchIOSSafeArea();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <MotionConfig reducedMotion="user">

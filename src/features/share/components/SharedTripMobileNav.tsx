@@ -32,7 +32,7 @@ export function SharedTripMobileNav({
       className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium lg:hidden transition-transform duration-300 ease-in-out ${
         areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"
       }`}
-      style={{ bottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
+      style={{ bottom: "calc(0.5rem + var(--safe-bottom))" }}
     >
       <div
         ref={containerRef}

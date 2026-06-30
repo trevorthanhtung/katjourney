@@ -171,7 +171,7 @@
         "restoreFailed": "Ripristino non riuscito: "
       },
       "fileRestore": {
-        "title": "Ripristinare l'itinerario?",
+        "title": "Ripristinare i dati?",
         "warning": "I dati attuali potrebbero subire modifiche dopo l'importazione del backup. Assicurati che il tuo file sia valido prima di procedere.",
         "cancel": "Annulla",
         "restore": "Ripristina"

@@ -171,7 +171,7 @@
         "restoreFailed": "Gagal memulihkan: "
       },
       "fileRestore": {
-        "title": "Pulihkan jadwal perjalanan?",
+        "title": "Pulihkan Data?",
         "warning": "Data saat ini mungkin berubah setelah mengimpor cadangan. Pastikan file Anda valid sebelum melanjutkan.",
         "cancel": "Batal",
         "restore": "Pulihkan"

@@ -1,13 +1,26 @@
 import i18n from "../i18n";
 import pkg from "../../package.json";
 export const APP_VERSION = pkg.version;
-import { ChecklistItem, Expense, JournalEntry, JournalMood, Member, PackingItem, PackingTripType, Trip } from "../db";
+import {
+  ChecklistItem,
+  Expense,
+  JournalEntry,
+  JournalMood,
+  Member,
+  PackingItem,
+  PackingTripType,
+  Trip,
+} from "../db";
 
-export const checklistSections: import("../db").ChecklistSection[] = ["Before Trip", "During Trip", "After Trip"];
+export const checklistSections: import("../db").ChecklistSection[] = [
+  "Before Trip",
+  "During Trip",
+  "After Trip",
+];
 export const sectionLabels: Record<import("../db").ChecklistSection, string> = {
   "Before Trip": "Trước chuyến đi",
   "During Trip": "Trong chuyến đi",
-  "After Trip": "Sau chuyến đi"
+  "After Trip": "Sau chuyến đi",
 };
 export const expenseCategories = [
   "Di chuyển",
@@ -18,7 +31,7 @@ export const expenseCategories = [
   "Mua sắm",
   "Vui chơi & Giải trí",
   "Chuẩn bị hành lý",
-  "Khác"
+  "Khác",
 ];
 export const moods: JournalMood[] = ["very_bad", "bad", "okay", "good", "great"];
 export const moodLabels: Record<JournalMood, string> = {
@@ -26,15 +39,49 @@ export const moodLabels: Record<JournalMood, string> = {
   bad: "Bất ngờ",
   okay: "Bình yên",
   good: "Vui",
-  great: "Hào hứng"
+  great: "Hào hứng",
 };
-export const packingTripTypes: PackingTripType[] = ["Biển", "Núi", "Thành phố", "Camping", "Gia đình"];
+export const packingTripTypes: PackingTripType[] = [
+  "Biển",
+  "Núi",
+  "Thành phố",
+  "Camping",
+  "Gia đình",
+];
 export const packingSuggestions: Record<PackingTripType, string[]> = {
-  Biển: ["Đồ bơi", "Kem chống nắng", "Kính mát", "Dép đi biển", "Túi chống nước", "Khăn tắm nhanh khô"],
-  Núi: ["Áo khoác nhẹ", "Giày trekking", "Bình nước", "Thuốc chống côn trùng", "Đèn pin", "Băng cá nhân"],
-  "Thành phố": ["Giày đi bộ", "Sạc dự phòng", "Túi đeo chéo", "Ô gấp", "Thẻ/tiền mặt", "Danh sách quán muốn thử"],
+  Biển: [
+    "Đồ bơi",
+    "Kem chống nắng",
+    "Kính mát",
+    "Dép đi biển",
+    "Túi chống nước",
+    "Khăn tắm nhanh khô",
+  ],
+  Núi: [
+    "Áo khoác nhẹ",
+    "Giày trekking",
+    "Bình nước",
+    "Thuốc chống côn trùng",
+    "Đèn pin",
+    "Băng cá nhân",
+  ],
+  "Thành phố": [
+    "Giày đi bộ",
+    "Sạc dự phòng",
+    "Túi đeo chéo",
+    "Ô gấp",
+    "Thẻ/tiền mặt",
+    "Danh sách quán muốn thử",
+  ],
   Camping: ["Lều", "Túi ngủ", "Đèn pin", "Bếp dã ngoại", "Dao đa năng", "Túi rác"],
-  "Gia đình": ["Giấy tờ tùy thân", "Thuốc cơ bản", "Đồ ăn nhẹ", "Khăn giấy ướt", "Đồ chơi nhỏ", "Bộ sạc chung"]
+  "Gia đình": [
+    "Giấy tờ tùy thân",
+    "Thuốc cơ bản",
+    "Đồ ăn nhẹ",
+    "Khăn giấy ướt",
+    "Đồ chơi nhỏ",
+    "Bộ sạc chung",
+  ],
 };
 
 export function toDateInputValue(date: Date) {
@@ -53,7 +100,11 @@ export function formatMoney(value: number, currency: string = "VND") {
       .replace(/\s+/g, "")
       .replace(/[đĐVNDvnd]/g, "₫");
   }
-  return new Intl.NumberFormat(undefined, { style: "currency", currency, currencyDisplay: "narrowSymbol" }).format(value);
+  return new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency,
+    currencyDisplay: "narrowSymbol",
+  }).format(value);
 }
 
 export function formatMoneyCompact(value: number, currency: string = "VND") {
@@ -66,14 +117,21 @@ export function formatMoneyCompact(value: number, currency: string = "VND") {
     }
     return formatMoney(value, currency);
   }
-  return new Intl.NumberFormat(undefined, { style: "currency", currency, notation: "compact", currencyDisplay: "narrowSymbol" }).format(value);
+  return new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency,
+    notation: "compact",
+    currencyDisplay: "narrowSymbol",
+  }).format(value);
 }
 
 export function formatDate(value: string) {
   if (!value) return "";
-  return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(
-    new Date(`${value}T00:00:00`)
-  );
+  return new Intl.DateTimeFormat("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date(`${value}T00:00:00`));
 }
 
 export function formatDateShort(value: string) {
@@ -105,11 +163,13 @@ export function getTripTiming(trip: Trip) {
   const now = new Date(`${today}T00:00:00`).getTime();
   const daysToStart = Math.ceil((start - now) / 86400000);
 
-  if (Number.isNaN(start) || Number.isNaN(end)) return { label: i18n.t("home.unknownDate"), status: "unknown" };
-  if (now < start) return { label: i18n.t("home.daysLeft", { days: daysToStart }), status: "upcoming" };
-  
+  if (Number.isNaN(start) || Number.isNaN(end))
+    return { label: i18n.t("home.unknownDate"), status: "unknown" };
+  if (now < start)
+    return { label: i18n.t("home.daysLeft", { days: daysToStart }), status: "upcoming" };
+
   const totalDays = Math.ceil((end - start) / 86400000) + 1;
-  
+
   if (now >= start && now <= end) {
     if (now === start) {
       return { label: i18n.t("home.todayIsDeparture"), status: "active" };
@@ -117,7 +177,7 @@ export function getTripTiming(trip: Trip) {
     const currentDay = Math.ceil((now - start) / 86400000) + 1;
     return { label: i18n.t("home.tripDayStatus", { currentDay, totalDays }), status: "active" };
   }
-  
+
   const daysSinceEnd = Math.ceil((now - end) / 86400000);
   return { label: i18n.t("home.endedDaysAgo", { days: daysSinceEnd }), status: "past" };
 }
@@ -156,8 +216,8 @@ export interface GroupUnit {
 }
 
 export function getGroupUnits(members: Member[], participantNames?: string[]): GroupUnit[] {
-  const participants = participantNames 
-    ? members.filter(m => participantNames.includes(m.name))
+  const participants = participantNames
+    ? members.filter((m) => participantNames.includes(m.name))
     : members;
 
   const units: GroupUnit[] = [];
@@ -173,25 +233,28 @@ export function getGroupUnits(members: Member[], participantNames?: string[]): G
       units.push({
         isGroup: false,
         memberNames: [m.name],
-        leaderName: m.name
+        leaderName: m.name,
       });
     }
   }
 
   for (const [groupName, groupMembers] of groupsMap.entries()) {
-    const leader = groupMembers.find(m => m.isGroupLeader) || groupMembers[0];
+    const leader = groupMembers.find((m) => m.isGroupLeader) || groupMembers[0];
     units.push({
       isGroup: true,
       groupName,
       leaderName: leader ? leader.name : undefined,
-      memberNames: groupMembers.map(m => m.name)
+      memberNames: groupMembers.map((m) => m.name),
     });
   }
 
   return units;
 }
 
-export function getMemberShareForExpense(expense: Expense, members: Member[]): Record<string, number> {
+export function getMemberShareForExpense(
+  expense: Expense,
+  members: Member[]
+): Record<string, number> {
   const shares: Record<string, number> = {};
   if (expense.splitType === "personal") return shares;
 
@@ -199,16 +262,17 @@ export function getMemberShareForExpense(expense: Expense, members: Member[]): R
   if (amount <= 0) return shares;
 
   const splitMode = expense.splitMode || "perPerson";
-  const participantNames = expense.splitAmong && expense.splitAmong.length > 0 
-    ? expense.splitAmong 
-    : members.map(m => m.name);
+  const participantNames =
+    expense.splitAmong && expense.splitAmong.length > 0
+      ? expense.splitAmong
+      : members.map((m) => m.name);
 
   if (splitMode === "perGroup") {
     const units = getGroupUnits(members, participantNames);
     if (units.length === 0) return shares;
 
     const amountPerUnit = amount / units.length;
-    
+
     for (const unit of units) {
       if (unit.isGroup && unit.leaderName) {
         shares[unit.leaderName] = (shares[unit.leaderName] || 0) + amountPerUnit;
@@ -223,7 +287,7 @@ export function getMemberShareForExpense(expense: Expense, members: Member[]): R
       }
     }
   } else {
-    const validParticipants = members.filter(m => participantNames.includes(m.name));
+    const validParticipants = members.filter((m) => participantNames.includes(m.name));
     if (validParticipants.length === 0) return shares;
     const amountPerPerson = amount / validParticipants.length;
     for (const m of validParticipants) {
@@ -236,18 +300,20 @@ export function getMemberShareForExpense(expense: Expense, members: Member[]): R
 
 export function getSettlementSuggestions(members: Member[], expenses: Expense[]) {
   if (!members.length || !expenses.length) return [];
-  
+
   const balancesMap: Record<string, number> = {};
-  members.forEach(m => { balancesMap[m.name] = 0; });
+  members.forEach((m) => {
+    balancesMap[m.name] = 0;
+  });
 
   const sharedExpenses = expenses.filter((e) => e.splitType !== "personal");
-  
+
   for (const expense of sharedExpenses) {
     const amount = Number(expense.amount || 0);
     if (expense.payer && balancesMap[expense.payer] !== undefined) {
       balancesMap[expense.payer] += amount;
     }
-    
+
     const shares = getMemberShareForExpense(expense, members);
     for (const [name, shareAmt] of Object.entries(shares)) {
       if (balancesMap[name] !== undefined) {
@@ -255,22 +321,22 @@ export function getSettlementSuggestions(members: Member[], expenses: Expense[])
       }
     }
   }
-  
+
   const balances = members.map((member) => ({
     name: member.name,
-    balance: balancesMap[member.name] || 0
+    balance: balancesMap[member.name] || 0,
   }));
-  
+
   const debtors = balances
     .filter((item) => item.balance < -1)
     .map((item) => ({ name: item.name, amount: Math.abs(item.balance) }))
     .sort((a, b) => b.amount - a.amount);
-    
+
   const creditors = balances
     .filter((item) => item.balance > 1)
     .map((item) => ({ name: item.name, amount: item.balance }))
     .sort((a, b) => b.amount - a.amount);
-    
+
   const suggestions: Array<{ from: string; to: string; amount: number }> = [];
 
   let debtorIndex = 0;
@@ -280,7 +346,11 @@ export function getSettlementSuggestions(members: Member[], expenses: Expense[])
     if (amount > 1) {
       const roundedAmount = roundVnd(amount);
       if (roundedAmount > 0) {
-        suggestions.push({ from: debtors[debtorIndex].name, to: creditors[creditorIndex].name, amount: roundedAmount });
+        suggestions.push({
+          from: debtors[debtorIndex].name,
+          to: creditors[creditorIndex].name,
+          amount: roundedAmount,
+        });
       }
     }
     debtors[debtorIndex].amount -= amount;
@@ -304,20 +374,34 @@ export interface TripData {
   backupPlans?: import("../db").BackupPlan[];
 }
 
-export function getWrappedStats({ trip, members, events, expenses, checklist, journals, packingItems }: TripData) {
+export function getWrappedStats({
+  trip,
+  members,
+  events,
+  expenses,
+  checklist,
+  journals,
+  packingItems,
+}: TripData) {
   const totalDays = daysBetween(trip.startDate, trip.endDate).length || 1;
   const checklistStats = getChecklistStats(checklist);
   const packingStats = getPackingStats(packingItems);
   const totalExpense = expenses.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-  const paidByMember = sumBy(expenses, (item) => item.payer, (item) => Number(item.amount || 0));
+  const paidByMember = sumBy(
+    expenses,
+    (item) => item.payer,
+    (item) => Number(item.amount || 0)
+  );
   const topPayerEntry = Object.entries(paidByMember).sort((a, b) => b[1] - a[1])[0];
-  const moodCounts = journals.reduce<Record<JournalMood, number>>((result, item) => {
-    result[item.mood] = (result[item.mood] ?? 0) + 1;
-    return result;
-  }, {} as Record<JournalMood, number>);
+  const moodCounts = journals.reduce<Record<JournalMood, number>>(
+    (result, item) => {
+      result[item.mood] = (result[item.mood] ?? 0) + 1;
+      return result;
+    },
+    {} as Record<JournalMood, number>
+  );
   const topMoodEntry = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0] as
-    | [JournalMood, number]
-    | undefined;
+    [JournalMood, number] | undefined;
 
   return {
     totalDays,
@@ -328,7 +412,7 @@ export function getWrappedStats({ trip, members, events, expenses, checklist, jo
     topPayer: topPayerEntry ? { name: topPayerEntry[0], amount: topPayerEntry[1] } : undefined,
     journalCount: journals.length,
     mostCommonMood: topMoodEntry ? topMoodEntry[0] : undefined,
-    packingPercent: packingStats.percent
+    packingPercent: packingStats.percent,
   };
 }
 
@@ -348,7 +432,17 @@ export interface TripExport {
   backupPlans?: import("../db").BackupPlan[];
 }
 
-export function createTripExport({ trip, members, events, expenses, checklist, journals, packingItems, travelDocuments, backupPlans }: TripData): TripExport {
+export function createTripExport({
+  trip,
+  members,
+  events,
+  expenses,
+  checklist,
+  journals,
+  packingItems,
+  travelDocuments,
+  backupPlans,
+}: TripData): TripExport {
   return {
     app: "KAT Journey",
     version: 2,
@@ -362,21 +456,23 @@ export function createTripExport({ trip, members, events, expenses, checklist, j
     journals,
     packingItems,
     travelDocuments,
-    backupPlans
+    backupPlans,
   };
 }
 
 export function safeFileName(value: string, fallback = "kat-trip") {
   if (!value) return fallback;
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/Đ/g, "D")
-    .replace(/[^a-zA-Z0-9_-]/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
-    .toLowerCase() || fallback;
+  return (
+    value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .replace(/Đ/g, "D")
+      .replace(/[^a-zA-Z0-9_-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .toLowerCase() || fallback
+  );
 }
 
 export function normalizeVietnameseDisplayText(value: string) {
@@ -388,7 +484,9 @@ export function downloadBlob(blob: Blob, fileName: string) {
   const link = document.createElement("a");
   link.href = url;
   link.download = fileName;
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
 

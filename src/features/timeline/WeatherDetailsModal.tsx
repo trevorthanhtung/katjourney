@@ -418,7 +418,7 @@ export function WeatherDetailsModal({
           {/* Modal Scrollable Body */}
           <div
             className="flex-1 min-h-0 overflow-y-auto p-5 space-y-5 custom-scrollbar md:rounded-b-[32px]"
-            style={{ paddingBottom: "max(40px, calc(env(safe-area-inset-bottom) + 24px))" }}
+            style={{ paddingBottom: "max(40px, calc(var(--safe-bottom) + 24px))" }}
           >
             {/* Smart Suggestion Banner */}
             <div

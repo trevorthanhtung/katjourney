@@ -63,8 +63,8 @@
           "desc": "Xóa bộ nhớ đệm và tệp không quan trọng"
         },
         "restoreData": {
-          "title": "Khôi phục hành trình",
-          "desc": "Nhập chuyến đi từ tệp sao lưu (.katjourney)"
+          "title": "Khôi phục dữ liệu",
+          "desc": "Nhập dữ liệu hoặc chuyến đi từ tệp sao lưu (.katjourney)"
         }
       },
       "dangerZone": {
@@ -169,7 +169,7 @@
         "restoreFailed": "Khôi phục thất bại: "
       },
       "fileRestore": {
-        "title": "Khôi phục hành trình?",
+        "title": "Khôi phục dữ liệu?",
         "warning": "Dữ liệu hiện tại có thể bị thay đổi sau khi nhập bản sao lưu. Vui lòng đảm bảo tệp của bạn là hợp lệ trước khi tiến hành.",
         "cancel": "Hủy",
         "restore": "Khôi phục"

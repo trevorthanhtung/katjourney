@@ -203,7 +203,9 @@ export function SettingsSheet({
   // Import preview modal
   const [importPreview, setImportPreview] = useState<{
     parsed: any;
+    isFullBackup?: boolean;
     tripName: string;
+    tripCount?: number;
     exportedAt: string;
     memberCount: number;
     eventCount: number;
@@ -376,7 +378,9 @@ export function SettingsSheet({
       const link = document.createElement("a");
       link.href = url;
       link.download = `kat-journey-backup-${dateStr}.katjourney`;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
       URL.revokeObjectURL(url);
     } catch (err: any) {
       console.error("Backup failed:", err);
@@ -428,13 +432,22 @@ export function SettingsSheet({
     if (!file) return;
     try {
       const parsed = JSON.parse(await file.text()) as any;
-      if (parsed.app !== "KAT Journey" || !parsed.trip?.title) {
+      if (parsed.app !== "KAT Journey") {
+        showToast(t("toast.invalidFileFormat"), "error");
+        return;
+      }
+      const isFullBackup = parsed.type === "full_backup";
+      if (!isFullBackup && !parsed.trip?.title) {
         showToast(t("toast.invalidFileFormat"), "error");
         return;
       }
       setImportPreview({
         parsed,
-        tripName: parsed.trip.title ?? t("settings.dialogs.importPreview.untitledTrip"),
+        isFullBackup,
+        tripName: isFullBackup
+          ? "Toàn bộ dữ liệu ứng dụng"
+          : (parsed.trip.title ?? t("settings.dialogs.importPreview.untitledTrip")),
+        tripCount: isFullBackup ? (parsed.trips ?? []).length : undefined,
         exportedAt: parsed.exportedAt ?? "",
         memberCount: (parsed.members ?? []).length,
         eventCount: (parsed.events ?? []).length,
@@ -453,6 +466,51 @@ export function SettingsSheet({
     if (!parsed) return;
     setImporting(true);
     try {
+      if (parsed.type === "full_backup") {
+        await db.transaction(
+          "rw",
+          [
+            db.trips,
+            db.members,
+            db.events,
+            db.expenses,
+            db.checklist,
+            db.journals,
+            db.packingItems,
+            db.travelDocuments,
+            db.backupPlans,
+          ],
+          async () => {
+            await db.trips.clear();
+            await db.members.clear();
+            await db.events.clear();
+            await db.expenses.clear();
+            await db.checklist.clear();
+            await db.journals.clear();
+            await db.packingItems.clear();
+            await db.travelDocuments.clear();
+            await db.backupPlans.clear();
+
+            if (parsed.trips?.length) await db.trips.bulkAdd(parsed.trips);
+            if (parsed.members?.length) await db.members.bulkAdd(parsed.members);
+            if (parsed.events?.length) await db.events.bulkAdd(parsed.events);
+            if (parsed.expenses?.length) await db.expenses.bulkAdd(parsed.expenses);
+            if (parsed.checklist?.length) await db.checklist.bulkAdd(parsed.checklist);
+            if (parsed.journals?.length) await db.journals.bulkAdd(parsed.journals);
+            if (parsed.packingItems?.length) await db.packingItems.bulkAdd(parsed.packingItems);
+            if (parsed.travelDocuments?.length)
+              await db.travelDocuments.bulkAdd(parsed.travelDocuments);
+            if (parsed.backupPlans?.length) await db.backupPlans.bulkAdd(parsed.backupPlans);
+          }
+        );
+        setIsImportPreviewOpen(false);
+        setImportPreview(null);
+        onClose();
+        showToast("Đã khôi phục toàn bộ dữ liệu thành công");
+        setTimeout(() => window.location.reload(), 1500);
+        return;
+      }
+
       if (parsed.app !== "KAT Journey" || !parsed.trip?.title) {
         throw new Error("Tệp không đúng định dạng KAT Journey.");
       }
@@ -1343,11 +1401,7 @@ export function SettingsSheet({
                   )}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-lime-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-lime-500/50"
-                >
+                <div className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-lime-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-lime-500/50">
                   <div className="absolute inset-0 bg-gradient-to-br from-lime-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-lime-500/10"></div>
                   <div className="flex items-center gap-4 relative z-10">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-lime-100 to-lime-50 text-lime-600 shadow-inner dark:from-lime-900/40 dark:to-lime-800/20 dark:text-lime-400 border border-lime-200 dark:border-lime-800/60 ring-1 ring-white/50 dark:ring-white/5">
@@ -1375,7 +1429,7 @@ export function SettingsSheet({
                   />
                   <input
                     ref={fileInputRef}
-                    className="hidden"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50"
                     type="file"
                     accept=".katjourney,application/json"
                     onChange={(event) => {
@@ -1384,7 +1438,7 @@ export function SettingsSheet({
                       event.target.value = "";
                     }}
                   />
-                </button>
+                </div>
               </div>
 
               {/* ── Section: Vùng nguy hiểm ── */}
@@ -2624,6 +2678,18 @@ export function SettingsSheet({
 
               <div className="grid grid-cols-6 gap-2.5 sm:gap-3">
                 {[
+                  ...(importPreview.isFullBackup
+                    ? [
+                        {
+                          label: "Chuyến đi",
+                          value: importPreview.tripCount || 0,
+                          icon: CompassIcon,
+                          color: "text-indigo-500 dark:text-indigo-400",
+                          bg: "bg-indigo-50 dark:bg-indigo-500/10",
+                          border: "border-indigo-100/50 dark:border-indigo-500/20",
+                        },
+                      ]
+                    : []),
                   {
                     label: t("settings.dialogs.importPreview.members"),
                     value: importPreview.memberCount,
@@ -2667,7 +2733,13 @@ export function SettingsSheet({
                 ].map((item, idx) => (
                   <div
                     key={item.label}
-                    className={`rounded-[16px] ${item.bg} border ${item.border} p-3 sm:p-4 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 ${idx < 3 ? "col-span-2" : "col-span-3"}`}
+                    className={`rounded-[16px] ${item.bg} border ${item.border} p-3 sm:p-4 flex flex-col items-center justify-center relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 ${
+                      importPreview.isFullBackup
+                        ? "col-span-2"
+                        : idx < 3
+                          ? "col-span-2"
+                          : "col-span-3"
+                    }`}
                   >
                     <div
                       className={`absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity ${item.color}`}
