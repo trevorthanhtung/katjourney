@@ -255,21 +255,32 @@ export function SharedJournalsSection({
     setIsLocating(true);
     try {
       const pos = await getCurrentPosition();
-      const geo = await reverseGeocode(pos.latitude, pos.longitude);
-      setForm((prev) => ({
-        ...prev,
-        locationName: geo.displayName,
-        latitude: pos.latitude,
-        longitude: pos.longitude,
-      }));
+      try {
+        const geo = await reverseGeocode(pos.latitude, pos.longitude);
+        setForm((prev) => ({
+          ...prev,
+          locationName: geo.displayName,
+          latitude: pos.latitude,
+          longitude: pos.longitude,
+        }));
+      } catch (err) {
+        setForm((prev) => ({
+          ...prev,
+          latitude: pos.latitude,
+          longitude: pos.longitude,
+          locationName: t("journal.locUnknown", "Vị trí không xác định"),
+        }));
+      }
     } catch (err: any) {
+      console.warn("Location fetch failed:", err);
       if (err.message !== "GPS is disabled by user setting") {
-        showToast(err.message || t("toast.locationError"), "error");
+        // Suppress automatic fetch errors to avoid disruptive toasts
+        // showToast(err.message || t("toast.locationError"), "error");
       }
     } finally {
       setIsLocating(false);
     }
-  }, []);
+  }, [t]);
 
   React.useEffect(() => {
     if (isFormOpen && !form.locationName && !form.latitude) {
