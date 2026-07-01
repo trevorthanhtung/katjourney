@@ -737,7 +737,7 @@ export function SharedChecklistSection({
         <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
           <div className="flex items-center gap-2.5">
             <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/30 text-purple-650 dark:text-purple-400 border border-purple-100/50 dark:border-purple-900/30 shadow-inner">
-              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5" />
+              <HugeiconsIcon icon={Luggage01Icon} className="h-5 w-5" />
             </div>
             <div>
               <h3 className="text-[16px] font-black text-slate-800 dark:text-slate-200">
@@ -937,6 +937,27 @@ export function SharedChecklistSection({
                   ? t("packing.proposeEdit")
                   : t("packing.proposeAdd")
           }
+          footer={
+            <div className="w-full">
+              <button
+                onClick={handleSave}
+                disabled={!form.title.trim()}
+                className="w-full h-[52px] rounded-2xl bg-kat-dark dark:bg-kat-primary font-black text-[14px] text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed border border-transparent motion-press"
+              >
+                {activeSubTab === "private"
+                  ? editingId
+                    ? t("packing.saveChanges")
+                    : t("packing.addToList")
+                  : isDirectEdit
+                    ? editingId
+                      ? t("packing.saveChanges")
+                      : t("packing.addToList")
+                    : editingId
+                      ? t("packing.proposeEdit")
+                      : t("packing.proposeAdd")}
+              </button>
+            </div>
+          }
         >
           <div className="flex flex-col gap-3.5 py-1">
             {/* Item Name */}
@@ -1128,24 +1149,6 @@ export function SharedChecklistSection({
                 placeholder={t("packing.notePlaceholder")}
               />
             </div>
-
-            <button
-              onClick={handleSave}
-              disabled={!form.title.trim()}
-              className="mt-1 w-full h-11 rounded-[12px] bg-kat-dark dark:bg-kat-primary font-black text-[14px] text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed border border-transparent"
-            >
-              {activeSubTab === "private"
-                ? editingId
-                  ? t("packing.saveChanges")
-                  : t("packing.addToList")
-                : isDirectEdit
-                  ? editingId
-                    ? t("packing.saveChanges")
-                    : t("packing.addToList")
-                  : editingId
-                    ? t("packing.proposeEdit")
-                    : t("packing.proposeAdd")}
-            </button>
           </div>
         </BottomSheet>
 

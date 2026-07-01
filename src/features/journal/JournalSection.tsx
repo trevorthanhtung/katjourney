@@ -775,7 +775,7 @@ export function JournalSection({
   }
 
   return (
-    <div className="mx-auto max-w-[960px] space-y-6 md:space-y-8 pb-0 md:pb-8">
+    <div className="mx-auto max-w-[960px] space-y-6 md:space-y-8 pb-36 md:pb-8">
       {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">

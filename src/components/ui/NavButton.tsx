@@ -24,7 +24,7 @@ export const NavButton = React.forwardRef<
         "relative flex items-center justify-center rounded-full z-10 motion-press",
         isActive
           ? classNames(
-              "text-kat-dark h-[40px] min-[340px]:h-[44px] min-[390px]:h-[48px] font-extrabold",
+              "text-kat-dark h-[40px] min-[340px]:h-[44px] min-[390px]:h-[48px] font-bold",
               compact
                 ? "px-2.5 min-[340px]:px-3 min-[390px]:px-3.5 gap-1 min-[340px]:gap-1"
                 : "px-2.5 min-[340px]:px-3 min-[390px]:px-5 gap-1 min-[340px]:gap-1.5 min-[390px]:gap-2"

@@ -578,7 +578,7 @@ export function MoreScreen({
     ).length;
 
     return (
-      <div className="mx-auto max-w-[1280px] space-y-6 pb-0 md:pb-8">
+      <div className="mx-auto max-w-[1280px] space-y-6 pb-36 md:pb-8">
         {/* Header / Title Row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -871,7 +871,7 @@ export function MoreScreen({
 
   if (section === "settings") {
     return (
-      <div className="mx-auto max-w-[640px] space-y-6 pb-0 md:pb-8">
+      <div className="mx-auto max-w-[640px] space-y-6 pb-36 md:pb-8">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">
@@ -1022,8 +1022,8 @@ export function MoreScreen({
   const tripDurationText = getTripDurationText();
 
   return (
-    <div className="mx-auto max-w-[1280px] px-2 md:px-0">
-      <div className="flex flex-col gap-6 pb-0 md:pb-8">
+    <div className="w-full mx-auto max-w-[1280px] px-2 md:px-0">
+      <div className="flex flex-col gap-6 pb-36 md:pb-8">
         {/* Title Block */}
         <div>
           <h2 className="text-[32px] font-extrabold tracking-tight text-kat-dark dark:text-slate-200">

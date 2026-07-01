@@ -148,14 +148,14 @@ export function TimePicker({
                     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
                   }}
                   data-hour={h}
-                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempHour === h ? "font-black text-kat-primary scale-110" : "font-medium text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"}`}
+                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempHour === h ? "font-bold text-kat-primary scale-110" : "font-medium text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"}`}
                 >
                   {h}
                 </div>
               ))}
             </div>
 
-            <div className="flex items-center justify-center text-xl font-black text-kat-text relative z-10 pb-1">
+            <div className="flex items-center justify-center text-xl font-bold text-kat-text relative z-10 pb-1">
               :
             </div>
 
@@ -175,7 +175,7 @@ export function TimePicker({
                     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
                   }}
                   data-min={m}
-                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempMinute === m ? "font-black text-kat-primary scale-110" : "font-medium text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"}`}
+                  className={`h-[44px] flex items-center justify-center snap-center cursor-pointer text-[22px] transition-all duration-200 ${tempMinute === m ? "font-bold text-kat-primary scale-110" : "font-medium text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"}`}
                 >
                   {m}
                 </div>
@@ -186,7 +186,7 @@ export function TimePicker({
           <div className="w-full mt-6">
             <button
               onClick={handleSave}
-              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-kat-dark text-white dark:bg-kat-primary dark:text-kat-dark px-6 font-black shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all motion-press"
+              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-kat-dark text-white dark:bg-kat-primary dark:text-kat-dark px-6 font-bold shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all motion-press"
             >
               {t("ui.saveTime")}
             </button>

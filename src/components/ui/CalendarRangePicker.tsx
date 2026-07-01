@@ -242,7 +242,7 @@ export function CalendarRangePicker({
       <div className="rounded-[24px] bg-white dark:bg-[#0A0F1C]/60 border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden flex flex-col">
         {/* Date Summary Header */}
         <div className="px-5 pt-4 pb-3 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
-          <div className="text-[18px] sm:text-[20px] font-black text-kat-dark dark:text-white flex items-center flex-wrap gap-2">
+          <div className="text-[18px] sm:text-[20px] font-bold text-kat-dark dark:text-white flex items-center flex-wrap gap-2">
             {tripType === "dayTrip" ? (
               <span className="flex items-center gap-2">
                 <HugeiconsIcon icon={Calendar01Icon} size={20} className="text-kat-primary" />

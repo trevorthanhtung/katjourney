@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { SegmentedControl } from "../../components/ui/SegmentedControl";
 import { useLiveQuery } from "dexie-react-hooks";
 import { getCurrencyLabel } from "../../constants/currencies";
@@ -98,16 +99,16 @@ export function BreakdownSection({
 }) {
   const { t } = useTranslation();
   const catMap: Record<string, string> = {
-    "Di chuyển": t("expenses.catTransport"),
-    "Vé máy bay": t("expenses.catFlights"),
-    "Ăn uống": t("expenses.catFood"),
-    "Lưu trú": t("expenses.catAccommodation"),
-    "Vé tham quan": t("expenses.catTickets"),
-    "Mua sắm": t("expenses.catShopping"),
-    "Vui chơi & Giải trí": t("expenses.catEntertainment"),
-    "Chuẩn bị hành lý": t("expenses.catPreparation"),
-    Khác: t("expenses.catOther"),
-    "Khác...": t("expenses.catCustom"),
+    transport: t("expenses.catTransport"),
+    flight: t("expenses.catFlights"),
+    food: t("expenses.catFood"),
+    accommodation: t("expenses.catAccommodation"),
+    tickets: t("expenses.catTickets"),
+    shopping: t("expenses.catShopping"),
+    entertainment: t("expenses.catEntertainment"),
+    packing: t("expenses.catPreparation"),
+    other: t("expenses.catOther"),
+    "other...": t("expenses.catCustom"),
   };
   const rows = Object.entries(items)
     .filter(([_, amount]) => amount > 0)
@@ -131,21 +132,21 @@ export function BreakdownSection({
 
   const getCatIcon = (cat: string) => {
     switch (cat) {
-      case "Di chuyển":
+      case "transport":
         return Route01Icon;
-      case "Vé máy bay":
+      case "flight":
         return Airplane01Icon;
-      case "Ăn uống":
+      case "food":
         return Dish01Icon;
-      case "Lưu trú":
+      case "accommodation":
         return HotelIcon;
-      case "Vé tham quan":
+      case "tickets":
         return Ticket01Icon;
-      case "Mua sắm":
+      case "shopping":
         return ShoppingBag01Icon;
-      case "Vui chơi & Giải trí":
+      case "entertainment":
         return GameController01Icon;
-      case "Chuẩn bị hành lý":
+      case "packing":
         return SparklesIcon;
       default:
         return Tag01Icon;
@@ -281,7 +282,7 @@ export function SettlementCard({
         </h3>
       </div>
       {settlements.length ? (
-        <div className="grid gap-3 sm:grid-cols-2 max-h-[380px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200/50 dark:scrollbar-thumb-slate-800/50">
+        <div className="grid gap-3 sm:grid-cols-2 max-h-none lg:max-h-[380px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200/50 dark:scrollbar-thumb-slate-800/50">
           {settlements.map((s, idx) => {
             const fromMember = members.find((m) => m.name === s.from);
             const toMember = members.find((m) => m.name === s.to);
@@ -360,16 +361,16 @@ const ExpenseCard = React.memo(function ExpenseCard({
 }) {
   const { t } = useTranslation();
   const catMap: Record<string, string> = {
-    "Di chuyển": t("expenses.catTransport"),
-    "Vé máy bay": t("expenses.catFlights"),
-    "Ăn uống": t("expenses.catFood"),
-    "Lưu trú": t("expenses.catAccommodation"),
-    "Vé tham quan": t("expenses.catTickets"),
-    "Mua sắm": t("expenses.catShopping"),
-    "Vui chơi & Giải trí": t("expenses.catEntertainment"),
-    "Chuẩn bị hành lý": t("expenses.catPreparation"),
-    Khác: t("expenses.catOther"),
-    "Khác...": t("expenses.catCustom"),
+    transport: t("expenses.catTransport"),
+    flight: t("expenses.catFlights"),
+    food: t("expenses.catFood"),
+    accommodation: t("expenses.catAccommodation"),
+    tickets: t("expenses.catTickets"),
+    shopping: t("expenses.catShopping"),
+    entertainment: t("expenses.catEntertainment"),
+    packing: t("expenses.catPreparation"),
+    other: t("expenses.catOther"),
+    "other...": t("expenses.catCustom"),
   };
   const isPersonal = item.splitType === "personal";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -387,21 +388,21 @@ const ExpenseCard = React.memo(function ExpenseCard({
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case "Di chuyển":
+      case "transport":
         return <HugeiconsIcon icon={Route01Icon} className="h-3.5 w-3.5" />;
-      case "Vé máy bay":
+      case "flight":
         return <HugeiconsIcon icon={Airplane01Icon} className="h-3.5 w-3.5" />;
-      case "Ăn uống":
+      case "food":
         return <HugeiconsIcon icon={Dish01Icon} className="h-3.5 w-3.5" />;
-      case "Lưu trú":
+      case "accommodation":
         return <HugeiconsIcon icon={HotelIcon} className="h-3.5 w-3.5" />;
-      case "Vé tham quan":
+      case "tickets":
         return <HugeiconsIcon icon={Ticket01Icon} className="h-3.5 w-3.5" />;
-      case "Mua sắm":
+      case "shopping":
         return <HugeiconsIcon icon={ShoppingBag01Icon} className="h-3.5 w-3.5" />;
-      case "Vui chơi & Giải trí":
+      case "entertainment":
         return <HugeiconsIcon icon={GameController01Icon} className="h-3.5 w-3.5" />;
-      case "Chuẩn bị hành lý":
+      case "packing":
         return <HugeiconsIcon icon={SparklesIcon} className="h-3.5 w-3.5" />;
       default:
         return <HugeiconsIcon icon={Tag01Icon} className="h-3.5 w-3.5" />;
@@ -558,16 +559,16 @@ function ExpenseForm({
   const { t, i18n } = useTranslation();
   const catMap: Record<string, string> = React.useMemo(
     () => ({
-      "Di chuyển": t("expenses.catTransport"),
-      "Vé máy bay": t("expenses.catFlights"),
-      "Ăn uống": t("expenses.catFood"),
-      "Lưu trú": t("expenses.catAccommodation"),
-      "Vé tham quan": t("expenses.catTickets"),
-      "Mua sắm": t("expenses.catShopping"),
-      "Vui chơi & Giải trí": t("expenses.catEntertainment"),
-      "Chuẩn bị hành lý": t("expenses.catPreparation"),
-      Khác: t("expenses.catOther"),
-      "Khác...": t("expenses.catCustom"),
+      transport: t("expenses.catTransport"),
+      flight: t("expenses.catFlights"),
+      food: t("expenses.catFood"),
+      accommodation: t("expenses.catAccommodation"),
+      tickets: t("expenses.catTickets"),
+      shopping: t("expenses.catShopping"),
+      entertainment: t("expenses.catEntertainment"),
+      packing: t("expenses.catPreparation"),
+      other: t("expenses.catOther"),
+      "other...": t("expenses.catCustom"),
     }),
     [t]
   );
@@ -577,7 +578,7 @@ function ExpenseForm({
     const uniqueUsedCats = Array.from(new Set(expenses.map((e) => e.category))).filter(
       (c) => !defaultCats.includes(c) && c !== "other" && c !== "other..."
     );
-    return [...defaultCats, ...uniqueUsedCats, "Khác..."];
+    return [...defaultCats, ...uniqueUsedCats, "other..."];
   }, [expenses]);
 
   const categoryLabels = React.useMemo(() => {
@@ -1353,16 +1354,16 @@ export function ExpensesScreen({
   const baseCurrency = trip?.defaultCurrency || "VND";
   const catMap: Record<string, string> = React.useMemo(
     () => ({
-      "Di chuyển": t("expenses.catTransport"),
-      "Vé máy bay": t("expenses.catFlights"),
-      "Ăn uống": t("expenses.catFood"),
-      "Lưu trú": t("expenses.catAccommodation"),
-      "Vé tham quan": t("expenses.catTickets"),
-      "Mua sắm": t("expenses.catShopping"),
-      "Vui chơi & Giải trí": t("expenses.catEntertainment"),
-      "Chuẩn bị hành lý": t("expenses.catPreparation"),
-      Khác: t("expenses.catOther"),
-      "Khác...": t("expenses.catCustom"),
+      transport: t("expenses.catTransport"),
+      flight: t("expenses.catFlights"),
+      food: t("expenses.catFood"),
+      accommodation: t("expenses.catAccommodation"),
+      tickets: t("expenses.catTickets"),
+      shopping: t("expenses.catShopping"),
+      entertainment: t("expenses.catEntertainment"),
+      packing: t("expenses.catPreparation"),
+      other: t("expenses.catOther"),
+      "other...": t("expenses.catCustom"),
     }),
     [t]
   );
@@ -1402,7 +1403,7 @@ export function ExpensesScreen({
         tripId,
         amount: 0,
         payer: members[0]?.name || "",
-        category: "Di chuyển", // Default category or something else
+        category: "transport", // Default category or something else
         description: "",
         date: initialAddState.date,
         eventId: String(initialAddState.eventId),
@@ -1472,8 +1473,8 @@ export function ExpensesScreen({
   const isEmpty = expenses.length === 0;
 
   return (
-    <div className="mx-auto max-w-[1280px] px-1 md:px-0">
-      <div className="space-y-6 md:space-y-8 pb-0 md:pb-8">
+    <div className="w-full mx-auto max-w-[1280px] px-1 md:px-0">
+      <div className="space-y-6 md:space-y-8 pb-36 md:pb-8">
         {/* Title row */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -1595,7 +1596,7 @@ export function ExpensesScreen({
                     {t("expenses.byCategory")}
                   </h3>
                 </div>
-                <div className="max-h-[340px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200/50 dark:scrollbar-thumb-slate-800/50 flex-1">
+                <div className="max-h-none lg:max-h-[340px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200/50 dark:scrollbar-thumb-slate-800/50 flex-1">
                   <BreakdownSection
                     items={byCategory}
                     total={totalExpense}
@@ -1614,7 +1615,7 @@ export function ExpensesScreen({
                     {t("expenses.sharePerMember")}
                   </h3>
                 </div>
-                <div className="max-h-[340px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200/50 dark:scrollbar-thumb-slate-800/50 flex-1">
+                <div className="max-h-none lg:max-h-[340px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200/50 dark:scrollbar-thumb-slate-800/50 flex-1">
                   {members.length > 0 ? (
                     <BreakdownSection
                       items={exactSharesByMember}
@@ -1687,6 +1688,20 @@ export function ExpensesScreen({
           </div>
         </section>
       </div>
+
+      {/* Floating Action Button (Mobile only) */}
+      {!isReadOnly &&
+        createPortal(
+          <button
+            onClick={openNewForm}
+            className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
+            style={{ bottom: "calc(6rem + var(--safe-bottom))" }}
+            aria-label={t("expenses.addExpense")}
+          >
+            <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
+          </button>,
+          document.body
+        )}
 
       <DeleteConfirmModal
         isOpen={Boolean(expenseToDelete)}

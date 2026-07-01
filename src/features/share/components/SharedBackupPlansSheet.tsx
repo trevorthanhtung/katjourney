@@ -299,7 +299,7 @@ export function SharedBackupPlansSheet({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-kat-surface sticky top-0 z-10 gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="text-[18px] font-extrabold text-kat-dark truncate">
+            <h3 className="text-[18px] font-bold text-kat-dark truncate">
               {t("share.backupPlanTitle")}
             </h3>
             <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 truncate">
@@ -312,7 +312,7 @@ export function SharedBackupPlansSheet({
             {!isFormOpen && plans.length > 0 && isRequestEdit && (
               <button
                 onClick={handleOpenAdd}
-                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-indigo-600 text-white px-3.5 text-[13px] font-extrabold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
+                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-indigo-600 text-white px-3.5 text-[13px] font-bold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" strokeWidth={2.5} />
                 <span>{t("share.add")}</span>
@@ -386,7 +386,7 @@ export function SharedBackupPlansSheet({
                 <button
                   type="button"
                   onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
-                  className="w-full flex items-center justify-between text-[13.5px] font-extrabold text-slate-700 dark:text-slate-200 hover:text-kat-dark dark:hover:text-white focus:outline-none transition-colors"
+                  className="w-full flex items-center justify-between text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:text-kat-dark dark:hover:text-white focus:outline-none transition-colors"
                 >
                   <span>{t("share.additionalInfo")}</span>
                   <HugeiconsIcon

@@ -35,9 +35,8 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
     if (isNaN(s.getTime()) || isNaN(e.getTime())) return acc;
     return acc + Math.ceil(Math.abs(e.getTime() - s.getTime()) / (1000 * 3600 * 24)) + 1;
   }, 0);
-
   const cardBaseClass =
-    "flex flex-col relative overflow-hidden bg-white/70 dark:bg-[#0A0F1C]/80 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 rounded-[2rem] p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_16px_48px_rgba(3,13,46,0.08)] dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.3)] hover:border-slate-300 dark:hover:border-white/20 hover:bg-white/90 dark:hover:bg-[#0A0F1C]/90 transition-all duration-500 min-h-[170px] group";
+    "flex flex-col relative overflow-hidden bg-white/70 dark:bg-[#0A0F1C]/80 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 rounded-[2rem] p-6 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_16px_48px_rgba(3,13,46,0.08)] dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.3)] hover:border-slate-300 dark:hover:border-white/20 hover:bg-white/90 dark:hover:bg-[#0A0F1C]/90 transition-all duration-500 min-h-[170px] group";
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
@@ -57,12 +56,12 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
 
           <div className="flex-1 flex flex-col justify-end">
             <div className="flex items-baseline gap-1.5 mb-1">
-              <span className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-rose-500 dark:group-hover:text-rose-400 transition-colors duration-300">
+              <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-rose-500 dark:group-hover:text-rose-400 transition-colors duration-300">
                 {visitedAlpha2s.length}
               </span>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500">/ 195</span>
             </div>
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
               Atlas: {t("dashboard.stats.countries", "Countries")}
             </span>
           </div>
@@ -100,11 +99,11 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
 
           <div className="flex-1 flex flex-col justify-end">
             <div className="flex items-baseline gap-1.5 mb-1">
-              <span className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors duration-300">
+              <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors duration-300">
                 {totalTrips}
               </span>
             </div>
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
               {t("dashboard.stats.totalTrips", "Total trips")}
             </span>
           </div>
@@ -130,14 +129,14 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
 
           <div className="flex-1 flex flex-col justify-end">
             <div className="flex items-baseline gap-1.5 mb-1">
-              <span className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors duration-300">
+              <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors duration-300">
                 {totalDays}
               </span>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
                 {t("dashboard.stats.daysLabel", "days")}
               </span>
             </div>
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
               {t("dashboard.stats.daysTraveled", "Days traveled")}
             </span>
           </div>
@@ -163,11 +162,11 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
 
           <div className="flex-1 flex flex-col justify-end">
             <div className="flex items-baseline gap-1.5 mb-1">
-              <span className="text-4xl font-black text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors duration-300">
+              <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors duration-300">
                 {trips.reduce((acc, t) => acc + (t.destinations?.length || 1), 0)}
               </span>
             </div>
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 leading-tight line-clamp-1">
               {t("dashboard.stats.destinations", "Destinations")}
             </span>
           </div>
@@ -384,7 +383,7 @@ export function TimezonesWidget() {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 shadow-sm">
               <HugeiconsIcon icon={Clock01Icon} size={15} />
             </div>
-            <span className="text-[12px] font-extrabold uppercase tracking-wider text-slate-450 dark:text-slate-405">
+            <span className="text-[12px] font-bold uppercase tracking-wider text-slate-450 dark:text-slate-405">
               {t("dashboard.widgets.timezones", "Timezones")}
             </span>
           </div>
@@ -406,11 +405,11 @@ export function TimezonesWidget() {
               {/* Highlighted First Timezone */}
               <div className="flex items-center justify-between group relative p-4.5 rounded-[20px] bg-indigo-500/5 dark:bg-indigo-500/10 border border-indigo-500/15 dark:border-indigo-500/10 shadow-inner">
                 <div className="min-w-0 flex-1">
-                  <div className="text-[22px] font-black text-slate-850 dark:text-slate-100 tracking-tight leading-tight truncate">
+                  <div className="text-[22px] font-bold text-slate-850 dark:text-slate-100 tracking-tight leading-tight truncate">
                     {tzName(timezones[0])}
                   </div>
                   <div className="text-[12px] font-bold text-slate-450 dark:text-slate-500 mt-2.5 flex items-center flex-wrap gap-2 leading-none">
-                    <span className="inline-flex items-center justify-center rounded-md px-1.5 py-0.5 text-[9.5px] font-extrabold bg-indigo-100 dark:bg-indigo-950/60 text-indigo-650 dark:text-indigo-400 tracking-wide uppercase shrink-0">
+                    <span className="inline-flex items-center justify-center rounded-md px-1.5 py-0.5 text-[9.5px] font-bold bg-indigo-100 dark:bg-indigo-950/60 text-indigo-650 dark:text-indigo-400 tracking-wide uppercase shrink-0">
                       {getRelativeTimeLabel(timezones[0])}
                     </span>
                     <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-850" />
@@ -420,7 +419,7 @@ export function TimezonesWidget() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5 shrink-0 pl-3">
-                  <span className="text-[24px] font-black text-indigo-600 dark:text-indigo-400 tracking-tight font-mono">
+                  <span className="text-[24px] font-bold text-indigo-600 dark:text-indigo-400 tracking-tight font-mono">
                     {tzTime(time, timezones[0])}
                   </span>
                   <button
@@ -445,19 +444,19 @@ export function TimezonesWidget() {
                       className="flex items-center justify-between group relative p-3.5 rounded-[18px] bg-white/30 dark:bg-slate-900/10 border border-slate-200/30 dark:border-white/[0.02] hover:border-slate-300/50 dark:hover:border-white/10 transition-all duration-300 shadow-soft"
                     >
                       <div className="min-w-0 flex-1 pr-3">
-                        <div className="text-[14.5px] font-extrabold text-slate-700 dark:text-slate-200 truncate">
+                        <div className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200 truncate">
                           {tzName(tz)}
                         </div>
                         <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mt-1.5 flex items-center flex-wrap gap-2 leading-none">
                           <span className="font-mono">{tzOffsetString(tz)}</span>
                           <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-800" />
-                          <span className="text-slate-450 dark:text-slate-400 font-extrabold bg-slate-100 dark:bg-slate-800/60 px-1.5 py-0.5 rounded-[6px] text-[10px]">
+                          <span className="text-slate-450 dark:text-slate-400 font-bold bg-slate-100 dark:bg-slate-800/60 px-1.5 py-0.5 rounded-[6px] text-[10px]">
                             {getRelativeTimeLabel(tz)}
                           </span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[15.5px] font-extrabold text-slate-650 dark:text-slate-300 font-mono">
+                        <span className="text-[15.5px] font-bold text-slate-650 dark:text-slate-300 font-mono">
                           {tzTime(time, tz)}
                         </span>
                         <button

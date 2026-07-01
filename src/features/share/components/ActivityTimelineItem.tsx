@@ -80,7 +80,7 @@ export function ActivityTimelineItem({
           <div className="flex flex-wrap items-baseline gap-2">
             <h4
               className={classNames(
-                "text-[15.5px] font-black text-kat-dark break-words tracking-tight",
+                "text-[15.5px] font-bold text-kat-dark break-words tracking-tight",
                 item.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
               )}
             >

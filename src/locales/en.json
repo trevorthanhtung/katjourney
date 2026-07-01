@@ -404,7 +404,9 @@
       "distance": "Distance",
       "km": "km",
       "noFlights": "No flights yet",
-      "world": "World"
+      "world": "World",
+      "destinations": "Destinations",
+      "explored": "Explored"
     },
     "widgets": {
       "timezones": "Timezones",

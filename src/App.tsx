@@ -1012,9 +1012,9 @@ function App() {
 
           <main
             className={classNames(
-              "mx-auto flex flex-1 w-full max-w-[1280px] flex-col",
+              "mx-auto flex flex-1 w-full max-w-[1280px] flex-col min-w-0",
               !isManagingTrips && tripId
-                ? "pb-24 md:pb-12"
+                ? "pb-32 md:pb-12"
                 : isManagingTrips && trips?.length === 0 && !isViewingArchive && !isCreatingTrip
                   ? "pb-0"
                   : "pb-12"
@@ -1022,7 +1022,7 @@ function App() {
           >
             <div
               className={classNames(
-                "flex-1 px-4 md:px-6 flex flex-col",
+                "flex-1 px-4 md:px-6 flex flex-col min-w-0",
                 isManagingTrips && trips?.length === 0 && !isViewingArchive && !isCreatingTrip
                   ? "py-0"
                   : "py-6 md:py-8"
@@ -1100,7 +1100,7 @@ function App() {
                     initial="initial"
                     animate="animate"
                     exit="exit"
-                    className="w-full origin-top flex-1 flex flex-col h-full"
+                    className="w-full origin-top flex-1 flex flex-col h-full min-w-0"
                   >
                     {deferredActiveTab === "home" && (
                       <HomeScreen

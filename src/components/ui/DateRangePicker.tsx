@@ -167,7 +167,7 @@ export function DateRangePickerSheet({
             type="button"
             disabled={!startDate || (mode === "range" && !endDate)}
             onClick={handleSave}
-            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-kat-teal text-kat-dark px-6 font-black hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-kat-teal text-kat-dark px-6 font-bold hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Lưu
           </button>
@@ -249,7 +249,7 @@ export function DateRangePickerSheet({
             const todayStr = formatDate(new Date());
             const isToday = dateStr === todayStr;
             if (isToday && !isStart && !isEnd && !isMiddle) {
-              textClass = "text-kat-teal font-black";
+              textClass = "text-kat-teal font-bold";
             }
 
             return (

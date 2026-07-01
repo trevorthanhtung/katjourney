@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   GlobeIcon,
@@ -694,7 +695,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
           <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="space-y-4">
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-md">
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider backdrop-blur-md">
                 ●{" "}
                 {status === "past"
                   ? t("trip.past")
@@ -702,7 +703,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     ? t("trip.ongoing")
                     : t("trip.upcoming")}
               </span>
-              <h2 className="text-[28px] font-black leading-tight tracking-tight drop-shadow-sm">
+              <h2 className="text-[28px] font-bold leading-tight tracking-tight drop-shadow-sm">
                 {trip.title}
               </h2>
               <div className="flex flex-wrap gap-2.5">
@@ -753,7 +754,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 <p className="text-[10px] font-semibold text-white/60 text-center">
                   {status === "past" ? t("trip.status") : t("trip.journey")}
                 </p>
-                <p className="mt-1 text-[17px] sm:text-[19px] font-black text-white drop-shadow-sm tracking-tight leading-none text-center">
+                <p className="mt-1 text-[17px] sm:text-[19px] font-bold text-white drop-shadow-sm tracking-tight leading-none text-center">
                   {timing.label}
                 </p>
                 {status === "active" &&
@@ -870,7 +871,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   {/* Weather Info Block */}
                   <div className="flex items-center justify-between gap-2 w-full min-w-0">
                     <div className="flex items-center gap-1.5 min-w-0 shrink">
-                      <span className="text-3xl min-[360px]:text-4xl font-black text-white drop-shadow-sm tracking-tighter shrink-0">
+                      <span className="text-3xl min-[360px]:text-4xl font-bold text-white drop-shadow-sm tracking-tighter shrink-0">
                         {formatTemp(forecast.current?.temperature || 20)}°
                       </span>
                       <div className="flex flex-col ml-1 min-w-0 shrink">
@@ -880,14 +881,14 @@ export default function SharedTripScreen({ token }: { token: string }) {
                             "w-7 h-7 drop-shadow-md"
                           )}
                         </span>
-                        <span className="text-[10px] min-[360px]:text-[11px] font-extrabold text-white/95 uppercase tracking-normal mt-1 drop-shadow-sm truncate text-center">
+                        <span className="text-[10px] min-[360px]:text-[11px] font-bold text-white/95 uppercase tracking-normal mt-1 drop-shadow-sm truncate text-center">
                           {getWeatherText(forecast.current?.weathercode || 0)}
                         </span>
                       </div>
                     </div>
                     <div className="w-px h-10 bg-white/30 mx-0.5 shrink-0" />
                     <div className="flex flex-col text-right whitespace-nowrap shrink-0">
-                      <span className="text-[11px] min-[360px]:text-[11.5px] font-extrabold text-white/95">
+                      <span className="text-[11px] min-[360px]:text-[11.5px] font-bold text-white/95">
                         {t("weather.high")}: {formatTemp(forecast.temperature_2m_max[0])}°
                       </span>
                       <span className="text-[11px] min-[360px]:text-[11.5px] font-bold text-white/70">
@@ -902,7 +903,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   {/* Packing Tip Block */}
                   {packingTip && (
                     <div className="w-full flex items-center">
-                      <p className="text-[12px] font-extrabold text-white/95 leading-normal whitespace-normal break-words">
+                      <p className="text-[12px] font-bold text-white/95 leading-normal whitespace-normal break-words">
                         {packingTip.message}
                       </p>
                     </div>
@@ -938,7 +939,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             </div>
             <p
               className={classNames(
-                "text-[20px] sm:text-[22px] font-black leading-none mb-1",
+                "text-[20px] sm:text-[22px] font-bold leading-none mb-1",
                 activities.length > 0
                   ? "text-kat-dark dark:text-white"
                   : "text-slate-400 dark:text-slate-500"
@@ -986,7 +987,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 return (
                   <p
                     className={classNames(
-                      `${sizeClass} font-black leading-none mb-1 px-0.5 whitespace-nowrap truncate w-full`,
+                      `${sizeClass} font-bold leading-none mb-1 px-0.5 whitespace-nowrap truncate w-full`,
                       totalExpense > 0
                         ? "text-kat-dark dark:text-white"
                         : "text-slate-400 dark:text-slate-500"
@@ -1024,7 +1025,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             </div>
             <p
               className={classNames(
-                "text-[20px] sm:text-[22px] font-black leading-none mb-1",
+                "text-[20px] sm:text-[22px] font-bold leading-none mb-1",
                 members.length > 0
                   ? "text-kat-dark dark:text-white"
                   : "text-slate-400 dark:text-slate-500"
@@ -1038,7 +1039,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           </div>
         </section>
 
-        <section className="hidden lg:flex bg-[#030D2E]/5 dark:bg-slate-950/40 p-1 rounded-full gap-1 overflow-x-auto scrollbar-none border border-slate-200/20 dark:border-slate-800/80">
+        <section className="hidden lg:flex gap-2 bg-slate-100/50 dark:bg-white/5 backdrop-blur-md p-1.5 rounded-full overflow-x-auto scrollbar-none border border-slate-200/50 dark:border-white/10 shadow-sm">
           {tabsList.map((tab) => {
             const IconComponent = tab.icon;
             const isActive = activeTab === tab.id;
@@ -1047,22 +1048,29 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={classNames(
-                  "flex-1 flex items-center justify-center gap-1.5 px-4.5 py-2.5 rounded-full text-[13.5px] font-extrabold transition-all duration-200 whitespace-nowrap cursor-pointer",
+                  "flex-1 flex items-center justify-center gap-1.5 px-5 py-2 rounded-full text-[14px] font-semibold transition-colors whitespace-nowrap cursor-pointer z-0 relative",
                   isActive
-                    ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-white shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-slate-200/50 dark:border-slate-700/50"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-800/40"
+                    ? "text-kat-text dark:text-white"
+                    : "text-slate-500 dark:text-slate-400 hover:text-kat-text dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
                 )}
               >
+                {isActive && (
+                  <motion.div
+                    layoutId="shared-desktop-nav-active-pill"
+                    className="absolute inset-0 bg-white dark:bg-white/15 rounded-full shadow-sm ring-1 ring-black/5 dark:ring-white/10 -z-10"
+                    transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
+                  />
+                )}
                 <HugeiconsIcon
                   icon={IconComponent}
                   className={classNames(
-                    "w-4 h-4",
+                    "w-4 h-4 relative z-10",
                     isActive
-                      ? "text-kat-dark dark:text-white"
+                      ? "text-kat-text dark:text-white"
                       : "text-slate-500 dark:text-slate-400"
                   )}
                 />
-                {tab.label}
+                <span className="relative z-10">{tab.label}</span>
               </button>
             );
           })}
@@ -1076,7 +1084,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 icon={CompassIcon}
                 className="w-12 h-12 text-slate-350 mb-3 animate-pulse"
               />
-              <h4 className="text-[16px] font-black text-kat-dark">{t("share.readyToExplore")}</h4>
+              <h4 className="text-[16px] font-bold text-kat-dark">{t("share.readyToExplore")}</h4>
               <p className="text-[12.5px] text-slate-400 dark:text-kat-muted font-bold mt-1.5 leading-relaxed">
                 {t("share.exploreDesc")}
               </p>
@@ -1106,42 +1114,40 @@ export default function SharedTripScreen({ token }: { token: string }) {
               <div className="space-y-6">
                 {/* 1. Trip Info context card */}
                 <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 border border-slate-200/50 dark:border-kat-border/40 shadow-[0_2px_12px_rgba(3,13,46,0.02)] space-y-4">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-dark/5 dark:bg-slate-800/80 text-kat-dark">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-teal/10 dark:bg-teal-500/10 text-kat-teal">
                       <HugeiconsIcon icon={RouteIcon} className="h-4 w-4" />
                     </span>
-                    <h4 className="text-[15px] font-extrabold text-kat-dark">
-                      {t("share.tripInfo")}
-                    </h4>
+                    <h4 className="text-[15px] font-bold text-kat-dark">{t("share.tripInfo")}</h4>
                   </div>
 
-                  <div className="space-y-3 text-[13.5px] font-semibold text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/50 pt-3">
-                    <div className="flex items-center justify-between border-b border-slate-100/40 dark:border-slate-800/20 pb-2.5">
-                      <span className="flex items-center gap-2">
+                  <div className="flex flex-col text-[13.5px] border-t border-slate-100 dark:border-slate-800/50">
+                    <div className="flex items-center justify-between py-3 border-b border-slate-100/50 dark:border-slate-800/20">
+                      <span className="flex items-center gap-2 font-medium text-slate-500 dark:text-slate-400">
                         <HugeiconsIcon icon={Location01Icon} className="h-4 w-4 text-slate-400" />
                         {t("share.location")}
                       </span>
-                      <span className="font-black text-kat-dark">
+                      <span className="font-semibold text-kat-dark text-right ml-4">
                         {trip.destination || trip.location || t("common.unknownLocation")}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between border-b border-slate-100/40 dark:border-slate-800/20 pb-2.5">
-                      <span className="flex items-center gap-2">
+                    <div className="flex items-center justify-between py-3 border-b border-slate-100/50 dark:border-slate-800/20">
+                      <span className="flex items-center gap-2 font-medium text-slate-500 dark:text-slate-400">
                         <HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4 text-slate-400" />
                         {t("share.time")}
                       </span>
-                      <span className="font-black text-kat-dark">
+                      <span className="font-semibold text-kat-dark text-right ml-4">
                         {isDayTrip
                           ? formatDate(trip.startDate)
                           : `${formatDate(trip.startDate)} - ${formatDate(trip.endDate)}`}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between pb-0.5">
-                      <span className="flex items-center gap-2">
+                    <div className="flex items-center justify-between pt-3">
+                      <span className="flex items-center gap-2 font-medium text-slate-500 dark:text-slate-400">
                         <HugeiconsIcon icon={RouteIcon} className="h-4 w-4 text-slate-400" />
                         {t("share.roadmapItems")}
                       </span>
-                      <span className="font-black text-kat-dark">
+                      <span className="font-semibold text-kat-dark text-right ml-4">
                         {activities.length} {t("share.itemsCount")}
                       </span>
                     </div>
@@ -1160,7 +1166,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                           <HugeiconsIcon icon={GitBranchIcon} className="h-4 w-4" />
                         </span>
                         <div>
-                          <h4 className="text-[15px] font-extrabold text-kat-dark">
+                          <h4 className="text-[15px] font-bold text-kat-dark">
                             {t("share.generalBackup")}
                           </h4>
                           <p className="text-[11px] text-slate-500/80 dark:text-slate-400 font-medium">
@@ -1230,7 +1236,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400">
                         <HugeiconsIcon icon={RouteIcon} className="h-4 w-4" />
                       </span>
-                      <h4 className="text-[15px] font-extrabold text-kat-dark">
+                      <h4 className="text-[15px] font-bold text-kat-dark">
                         {t("share.travelRoadmap")}
                       </h4>
                     </div>
@@ -1251,7 +1257,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                               <div className="text-[10.5px] font-bold text-emerald-600/70 dark:text-emerald-400/80 uppercase tracking-wide mb-0.5">
                                 {t("share.viewingDay")}
                               </div>
-                              <div className="text-[14.5px] font-extrabold text-kat-dark dark:text-slate-100">
+                              <div className="text-[14.5px] font-bold text-kat-dark dark:text-slate-100">
                                 {selectedRoadmapDay
                                   ? `${t("share.day")} ${days.indexOf(selectedRoadmapDay) + 1} (${formatDateShort(selectedRoadmapDay)})`
                                   : t("share.selectDay")}
@@ -1281,7 +1287,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
                         );
                         const travel = dayActs.find(
                           (e: any) =>
-                            e.mapLink && (e.category === "Di chuyển" || e.category === "travel")
+                            e.mapLink &&
+                            (e.category === "transport" ||
+                              e.category === "Di chuyển" ||
+                              e.category === "travel")
                         );
                         const fallback = !travel ? dayActs.find((e: any) => e.mapLink) : null;
                         return (travel || fallback)?.mapLink || "";
@@ -1328,7 +1337,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                 href={ensureAbsoluteUrl(mapUrl)}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+                                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-[13.5px] shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
                               >
                                 <HugeiconsIcon icon={RouteIcon} className="w-4 h-4" />
                                 {t("share.openRoadmap")} &rarr;
@@ -1509,7 +1518,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             </div>
             <span className="text-[15px] font-medium text-slate-500 dark:text-slate-400">
               {t("sharedVia")}{" "}
-              <strong className="font-extrabold text-kat-dark dark:text-white">KAT Journey</strong>
+              <strong className="font-bold text-kat-dark dark:text-white">KAT Journey</strong>
             </span>
           </a>
 
@@ -1646,7 +1655,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                   <div className="text-left">
                     <div
                       className={classNames(
-                        "text-[15px] font-extrabold",
+                        "text-[15px] font-bold",
                         isSelected
                           ? "text-emerald-900 dark:text-emerald-300"
                           : "text-kat-dark dark:text-slate-100"

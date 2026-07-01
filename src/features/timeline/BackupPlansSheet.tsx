@@ -200,7 +200,7 @@ export function BackupPlansSheet({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-kat-border bg-white dark:bg-kat-surface sticky top-0 z-10 gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="text-[18px] font-extrabold text-kat-dark dark:text-slate-100 truncate">
+            <h3 className="text-[18px] font-bold text-kat-dark dark:text-slate-100 truncate">
               {t("backup.title")}
             </h3>
             <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 truncate">
@@ -211,7 +211,7 @@ export function BackupPlansSheet({
             {!isFormOpen && plans.length > 0 && (
               <button
                 onClick={handleOpenAdd}
-                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white px-3.5 text-[13px] font-extrabold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
+                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white px-3.5 text-[13px] font-bold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" />
                 <span>{t("backup.add")}</span>
@@ -284,7 +284,7 @@ export function BackupPlansSheet({
                 <button
                   type="button"
                   onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
-                  className="w-full flex items-center justify-between text-[13.5px] font-extrabold text-slate-700 dark:text-slate-200 hover:text-kat-dark dark:hover:text-white focus:outline-none transition-colors"
+                  className="w-full flex items-center justify-between text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:text-kat-dark dark:hover:text-white focus:outline-none transition-colors"
                 >
                   <span>{t("backup.additionalInfo")}</span>
                   <HugeiconsIcon
@@ -372,7 +372,7 @@ export function BackupPlansSheet({
                 </button>
                 <button
                   onClick={handleSave}
-                  className="flex-1 py-4 rounded-[16px] text-[15px] font-extrabold text-white bg-kat-teal hover:bg-[#00a89f] shadow-[0_8px_20px_rgba(0,191,183,0.3)] hover:shadow-[0_10px_25px_rgba(0,191,183,0.4)] hover:-translate-y-0.5 transition-all motion-press focus:outline-none"
+                  className="flex-1 py-4 rounded-[16px] text-[15px] font-bold text-white bg-kat-teal hover:bg-[#00a89f] shadow-[0_8px_20px_rgba(0,191,183,0.3)] hover:shadow-[0_10px_25px_rgba(0,191,183,0.4)] hover:-translate-y-0.5 transition-all motion-press focus:outline-none"
                 >
                   {t("backup.savePlan")}
                 </button>
@@ -390,7 +390,7 @@ export function BackupPlansSheet({
                   className="w-12 h-12 drop-shadow-md relative z-10"
                 />
               </div>
-              <h4 className="text-[18px] font-extrabold text-kat-dark dark:text-slate-100 mb-2">
+              <h4 className="text-[18px] font-bold text-kat-dark dark:text-slate-100 mb-2">
                 {t("backup.emptyTitle")}
               </h4>
               <p className="text-[14.5px] font-medium text-slate-500 dark:text-slate-400 mb-8 max-w-[280px]">
@@ -398,7 +398,7 @@ export function BackupPlansSheet({
               </p>
               <button
                 onClick={handleOpenAdd}
-                className="flex items-center gap-2 px-7 py-3.5 bg-kat-teal hover:bg-[#00a89f] text-white rounded-[16px] text-[15px] font-extrabold shadow-[0_8px_20px_rgba(0,191,183,0.3)] hover:shadow-[0_10px_25px_rgba(0,191,183,0.4)] hover:-translate-y-0.5 transition-all motion-press"
+                className="flex items-center gap-2 px-7 py-3.5 bg-kat-teal hover:bg-[#00a89f] text-white rounded-[16px] text-[15px] font-bold shadow-[0_8px_20px_rgba(0,191,183,0.3)] hover:shadow-[0_10px_25px_rgba(0,191,183,0.4)] hover:-translate-y-0.5 transition-all motion-press"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-5 h-5 stroke-[2.5]" />
                 {t("backup.addFirst")}
@@ -418,14 +418,14 @@ export function BackupPlansSheet({
                         {/* Type Badge */}
                         <div className="mb-2">
                           <span
-                            className={`px-2 py-0.5 rounded-md text-[11px] font-extrabold border ${typeColors[plan.type || "other"]}`}
+                            className={`px-2 py-0.5 rounded-md text-[11px] font-bold border ${typeColors[plan.type || "other"]}`}
                           >
                             {t(typeLabels[plan.type || "other"])}
                           </span>
                         </div>
 
                         {/* Title */}
-                        <h4 className="text-[15.5px] font-extrabold text-kat-dark dark:text-slate-100 leading-snug">
+                        <h4 className="text-[15.5px] font-bold text-kat-dark dark:text-slate-100 leading-snug">
                           {plan.title}
                         </h4>
 

@@ -347,12 +347,12 @@ export function SharedMembersSection({
   }
 
   return (
-    <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden space-y-4">
+    <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden">
       {/* Ambient background glow */}
       <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-blue-500/[0.03] dark:bg-blue-500/[0.05] blur-[30px] pointer-events-none" />
 
       {/* Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
+      <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
         <div className="flex items-center gap-2.5">
           <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/30 shadow-inner">
             <HugeiconsIcon icon={UserGroupIcon} className="h-5 w-5" />
@@ -749,9 +749,9 @@ export function SharedMembersSection({
           };
 
           return (
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col">
               {groups.map((g) => (
-                <div key={g.name} className="animate-fadeIn">
+                <div key={g.name} className="animate-fadeIn mb-4">
                   <div className="flex items-center mb-3 px-1">
                     <div className="inline-flex items-center gap-2 bg-slate-50/60 dark:bg-slate-800/30 border border-slate-200/50 dark:border-white/5 px-3.5 py-1.5 rounded-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.01)] select-none">
                       <HugeiconsIcon icon={UserGroupIcon} className="w-4 h-4 text-blue-500" />

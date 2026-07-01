@@ -482,18 +482,18 @@ export function SharedActivitiesSection({
 
   return (
     <>
-      <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 md:p-6 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden space-y-4">
+      <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 md:p-6 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden">
         {/* Ambient background glow */}
         <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-teal-500/[0.03] dark:bg-teal-500/[0.05] blur-[30px] pointer-events-none" />
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100 dark:border-slate-800/80 mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
           <div className="flex items-center gap-2.5">
             <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 border border-teal-100/50 dark:border-teal-900/30 shadow-inner">
               <HugeiconsIcon icon={Route01Icon} className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-[16px] font-black text-slate-800 dark:text-slate-200">
+              <h3 className="text-[16px] font-bold text-slate-800 dark:text-slate-200">
                 {t("share.detailedSchedule")}
               </h3>
               <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
@@ -537,7 +537,7 @@ export function SharedActivitiesSection({
               <button
                 type="button"
                 onClick={startAdd}
-                className="hidden lg:flex items-center justify-center gap-1.5 rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-3.5 py-2 text-[12.5px] font-extrabold shadow-sm hover:bg-kat-dark dark:hover:bg-kat-primary-light bg-opacity-90 active:scale-95 transition-all h-9 motion-press cursor-pointer border-transparent"
+                className="hidden lg:flex items-center justify-center gap-1.5 rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-3.5 py-2 text-[12.5px] font-bold shadow-sm hover:bg-kat-dark dark:hover:bg-kat-primary-light bg-opacity-90 active:scale-95 transition-all h-9 motion-press cursor-pointer border-transparent"
                 title={isDirectEdit ? t("timeline.addActivity") : t("share.suggestAdd")}
               >
                 <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5" />
@@ -578,7 +578,7 @@ export function SharedActivitiesSection({
                   <div className="flex items-center gap-3">
                     <div
                       className={classNames(
-                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl font-black text-[13.5px] border shadow-sm",
+                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl font-bold text-[13.5px] border shadow-sm",
                         group.id === "undated"
                           ? "bg-slate-400 text-white border-transparent"
                           : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/50"
@@ -588,7 +588,7 @@ export function SharedActivitiesSection({
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="text-[15.5px] font-black text-kat-dark tracking-tight">
+                        <h4 className="text-[15.5px] font-bold text-kat-dark tracking-tight">
                           {group.title}
                         </h4>
                         {group.id !== "undated" && trip?.dayRoadmaps?.[group.id] && (
@@ -596,7 +596,7 @@ export function SharedActivitiesSection({
                             href={ensureAbsoluteUrl(trip.dayRoadmaps[group.id])}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/30 text-[10px] font-extrabold tracking-wide transition-all active:scale-95 shadow-sm"
+                            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/30 text-[10px] font-bold tracking-wide transition-all active:scale-95 shadow-sm"
                             title="Mở bản đồ lộ trình"
                           >
                             <HugeiconsIcon
@@ -619,7 +619,7 @@ export function SharedActivitiesSection({
                       <div className="relative flex gap-4 pl-1 group">
                         <div className="absolute bottom-0 left-[19px] top-8 w-0.5 bg-slate-100 dark:bg-slate-800 group-last:bg-transparent" />
                         <div className="relative z-10 flex shrink-0 mt-1">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full ring-4 ring-white dark:ring-[#0A1124] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-dashed border-slate-200 dark:border-slate-800/40 text-slate-300 dark:text-slate-650 font-extrabold">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full ring-4 ring-white dark:ring-[#0A1124] shadow-[0_2px_8px_rgba(3,13,46,0.06)] border border-dashed border-slate-200 dark:border-slate-800/40 text-slate-300 dark:text-slate-650 font-bold">
                             {group.icon}
                           </div>
                         </div>
@@ -643,7 +643,7 @@ export function SharedActivitiesSection({
                                 setIsFormOpen(true);
                                 setEditingId(null);
                               }}
-                              className="text-[12.5px] font-extrabold text-[#00A19D] hover:underline cursor-pointer active:scale-95 transition-transform"
+                              className="text-[12.5px] font-bold text-[#00A19D] hover:underline cursor-pointer active:scale-95 transition-transform"
                             >
                               {t("share.suggestMore", "+ Đề xuất thêm")}
                             </button>
@@ -676,21 +676,21 @@ export function SharedActivitiesSection({
             renderActivityCard={(item, idx) => renderActivityCard(item, idx)}
           />
         )}
-
-        {/* Global Add FAB (Mobile only) */}
-        {isRequestEdit && (
-          <button
-            type="button"
-            onClick={startAdd}
-            className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-800/40 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 dark:hover:bg-slate-800/60 duration-200 cursor-pointer"
-            style={{ bottom: "calc(6rem + var(--safe-bottom))" }}
-            aria-label={isDirectEdit ? t("timeline.addActivity") : t("share.suggestAdd")}
-            title={isDirectEdit ? t("timeline.addActivity") : t("share.suggestAdd")}
-          >
-            <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
-          </button>
-        )}
       </section>
+
+      {/* Global Add FAB (Mobile only) */}
+      {isRequestEdit && (
+        <button
+          type="button"
+          onClick={startAdd}
+          className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-800/40 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 dark:hover:bg-slate-800/60 duration-200 cursor-pointer"
+          style={{ bottom: "calc(6rem + var(--safe-bottom))" }}
+          aria-label={isDirectEdit ? t("timeline.addActivity") : t("share.suggestAdd")}
+          title={isDirectEdit ? t("timeline.addActivity") : t("share.suggestAdd")}
+        >
+          <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
+        </button>
+      )}
 
       {/* Fixed-position dropdown — renders above everything */}
       {activeMenuId &&
@@ -781,7 +781,7 @@ export function SharedActivitiesSection({
               type="button"
               onClick={handleSave}
               disabled={!form.title.trim()}
-              className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
+              className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-bold shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
             >
               <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" />
               {isDirectEdit
@@ -1000,7 +1000,7 @@ export function SharedActivitiesSection({
                   : "bg-white dark:bg-kat-surface border-slate-200 dark:border-kat-border text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/40"
               )}
             >
-              <span className="text-[13.5px] font-extrabold">{t("share.allDays")}</span>
+              <span className="text-[13.5px] font-bold">{t("share.allDays")}</span>
               <span
                 className={classNames(
                   "text-[10px] font-bold mt-1 px-1.5 py-0.5 rounded-full",
@@ -1031,7 +1031,7 @@ export function SharedActivitiesSection({
                       : "bg-white dark:bg-kat-surface border-slate-200 dark:border-kat-border text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/40"
                   )}
                 >
-                  <span className="text-[13.5px] font-extrabold">
+                  <span className="text-[13.5px] font-bold">
                     {t("share.dayX", "Ngày {{day}}", { day: idx + 1 })}
                   </span>
                   <span
@@ -1047,7 +1047,7 @@ export function SharedActivitiesSection({
                   {count > 0 && (
                     <span
                       className={classNames(
-                        "text-[9px] font-black mt-1 px-1.5 py-0.2 rounded-full",
+                        "text-[9px] font-bold mt-1 px-1.5 py-0.2 rounded-full",
                         isActive
                           ? "bg-white/20 text-white"
                           : "bg-kat-primary/15 dark:bg-kat-primary-soft/30 text-kat-primary"

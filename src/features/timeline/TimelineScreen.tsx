@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -1006,7 +1007,7 @@ export function TimelineScreen({
   };
 
   return (
-    <div className="mx-auto max-w-[1280px] px-1 md:px-0">
+    <div className="w-full mx-auto max-w-[1280px] px-1 md:px-0">
       {/* Title Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
@@ -1058,19 +1059,21 @@ export function TimelineScreen({
       </div>
 
       {/* Global Add FAB (Mobile only) */}
-      {!isReadOnly && (
-        <button
-          onClick={() => openNewForm()}
-          className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur-2xl border border-white/40 text-kat-dark shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
-          style={{ bottom: "calc(6rem + var(--safe-bottom))" }}
-          aria-label={t("timeline.addTimeline")}
-        >
-          <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
-        </button>
-      )}
+      {!isReadOnly &&
+        createPortal(
+          <button
+            onClick={() => openNewForm()}
+            className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
+            style={{ bottom: "calc(6rem + var(--safe-bottom))" }}
+            aria-label={t("timeline.addTimeline")}
+          >
+            <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
+          </button>,
+          document.body
+        )}
 
       {/* Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:gap-8 items-start pb-0 md:pb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:gap-8 items-start pb-36 md:pb-8">
         {/* Left Column: Timeline list */}
         <div className="space-y-8">
           {events.length === 0 && viewMode === "list" ? (
@@ -1194,10 +1197,10 @@ export function TimelineScreen({
                   <HugeiconsIcon icon={GitBranchIcon} className="h-4 w-4" />
                 </span>
                 <div>
-                  <h4 className="text-[15px] font-extrabold text-kat-dark dark:text-slate-200">
+                  <h4 className="text-[15px] font-bold text-kat-dark dark:text-slate-200">
                     {t("timeline.generalBackup")}
                   </h4>
-                  <p className="text-[11px] text-slate-500/80 dark:text-slate-400 font-medium">
+                  <p className="text-[11.5px] text-slate-500/90 dark:text-slate-400 font-medium mt-0.5">
                     {t("timeline.generalBackupDesc", "Apply to whole trip")}
                   </p>
                 </div>
@@ -1234,7 +1237,7 @@ export function TimelineScreen({
                         }}
                         className="text-[11px] font-bold text-kat-teal hover:underline whitespace-nowrap"
                       >
-                        {t("common.details", "Details")} &rarr;
+                        {t("share.details", "Details")} &rarr;
                       </button>
                     </div>
                   ))}
@@ -1433,51 +1436,50 @@ export function TimelineScreen({
         title={t("timeline.roadmapEditTitle", { n: days.indexOf(roadmapEditDay) + 1 })}
       >
         <div className="space-y-5 pb-4">
-          {/* Instruction card */}
-          <div className="flex items-start gap-3 bg-kat-primary-soft dark:bg-[#00BFB7]/10 backdrop-blur-md border border-kat-teal border-opacity-20 dark:border-[#00BFB7]/30 rounded-2xl px-4 py-3">
+          {/* Minimal Instruction */}
+          <div className="flex items-start gap-3 px-1">
             <HugeiconsIcon icon={Route01Icon} className="h-5 w-5 text-kat-teal shrink-0 mt-0.5" />
             <div>
-              <p className="text-[13px] font-bold text-kat-dark dark:text-white/90">
+              <p className="text-[13px] font-bold text-kat-dark dark:text-slate-200">
                 {t("timeline.pasteGoogleMapsLink")}
               </p>
-              <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium mt-0.5 leading-relaxed">
+              <p className="text-[12.5px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
                 {t("timeline.pasteGoogleMapsHelper")}
               </p>
             </div>
           </div>
 
-          {/* Input */}
-          <div className="relative">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-              <HugeiconsIcon icon={Route01Icon} className="h-4 w-4 text-kat-teal" />
-            </div>
+          {/* Input & Action */}
+          <div className="space-y-1.5">
             <input
               type="url"
               value={roadmapInputLink}
               onChange={(e) => setRoadmapInputLink(e.target.value)}
               placeholder="https://www.google.com/maps/dir/..."
-              className="w-full pl-11 pr-4 py-4 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md border-0 ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 rounded-2xl text-[14px] font-semibold text-kat-dark dark:text-white/90 placeholder:text-slate-400 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-[#00BFB7] transition-all duration-200"
+              className="w-full px-4 py-3.5 bg-slate-50/80 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-xl text-[14px] font-medium text-kat-dark dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-kat-teal/20 focus:border-kat-teal transition-all truncate"
             />
+            {roadmapInputLink.trim() && (
+              <div className="flex justify-end px-1">
+                <a
+                  href={ensureAbsoluteUrl(roadmapInputLink)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[12.5px] font-bold text-kat-teal hover:text-kat-teal/80 transition-colors"
+                >
+                  <HugeiconsIcon icon={MapsIcon} className="w-3.5 h-3.5" />
+                  {t("timeline.checkLink")} &rarr;
+                </a>
+              </div>
+            )}
           </div>
 
-          {/* Test link button – only show when there's input */}
-          {roadmapInputLink.trim() && (
-            <a
-              href={ensureAbsoluteUrl(roadmapInputLink)}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-[#00BFB7]/5 dark:bg-[#00BFB7]/10 backdrop-blur-md border border-[#00BFB7]/20 dark:border-[#00BFB7]/30 text-[13.5px] font-bold text-[#00BFB7] dark:text-[#00BFB7] hover:bg-[#00BFB7]/15 dark:hover:bg-[#00BFB7]/20 transition-colors"
-            >
-              <HugeiconsIcon icon={MapsIcon} className="w-4 h-4" />
-              {t("timeline.checkLink")} &rarr;
-            </a>
-          )}
-
-          <FormActions
-            onCancel={() => setIsRoadmapFormOpen(false)}
-            onSave={handleSaveRoadmap}
-            saveLabel={t("timeline.saveRoute")}
-          />
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+            <FormActions
+              onCancel={() => setIsRoadmapFormOpen(false)}
+              onSave={handleSaveRoadmap}
+              saveLabel={t("timeline.saveRoute")}
+            />
+          </div>
         </div>
       </BottomSheet>
 

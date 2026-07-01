@@ -131,7 +131,7 @@ export function WeatherWidget({
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 dark:bg-sky-950 text-sky-500 mb-1 shadow-sm animate-pulse">
           <HugeiconsIcon icon={CloudRainWindIcon} className="w-5.5 h-5.5" />
         </span>
-        <span className="text-[14px] font-black text-kat-dark">
+        <span className="text-[14px] font-bold text-kat-dark">
           {t("weather.noDestinationTitle")}
         </span>
         <span className="text-[11.5px] text-slate-500/80 dark:text-slate-400 font-medium max-w-[220px] leading-relaxed">
@@ -296,7 +296,7 @@ export function WeatherWidget({
                       )}
                     </div>
 
-                    <span className="font-black text-kat-dark dark:text-slate-200 text-[13px] w-8 text-right shrink-0">
+                    <span className="font-bold text-kat-dark dark:text-slate-200 text-[13px] w-8 text-right shrink-0">
                       {maxTemp}°
                     </span>
                   </div>

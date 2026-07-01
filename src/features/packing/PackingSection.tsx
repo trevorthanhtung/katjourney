@@ -225,7 +225,7 @@ export function PackingSection({
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="space-y-6 pb-0 md:pb-8">
+      <div className="space-y-6 pb-36 md:pb-8">
         <ScreenTitle title={t("packing.pageTitle")} subtitle={t("packing.pageSubtitle")} />
 
         {/* Progress Card Hero */}

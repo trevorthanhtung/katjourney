@@ -327,7 +327,7 @@ export function WeatherDetailsModal({
                   <button
                     type="button"
                     onClick={() => setIsDestDropdownOpen(!isDestDropdownOpen)}
-                    className={`flex items-center gap-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white text-lg md:text-xl font-black rounded-xl pl-4 pr-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all ${isDestDropdownOpen ? "bg-white/30 shadow-inner" : ""}`}
+                    className={`flex items-center gap-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white text-lg md:text-xl font-bold rounded-xl pl-4 pr-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all ${isDestDropdownOpen ? "bg-white/30 shadow-inner" : ""}`}
                   >
                     <span className="truncate max-w-[200px] md:max-w-[300px]">
                       {destinations[selectedDestIndex]?.name || t("common.unknownLocation")}
@@ -376,14 +376,14 @@ export function WeatherDetailsModal({
                   )}
                 </div>
               ) : (
-                <h3 className="text-xl md:text-2xl font-black text-white line-clamp-1">
+                <h3 className="text-xl md:text-2xl font-bold text-white line-clamp-1">
                   {destination}
                 </h3>
               )}
 
               <div className="flex items-end justify-between mt-2">
                 <div className="flex items-center gap-3">
-                  <span className="text-5xl font-black tracking-tighter drop-shadow-sm">
+                  <span className="text-5xl font-bold tracking-tighter drop-shadow-sm">
                     {currentTemp}°
                   </span>
                   <div className="flex flex-col mb-1">
@@ -424,9 +424,7 @@ export function WeatherDetailsModal({
                 {recommendation.icon}
               </div>
               <div className="flex flex-col text-left justify-center">
-                <h4 className="text-[14px] font-black leading-tight mb-1">
-                  {recommendation.title}
-                </h4>
+                <h4 className="text-[14px] font-bold leading-tight mb-1">{recommendation.title}</h4>
                 <p className="text-[12.5px] font-bold opacity-90 leading-relaxed">
                   {recommendation.desc}
                 </p>
@@ -463,7 +461,7 @@ export function WeatherDetailsModal({
                       : "text-slate-500 dark:text-slate-400";
                 return (
                   <div className="space-y-2.5">
-                    <h4 className="text-[14px] font-black text-slate-800 dark:text-slate-200 text-left px-1">
+                    <h4 className="text-[14px] font-bold text-slate-800 dark:text-slate-200 text-left px-1">
                       {t("weather.compareLocation")}
                     </h4>
                     <div className="bg-white/50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-white/5 rounded-[24px] p-5 shadow-soft relative overflow-hidden">
@@ -471,13 +469,13 @@ export function WeatherDetailsModal({
                       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
                         {/* Current location column */}
                         <div className="flex flex-col items-center gap-2 text-center">
-                          <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500 line-clamp-2 min-h-[30px] max-w-full">
+                          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500 line-clamp-2 min-h-[30px] max-w-full">
                             {currentLocationName ?? t("weather.yourLocation")}
                           </span>
                           <div className="flex items-center justify-center h-9">
                             {getWeatherIcon(myCode, "w-8 h-8 drop-shadow-sm")}
                           </div>
-                          <span className="text-3xl font-black text-slate-800 dark:text-white tracking-tighter leading-none">
+                          <span className="text-3xl font-bold text-slate-800 dark:text-white tracking-tighter leading-none">
                             {myTemp}°
                           </span>
                           <div className="flex flex-col items-center gap-2 mt-1">
@@ -501,7 +499,7 @@ export function WeatherDetailsModal({
                         {/* Middle badge */}
                         <div className="flex flex-col items-center justify-center">
                           <span
-                            className={`inline-flex items-center justify-center px-2.5 py-1.5 rounded-full text-[10.5px] font-black tracking-tight text-center leading-none bg-slate-50 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/60 shadow-sm ${diffColor}`}
+                            className={`inline-flex items-center justify-center px-2.5 py-1.5 rounded-full text-[10.5px] font-bold tracking-tight text-center leading-none bg-slate-50 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/60 shadow-sm ${diffColor}`}
                           >
                             {diffLabel}
                           </span>
@@ -509,13 +507,13 @@ export function WeatherDetailsModal({
 
                         {/* Destination column */}
                         <div className="flex flex-col items-center gap-2 text-center">
-                          <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500 line-clamp-2 min-h-[30px] max-w-full">
+                          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500 line-clamp-2 min-h-[30px] max-w-full">
                             {destination}
                           </span>
                           <div className="flex items-center justify-center h-9">
                             {getWeatherIcon(currentCode, "w-8 h-8 drop-shadow-sm")}
                           </div>
-                          <span className="text-3xl font-black text-slate-800 dark:text-white tracking-tighter leading-none">
+                          <span className="text-3xl font-bold text-slate-800 dark:text-white tracking-tighter leading-none">
                             {currentTemp}°
                           </span>
                           <div className="flex flex-col items-center gap-2 mt-1">
@@ -540,7 +538,7 @@ export function WeatherDetailsModal({
             {/* Hourly 24-Hour Forecast */}
             {forecast.hourly && (
               <div className="space-y-2.5">
-                <h4 className="text-[14px] font-black text-slate-800 dark:text-slate-200 text-left px-1">
+                <h4 className="text-[14px] font-bold text-slate-800 dark:text-slate-200 text-left px-1">
                   {t("weather.forecast24h")}
                 </h4>
 
@@ -565,11 +563,11 @@ export function WeatherDetailsModal({
                         </div>
 
                         <div className="flex flex-col items-center">
-                          <span className="text-[14.5px] font-black text-slate-800 dark:text-slate-200">
+                          <span className="text-[14.5px] font-bold text-slate-800 dark:text-slate-200">
                             {temp}°
                           </span>
                           {precip > 15 ? (
-                            <span className="text-[9.5px] font-black text-sky-500 dark:text-sky-400 mt-0.5 leading-none">
+                            <span className="text-[9.5px] font-bold text-sky-500 dark:text-sky-400 mt-0.5 leading-none">
                               {precip}%
                             </span>
                           ) : (
@@ -587,7 +585,7 @@ export function WeatherDetailsModal({
 
             {/* Weather Parameters Grid */}
             <div className="space-y-2.5">
-              <h4 className="text-[14px] font-black text-slate-800 dark:text-slate-200 text-left px-1">
+              <h4 className="text-[14px] font-bold text-slate-800 dark:text-slate-200 text-left px-1">
                 {t("weather.detailedIndex")}
               </h4>
 
@@ -595,7 +593,7 @@ export function WeatherDetailsModal({
                 {/* Feel Temp Card */}
                 <div className="bg-white/50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-white/5 rounded-[22px] p-4 flex flex-col text-left justify-between min-h-[105px] shadow-soft relative overflow-hidden">
                   <div className="flex items-center justify-between text-slate-400 dark:text-slate-550">
-                    <span className="text-[10px] font-extrabold uppercase tracking-[0.12em]">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.12em]">
                       {t("weather.feelsLike")}
                     </span>
                     <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-500/10 dark:bg-rose-500/25 text-rose-500 border border-rose-500/20 dark:border-rose-500/10 shadow-sm shrink-0">
@@ -603,7 +601,7 @@ export function WeatherDetailsModal({
                     </div>
                   </div>
                   <div className="flex flex-col justify-end mt-auto min-h-0">
-                    <span className="text-[22px] font-black text-slate-800 dark:text-white leading-none">
+                    <span className="text-[22px] font-bold text-slate-800 dark:text-white leading-none">
                       {apparentTemp}°
                     </span>
                     <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-1">
@@ -619,7 +617,7 @@ export function WeatherDetailsModal({
                 {/* Humidity Card */}
                 <div className="bg-white/50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-white/5 rounded-[22px] p-4 flex flex-col text-left justify-between min-h-[105px] shadow-soft relative overflow-hidden">
                   <div className="flex items-center justify-between text-slate-400 dark:text-slate-550">
-                    <span className="text-[10px] font-extrabold uppercase tracking-[0.12em]">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.12em]">
                       {t("weather.humidity")}
                     </span>
                     <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-500/10 dark:bg-sky-500/25 text-sky-550 dark:text-sky-400 border border-sky-500/20 dark:border-sky-500/10 shadow-sm shrink-0">
@@ -627,7 +625,7 @@ export function WeatherDetailsModal({
                     </div>
                   </div>
                   <div className="flex flex-col mt-auto">
-                    <span className="text-[22px] font-black text-slate-800 dark:text-white leading-none">
+                    <span className="text-[22px] font-bold text-slate-800 dark:text-white leading-none">
                       {humidity}%
                     </span>
                     <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mt-2 relative">
@@ -642,7 +640,7 @@ export function WeatherDetailsModal({
                 {/* Wind speed Card */}
                 <div className="bg-white/50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-white/5 rounded-[22px] p-4 flex flex-col text-left justify-between min-h-[105px] shadow-soft relative overflow-hidden">
                   <div className="flex items-center justify-between text-slate-400 dark:text-slate-550">
-                    <span className="text-[10px] font-extrabold uppercase tracking-[0.12em]">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.12em]">
                       {t("weather.windSpeed")}
                     </span>
                     <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-500/10 dark:bg-slate-500/25 text-slate-555 dark:text-slate-400 border border-slate-500/20 dark:border-slate-500/10 shadow-sm shrink-0">
@@ -650,10 +648,10 @@ export function WeatherDetailsModal({
                     </div>
                   </div>
                   <div className="flex items-baseline gap-1 mt-auto">
-                    <span className="text-[22px] font-black text-slate-800 dark:text-white leading-none">
+                    <span className="text-[22px] font-bold text-slate-800 dark:text-white leading-none">
                       {formatSpeed(windspeed)}
                     </span>
-                    <span className="text-[11px] font-extrabold text-slate-550 dark:text-slate-400 uppercase tracking-wider">
+                    <span className="text-[11px] font-bold text-slate-550 dark:text-slate-400 uppercase tracking-wider">
                       {speedLabel}
                     </span>
                   </div>
@@ -662,7 +660,7 @@ export function WeatherDetailsModal({
                 {/* UV index Card */}
                 <div className="bg-white/50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-white/5 rounded-[22px] p-4 flex flex-col text-left justify-between min-h-[105px] shadow-soft relative overflow-hidden">
                   <div className="flex items-center justify-between text-slate-400 dark:text-slate-550">
-                    <span className="text-[10px] font-extrabold uppercase tracking-[0.12em]">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.12em]">
                       {t("weather.uvIndex")}
                     </span>
                     <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 dark:bg-amber-500/25 text-amber-500 border border-amber-500/20 dark:border-amber-500/10 shadow-sm shrink-0">
@@ -671,11 +669,11 @@ export function WeatherDetailsModal({
                   </div>
                   <div className="flex flex-col mt-auto">
                     <div className="flex items-center gap-2">
-                      <span className="text-[22px] font-black text-slate-800 dark:text-white leading-none">
+                      <span className="text-[22px] font-bold text-slate-800 dark:text-white leading-none">
                         {uvIndex}
                       </span>
                       <span
-                        className={`text-[9.5px] font-black px-2 py-0.5 rounded-full border leading-none tracking-wide ${uvRating.color}`}
+                        className={`text-[9.5px] font-bold px-2 py-0.5 rounded-full border leading-none tracking-wide ${uvRating.color}`}
                       >
                         {uvRating.text}
                       </span>

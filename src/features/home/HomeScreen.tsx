@@ -244,9 +244,7 @@ export function HomeScreen({
             </div>
           )}
         </div>
-        <span className="text-[14.5px] font-semibold text-slate-700 dark:text-slate-300">
-          {text}
-        </span>
+        <span className="text-[15px] font-extrabold text-kat-text">{text}</span>
       </div>
     );
   };
@@ -538,45 +536,46 @@ export function HomeScreen({
                 className="flex flex-col items-stretch justify-center bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-3xl p-3 gap-2 shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset,0_4px_24px_rgba(0,0,0,0.08)] hover:bg-white/[0.12] hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
               >
                 {/* Weather Info Block */}
-                <div className="flex items-center justify-between gap-2 w-full min-w-0">
-                  <div className="flex items-center gap-1.5 min-w-0 shrink">
-                    <span className="text-3xl min-[360px]:text-4xl font-black text-white drop-shadow-sm tracking-tighter shrink-0">
-                      {formatTemp(forecast.current?.temperature || 20)}°
-                    </span>
-                    <div className="flex flex-col ml-1 min-w-0 shrink">
-                      <span className="mb-[-4px] flex items-center justify-center h-8 shrink-0">
+                <div className="flex flex-col w-full gap-2.5">
+                  <div className="flex items-start justify-between gap-3 w-full">
+                    {/* Left: Icon, Temp, Weather Desc */}
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="shrink-0 flex items-center justify-center">
                         {getWeatherIcon(
                           forecast.current?.weathercode || 0,
-                          "w-7 h-7 drop-shadow-md"
+                          "w-9 h-9 drop-shadow-sm"
                         )}
+                      </div>
+                      <div className="flex flex-col min-w-0 justify-center">
+                        <span className="text-[32px] font-bold text-white drop-shadow-sm tracking-tighter leading-none">
+                          {formatTemp(forecast.current?.temperature || 20)}°
+                        </span>
+                        <span className="text-[12px] font-medium text-white/90 tracking-wide mt-1.5 truncate uppercase">
+                          {getWeatherText(forecast.current?.weathercode || 0)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Right: High/Low */}
+                    <div className="flex flex-col items-end shrink-0 gap-1 pt-1">
+                      <span className="text-[11px] font-semibold text-white/95">
+                        {t("weather.high")}: {formatTemp(forecast.temperature_2m_max[0])}°
                       </span>
-                      <span className="text-[10px] min-[360px]:text-[11px] font-extrabold text-white/95 uppercase tracking-normal mt-1 drop-shadow-sm truncate text-center">
-                        {getWeatherText(forecast.current?.weathercode || 0)}
+                      <span className="text-[11px] font-medium text-white/60">
+                        {t("weather.low")}: {formatTemp(forecast.temperature_2m_min[0])}°
                       </span>
                     </div>
                   </div>
-                  <div className="w-px h-10 bg-white/30 mx-0.5 shrink-0" />
-                  <div className="flex flex-col text-right whitespace-nowrap shrink-0">
-                    <span className="text-[11px] min-[360px]:text-[11.5px] font-extrabold text-white/95">
-                      {t("weather.high")}: {formatTemp(forecast.temperature_2m_max[0])}°
-                    </span>
-                    <span className="text-[11px] min-[360px]:text-[11.5px] font-bold text-white/70">
-                      {t("weather.low")}: {formatTemp(forecast.temperature_2m_min[0])}°
-                    </span>
-                  </div>
+
+                  {/* Packing Tip Block */}
+                  {packingTip && (
+                    <div className="pt-2.5 border-t border-white/15 w-full">
+                      <p className="text-[11.5px] font-medium text-white/85 leading-snug">
+                        {packingTip.message}
+                      </p>
+                    </div>
+                  )}
                 </div>
-
-                {/* Divider - only visible when packingTip exists */}
-                {packingTip && <div className="h-px bg-white/15 w-full my-0.5" />}
-
-                {/* Packing Tip Block */}
-                {packingTip && (
-                  <div className="w-full flex items-center">
-                    <p className="text-[12px] font-extrabold text-white/95 leading-normal whitespace-normal break-words">
-                      {packingTip.message}
-                    </p>
-                  </div>
-                )}
               </div>
             )}
           </div>
@@ -686,14 +685,16 @@ export function HomeScreen({
           </h3>
 
           <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 motion-card-enter motion-delay-2">
-            <ul className="space-y-6">
+            <ul className="space-y-4">
               <li className="flex items-start gap-4">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20">
                   <HugeiconsIcon icon={UserGroupIcon} size={20} />
                 </div>
-                <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">{t("home.members")}</p>
-                  <div className="mt-1.5">{renderCompanions()}</div>
+                <div className="min-w-0 flex-1 flex flex-col justify-center">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-kat-muted mb-0.5">
+                    {t("home.members")}
+                  </p>
+                  <div>{renderCompanions()}</div>
                 </div>
               </li>
 
@@ -701,17 +702,17 @@ export function HomeScreen({
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/20">
                   <HugeiconsIcon icon={Calendar01Icon} size={20} />
                 </div>
-                <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">
+                <div className="min-w-0 flex-1 flex flex-col justify-center">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-kat-muted mb-0.5">
                     {t("home.recordedSchedule")}
                   </p>
                   {events.length > 0 ? (
-                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-dark">
+                    <p className="text-[15px] font-extrabold text-kat-dark">
                       {t("home.recordedEvents", { count: events.length })}
                     </p>
                   ) : (
                     <div>
-                      <p className="mt-0.5 text-[14px] font-semibold text-slate-400 dark:text-slate-500">
+                      <p className="text-[14px] font-semibold text-slate-400 dark:text-slate-500">
                         {t("home.noScheduleRecorded")}
                       </p>
                       {!isReadOnly && (
@@ -731,9 +732,11 @@ export function HomeScreen({
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/20">
                   <HugeiconsIcon icon={Briefcase01Icon} size={20} />
                 </div>
-                <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">{t("home.packing")}</p>
-                  <p className="mt-0.5 text-[15px] font-extrabold text-kat-dark">
+                <div className="min-w-0 flex-1 flex flex-col justify-center">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-kat-muted mb-0.5">
+                    {t("home.packing")}
+                  </p>
+                  <p className="text-[15px] font-extrabold text-kat-dark">
                     {checklistStats.total > 0
                       ? t("home.checklistProgress", {
                           completed: checklistStats.completed,
@@ -748,9 +751,11 @@ export function HomeScreen({
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/20">
                   <HugeiconsIcon icon={ReceiptTextIcon} size={20} />
                 </div>
-                <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[13px] font-semibold text-kat-muted">{t("home.totalSpent")}</p>
-                  <p className="mt-0.5 text-[15px] font-extrabold text-kat-dark">
+                <div className="min-w-0 flex-1 flex flex-col justify-center">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-kat-muted mb-0.5">
+                    {t("home.totalSpent")}
+                  </p>
+                  <p className="text-[15px] font-extrabold text-kat-dark">
                     {totalExpense > 0 ? formatMoney(totalExpense) : t("home.noCostYet")}
                   </p>
                 </div>
@@ -784,29 +789,29 @@ export function HomeScreen({
             </h3>
             {nextEvent ? (
               <div
-                className="flex items-center gap-4 rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 transition-[box-shadow,transform,border-color] duration-200 hover:shadow-md cursor-pointer group motion-card-enter motion-delay-1 motion-press active:scale-[0.97]"
+                className="flex items-center gap-4 rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 transition-[box-shadow,transform,border-color] duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:border-slate-300/80 dark:hover:border-white/20 cursor-pointer group motion-card-enter motion-delay-1 active:scale-[0.98]"
                 onClick={() => onNavigateTab("timeline")}
               >
-                <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-kat-primary-soft text-kat-primary transition-colors group-hover:bg-[#00BFB7]/20">
-                  <span className="text-[13px] font-extrabold uppercase leading-none">
+                <div className="flex h-[60px] w-[56px] shrink-0 flex-col items-center justify-center rounded-[18px] bg-kat-primary-soft dark:bg-[#00BFB7]/10 text-kat-primary transition-colors group-hover:bg-kat-primary-soft/80 dark:group-hover:bg-[#00BFB7]/20">
+                  <span className="text-[22px] font-black leading-none tracking-tight">
                     {formatDate(nextEvent.date).split("/")[0]}
                   </span>
-                  <span className="mt-1 text-[11px] font-bold leading-none opacity-90">
+                  <span className="mt-1.5 text-[9px] font-bold uppercase tracking-wider leading-none opacity-80">
                     {t("home.month", { month: formatDate(nextEvent.date).split("/")[1] })}
                   </span>
                 </div>
                 <div className="min-w-0 flex-1">
                   {nextEvent.time && (
-                    <p className="flex items-center gap-1.5 text-[12.5px] font-bold text-kat-yellow">
+                    <p className="flex items-center gap-1.5 text-[12.5px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">
                       <HugeiconsIcon icon={Clock01Icon} size={14} />
                       {nextEvent.time}
                     </p>
                   )}
-                  <h4 className="mt-1 truncate text-base font-extrabold text-kat-text">
+                  <h4 className="truncate text-[17px] font-black text-slate-800 dark:text-slate-100">
                     {nextEvent.title}
                   </h4>
                   {nextEvent.location && (
-                    <p className="mt-0.5 truncate text-[13.5px] text-slate-500 dark:text-slate-400">
+                    <p className="mt-0.5 truncate text-[12.5px] font-medium text-slate-500 dark:text-slate-400">
                       {nextEvent.location}
                     </p>
                   )}
@@ -814,7 +819,8 @@ export function HomeScreen({
                 <HugeiconsIcon
                   icon={ChevronRightIcon}
                   size={20}
-                  className="text-slate-300 dark:text-slate-500"
+                  className="text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors"
+                  strokeWidth={2}
                 />
               </div>
             ) : (
@@ -846,45 +852,47 @@ export function HomeScreen({
                   {reminders.map((rem, idx) => (
                     <div
                       key={rem.id}
-                      className="flex flex-col justify-between p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md hover:border-amber-200/60 transition-all group"
+                      className="flex flex-col justify-between p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md hover:border-amber-200/60 dark:hover:border-amber-500/30 transition-all group"
                     >
-                      <div>
-                        <h4 className="text-[14px] font-extrabold text-slate-800 dark:text-slate-200 leading-snug flex items-start gap-2">
-                          <HugeiconsIcon
-                            icon={AlertCircleIcon}
-                            className={`h-4.5 w-4.5 shrink-0 ${
-                              rem.type === "danger" ? "text-rose-500" : "text-amber-500"
-                            }`}
-                          />
-                          <span>{rem.title}</span>
-                        </h4>
-                        <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 mt-1 pl-6.5 leading-relaxed">
-                          {rem.description}
-                        </p>
+                      <div className="flex items-start gap-3">
+                        <HugeiconsIcon
+                          icon={AlertCircleIcon}
+                          className={`h-5 w-5 shrink-0 mt-0.5 ${
+                            rem.type === "danger" ? "text-rose-500" : "text-amber-500"
+                          }`}
+                        />
+                        <div className="flex flex-col min-w-0">
+                          <h4 className="text-[14.5px] font-bold text-slate-800 dark:text-slate-200 leading-snug">
+                            {rem.title}
+                          </h4>
+                          <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                            {rem.description}
+                          </p>
+                          {rem.actionLabel && rem.onClickSection && (
+                            <button
+                              onClick={() => {
+                                if (
+                                  rem.onClickSection === "timeline" ||
+                                  rem.onClickSection === "expenses" ||
+                                  rem.onClickSection === "checklist"
+                                ) {
+                                  onNavigateTab(rem.onClickSection);
+                                } else if (rem.onClickSection) {
+                                  onNavigateMore(rem.onClickSection as "members" | "documents");
+                                }
+                              }}
+                              className="mt-2.5 self-start text-[13px] font-bold text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center gap-1 motion-press"
+                            >
+                              <span>{rem.actionLabel}</span>
+                              <HugeiconsIcon
+                                icon={ChevronRightIcon}
+                                size={14}
+                                className="group-hover:translate-x-0.5 transition-transform"
+                              />
+                            </button>
+                          )}
+                        </div>
                       </div>
-                      {rem.actionLabel && rem.onClickSection && (
-                        <button
-                          onClick={() => {
-                            if (
-                              rem.onClickSection === "timeline" ||
-                              rem.onClickSection === "expenses" ||
-                              rem.onClickSection === "checklist"
-                            ) {
-                              onNavigateTab(rem.onClickSection);
-                            } else if (rem.onClickSection) {
-                              onNavigateMore(rem.onClickSection as "members" | "documents");
-                            }
-                          }}
-                          className="mt-3 pl-6.5 self-start text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center gap-1 motion-press"
-                        >
-                          <span>{rem.actionLabel}</span>
-                          <HugeiconsIcon
-                            icon={ChevronRightIcon}
-                            size={14}
-                            className="group-hover:translate-x-0.5 transition-transform"
-                          />
-                        </button>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -916,23 +924,27 @@ export function HomeScreen({
               {t("home.tripOverview")}
             </h3>
             <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 motion-card-enter motion-delay-3">
-              <ul className="space-y-6">
+              <ul className="space-y-4">
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20">
                     <HugeiconsIcon icon={UserGroupIcon} size={20} />
                   </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">{t("home.members")}</p>
-                    <div className="mt-1.5">{renderCompanions()}</div>
+                  <div className="min-w-0 flex-1 flex flex-col justify-center">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-kat-muted mb-0.5">
+                      {t("home.members")}
+                    </p>
+                    <div>{renderCompanions()}</div>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/20">
                     <HugeiconsIcon icon={Briefcase01Icon} size={20} />
                   </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">{t("home.packing")}</p>
-                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">
+                  <div className="min-w-0 flex-1 flex flex-col justify-center">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-kat-muted mb-0.5">
+                      {t("home.packing")}
+                    </p>
+                    <p className="text-[15px] font-extrabold text-kat-text">
                       {checklistStats.total > 0
                         ? t("home.checklistProgress", {
                             completed: checklistStats.completed,
@@ -946,11 +958,11 @@ export function HomeScreen({
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/20">
                     <HugeiconsIcon icon={Calendar01Icon} size={20} />
                   </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">
+                  <div className="min-w-0 flex-1 flex flex-col justify-center">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-kat-muted mb-0.5">
                       {t("home.nextSchedule")}
                     </p>
-                    <p className="mt-0.5 truncate text-[15px] font-extrabold text-kat-text">
+                    <p className="truncate text-[15px] font-extrabold text-kat-text">
                       {nextEvent ? nextEvent.title : t("home.noActivity")}
                     </p>
                   </div>
@@ -959,11 +971,11 @@ export function HomeScreen({
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/20">
                     <HugeiconsIcon icon={ReceiptTextIcon} size={20} />
                   </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">
+                  <div className="min-w-0 flex-1 flex flex-col justify-center">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-kat-muted mb-0.5">
                       {t("home.estimatedCost")}
                     </p>
-                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">
+                    <p className="text-[15px] font-extrabold text-kat-text">
                       {totalExpense > 0 ? formatMoney(totalExpense) : t("home.noCostYet")}
                     </p>
                   </div>
@@ -979,11 +991,11 @@ export function HomeScreen({
             </h3>
             <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-card-enter motion-delay-4">
               {travelDocuments.length > 0 ? (
-                <div className="space-y-3">
-                  <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
+                <div className="flex flex-col gap-1">
+                  <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400">
                     {t("home.savedDocs", { count: travelDocuments.length })}
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mt-1.5">
                     {Array.from(new Set(travelDocuments.map((d) => d.type || "other"))).map(
                       (type) => {
                         const label =
@@ -1002,7 +1014,7 @@ export function HomeScreen({
                         return (
                           <span
                             key={type}
-                            className="inline-flex items-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 px-2.5 py-1 text-[11.5px] font-bold text-slate-650 dark:text-slate-300"
+                            className="inline-flex items-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 px-2.5 py-1 text-[11.5px] font-semibold text-slate-700 dark:text-slate-300"
                           >
                             {label} ({count})
                           </span>
@@ -1012,21 +1024,21 @@ export function HomeScreen({
                   </div>
                   <button
                     onClick={() => onNavigateMore("documents")}
-                    className="mt-2.5 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center gap-1.5 motion-press"
+                    className="mt-3.5 text-[13px] font-bold text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center gap-1.5 motion-press self-start"
                   >
                     <span>{t("home.viewAllDocs")}</span>
-                    <HugeiconsIcon icon={ChevronRightIcon} size={16} />
+                    <HugeiconsIcon icon={ChevronRightIcon} size={15} />
                   </button>
                 </div>
               ) : (
-                <div className="text-center py-2">
-                  <p className="text-[13.5px] font-semibold text-slate-400 dark:text-slate-500">
+                <div className="text-center py-2 flex flex-col items-center">
+                  <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400">
                     {t("home.noSavedDocs")}
                   </p>
                   {!isReadOnly && (
                     <button
                       onClick={() => onNavigateMore("documents")}
-                      className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-extrabold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-press"
+                      className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-bold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-press"
                     >
                       <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
                       {t("home.addDoc", "Thêm giấy tờ")}
@@ -1221,7 +1233,7 @@ export function HomeScreen({
           </section>
         </div>
 
-        {/* Right Column: Tổng quan hành trình, Chuẩn bị còn thiếu & Lịch trình đã ghi */}
+        {/* Right Column: Tổng quan hành trình & Chuẩn bị còn thiếu */}
         <div className="space-y-6">
           {/* Tổng quan hành trình */}
           <section className="space-y-4">
@@ -1229,23 +1241,27 @@ export function HomeScreen({
               {t("home.tripOverview")}
             </h3>
             <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 motion-card-enter motion-delay-3">
-              <ul className="space-y-6">
+              <ul className="space-y-4">
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20">
                     <HugeiconsIcon icon={UserGroupIcon} size={20} />
                   </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">{t("home.members")}</p>
-                    <div className="mt-1.5">{renderCompanions()}</div>
+                  <div className="min-w-0 flex-1 flex flex-col justify-center">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-kat-muted mb-0.5">
+                      {t("home.members")}
+                    </p>
+                    <div>{renderCompanions()}</div>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/20">
                     <HugeiconsIcon icon={Briefcase01Icon} size={20} />
                   </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">{t("home.packing")}</p>
-                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">
+                  <div className="min-w-0 flex-1 flex flex-col justify-center">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-kat-muted mb-0.5">
+                      {t("home.packing")}
+                    </p>
+                    <p className="text-[15px] font-extrabold text-kat-text">
                       {checklistStats.total > 0
                         ? t("home.checklistProgress", {
                             completed: checklistStats.completed,
@@ -1259,11 +1275,11 @@ export function HomeScreen({
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/20">
                     <HugeiconsIcon icon={Calendar01Icon} size={20} />
                   </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">
+                  <div className="min-w-0 flex-1 flex flex-col justify-center">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-kat-muted mb-0.5">
                       {t("home.nextActivity")}
                     </p>
-                    <p className="mt-0.5 truncate text-[15px] font-extrabold text-kat-text">
+                    <p className="truncate text-[15px] font-extrabold text-kat-text">
                       {nextEvent ? nextEvent.title : t("home.noActivity")}
                     </p>
                   </div>
@@ -1272,11 +1288,11 @@ export function HomeScreen({
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/20">
                     <HugeiconsIcon icon={ReceiptTextIcon} size={20} />
                   </div>
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[13px] font-semibold text-kat-muted">
+                  <div className="min-w-0 flex-1 flex flex-col justify-center">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-kat-muted mb-0.5">
                       {t("home.totalSpent")}
                     </p>
-                    <p className="mt-0.5 text-[15px] font-extrabold text-kat-text">
+                    <p className="text-[15px] font-extrabold text-kat-text">
                       {totalExpense > 0 ? formatMoney(totalExpense) : t("home.noCostYet")}
                     </p>
                   </div>
@@ -1346,26 +1362,6 @@ export function HomeScreen({
                   )}
                 </div>
               )}
-            </div>
-          </section>
-
-          <section className="space-y-4">
-            <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">
-              {t("home.recordedSchedule")}
-            </h3>
-            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-card-enter motion-delay-5">
-              <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
-                {events.length > 0
-                  ? t("home.activeEvents", { count: events.length })
-                  : t("home.noEventsRecorded")}
-              </p>
-              <button
-                onClick={() => onNavigateTab("timeline")}
-                className="mt-3.5 text-[12.5px] font-black text-kat-primary hover:text-kat-primary-usable transition-colors flex items-center gap-1.5 motion-press"
-              >
-                <span>{t("home.viewDetailedSchedule")}</span>
-                <HugeiconsIcon icon={ChevronRightIcon} size={16} />
-              </button>
             </div>
           </section>
         </div>

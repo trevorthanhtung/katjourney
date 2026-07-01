@@ -406,12 +406,12 @@ export function SharedJournalsSection({
 
   return (
     <>
-      <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden space-y-4">
+      <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden">
         {/* Ambient background glow */}
         <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-sky-500/[0.03] dark:bg-sky-500/[0.05] blur-[30px] pointer-events-none" />
 
         {/* Header */}
-        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80">
+        <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
           <div className="flex items-center gap-2.5">
             <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-950/30 text-sky-600 dark:text-sky-400 border border-sky-100/50 dark:border-sky-900/30 shadow-inner">
               <HugeiconsIcon icon={GlobeIcon} className="h-5 w-5" />
@@ -793,7 +793,7 @@ export function SharedJournalsSection({
                 <div className="mt-2 flex items-center gap-1.5 text-[12.5px] font-medium text-slate-500 px-1 animate-fadeIn">
                   <HugeiconsIcon icon={Location01Icon} className="h-3.5 w-3.5 text-kat-primary" />
                   <span>
-                    {t("journal.locCurrent", "Đang ở")}
+                    {t("journal.locCurrent", "Đang ở")}{" "}
                     <span className="font-bold text-kat-primary">{form.locationName}</span>
                   </span>
                   <button

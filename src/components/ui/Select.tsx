@@ -101,7 +101,7 @@ export function Select({
                     : "text-kat-text hover:bg-slate-50 dark:hover:bg-white/5"
                 }`}
               >
-                <span className={`text-[15px] ${isSelected ? "font-extrabold" : "font-semibold"}`}>
+                <span className={`text-[15px] ${isSelected ? "font-bold" : "font-semibold"}`}>
                   {displayLabel}
                 </span>
                 {isSelected && (

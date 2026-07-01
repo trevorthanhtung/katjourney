@@ -589,7 +589,7 @@ export function TripManagerScreen({
       ) : (
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8 w-full motion-page-enter">
           {/* Main Content Column */}
-          <div className="xl:col-span-8 flex flex-col gap-6 lg:gap-8">
+          <div className="xl:col-span-8 flex flex-col gap-6 lg:gap-8 order-last xl:order-first">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
               <h2 className="text-[26px] font-black text-kat-text tracking-tight motion-title-enter">
                 {t("trips.journey", "Hành trình")}
@@ -730,7 +730,7 @@ export function TripManagerScreen({
           </div>
 
           {/* Right Sidebar Widgets */}
-          <div className="xl:col-span-4 flex flex-col gap-5 lg:gap-6">
+          <div className="xl:col-span-4 flex flex-col gap-5 lg:gap-6 order-first xl:order-last">
             <TimezonesWidget />
           </div>
         </div>

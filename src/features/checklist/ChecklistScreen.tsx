@@ -563,7 +563,7 @@ export function ChecklistScreen({
   };
 
   return (
-    <div className="mx-auto max-w-[1280px] px-2 sm:px-4 md:px-6 py-6 md:py-8 space-y-6 md:space-y-8 pb-0 md:pb-8">
+    <div className="w-full mx-auto max-w-[1280px] px-2 sm:px-4 md:px-6 py-6 md:py-8 space-y-6 md:space-y-8 pb-36 md:pb-8">
       {/* Title Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -1134,16 +1134,18 @@ export function ChecklistScreen({
         )}
 
       {/* Floating Action Button (Mobile only) */}
-      {!isReadOnly && (
-        <button
-          onClick={openAddForm}
-          className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
-          style={{ bottom: "calc(6rem + var(--safe-bottom))" }}
-          aria-label={t("packing.addItem")}
-        >
-          <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
-        </button>
-      )}
+      {!isReadOnly &&
+        createPortal(
+          <button
+            onClick={openAddForm}
+            className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
+            style={{ bottom: "calc(6rem + var(--safe-bottom))" }}
+            aria-label={t("packing.addItem")}
+          >
+            <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
+          </button>,
+          document.body
+        )}
 
       <DeleteConfirmModal
         isOpen={Boolean(itemToDelete)}

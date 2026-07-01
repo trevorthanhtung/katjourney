@@ -85,10 +85,10 @@ export function TypedDeleteConfirmModal({
 
         {itemName && (
           <div className="rounded-2xl border border-kat-border/40 bg-slate-50 dark:bg-slate-800/20 px-4 py-3">
-            <p className="text-[12px] font-black uppercase tracking-wide text-slate-400 dark:text-slate-500">
+            <p className="text-[12px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
               {t("common.itemToDelete")}
             </p>
-            <p className="mt-1 break-words text-[15px] font-extrabold text-kat-text">{itemName}</p>
+            <p className="mt-1 break-words text-[15px] font-bold text-kat-text">{itemName}</p>
           </div>
         )}
 
@@ -98,7 +98,7 @@ export function TypedDeleteConfirmModal({
               <Trans
                 i18nKey="ui.typeToConfirm"
                 values={{ text: actualConfirmationText }}
-                components={{ span: <span className="text-rose-500 font-black" /> }}
+                components={{ span: <span className="text-rose-500 font-bold" /> }}
               />
             </Trans>
           </span>
@@ -187,10 +187,10 @@ export function DeleteConfirmModal({
 
         {itemName && (
           <div className="rounded-2xl border border-kat-border/40 bg-slate-50 dark:bg-slate-800/20 px-4 py-3">
-            <p className="text-[12px] font-black uppercase tracking-wide text-slate-400 dark:text-slate-500">
+            <p className="text-[12px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
               {t("common.itemToDelete")}
             </p>
-            <p className="mt-1 break-words text-[15px] font-extrabold text-kat-text">{itemName}</p>
+            <p className="mt-1 break-words text-[15px] font-bold text-kat-text">{itemName}</p>
           </div>
         )}
 

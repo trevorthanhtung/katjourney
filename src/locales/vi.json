@@ -402,7 +402,9 @@
       "distance": "Chặng đường",
       "km": "km",
       "noFlights": "Chưa có dữ liệu",
-      "world": "Thế giới"
+      "world": "Thế giới",
+      "destinations": "Điểm đến",
+      "explored": "Đã khám phá"
     },
     "widgets": {
       "timezones": "Múi giờ",
