@@ -1213,8 +1213,11 @@ function App() {
 
           {!isManagingTrips && tripId && (
             <nav
-              className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] -translate-x-1/2 rounded-[26px] glass-panel-nav shadow-floating-premium lg:hidden transition-transform duration-200 ease-out ${areBarsVisible ? "translate-y-0" : "translate-y-[calc(100%+2.5rem)]"}`}
-              style={{ bottom: "calc(0.5rem + var(--safe-bottom))" }}
+              className={`fixed left-1/2 z-50 w-[calc(100%-2rem)] max-w-[480px] rounded-[26px] glass-panel-nav shadow-floating-premium lg:hidden transition-transform duration-200 ease-out`}
+              style={{ 
+                bottom: "max(0.75rem, calc(var(--safe-bottom) - 10px))",
+                transform: `translateX(-50%) translateY(${areBarsVisible ? "0" : "calc(100% + 2.5rem)"})`
+              }}
             >
               <div className="relative flex h-[56px] min-[390px]:h-[60px] items-center justify-between px-2">
                 <NavButton

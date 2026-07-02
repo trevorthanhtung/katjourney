@@ -811,7 +811,7 @@ export function TripManagerScreen({
           <nav
             className={`fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-floating-premium transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex lg:hidden`}
             style={{ 
-              bottom: "calc(0.5rem + var(--safe-bottom))",
+              bottom: "max(0.75rem, calc(var(--safe-bottom) - 10px))",
               transform: `translateX(-50%) translateY(${areBarsVisible ? "0" : "150%"})`
             }}
           >

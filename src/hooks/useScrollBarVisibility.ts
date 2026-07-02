@@ -20,12 +20,12 @@ export function useScrollBarVisibility(desktopBreakpoint = 768) {
 
       const scrollY = window.scrollY;
 
-      if (Math.abs(scrollY - lastScrollY) < 15) {
+      if (Math.abs(scrollY - lastScrollY) < 10) {
         ticking = false;
         return;
       }
 
-      if (scrollY < 60) {
+      if (scrollY < 20) {
         setAreBarsVisible(true);
       } else if (scrollY > lastScrollY) {
         setAreBarsVisible(false);
