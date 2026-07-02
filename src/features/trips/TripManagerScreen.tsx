@@ -551,7 +551,7 @@ export function TripManagerScreen({
           {/* Elegant Feature List with Journey Line */}
           <div className="relative flex flex-col gap-3.5 w-full max-w-[400px] mb-8 z-10 text-left">
             {/* Vertical connector line */}
-            <div className="absolute left-[20px] top-[24px] bottom-[24px] w-0.5 bg-linear-to-b from-slate-200 via-slate-200 to-slate-200 dark:from-white/10 dark:via-white/10 dark:to-transparent" />
+            <div className="absolute left-[31px] top-[32px] bottom-[32px] w-0.5 bg-linear-to-b from-slate-200 via-slate-200 to-slate-200 dark:from-white/10 dark:via-white/10 dark:to-transparent" />
             
             {[
               {
