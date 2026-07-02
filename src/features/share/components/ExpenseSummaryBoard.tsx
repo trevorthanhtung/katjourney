@@ -113,19 +113,6 @@ export function ExpenseSummaryBoard({
               </div>
             </div>
           </div>
-
-          {isRequestEdit && (
-            <div className="shrink-0 flex md:hidden items-center justify-end w-full">
-              <button
-                type="button"
-                onClick={startAdd}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary hover:bg-opacity-95 dark:hover:brightness-110 text-white dark:text-slate-950 px-6 py-3 text-[14px] font-bold shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] motion-press h-[48px]"
-              >
-                <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
-                {isDirectEdit ? t("expenses.addExpense") : t("share.suggestAdd")}
-              </button>
-            </div>
-          )}
         </div>
       </section>
 

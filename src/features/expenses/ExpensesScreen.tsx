@@ -422,18 +422,18 @@ const ExpenseCard = React.memo(function ExpenseCard({
         </h4>
 
         {/* Category & Badge */}
-        <div className="flex items-center flex-wrap gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1.5">
-          <span className="inline-flex items-center gap-1 font-medium bg-slate-100/50 dark:bg-white/5 backdrop-blur-sm px-2 py-0.5 rounded-md border border-slate-200/50 dark:border-white/10">
+        <div className="flex items-center flex-wrap gap-2 text-xs mt-1.5">
+          <span className="inline-flex items-center gap-1 font-medium bg-slate-100 dark:bg-slate-800/60 backdrop-blur-sm px-2 py-0.5 rounded-md text-slate-600 dark:text-slate-300">
             {getCategoryIcon(item.category)}
             {catMap[item.category] || item.category}
           </span>
 
           <span
             className={classNames(
-              "inline-flex items-center rounded-md px-2 py-0.5 font-bold border",
+              "inline-flex items-center rounded-md px-2 py-0.5 font-bold",
               isPersonal
-                ? "bg-slate-50/50 dark:bg-white/5 backdrop-blur-sm text-slate-500 dark:text-slate-400 border-slate-200/50 dark:border-white/10"
-                : "bg-[#00BFB7]/10 dark:bg-[#00BFB7]/10 backdrop-blur-sm text-[#00BFB7] dark:text-[#00BFB7] border-[#00BFB7]/20 dark:border-[#00BFB7]/30"
+                ? "bg-slate-100 dark:bg-slate-800/60 backdrop-blur-sm text-slate-500 dark:text-slate-400"
+                : "bg-[#00BFB7]/10 dark:bg-[#00BFB7]/15 backdrop-blur-sm text-[#00BFB7]"
             )}
           >
             {isPersonal
@@ -443,7 +443,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
                 : t("expenses.splitShared")}
           </span>
 
-          <span className="font-medium">
+          <span className="font-medium text-slate-400 dark:text-slate-500">
             •{" "}
             {isPersonal
               ? item.payer
@@ -459,11 +459,11 @@ const ExpenseCard = React.memo(function ExpenseCard({
           </span>
 
           {item.date && (
-            <span className="font-medium px-2 py-0.5 bg-slate-50/50 dark:bg-white/5 backdrop-blur-sm border border-slate-200/50 dark:border-white/10 rounded-md">
+            <span className="font-medium text-slate-400 dark:text-slate-500">
+              •{" "}
               {new Date(item.date).toLocaleDateString("vi-VN", {
                 day: "2-digit",
                 month: "2-digit",
-                year: "numeric",
               })}
             </span>
           )}
@@ -1566,20 +1566,6 @@ export function ExpensesScreen({
                 </div>
               </div>
             </div>
-
-            {/* Hộp nút thêm khoản chi trên Mobile */}
-            {!isReadOnly && (
-              <div className="shrink-0 flex md:hidden items-center justify-end w-full">
-                <button
-                  type="button"
-                  onClick={openNewForm}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary hover:bg-opacity-95 dark:hover:brightness-110 text-white dark:text-slate-950 px-6 py-3 text-[14px] font-bold shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] motion-press h-[48px]"
-                >
-                  <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
-                  {t("expenses.addExpense")}
-                </button>
-              </div>
-            )}
           </div>
         </section>
 

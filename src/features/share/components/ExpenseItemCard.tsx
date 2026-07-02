@@ -86,18 +86,21 @@ export function ExpenseItemCard({
             )}
           </div>
 
-          <div className="flex items-center gap-2 mt-0.5 text-[11px] font-bold text-slate-400 dark:text-slate-500">
-            {e.date && (
-              <span className="flex items-center gap-1 shrink-0">
-                <HugeiconsIcon
-                  icon={Calendar01Icon}
-                  className="h-3.5 w-3.5 text-slate-300 dark:text-slate-600"
-                />
-                {new Date(e.date).toLocaleDateString("vi-VN", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}
+          <div className="flex items-center gap-2 mt-1 text-[11.5px] font-medium text-slate-400 dark:text-slate-500">
+            {e.splitType && (
+              <span
+                className={classNames(
+                  "px-1.5 py-0.5 rounded-md font-bold shrink-0",
+                  e.splitType === "shared"
+                    ? "bg-[#00BFB7]/10 dark:bg-[#00BFB7]/15 text-[#00BFB7]"
+                    : "bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400"
+                )}
+              >
+                {e.splitType === "personal"
+                  ? t("expenses.personalLabel")
+                  : e.splitMode === "perGroup"
+                    ? t("expenses.splitPerGroup")
+                    : t("expenses.splitShared")}
               </span>
             )}
 
@@ -105,30 +108,21 @@ export function ExpenseItemCard({
               <>
                 <span className="text-slate-300 dark:text-slate-700">•</span>
                 <span className="truncate max-w-[80px] sm:max-w-[120px]">
-                  {t("expenses.paidBy")}{" "}
-                  <span className="text-slate-500 dark:text-slate-400 font-extrabold">
-                    {e.payer}
-                  </span>
+                  {e.splitType === "personal"
+                    ? t("expenses.paidByOf", { name: e.payer })
+                    : t("expenses.paidByPay", { name: e.payer })}
                 </span>
               </>
             )}
 
-            {e.splitType && (
+            {e.date && (
               <>
                 <span className="text-slate-300 dark:text-slate-700">•</span>
-                <span
-                  className={classNames(
-                    "px-1.5 py-0.2 rounded-md text-[9.5px] font-extrabold border shrink-0",
-                    e.splitType === "shared"
-                      ? "bg-indigo-50/50 dark:bg-indigo-950/20 border-indigo-100/60 dark:border-indigo-900/30 text-indigo-600 dark:text-indigo-400"
-                      : "bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-700/50 text-slate-500 dark:text-slate-400"
-                  )}
-                >
-                  {e.splitType === "personal"
-                    ? t("expenses.personalLabel")
-                    : e.splitMode === "perGroup"
-                      ? t("expenses.splitPerGroup")
-                      : t("expenses.splitShared")}
+                <span className="shrink-0">
+                  {new Date(e.date).toLocaleDateString("vi-VN", {
+                    day: "2-digit",
+                    month: "2-digit",
+                  })}
                 </span>
               </>
             )}
