@@ -1035,7 +1035,7 @@ export function MoreScreen({
         </div>
 
         {/* Hero chuyến đi compact hơn */}
-        <section className="relative overflow-hidden rounded-[28px] bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-white/5 p-5 md:p-6 text-kat-text shadow-soft">
+        <section className="relative overflow-hidden rounded-[28px] bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-100 dark:border-white/5 p-5 md:p-6 text-kat-text shadow-soft">
           {/* Ambient background glow */}
           <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-kat-primary/5 dark:bg-kat-primary/10 blur-[40px] pointer-events-none" />
 
@@ -1076,20 +1076,20 @@ export function MoreScreen({
             </div>
 
             {/* Compact inline stats pills */}
-            <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100 dark:border-white/5 mt-1">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-kat-primary-soft dark:bg-kat-primary/10 border border-kat-primary/20 dark:border-kat-primary/30 px-3.5 py-1.5 text-[12.5px] font-extrabold text-kat-primary-usable dark:text-kat-primary transition-all hover:scale-[1.025] duration-200 cursor-default">
+            <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-100 dark:border-white/5 mt-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-kat-primary-soft dark:bg-kat-primary/10 px-3.5 py-1.5 text-[12.5px] font-bold text-kat-primary-usable dark:text-kat-primary transition-all hover:scale-[1.025] duration-200 cursor-default">
                 <HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5" />
                 {members.length} {t("more.membersCount")}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0081BE]/8 dark:bg-[#0081BE]/10 border border-[#0081BE]/15 px-3.5 py-1.5 text-[12.5px] font-extrabold text-[#0081BE] transition-all hover:scale-[1.025] duration-200 cursor-default">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0081BE]/8 dark:bg-[#0081BE]/10 px-3.5 py-1.5 text-[12.5px] font-bold text-[#0081BE] transition-all hover:scale-[1.025] duration-200 cursor-default">
                 <HugeiconsIcon icon={Route01Icon} className="h-3.5 w-3.5" />
                 {events.length} {t("more.eventsCount")}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-55/90 dark:bg-emerald-500/10 border border-emerald-500/15 px-3.5 py-1.5 text-[12.5px] font-extrabold text-emerald-600 dark:text-emerald-450 transition-all hover:scale-[1.025] duration-200 cursor-default">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-3.5 py-1.5 text-[12.5px] font-bold text-emerald-600 dark:text-emerald-450 transition-all hover:scale-[1.025] duration-200 cursor-default">
                 <HugeiconsIcon icon={WalletCardsIcon} className="h-3.5 w-3.5" />
                 {formatMoney(totalExpense)} {t("more.expensesCount")}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F89B02]/8 dark:bg-[#F89B02]/10 border border-[#F89B02]/15 px-3.5 py-1.5 text-[12.5px] font-extrabold text-[#F89B02] transition-all hover:scale-[1.025] duration-200 cursor-default">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F89B02]/8 dark:bg-[#F89B02]/10 px-3.5 py-1.5 text-[12.5px] font-bold text-[#F89B02] transition-all hover:scale-[1.025] duration-200 cursor-default">
                 <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5" />
                 {t("more.packingProgress")} {checklistPercent}%
               </span>
