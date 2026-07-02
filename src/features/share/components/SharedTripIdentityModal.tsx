@@ -191,12 +191,13 @@ export function SharedTripIdentityModal({
               setIdentityChecked(true);
               setIsBannerVisible(true);
             }}
-            className="flex w-full items-center gap-3 px-4 py-3 text-left rounded-[20px] bg-indigo-500/[0.04] dark:bg-indigo-500/[0.02] border border-dashed border-indigo-200/60 dark:border-indigo-900/30 hover:border-indigo-400 hover:bg-indigo-500/[0.08] dark:hover:bg-indigo-500/[0.05] transition-all active:scale-[0.99] shrink-0 cursor-pointer"
+            className="flex w-full items-center justify-center gap-2.5 px-4 py-3 text-center rounded-[20px] bg-slate-100/80 dark:bg-slate-800/60 border border-transparent hover:bg-slate-200/80 dark:hover:bg-slate-700/80 transition-all active:scale-[0.99] shrink-0 cursor-pointer"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 shrink-0 shadow-sm">
-              <HugeiconsIcon icon={GlobeIcon} className="h-4.5 w-4.5" />
-            </div>
-            <span className="text-[14px] font-black text-indigo-650 dark:text-indigo-400">
+            <HugeiconsIcon
+              icon={GlobeIcon}
+              className="h-4.5 w-4.5 text-slate-500 dark:text-slate-400"
+            />
+            <span className="text-[14px] font-bold text-slate-600 dark:text-slate-300">
               {t("share.justWantToView")}
             </span>
           </button>
