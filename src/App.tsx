@@ -570,7 +570,7 @@ function App() {
       {!isShareRoute && (
         <div
           className={classNames(
-            "font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg",
+            "font-sans text-kat-text subpixel-antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg",
             showSplash && "transition-all duration-500 ease-out",
             showSplash && (isSplashFading ? "scale-100 opacity-100" : "scale-[0.96] opacity-0")
           )}

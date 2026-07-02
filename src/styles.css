@@ -203,6 +203,20 @@
   html {
     scrollbar-gutter: stable;
   }
+
+  /* Tailwind v4 removed cursor: pointer from interactive elements — restore v3 behavior */
+  button,
+  [role="button"],
+  a,
+  label[for],
+  select,
+  summary,
+  [type="button"],
+  [type="reset"],
+  [type="submit"] {
+    cursor: pointer;
+  }
+
   h1,
   h2,
   h3,
@@ -251,10 +265,6 @@
 
   color: var(--kat-text);
   background: var(--kat-bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 :root[data-theme="dark"] {
