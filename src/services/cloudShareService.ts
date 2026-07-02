@@ -110,7 +110,9 @@ export async function createShareLink(
     trip: {
       id: String(trip.id),
       name: trip.title,
+      title: trip.title, // Add title for consistency
       destination: trip.location,
+      location: trip.location, // Add location for consistency with WeatherWidget
       latitude: trip.latitude || null,
       longitude: trip.longitude || null,
       startDate: trip.startDate,
@@ -118,6 +120,8 @@ export async function createShareLink(
       tripType: trip.tripType || "multiDay",
       dayRoadmaps: trip.dayRoadmaps || null,
       status: trip.status || "active",
+      destinations: trip.destinations || null,
+      countryCode: trip.countryCode || null,
     },
   });
 

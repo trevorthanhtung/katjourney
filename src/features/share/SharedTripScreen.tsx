@@ -148,6 +148,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
   );
   const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
+  const [selectedDestIndex, setSelectedDestIndex] = useState(0);
   const { formatTemp } = usePreferences();
 
   // Packing tip based on GPS vs destination temp
@@ -1155,7 +1156,12 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 </div>
 
                 {/* 2. Weather Forecast Widget */}
-                <WeatherWidget trip={trip} days={Math.max(3, tripDays.length)} />
+                <WeatherWidget
+                  trip={trip}
+                  selectedDestIndex={selectedDestIndex}
+                  onSelectDestIndex={setSelectedDestIndex}
+                  days={Math.max(3, tripDays.length + 1)}
+                />
 
                 {/* 3. Shared General Backup Plans Widget */}
                 {data.includeBackupPlans && (

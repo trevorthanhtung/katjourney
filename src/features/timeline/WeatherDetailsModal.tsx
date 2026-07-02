@@ -350,7 +350,7 @@ export function WeatherDetailsModal({
                             key={idx}
                             type="button"
                             onClick={() => {
-                              onSelectDestIndex(idx);
+                              onSelectDestIndex?.(idx);
                               setIsDestDropdownOpen(false);
                             }}
                             className={`text-left px-4 py-3 rounded-xl text-base font-semibold transition-colors flex items-center justify-between group ${
