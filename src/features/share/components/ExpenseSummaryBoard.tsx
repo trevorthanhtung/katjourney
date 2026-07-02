@@ -47,7 +47,7 @@ export function ExpenseSummaryBoard({
 }: ExpenseSummaryBoardProps) {
   return (
     <>
-      <section className="relative overflow-hidden rounded-[32px] bg-kat-surface border border-slate-200 dark:border-kat-border/40 p-6 md:p-8 text-kat-dark dark:text-slate-100 shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
+      <section className="relative overflow-hidden rounded-[32px] bg-kat-surface border-t-4 border-t-kat-dark dark:border-t-kat-border/40 border-x border-b border-slate-200 dark:border-kat-border/40 p-6 md:p-8 text-kat-dark dark:text-slate-100 shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex-1 space-y-5">
             <div>

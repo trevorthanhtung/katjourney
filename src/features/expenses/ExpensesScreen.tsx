@@ -1500,7 +1500,7 @@ export function ExpensesScreen({
         </div>
 
         {/* Total Expense Hero */}
-        <section className="relative overflow-hidden rounded-[32px] bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 p-6 md:p-8 text-kat-dark dark:text-slate-100 shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
+        <section className="relative overflow-hidden rounded-[32px] bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl border-t-4 border-t-[#030D2E] dark:border-t-kat-border/40 border-x border-b border-slate-200/60 dark:border-white/10 p-6 md:p-8 text-kat-dark dark:text-slate-100 shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="flex-1 space-y-5">
               <div>
