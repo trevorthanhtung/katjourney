@@ -137,6 +137,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
 
   const [weatherModalOpen, setWeatherModalOpen] = useState(false);
   const [selectedDestIndex, setSelectedDestIndex] = useState(0);
+  const [isDestDropdownOpen, setIsDestDropdownOpen] = useState(false);
 
   const activeDestIndex = selectedDestIndex ?? 0;
   const activeDest = data?.trip?.destinations?.[activeDestIndex] || {
@@ -692,11 +693,13 @@ export default function SharedTripScreen({ token }: { token: string }) {
       <main className="max-w-[1280px] mx-auto px-2.5 min-[390px]:px-4 pt-6 pb-20 lg:pb-6 space-y-6">
         {/* Hero Card */}
         <section
-          className="relative rounded-[32px] p-6 text-white overflow-hidden shadow-xl border border-white/5 group hover:shadow-2xl hover:scale-[1.002] transition-all duration-500 ease-out motion-weather-bg"
+          className="relative z-10 rounded-[32px] p-6 text-white shadow-xl border border-white/5 group hover:shadow-2xl hover:scale-[1.002] transition-all duration-500 ease-out motion-weather-bg"
           style={{ background: heroBg }}
         >
           {/* Subtle World Map Watermark */}
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+          <div className="absolute inset-0 rounded-[32px] overflow-hidden pointer-events-none">
+            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+          </div>
 
           <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="space-y-4">
@@ -712,15 +715,80 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 {trip.title}
               </h2>
               <div className="flex flex-wrap gap-2.5">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90 max-w-full">
-                  <HugeiconsIcon
-                    icon={Location01Icon}
-                    className="h-3.5 w-3.5 text-white/70 shrink-0"
-                  />
-                  <span className="truncate">
-                    {trip.destination || t("share.unknownDestination")}
-                  </span>
-                </span>
+                <div className="relative inline-flex z-50">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (trip.destinations && trip.destinations.length > 1) {
+                        setIsDestDropdownOpen(!isDestDropdownOpen);
+                      }
+                    }}
+                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium border text-white/90 transition-all max-w-full ${
+                      trip.destinations && trip.destinations.length > 1 && isDestDropdownOpen
+                        ? "bg-white/20 border-white/30 shadow-inner"
+                        : "bg-white/10 border-white/10 hover:bg-white/15"
+                    } ${trip.destinations && trip.destinations.length > 1 ? "cursor-pointer" : ""}`}
+                  >
+                    <HugeiconsIcon
+                      icon={Location01Icon}
+                      className="h-3.5 w-3.5 text-white/70 shrink-0"
+                    />
+                    <span className="truncate">
+                      {trip.destinations && trip.destinations.length > 1
+                        ? t("trip.locationAndOthers", {
+                            location: activeDest.name || trip.destination || trip.location,
+                            count: trip.destinations.length - 1,
+                            defaultValue: `{{location}} & {{count}} điểm khác`,
+                          })
+                        : trip.destination || trip.location || t("share.unknownDestination")}
+                    </span>
+
+                    {trip.destinations && trip.destinations.length > 1 && (
+                      <HugeiconsIcon
+                        icon={ChevronDownIcon}
+                        size={12}
+                        className={`text-white/50 ml-0.5 shrink-0 transition-transform duration-200 ${isDestDropdownOpen ? "rotate-180" : ""}`}
+                      />
+                    )}
+                  </button>
+
+                  {isDestDropdownOpen && trip.destinations && trip.destinations.length > 1 && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setIsDestDropdownOpen(false)}
+                      />
+                      <div className="absolute top-full left-0 mt-2 min-w-[240px] max-w-[85vw] bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden flex flex-col p-1.5 animate-in fade-in zoom-in-95 duration-200 origin-top-left">
+                        {trip.destinations.map((d: any, idx: number) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => {
+                              setSelectedDestIndex(idx);
+                              setIsDestDropdownOpen(false);
+                            }}
+                            className={`text-left px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center justify-between group ${
+                              idx === selectedDestIndex
+                                ? "bg-sky-500/10 text-sky-600 dark:bg-sky-400/10 dark:text-sky-400"
+                                : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50"
+                            }`}
+                          >
+                            <span className="truncate max-w-[200px]">
+                              {d.name || t("common.unknownLocation")}
+                            </span>
+                            {idx === selectedDestIndex && (
+                              <HugeiconsIcon
+                                icon={CheckmarkCircle02Icon}
+                                size={16}
+                                className="text-sky-600 dark:text-sky-400 shrink-0 ml-2"
+                              />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-medium border border-white/10 text-white/90 max-w-full">
                   <HugeiconsIcon
                     icon={Calendar01Icon}
@@ -871,48 +939,49 @@ export default function SharedTripScreen({ token }: { token: string }) {
               ) : (
                 <div
                   onClick={() => setWeatherModalOpen(true)}
-                  className="flex flex-col items-stretch justify-center bg-white/12 backdrop-blur-md border border-white/25 rounded-3xl p-3 gap-2 shadow-[0_8px_32px_rgba(0,0,0,0.06)] hover:bg-white/18 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
+                  className="flex flex-col items-stretch justify-center bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-3xl p-3 gap-2 shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset,0_4px_24px_rgba(0,0,0,0.08)] hover:bg-white/[0.12] hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
                 >
                   {/* Weather Info Block */}
-                  <div className="flex items-center justify-between gap-2 w-full min-w-0">
-                    <div className="flex items-center gap-1.5 min-w-0 shrink">
-                      <span className="text-3xl min-[360px]:text-4xl font-bold text-white drop-shadow-sm tracking-tighter shrink-0">
-                        {formatTemp(forecast.current?.temperature || 20)}°
-                      </span>
-                      <div className="flex flex-col ml-1 min-w-0 shrink">
-                        <span className="mb-[-4px] flex items-center justify-center h-8 shrink-0">
+                  <div className="flex flex-col w-full gap-2.5">
+                    <div className="flex items-start justify-between gap-3 w-full">
+                      {/* Left: Icon, Temp, Weather Desc */}
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="shrink-0 flex items-center justify-center">
                           {getWeatherIcon(
                             forecast.current?.weathercode || 0,
-                            "w-7 h-7 drop-shadow-md"
+                            "w-9 h-9 drop-shadow-sm"
                           )}
+                        </div>
+                        <div className="flex flex-col min-w-0 justify-center">
+                          <span className="text-[32px] font-bold text-white drop-shadow-sm tracking-tighter leading-none">
+                            {formatTemp(forecast.current?.temperature || 20)}°
+                          </span>
+                          <span className="text-[12px] font-medium text-white/90 tracking-wide mt-1.5 truncate uppercase">
+                            {getWeatherText(forecast.current?.weathercode || 0)}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Right: High/Low */}
+                      <div className="flex flex-col items-end shrink-0 gap-1 pt-1">
+                        <span className="text-[11px] font-semibold text-white/95">
+                          {t("weather.high")}: {formatTemp(forecast.temperature_2m_max[0])}°
                         </span>
-                        <span className="text-[10px] min-[360px]:text-[11px] font-bold text-white/95 uppercase tracking-normal mt-1 drop-shadow-sm truncate text-center">
-                          {getWeatherText(forecast.current?.weathercode || 0)}
+                        <span className="text-[11px] font-medium text-white/60">
+                          {t("weather.low")}: {formatTemp(forecast.temperature_2m_min[0])}°
                         </span>
                       </div>
                     </div>
-                    <div className="w-px h-10 bg-white/30 mx-0.5 shrink-0" />
-                    <div className="flex flex-col text-right whitespace-nowrap shrink-0">
-                      <span className="text-[11px] min-[360px]:text-[11.5px] font-bold text-white/95">
-                        {t("weather.high")}: {formatTemp(forecast.temperature_2m_max[0])}°
-                      </span>
-                      <span className="text-[11px] min-[360px]:text-[11.5px] font-bold text-white/70">
-                        {t("weather.low")}: {formatTemp(forecast.temperature_2m_min[0])}°
-                      </span>
-                    </div>
+
+                    {/* Packing Tip Block */}
+                    {packingTip && (
+                      <div className="pt-2.5 border-t border-white/15 w-full">
+                        <p className="text-[11.5px] font-medium text-white/85 leading-snug">
+                          {packingTip.message}
+                        </p>
+                      </div>
+                    )}
                   </div>
-
-                  {/* Divider - only visible when packingTip exists */}
-                  {packingTip && <div className="h-px bg-white/15 w-full my-0.5" />}
-
-                  {/* Packing Tip Block */}
-                  {packingTip && (
-                    <div className="w-full flex items-center">
-                      <p className="text-[12px] font-bold text-white/95 leading-normal whitespace-normal break-words">
-                        {packingTip.message}
-                      </p>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
