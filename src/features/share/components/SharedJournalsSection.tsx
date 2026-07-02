@@ -571,8 +571,7 @@ export function SharedJournalsSection({
                                       <span
                                         className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider border ${moodBadge}`}
                                       >
-                                        {moodLabels[j.mood as keyof typeof moodLabels] ||
-                                          "Đáng nhớ"}
+                                        {t(`journal.mood_${j.mood || "default"}`)}
                                       </span>
                                       {j.postedAt && (
                                         <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 flex items-center gap-0.5">

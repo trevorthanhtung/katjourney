@@ -78,7 +78,7 @@ export function WrappedSection({
   const { t } = useTranslation();
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const stats = getWrappedStats(data);
-  const mood = stats.mostCommonMood ? moodLabels[stats.mostCommonMood] : undefined;
+  const mood = stats.mostCommonMood ? t(`journal.mood_${stats.mostCommonMood}`) : undefined;
 
   // Derived Finance Data
   const sharedExpenses = data.expenses.filter((e) => e.splitType !== "personal" && !e.isDeleted);
