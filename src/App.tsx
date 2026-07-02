@@ -438,50 +438,50 @@ function App() {
     return reminders.map((rem) => {
       let icon = Notification01Icon;
       let colorClasses =
-        "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-100/50 dark:border-slate-700/50";
+        "bg-slate-50 dark:bg-slate-500/15 text-slate-600 dark:text-slate-400 border border-slate-100/50 dark:border-transparent";
 
       switch (rem.tab) {
         case "timeline":
           icon = Calendar01Icon;
           colorClasses =
-            "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/30";
+            "bg-blue-50 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-transparent";
           break;
         case "checklist":
           icon = CheckListIcon;
           colorClasses =
-            "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/30";
+            "bg-amber-50 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-transparent";
           break;
         case "expenses":
           icon = WalletCardsIcon;
           colorClasses =
-            "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/30";
+            "bg-emerald-50 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-transparent";
           break;
         case "documents":
           icon = File01Icon;
           colorClasses =
-            "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/30";
+            "bg-rose-50 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-transparent";
           break;
         case "journal":
           icon = Globe02Icon;
           colorClasses =
-            "bg-violet-50 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400 border border-violet-100/50 dark:border-violet-900/30";
+            "bg-violet-50 dark:bg-violet-500/15 text-violet-600 dark:text-violet-400 border border-violet-100/50 dark:border-transparent";
           break;
         case "wrapped":
           icon = SparklesIcon;
           colorClasses =
-            "bg-sky-50 dark:bg-sky-950/20 text-sky-600 dark:text-sky-400 border border-sky-100/50 dark:border-sky-900/30";
+            "bg-sky-50 dark:bg-sky-500/15 text-sky-600 dark:text-sky-400 border border-sky-100/50 dark:border-transparent";
           break;
         case "share_requests" as any:
           icon = NotificationBubbleIcon;
           colorClasses =
-            "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/30";
+            "bg-rose-50 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-transparent";
           break;
       }
 
       return (
         <button
           key={rem.id}
-          className="flex w-full items-center gap-3.5 bg-white dark:bg-slate-900 p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 active:bg-slate-100 dark:active:bg-slate-800 transition-colors focus:outline-hidden"
+          className="flex w-full items-center gap-4 bg-white dark:bg-slate-900 px-5 py-4.5 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 active:bg-slate-100 dark:active:bg-slate-800 transition-colors focus:outline-hidden"
           onClick={() => {
             const handleNavigation = (action: () => void) => {
               if (!isDesktop && window.location.hash === "#reminders-modal") {
@@ -697,7 +697,7 @@ function App() {
                         )}
                       </button>
                       {reminders.length > 0 && (
-                        <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 min-[390px]:h-4 min-[390px]:w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] min-[390px]:text-[10px] font-black text-white ring-2 ring-white pointer-events-none">
+                        <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 min-[390px]:h-4 min-[390px]:w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] min-[390px]:text-[10px] font-black text-white ring-2 ring-white dark:ring-kat-dark pointer-events-none">
                           {reminders.length}
                         </span>
                       )}
@@ -719,7 +719,7 @@ function App() {
                             </div>
 
                             {/* Popover Content */}
-                            <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[400px] overflow-y-auto custom-scrollbar">
+                            <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
                               {renderReminderItems()}
                             </div>
                           </div>
@@ -1327,7 +1327,7 @@ function App() {
               title={t("reminders.title")}
               subtitle={t("reminders.subtitle")}
             >
-              <div className="divide-y divide-slate-100 dark:divide-slate-800 -mx-5 -mb-4 mt-1 border-t border-slate-100 dark:border-slate-800/80">
+              <div className="-mx-5 -mb-4 mt-1 border-t border-slate-100 dark:border-slate-800/80">
                 {renderReminderItems()}
               </div>
             </BottomSheet>
