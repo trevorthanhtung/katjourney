@@ -245,19 +245,52 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
 
         {/* Cinematic Content Text */}
         <div className="absolute bottom-12 left-12 pr-12 z-10 space-y-3">
-          <h2 className="text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-none mb-2 text-balance">
+          <h2 className="text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-none mb-4 text-balance">
             <span dangerouslySetInnerHTML={{ __html: t("welcomeScreen.heroTitle1") }} />
             <br />
             <span dangerouslySetInnerHTML={{ __html: t("welcomeScreen.heroTitle2") }} />
           </h2>
-          <p className="text-lg text-gray-300 font-semibold leading-relaxed max-w-lg">
-            {t("welcomeScreen.heroDesc")}
-          </p>
+
+          <div className="h-[90px] relative overflow-hidden w-full max-w-lg">
+            {onboardingSlides.map((slide, idx) => (
+              <div
+                key={idx}
+                className={`absolute inset-0 flex flex-col justify-center transition-opacity duration-700 ${activeSlide === idx ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+              >
+                <div className="flex items-center gap-2.5 mb-2">
+                  <HugeiconsIcon icon={slide.icon} className="w-6 h-6 text-kat-primary" />
+                  <h3 className="text-[20px] font-extrabold text-white tracking-tight">
+                    {t(slide.titleKey)}
+                  </h3>
+                </div>
+                <p className="text-[15.5px] text-gray-300 font-medium leading-relaxed">
+                  {t(slide.descKey)}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex gap-2 pt-2">
+            {onboardingSlides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  stopAutoPlay();
+                  setActiveSlide(idx);
+                  startAutoPlay();
+                }}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  activeSlide === idx ? "w-6 bg-kat-primary" : "w-1.5 bg-white/30 hover:bg-white/50"
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
       {/* 2. RIGHT SIDE - Zero-Friction Auth Form (Mobile-first) */}
-      <div className="flex flex-col justify-between items-center relative w-full h-full px-6 py-6 pb-safe lg:px-12 lg:py-10 bg-transparent lg:bg-white dark:lg:bg-[#0A1124] overflow-hidden z-10">
+      <div className="flex flex-col justify-between items-center relative w-full h-full px-6 py-6 pb-safe lg:px-12 lg:py-10 bg-transparent lg:bg-slate-50 dark:lg:bg-[#0A1124] overflow-hidden z-10">
         {/* TOP CONTROLS: Language Selector */}
         <div className="absolute top-6 right-6 lg:top-8 lg:right-10 flex items-center z-[60]">
           <button
@@ -296,10 +329,15 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             </span>
           </div>
 
-          <div className="w-full p-6 sm:p-8 backdrop-blur-2xl bg-white/95 dark:bg-[#0F172A]/70 lg:backdrop-blur-none lg:bg-white dark:lg:bg-[#0F172A]/40 rounded-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.2)] lg:shadow-[0_2px_24px_rgba(3,13,46,0.07)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-white/20 dark:border-slate-800/80 flex flex-col items-center relative z-10 animate-scaleUp">
-            {/* Onboarding Carousel (2027 Premium Swipeable) */}
+          <div className="w-full p-6 sm:p-8 backdrop-blur-2xl bg-white/95 dark:bg-[#0F172A]/70 lg:backdrop-blur-none lg:bg-white dark:lg:bg-[#0F172A]/40 rounded-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.2)] lg:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.08)] border border-white/20 dark:border-slate-800/80 flex flex-col items-center relative z-10 animate-scaleUp">
+            {/* Desktop Only: Static Title */}
+            <h2 className="hidden lg:block text-[22px] font-black text-kat-dark dark:text-white mb-6 tracking-tight text-center">
+              {t("welcomeScreen.getStarted")}
+            </h2>
+
+            {/* Mobile Only: Onboarding Carousel */}
             <div
-              className="w-full overflow-x-hidden overflow-y-visible mb-4 relative cursor-grab active:cursor-grabbing select-none pt-2"
+              className="w-full lg:hidden overflow-x-hidden overflow-y-visible mb-4 relative cursor-grab active:cursor-grabbing select-none pt-2"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
@@ -331,8 +369,8 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               </div>
             </div>
 
-            {/* Liquid Dots Indicators */}
-            <div className="flex items-center justify-center gap-1.5 mb-5 select-none">
+            {/* Liquid Dots Indicators (Mobile Only) */}
+            <div className="flex lg:hidden items-center justify-center gap-1.5 mb-5 select-none">
               {onboardingSlides.map((_, idx) => (
                 <button
                   key={idx}
@@ -368,7 +406,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               <button
                 onClick={handleGoogleLogin}
                 disabled={loading !== null}
-                className="w-full flex items-center justify-center gap-3.5 h-14 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-[0.97] transition-all font-extrabold text-[16px] text-kat-dark dark:text-slate-200 shadow-[0_4px_14px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.1)] border border-slate-100 dark:border-slate-700/50 disabled:opacity-60 disabled:scale-100 group"
+                className="w-full flex items-center justify-center gap-3.5 h-14 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-[0.97] transition-all font-extrabold text-[16px] text-kat-dark dark:text-slate-200 shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.12)] border border-slate-200 dark:border-slate-700/50 disabled:opacity-60 disabled:scale-100 group"
               >
                 {loading === "google" ? (
                   <HugeiconsIcon
@@ -413,7 +451,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
         {/* BOTTOM SECTION: LEGAL FOOTER */}
         <div className="w-full shrink-0 text-center pt-4 pb-1 relative z-10">
           <div
-            className="flex items-center justify-center gap-4 text-slate-300 opacity-80 mb-3"
+            className="flex items-center justify-center gap-4 text-slate-400 dark:text-slate-500 mb-3"
             title={t("welcomeScreen.multiplatform")}
           >
             <HugeiconsIcon
@@ -422,7 +460,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               strokeWidth={2.5}
             />
             <AndroidIcon className="h-[16px] w-[16px] hover:text-emerald-400 transition-colors" />
-            <AppleIcon className="h-[18px] w-[18px] hover:text-slate-400 transition-colors" />
+            <AppleIcon className="h-[18px] w-[18px] hover:text-slate-600 dark:hover:text-slate-300 transition-colors" />
           </div>
           <p className="text-[11.5px] leading-relaxed text-slate-400 font-medium max-w-xs mx-auto">
             <Trans
