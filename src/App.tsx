@@ -982,7 +982,7 @@ function App() {
                   {syncProps.isSyncing ? (
                     <>
                       <HugeiconsIcon icon={RefreshIcon} className="w-3.5 h-3.5 animate-spin" />
-                      {t("common.processing", "Processing...")}
+                      {t("share.processing", "Processing...")}
                     </>
                   ) : (
                     <>
