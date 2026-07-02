@@ -206,11 +206,19 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
             </div>
           ) : messages.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 select-none">
-              <div className="w-16 h-16 rounded-full bg-[#00BFB7]/10 flex items-center justify-center mb-3 border border-[#00BFB7]/20">
-                <HugeiconsIcon icon={BubbleChatIcon} className="w-8 h-8 text-[#00BFB7]" />
+              <div className="relative w-16 h-16 rounded-[22px] bg-[#00BFB7]/10 dark:bg-[#00BFB7]/20 flex items-center justify-center mb-5 border border-[#00BFB7]/30 dark:border-[#00BFB7]/40 shadow-sm shadow-[#00BFB7]/5">
+                <HugeiconsIcon
+                  icon={BubbleChatIcon}
+                  className="w-8 h-8 text-[#00BFB7] dark:text-[#00BFB7] relative z-10"
+                />
+                <div className="absolute inset-0 rounded-[22px] bg-[#00BFB7]/20 blur-xl scale-125"></div>
               </div>
-              <h4 className="font-bold text-kat-text text-sm mb-1">{t("chat.emptyTitle")}</h4>
-              <p className="text-xs text-kat-muted max-w-[200px]">{t("chat.emptySubtitle")}</p>
+              <h4 className="text-[15px] font-extrabold text-kat-text dark:text-slate-200 tracking-tight mb-1.5">
+                {t("chat.emptyTitle")}
+              </h4>
+              <p className="text-[13px] font-medium text-slate-400 dark:text-slate-500 max-w-[220px] leading-relaxed">
+                {t("chat.emptySubtitle")}
+              </p>
             </div>
           ) : (
             messages.map((msg, index) => {
@@ -334,32 +342,32 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
             {t("share.tripEndedChatOnly", "Chuyến đi đã kết thúc &mdash; Chỉ xem trò chuyện")}
           </div>
         ) : (
-          <div className="p-3 bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl border-t border-slate-200/60 dark:border-white/10 shrink-0 z-10">
+          <div className="p-3 bg-white/80 dark:bg-[#0A0F1C]/80 backdrop-blur-xl border-t border-slate-100 dark:border-slate-800/80 shrink-0 z-10 shadow-[0_-4px_24px_rgba(0,0,0,0.02)] dark:shadow-none">
             <form
               onSubmit={handleSend}
-              className="flex items-center gap-2 bg-white dark:bg-[#131b2e]/60 border border-slate-200/60 dark:border-white/10 rounded-2xl p-1.5 shadow-inner transition-colors focus-within:border-[#00BFB7]/50 focus-within:bg-white dark:focus-within:bg-[#131b2e] focus-within:ring-2 focus-within:ring-[#00BFB7]/10"
+              className="flex items-center gap-2 bg-slate-50 dark:bg-[#131b2e]/60 border border-slate-200/50 dark:border-slate-700/50 rounded-[20px] p-1.5 shadow-inner transition-colors focus-within:border-[#00BFB7]/50 focus-within:bg-white dark:focus-within:bg-[#131b2e] focus-within:ring-[3px] focus-within:ring-[#00BFB7]/10"
             >
               <input
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={t("chat.inputPlaceholder")}
-                className="flex-1 bg-transparent border-0 rounded-full px-3 py-1.5 text-xs text-kat-dark dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none transition-all duration-200"
+                className="flex-1 bg-transparent border-0 rounded-full px-3 py-2 text-[14px] font-medium text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none transition-all duration-200"
               />
               <button
                 type="submit"
                 disabled={!inputText.trim() || sending}
                 className={classNames(
-                  "w-9 h-9 rounded-full text-white flex items-center justify-center transition-all duration-300 shrink-0 shadow-md active:scale-90 motion-press",
+                  "w-10 h-10 rounded-[14px] text-white flex items-center justify-center transition-all duration-300 shrink-0 shadow-md active:scale-95 motion-press",
                   inputText.trim() && !sending
-                    ? "bg-gradient-to-r from-kat-primary to-kat-primary-usable hover:scale-105 shadow-kat-primary/20 hover:shadow-[0_0_12px_rgba(0,191,183,0.4)]"
-                    : "bg-slate-100 dark:bg-slate-900 text-slate-300 dark:text-slate-600 shadow-none scale-100 cursor-not-allowed"
+                    ? "bg-gradient-to-r from-kat-primary to-kat-primary-usable hover:scale-105 shadow-kat-primary/20 hover:shadow-[0_4px_16px_rgba(0,191,183,0.3)]"
+                    : "bg-slate-200/60 dark:bg-slate-800 text-slate-400 dark:text-slate-600 shadow-none scale-100 cursor-not-allowed"
                 )}
               >
                 {sending ? (
-                  <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin" />
+                  <HugeiconsIcon icon={Loading01Icon} className="w-5 h-5 animate-spin" />
                 ) : (
-                  <HugeiconsIcon icon={SentIcon} className="w-4 h-4 ml-0.5" />
+                  <HugeiconsIcon icon={SentIcon} className="w-5 h-5 ml-0.5" />
                 )}
               </button>
             </form>
