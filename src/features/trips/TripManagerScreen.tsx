@@ -502,7 +502,7 @@ export function TripManagerScreen({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col items-center justify-center rounded-[32px] bg-white/80 dark:bg-[#060B14]/80 backdrop-blur-xl p-8 sm:p-12 text-center border border-slate-200/60 dark:border-white/[0.04] shadow-[0_20px_50px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_50px_rgba(0,191,183,0.03)] mx-auto w-full max-w-[540px] relative overflow-hidden"
+          className="flex flex-col items-center justify-center rounded-[28px] sm:rounded-[32px] bg-white/80 dark:bg-[#060B14]/80 backdrop-blur-xl p-6 sm:p-8 text-center border border-slate-200/60 dark:border-white/[0.04] shadow-[0_20px_50px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_50px_rgba(0,191,183,0.03)] mx-auto w-full max-w-[480px] relative overflow-hidden"
         >
           {/* Ambient Glowing Blobs */}
           <div className="absolute top-0 left-0 w-64 h-64 bg-teal-400/10 dark:bg-[#00BFB7]/10 rounded-full blur-[80px] pointer-events-none transform -translate-x-1/2 -translate-y-1/2" />
@@ -512,7 +512,7 @@ export function TripManagerScreen({
           <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-[#00BFB7] to-transparent opacity-60" />
 
           {/* Premium Animated Icon Container */}
-          <div className="relative mb-10 mt-2 flex items-center justify-center">
+          <div className="relative mb-6 mt-1 flex items-center justify-center">
             {/* Pulsing glow */}
             <motion.div 
               animate={{ opacity: [0.15, 0.25, 0.15], scale: [1, 1.05, 1] }} 
@@ -523,35 +523,35 @@ export function TripManagerScreen({
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-              className="absolute w-[140px] h-[140px] rounded-full border border-dashed border-[#00BFB7]/30 dark:border-[#00BFB7]/20"
+              className="absolute w-[110px] h-[110px] rounded-full border border-dashed border-[#00BFB7]/30 dark:border-[#00BFB7]/20"
             />
             {/* Floating airplane container */}
             <motion.div 
-              animate={{ y: [-4, 4, -4] }}
+              animate={{ y: [-3, 3, -3] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="relative flex h-24 w-24 items-center justify-center rounded-full bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-[#0C1425] border border-white dark:border-white/5 shadow-[0_8px_30px_rgba(0,191,183,0.15)] ring-1 ring-black/5 dark:ring-0"
+              className="relative flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-[#0C1425] border border-white dark:border-white/5 shadow-[0_8px_30px_rgba(0,191,183,0.15)] ring-1 ring-black/5 dark:ring-0"
             >
               <HugeiconsIcon
                 icon={Airplane01Icon}
-                size={40}
+                size={34}
                 className="text-[#00BFB7] -rotate-45"
                 strokeWidth={2}
               />
             </motion.div>
           </div>
 
-          <h3 className="mb-3 text-[26px] sm:text-[30px] font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight z-10 relative">
+          <h3 className="mb-2.5 text-[22px] sm:text-[26px] font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight z-10 relative">
             {t("dashboard.emptyTitle")}
           </h3>
 
-          <p className="mb-10 text-[15px] sm:text-[16px] text-slate-500 dark:text-slate-400 leading-relaxed max-w-[400px] z-10 relative">
+          <p className="mb-6 text-[14px] sm:text-[15px] text-slate-500 dark:text-slate-400 leading-relaxed max-w-[360px] z-10 relative">
             {t("dashboard.emptyDesc")}
           </p>
 
           {/* Elegant Feature List with Journey Line */}
-          <div className="relative flex flex-col gap-5 w-full max-w-[420px] mb-12 z-10 text-left">
+          <div className="relative flex flex-col gap-3.5 w-full max-w-[400px] mb-8 z-10 text-left">
             {/* Vertical connector line */}
-            <div className="absolute left-[23px] top-[30px] bottom-[30px] w-0.5 bg-linear-to-b from-slate-200 via-slate-200 to-slate-200 dark:from-white/10 dark:via-white/10 dark:to-transparent" />
+            <div className="absolute left-[20px] top-[24px] bottom-[24px] w-0.5 bg-linear-to-b from-slate-200 via-slate-200 to-slate-200 dark:from-white/10 dark:via-white/10 dark:to-transparent" />
             
             {[
               {
@@ -580,16 +580,16 @@ export function TripManagerScreen({
                 key={idx}
                 whileHover={{ x: 6, scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                className="group relative flex items-center gap-5 p-3.5 rounded-2xl bg-white dark:bg-white/[0.02] border border-transparent hover:border-slate-200 dark:hover:border-white/10 hover:shadow-sm dark:hover:shadow-none hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-colors cursor-default"
+                className="group relative flex items-center gap-4 p-3 rounded-2xl bg-white dark:bg-white/[0.02] border border-transparent hover:border-slate-200 dark:hover:border-white/10 hover:shadow-sm dark:hover:shadow-none hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-colors cursor-default"
               >
-                <div className={`relative z-10 h-[46px] w-[46px] shrink-0 rounded-2xl ${feature.bgClass} ${feature.colorClass} flex items-center justify-center border border-white dark:border-white/5 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
-                  <HugeiconsIcon icon={feature.icon} size={22} strokeWidth={2} />
+                <div className={`relative z-10 h-[40px] w-[40px] shrink-0 rounded-xl ${feature.bgClass} ${feature.colorClass} flex items-center justify-center border border-white dark:border-white/5 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                  <HugeiconsIcon icon={feature.icon} size={20} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col items-start">
-                  <span className="text-[14.5px] font-bold text-slate-900 dark:text-slate-100 mb-0.5 group-hover:text-[#00BFB7] transition-colors">
+                  <span className="text-[14px] font-bold text-slate-900 dark:text-slate-100 mb-0.5 group-hover:text-[#00BFB7] transition-colors">
                     {feature.title}
                   </span>
-                  <span className="text-[13px] text-slate-500 dark:text-slate-400 font-medium">
+                  <span className="text-[12.5px] text-slate-500 dark:text-slate-400 font-medium">
                     {feature.desc}
                   </span>
                 </div>
@@ -601,7 +601,7 @@ export function TripManagerScreen({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onCreateNew}
-            className="group relative flex h-14 w-full max-w-[360px] items-center justify-center gap-2.5 rounded-2xl bg-linear-to-r from-[#00BFB7] to-[#00A8A2] text-white px-6 font-bold text-[16px] shadow-[0_12px_24px_rgba(0,191,183,0.3)] hover:shadow-[0_16px_32px_rgba(0,191,183,0.4)] transition-shadow duration-300 z-10 overflow-hidden"
+            className="group relative flex h-12 sm:h-14 w-full max-w-[320px] items-center justify-center gap-2.5 rounded-2xl bg-linear-to-r from-[#00BFB7] to-[#00A8A2] text-white px-6 font-bold text-[15px] sm:text-[16px] shadow-[0_12px_24px_rgba(0,191,183,0.3)] hover:shadow-[0_16px_32px_rgba(0,191,183,0.4)] transition-shadow duration-300 z-10 overflow-hidden"
           >
             {/* Button Shine Effect */}
             <div className="absolute inset-0 -translate-x-[150%] bg-linear-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
@@ -611,7 +611,7 @@ export function TripManagerScreen({
                whileHover={{ rotate: 90 }}
                transition={{ type: "spring", stiffness: 200, damping: 10 }}
             >
-              <HugeiconsIcon icon={PlusSignIcon} size={22} strokeWidth={2.5} />
+              <HugeiconsIcon icon={PlusSignIcon} size={20} strokeWidth={2.5} />
             </motion.div>
             {t("dashboard.emptyCreateBtn")}
           </motion.button>
@@ -619,7 +619,7 @@ export function TripManagerScreen({
           {archivedTripsCount > 0 && (
             <button
               onClick={onOpenArchive}
-              className="mt-6 text-[14px] font-semibold text-slate-500 hover:text-[#00BFB7] transition-colors z-10 relative"
+              className="mt-5 text-[13px] sm:text-[14px] font-semibold text-slate-500 hover:text-[#00BFB7] transition-colors z-10 relative"
             >
               {t("trips.viewMemories", "Xem kỷ niệm chuyến đi ({{count}})", {
                 count: archivedTripsCount,
