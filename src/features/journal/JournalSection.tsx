@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -33,11 +34,11 @@ import { getAvatarSvg } from "../../utils/avatars";
 import { formatDate, moodLabels, today } from "../../utils/helpers";
 import {
   BottomSheet,
-  FAB,
   Input,
   Textarea,
   DatePicker,
   DeleteConfirmModal,
+  classNames,
 } from "../../components/ui";
 import { getIdentity } from "../../utils/identityCache";
 import { processLocalImage } from "../../services/storageService";
@@ -830,7 +831,10 @@ export function JournalSection({
         {!isReadOnly && journalMode === "posts" && (
           <button
             onClick={openNewForm}
-            className="hidden md:flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 text-[14px] font-black text-white dark:text-slate-950 transition-all hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 shadow-sm shrink-0 motion-press border border-transparent dark:border-kat-primary"
+            className={classNames(
+              "h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 text-[14px] font-black text-white dark:text-slate-950 transition-all hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 shadow-sm shrink-0 motion-press border border-transparent dark:border-kat-primary",
+              journals.length > 0 ? "hidden md:flex" : "flex w-full sm:w-auto"
+            )}
           >
             <HugeiconsIcon icon={PenTool01Icon} className="w-4.5 h-4.5" />
             {t("journal.postBtn")}
@@ -1148,14 +1152,20 @@ export function JournalSection({
       )}
 
       {/* FAB Mobile button */}
-      {!isReadOnly && journalMode === "posts" && (
-        <FAB
-          icon={<HugeiconsIcon icon={PenTool01Icon} className="h-6 w-6" />}
-          label="Đăng bản tin"
-          onClick={openNewForm}
-          className="md:hidden h-14 w-14 bg-white/15 backdrop-blur-2xl border border-white/40 text-kat-dark hover:scale-105 hover:bg-white/25 duration-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press"
-        />
-      )}
+      {!isReadOnly &&
+        journalMode === "posts" &&
+        journals.length > 0 &&
+        createPortal(
+          <button
+            onClick={() => openNewForm()}
+            className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-slate-800/95 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-700/50 dark:border-slate-700/50 text-white dark:text-slate-200 shadow-lg motion-press hover:scale-105 duration-200"
+            style={{ bottom: "calc(6rem + var(--safe-bottom))" }}
+            aria-label="Đăng bản tin"
+          >
+            <HugeiconsIcon icon={PenTool01Icon} className="h-6 w-6" />
+          </button>,
+          document.body
+        )}
 
       {/* Modal Form */}
       <JournalForm
