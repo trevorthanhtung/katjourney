@@ -809,12 +809,15 @@ export function TripManagerScreen({
       {trips.length > 0 &&
         createPortal(
           <nav
-            className={`fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] -translate-x-1/2 rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-floating-premium transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex lg:hidden ${areBarsVisible ? "translate-y-0" : "translate-y-[150%]"}`}
-            style={{ bottom: "calc(0.5rem + var(--safe-bottom))" }}
+            className={`fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-floating-premium transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex lg:hidden`}
+            style={{ 
+              bottom: "calc(0.5rem + var(--safe-bottom))",
+              transform: `translateX(-50%) translateY(${areBarsVisible ? "0" : "150%"})`
+            }}
           >
-            <div className="relative flex h-[68px] items-center w-full px-1">
-              {/* 5-Column Grid for perfect symmetry */}
-              <div className="grid grid-cols-5 w-full h-full items-center justify-items-center">
+            <div className="relative flex h-[68px] items-center justify-between w-full px-2">
+              {/* Flex container instead of grid for smooth layout animations */}
+              <div className="flex items-center justify-between w-full">
                 {/* Tab 1: Kế hoạch */}
                 <NavButton
                   isActive={filterTab === "planned"}
@@ -836,7 +839,7 @@ export function TripManagerScreen({
                 />
 
                 {/* Tab 3: Empty space for FAB */}
-                <div className="w-full h-full pointer-events-none" />
+                <div className="w-12 h-full shrink-0 pointer-events-none" />
 
                 {/* Tab 4: Đã qua */}
                 <NavButton
@@ -860,7 +863,10 @@ export function TripManagerScreen({
               </div>
 
               {/* Absolute Center FAB - Floats prominently */}
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-[-60%] z-20 pointer-events-auto">
+              <div 
+                className="absolute left-1/2 top-1/2 z-20 pointer-events-auto"
+                style={{ transform: "translate(-50%, -60%)" }}
+              >
                 <button
                   onClick={onCreateNew}
                   className="flex items-center justify-center w-[50px] h-[50px] rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_4px_12px_rgba(2,6,23,0.15)] dark:shadow-[0_4px_12px_rgba(0,191,183,0.25)] hover:shadow-[0_8px_20px_rgba(2,6,23,0.2)] dark:hover:shadow-[0_8px_20px_rgba(0,191,183,0.35)] hover:scale-105 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-press border-[3px] border-white dark:border-slate-900"
