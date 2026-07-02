@@ -94,40 +94,47 @@ export function ReloadPrompt({ hasBottomNav = false }: { hasBottomNav?: boolean 
 
   return (
     <div
-      className={`fixed right-4 left-4 md:left-auto md:w-[380px] z-9999 animate-slideUp transition-all duration-300 ${hasBottomNav ? "bottom-24 lg:bottom-6" : "bottom-6"}`}
+      className={`fixed right-4 left-4 md:left-auto md:w-[400px] z-9999 animate-slideUp transition-all duration-300 ${hasBottomNav ? "bottom-24 lg:bottom-6" : "bottom-6"}`}
     >
-      <div className="backdrop-blur-xl bg-white/95 dark:bg-[#111A33]/90 border border-slate-200/50 dark:border-slate-800/60 shadow-[0_20px_50px_rgba(3,13,46,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.35)] rounded-[24px] p-5 flex flex-col gap-4.5 transition-all duration-300">
-        <div className="flex items-start gap-3.5">
-          <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-linear-to-br from-teal-500/10 to-emerald-500/10 border border-teal-500/20 dark:border-teal-500/30 text-kat-teal shrink-0 shadow-inner">
-            <div className="absolute inset-0 rounded-2xl bg-kat-teal/5 animate-pulse" />
+      <div className="relative overflow-hidden backdrop-blur-2xl bg-white/90 dark:bg-[#0A0F1C]/90 border border-white/60 dark:border-white/10 shadow-[0_24px_50px_rgba(0,191,183,0.12)] dark:shadow-[0_24px_50px_rgba(0,0,0,0.5)] rounded-[28px] p-6 flex flex-col gap-5 transition-all duration-300">
+        {/* Subtle top glow */}
+        <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-linear-to-r from-transparent via-[#00BFB7]/40 to-transparent blur-[2px]" />
+        
+        <div className="flex items-start gap-4">
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-[18px] bg-linear-to-b from-[#00BFB7]/10 to-[#00BFB7]/5 border border-[#00BFB7]/20 dark:border-[#00BFB7]/30 shrink-0 shadow-inner group">
+            <div className="absolute inset-0 rounded-[18px] bg-[#00BFB7]/10 animate-pulse blur-md" />
             <HugeiconsIcon
               icon={needRefresh ? SystemUpdate01Icon : Download01Icon}
-              className="w-5.5 h-5.5 text-kat-teal relative z-10 animate-pulse"
+              className="w-6 h-6 text-[#00BFB7] relative z-10 transition-transform duration-500 group-hover:rotate-180"
+              strokeWidth={2}
             />
           </div>
-          <div className="flex-1 min-w-0">
-            <h4 className="font-display text-[16px] font-black text-kat-dark dark:text-white tracking-tight leading-snug">
+          <div className="flex-1 min-w-0 pt-0.5">
+            <h4 className="font-display text-[17px] font-black text-slate-900 dark:text-white tracking-tight leading-tight">
               {needRefresh ? t("pwa.newVersion") : t("pwa.offlineReady")}
             </h4>
-            <p className="text-[12.5px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed font-medium">
+            <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed font-medium pr-2">
               {needRefresh ? t("pwa.newVersionDesc") : t("pwa.offlineReadyDesc")}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 justify-end pt-1">
+        <div className="flex items-center gap-3 pt-1">
           <button
             onClick={close}
-            className="px-4 py-2.5 text-xs font-black text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-50 hover:bg-slate-100/80 dark:bg-slate-800/30 dark:hover:bg-slate-800/60 border border-slate-200/30 dark:border-slate-700/30 rounded-xl transition-all duration-200 active:scale-[0.97] hover:scale-[1.01]"
+            className="flex-1 px-4 py-3.5 text-[13.5px] font-bold text-slate-600 dark:text-slate-300 bg-slate-100/80 hover:bg-slate-200/80 dark:bg-slate-800/50 dark:hover:bg-slate-800/80 rounded-2xl transition-all duration-200 active:scale-[0.98] motion-press"
           >
             {t("pwa.later")}
           </button>
           {needRefresh && (
             <button
               onClick={() => updateServiceWorker(true)}
-              className="px-5 py-2.5 text-xs font-black text-white bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl shadow-md shadow-teal-500/10 hover:shadow-teal-500/25 hover:shadow-lg transition-all duration-200 active:scale-[0.97] hover:scale-[1.01]"
+              className="flex-1 relative overflow-hidden px-5 py-3.5 text-[13.5px] font-bold text-white bg-kat-dark dark:bg-kat-primary rounded-2xl shadow-[0_8px_20px_rgba(2,6,23,0.12)] dark:shadow-[0_8px_20px_rgba(0,191,183,0.25)] hover:shadow-[0_12px_24px_rgba(2,6,23,0.2)] dark:hover:shadow-[0_12px_24px_rgba(0,191,183,0.35)] transition-all duration-300 active:scale-[0.98] group"
             >
-              {t("pwa.updateNow")}
+              <div className="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/20 to-transparent group-hover:animate-shimmer" />
+              <span className="relative z-10 dark:text-slate-950">
+                {t("pwa.updateNow")}
+              </span>
             </button>
           )}
         </div>
