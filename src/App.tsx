@@ -782,8 +782,8 @@ function App() {
                     {isUserMenuOpen && (
                       <>
                         <div className="absolute right-0 mt-2 z-50 w-52 rounded-2xl bg-white dark:bg-kat-surface border border-slate-200/80 dark:border-kat-border shadow-floating p-1.5 animate-fadeIn">
-                          <div className="px-3.5 py-2.5 border-b border-slate-100/80 dark:border-slate-800/60">
-                            <p className="text-[13px] font-black text-kat-dark truncate text-left">
+                          <div className="px-3 py-2 mb-1">
+                            <p className="text-[13px] font-bold text-kat-dark truncate text-left">
                               {isAuthenticated && user
                                 ? provider === "guest"
                                   ? t("userMenu.guest")
@@ -791,12 +791,12 @@ function App() {
                                 : t("userMenu.notLoggedIn")}
                             </p>
                             {isAuthenticated && user && provider !== "guest" && user.email ? (
-                              <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
+                              <p className="text-[11.5px] text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5 text-left">
                                 {user.email}
                               </p>
                             ) : (
                               (!isAuthenticated || !user) && (
-                                <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
+                                <p className="text-[11.5px] text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5 text-left">
                                   {t("userMenu.loginToSync")}
                                 </p>
                               )
@@ -806,18 +806,18 @@ function App() {
                           {isAuthenticated && user ? (
                             provider === "guest" ? (
                               <>
-                                <div className="py-1 space-y-0.5">
+                                <div className="space-y-0.5">
                                   <button
                                     onClick={() => {
                                       setIsUserMenuOpen(false);
                                       setSettingsInitialView("auth");
                                       setIsSettingsOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                    className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
                                   >
                                     <HugeiconsIcon
                                       icon={UserIcon}
-                                      className="w-4 h-4 text-slate-400 shrink-0"
+                                      className="w-[15px] h-[15px] text-slate-400 shrink-0"
                                     />
                                     {t("userMenu.profileAndAccount")}
                                   </button>
@@ -827,26 +827,26 @@ function App() {
                                       setSettingsInitialView("menu");
                                       setIsSettingsOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                    className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
                                   >
                                     <HugeiconsIcon
                                       icon={Settings01Icon}
-                                      className="w-4 h-4 text-slate-400 shrink-0"
+                                      className="w-[15px] h-[15px] text-slate-400 shrink-0"
                                     />
                                     {t("userMenu.appSettings")}
                                   </button>
                                 </div>
-                                <div className="border-t border-slate-100/80 dark:border-slate-800/60 pt-1 mt-1">
+                                <div className="mt-1.5 mb-0.5">
                                   <button
                                     onClick={() => {
                                       setIsUserMenuOpen(false);
                                       setIsLogoutConfirmOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
+                                    className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
                                   >
                                     <HugeiconsIcon
                                       icon={Logout01Icon}
-                                      className="w-4 h-4 text-rose-500 shrink-0"
+                                      className="w-[15px] h-[15px] text-rose-500 shrink-0"
                                     />
                                     {t("userMenu.exitGuest")}
                                   </button>
@@ -854,18 +854,18 @@ function App() {
                               </>
                             ) : (
                               <>
-                                <div className="py-1 space-y-0.5">
+                                <div className="space-y-0.5">
                                   <button
                                     onClick={() => {
                                       setIsUserMenuOpen(false);
                                       setSettingsInitialView("auth");
                                       setIsSettingsOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                    className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
                                   >
                                     <HugeiconsIcon
                                       icon={UserIcon}
-                                      className="w-4 h-4 text-slate-400 shrink-0"
+                                      className="w-[15px] h-[15px] text-slate-400 shrink-0"
                                     />
                                     {t("userMenu.profileAndAccount")}
                                   </button>
@@ -875,26 +875,26 @@ function App() {
                                       setSettingsInitialView("menu");
                                       setIsSettingsOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                    className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
                                   >
                                     <HugeiconsIcon
                                       icon={Settings01Icon}
-                                      className="w-4 h-4 text-slate-400 shrink-0"
+                                      className="w-[15px] h-[15px] text-slate-400 shrink-0"
                                     />
                                     {t("userMenu.appSettings")}
                                   </button>
                                 </div>
-                                <div className="border-t border-slate-100/80 dark:border-slate-800/60 pt-1 mt-1">
+                                <div className="mt-1.5 mb-0.5">
                                   <button
                                     onClick={() => {
                                       setIsUserMenuOpen(false);
                                       setIsLogoutConfirmOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
+                                    className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
                                   >
                                     <HugeiconsIcon
                                       icon={Logout01Icon}
-                                      className="w-4 h-4 text-rose-500 shrink-0"
+                                      className="w-[15px] h-[15px] text-rose-500 shrink-0"
                                     />
                                     {t("userMenu.logout")}
                                   </button>
@@ -903,18 +903,18 @@ function App() {
                             )
                           ) : (
                             <>
-                              <div className="py-1 space-y-0.5">
+                              <div className="space-y-0.5">
                                 <button
                                   onClick={() => {
                                     setIsUserMenuOpen(false);
                                     setSettingsInitialView("auth");
                                     setIsSettingsOpen(true);
                                   }}
-                                  className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                  className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
                                 >
                                   <HugeiconsIcon
                                     icon={UserIcon}
-                                    className="w-4 h-4 text-slate-400 shrink-0"
+                                    className="w-[15px] h-[15px] text-slate-400 shrink-0"
                                   />
                                   {t("userMenu.loginRegister")}
                                 </button>
@@ -924,11 +924,11 @@ function App() {
                                     setSettingsInitialView("menu");
                                     setIsSettingsOpen(true);
                                   }}
-                                  className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                  className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
                                 >
                                   <HugeiconsIcon
                                     icon={Settings01Icon}
-                                    className="w-4 h-4 text-slate-400 shrink-0"
+                                    className="w-[15px] h-[15px] text-slate-400 shrink-0"
                                   />
                                   {t("userMenu.appSettings")}
                                 </button>
