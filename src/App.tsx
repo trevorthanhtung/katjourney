@@ -1188,6 +1188,7 @@ function App() {
                           }}
                           isAutoSyncing={isAutoSyncing}
                           lastSyncedAt={lastSyncedAt}
+                          onNavigateToTab={setActiveTab}
                         />
                       )}
                     </React.Suspense>

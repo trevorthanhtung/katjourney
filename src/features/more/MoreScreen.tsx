@@ -178,6 +178,7 @@ export function MoreScreen({
   isReadOnly,
   isAutoSyncing,
   lastSyncedAt,
+  onNavigateToTab,
 }: {
   trip: Trip;
   members: Member[];
@@ -199,6 +200,7 @@ export function MoreScreen({
   isReadOnly?: boolean;
   isAutoSyncing?: boolean;
   lastSyncedAt?: Date | null;
+  onNavigateToTab?: (tab: "home" | "timeline" | "expenses" | "checklist" | "more") => void;
 }) {
   const { t } = useTranslation();
   const [authName, setAuthName] = useState<string | null>(null);
@@ -626,7 +628,10 @@ export function MoreScreen({
                   </span>
                 </div>
 
-                <div className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-default">
+                <div
+                  onClick={() => onNavigateToTab?.("checklist")}
+                  className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-pointer active:scale-95"
+                >
                   <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-2 border border-amber-500/20 shadow-inner">
                     <HugeiconsIcon icon={CheckmarkBadge01Icon} className="w-5 h-5" />
                   </div>
@@ -638,7 +643,10 @@ export function MoreScreen({
                   </span>
                 </div>
 
-                <div className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-default">
+                <div
+                  onClick={() => onNavigateToTab?.("expenses")}
+                  className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-pointer active:scale-95"
+                >
                   <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-2 border border-emerald-500/20 shadow-inner">
                     <HugeiconsIcon icon={WalletCardsIcon} className="w-5 h-5" />
                   </div>
@@ -650,7 +658,10 @@ export function MoreScreen({
                   </span>
                 </div>
 
-                <div className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-default">
+                <div
+                  onClick={() => onNavigateToTab?.("expenses")}
+                  className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-pointer active:scale-95"
+                >
                   <div
                     className={classNames(
                       "h-10 w-10 rounded-xl flex items-center justify-center mb-2 border shadow-inner",
