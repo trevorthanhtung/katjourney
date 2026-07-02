@@ -51,20 +51,7 @@ export function SharedTripIdentityModal({
       />
 
       <div className="w-full max-w-md max-h-[90dvh] rounded-[32px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] border border-white/50 dark:border-white/5 animate-scaleIn flex flex-col relative overflow-hidden">
-        {/* Close button (only when swapping identity) */}
-        {currentUser && (
-          <button
-            onClick={() => {
-              localStorage.removeItem("kat_pending_swap_" + trip.id);
-              setShowIdentityModal(false);
-            }}
-            className="absolute top-5 right-5 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:scale-105 active:scale-95 transition-all z-20"
-            title={t("common.close")}
-          >
-            <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
-          </button>
-        )}
-
+        {/* No close button - users must select an identity or view mode */}
         {/* ── SCROLLABLE AREA: header scrolls away, search sticks ── */}
         <div className="flex-1 min-h-0 overflow-y-auto" style={{ overscrollBehavior: "contain" }}>
           {/* Header — scrolls away when user drags down */}
