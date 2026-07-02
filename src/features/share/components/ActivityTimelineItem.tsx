@@ -80,7 +80,7 @@ export function ActivityTimelineItem({
           <div className="flex flex-wrap items-baseline gap-2">
             <h4
               className={classNames(
-                "text-[15.5px] font-bold text-kat-dark break-words tracking-tight",
+                "text-[15.5px] font-bold text-kat-dark wrap-break-word tracking-tight",
                 item.isPendingDelete ? "line-through text-slate-400 opacity-60" : ""
               )}
             >
@@ -121,7 +121,7 @@ export function ActivityTimelineItem({
                   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
                   onMenuClick(String(item.id), rect);
                 }}
-                className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-90 transition-all focus:outline-none"
+                className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-90 transition-all focus:outline-hidden"
                 title={t("expenses.suggestOption")}
               >
                 <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
@@ -190,7 +190,7 @@ export function ActivityTimelineItem({
               icon={Location01Icon}
               className="h-4 w-4 shrink-0 mt-0.5 text-slate-400"
             />
-            <span className="break-words font-medium">{item.location}</span>
+            <span className="wrap-break-word font-medium">{item.location}</span>
           </p>
         )}
 
@@ -222,7 +222,7 @@ export function ActivityTimelineItem({
             onClick={(e) => e.stopPropagation()}
           >
             {getEmbedMapUrl(item.mapLink || item.location || "", item.location) && (
-              <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm bg-slate-100 relative min-h-[160px]">
+              <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-xs bg-slate-100 relative min-h-[160px]">
                 <div className="absolute inset-0 flex items-center justify-center text-slate-400">
                   <span className="text-[12px] font-medium animate-pulse">
                     {i18n.t("common.loadingMap", "Loading map...")}
@@ -310,7 +310,7 @@ export function ActivityTimelineItem({
                       onOpenBackupPlans(item);
                     }}
                     className={classNames(
-                      "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] font-bold border transition-colors motion-press cursor-pointer focus:outline-none",
+                      "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] font-bold border transition-colors motion-press cursor-pointer focus:outline-hidden",
                       backupCount > 0
                         ? "bg-indigo-50/60 dark:bg-indigo-950/20 text-indigo-650 dark:text-indigo-400 border-indigo-100 dark:border-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-950/30 shadow-[0_1px_4px_rgba(79,70,229,0.03)]"
                         : "bg-slate-50/40 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 border border-dashed border-slate-200 dark:border-slate-700 hover:bg-slate-100/60 dark:hover:bg-slate-800/85 hover:text-slate-700 dark:hover:text-slate-200"

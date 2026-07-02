@@ -36,7 +36,7 @@ export const GlobalToast = () => {
   }, []);
 
   return createPortal(
-    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[99999] px-4 w-full max-w-[400px] pointer-events-none flex flex-col items-center">
+    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-99999 px-4 w-full max-w-[400px] pointer-events-none flex flex-col items-center">
       <AnimatePresence mode="wait">
         {toast && (
           <motion.div

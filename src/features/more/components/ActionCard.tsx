@@ -87,7 +87,7 @@ export function ActionCard({
 }) {
   const content = (
     <>
-      <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-white/5"></div>
+      <div className="absolute inset-0 bg-linear-to-br from-white/40 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-white/5"></div>
       <div className="flex items-center gap-4 min-w-0 flex-1 relative z-10">
         <div
           className={classNames(
@@ -121,7 +121,7 @@ export function ActionCard({
   );
 
   const wrapperClasses = classNames(
-    "group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border p-4 shadow-sm transition-all focus:outline-none",
+    "group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border p-4 shadow-xs transition-all focus:outline-hidden",
     disabled
       ? "bg-slate-50 dark:bg-slate-900/40 border-slate-200/50 dark:border-slate-800/50 opacity-60 cursor-not-allowed"
       : "bg-white dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-700/50 hover:border-kat-primary/30 dark:hover:border-kat-primary/40 hover:shadow-md active:scale-[0.98]",

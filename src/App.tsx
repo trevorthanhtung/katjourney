@@ -427,9 +427,9 @@ function App() {
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 mb-2.5 border border-emerald-100 dark:border-emerald-900/30">
             <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" strokeWidth={3} />
           </div>
-          <p className="text-[14px] font-bold text-kat-dark">Tuyệt vời! Không có nhắc nhở</p>
+          <p className="text-[14px] font-bold text-kat-dark">{t("reminders.noRemindersTitle")}</p>
           <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
-            Hành trình của bạn đã sẵn sàng.
+            {t("reminders.noRemindersDesc")}
           </p>
         </div>
       );
@@ -438,50 +438,50 @@ function App() {
     return reminders.map((rem) => {
       let icon = Notification01Icon;
       let colorClasses =
-        "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-100/50 dark:border-slate-700/50";
+        "bg-slate-50 dark:bg-slate-500/15 text-slate-600 dark:text-slate-400 border border-slate-100/50 dark:border-transparent";
 
       switch (rem.tab) {
         case "timeline":
           icon = Calendar01Icon;
           colorClasses =
-            "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/30";
+            "bg-blue-50 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-transparent";
           break;
         case "checklist":
           icon = CheckListIcon;
           colorClasses =
-            "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/30";
+            "bg-amber-50 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-transparent";
           break;
         case "expenses":
           icon = WalletCardsIcon;
           colorClasses =
-            "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/30";
+            "bg-emerald-50 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-transparent";
           break;
         case "documents":
           icon = File01Icon;
           colorClasses =
-            "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/30";
+            "bg-rose-50 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-transparent";
           break;
         case "journal":
           icon = Globe02Icon;
           colorClasses =
-            "bg-violet-50 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400 border border-violet-100/50 dark:border-violet-900/30";
+            "bg-violet-50 dark:bg-violet-500/15 text-violet-600 dark:text-violet-400 border border-violet-100/50 dark:border-transparent";
           break;
         case "wrapped":
           icon = SparklesIcon;
           colorClasses =
-            "bg-sky-50 dark:bg-sky-950/20 text-sky-600 dark:text-sky-400 border border-sky-100/50 dark:border-sky-900/30";
+            "bg-sky-50 dark:bg-sky-500/15 text-sky-600 dark:text-sky-400 border border-sky-100/50 dark:border-transparent";
           break;
         case "share_requests" as any:
           icon = NotificationBubbleIcon;
           colorClasses =
-            "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/30";
+            "bg-rose-50 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-transparent";
           break;
       }
 
       return (
         <button
           key={rem.id}
-          className="flex w-full items-center gap-3.5 bg-white dark:bg-slate-900 p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 active:bg-slate-100 dark:active:bg-slate-800 transition-colors focus:outline-none"
+          className="flex w-full items-center gap-4 bg-white dark:bg-slate-900 px-5 py-4.5 text-left hover:bg-slate-50 dark:hover:bg-slate-800/60 active:bg-slate-100 dark:active:bg-slate-800 transition-colors focus:outline-hidden"
           onClick={() => {
             const handleNavigation = (action: () => void) => {
               if (!isDesktop && window.location.hash === "#reminders-modal") {
@@ -516,7 +516,7 @@ function App() {
           {/* Leading Icon */}
           <div
             className={classNames(
-              "flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-sm",
+              "flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-xs",
               colorClasses
             )}
           >
@@ -525,7 +525,7 @@ function App() {
 
           {/* Message Content */}
           <div className="flex-1 min-w-0">
-            <p className="text-[13.5px] font-semibold text-slate-700 dark:text-slate-300 leading-snug break-words">
+            <p className="text-[13.5px] font-semibold text-slate-700 dark:text-slate-300 leading-snug wrap-break-word">
               {rem.text}
             </p>
           </div>
@@ -570,7 +570,7 @@ function App() {
       {!isShareRoute && (
         <div
           className={classNames(
-            "font-sans text-kat-text antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg",
+            "font-sans text-kat-text subpixel-antialiased selection:bg-kat-primary-light/30 selection:text-kat-text flex flex-col min-h-screen bg-kat-bg",
             showSplash && "transition-all duration-500 ease-out",
             showSplash && (isSplashFading ? "scale-100 opacity-100" : "scale-[0.96] opacity-0")
           )}
@@ -583,7 +583,7 @@ function App() {
           }
         >
           <header
-            className={`sticky top-0 z-40 px-2.5 min-[390px]:px-4 pb-3 pt-3 glass-panel-header shadow-[0_4px_24px_rgba(3,13,46,0.05)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/70 before:to-transparent transition-transform duration-200 ease-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`}
+            className={`sticky top-0 z-40 px-2.5 min-[390px]:px-4 pb-3 pt-3 glass-panel-header shadow-[0_4px_24px_rgba(3,13,46,0.05)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-linear-to-r before:from-transparent before:via-white/70 before:to-transparent transition-transform duration-200 ease-out ${areBarsVisible ? "translate-y-0" : "-translate-y-full"}`}
             style={{
               paddingTop: "calc(0.75rem + var(--safe-top))",
               paddingLeft: "max(0.625rem, var(--safe-left))",
@@ -597,7 +597,7 @@ function App() {
                   <img
                     src="/asset/logo.png"
                     alt="KAT Journey Logo"
-                    className="hidden lg:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-sm"
+                    className="hidden lg:block h-[26px] w-[26px] min-[390px]:h-[28px] min-[390px]:w-[28px] shrink-0 object-contain drop-shadow-xs"
                   />
                   <h1 className="text-[17px] min-[390px]:text-[20px] font-extrabold tracking-tight text-kat-text whitespace-nowrap shrink-0">
                     KAT Journey
@@ -606,7 +606,7 @@ function App() {
 
                 {/* Desktop Navigation */}
                 {!isManagingTrips && tripId && (
-                  <div className="hidden lg:flex ml-6 gap-2 bg-slate-100/50 dark:bg-white/5 backdrop-blur-md p-1.5 rounded-full border border-slate-200/50 dark:border-white/10 shadow-sm relative">
+                  <div className="hidden lg:flex ml-6 gap-2 bg-slate-100/50 dark:bg-white/5 backdrop-blur-md p-1.5 rounded-full border border-slate-200/50 dark:border-white/10 shadow-xs relative">
                     {(["home", "timeline", "expenses", "checklist", "more"] as const).map((tab) => {
                       const isActive = activeTab === tab;
                       return (
@@ -626,7 +626,7 @@ function App() {
                           {isActive && (
                             <motion.div
                               layoutId="desktop-nav-active-pill"
-                              className="absolute inset-0 bg-white dark:bg-white/15 rounded-full shadow-sm ring-1 ring-black/5 dark:ring-white/10 -z-10"
+                              className="absolute inset-0 bg-white dark:bg-white/15 rounded-full shadow-xs ring-1 ring-black/5 dark:ring-white/10 -z-10"
                               transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
                             />
                           )}
@@ -653,7 +653,7 @@ function App() {
 
                 <button
                   onClick={() => setIsImportModalOpen(true)}
-                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
+                  className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-xs focus:outline-hidden shrink-0"
                   title="Xem chuyến đi qua link chia sẻ"
                   aria-label="Xem chuyến đi qua link chia sẻ"
                 >
@@ -667,7 +667,7 @@ function App() {
                   <>
                     <button
                       onClick={() => setIsSearchOpen(true)}
-                      className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
+                      className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-xs focus:outline-hidden shrink-0"
                       title="Tìm trong chuyến đi"
                       aria-label={t("search.placeholder")}
                     >
@@ -680,7 +680,7 @@ function App() {
                     <div className="relative" ref={remindersRef}>
                       <button
                         onClick={() => setIsRemindersOpen(!isRemindersOpen)}
-                        className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
+                        className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-xs focus:outline-hidden shrink-0"
                         title={t("reminders.title")}
                         aria-label={t("reminders.title")}
                       >
@@ -697,7 +697,7 @@ function App() {
                         )}
                       </button>
                       {reminders.length > 0 && (
-                        <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 min-[390px]:h-4 min-[390px]:w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] min-[390px]:text-[10px] font-black text-white ring-2 ring-white pointer-events-none">
+                        <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 min-[390px]:h-4 min-[390px]:w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] min-[390px]:text-[10px] font-black text-white ring-2 ring-white dark:ring-kat-dark pointer-events-none">
                           {reminders.length}
                         </span>
                       )}
@@ -719,7 +719,7 @@ function App() {
                             </div>
 
                             {/* Popover Content */}
-                            <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[400px] overflow-y-auto custom-scrollbar">
+                            <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
                               {renderReminderItems()}
                             </div>
                           </div>
@@ -732,7 +732,7 @@ function App() {
                         setIsManagingTrips(true);
                         setIsViewingArchive(false);
                       }}
-                      className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
+                      className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 active:scale-[0.97] transition-all duration-150 shadow-xs focus:outline-hidden shrink-0"
                       title="Quay lại danh sách chuyến đi"
                       aria-label="Quay lại danh sách chuyến đi"
                     >
@@ -746,7 +746,7 @@ function App() {
                   <div className="relative" ref={userMenuRef}>
                     <button
                       onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                      className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full overflow-hidden bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 hover:bg-white dark:hover:bg-white/10 hover:text-slate-800 dark:hover:text-white hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-[0.97] transition-all duration-150 shadow-sm focus:outline-none shrink-0"
+                      className="flex h-8 w-8 min-[390px]:h-9 min-[390px]:w-9 items-center justify-center rounded-full overflow-hidden bg-white/80 dark:bg-white/5 backdrop-blur-md border border-slate-200/80 dark:border-white/10 hover:bg-white dark:hover:bg-white/10 hover:text-slate-800 dark:hover:text-white hover:ring-2 hover:ring-[#00BFB7]/40 active:scale-[0.97] transition-all duration-150 shadow-xs focus:outline-hidden shrink-0"
                       title={t("userMenu.accountMenu")}
                       aria-label={t("userMenu.accountMenu")}
                     >
@@ -758,7 +758,7 @@ function App() {
                             className="h-full w-full object-cover"
                           />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[11px] min-[390px]:text-[13px]">
+                          <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-[#4285F4] to-[#357AE8] text-white font-extrabold text-[11px] min-[390px]:text-[13px]">
                             {user.displayName
                               ? user.displayName
                                   .split(" ")
@@ -782,8 +782,8 @@ function App() {
                     {isUserMenuOpen && (
                       <>
                         <div className="absolute right-0 mt-2 z-50 w-52 rounded-2xl bg-white dark:bg-kat-surface border border-slate-200/80 dark:border-kat-border shadow-floating p-1.5 animate-fadeIn">
-                          <div className="px-3.5 py-2.5 border-b border-slate-100/80 dark:border-slate-800/60">
-                            <p className="text-[13px] font-black text-kat-dark truncate text-left">
+                          <div className="px-3 py-2 mb-1">
+                            <p className="text-[13px] font-bold text-kat-dark truncate text-left">
                               {isAuthenticated && user
                                 ? provider === "guest"
                                   ? t("userMenu.guest")
@@ -791,12 +791,12 @@ function App() {
                                 : t("userMenu.notLoggedIn")}
                             </p>
                             {isAuthenticated && user && provider !== "guest" && user.email ? (
-                              <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
+                              <p className="text-[11.5px] text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5 text-left">
                                 {user.email}
                               </p>
                             ) : (
                               (!isAuthenticated || !user) && (
-                                <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5 text-left">
+                                <p className="text-[11.5px] text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5 text-left">
                                   {t("userMenu.loginToSync")}
                                 </p>
                               )
@@ -806,18 +806,18 @@ function App() {
                           {isAuthenticated && user ? (
                             provider === "guest" ? (
                               <>
-                                <div className="py-1 space-y-0.5">
+                                <div className="space-y-0.5">
                                   <button
                                     onClick={() => {
                                       setIsUserMenuOpen(false);
                                       setSettingsInitialView("auth");
                                       setIsSettingsOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                    className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
                                   >
                                     <HugeiconsIcon
                                       icon={UserIcon}
-                                      className="w-4 h-4 text-slate-400 shrink-0"
+                                      className="w-[15px] h-[15px] text-slate-400 shrink-0"
                                     />
                                     {t("userMenu.profileAndAccount")}
                                   </button>
@@ -827,26 +827,26 @@ function App() {
                                       setSettingsInitialView("menu");
                                       setIsSettingsOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                    className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
                                   >
                                     <HugeiconsIcon
                                       icon={Settings01Icon}
-                                      className="w-4 h-4 text-slate-400 shrink-0"
+                                      className="w-[15px] h-[15px] text-slate-400 shrink-0"
                                     />
                                     {t("userMenu.appSettings")}
                                   </button>
                                 </div>
-                                <div className="border-t border-slate-100/80 dark:border-slate-800/60 pt-1 mt-1">
+                                <div className="mt-1.5 mb-0.5">
                                   <button
                                     onClick={() => {
                                       setIsUserMenuOpen(false);
                                       setIsLogoutConfirmOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
+                                    className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
                                   >
                                     <HugeiconsIcon
                                       icon={Logout01Icon}
-                                      className="w-4 h-4 text-rose-500 shrink-0"
+                                      className="w-[15px] h-[15px] text-rose-500 shrink-0"
                                     />
                                     {t("userMenu.exitGuest")}
                                   </button>
@@ -854,18 +854,18 @@ function App() {
                               </>
                             ) : (
                               <>
-                                <div className="py-1 space-y-0.5">
+                                <div className="space-y-0.5">
                                   <button
                                     onClick={() => {
                                       setIsUserMenuOpen(false);
                                       setSettingsInitialView("auth");
                                       setIsSettingsOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                    className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
                                   >
                                     <HugeiconsIcon
                                       icon={UserIcon}
-                                      className="w-4 h-4 text-slate-400 shrink-0"
+                                      className="w-[15px] h-[15px] text-slate-400 shrink-0"
                                     />
                                     {t("userMenu.profileAndAccount")}
                                   </button>
@@ -875,26 +875,26 @@ function App() {
                                       setSettingsInitialView("menu");
                                       setIsSettingsOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                    className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
                                   >
                                     <HugeiconsIcon
                                       icon={Settings01Icon}
-                                      className="w-4 h-4 text-slate-400 shrink-0"
+                                      className="w-[15px] h-[15px] text-slate-400 shrink-0"
                                     />
                                     {t("userMenu.appSettings")}
                                   </button>
                                 </div>
-                                <div className="border-t border-slate-100/80 dark:border-slate-800/60 pt-1 mt-1">
+                                <div className="mt-1.5 mb-0.5">
                                   <button
                                     onClick={() => {
                                       setIsUserMenuOpen(false);
                                       setIsLogoutConfirmOpen(true);
                                     }}
-                                    className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-black text-rose-650 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
+                                    className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors"
                                   >
                                     <HugeiconsIcon
                                       icon={Logout01Icon}
-                                      className="w-4 h-4 text-rose-500 shrink-0"
+                                      className="w-[15px] h-[15px] text-rose-500 shrink-0"
                                     />
                                     {t("userMenu.logout")}
                                   </button>
@@ -903,18 +903,18 @@ function App() {
                             )
                           ) : (
                             <>
-                              <div className="py-1 space-y-0.5">
+                              <div className="space-y-0.5">
                                 <button
                                   onClick={() => {
                                     setIsUserMenuOpen(false);
                                     setSettingsInitialView("auth");
                                     setIsSettingsOpen(true);
                                   }}
-                                  className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                  className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
                                 >
                                   <HugeiconsIcon
                                     icon={UserIcon}
-                                    className="w-4 h-4 text-slate-400 shrink-0"
+                                    className="w-[15px] h-[15px] text-slate-400 shrink-0"
                                   />
                                   {t("userMenu.loginRegister")}
                                 </button>
@@ -924,11 +924,11 @@ function App() {
                                     setSettingsInitialView("menu");
                                     setIsSettingsOpen(true);
                                   }}
-                                  className="flex w-full items-center gap-2.5 px-3.5 py-2 rounded-xl text-left text-[12.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                  className="flex w-full items-center gap-2.5 px-3 py-1.5 rounded-lg text-left text-[13px] font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
                                 >
                                   <HugeiconsIcon
                                     icon={Settings01Icon}
-                                    className="w-4 h-4 text-slate-400 shrink-0"
+                                    className="w-[15px] h-[15px] text-slate-400 shrink-0"
                                   />
                                   {t("userMenu.appSettings")}
                                 </button>
@@ -945,7 +945,7 @@ function App() {
           </header>
 
           {!isOnline && (
-            <div className="bg-amber-500 text-white px-4 py-2 flex items-center justify-center gap-2 shadow-sm animate-fadeIn z-40 relative">
+            <div className="bg-amber-500 text-white px-4 py-2 flex items-center justify-center gap-2 shadow-xs animate-fadeIn z-40 relative">
               <HugeiconsIcon icon={WifiOffIcon} className="w-4 h-4 shrink-0" />
               <div className="text-[13px] font-bold">
                 {t("offline.title")}{" "}
@@ -956,13 +956,13 @@ function App() {
 
           {syncProps.hasCloudVersion && (
             <div className="max-w-[1280px] mx-auto mt-4 mb-2 px-4 sm:px-6">
-              <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/35 dark:to-indigo-950/35 border border-blue-100/40 dark:border-blue-900/40 shadow-sm p-3 sm:py-2.5 sm:px-4 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="relative overflow-hidden rounded-xl bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-950/35 dark:to-indigo-950/35 border border-blue-100/40 dark:border-blue-900/40 shadow-xs p-3 sm:py-2.5 sm:px-4 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
                 {/* Background decorative blob */}
                 <div className="absolute -right-6 -top-6 w-20 h-20 bg-blue-500/5 dark:bg-blue-400/5 rounded-full blur-xl"></div>
                 <div className="absolute -left-6 -bottom-6 w-20 h-20 bg-indigo-500/5 dark:bg-indigo-400/5 rounded-full blur-xl"></div>
 
                 <div className="relative flex items-center gap-2.5 z-10 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center shrink-0 border border-blue-50 dark:border-slate-700/50 text-blue-600 dark:text-blue-450">
+                  <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 shadow-xs flex items-center justify-center shrink-0 border border-blue-50 dark:border-slate-700/50 text-blue-600 dark:text-blue-450">
                     <HugeiconsIcon icon={CloudIcon} className="w-4.5 h-4.5" />
                   </div>
                   <div className="min-w-0">
@@ -1299,7 +1299,7 @@ function App() {
 
           {(syncProps.isSyncing || syncProps.isAutoSyncingUI) && (
             <div className="fixed bottom-24 md:bottom-6 right-6 z-50 animate-fadeIn pointer-events-none">
-              <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/90 text-white shadow-lg backdrop-blur-sm border border-white/10 text-[12px] font-bold">
+              <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/90 text-white shadow-lg backdrop-blur-xs border border-white/10 text-[12px] font-bold">
                 <HugeiconsIcon
                   icon={RefreshIcon}
                   className="w-3.5 h-3.5 animate-spin text-kat-teal shrink-0"
@@ -1327,7 +1327,7 @@ function App() {
               title={t("reminders.title")}
               subtitle={t("reminders.subtitle")}
             >
-              <div className="divide-y divide-slate-100 dark:divide-slate-800 -mx-5 -mb-4 mt-1 border-t border-slate-100 dark:border-slate-800/80">
+              <div className="-mx-5 -mb-4 mt-1 border-t border-slate-100 dark:border-slate-800/80">
                 {renderReminderItems()}
               </div>
             </BottomSheet>

@@ -127,8 +127,8 @@ export function WeatherWidget({
 
   if (!activeDest?.name?.trim() && !activeDest?.latitude && !activeDest?.longitude) {
     return (
-      <div className="w-full mb-6 rounded-3xl bg-gradient-to-b from-sky-50/20 via-sky-50/5 to-white dark:from-sky-950/10 dark:via-sky-950/5 dark:to-kat-surface border border-slate-200/40 dark:border-kat-border/40 p-5 shadow-[0_4px_20px_rgba(3,13,46,0.02)] dark:shadow-none flex flex-col items-center justify-center text-center gap-2">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 dark:bg-sky-950 text-sky-500 mb-1 shadow-sm animate-pulse">
+      <div className="w-full mb-6 rounded-3xl bg-linear-to-b from-sky-50/20 via-sky-50/5 to-white dark:from-sky-950/10 dark:via-sky-950/5 dark:to-kat-surface border border-slate-200/40 dark:border-kat-border/40 p-5 shadow-[0_4px_20px_rgba(3,13,46,0.02)] dark:shadow-none flex flex-col items-center justify-center text-center gap-2">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 dark:bg-sky-950 text-sky-500 mb-1 shadow-xs animate-pulse">
           <HugeiconsIcon icon={CloudRainWindIcon} className="w-5.5 h-5.5" />
         </span>
         <span className="text-[14px] font-bold text-kat-dark">
@@ -189,9 +189,9 @@ export function WeatherWidget({
 
   return (
     <>
-      <div className="w-full mb-6 rounded-3xl bg-gradient-to-b from-sky-50/70 via-sky-50/20 to-white dark:from-sky-950/20 dark:via-sky-950/5 dark:to-kat-surface border border-sky-100/70 dark:border-kat-border/40 shadow-[0_8px_30px_rgba(107,178,255,0.08)] dark:shadow-none relative overflow-hidden">
+      <div className="w-full mb-6 rounded-3xl bg-linear-to-b from-sky-50/70 via-sky-50/20 to-white dark:from-sky-950/20 dark:via-sky-950/5 dark:to-kat-surface border border-sky-100/70 dark:border-kat-border/40 shadow-[0_8px_30px_rgba(107,178,255,0.08)] dark:shadow-none relative overflow-hidden">
         {/* Decorative background element */}
-        <div className="absolute -right-8 -top-8 text-sky-400/[0.04] dark:text-sky-400/[0.02] pointer-events-none">
+        <div className="absolute -right-8 -top-8 text-sky-400/4 dark:text-sky-400/2 pointer-events-none">
           <HugeiconsIcon icon={CloudRainWindIcon} className="w-48 h-48" />
         </div>
 
@@ -272,7 +272,7 @@ export function WeatherWidget({
                   </span>
 
                   <div className="w-8 flex items-center justify-center shrink-0">
-                    {getWeatherIcon(forecast.weathercode[idx], "w-[22px] h-[22px] drop-shadow-sm")}
+                    {getWeatherIcon(forecast.weathercode[idx], "w-[22px] h-[22px] drop-shadow-xs")}
                   </div>
 
                   <div className="flex items-center gap-3 flex-1 justify-end">
@@ -283,13 +283,13 @@ export function WeatherWidget({
                     {/* iOS Style Temperature Bar with current temp dot */}
                     <div className="h-1.5 w-16 sm:w-20 bg-slate-100 dark:bg-slate-800 rounded-full overflow-visible relative shrink-0">
                       <div
-                        className="absolute h-full bg-gradient-to-r from-sky-400 via-emerald-400 to-amber-400 rounded-full opacity-90 shadow-sm"
+                        className="absolute h-full bg-linear-to-r from-sky-400 via-emerald-400 to-amber-400 rounded-full opacity-90 shadow-xs"
                         style={{ left: `${leftPercent}%`, width: `${widthPercent}%` }}
                       />
                       {/* Current temperature indicator dot (only for "Hôm nay") */}
                       {currentTempDotPercent != null && (
                         <div
-                          className="absolute w-3 h-3 bg-white border-2 border-sky-500 rounded-full shadow-md -top-[3px] transition-all"
+                          className="absolute w-3 h-3 bg-white border-2 border-sky-500 rounded-full shadow-md top-[-3px] transition-all"
                           style={{ left: `calc(${currentTempDotPercent}% - 6px)` }}
                           title={t("weather.currentTemp", { temp: formatTemp(currentTemp!) })}
                         />

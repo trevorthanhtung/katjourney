@@ -419,7 +419,7 @@ export function SharedJournalsSection({
     <>
       <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden">
         {/* Ambient background glow */}
-        <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-sky-500/[0.03] dark:bg-sky-500/[0.05] blur-[30px] pointer-events-none" />
+        <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-sky-500/3 dark:bg-sky-500/5 blur-[30px] pointer-events-none" />
 
         {/* Header */}
         <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
@@ -444,7 +444,7 @@ export function SharedJournalsSection({
                 onClick={() => setJournalMode("posts")}
                 className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${
                   journalMode === "posts"
-                    ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200/60 dark:border-slate-700 shadow-sm"
+                    ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200/60 dark:border-slate-700 shadow-xs"
                     : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
                 }`}
               >
@@ -454,7 +454,7 @@ export function SharedJournalsSection({
                 onClick={() => setJournalMode("chat")}
                 className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${
                   journalMode === "chat"
-                    ? "bg-white dark:bg-slate-800 text-kat-teal dark:text-kat-primary shadow-sm border-slate-200/60 dark:border-slate-700"
+                    ? "bg-white dark:bg-slate-800 text-kat-teal dark:text-kat-primary shadow-xs border-slate-200/60 dark:border-slate-700"
                     : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
                 }`}
               >
@@ -469,7 +469,7 @@ export function SharedJournalsSection({
             <button
               onClick={() => setIsFormOpen(true)}
               className={classNames(
-                "items-center justify-center gap-1.5 px-4 py-2 bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 font-bold rounded-[14px] text-[13px] hover:bg-opacity-95 dark:hover:bg-kat-primary/95 transition-all shadow-sm shrink-0 motion-press",
+                "items-center justify-center gap-1.5 px-4 py-2 bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 font-bold rounded-[14px] text-[13px] hover:bg-opacity-95 dark:hover:bg-kat-primary/95 transition-all shadow-xs shrink-0 motion-press",
                 mergedJournals.length > 0 ? "hidden lg:flex" : "flex"
               )}
             >
@@ -618,7 +618,7 @@ export function SharedJournalsSection({
                             )}
 
                             <div className="p-4 pt-3">
-                              <h4 className="text-[17px] font-black text-kat-dark dark:text-slate-200 leading-snug break-words">
+                              <h4 className="text-[17px] font-black text-kat-dark dark:text-slate-200 leading-snug wrap-break-word">
                                 {j.title || t("journal.defaultTitle")}
                               </h4>
                               {j.locationName && (
@@ -745,7 +745,7 @@ export function SharedJournalsSection({
                 type="button"
                 disabled={hasError}
                 onClick={handleCreate}
-                className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
+                className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-xs hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
               >
                 <HugeiconsIcon icon={SaveIcon} className="h-4.5 w-4.5" strokeWidth={2.5} />
                 {t("journal.submit")}
@@ -827,7 +827,7 @@ export function SharedJournalsSection({
                   <button
                     type="button"
                     onClick={fetchLocation}
-                    className="flex items-center gap-1.5 text-[12.5px] font-bold text-slate-400 hover:text-kat-primary transition-colors focus:outline-none"
+                    className="flex items-center gap-1.5 text-[12.5px] font-bold text-slate-400 hover:text-kat-primary transition-colors focus:outline-hidden"
                   >
                     <HugeiconsIcon icon={LocationOfflineIcon} className="h-3.5 w-3.5" />
                     <span>{t("journal.attachLocation", "Nhấn để đính kèm vị trí")}</span>
@@ -856,7 +856,7 @@ export function SharedJournalsSection({
                       }}
                       className={`flex items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-bold border transition-all duration-200 active:scale-95 ${
                         isActive
-                          ? "bg-kat-primary-soft dark:bg-kat-primary-soft/30 border-[#00BFB7] dark:border-kat-primary/50 text-kat-teal dark:text-kat-primary-usable shadow-sm"
+                          ? "bg-kat-primary-soft dark:bg-kat-primary-soft/30 border-[#00BFB7] dark:border-kat-primary/50 text-kat-teal dark:text-kat-primary-usable shadow-xs"
                           : "bg-white dark:bg-slate-800 border-slate-205 dark:border-slate-700/50 text-slate-655 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                       }`}
                     >
@@ -898,7 +898,7 @@ export function SharedJournalsSection({
                   <img
                     src={form.imageUrl}
                     alt="Uploaded"
-                    className="w-full aspect-[4/3] object-contain"
+                    className="w-full aspect-4/3 object-contain"
                   />
                   <button
                     onClick={() => {
@@ -923,7 +923,7 @@ export function SharedJournalsSection({
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploading}
-                    className="w-full h-12 rounded-xl bg-indigo-50/80 dark:bg-indigo-500/[0.04] text-indigo-500 dark:text-indigo-400 font-bold text-[14px] hover:bg-indigo-100/80 dark:hover:bg-indigo-500/[0.08] transition-all flex items-center justify-center gap-2 group border border-indigo-100/50 dark:border-indigo-500/10 active:scale-[0.98]"
+                    className="w-full h-12 rounded-xl bg-indigo-50/80 dark:bg-indigo-500/4 text-indigo-500 dark:text-indigo-400 font-bold text-[14px] hover:bg-indigo-100/80 dark:hover:bg-indigo-500/8 transition-all flex items-center justify-center gap-2 group border border-indigo-100/50 dark:border-indigo-500/10 active:scale-[0.98]"
                   >
                     {uploading ? (
                       <>

@@ -523,7 +523,7 @@ export function SettingsSheet({
       return (
         <button
           onClick={handleSheetClose}
-          className="flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700/60 focus:outline-none"
+          className="flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700/60 focus:outline-hidden"
           title="Quay lại"
           aria-label="Quay lại"
         >
@@ -611,7 +611,7 @@ export function SettingsSheet({
       >
         <div className="space-y-5 text-left">
           <div className="rounded-[22px] bg-amber-500/10 dark:bg-amber-950/20 border border-amber-500/20 dark:border-amber-900/30 p-4 text-[13px] text-amber-800 dark:text-amber-350 font-bold leading-relaxed flex items-start gap-3 shadow-inner">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 dark:bg-amber-500/25 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5 shadow-sm">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 dark:bg-amber-500/25 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5 shadow-xs">
               <HugeiconsIcon icon={AlertCircleIcon} className="w-4.5 h-4.5" />
             </div>
             <span className="pt-1 flex-1">{t("settings.dialogs.cloudRestore.warning")}</span>
@@ -635,10 +635,10 @@ export function SettingsSheet({
                 className="sr-only"
               />
               <div
-                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border shadow-sm transition-colors ${
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border shadow-xs transition-colors ${
                   restoreMode === "merge"
                     ? "bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:bg-indigo-500/25 dark:text-indigo-400 dark:border-indigo-500/20 shadow-inner"
-                    : "bg-slate-50 dark:bg-slate-800 text-slate-450 dark:text-slate-500 border-slate-200/80 dark:border-white/[0.03] shadow-sm"
+                    : "bg-slate-50 dark:bg-slate-800 text-slate-450 dark:text-slate-500 border-slate-200/80 dark:border-white/3 shadow-xs"
                 }`}
               >
                 <HugeiconsIcon icon={GitMergeIcon} className="w-5.5 h-5.5" />
@@ -687,10 +687,10 @@ export function SettingsSheet({
                 className="sr-only"
               />
               <div
-                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border shadow-sm transition-colors ${
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border shadow-xs transition-colors ${
                   restoreMode === "replace"
                     ? "bg-rose-500/15 text-rose-500 border-rose-500/20 dark:bg-rose-500/25 dark:text-rose-400 dark:border-rose-500/20 shadow-inner"
-                    : "bg-slate-50 dark:bg-slate-800 text-slate-450 dark:text-slate-500 border-slate-200/80 dark:border-white/[0.03] shadow-sm"
+                    : "bg-slate-50 dark:bg-slate-800 text-slate-450 dark:text-slate-500 border-slate-200/80 dark:border-white/3 shadow-xs"
                 }`}
               >
                 <HugeiconsIcon icon={Delete01Icon} className="w-5.5 h-5.5" />
@@ -730,14 +730,14 @@ export function SettingsSheet({
             <button
               type="button"
               onClick={() => setIsRestoreConfirmOpen(false)}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100/80 dark:bg-slate-800/80 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200 border border-transparent dark:border-white/5 cursor-pointer shadow-sm"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center rounded-[16px] bg-slate-100/80 dark:bg-slate-800/80 px-6 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all duration-200 border border-transparent dark:border-white/5 cursor-pointer shadow-xs"
             >
               {t("settings.dialogs.cloudRestore.cancel")}
             </button>
             <button
               type="button"
               onClick={handleRestore}
-              className={`flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] px-6 font-black active:scale-[0.98] transition-all duration-200 shadow-sm border border-transparent dark:border-white/[0.04] cursor-pointer ${
+              className={`flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-[16px] px-6 font-black active:scale-[0.98] transition-all duration-200 shadow-xs border border-transparent dark:border-white/4 cursor-pointer ${
                 restoreMode === "replace"
                   ? "bg-rose-600 text-white hover:bg-rose-700 hover:shadow-[0_4px_16px_rgba(225,29,72,0.3)]"
                   : "bg-[#00BFB7] text-slate-950 hover:bg-[#00A19D] hover:shadow-[0_4px_16px_rgba(0,191,183,0.3)]"
@@ -787,7 +787,7 @@ export function SettingsSheet({
                 }
                 setSelectedFileForRestore(null);
               }}
-              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-slate-800 border border-kat-dark dark:border-white/[0.04] px-6 font-bold text-white dark:text-slate-200 hover:bg-kat-dark dark:hover:bg-slate-700 bg-opacity-90 active:scale-98 transition-all duration-200 shadow-sm"
+              className="flex-1 inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-slate-800 border border-kat-dark dark:border-white/4 px-6 font-bold text-white dark:text-slate-200 hover:bg-kat-dark dark:hover:bg-slate-700 bg-opacity-90 active:scale-98 transition-all duration-200 shadow-xs"
             >
               <HugeiconsIcon icon={Upload01Icon} className="h-5 w-5" />
               {t("settings.dialogs.fileRestore.restore")}
@@ -804,10 +804,10 @@ export function SettingsSheet({
 
       {/* ── Import Preview Modal ── */}
       {isImportPreviewOpen && importPreview && (
-        <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
+        <div className="fixed inset-0 z-200 flex items-end sm:items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn">
           <div className="bg-white dark:bg-kat-surface w-full max-w-md rounded-[28px] border border-slate-200 dark:border-kat-border/60 shadow-2xl dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-hidden animate-scaleUp">
             {/* Header */}
-            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100 dark:border-white/[0.04]">
+            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100 dark:border-white/4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/40">
                   <HugeiconsIcon icon={PackageReceiveIcon} className="h-5 w-5" />
@@ -925,7 +925,7 @@ export function SettingsSheet({
                       <HugeiconsIcon icon={item.icon} className="w-16 h-16" />
                     </div>
                     <div
-                      className={`flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-slate-800 shadow-sm mb-2 ${item.color}`}
+                      className={`flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-slate-800 shadow-xs mb-2 ${item.color}`}
                     >
                       <HugeiconsIcon icon={item.icon} className="w-4 h-4" />
                     </div>
@@ -964,7 +964,7 @@ export function SettingsSheet({
               <button
                 onClick={() => importTrip(importPreview.parsed)}
                 disabled={importing}
-                className="flex-1 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary font-black text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] transition-all disabled:opacity-60 shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] border border-transparent dark:border-kat-primary dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent"
+                className="flex-1 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary font-black text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] transition-all disabled:opacity-60 shadow-xs dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] border border-transparent dark:border-kat-primary dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent"
               >
                 {importing ? (
                   <HugeiconsIcon icon={Loading01Icon} className="h-4 w-4 animate-spin" />

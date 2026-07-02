@@ -184,7 +184,7 @@ export function WeatherDetailsModal({
     const uvRating = getUvRating(uvIndex);
 
     return createPortal(
-      <div className="fixed inset-0 z-[60] flex items-end justify-center md:items-center p-0 md:p-4">
+      <div className="fixed inset-0 z-60 flex items-end justify-center md:items-center p-0 md:p-4">
         {/* Dynamic Keyframes Injector */}
         <style>{`
           @keyframes sun-glow {
@@ -312,7 +312,7 @@ export function WeatherDetailsModal({
             {/* Header Actions */}
             <button
               onClick={onClose}
-              className="absolute right-4 top-4 h-11 w-11 bg-black/20 hover:bg-black/35 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all active:scale-90 shadow-sm z-50 cursor-pointer"
+              className="absolute right-4 top-4 h-11 w-11 bg-black/20 hover:bg-black/35 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all active:scale-90 shadow-xs z-50 cursor-pointer"
             >
               <HugeiconsIcon icon={Cancel01Icon} className="w-5.5 h-5.5" />
             </button>
@@ -327,7 +327,7 @@ export function WeatherDetailsModal({
                   <button
                     type="button"
                     onClick={() => setIsDestDropdownOpen(!isDestDropdownOpen)}
-                    className={`flex items-center gap-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white text-lg md:text-xl font-bold rounded-xl pl-4 pr-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all ${isDestDropdownOpen ? "bg-white/30 shadow-inner" : ""}`}
+                    className={`flex items-center gap-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white text-lg md:text-xl font-bold rounded-xl pl-4 pr-3 py-1.5 focus:outline-hidden focus:ring-2 focus:ring-white/50 transition-all ${isDestDropdownOpen ? "bg-white/30 shadow-inner" : ""}`}
                   >
                     <span className="truncate max-w-[200px] md:max-w-[300px]">
                       {destinations[selectedDestIndex]?.name || t("common.unknownLocation")}
@@ -383,7 +383,7 @@ export function WeatherDetailsModal({
 
               <div className="flex items-end justify-between mt-2">
                 <div className="flex items-center gap-3">
-                  <span className="text-5xl font-bold tracking-tighter drop-shadow-sm">
+                  <span className="text-5xl font-bold tracking-tighter drop-shadow-xs">
                     {currentTemp}°
                   </span>
                   <div className="flex flex-col mb-1">
@@ -416,7 +416,7 @@ export function WeatherDetailsModal({
           >
             {/* Smart Suggestion Banner */}
             <div
-              className={`p-4 rounded-[22px] border flex gap-3.5 backdrop-blur-md shadow-sm ${recommendation.bg} transition-all duration-300`}
+              className={`p-4 rounded-[22px] border flex gap-3.5 backdrop-blur-md shadow-xs ${recommendation.bg} transition-all duration-300`}
             >
               <div
                 className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${recommendation.badgeBg} border border-black/5 shadow-inner`}
@@ -465,7 +465,7 @@ export function WeatherDetailsModal({
                       {t("weather.compareLocation")}
                     </h4>
                     <div className="bg-white/50 dark:bg-slate-900/30 border border-slate-200/50 dark:border-white/5 rounded-[24px] p-5 shadow-soft relative overflow-hidden">
-                      <div className="absolute -right-6 -top-6 w-16 h-16 bg-sky-500/[0.02] dark:bg-sky-500/[0.04] rounded-full blur-xl pointer-events-none" />
+                      <div className="absolute -right-6 -top-6 w-16 h-16 bg-sky-500/2 dark:bg-sky-500/4 rounded-full blur-xl pointer-events-none" />
                       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
                         {/* Current location column */}
                         <div className="flex flex-col items-center gap-2 text-center">
@@ -473,7 +473,7 @@ export function WeatherDetailsModal({
                             {currentLocationName ?? t("weather.yourLocation")}
                           </span>
                           <div className="flex items-center justify-center h-9">
-                            {getWeatherIcon(myCode, "w-8 h-8 drop-shadow-sm")}
+                            {getWeatherIcon(myCode, "w-8 h-8 drop-shadow-xs")}
                           </div>
                           <span className="text-3xl font-bold text-slate-800 dark:text-white tracking-tighter leading-none">
                             {myTemp}°
@@ -499,7 +499,7 @@ export function WeatherDetailsModal({
                         {/* Middle badge */}
                         <div className="flex flex-col items-center justify-center">
                           <span
-                            className={`inline-flex items-center justify-center px-2.5 py-1.5 rounded-full text-[10.5px] font-bold tracking-tight text-center leading-none bg-slate-50 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/60 shadow-sm ${diffColor}`}
+                            className={`inline-flex items-center justify-center px-2.5 py-1.5 rounded-full text-[10.5px] font-bold tracking-tight text-center leading-none bg-slate-50 dark:bg-slate-800/80 border border-slate-200/50 dark:border-slate-700/60 shadow-xs ${diffColor}`}
                           >
                             {diffLabel}
                           </span>
@@ -511,7 +511,7 @@ export function WeatherDetailsModal({
                             {destination}
                           </span>
                           <div className="flex items-center justify-center h-9">
-                            {getWeatherIcon(currentCode, "w-8 h-8 drop-shadow-sm")}
+                            {getWeatherIcon(currentCode, "w-8 h-8 drop-shadow-xs")}
                           </div>
                           <span className="text-3xl font-bold text-slate-800 dark:text-white tracking-tighter leading-none">
                             {currentTemp}°
@@ -558,7 +558,7 @@ export function WeatherDetailsModal({
                           {idx === 0 ? t("weather.now") : `${hour}:00`}
                         </span>
 
-                        <div className="relative h-7 flex items-center justify-center drop-shadow-sm">
+                        <div className="relative h-7 flex items-center justify-center drop-shadow-xs">
                           {getWeatherIcon(code, "w-6.5 h-6.5")}
                         </div>
 
@@ -596,7 +596,7 @@ export function WeatherDetailsModal({
                     <span className="text-[10px] font-bold uppercase tracking-[0.12em]">
                       {t("weather.feelsLike")}
                     </span>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-500/10 dark:bg-rose-500/25 text-rose-500 border border-rose-500/20 dark:border-rose-500/10 shadow-sm shrink-0">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-500/10 dark:bg-rose-500/25 text-rose-500 border border-rose-500/20 dark:border-rose-500/10 shadow-xs shrink-0">
                       <ThermometerIcon className="w-4.5 h-4.5" />
                     </div>
                   </div>
@@ -620,7 +620,7 @@ export function WeatherDetailsModal({
                     <span className="text-[10px] font-bold uppercase tracking-[0.12em]">
                       {t("weather.humidity")}
                     </span>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-500/10 dark:bg-sky-500/25 text-sky-550 dark:text-sky-400 border border-sky-500/20 dark:border-sky-500/10 shadow-sm shrink-0">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-500/10 dark:bg-sky-500/25 text-sky-550 dark:text-sky-400 border border-sky-500/20 dark:border-sky-500/10 shadow-xs shrink-0">
                       <HumidityIcon className="w-4.5 h-4.5" />
                     </div>
                   </div>
@@ -630,7 +630,7 @@ export function WeatherDetailsModal({
                     </span>
                     <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mt-2 relative">
                       <div
-                        className="absolute left-0 h-full bg-gradient-to-r from-sky-400 to-sky-500 rounded-full"
+                        className="absolute left-0 h-full bg-linear-to-r from-sky-400 to-sky-500 rounded-full"
                         style={{ width: `${humidity}%` }}
                       />
                     </div>
@@ -643,7 +643,7 @@ export function WeatherDetailsModal({
                     <span className="text-[10px] font-bold uppercase tracking-[0.12em]">
                       {t("weather.windSpeed")}
                     </span>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-500/10 dark:bg-slate-500/25 text-slate-555 dark:text-slate-400 border border-slate-500/20 dark:border-slate-500/10 shadow-sm shrink-0">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-500/10 dark:bg-slate-500/25 text-slate-555 dark:text-slate-400 border border-slate-500/20 dark:border-slate-500/10 shadow-xs shrink-0">
                       <WindIcon className="w-4.5 h-4.5" />
                     </div>
                   </div>
@@ -663,7 +663,7 @@ export function WeatherDetailsModal({
                     <span className="text-[10px] font-bold uppercase tracking-[0.12em]">
                       {t("weather.uvIndex")}
                     </span>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 dark:bg-amber-500/25 text-amber-500 border border-amber-500/20 dark:border-amber-500/10 shadow-sm shrink-0">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/10 dark:bg-amber-500/25 text-amber-500 border border-amber-500/20 dark:border-amber-500/10 shadow-xs shrink-0">
                       <SunIcon className="w-4.5 h-4.5" />
                     </div>
                   </div>
@@ -689,7 +689,7 @@ export function WeatherDetailsModal({
     );
   } catch (err: any) {
     return createPortal(
-      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+      <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
         <div className="bg-white dark:bg-kat-surface p-6 rounded-2xl max-w-sm w-full text-center border border-slate-100 dark:border-kat-border/40">
           <div className="text-red-500 mb-2">
             <svg

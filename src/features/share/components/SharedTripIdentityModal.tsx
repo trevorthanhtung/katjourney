@@ -44,9 +44,9 @@ export function SharedTripIdentityModal({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-slate-100/90 dark:bg-[#060b19]/90 p-4 animate-fadeIn overflow-hidden z-50">
       {/* Animated background glows */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-indigo-500/[0.08] dark:bg-indigo-500/[0.05] blur-[80px] animate-pulse pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-indigo-500/8 dark:bg-indigo-500/5 blur-[80px] animate-pulse pointer-events-none" />
       <div
-        className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-teal-500/[0.08] dark:bg-teal-500/[0.05] blur-[80px] animate-pulse pointer-events-none"
+        className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-teal-500/8 dark:bg-teal-500/5 blur-[80px] animate-pulse pointer-events-none"
         style={{ animationDelay: "2s" }}
       />
 
@@ -83,7 +83,7 @@ export function SharedTripIdentityModal({
                 value={memberSearchQuery}
                 onChange={(e) => setMemberSearchQuery(e.target.value)}
                 placeholder={t("share.searchMember")}
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-2xl text-[14px] font-semibold text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/15 focus:bg-white dark:focus:bg-slate-800 transition-all duration-200"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-2xl text-[14px] font-semibold text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-hidden focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/15 focus:bg-white dark:focus:bg-slate-800 transition-all duration-200"
               />
               <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-450">
                 <HugeiconsIcon icon={Search01Icon} className="w-4 h-4" />
@@ -156,7 +156,7 @@ export function SharedTripIdentityModal({
                   }}
                   className="flex w-full items-center gap-3 px-4 py-3 text-left rounded-[20px] bg-white/50 dark:bg-slate-800/30 border border-slate-200/50 dark:border-white/5 hover:border-slate-350 dark:hover:border-slate-700 hover:scale-[1.01] hover:shadow-[0_4px_12px_rgba(0,0,0,0.02)] transition-all active:scale-[0.99] cursor-pointer"
                 >
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 shadow-sm shrink-0">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 shadow-xs shrink-0">
                     {m.avatar ? (
                       getAvatarSvg(m.avatar, "w-full h-full")
                     ) : (

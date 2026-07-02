@@ -707,7 +707,9 @@
     "noMembersAction": "Add companions",
     "noExpensesTitle": "No group expenses recorded",
     "noExpensesDesc": "Record shared expenses so the app auto-calculates the settlement for the group.",
-    "noExpensesAction": "Record expenses"
+    "noExpensesAction": "Record expenses",
+    "noRemindersTitle": "All clear! No reminders",
+    "noRemindersDesc": "Your trip is all set and ready to go."
   },
   "share": {
     "completedPercent": "Terminé {{percent}}%",

@@ -528,7 +528,7 @@ export function SharedChecklistSection({
     return (
       <div
         key={catName}
-        className={`bg-white/70 dark:bg-slate-900/30 backdrop-blur-md rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-sm space-y-4 hover:shadow-md transition-all duration-200`}
+        className={`bg-white/70 dark:bg-slate-900/30 backdrop-blur-md rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-xs space-y-4 hover:shadow-md transition-all duration-200`}
       >
         {/* Category Header */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80">
@@ -568,7 +568,7 @@ export function SharedChecklistSection({
                   canToggle ? "cursor-pointer" : "cursor-default",
                   c.completed
                     ? "bg-slate-50/40 dark:bg-slate-900/20 border-slate-150 dark:border-white/5 opacity-70"
-                    : "bg-white/50 dark:bg-slate-800/20 backdrop-blur-sm border-slate-200/55 dark:border-white/5 hover:border-slate-350 dark:hover:border-slate-700 hover:scale-[1.01] hover:shadow-[0_4px_12px_rgba(0,0,0,0.02)]",
+                    : "bg-white/50 dark:bg-slate-800/20 backdrop-blur-xs border-slate-200/55 dark:border-white/5 hover:border-slate-350 dark:hover:border-slate-700 hover:scale-[1.01] hover:shadow-[0_4px_12px_rgba(0,0,0,0.02)]",
                   itemAny.isPendingCreate || itemAny.isPendingUpdate
                     ? "bg-sky-50/40 dark:bg-sky-950/20 border-sky-100/50 dark:border-sky-900/30"
                     : "",
@@ -580,9 +580,9 @@ export function SharedChecklistSection({
                 <div className="flex items-start gap-3 flex-1 min-w-0">
                   {/* Interactive Checkbox */}
                   {canToggle ? (
-                    <div className="flex-shrink-0 mt-0.5">
+                    <div className="shrink-0 mt-0.5">
                       {c.completed ? (
-                        <div className="w-5 h-5 rounded-[6px] bg-emerald-550/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all scale-100 border border-transparent shadow-sm">
+                        <div className="w-5 h-5 rounded-[6px] bg-emerald-550/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all scale-100 border border-transparent shadow-xs">
                           <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5 text-current" />
                         </div>
                       ) : (
@@ -590,7 +590,7 @@ export function SharedChecklistSection({
                       )}
                     </div>
                   ) : (
-                    <div className="flex-shrink-0 mt-0.5">
+                    <div className="shrink-0 mt-0.5">
                       {c.completed ? (
                         <div className="w-5 h-5 rounded-[6px] bg-emerald-500/10 text-emerald-655/70 dark:text-emerald-450 flex items-center justify-center">
                           <HugeiconsIcon icon={CheckIcon} className="h-3 w-3" />
@@ -606,7 +606,7 @@ export function SharedChecklistSection({
                     <div className="flex items-center gap-2 flex-wrap">
                       <span
                         className={classNames(
-                          "text-[14px] font-bold break-words leading-tight",
+                          "text-[14px] font-bold wrap-break-word leading-tight",
                           c.completed
                             ? "text-slate-400 dark:text-slate-400/80 line-through font-medium"
                             : "text-kat-dark dark:text-slate-200",
@@ -657,7 +657,7 @@ export function SharedChecklistSection({
                     <div className="flex items-center gap-2.5 mt-1.5 flex-wrap">
                       {c.assignedTo && (
                         <span
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-bold dark:!bg-slate-800 dark:!text-slate-300 dark:!border-slate-700/60 dark:border"
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-bold dark:bg-slate-800! dark:text-slate-300! dark:border-slate-700/60! dark:border"
                           style={{
                             backgroundColor: `hsl(${(c.assignedTo.charCodeAt(0) * 137.5) % 360}, 75%, 95%)`,
                             color: `hsl(${(c.assignedTo.charCodeAt(0) * 137.5) % 360}, 70%, 35%)`,
@@ -712,7 +712,7 @@ export function SharedChecklistSection({
                           });
                         }
                       }}
-                      className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-90 transition-all focus:outline-none"
+                      className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-90 transition-all focus:outline-hidden"
                       title={activeSubTab === "private" ? "Tùy chọn" : "Tùy chọn đề xuất"}
                     >
                       <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
@@ -731,7 +731,7 @@ export function SharedChecklistSection({
     <>
       <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden">
         {/* Ambient background glow */}
-        <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-purple-500/[0.03] dark:bg-purple-500/[0.05] blur-[30px] pointer-events-none" />
+        <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-purple-500/3 dark:bg-purple-500/5 blur-[30px] pointer-events-none" />
 
         {/* Header */}
         <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
@@ -766,7 +766,7 @@ export function SharedChecklistSection({
             className={classNames(
               "flex-1 py-2 text-[13px] font-bold rounded-lg transition-all duration-300 text-center cursor-pointer",
               activeSubTab === "shared"
-                ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm"
+                ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-xs"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
             )}
           >
@@ -778,7 +778,7 @@ export function SharedChecklistSection({
             className={classNames(
               "flex-1 py-2 text-[13px] font-bold rounded-lg transition-all duration-300 text-center cursor-pointer flex items-center justify-center gap-1.5",
               activeSubTab === "private"
-                ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm"
+                ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-xs"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
             )}
           >
@@ -844,14 +844,14 @@ export function SharedChecklistSection({
           createPortal(
             <>
               <div
-                className="fixed inset-0 z-[998]"
+                className="fixed inset-0 z-998"
                 onClick={() => {
                   setActiveMenuId(null);
                   setMenuPos(null);
                 }}
               />
               <div
-                className="fixed z-[999] w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg py-1.5 animate-fadeIn"
+                className="fixed z-999 w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg py-1.5 animate-fadeIn"
                 style={{ top: menuPos.top, right: menuPos.right }}
               >
                 <button
@@ -898,7 +898,7 @@ export function SharedChecklistSection({
           <button
             onClick={startAdd}
             className={classNames(
-              "mt-4 items-center justify-center gap-2 text-[13.5px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/25 hover:bg-purple-100/80 dark:hover:bg-purple-900/30 active:scale-[0.99] rounded-xl transition-all shadow-sm shadow-purple-100/30 dark:shadow-none h-11 w-full",
+              "mt-4 items-center justify-center gap-2 text-[13.5px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/25 hover:bg-purple-100/80 dark:hover:bg-purple-900/30 active:scale-[0.99] rounded-xl transition-all shadow-xs shadow-purple-100/30 dark:shadow-none h-11 w-full",
               displayedChecklist.length > 0 ? "hidden lg:flex" : "flex"
             )}
             title={
@@ -942,7 +942,7 @@ export function SharedChecklistSection({
               <button
                 onClick={handleSave}
                 disabled={!form.title.trim()}
-                className="w-full h-[52px] rounded-2xl bg-kat-dark dark:bg-kat-primary font-black text-[14px] text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed border border-transparent motion-press"
+                className="w-full h-[52px] rounded-2xl bg-kat-dark dark:bg-kat-primary font-black text-[14px] text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all shadow-xs flex items-center justify-center gap-2 disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed border border-transparent motion-press"
               >
                 {activeSubTab === "private"
                   ? editingId
@@ -970,7 +970,7 @@ export function SharedChecklistSection({
                 {t("packing.itemNameLabel")}
               </label>
               <input
-                className={`w-full rounded-[12px] border bg-slate-50 dark:bg-slate-800/50 px-3.5 h-11 text-[14px] font-semibold text-slate-800 dark:text-slate-200 outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-teal placeholder-slate-400 ${
+                className={`w-full rounded-[12px] border bg-slate-50 dark:bg-slate-800/50 px-3.5 h-11 text-[14px] font-semibold text-slate-800 dark:text-slate-200 outline-hidden ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-teal placeholder-slate-400 ${
                   showValidationError
                     ? "border-red-500 ring-2 ring-red-500"
                     : "border-slate-200 dark:border-slate-700/60 focus:border-kat-teal"
@@ -1009,7 +1009,7 @@ export function SharedChecklistSection({
                       onClick={() => setForm({ ...form, category: cat })}
                       className={`flex flex-col items-center justify-center min-h-[76px] p-2 rounded-[18px] border-2 transition-all duration-200 active:scale-95 cursor-pointer ${
                         isSelected
-                          ? "bg-kat-dark/5 dark:bg-slate-800/80 border-kat-dark dark:border-kat-primary text-kat-dark dark:text-kat-primary font-black shadow-sm"
+                          ? "bg-kat-dark/5 dark:bg-slate-800/80 border-kat-dark dark:border-kat-primary text-kat-dark dark:text-kat-primary font-black shadow-xs"
                           : "bg-white dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/60 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-650"
                       }`}
                     >
@@ -1042,7 +1042,7 @@ export function SharedChecklistSection({
                   <button
                     type="button"
                     onClick={() => setForm({ ...form, quantity: Math.max(1, form.quantity - 1) })}
-                    className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700/60 shadow-sm active:scale-95 transition-all hover:bg-slate-50 dark:hover:bg-slate-700"
+                    className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700/60 shadow-xs active:scale-95 transition-all hover:bg-slate-50 dark:hover:bg-slate-700"
                   >
                     <HugeiconsIcon icon={MinusSignIcon} className="h-3 w-3" />
                   </button>
@@ -1052,7 +1052,7 @@ export function SharedChecklistSection({
                   <button
                     type="button"
                     onClick={() => setForm({ ...form, quantity: form.quantity + 1 })}
-                    className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700/60 shadow-sm active:scale-95 transition-all hover:bg-slate-50 dark:hover:bg-slate-700"
+                    className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700/60 shadow-xs active:scale-95 transition-all hover:bg-slate-50 dark:hover:bg-slate-700"
                   >
                     <HugeiconsIcon icon={Add01Icon} className="h-3 w-3" strokeWidth={3} />
                   </button>
@@ -1079,7 +1079,7 @@ export function SharedChecklistSection({
                         onClick={() => setForm({ ...form, priority: prio })}
                         className={`flex-1 py-1 rounded-[8px] text-[11.5px] font-bold transition-all h-full flex items-center justify-center ${
                           isSelected
-                            ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm border border-slate-200/30 dark:border-slate-650"
+                            ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-xs border border-slate-200/30 dark:border-slate-650"
                             : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                         }`}
                       >
@@ -1128,7 +1128,7 @@ export function SharedChecklistSection({
                     ...members.map((m) => m.name),
                   ]}
                   placeholder={t("packing.companionSelect")}
-                  buttonClassName="w-full flex items-center justify-between rounded-[12px] border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50 px-3.5 h-11 text-[14px] font-semibold text-slate-800 dark:text-slate-200 outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-teal"
+                  buttonClassName="w-full flex items-center justify-between rounded-[12px] border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50 px-3.5 h-11 text-[14px] font-semibold text-slate-800 dark:text-slate-200 outline-hidden ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-teal"
                 />
               )}
             </div>
@@ -1143,7 +1143,7 @@ export function SharedChecklistSection({
                 {t("packing.noteLabel")}
               </label>
               <textarea
-                className="w-full h-14 rounded-[12px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-3.5 py-2.5 text-[13.5px] font-semibold text-slate-800 dark:text-slate-200 outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-teal resize-none placeholder-slate-400"
+                className="w-full h-14 rounded-[12px] border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-3.5 py-2.5 text-[13.5px] font-semibold text-slate-800 dark:text-slate-200 outline-hidden ring-1 ring-inset ring-slate-200/60 dark:ring-slate-700 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-teal resize-none placeholder-slate-400"
                 value={form.note}
                 onChange={(e) => setForm({ ...form, note: e.target.value })}
                 placeholder={t("packing.notePlaceholder")}

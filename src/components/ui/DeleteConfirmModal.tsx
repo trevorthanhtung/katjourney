@@ -88,7 +88,7 @@ export function TypedDeleteConfirmModal({
             <p className="text-[12px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
               {t("common.itemToDelete")}
             </p>
-            <p className="mt-1 break-words text-[15px] font-bold text-kat-text">{itemName}</p>
+            <p className="mt-1 wrap-break-word text-[15px] font-bold text-kat-text">{itemName}</p>
           </div>
         )}
 
@@ -114,7 +114,7 @@ export function TypedDeleteConfirmModal({
             autoCorrect="off"
             autoComplete="off"
             spellCheck={false}
-            className="w-full rounded-[14px] border border-slate-200/60 dark:border-slate-700/65 bg-slate-50 dark:bg-slate-800/40 px-4 h-[50px] text-[15px] font-bold text-kat-text outline-none transition-all focus:bg-white dark:focus:bg-kat-surface focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder:text-slate-400 dark:placeholder:text-slate-500"
+            className="w-full rounded-[14px] border border-slate-200/60 dark:border-slate-700/65 bg-slate-50 dark:bg-slate-800/40 px-4 h-[50px] text-[15px] font-bold text-kat-text outline-hidden transition-all focus:bg-white dark:focus:bg-kat-surface focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
         </label>
 
@@ -190,7 +190,7 @@ export function DeleteConfirmModal({
             <p className="text-[12px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
               {t("common.itemToDelete")}
             </p>
-            <p className="mt-1 break-words text-[15px] font-bold text-kat-text">{itemName}</p>
+            <p className="mt-1 wrap-break-word text-[15px] font-bold text-kat-text">{itemName}</p>
           </div>
         )}
 

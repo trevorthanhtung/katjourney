@@ -96,12 +96,12 @@ function ShareSwitch({
         e.stopPropagation();
         onChange(!checked);
       }}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-kat-primary focus:ring-offset-2 ${
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-kat-primary focus:ring-offset-2 ${
         checked ? "bg-kat-primary" : "bg-slate-200"
       }`}
     >
       <span
-        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
           checked ? "translate-x-5" : "translate-x-0"
         }`}
       />
@@ -602,7 +602,7 @@ export function MoreScreen({
           </div>
           {!isReadOnly && (
             <button
-              className="flex h-11 sm:h-12 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 transition-all hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] shadow-sm w-full sm:w-auto shrink-0 border border-transparent dark:border-kat-primary px-5 text-[14px] font-black"
+              className="flex h-11 sm:h-12 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 transition-all hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] shadow-xs w-full sm:w-auto shrink-0 border border-transparent dark:border-kat-primary px-5 text-[14px] font-black"
               onClick={openNewMember}
             >
               <HugeiconsIcon icon={UserAdd01Icon} className="w-4.5 h-4.5" />
@@ -616,7 +616,7 @@ export function MoreScreen({
           {members.length ? (
             <div className="space-y-4">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-default">
+                <div className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-xs flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-default">
                   <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-2 border border-blue-500/20 shadow-inner">
                     <HugeiconsIcon icon={UserGroupIcon} className="w-5 h-5" />
                   </div>
@@ -630,7 +630,7 @@ export function MoreScreen({
 
                 <div
                   onClick={() => onNavigateToTab?.("checklist")}
-                  className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-pointer active:scale-95"
+                  className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-xs flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-pointer active:scale-95"
                 >
                   <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-2 border border-amber-500/20 shadow-inner">
                     <HugeiconsIcon icon={CheckmarkBadge01Icon} className="w-5 h-5" />
@@ -645,7 +645,7 @@ export function MoreScreen({
 
                 <div
                   onClick={() => onNavigateToTab?.("expenses")}
-                  className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-pointer active:scale-95"
+                  className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-xs flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-pointer active:scale-95"
                 >
                   <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-2 border border-emerald-500/20 shadow-inner">
                     <HugeiconsIcon icon={WalletCardsIcon} className="w-5 h-5" />
@@ -660,7 +660,7 @@ export function MoreScreen({
 
                 <div
                   onClick={() => onNavigateToTab?.("expenses")}
-                  className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-sm flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-pointer active:scale-95"
+                  className="rounded-[22px] bg-white/75 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-4 shadow-xs flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.025] hover:shadow-md cursor-pointer active:scale-95"
                 >
                   <div
                     className={classNames(
@@ -723,7 +723,7 @@ export function MoreScreen({
                   placeholder={t("members.searchMember")}
                   value={memberSearchQuery}
                   onChange={(e) => setMemberSearchQuery(e.target.value)}
-                  className="block w-full rounded-2xl border border-slate-200/60 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/40 backdrop-blur-md py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-350 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-100 dark:focus:ring-slate-800/50 transition-all shadow-sm"
+                  className="block w-full rounded-2xl border border-slate-200/60 dark:border-slate-700/50 bg-white/70 dark:bg-slate-800/40 backdrop-blur-md py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-350 dark:focus:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:outline-hidden focus:ring-2 focus:ring-slate-100 dark:focus:ring-slate-800/50 transition-all shadow-xs"
                 />
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 z-10">
                   <HugeiconsIcon icon={Search01Icon} className="h-4.5 w-4.5 text-slate-400" />
@@ -894,7 +894,7 @@ export function MoreScreen({
           </div>
           <button
             onClick={() => setSection("overview")}
-            className="flex h-10 items-center justify-center rounded-full bg-[#EDEAE2] dark:bg-slate-800 border border-[#C8BDB0] dark:border-slate-700 px-4 text-[13.5px] font-bold text-kat-dark dark:text-slate-200 transition-all hover:bg-[#E2DDD3] dark:hover:bg-slate-700 active:scale-95 shadow-sm"
+            className="flex h-10 items-center justify-center rounded-full bg-[#EDEAE2] dark:bg-slate-800 border border-[#C8BDB0] dark:border-slate-700 px-4 text-[13.5px] font-bold text-kat-dark dark:text-slate-200 transition-all hover:bg-[#E2DDD3] dark:hover:bg-slate-700 active:scale-95 shadow-xs"
           >
             {t("common.back", "Quay lại")}
           </button>
@@ -905,7 +905,7 @@ export function MoreScreen({
           {/* Privacy */}
           <button
             onClick={() => onOpenSettings?.("privacy")}
-            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50/60 dark:hover:bg-slate-800/80 transition-all text-left focus:outline-none"
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50/60 dark:hover:bg-slate-800/80 transition-all text-left focus:outline-hidden"
           >
             <div className="flex items-center gap-3.5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30">
@@ -929,7 +929,7 @@ export function MoreScreen({
           {/* About */}
           <button
             onClick={() => onOpenSettings?.("about")}
-            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50/60 dark:hover:bg-slate-800/80 transition-all text-left focus:outline-none"
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50/60 dark:hover:bg-slate-800/80 transition-all text-left focus:outline-hidden"
           >
             <div className="flex items-center gap-3.5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400 border border-violet-100 dark:border-violet-900/30">
@@ -953,7 +953,7 @@ export function MoreScreen({
           {/* Donate */}
           <button
             onClick={() => onOpenSettings?.("donate")}
-            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50/60 dark:hover:bg-slate-800/80 transition-all text-left focus:outline-none"
+            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50/60 dark:hover:bg-slate-800/80 transition-all text-left focus:outline-hidden"
           >
             <div className="flex items-center gap-3.5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30">
@@ -1048,7 +1048,7 @@ export function MoreScreen({
         {/* Hero chuyến đi compact hơn */}
         <section className="relative overflow-hidden rounded-[28px] bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-100 dark:border-white/5 p-5 md:p-6 text-kat-text shadow-soft">
           {/* Ambient background glow */}
-          <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-kat-primary/5 dark:bg-kat-primary/10 blur-[40px] pointer-events-none" />
+          <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-kat-primary/5 dark:bg-kat-primary/10 blur-2xl pointer-events-none" />
 
           <div
             className="absolute -right-6 -bottom-6 w-32 h-32 rotate-12 pointer-events-none z-0 flex items-center justify-center text-kat-primary"
@@ -1063,7 +1063,7 @@ export function MoreScreen({
               <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-450">
                 {t("more.currentTrip")}
               </p>
-              <h3 className="mt-1 break-words text-[24px] md:text-[28px] font-black leading-tight tracking-tight text-kat-dark dark:text-slate-200">
+              <h3 className="mt-1 wrap-break-word text-[24px] md:text-[28px] font-black leading-tight tracking-tight text-kat-dark dark:text-slate-200">
                 {trip.title}
               </h3>
             </div>
@@ -1188,7 +1188,7 @@ export function MoreScreen({
                 <div className="flex flex-col gap-2.5 mt-1 animate-fadeIn sm:pl-8 pl-4">
                   <div className="relative">
                     {/* Decorative connection line */}
-                    <div className="absolute -left-3 top-0 bottom-6 w-px bg-gradient-to-b from-blue-200 via-sky-200 to-transparent dark:from-blue-800 dark:via-sky-800 hidden sm:block"></div>
+                    <div className="absolute -left-3 top-0 bottom-6 w-px bg-linear-to-b from-blue-200 via-sky-200 to-transparent dark:from-blue-800 dark:via-sky-800 hidden sm:block"></div>
 
                     <div className="flex flex-col gap-2.5">
                       <ActionCard
@@ -1557,7 +1557,7 @@ export function MoreScreen({
                               (prev as HTMLInputElement)?.focus();
                             }
                           }}
-                          className="w-12 h-12 rounded-xl border-2 text-center text-[20px] font-black text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 focus:border-kat-dark focus:dark:border-kat-primary focus:ring-2 focus:ring-[#030D2E]/20 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="w-12 h-12 rounded-xl border-2 text-center text-[20px] font-black text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 focus:border-kat-dark dark:focus:border-kat-primary focus:ring-2 focus:ring-[#030D2E]/20 focus:outline-hidden transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           style={{ borderColor: shareOptions.sharePin[i] ? undefined : undefined }}
                         />
                       ))}
@@ -1581,7 +1581,7 @@ export function MoreScreen({
                 <button
                   type="button"
                   onClick={() => setIsShareModalOpen(false)}
-                  className="flex-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent dark:border-slate-700/50 py-3 font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors min-h-[44px] text-[13.5px] focus:outline-none"
+                  className="flex-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent dark:border-slate-700/50 py-3 font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors min-h-[44px] text-[13.5px] focus:outline-hidden"
                 >
                   {t("share.close")}
                 </button>
@@ -1592,7 +1592,7 @@ export function MoreScreen({
                     shareLoading ||
                     (shareOptions.usePinProtection && shareOptions.sharePin.length < 4)
                   }
-                  className="flex-[2] rounded-xl bg-kat-dark dark:bg-kat-primary py-3 font-bold text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-none border border-transparent dark:border-kat-primary"
+                  className="flex-2 rounded-xl bg-kat-dark dark:bg-kat-primary py-3 font-bold text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 transition-colors disabled:opacity-50 min-h-[44px] text-[13.5px] focus:outline-hidden border border-transparent dark:border-kat-primary"
                 >
                   {shareLoading ? t("share.creatingLink") : t("share.createLink")}
                 </button>
@@ -1601,7 +1601,7 @@ export function MoreScreen({
           ) : (
             <div className="space-y-6 animate-fadeIn pb-2">
               {/* Premium Success Layout */}
-              <div className="relative overflow-hidden flex items-center gap-3 rounded-[16px] bg-gradient-to-r from-emerald-500/10 via-emerald-400/5 to-transparent border border-emerald-500/20 py-2.5 px-3.5">
+              <div className="relative overflow-hidden flex items-center gap-3 rounded-[16px] bg-linear-to-r from-emerald-500/10 via-emerald-400/5 to-transparent border border-emerald-500/20 py-2.5 px-3.5">
                 <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
                 <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white shadow-[0_0_12px_rgba(16,185,129,0.4)]">
                   <HugeiconsIcon icon={CheckIcon} className="h-3.5 w-3.5" />
@@ -1612,13 +1612,13 @@ export function MoreScreen({
               </div>
 
               {/* Ultra-sleek Link Input container */}
-              <div className="group relative flex items-center rounded-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-1.5 pl-5 shadow-sm hover:border-sky-500/30 transition-all duration-300 min-h-[48px]">
+              <div className="group relative flex items-center rounded-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-1.5 pl-5 shadow-xs hover:border-sky-500/30 transition-all duration-300 min-h-[48px]">
                 <input
                   type="text"
                   readOnly
                   value={activeShareLink.url}
                   onClick={(e) => (e.target as HTMLInputElement).select()}
-                  className="flex-1 bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 text-[13.5px] font-medium truncate cursor-text mr-2"
+                  className="flex-1 bg-transparent border-none outline-hidden text-slate-700 dark:text-slate-200 text-[13.5px] font-medium truncate cursor-text mr-2"
                 />
                 <div className="flex shrink-0 items-center gap-1.5">
                   <button
@@ -1703,7 +1703,7 @@ export function MoreScreen({
                 <button
                   type="button"
                   onClick={() => setIsShareModalOpen(false)}
-                  className="flex-1 rounded-[16px] bg-slate-100 dark:bg-slate-800 py-3.5 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors min-h-[48px] text-[13.5px] focus:outline-none"
+                  className="flex-1 rounded-[16px] bg-slate-100 dark:bg-slate-800 py-3.5 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors min-h-[48px] text-[13.5px] focus:outline-hidden"
                 >
                   {t("share.close")}
                 </button>
@@ -1711,7 +1711,7 @@ export function MoreScreen({
                   type="button"
                   onClick={handleSyncLink}
                   disabled={syncLoading}
-                  className="flex-[2] rounded-[16px] bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 hover:border-sky-500/30 py-3 font-bold text-slate-700 dark:text-slate-200 hover:text-sky-600 dark:hover:text-sky-400 active:scale-95 transition-all disabled:opacity-50 min-h-[48px] text-[13.5px] focus:outline-none flex items-center justify-center gap-2 shadow-sm"
+                  className="flex-2 rounded-[16px] bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 hover:border-sky-500/30 py-3 font-bold text-slate-700 dark:text-slate-200 hover:text-sky-600 dark:hover:text-sky-400 active:scale-95 transition-all disabled:opacity-50 min-h-[48px] text-[13.5px] focus:outline-hidden flex items-center justify-center gap-2 shadow-xs"
                 >
                   <HugeiconsIcon
                     icon={Refresh01Icon}
@@ -1723,7 +1723,7 @@ export function MoreScreen({
                   type="button"
                   onClick={handleRevokeLink}
                   disabled={shareLoading}
-                  className="flex-1 rounded-[16px] bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-450 py-3.5 font-bold active:scale-95 transition-colors disabled:opacity-50 min-h-[48px] text-[13.5px] focus:outline-none"
+                  className="flex-1 rounded-[16px] bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-450 py-3.5 font-bold active:scale-95 transition-colors disabled:opacity-50 min-h-[48px] text-[13.5px] focus:outline-hidden"
                 >
                   {shareLoading ? t("share.turningOff") : t("share.turnOff")}
                 </button>

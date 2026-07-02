@@ -201,7 +201,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col lg:grid lg:grid-cols-2 w-full bg-kat-bg overflow-hidden font-sans select-none">
+    <div className="fixed inset-0 z-100 flex flex-col lg:grid lg:grid-cols-2 w-full bg-kat-bg overflow-hidden font-sans select-none">
       {/* Dynamic Cinematic Backgrounds (Full screen on mobile, left half on desktop) */}
       <div className="absolute inset-0 w-full h-full lg:w-1/2 overflow-hidden z-0">
         <img
@@ -224,7 +224,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
         />
 
         {/* Luxury Dark Gradient Overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1120] via-[#0B1120]/60 to-[#0B1120]/30" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#0B1120] via-[#0B1120]/60 to-[#0B1120]/30" />
       </div>
 
       {/* 1. LEFT SIDE - Hero Image Content (Desktop only) */}
@@ -235,10 +235,10 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             <img
               src="/asset/logo.png"
               alt="KAT Journey Logo"
-              className="h-full w-full rounded-xl object-contain shadow-sm border border-white/20"
+              className="h-full w-full rounded-xl object-contain shadow-xs border border-white/20"
             />
           </div>
-          <span className="text-[20px] font-black tracking-tight text-white drop-shadow-sm">
+          <span className="text-[20px] font-black tracking-tight text-white drop-shadow-xs">
             KAT Journey
           </span>
         </div>
@@ -259,10 +259,10 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
       {/* 2. RIGHT SIDE - Zero-Friction Auth Form (Mobile-first) */}
       <div className="flex flex-col justify-between items-center relative w-full h-full px-6 py-6 pb-safe lg:px-12 lg:py-10 bg-transparent lg:bg-white dark:lg:bg-[#0A1124] overflow-hidden z-10">
         {/* TOP CONTROLS: Language Selector */}
-        <div className="absolute top-6 right-6 lg:top-8 lg:right-10 flex items-center z-[60]">
+        <div className="absolute top-6 right-6 lg:top-8 lg:right-10 flex items-center z-60">
           <button
             onClick={() => setLegalModal("language")}
-            className="flex h-10 items-center justify-center gap-2 px-4 rounded-[14px] bg-white/20 lg:bg-slate-100 dark:bg-[#1E293B] hover:bg-white/30 lg:hover:bg-slate-200 dark:hover:bg-[#334155] border border-white/20 lg:border-transparent transition-all shadow-sm focus:outline-none backdrop-blur-md lg:backdrop-blur-none group"
+            className="flex h-10 items-center justify-center gap-2 px-4 rounded-[14px] bg-white/20 lg:bg-slate-100 dark:bg-[#1E293B] hover:bg-white/30 lg:hover:bg-slate-200 dark:hover:bg-slate-700 border border-white/20 lg:border-transparent transition-all shadow-xs focus:outline-hidden backdrop-blur-md lg:backdrop-blur-none group"
           >
             <HugeiconsIcon
               icon={Globe02Icon}
@@ -288,7 +288,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               <img
                 src="/asset/logo.png"
                 alt="KAT Journey Logo"
-                className="h-full w-full rounded-[14px] object-contain shadow-sm border border-white/20"
+                className="h-full w-full rounded-[14px] object-contain shadow-xs border border-white/20"
               />
             </div>
             <span className="ml-3 text-[28px] font-black tracking-tight text-white drop-shadow-lg">
@@ -314,7 +314,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                     >
                       {/* Icon */}
                       <div className="relative mb-3 flex items-center justify-center">
-                        <div className="flex items-center justify-center h-14 w-14 rounded-[18px] bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm animate-float-slow">
+                        <div className="flex items-center justify-center h-14 w-14 rounded-[18px] bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs animate-float-slow">
                           <HugeiconsIcon icon={IconComp} size={22} className={slide.iconColor} />
                         </div>
                       </div>
@@ -431,17 +431,17 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                 <button
                   key="terms"
                   onClick={() => setLegalModal("terms")}
-                  className="text-kat-primary hover:underline font-semibold focus:outline-none"
+                  className="text-kat-primary hover:underline font-semibold focus:outline-hidden"
                 />,
                 <button
                   key="privacy"
                   onClick={() => setLegalModal("privacy")}
-                  className="text-kat-primary hover:underline font-semibold focus:outline-none"
+                  className="text-kat-primary hover:underline font-semibold focus:outline-hidden"
                 />,
                 <button
                   key="cookie"
                   onClick={() => setLegalModal("cookie")}
-                  className="text-kat-primary hover:underline font-semibold focus:outline-none"
+                  className="text-kat-primary hover:underline font-semibold focus:outline-hidden"
                 />,
               ]}
             />
@@ -451,7 +451,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
 
       {/* 3. LEGAL MODAL SHEETS */}
       {legalModal && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm animate-fadeIn">
+        <div className="fixed inset-0 z-120 flex items-center justify-center p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-xs animate-fadeIn">
           <div className="bg-white dark:bg-slate-900 w-full max-w-[500px] rounded-[28px] border border-slate-200 dark:border-slate-800 p-6 shadow-floating max-h-[85vh] flex flex-col animate-scaleUp">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
               <div className="flex items-center gap-2">
@@ -619,10 +619,10 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                       onClick={() => {
                         i18n.changeLanguage(lang.code);
                       }}
-                      className={`relative flex items-center gap-3.5 p-3 rounded-[20px] border-2 transition-all duration-300 group focus:outline-none text-left overflow-hidden w-full ${
+                      className={`relative flex items-center gap-3.5 p-3 rounded-[20px] border-2 transition-all duration-300 group focus:outline-hidden text-left overflow-hidden w-full ${
                         i18n.language === lang.code
                           ? "border-kat-primary bg-kat-primary/5 ring-2 ring-kat-primary/20 shadow-lg shadow-kat-primary/20 scale-[1.02] dark:border-kat-primary/50 dark:bg-kat-primary/10"
-                          : "border-slate-100 dark:border-white/[0.04] bg-white/80 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
+                          : "border-slate-100 dark:border-white/4 bg-white/80 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
                       }`}
                     >
                       <div
@@ -662,7 +662,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
               <button
                 type="button"
                 onClick={() => setLegalModal(null)}
-                className={`w-full inline-flex min-h-[44px] items-center justify-center rounded-[12px] px-6 font-bold hover:brightness-105 active:scale-[0.98] transition-all shadow-sm ${
+                className={`w-full inline-flex min-h-[44px] items-center justify-center rounded-[12px] px-6 font-bold hover:brightness-105 active:scale-[0.98] transition-all shadow-xs ${
                   legalModal === "language"
                     ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
                     : "bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950"

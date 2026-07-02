@@ -484,7 +484,7 @@ export function SharedActivitiesSection({
     <>
       <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 md:p-6 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden">
         {/* Ambient background glow */}
-        <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-teal-500/[0.03] dark:bg-teal-500/[0.05] blur-[30px] pointer-events-none" />
+        <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-teal-500/3 dark:bg-teal-500/5 blur-[30px] pointer-events-none" />
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
@@ -512,7 +512,7 @@ export function SharedActivitiesSection({
                 className={classNames(
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press cursor-pointer",
                   viewMode === "list"
-                    ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-slate-200 shadow-sm animate-scaleIn"
+                    ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-slate-200 shadow-xs animate-scaleIn"
                     : "text-slate-500 hover:text-kat-dark dark:text-slate-400 dark:hover:text-slate-200"
                 )}
               >
@@ -524,7 +524,7 @@ export function SharedActivitiesSection({
                 className={classNames(
                   "flex items-center justify-center w-9 h-8 rounded-lg transition-all motion-press cursor-pointer",
                   viewMode === "calendar"
-                    ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-slate-200 shadow-sm animate-scaleIn"
+                    ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-slate-200 shadow-xs animate-scaleIn"
                     : "text-slate-500 hover:text-kat-dark dark:text-slate-400 dark:hover:text-slate-200"
                 )}
                 aria-label={t("share.viewCalendar")}
@@ -537,7 +537,7 @@ export function SharedActivitiesSection({
               <button
                 type="button"
                 onClick={startAdd}
-                className="hidden lg:flex items-center justify-center gap-1.5 rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-3.5 py-2 text-[12.5px] font-bold shadow-sm hover:bg-kat-dark dark:hover:bg-kat-primary-light bg-opacity-90 active:scale-95 transition-all h-9 motion-press cursor-pointer border-transparent"
+                className="hidden lg:flex items-center justify-center gap-1.5 rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-3.5 py-2 text-[12.5px] font-bold shadow-xs hover:bg-kat-dark dark:hover:bg-kat-primary-light bg-opacity-90 active:scale-95 transition-all h-9 motion-press cursor-pointer border-transparent"
                 title={isDirectEdit ? t("timeline.addActivity") : t("share.suggestAdd")}
               >
                 <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5" />
@@ -578,7 +578,7 @@ export function SharedActivitiesSection({
                   <div className="flex items-center gap-3">
                     <div
                       className={classNames(
-                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl font-bold text-[13.5px] border shadow-sm",
+                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl font-bold text-[13.5px] border shadow-xs",
                         group.id === "undated"
                           ? "bg-slate-400 text-white border-transparent"
                           : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/50"
@@ -596,7 +596,7 @@ export function SharedActivitiesSection({
                             href={ensureAbsoluteUrl(trip.dayRoadmaps[group.id])}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/30 text-[10px] font-bold tracking-wide transition-all active:scale-95 shadow-sm"
+                            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/30 text-[10px] font-bold tracking-wide transition-all active:scale-95 shadow-xs"
                             title="Mở bản đồ lộ trình"
                           >
                             <HugeiconsIcon
@@ -698,14 +698,14 @@ export function SharedActivitiesSection({
         createPortal(
           <>
             <div
-              className="fixed inset-0 z-[998]"
+              className="fixed inset-0 z-998"
               onClick={() => {
                 setActiveMenuId(null);
                 setMenuPos(null);
               }}
             />
             <div
-              className="fixed z-[999] w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg py-1.5 animate-fadeIn"
+              className="fixed z-999 w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg py-1.5 animate-fadeIn"
               style={{ top: menuPos.top, right: menuPos.right }}
             >
               <button
@@ -781,7 +781,7 @@ export function SharedActivitiesSection({
               type="button"
               onClick={handleSave}
               disabled={!form.title.trim()}
-              className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-bold shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
+              className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-bold shadow-xs hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
             >
               <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" />
               {isDirectEdit
@@ -996,7 +996,7 @@ export function SharedActivitiesSection({
               className={classNames(
                 "flex flex-col items-center justify-center p-3 rounded-[16px] border text-center transition-all duration-200 active:scale-95 min-h-[72px] cursor-pointer",
                 filterDay === "all"
-                  ? "bg-kat-dark dark:bg-slate-800 text-white dark:text-slate-200 border-kat-dark dark:border-slate-700/55 shadow-sm"
+                  ? "bg-kat-dark dark:bg-slate-800 text-white dark:text-slate-200 border-kat-dark dark:border-slate-700/55 shadow-xs"
                   : "bg-white dark:bg-kat-surface border-slate-200 dark:border-kat-border text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/40"
               )}
             >
@@ -1027,7 +1027,7 @@ export function SharedActivitiesSection({
                   className={classNames(
                     "flex flex-col items-center justify-center p-3 rounded-[16px] border text-center transition-all duration-200 active:scale-95 min-h-[72px] cursor-pointer",
                     isActive
-                      ? "bg-kat-dark dark:bg-slate-800 text-white dark:text-slate-200 border-kat-dark dark:border-slate-700/55 shadow-sm"
+                      ? "bg-kat-dark dark:bg-slate-800 text-white dark:text-slate-200 border-kat-dark dark:border-slate-700/55 shadow-xs"
                       : "bg-white dark:bg-kat-surface border-slate-200 dark:border-kat-border text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/40"
                   )}
                 >

@@ -65,12 +65,11 @@ import {
 export function CategoryBar({ percent, colorClass }: { percent: number; colorClass: string }) {
   let fillClass = colorClass;
   if (colorClass === "bg-kat-primary") {
-    fillClass =
-      "bg-gradient-to-r from-teal-400 to-emerald-400 shadow-[0_0_8px_rgba(45,212,191,0.2)]";
+    fillClass = "bg-linear-to-r from-teal-400 to-emerald-400 shadow-[0_0_8px_rgba(45,212,191,0.2)]";
   } else if (colorClass === "bg-kat-primary/70") {
-    fillClass = "bg-gradient-to-r from-teal-400/80 to-emerald-400/80";
+    fillClass = "bg-linear-to-r from-teal-400/80 to-emerald-400/80";
   } else if (colorClass === "bg-kat-primary/40") {
-    fillClass = "bg-gradient-to-r from-teal-400/50 to-emerald-400/50";
+    fillClass = "bg-linear-to-r from-teal-400/50 to-emerald-400/50";
   } else {
     fillClass = "bg-slate-200 dark:bg-slate-700";
   }
@@ -185,22 +184,22 @@ export function BreakdownSection({
                     const colorClass = memberColors[charCodeSum % memberColors.length];
                     return (
                       <div
-                        className={`w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold shrink-0 shadow-sm ${colorClass}`}
+                        className={`w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold shrink-0 shadow-xs ${colorClass}`}
                       >
                         {initials}
                       </div>
                     );
                   })()}
-                  <p className="text-slate-700 dark:text-slate-300 group-hover:text-kat-dark group-hover:dark:text-white transition-colors truncate">
+                  <p className="text-slate-700 dark:text-slate-300 group-hover:text-kat-dark dark:group-hover:text-white transition-colors truncate">
                     {label}
                   </p>
                 </div>
               ) : (
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/40 dark:border-slate-700/40 shadow-sm shrink-0">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/40 dark:border-slate-700/40 shadow-xs shrink-0">
                     <HugeiconsIcon icon={getCatIcon(label)} className="h-3.5 w-3.5" />
                   </span>
-                  <p className="text-slate-700 dark:text-slate-300 group-hover:text-kat-dark group-hover:dark:text-white transition-colors truncate">
+                  <p className="text-slate-700 dark:text-slate-300 group-hover:text-kat-dark dark:group-hover:text-white transition-colors truncate">
                     {catMap[label] || label}
                   </p>
                 </div>
@@ -221,7 +220,7 @@ export function BreakdownSection({
                 percent={percent}
                 colorClass={isZeroAmount ? "bg-slate-200" : colorClass}
               />
-              <span className="w-10 text-right text-[12px] font-black text-slate-400 dark:text-slate-500 group-hover:text-slate-600 group-hover:dark:text-slate-350 transition-colors">
+              <span className="w-10 text-right text-[12px] font-black text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-350 transition-colors">
                 {percent}%
               </span>
             </div>
@@ -264,7 +263,7 @@ export function SettlementCard({
     const colorClass = colors[charCodeSum % colors.length];
     return (
       <div
-        className={`w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-black shrink-0 shadow-sm mb-1 ${colorClass}`}
+        className={`w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-black shrink-0 shadow-xs mb-1 ${colorClass}`}
       >
         {initials}
       </div>
@@ -293,12 +292,12 @@ export function SettlementCard({
             return (
               <div
                 key={idx}
-                className="flex flex-col justify-center bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/60 dark:border-white/10 shadow-sm rounded-2xl p-4 gap-2 hover:shadow-md hover:border-slate-300/60 dark:hover:border-white/20 transition-all duration-200"
+                className="flex flex-col justify-center bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/60 dark:border-white/10 shadow-xs rounded-2xl p-4 gap-2 hover:shadow-md hover:border-slate-300/60 dark:hover:border-white/20 transition-all duration-200"
               >
                 <div className="flex items-center justify-between w-full">
                   <div className="flex flex-col items-center flex-1">
                     {getMemberAvatar(s.from)}
-                    <span className="font-bold text-kat-dark dark:text-slate-200 text-[13px] text-center px-1 break-words leading-tight">
+                    <span className="font-bold text-kat-dark dark:text-slate-200 text-[13px] text-center px-1 wrap-break-word leading-tight">
                       {s.from}
                     </span>
                     {fromGroup && (
@@ -313,13 +312,13 @@ export function SettlementCard({
                       {formatMoney(s.amount, currency)}
                     </span>
                     <div className="w-full h-[2px] bg-slate-200 dark:bg-slate-700/80 relative flex items-center justify-center">
-                      <div className="absolute right-[-4px] top-1/2 -translate-y-1/2 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-slate-200 dark:border-l-slate-700/80" />
+                      <div className="absolute right-[-4px] top-1/2 -translate-y-1/2 border-t-4 border-b-4 border-l-[6px] border-transparent border-l-slate-200 dark:border-l-slate-700/80" />
                     </div>
                   </div>
 
                   <div className="flex flex-col items-center flex-1">
                     {getMemberAvatar(s.to)}
-                    <span className="font-bold text-kat-primary text-[13px] text-center px-1 break-words leading-tight">
+                    <span className="font-bold text-kat-primary text-[13px] text-center px-1 wrap-break-word leading-tight">
                       {s.to}
                     </span>
                     {toGroup && (
@@ -411,7 +410,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
 
   return (
     <article
-      className={`motion-card-enter motion-delay-${Math.min(idx + 1, 5)} flex items-center justify-between gap-4 rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-sm transition-all duration-200 hover:shadow-md`}
+      className={`motion-card-enter motion-delay-${Math.min(idx + 1, 5)} flex items-center justify-between gap-4 rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-xs transition-all duration-200 hover:shadow-md`}
     >
       <div className="min-w-0 flex-1">
         {/* Description */}
@@ -423,7 +422,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
 
         {/* Category & Badge */}
         <div className="flex items-center flex-wrap gap-2 text-xs mt-1.5">
-          <span className="inline-flex items-center gap-1 font-medium bg-slate-100 dark:bg-slate-800/60 backdrop-blur-sm px-2 py-0.5 rounded-md text-slate-600 dark:text-slate-300">
+          <span className="inline-flex items-center gap-1 font-medium bg-slate-100 dark:bg-slate-800/60 backdrop-blur-xs px-2 py-0.5 rounded-md text-slate-600 dark:text-slate-300">
             {getCategoryIcon(item.category)}
             {catMap[item.category] || item.category}
           </span>
@@ -432,8 +431,8 @@ const ExpenseCard = React.memo(function ExpenseCard({
             className={classNames(
               "inline-flex items-center rounded-md px-2 py-0.5 font-bold",
               isPersonal
-                ? "bg-slate-100 dark:bg-slate-800/60 backdrop-blur-sm text-slate-500 dark:text-slate-400"
-                : "bg-[#00BFB7]/10 dark:bg-[#00BFB7]/15 backdrop-blur-sm text-[#00BFB7]"
+                ? "bg-slate-100 dark:bg-slate-800/60 backdrop-blur-xs text-slate-500 dark:text-slate-400"
+                : "bg-[#00BFB7]/10 dark:bg-[#00BFB7]/15 backdrop-blur-xs text-[#00BFB7]"
             )}
           >
             {isPersonal
@@ -489,7 +488,7 @@ const ExpenseCard = React.memo(function ExpenseCard({
         <div className="relative shrink-0 self-center" ref={menuRef}>
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800/40 transition-colors focus:outline-none"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800/40 transition-colors focus:outline-hidden"
             onClick={(e) => {
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
@@ -793,7 +792,7 @@ function ExpenseForm({
       type="button"
       onClick={save}
       disabled={isSaveDisabled}
-      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 text-white dark:text-slate-950 px-4 text-[13.5px] font-bold shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] transition-all active:scale-[0.97] disabled:bg-slate-100 dark:disabled:bg-slate-800/40 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed"
+      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 text-white dark:text-slate-950 px-4 text-[13.5px] font-bold shadow-xs dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] transition-all active:scale-[0.97] disabled:bg-slate-100 dark:disabled:bg-slate-800/40 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed"
     >
       {editing ? t("expenses.save") : t("expenses.add")}
     </button>
@@ -817,7 +816,7 @@ function ExpenseForm({
               <button
                 type="button"
                 onClick={() => setIsCurrencyDropdownOpen(true)}
-                className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1 text-kat-dark dark:text-slate-200 hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
+                className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1 text-kat-dark dark:text-slate-200 hover:bg-slate-50 transition-colors shadow-xs cursor-pointer"
               >
                 {form.currency}
                 <HugeiconsIcon icon={ChevronDownIcon} className="w-3.5 h-3.5 text-slate-400" />
@@ -941,7 +940,7 @@ function ExpenseForm({
                 setErrors({ ...errors, amount: "" });
               }}
               placeholder="0"
-              className="w-full text-center text-3xl font-black text-kat-dark dark:text-white bg-transparent border-none outline-none placeholder-slate-300 focus:ring-0"
+              className="w-full text-center text-3xl font-black text-kat-dark dark:text-white bg-transparent border-none outline-hidden placeholder-slate-300 focus:ring-0"
             />
           </div>
           {form.currency !== (currency || "VND") && form.amount && (
@@ -1045,7 +1044,7 @@ function ExpenseForm({
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-slate-200 transition-colors focus:outline-none"
+            className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-slate-200 transition-colors focus:outline-hidden"
           >
             <span className="flex items-center gap-1.5">
               <HugeiconsIcon icon={PreferenceHorizontalIcon} className="h-4 w-4 text-slate-400" />
@@ -1490,7 +1489,7 @@ export function ExpensesScreen({
               <button
                 type="button"
                 onClick={openNewForm}
-                className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary hover:bg-opacity-95 dark:hover:brightness-110 px-5 text-[14px] font-bold text-white dark:text-slate-950 shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] motion-press h-[48px]"
+                className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary hover:bg-opacity-95 dark:hover:brightness-110 px-5 text-[14px] font-bold text-white dark:text-slate-950 shadow-xs dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] motion-press h-[48px]"
               >
                 <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
                 {t("expenses.addExpense")}
@@ -1510,13 +1509,13 @@ export function ExpensesScreen({
                     {t("expenses.totalTrip")}
                   </p>
                 </div>
-                <p className="mt-1 break-words text-[36px] md:text-[44px] font-black leading-none tracking-tight text-kat-dark dark:text-white">
+                <p className="mt-1 wrap-break-word text-[36px] md:text-[44px] font-black leading-none tracking-tight text-kat-dark dark:text-white">
                   {formatMoney(totalExpense, baseCurrency)}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-4xl">
-                <div className="bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/60 dark:border-white/10 rounded-2xl p-4 shadow-sm flex flex-col gap-1.5">
+                <div className="bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/60 dark:border-white/10 rounded-2xl p-4 shadow-xs flex flex-col gap-1.5">
                   <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800/60 shrink-0">
                       <HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5" />
@@ -1528,7 +1527,7 @@ export function ExpensesScreen({
                   </p>
                 </div>
 
-                <div className="bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/60 dark:border-white/10 rounded-2xl p-4 shadow-sm flex flex-col gap-1.5">
+                <div className="bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/60 dark:border-white/10 rounded-2xl p-4 shadow-xs flex flex-col gap-1.5">
                   <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800/60 shrink-0">
                       <HugeiconsIcon icon={UserIcon} className="h-3.5 w-3.5" />
@@ -1542,7 +1541,7 @@ export function ExpensesScreen({
                   </p>
                 </div>
 
-                <div className="bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/60 dark:border-white/10 rounded-2xl p-4 shadow-sm flex flex-col gap-1.5">
+                <div className="bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/60 dark:border-white/10 rounded-2xl p-4 shadow-xs flex flex-col gap-1.5">
                   <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800/60 shrink-0">
                       <HugeiconsIcon icon={CalculatorIcon} className="h-3.5 w-3.5" />

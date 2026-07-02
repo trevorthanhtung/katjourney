@@ -31,14 +31,14 @@ export function ThemeSettings({ theme, setTheme, setView }: ThemeSettingsProps) 
                 type="button"
                 onClick={() => setTheme("light")}
                 className={classNames(
-                  "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
+                  "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-hidden w-full",
                   theme === "light"
                     ? "border-amber-400 bg-amber-50 shadow-[0_4px_24px_rgba(251,191,36,0.25)] ring-2 ring-amber-400/20 scale-[1.02] dark:border-amber-500/50 dark:bg-amber-500/10 dark:shadow-[0_4px_24px_rgba(245,158,11,0.15)]"
-                    : "bg-white/80 dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
+                    : "bg-white/80 dark:bg-slate-900/40 border-slate-200/80 dark:border-white/4 hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
                 )}
               >
                 {/* Mini Screen Preview */}
-                <div className="w-[76px] h-[52px] rounded-xl bg-white border border-slate-200/80 relative overflow-hidden flex flex-col items-center justify-center shadow-sm shrink-0 mt-0.5 group-hover:shadow-md transition-shadow">
+                <div className="w-[76px] h-[52px] rounded-xl bg-white border border-slate-200/80 relative overflow-hidden flex flex-col items-center justify-center shadow-xs shrink-0 mt-0.5 group-hover:shadow-md transition-shadow">
                   <div className="absolute top-0 inset-x-0 h-2 bg-slate-50 border-b border-slate-100" />
                   <div className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
                     <HugeiconsIcon
@@ -69,14 +69,14 @@ export function ThemeSettings({ theme, setTheme, setView }: ThemeSettingsProps) 
                 type="button"
                 onClick={() => setTheme("dark")}
                 className={classNames(
-                  "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
+                  "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-hidden w-full",
                   theme === "dark"
                     ? "border-violet-400 bg-violet-50 shadow-[0_4px_24px_rgba(167,139,250,0.25)] ring-2 ring-violet-400/20 scale-[1.02] dark:border-violet-500/50 dark:bg-violet-500/10 dark:shadow-[0_4px_24px_rgba(139,92,246,0.15)]"
-                    : "bg-white/80 dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
+                    : "bg-white/80 dark:bg-slate-900/40 border-slate-200/80 dark:border-white/4 hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
                 )}
               >
                 {/* Mini Screen Preview */}
-                <div className="w-[76px] h-[52px] rounded-xl bg-slate-950 border border-slate-900 relative overflow-hidden flex flex-col items-center justify-center shadow-sm shrink-0 mt-0.5 group-hover:shadow-md transition-shadow">
+                <div className="w-[76px] h-[52px] rounded-xl bg-slate-950 border border-slate-900 relative overflow-hidden flex flex-col items-center justify-center shadow-xs shrink-0 mt-0.5 group-hover:shadow-md transition-shadow">
                   <div className="absolute top-0 inset-x-0 h-2 bg-slate-900 border-b border-slate-800" />
                   <div className="w-8 h-8 rounded-full bg-violet-500/15 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
                     <HugeiconsIcon
@@ -107,14 +107,14 @@ export function ThemeSettings({ theme, setTheme, setView }: ThemeSettingsProps) 
                 type="button"
                 onClick={() => setTheme("system")}
                 className={classNames(
-                  "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-none w-full",
+                  "flex flex-col items-center justify-between p-3 rounded-[24px] border-2 transition-all duration-300 relative overflow-hidden group select-none h-[142px] text-center focus:outline-hidden w-full",
                   theme === "system"
                     ? "border-teal-400 bg-teal-50 shadow-[0_4px_24px_rgba(45,212,191,0.25)] ring-2 ring-teal-400/20 scale-[1.02] dark:border-teal-500/50 dark:bg-teal-500/10 dark:shadow-[0_4px_24px_rgba(20,184,166,0.15)]"
-                    : "bg-white/80 dark:bg-slate-900/40 border-slate-200/80 dark:border-white/[0.04] hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
+                    : "bg-white/80 dark:bg-slate-900/40 border-slate-200/80 dark:border-white/4 hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
                 )}
               >
                 {/* Mini Screen Preview (Split) */}
-                <div className="w-[76px] h-[52px] rounded-xl bg-white border border-slate-200/80 relative overflow-hidden shadow-sm shrink-0 mt-0.5 group-hover:shadow-md transition-shadow">
+                <div className="w-[76px] h-[52px] rounded-xl bg-white border border-slate-200/80 relative overflow-hidden shadow-xs shrink-0 mt-0.5 group-hover:shadow-md transition-shadow">
                   {/* Light Underlay */}
                   <div className="absolute inset-0 flex items-center justify-start pl-2 bg-white">
                     <div className="absolute top-0 inset-x-0 h-2 bg-slate-50 border-b border-slate-100" />
@@ -162,7 +162,7 @@ export function ThemeSettings({ theme, setTheme, setView }: ThemeSettingsProps) 
 
         <button
           onClick={() => setView("menu")}
-          className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
+          className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/4 dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
         >
           {t("settings.actions.backToMenu")}
         </button>

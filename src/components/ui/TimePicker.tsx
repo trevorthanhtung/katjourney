@@ -114,7 +114,7 @@ export function TimePicker({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md px-4 h-[50px] text-[15px] font-medium outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 transition-shadow focus:bg-white/80 dark:focus:bg-white/5 focus:ring-2 focus:ring-kat-teal"
+        className="mt-1.5 w-full flex items-center justify-between rounded-xl border-0 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md px-4 h-[50px] text-[15px] font-medium outline-hidden ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 transition-shadow focus:bg-white/80 dark:focus:bg-white/5 focus:ring-2 focus:ring-kat-teal"
       >
         <span className={value ? "text-kat-text font-bold" : "text-slate-400 dark:text-slate-500"}>
           {value || placeholder}
@@ -130,7 +130,7 @@ export function TimePicker({
         <div className="flex flex-col items-center">
           <div className="flex justify-center w-full max-w-[240px] h-[200px] relative overflow-hidden bg-slate-50/80 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-kat-border/40 shadow-inner">
             {/* Highlight bar in the middle */}
-            <div className="absolute top-1/2 -translate-y-1/2 w-[90%] h-[44px] bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-sm pointer-events-none" />
+            <div className="absolute top-1/2 -translate-y-1/2 w-[90%] h-[44px] bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-xs pointer-events-none" />
 
             {/* Hours column */}
             <div
@@ -186,7 +186,7 @@ export function TimePicker({
           <div className="w-full mt-6">
             <button
               onClick={handleSave}
-              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-kat-dark text-white dark:bg-kat-primary dark:text-kat-dark px-6 font-bold shadow-sm hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all motion-press"
+              className="w-full flex h-[52px] items-center justify-center rounded-2xl bg-kat-dark text-white dark:bg-kat-primary dark:text-kat-dark px-6 font-bold shadow-xs hover:bg-kat-dark bg-opacity-90 active:scale-[0.98] transition-all motion-press"
             >
               {t("ui.saveTime")}
             </button>

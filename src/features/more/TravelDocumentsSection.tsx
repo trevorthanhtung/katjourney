@@ -270,7 +270,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
       type="button"
       onClick={save}
       disabled={isSaveDisabled}
-      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 px-4 text-[13.5px] font-extrabold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed"
+      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 px-4 text-[13.5px] font-extrabold shadow-xs transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed"
     >
       {isUploading ? (
         <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin text-slate-400" />
@@ -368,7 +368,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-kat-dark transition-colors focus:outline-none"
+            className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-kat-dark transition-colors focus:outline-hidden"
           >
             <span className="flex items-center gap-1.5">
               <HugeiconsIcon icon={Add01Icon} className="h-4 w-4 text-slate-400" />
@@ -450,7 +450,7 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-28 border-[1.5px] border-dashed border-[#00BFB7]/40 dark:border-[#00BFB7]/30 rounded-[24px] bg-[#00BFB7]/[0.03] dark:bg-[#00BFB7]/[0.02] hover:bg-[#00BFB7]/[0.06] dark:hover:bg-[#00BFB7]/[0.04] transition-all cursor-pointer text-slate-500 dark:text-slate-400 group">
+                  <label className="flex flex-col items-center justify-center w-full h-28 border-[1.5px] border-dashed border-[#00BFB7]/40 dark:border-[#00BFB7]/30 rounded-[24px] bg-[#00BFB7]/3 dark:bg-[#00BFB7]/2 hover:bg-[#00BFB7]/6 dark:hover:bg-[#00BFB7]/4 transition-all cursor-pointer text-slate-500 dark:text-slate-400 group">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <div className="relative mb-3">
                         <HugeiconsIcon
@@ -554,7 +554,7 @@ function DocumentCard({
             <div className="relative shrink-0" ref={menuRef}>
               <button
                 type="button"
-                className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors focus:outline-none"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors focus:outline-hidden"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsMenuOpen(!isMenuOpen);
@@ -616,7 +616,7 @@ function DocumentCard({
             </div>
             <button
               type="button"
-              className="ml-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-slate-200 transition-all shadow-sm shrink-0"
+              className="ml-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-slate-200 transition-all shadow-xs shrink-0"
               title={t("documents.copyCodeBtn")}
             >
               {copied ? (
@@ -692,7 +692,7 @@ function DocumentCard({
       {/* Lightbox */}
       {previewImage && (
         <div
-          className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4 cursor-pointer backdrop-blur-sm"
+          className="fixed inset-0 z-9999 bg-black/90 flex items-center justify-center p-4 cursor-pointer backdrop-blur-xs"
           onClick={(e) => {
             e.stopPropagation();
             setPreviewImage(null);
@@ -801,7 +801,7 @@ export function TravelDocumentsSection({
           <button
             onClick={openNewForm}
             className={classNames(
-              "h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-5 text-[13.5px] font-bold hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center border border-transparent dark:border-kat-primary",
+              "h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-5 text-[13.5px] font-bold hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press shadow-xs shrink-0 w-full sm:w-auto self-stretch sm:self-center border border-transparent dark:border-kat-primary",
               documents.length > 0 ? "hidden md:flex" : "flex"
             )}
           >

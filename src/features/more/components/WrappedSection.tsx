@@ -165,7 +165,7 @@ export function WrappedSection({
         <button
           onClick={handleExportPdf}
           disabled={isGeneratingPdf}
-          className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-5 text-[13.5px] font-bold hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center disabled:opacity-50 disabled:cursor-not-allowed border border-transparent dark:border-kat-primary"
+          className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-5 text-[13.5px] font-bold hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press shadow-xs shrink-0 w-full sm:w-auto self-stretch sm:self-center disabled:opacity-50 disabled:cursor-not-allowed border border-transparent dark:border-kat-primary"
         >
           <HugeiconsIcon
             icon={FileDownloadIcon}
@@ -181,9 +181,9 @@ export function WrappedSection({
           {/* Hero Recap Card */}
           <section className="relative overflow-hidden rounded-[32px] bg-white/70 dark:bg-[#0E172A]/40 border border-slate-200/50 dark:border-white/5 p-8 text-kat-text shadow-[0_8px_30px_rgba(0,0,0,0.02)] flex-1 flex flex-col justify-center">
             {/* Subtle ambient light behind the compass */}
-            <div className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-48 h-48 rounded-full bg-kat-primary/5 dark:bg-kat-primary/10 blur-[40px] pointer-events-none" />
+            <div className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-48 h-48 rounded-full bg-kat-primary/5 dark:bg-kat-primary/10 blur-2xl pointer-events-none" />
             <div className="relative z-10 flex flex-col items-center text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-kat-primary/20 to-teal-400/20 text-kat-primary mb-4 ring-4 ring-kat-primary/5 border border-kat-primary/20 shadow-sm">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-tr from-kat-primary/20 to-teal-400/20 text-kat-primary mb-4 ring-4 ring-kat-primary/5 border border-kat-primary/20 shadow-xs">
                 <HugeiconsIcon icon={CompassIcon} className="h-6 w-6" />
               </div>
               <h2 className="text-[30px] md:text-[36px] font-black leading-tight tracking-tight text-kat-dark dark:text-white">
@@ -285,7 +285,7 @@ export function WrappedSection({
                 {mood ? (
                   <div className="mt-2 flex flex-col items-center animate-fadeIn">
                     <p
-                      className={`text-[32px] md:text-[36px] font-black bg-gradient-to-r ${theme.gradient} bg-clip-text text-transparent drop-shadow-sm`}
+                      className={`text-[32px] md:text-[36px] font-black bg-linear-to-r ${theme.gradient} bg-clip-text text-transparent drop-shadow-xs`}
                     >
                       {mood}
                     </p>
@@ -303,7 +303,7 @@ export function WrappedSection({
                     </p>
                     <button
                       onClick={() => setSection("journal")}
-                      className="flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 py-2.5 text-[14px] font-extrabold text-white dark:text-slate-950 hover:bg-kat-dark/95 dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] transition-all shadow-sm border border-transparent dark:border-kat-primary"
+                      className="flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 py-2.5 text-[14px] font-extrabold text-white dark:text-slate-950 hover:bg-kat-dark/95 dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] transition-all shadow-xs border border-transparent dark:border-kat-primary"
                     >
                       <HugeiconsIcon icon={BookOpen01Icon} className="h-4.5 w-4.5" />
                       {t("more.wrappedPostFirstJournal")}
@@ -381,7 +381,7 @@ export function WrappedSection({
           {/* Finance Recap */}
           <div className="rounded-[32px] bg-white/70 dark:bg-[#0E172A]/40 backdrop-blur-md border border-slate-200/50 dark:border-white/5 p-8 text-kat-text shadow-[0_8px_30px_rgba(0,0,0,0.02)] relative overflow-hidden flex-1 flex flex-col justify-center">
             {/* Decorative corner glow */}
-            <div className="absolute -bottom-16 -left-16 w-36 h-36 rounded-full bg-emerald-500/5 dark:bg-emerald-500/10 blur-[40px] pointer-events-none" />
+            <div className="absolute -bottom-16 -left-16 w-36 h-36 rounded-full bg-emerald-500/5 dark:bg-emerald-500/10 blur-2xl pointer-events-none" />
 
             <div className="relative z-10">
               <h3 className="text-[13px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
@@ -395,13 +395,13 @@ export function WrappedSection({
                     <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-450">
                       {t("more.wrappedTotalExpense")}
                     </p>
-                    <p className="mt-2 text-[42px] md:text-[48px] font-black bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent leading-none tracking-tight">
+                    <p className="mt-2 text-[42px] md:text-[48px] font-black bg-linear-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent leading-none tracking-tight">
                       {formatMoney(stats.totalExpense)}
                     </p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl">
-                    <div className="bg-emerald-500/[0.04] dark:bg-emerald-500/[0.06] border border-emerald-500/10 dark:border-emerald-500/5 rounded-2xl p-4 flex flex-col justify-center">
+                    <div className="bg-emerald-500/4 dark:bg-emerald-500/6 border border-emerald-500/10 dark:border-emerald-500/5 rounded-2xl p-4 flex flex-col justify-center">
                       <p className="text-[11px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">
                         {t("more.wrappedSharedExpense")}
                       </p>
@@ -409,7 +409,7 @@ export function WrappedSection({
                         {formatMoney(sharedTotal)}
                       </p>
                     </div>
-                    <div className="bg-slate-500/[0.04] dark:bg-slate-500/[0.06] border border-slate-500/10 dark:border-slate-500/5 rounded-2xl p-4 flex flex-col justify-center">
+                    <div className="bg-slate-500/4 dark:bg-slate-500/6 border border-slate-500/10 dark:border-slate-500/5 rounded-2xl p-4 flex flex-col justify-center">
                       <p className="text-[11px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">
                         {t("more.wrappedPersonalExpense")}
                       </p>
@@ -429,7 +429,7 @@ export function WrappedSection({
                     <>
                       {stats.topPayer && (
                         <div className="max-w-xl">
-                          <div className="rounded-2xl bg-amber-500/[0.04] dark:bg-amber-500/[0.08] border border-amber-500/15 dark:border-amber-500/10 p-4 flex items-start gap-3.5 shadow-sm">
+                          <div className="rounded-2xl bg-amber-500/4 dark:bg-amber-500/8 border border-amber-500/15 dark:border-amber-500/10 p-4 flex items-start gap-3.5 shadow-xs">
                             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-500 shadow-inner">
                               <HugeiconsIcon icon={StarIcon} className="h-5.5 w-5.5" />
                             </div>

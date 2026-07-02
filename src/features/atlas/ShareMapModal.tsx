@@ -103,7 +103,7 @@ export function ShareMapModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-4">
+    <div className="fixed inset-0 z-200 bg-black/80 backdrop-blur-xs flex flex-col items-center justify-center p-4">
       {/* The Map Card (This will be exported) */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -133,7 +133,7 @@ export function ShareMapModal({
 
           {/* Map Area */}
           <div className="flex-1 w-full relative flex items-center justify-center px-2">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[120%] bg-gradient-to-tr from-cyan-500/10 via-transparent to-blue-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[120%] bg-linear-to-tr from-cyan-500/10 via-transparent to-blue-500/10 rounded-full blur-[80px] pointer-events-none"></div>
 
             <svg
               viewBox={`0 0 ${width} ${height}`}
@@ -161,8 +161,8 @@ export function ShareMapModal({
           {/* Stats Bar */}
           <div className="mt-auto px-6 pb-10 pt-4 relative z-20">
             <div className="flex items-center justify-between gap-3">
-              <div className="flex-1 bg-white/[0.03] border border-white/10 rounded-[1.5rem] p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-                <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-50"></div>
+              <div className="flex-1 bg-white/3 border border-white/10 rounded-3xl p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+                <div className="absolute inset-x-0 bottom-0 h-1 bg-linear-to-r from-transparent via-cyan-400 to-transparent opacity-50"></div>
                 <span className="text-4xl font-black text-white tracking-tighter mb-1 drop-shadow-md">
                   {visitedCountries.length}
                 </span>
@@ -171,9 +171,9 @@ export function ShareMapModal({
                 </span>
               </div>
 
-              <div className="flex-1 bg-cyan-500/10 border border-cyan-400/30 rounded-[1.5rem] p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_0_20px_rgba(6,182,212,0.15)] ring-1 ring-cyan-400/20">
-                <div className="absolute inset-0 bg-gradient-to-t from-cyan-400/20 to-transparent opacity-50"></div>
-                <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-cyan-200 mb-1 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)] relative z-10">
+              <div className="flex-1 bg-cyan-500/10 border border-cyan-400/30 rounded-3xl p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_0_20px_rgba(6,182,212,0.15)] ring-1 ring-cyan-400/20">
+                <div className="absolute inset-0 bg-linear-to-t from-cyan-400/20 to-transparent opacity-50"></div>
+                <span className="text-4xl font-black text-transparent bg-clip-text bg-linear-to-b from-white to-cyan-200 mb-1 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)] relative z-10">
                   {percentage}%
                 </span>
                 <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-200/70 relative z-10">
@@ -181,8 +181,8 @@ export function ShareMapModal({
                 </span>
               </div>
 
-              <div className="flex-1 bg-white/[0.03] border border-white/10 rounded-[1.5rem] p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-                <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-50"></div>
+              <div className="flex-1 bg-white/3 border border-white/10 rounded-3xl p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+                <div className="absolute inset-x-0 bottom-0 h-1 bg-linear-to-r from-transparent via-blue-400 to-transparent opacity-50"></div>
                 <span className="text-4xl font-black text-white tracking-tighter mb-1 drop-shadow-md">
                   {totalTrips}
                 </span>
@@ -254,7 +254,7 @@ export function ShareMapModal({
       {/* Close button - Safe area adjusted and high z-index */}
       <button
         onClick={onClose}
-        className="absolute top-[max(1.5rem,env(safe-area-inset-top))] right-[max(1.5rem,env(safe-area-inset-right))] w-11 h-11 bg-slate-800/60 hover:bg-slate-700/80 rounded-full flex items-center justify-center text-white transition-colors z-[300] backdrop-blur-md shadow-xl border border-white/20"
+        className="absolute top-[max(1.5rem,env(safe-area-inset-top))] right-[max(1.5rem,env(safe-area-inset-right))] w-11 h-11 bg-slate-800/60 hover:bg-slate-700/80 rounded-full flex items-center justify-center text-white transition-colors z-300 backdrop-blur-md shadow-xl border border-white/20"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path

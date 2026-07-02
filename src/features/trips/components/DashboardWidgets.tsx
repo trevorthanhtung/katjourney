@@ -36,7 +36,7 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
     return acc + Math.ceil(Math.abs(e.getTime() - s.getTime()) / (1000 * 3600 * 24)) + 1;
   }, 0);
   const cardBaseClass =
-    "flex flex-col relative overflow-hidden bg-white/70 dark:bg-[#0A0F1C]/80 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 rounded-[2rem] p-6 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_16px_48px_rgba(3,13,46,0.08)] dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.3)] hover:border-slate-300 dark:hover:border-white/20 hover:bg-white/90 dark:hover:bg-[#0A0F1C]/90 transition-all duration-500 min-h-[170px] group";
+    "flex flex-col relative overflow-hidden bg-white/70 dark:bg-[#0A0F1C]/80 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 rounded-4xl p-6 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_16px_48px_rgba(3,13,46,0.08)] dark:hover:shadow-[0_16px_48px_rgba(0,0,0,0.3)] hover:border-slate-300 dark:hover:border-white/20 hover:bg-white/90 dark:hover:bg-[#0A0F1C]/90 transition-all duration-500 min-h-[170px] group";
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
@@ -45,18 +45,18 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
         onClick={onAtlasClick}
         className={`${cardBaseClass} ${onAtlasClick ? "cursor-pointer motion-press" : ""}`}
       >
-        <div className="absolute -right-10 -top-10 w-40 h-40 bg-rose-500/10 dark:bg-rose-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-rose-500/10 dark:bg-rose-500/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
 
         <div className="flex flex-col h-full relative z-10">
           <div className="flex items-start justify-between mb-4">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-100 to-rose-50 dark:from-rose-500/20 dark:to-rose-500/5 flex items-center justify-center text-rose-500 border border-rose-200/50 dark:border-rose-500/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+            <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-rose-100 to-rose-50 dark:from-rose-500/20 dark:to-rose-500/5 flex items-center justify-center text-rose-500 border border-rose-200/50 dark:border-rose-500/20 shadow-xs group-hover:scale-110 transition-transform duration-500">
               <HugeiconsIcon icon={EarthIcon} size={20} />
             </div>
           </div>
 
           <div className="flex-1 flex flex-col justify-end">
             <div className="flex items-baseline gap-1.5 mb-1">
-              <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-rose-500 dark:group-hover:text-rose-400 transition-colors duration-300">
+              <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter drop-shadow-xs group-hover:text-rose-500 dark:group-hover:text-rose-400 transition-colors duration-300">
                 {visitedAlpha2s.length}
               </span>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500">/ 195</span>
@@ -77,7 +77,7 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
                 key={alpha2}
                 src={`https://flagcdn.com/w40/${alpha2.toLowerCase()}.png`}
                 alt={alpha2}
-                className="w-6 h-6 rounded-full object-cover border-2 border-white dark:border-[#0A0F1C] shrink-0 shadow-sm relative"
+                className="w-6 h-6 rounded-full object-cover border-2 border-white dark:border-[#0A0F1C] shrink-0 shadow-xs relative"
                 style={{ zIndex: 5 - idx }}
                 title={alpha2}
               />
@@ -88,18 +88,18 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
 
       {/* TOTAL TRIPS CARD */}
       <div className={cardBaseClass}>
-        <div className="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
 
         <div className="flex flex-col h-full relative z-10">
           <div className="flex items-start justify-between mb-4">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 dark:from-indigo-500/20 dark:to-indigo-500/5 flex items-center justify-center text-indigo-500 border border-indigo-200/50 dark:border-indigo-500/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+            <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-indigo-100 to-indigo-50 dark:from-indigo-500/20 dark:to-indigo-500/5 flex items-center justify-center text-indigo-500 border border-indigo-200/50 dark:border-indigo-500/20 shadow-xs group-hover:scale-110 transition-transform duration-500">
               <HugeiconsIcon icon={Route01Icon} size={20} />
             </div>
           </div>
 
           <div className="flex-1 flex flex-col justify-end">
             <div className="flex items-baseline gap-1.5 mb-1">
-              <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors duration-300">
+              <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter drop-shadow-xs group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors duration-300">
                 {totalTrips}
               </span>
             </div>
@@ -118,18 +118,18 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
 
       {/* DAYS TRAVELED CARD */}
       <div className={cardBaseClass}>
-        <div className="absolute -right-10 -top-10 w-40 h-40 bg-orange-500/10 dark:bg-orange-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-orange-500/10 dark:bg-orange-500/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
 
         <div className="flex flex-col h-full relative z-10">
           <div className="flex items-start justify-between mb-4">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-100 to-orange-50 dark:from-orange-500/20 dark:to-orange-500/5 flex items-center justify-center text-orange-500 border border-orange-200/50 dark:border-orange-500/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+            <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-orange-100 to-orange-50 dark:from-orange-500/20 dark:to-orange-500/5 flex items-center justify-center text-orange-500 border border-orange-200/50 dark:border-orange-500/20 shadow-xs group-hover:scale-110 transition-transform duration-500">
               <HugeiconsIcon icon={Calendar01Icon} size={20} />
             </div>
           </div>
 
           <div className="flex-1 flex flex-col justify-end">
             <div className="flex items-baseline gap-1.5 mb-1">
-              <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors duration-300">
+              <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter drop-shadow-xs group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors duration-300">
                 {totalDays}
               </span>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
@@ -151,18 +151,18 @@ export function GamificationStats({ trips, onAtlasClick }: GamificationStatsProp
 
       {/* DESTINATIONS CARD */}
       <div className={cardBaseClass}>
-        <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none"></div>
 
         <div className="flex flex-col h-full relative z-10">
           <div className="flex items-start justify-between mb-4">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-500/20 dark:to-emerald-500/5 flex items-center justify-center text-emerald-500 border border-emerald-200/50 dark:border-emerald-500/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+            <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-emerald-100 to-emerald-50 dark:from-emerald-500/20 dark:to-emerald-500/5 flex items-center justify-center text-emerald-500 border border-emerald-200/50 dark:border-emerald-500/20 shadow-xs group-hover:scale-110 transition-transform duration-500">
               <HugeiconsIcon icon={MapsLocation01Icon} size={20} />
             </div>
           </div>
 
           <div className="flex-1 flex flex-col justify-end">
             <div className="flex items-baseline gap-1.5 mb-1">
-              <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter drop-shadow-sm group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors duration-300">
+              <span className="text-4xl font-bold text-slate-800 dark:text-white tracking-tighter drop-shadow-xs group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors duration-300">
                 {trips.reduce((acc, t) => acc + (t.destinations?.length || 1), 0)}
               </span>
             </div>
@@ -380,7 +380,7 @@ export function TimezonesWidget() {
       <div className="relative overflow-hidden w-full rounded-[28px] border border-slate-200/50 dark:border-white/5 bg-white/40 dark:bg-slate-900/20 backdrop-blur-md p-6 shadow-soft transition-all duration-300">
         <div className="flex items-center justify-between mb-5.5">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 shadow-sm">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 shadow-xs">
               <HugeiconsIcon icon={Clock01Icon} size={15} />
             </div>
             <span className="text-[12px] font-bold uppercase tracking-wider text-slate-450 dark:text-slate-405">
@@ -389,7 +389,7 @@ export function TimezonesWidget() {
           </div>
           <button
             onClick={() => setIsAdding(true)}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 hover:text-[#00BFB7] dark:hover:text-[#00BFB7] hover:bg-slate-200/80 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all shadow-sm cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 hover:text-[#00BFB7] dark:hover:text-[#00BFB7] hover:bg-slate-200/80 dark:hover:bg-slate-700/80 active:scale-[0.98] transition-all shadow-xs cursor-pointer"
           >
             <HugeiconsIcon icon={EarthIcon} size={17} />
           </button>
@@ -441,7 +441,7 @@ export function TimezonesWidget() {
                   return (
                     <div
                       key={tz}
-                      className="flex items-center justify-between group relative p-3.5 rounded-[18px] bg-white/30 dark:bg-slate-900/10 border border-slate-200/30 dark:border-white/[0.02] hover:border-slate-300/50 dark:hover:border-white/10 transition-all duration-300 shadow-soft"
+                      className="flex items-center justify-between group relative p-3.5 rounded-[18px] bg-white/30 dark:bg-slate-900/10 border border-slate-200/30 dark:border-white/2 hover:border-slate-300/50 dark:hover:border-white/10 transition-all duration-300 shadow-soft"
                     >
                       <div className="min-w-0 flex-1 pr-3">
                         <div className="text-[14.5px] font-bold text-slate-700 dark:text-slate-200 truncate">
@@ -492,7 +492,7 @@ export function TimezonesWidget() {
                 type="text"
                 autoFocus
                 placeholder={t("dashboard.widgets.searchTimezone", "Search timezone...")}
-                className="w-full bg-slate-50 dark:bg-[#2C2C2E] border border-transparent focus:border-kat-primary/30 rounded-xl pl-10 pr-4 py-3 text-[14px] text-slate-800 dark:text-slate-200 outline-none transition-colors"
+                className="w-full bg-slate-50 dark:bg-[#2C2C2E] border border-transparent focus:border-kat-primary/30 rounded-xl pl-10 pr-4 py-3 text-[14px] text-slate-800 dark:text-slate-200 outline-hidden transition-colors"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />

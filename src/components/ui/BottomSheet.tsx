@@ -43,14 +43,14 @@ export function BottomSheet({
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center p-0 sm:p-6">
+        <div className="fixed inset-0 z-100 flex items-end justify-center sm:items-center p-0 sm:p-6">
           {/* Backdrop */}
           <motion.div
             variants={modalOverlayVariants}
             initial="initial"
             animate="animate"
             exit="exit"
-            className="absolute inset-0 bg-slate-900/35 backdrop-blur-sm"
+            className="absolute inset-0 bg-slate-900/35 backdrop-blur-xs"
             onClick={onClose}
           />
 
@@ -71,7 +71,7 @@ export function BottomSheet({
             {/* Header */}
             <div className="relative z-10 flex shrink-0 items-start justify-between border-b border-slate-200/60 dark:border-white/10 px-5 sm:px-6 py-3.5 sm:py-4 gap-3 bg-transparent">
               <div className="pr-2 min-w-0 flex-1">
-                <h3 className="text-[20px] sm:text-[22px] font-bold bg-gradient-to-r from-kat-dark to-kat-primary dark:from-white dark:to-teal-300 bg-clip-text text-transparent drop-shadow-sm leading-snug truncate">
+                <h3 className="text-[20px] sm:text-[22px] font-bold bg-linear-to-r from-kat-dark to-kat-primary dark:from-white dark:to-teal-300 bg-clip-text text-transparent drop-shadow-xs leading-snug truncate">
                   {title}
                 </h3>
                 {subtitle && (
@@ -83,7 +83,7 @@ export function BottomSheet({
               <div className="flex items-center gap-2 shrink-0">
                 {headerAction}
                 <button
-                  className="group flex shrink-0 h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800/80 backdrop-blur-md text-slate-600 dark:text-slate-400 transition-all hover:bg-slate-100 dark:hover:bg-slate-700 hover:shadow-sm focus:outline-none"
+                  className="group flex shrink-0 h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800/80 backdrop-blur-md text-slate-600 dark:text-slate-400 transition-all hover:bg-slate-100 dark:hover:bg-slate-700 hover:shadow-xs focus:outline-hidden"
                   onClick={onClose}
                   title={t("ui.close")}
                   aria-label={t("ui.close")}

@@ -176,7 +176,7 @@ export function TripSearchModal({
           <input
             ref={inputRef}
             type="text"
-            className="flex-1 text-[16px] font-bold text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 outline-none border-none bg-transparent"
+            className="flex-1 text-[16px] font-bold text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 outline-hidden border-none bg-transparent"
             placeholder={t("search.placeholder")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}

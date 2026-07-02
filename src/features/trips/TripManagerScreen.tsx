@@ -141,15 +141,15 @@ function TripCard({
       >
         {/* Left Side (Gradient & Title) - Card in Card */}
         <div
-          className={`w-[40%] sm:w-[35%] lg:w-[30%] h-full shrink-0 bg-gradient-to-br ${gradientClass} relative px-3 sm:px-5 flex flex-col justify-center rounded-[18px] sm:rounded-[20px] overflow-hidden shadow-inner`}
+          className={`w-[40%] sm:w-[35%] lg:w-[30%] h-full shrink-0 bg-linear-to-br ${gradientClass} relative px-3 sm:px-5 flex flex-col justify-center rounded-[18px] sm:rounded-[20px] overflow-hidden shadow-inner`}
         >
           {/* Status Badge */}
-          <div className="absolute top-2.5 left-3 sm:top-3 sm:left-4 flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm">
+          <div className="absolute top-2.5 left-3 sm:top-3 sm:left-4 flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-xs">
             <span className={`relative flex h-1.5 w-1.5 rounded-full ${statusColorClass}`}></span>
             {statusLabel}
           </div>
 
-          <h4 className="text-[16px] sm:text-[22px] font-bold text-white leading-tight truncate tracking-tight drop-shadow-sm mt-4 sm:mt-3">
+          <h4 className="text-[16px] sm:text-[22px] font-bold text-white leading-tight truncate tracking-tight drop-shadow-xs mt-4 sm:mt-3">
             {trip.title}
           </h4>
         </div>
@@ -227,15 +227,15 @@ function TripCard({
       whileTap={{ scale: 0.98 }}
       transition={springInteraction}
       onClick={() => onOpenTrip(trip.id!)}
-      className={`group relative cursor-pointer flex flex-col overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-shadow duration-300 w-full h-[290px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square p-1.5 sm:p-2`}
+      className={`group relative cursor-pointer flex flex-col overflow-hidden rounded-[24px] bg-white dark:bg-kat-surface border border-slate-100 dark:border-kat-border hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-shadow duration-300 w-full h-[290px] sm:h-auto sm:aspect-4/4.5 lg:aspect-square p-1.5 sm:p-2`}
     >
       {/* Top Banner Area (Gradient) - Card in Card */}
       <div
-        className={`flex-1 bg-gradient-to-br ${gradientClass} relative p-4 sm:p-5 flex flex-col justify-between overflow-hidden rounded-[20px] shadow-inner`}
+        className={`flex-1 bg-linear-to-br ${gradientClass} relative p-4 sm:p-5 flex flex-col justify-between overflow-hidden rounded-[20px] shadow-inner`}
       >
         {/* Status Badge */}
         <div className="relative z-10 flex justify-start items-start shrink-0">
-          <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider shadow-sm">
+          <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider shadow-xs">
             <span className={`relative flex h-2 w-2 rounded-full ${statusColorClass}`}></span>
             {statusLabel}
           </div>
@@ -243,7 +243,7 @@ function TripCard({
 
         {/* Title */}
         <div className="relative z-10 mt-auto shrink-0 pb-1">
-          <h4 className="text-[24px] sm:text-[28px] font-bold text-white leading-tight line-clamp-2 tracking-tight drop-shadow-sm">
+          <h4 className="text-[24px] sm:text-[28px] font-bold text-white leading-tight line-clamp-2 tracking-tight drop-shadow-xs">
             {trip.title}
           </h4>
         </div>
@@ -378,11 +378,11 @@ function TripList({
             className={`hidden lg:flex group cursor-pointer ${
               viewMode === "list"
                 ? "flex-col h-32"
-                : "flex-col h-[260px] sm:h-auto sm:aspect-[4/4.5] lg:aspect-square"
+                : "flex-col h-[260px] sm:h-auto sm:aspect-4/4.5 lg:aspect-square"
             } items-center justify-center rounded-[24px] border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors duration-200 ease-out w-full`}
           >
             <div
-              className={`rounded-full bg-slate-800 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all duration-300 ease-out shadow-sm ${viewMode === "list" ? "w-10 h-10 mb-2" : "w-14 h-14 mb-4"}`}
+              className={`rounded-full bg-slate-800 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center group-hover:scale-110 group-hover:shadow-md transition-all duration-300 ease-out shadow-xs ${viewMode === "list" ? "w-10 h-10 mb-2" : "w-14 h-14 mb-4"}`}
             >
               <svg
                 className={viewMode === "list" ? "w-5 h-5" : "w-6 h-6"}
@@ -498,94 +498,135 @@ export function TripManagerScreen({
       className={`mx-auto w-full max-w-[1280px] flex-1 flex flex-col ${trips.length === 0 ? "justify-center py-0 md:py-0" : "py-6 pb-40 md:pt-4 md:pb-16"}`}
     >
       {trips.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[32px] bg-white dark:bg-[#0A0F1C] p-8 sm:p-12 text-center border border-slate-200 dark:border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_50px_rgba(0,191,183,0.03)] mx-auto w-full max-w-[540px] relative overflow-hidden motion-page-enter">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col items-center justify-center rounded-[28px] sm:rounded-[32px] bg-white/80 dark:bg-[#060B14]/80 backdrop-blur-xl p-6 sm:p-8 text-center border border-slate-200/60 dark:border-white/[0.04] shadow-[0_20px_50px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_50px_rgba(0,191,183,0.03)] mx-auto w-full max-w-[480px] relative overflow-hidden"
+        >
+          {/* Ambient Glowing Blobs */}
+          <div className="absolute top-0 left-0 w-64 h-64 bg-teal-400/10 dark:bg-[#00BFB7]/10 rounded-full blur-[80px] pointer-events-none transform -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 right-0 w-64 h-64 bg-cyan-400/10 dark:bg-[#0081BE]/10 rounded-full blur-[80px] pointer-events-none transform translate-x-1/3 translate-y-1/3" />
+          
           {/* Subtle top gradient line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00BFB7] to-transparent opacity-50" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-[#00BFB7] to-transparent opacity-60" />
 
-          {/* Premium Icon Container */}
-          <div className="relative mb-8 flex items-center justify-center">
-            <div className="absolute inset-0 bg-[#00BFB7] rounded-full blur-[40px] opacity-10" />
-            <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-slate-700 shadow-inner">
+          {/* Premium Animated Icon Container */}
+          <div className="relative mb-6 mt-1 flex items-center justify-center">
+            {/* Pulsing glow */}
+            <motion.div 
+              animate={{ opacity: [0.15, 0.25, 0.15], scale: [1, 1.05, 1] }} 
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0 bg-[#00BFB7] rounded-full blur-2xl" 
+            />
+            {/* Dotted orbit */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+              className="absolute w-[110px] h-[110px] rounded-full border border-dashed border-[#00BFB7]/30 dark:border-[#00BFB7]/20"
+            />
+            {/* Floating airplane container */}
+            <motion.div 
+              animate={{ y: [-3, 3, -3] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="relative flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-[#0C1425] border border-white dark:border-white/5 shadow-[0_8px_30px_rgba(0,191,183,0.15)] ring-1 ring-black/5 dark:ring-0"
+            >
               <HugeiconsIcon
                 icon={Airplane01Icon}
-                size={42}
+                size={34}
                 className="text-[#00BFB7] -rotate-45"
+                strokeWidth={2}
               />
-            </div>
+            </motion.div>
           </div>
 
-          <h3 className="mb-3 text-[26px] sm:text-[30px] font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+          <h3 className="mb-2.5 text-[22px] sm:text-[26px] font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight z-10 relative">
             {t("dashboard.emptyTitle")}
           </h3>
 
-          <p className="mb-10 text-[15px] sm:text-[16px] text-slate-500 dark:text-slate-400 leading-relaxed max-w-[400px]">
+          <p className="mb-6 text-[14px] sm:text-[15px] text-slate-500 dark:text-slate-400 leading-relaxed max-w-[360px] z-10 relative">
             {t("dashboard.emptyDesc")}
           </p>
 
-          {/* Sleek Feature List */}
-          <div className="flex flex-col gap-3 w-full max-w-[420px] mb-10">
-            <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
-              <div className="h-10 w-10 shrink-0 rounded-xl bg-[#0081BE]/10 text-[#0081BE] dark:text-[#38bdf8] flex items-center justify-center">
-                <HugeiconsIcon icon={Calendar01Icon} size={20} />
-              </div>
-              <div className="flex flex-col items-start text-left">
-                <span className="text-[14px] font-bold text-slate-900 dark:text-slate-100">
-                  {t("dashboard.emptyFeature1")}
-                </span>
-                <span className="text-[12px] text-slate-500 dark:text-slate-400 font-medium">
-                  {t("dashboard.emptyFeature1Desc")}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
-              <div className="h-10 w-10 shrink-0 rounded-xl bg-[#F89B02]/10 text-[#F89B02] dark:text-[#fbbf24] flex items-center justify-center">
-                <HugeiconsIcon icon={WalletCardsIcon} size={20} />
-              </div>
-              <div className="flex flex-col items-start text-left">
-                <span className="text-[14px] font-bold text-slate-900 dark:text-slate-100">
-                  {t("dashboard.emptyFeature2")}
-                </span>
-                <span className="text-[12px] text-slate-500 dark:text-slate-400 font-medium">
-                  {t("dashboard.emptyFeature2Desc")}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
-              <div className="h-10 w-10 shrink-0 rounded-xl bg-[#00BFB7]/10 text-[#00BFB7] dark:text-[#2dd4bf] flex items-center justify-center">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} size={20} />
-              </div>
-              <div className="flex flex-col items-start text-left">
-                <span className="text-[14px] font-bold text-slate-900 dark:text-slate-100">
-                  {t("dashboard.emptyFeature3")}
-                </span>
-                <span className="text-[12px] text-slate-500 dark:text-slate-400 font-medium">
-                  {t("dashboard.emptyFeature3Desc")}
-                </span>
-              </div>
-            </div>
+          {/* Elegant Feature List with Journey Line */}
+          <div className="relative flex flex-col gap-3.5 w-full max-w-[400px] mb-8 z-10 text-left">
+            {/* Vertical connector line */}
+            <div className="absolute left-[31px] top-[32px] bottom-[32px] w-0.5 bg-linear-to-b from-slate-200 via-slate-200 to-slate-200 dark:from-white/10 dark:via-white/10 dark:to-transparent" />
+            
+            {[
+              {
+                icon: Calendar01Icon,
+                title: t("dashboard.emptyFeature1"),
+                desc: t("dashboard.emptyFeature1Desc"),
+                colorClass: "text-[#0081BE] dark:text-[#38bdf8]",
+                bgClass: "bg-[#0081BE]/10",
+              },
+              {
+                icon: WalletCardsIcon,
+                title: t("dashboard.emptyFeature2"),
+                desc: t("dashboard.emptyFeature2Desc"),
+                colorClass: "text-[#F89B02] dark:text-amber-400",
+                bgClass: "bg-[#F89B02]/10",
+              },
+              {
+                icon: CheckmarkCircle02Icon,
+                title: t("dashboard.emptyFeature3"),
+                desc: t("dashboard.emptyFeature3Desc"),
+                colorClass: "text-[#00BFB7] dark:text-[#2dd4bf]",
+                bgClass: "bg-[#00BFB7]/10",
+              },
+            ].map((feature, idx) => (
+              <motion.div 
+                key={idx}
+                whileHover={{ x: 6, scale: 1.01 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                className="group relative z-10 flex items-center gap-4 p-3 rounded-2xl bg-white dark:bg-[#0D1424] border border-white/50 dark:border-white/5 shadow-sm dark:shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:border-slate-200 dark:hover:border-white/10 hover:shadow-md dark:hover:shadow-[0_4px_16px_rgba(0,0,0,0.2)] hover:bg-slate-50 dark:hover:bg-[#111A2E] transition-all cursor-default"
+              >
+                <div className={`relative z-10 h-[40px] w-[40px] shrink-0 rounded-xl ${feature.bgClass} ${feature.colorClass} flex items-center justify-center border border-white dark:border-white/5 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                  <HugeiconsIcon icon={feature.icon} size={20} strokeWidth={2} />
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="text-[14px] font-bold text-slate-900 dark:text-slate-100 mb-0.5 group-hover:text-[#00BFB7] transition-colors">
+                    {feature.title}
+                  </span>
+                  <span className="text-[12.5px] text-slate-500 dark:text-slate-400 font-medium">
+                    {feature.desc}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
           </div>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={onCreateNew}
-            className="group flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#00BFB7] text-white px-6 font-bold text-[16px] hover:bg-[#00AFA8] active:scale-[0.98] transition-all duration-300 shadow-[0_8px_20px_rgba(0,191,183,0.25)]"
+            className="group relative flex h-12 sm:h-14 w-full max-w-[320px] items-center justify-center gap-2.5 rounded-2xl bg-linear-to-r from-[#00BFB7] to-[#00A8A2] text-white px-6 font-bold text-[15px] sm:text-[16px] shadow-[0_12px_24px_rgba(0,191,183,0.3)] hover:shadow-[0_16px_32px_rgba(0,191,183,0.4)] transition-shadow duration-300 z-10 overflow-hidden"
           >
-            <HugeiconsIcon icon={PlusSignIcon} size={20} strokeWidth={2.5} />
+            {/* Button Shine Effect */}
+            <div className="absolute inset-0 -translate-x-[150%] bg-linear-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
+            <motion.div
+               initial={false}
+               animate={{ rotate: 0 }}
+               whileHover={{ rotate: 90 }}
+               transition={{ type: "spring", stiffness: 200, damping: 10 }}
+            >
+              <HugeiconsIcon icon={PlusSignIcon} size={20} strokeWidth={2.5} />
+            </motion.div>
             {t("dashboard.emptyCreateBtn")}
-          </button>
+          </motion.button>
 
           {archivedTripsCount > 0 && (
             <button
               onClick={onOpenArchive}
-              className="mt-6 text-[14px] font-semibold text-slate-500 hover:text-[#00BFB7] transition-colors"
+              className="mt-5 text-[13px] sm:text-[14px] font-semibold text-slate-500 hover:text-[#00BFB7] transition-colors z-10 relative"
             >
               {t("trips.viewMemories", "Xem kỷ niệm chuyến đi ({{count}})", {
                 count: archivedTripsCount,
               })}
             </button>
           )}
-        </div>
+        </motion.div>
       ) : (
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8 w-full motion-page-enter">
           {/* Main Content Column */}
@@ -768,122 +809,70 @@ export function TripManagerScreen({
       {trips.length > 0 &&
         createPortal(
           <nav
-            className={`fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] -translate-x-1/2 rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-floating-premium transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex lg:hidden ${areBarsVisible ? "translate-y-0" : "translate-y-[150%]"}`}
-            style={{ bottom: "calc(0.5rem + var(--safe-bottom))" }}
+            className={`fixed left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-[480px] rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-floating-premium transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex lg:hidden`}
+            style={{ 
+              bottom: "calc(0.5rem + var(--safe-bottom))",
+              transform: `translateX(-50%) translateY(${areBarsVisible ? "0" : "150%"})`
+            }}
           >
-            <div className="relative flex h-[68px] items-center w-full px-1">
-              {/* 5-Column Grid for perfect symmetry */}
-              <div className="grid grid-cols-5 w-full h-full items-center justify-items-center">
+            <div className="relative flex h-[68px] items-center justify-between w-full px-2">
+              {/* Flex container instead of grid for smooth layout animations */}
+              <div className="flex items-center justify-between w-full">
                 {/* Tab 1: Kế hoạch */}
-                <button
+                <NavButton
+                  isActive={filterTab === "planned"}
                   onClick={() => setFilterTab("planned")}
-                  className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
-                >
-                  <div
-                    className={classNames(
-                      "flex items-center justify-center transition-all duration-300",
-                      filterTab === "planned"
-                        ? "text-kat-dark dark:text-white scale-110"
-                        : "text-gray-400 dark:text-gray-500"
-                    )}
-                  >
-                    <HugeiconsIcon icon={Calendar01Icon} className="w-[22px] h-[22px]" />
-                  </div>
-                  <span
-                    className={classNames(
-                      "text-[9px] font-bold transition-all duration-300",
-                      filterTab === "planned"
-                        ? "text-kat-dark dark:text-white opacity-100"
-                        : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
-                    )}
-                  >
-                    {t("dashboard.tabs.planned", "Planned")}
-                  </span>
-                </button>
+                  icon={Calendar01Icon}
+                  label={t("dashboard.tabs.planned", "Planned")}
+                  layoutIdPrefix="trip-manager-nav"
+                  compact
+                />
 
                 {/* Tab 2: Lưu trữ */}
-                <button
+                <NavButton
+                  isActive={filterTab === "archived"}
                   onClick={() => setFilterTab("archived")}
-                  className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
-                >
-                  <div
-                    className={classNames(
-                      "flex items-center justify-center transition-all duration-300",
-                      filterTab === "archived"
-                        ? "text-kat-dark dark:text-white scale-110"
-                        : "text-gray-400 dark:text-gray-500"
-                    )}
-                  >
-                    <HugeiconsIcon icon={Archive02Icon} className="w-[22px] h-[22px]" />
-                  </div>
-                  <span
-                    className={classNames(
-                      "text-[9px] font-bold transition-all duration-300",
-                      filterTab === "archived"
-                        ? "text-kat-dark dark:text-white opacity-100"
-                        : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
-                    )}
-                  >
-                    {t("dashboard.tabs.archived", "Archived")}
-                  </span>
-                </button>
+                  icon={Archive02Icon}
+                  label={t("dashboard.tabs.archived", "Archived")}
+                  layoutIdPrefix="trip-manager-nav"
+                  compact
+                />
 
                 {/* Tab 3: Empty space for FAB */}
-                <div className="w-full h-full pointer-events-none" />
+                <div className="w-12 h-full shrink-0 pointer-events-none" />
 
                 {/* Tab 4: Đã qua */}
-                <button
+                <NavButton
+                  isActive={filterTab === "completed"}
                   onClick={() => setFilterTab("completed")}
-                  className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
-                >
-                  <div
-                    className={classNames(
-                      "flex items-center justify-center transition-all duration-300",
-                      filterTab === "completed"
-                        ? "text-kat-dark dark:text-white scale-110"
-                        : "text-gray-400 dark:text-gray-500"
-                    )}
-                  >
-                    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-[22px] h-[22px]" />
-                  </div>
-                  <span
-                    className={classNames(
-                      "text-[9px] font-bold transition-all duration-300",
-                      filterTab === "completed"
-                        ? "text-kat-dark dark:text-white opacity-100"
-                        : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
-                    )}
-                  >
-                    {t("dashboard.tabs.completed", "Past")}
-                  </span>
-                </button>
+                  icon={CheckmarkCircle02Icon}
+                  label={t("dashboard.tabs.completed", "Past")}
+                  layoutIdPrefix="trip-manager-nav"
+                  compact
+                />
 
                 {/* Tab 5: Đổi View */}
-                <button
+                <NavButton
+                  isActive={false}
                   onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-                  className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
-                >
-                  <div className="flex items-center justify-center transition-all duration-300 text-gray-400 dark:text-gray-500 hover:text-kat-dark dark:hover:text-white">
-                    {viewMode === "grid" ? (
-                      <HugeiconsIcon icon={Menu01Icon} className="w-[22px] h-[22px]" />
-                    ) : (
-                      <HugeiconsIcon icon={DashboardSquare01Icon} className="w-[22px] h-[22px]" />
-                    )}
-                  </div>
-                  <span className="text-[9px] font-bold text-gray-400 dark:text-gray-500 opacity-0 h-0 transition-all duration-300">
-                    {t("dashboard.tabs.view", "View")}
-                  </span>
-                </button>
+                  icon={viewMode === "grid" ? Menu01Icon : DashboardSquare01Icon}
+                  label={t("dashboard.tabs.view", "View")}
+                  layoutIdPrefix="trip-manager-nav"
+                  compact
+                />
               </div>
 
               {/* Absolute Center FAB - Floats prominently */}
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[60%] z-20 pointer-events-auto">
+              <div 
+                className="absolute left-1/2 top-1/2 z-20 pointer-events-auto"
+                style={{ transform: "translate(-50%, -60%)" }}
+              >
                 <button
                   onClick={onCreateNew}
-                  className="flex items-center justify-center w-[54px] h-[54px] rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_8px_20px_rgba(3,13,46,0.3)] dark:shadow-[0_8px_20px_rgba(0,191,183,0.35)] hover:shadow-[0_12px_28px_rgba(3,13,46,0.4)] dark:hover:shadow-[0_12px_28px_rgba(0,191,183,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-press border-4 border-white dark:border-slate-900"
+                  className="flex items-center justify-center w-[50px] h-[50px] rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_4px_12px_rgba(2,6,23,0.15)] dark:shadow-[0_4px_12px_rgba(0,191,183,0.25)] hover:shadow-[0_8px_20px_rgba(2,6,23,0.2)] dark:hover:shadow-[0_8px_20px_rgba(0,191,183,0.35)] hover:scale-105 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-press border-[3px] border-white dark:border-slate-900"
                   aria-label="Thêm chuyến đi"
                 >
-                  <HugeiconsIcon icon={PlusSignIcon} className="w-6 h-6" />
+                  <HugeiconsIcon icon={PlusSignIcon} className="w-5 h-5" />
                 </button>
               </div>
             </div>

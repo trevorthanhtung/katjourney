@@ -86,11 +86,11 @@ export function ImportTripSheet({ isOpen, onClose, showToast }: ImportTripSheetP
                 placeholder={t("sharedTrip.inputPlaceholder")}
                 autoComplete="off"
                 spellCheck={false}
-                className="w-full rounded-[16px] border border-slate-200/80 dark:border-white/5 bg-slate-50/50 dark:bg-slate-900/40 backdrop-blur-sm px-4 h-[50px] text-[15px] font-bold text-kat-dark dark:text-slate-100 outline-none transition-all duration-300 focus:bg-white dark:focus:bg-slate-800/60 focus:ring-2 focus:ring-kat-primary/50 focus:border-kat-primary/30 dark:focus:border-kat-primary/50 shadow-inner placeholder:text-slate-400 dark:placeholder:text-slate-500/70"
+                className="w-full rounded-[16px] border border-slate-200/80 dark:border-white/5 bg-slate-50/50 dark:bg-slate-900/40 backdrop-blur-xs px-4 h-[50px] text-[15px] font-bold text-kat-dark dark:text-slate-100 outline-hidden transition-all duration-300 focus:bg-white dark:focus:bg-slate-800/60 focus:ring-2 focus:ring-kat-primary/50 focus:border-kat-primary/30 dark:focus:border-kat-primary/50 shadow-inner placeholder:text-slate-400 dark:placeholder:text-slate-500/70"
               />
               <button
                 onClick={handleImport}
-                className="group relative inline-flex h-[50px] shrink-0 items-center justify-center overflow-hidden rounded-[16px] bg-gradient-to-r from-kat-dark to-slate-800 dark:from-kat-primary dark:to-kat-teal text-white border border-transparent px-6 font-black active:scale-[0.96] transition-all duration-300 shadow-sm dark:shadow-[0_4px_16px_rgba(0,191,183,0.3)] hover:shadow-lg dark:hover:shadow-[0_4px_24px_rgba(0,191,183,0.5)] hover:-translate-y-0.5"
+                className="group relative inline-flex h-[50px] shrink-0 items-center justify-center overflow-hidden rounded-[16px] bg-linear-to-r from-kat-dark to-slate-800 dark:from-kat-primary dark:to-kat-teal text-white border border-transparent px-6 font-black active:scale-[0.96] transition-all duration-300 shadow-xs dark:shadow-[0_4px_16px_rgba(0,191,183,0.3)] hover:shadow-lg dark:hover:shadow-[0_4px_24px_rgba(0,191,183,0.5)] hover:-translate-y-0.5"
               >
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                 <span className="relative z-10">{t("sharedTrip.viewButton")}</span>
@@ -101,7 +101,7 @@ export function ImportTripSheet({ isOpen, onClose, showToast }: ImportTripSheetP
 
         {recentSharedTrips.length > 0 && (
           <div className="space-y-4 pt-2">
-            <h4 className="text-[12.5px] font-black uppercase tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-slate-400 to-slate-500 dark:from-slate-400 dark:to-slate-600 px-1 animate-fadeIn">
+            <h4 className="text-[12.5px] font-black uppercase tracking-widest bg-clip-text text-transparent bg-linear-to-r from-slate-400 to-slate-500 dark:from-slate-400 dark:to-slate-600 px-1 animate-fadeIn">
               {t("sharedTrip.recentHistory")}
             </h4>
             <div className="space-y-3">
@@ -111,7 +111,7 @@ export function ImportTripSheet({ isOpen, onClose, showToast }: ImportTripSheetP
                   onClick={() => {
                     window.location.href = "/share/" + trip.token;
                   }}
-                  className="group flex items-center justify-between p-4 rounded-[20px] border border-slate-100 dark:border-white/[0.04] bg-white/80 dark:bg-slate-800/30 backdrop-blur-md hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:border-kat-primary/30 dark:hover:border-kat-primary/50 cursor-pointer active:scale-[0.98] transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_4px_24px_rgba(0,0,0,0.2)] hover:-translate-y-0.5 animate-slideUpFade"
+                  className="group flex items-center justify-between p-4 rounded-[20px] border border-slate-100 dark:border-white/4 bg-white/80 dark:bg-slate-800/30 backdrop-blur-md hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:border-kat-primary/30 dark:hover:border-kat-primary/50 cursor-pointer active:scale-[0.98] transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_4px_24px_rgba(0,0,0,0.2)] hover:-translate-y-0.5 animate-slideUpFade"
                   style={{ animationDelay: `${(idx + 1) * 80}ms`, animationFillMode: "both" }}
                 >
                   <div className="flex items-center gap-4 min-w-0">

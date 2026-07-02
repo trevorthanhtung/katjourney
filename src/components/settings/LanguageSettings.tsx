@@ -129,20 +129,20 @@ export function LanguageSettings({ i18n, setView }: LanguageSettingsProps) {
                   type="button"
                   onClick={() => i18n.changeLanguage(lang.code)}
                   className={classNames(
-                    "relative flex items-center gap-3.5 p-3 rounded-[20px] border-2 transition-all duration-300 group focus:outline-none text-left overflow-hidden w-full animate-slideUpFade",
+                    "relative flex items-center gap-3.5 p-3 rounded-[20px] border-2 transition-all duration-300 group focus:outline-hidden text-left overflow-hidden w-full animate-slideUpFade",
                     i18n.language === lang.code
                       ? "border-kat-primary bg-kat-primary/5 ring-2 ring-kat-primary/20 shadow-lg shadow-kat-primary/20 scale-[1.02] dark:border-kat-primary/50 dark:bg-kat-primary/10"
-                      : "border-slate-100 dark:border-white/[0.04] bg-white/80 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
+                      : "border-slate-100 dark:border-white/4 bg-white/80 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:scale-[1.01] active:scale-[0.98] hover:shadow-md"
                   )}
                   style={{ animationDelay: `${idx * 40}ms`, animationFillMode: "both" }}
                 >
                   {/* Background hover gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 dark:via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out pointer-events-none" />
+                  <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/40 dark:via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out pointer-events-none" />
 
                   {/* Icon */}
                   <div
                     className={classNames(
-                      "flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] shadow-sm transition-transform duration-300 group-hover:scale-105 relative z-10",
+                      "flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] shadow-xs transition-transform duration-300 group-hover:scale-105 relative z-10",
                       lang.bg,
                       "border",
                       lang.border
@@ -188,7 +188,7 @@ export function LanguageSettings({ i18n, setView }: LanguageSettingsProps) {
 
         <button
           onClick={() => setView("menu")}
-          className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
+          className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/4 dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
         >
           {t("settings.actions.backToMenu")}
         </button>

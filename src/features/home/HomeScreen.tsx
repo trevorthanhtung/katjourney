@@ -57,7 +57,7 @@ function QuickAction({
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       transition={springInteraction}
-      className="flex flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white dark:bg-slate-800 p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-100 dark:border-slate-700 transition-[box-shadow,border-color] duration-200 ease-out hover:border-[#00BFB7]/30 hover:shadow-[0_8px_20px_rgba(0,191,183,0.06)] w-full group"
+      className="flex flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white dark:bg-slate-800 p-5 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-100 dark:border-slate-700 transition-[box-shadow,border-color] duration-200 ease-out hover:border-[#00BFB7]/30 hover:shadow-[0_8px_20px_rgba(0,191,183,0.06)] w-full group"
       onClick={onClick}
     >
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-kat-primary-soft text-kat-primary transition-transform duration-300 group-hover:scale-110">
@@ -223,7 +223,7 @@ export function HomeScreen({
             return (
               <div
                 key={member.id || i}
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-white dark:border-[#1E293B] overflow-hidden bg-slate-50 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-white dark:border-[#1E293B] overflow-hidden bg-slate-50 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
                 title={member.name}
               >
                 {member.avatar ? (
@@ -281,7 +281,7 @@ export function HomeScreen({
       >
         <div className="absolute inset-0 rounded-[32px] overflow-hidden pointer-events-none">
           {/* Subtle World Map Watermark */}
-          <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+          <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#fff_1px,transparent_1px)] bg-size-[20px_20px]"></div>
 
           {/* Dynamic Weather Backdrops */}
           {forecast && currentCode != null && (
@@ -296,7 +296,7 @@ export function HomeScreen({
                 (currentCode >= 80 && currentCode <= 82) ||
                 currentCode >= 95) && (
                 <div className="absolute inset-0 pointer-events-none opacity-25">
-                  <div className="absolute inset-0 bg-[linear-gradient(170deg,transparent_40%,rgba(255,255,255,0.15)_45%,rgba(255,255,255,0.15)_50%,transparent_55%)] bg-[size:40px_120px] animate-weather-sway" />
+                  <div className="absolute inset-0 bg-[linear-gradient(170deg,transparent_40%,rgba(255,255,255,0.15)_45%,rgba(255,255,255,0.15)_50%,transparent_55%)] bg-size-[40px_120px] animate-weather-sway" />
                 </div>
               )}
             </>
@@ -305,7 +305,7 @@ export function HomeScreen({
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-5">
           <div className="space-y-3 min-w-0 flex-1">
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.12] px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-xl border border-white/[0.08] shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/12 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider backdrop-blur-xl border border-white/8 shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset]">
               ●{" "}
               {status === "past"
                 ? t("home.ended")
@@ -313,7 +313,7 @@ export function HomeScreen({
                   ? t("home.ongoing")
                   : t("home.upcoming")}
             </span>
-            <h2 className="text-[24px] sm:text-[26px] font-black leading-tight tracking-tight drop-shadow-sm">
+            <h2 className="text-[24px] sm:text-[26px] font-black leading-tight tracking-tight drop-shadow-xs">
               {trip.title}
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -419,11 +419,11 @@ export function HomeScreen({
 
           <div className="flex flex-col sm:flex-row lg:flex-col items-stretch gap-3 shrink-0 w-full lg:w-[250px]">
             {/* Timing box with Progress Bar */}
-            <div className="flex flex-col items-stretch justify-center rounded-2xl bg-white/[0.07] backdrop-blur-xl px-4 py-3 border border-white/[0.12] shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset,0_4px_24px_rgba(0,0,0,0.08)] flex-1 lg:flex-none lg:w-full text-center shrink-0 min-h-[64px]">
+            <div className="flex flex-col items-stretch justify-center rounded-2xl bg-white/[0.07] backdrop-blur-xl px-4 py-3 border border-white/12 shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset,0_4px_24px_rgba(0,0,0,0.08)] flex-1 lg:flex-none lg:w-full text-center shrink-0 min-h-[64px]">
               <p className="text-[10px] font-semibold text-white/60 text-center">
                 {status === "past" ? t("home.status") : t("home.journey")}
               </p>
-              <p className="mt-1 text-[17px] sm:text-[19px] font-black text-white drop-shadow-sm tracking-tight leading-tight pb-[2px] text-center">
+              <p className="mt-1 text-[17px] sm:text-[19px] font-black text-white drop-shadow-xs tracking-tight leading-tight pb-[2px] text-center">
                 {timing.label}
               </p>
               {status === "active" &&
@@ -449,9 +449,9 @@ export function HomeScreen({
                         <span>{t("home.traveling")}</span>
                         <span>{t("home.end")}</span>
                       </div>
-                      <div className="relative h-1.5 w-full rounded-full bg-white/[0.08] overflow-hidden border border-white/[0.06]">
+                      <div className="relative h-1.5 w-full rounded-full bg-white/8 overflow-hidden border border-white/6">
                         <div
-                          className="absolute top-0 bottom-0 left-0 rounded-full bg-gradient-to-r from-teal-300 via-cyan-300 to-sky-300 shadow-[0_0_8px_rgba(110,231,183,0.5),0_0_20px_rgba(110,231,183,0.15)] transition-all duration-500"
+                          className="absolute top-0 bottom-0 left-0 rounded-full bg-linear-to-r from-teal-300 via-cyan-300 to-sky-300 shadow-[0_0_8px_rgba(110,231,183,0.5),0_0_20px_rgba(110,231,183,0.15)] transition-all duration-500"
                           style={{ width: `${progressPercent}%` }}
                         />
                         <div
@@ -533,7 +533,7 @@ export function HomeScreen({
             ) : (
               <div
                 onClick={() => setWeatherModalOpen(true)}
-                className="flex flex-col items-stretch justify-center bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-3xl p-3 gap-2 shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset,0_4px_24px_rgba(0,0,0,0.08)] hover:bg-white/[0.12] hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
+                className="flex flex-col items-stretch justify-center bg-white/[0.07] backdrop-blur-xl border border-white/12 rounded-3xl p-3 gap-2 shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset,0_4px_24px_rgba(0,0,0,0.08)] hover:bg-white/12 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
               >
                 {/* Weather Info Block */}
                 <div className="flex flex-col w-full gap-2.5">
@@ -543,11 +543,11 @@ export function HomeScreen({
                       <div className="shrink-0 flex items-center justify-center">
                         {getWeatherIcon(
                           forecast.current?.weathercode || 0,
-                          "w-9 h-9 drop-shadow-sm"
+                          "w-9 h-9 drop-shadow-xs"
                         )}
                       </div>
                       <div className="flex flex-col min-w-0 justify-center">
-                        <span className="text-[32px] font-bold text-white drop-shadow-sm tracking-tighter leading-none">
+                        <span className="text-[32px] font-bold text-white drop-shadow-xs tracking-tighter leading-none">
                           {formatTemp(forecast.current?.temperature || 20)}°
                         </span>
                         <span className="text-[12px] font-medium text-white/90 tracking-wide mt-1.5 truncate uppercase">
@@ -620,7 +620,7 @@ export function HomeScreen({
             </div>
 
             {/* Bản tin card — compact horizontal */}
-            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 p-4 motion-card-enter motion-delay-2 flex items-center gap-4 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 p-4 motion-card-enter motion-delay-2 flex items-center gap-4 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-500/10 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400">
                 <HugeiconsIcon icon={BookOpen01Icon} className="h-5.5 w-5.5" />
               </div>
@@ -645,7 +645,7 @@ export function HomeScreen({
             </div>
 
             {/* Báo cáo card — action-focused, two buttons prominent */}
-            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 p-5 motion-card-enter motion-delay-3 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl border border-slate-200/60 dark:border-white/10 p-5 motion-card-enter motion-delay-3 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
               <div className="flex items-center gap-3 mb-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                   <HugeiconsIcon icon={FileDownloadIcon} className="h-4.5 w-4.5" />
@@ -684,7 +684,7 @@ export function HomeScreen({
             {t("home.tripOverview")}
           </h3>
 
-          <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 motion-card-enter motion-delay-2">
+          <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 motion-card-enter motion-delay-2">
             <ul className="space-y-4">
               <li className="flex items-start gap-4">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20">
@@ -789,7 +789,7 @@ export function HomeScreen({
             </h3>
             {nextEvent ? (
               <div
-                className="flex items-center gap-4 rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 transition-[box-shadow,transform,border-color] duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:border-slate-300/80 dark:hover:border-white/20 cursor-pointer group motion-card-enter motion-delay-1 active:scale-[0.98]"
+                className="flex items-center gap-4 rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 transition-[box-shadow,transform,border-color] duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:border-slate-300/80 dark:hover:border-white/20 cursor-pointer group motion-card-enter motion-delay-1 active:scale-[0.98]"
                 onClick={() => onNavigateTab("timeline")}
               >
                 <div className="flex h-[60px] w-[56px] shrink-0 flex-col items-center justify-center rounded-[18px] bg-kat-primary-soft dark:bg-[#00BFB7]/10 text-kat-primary transition-colors group-hover:bg-kat-primary-soft/80 dark:group-hover:bg-[#00BFB7]/20">
@@ -824,7 +824,7 @@ export function HomeScreen({
                 />
               </div>
             ) : (
-              <div className="rounded-[24px] bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex flex-col items-center text-center motion-card-enter motion-delay-1">
+              <div className="rounded-[24px] bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 border border-slate-200/60 dark:border-white/10 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex flex-col items-center text-center motion-card-enter motion-delay-1">
                 <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
                   {t("home.noScheduledActivity")}
                 </p>
@@ -847,7 +847,7 @@ export function HomeScreen({
               {t("home.preTripReminders")}
             </h3>
             {reminders.length > 0 ? (
-              <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] space-y-4 motion-card-enter motion-delay-2">
+              <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] space-y-4 motion-card-enter motion-delay-2">
                 <div className="grid grid-cols-1 gap-3.5">
                   {reminders.map((rem, idx) => (
                     <div
@@ -898,14 +898,14 @@ export function HomeScreen({
                 </div>
               </div>
             ) : (
-              <div className="rounded-[24px] bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex flex-col items-center text-center motion-card-enter motion-delay-2">
+              <div className="rounded-[24px] bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 border border-slate-200/60 dark:border-white/10 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex flex-col items-center text-center motion-card-enter motion-delay-2">
                 <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
                   {t("home.everythingReady")}
                 </p>
                 {!isReadOnly && (
                   <button
                     onClick={() => onNavigateTab("checklist")}
-                    className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-kat-primary text-kat-dark dark:text-slate-900 hover:brightness-105 px-4 py-2.5 text-[13px] font-black transition-[transform,filter] duration-150 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] active:scale-[0.97] motion-press"
+                    className="mt-4 flex items-center justify-center gap-1.5 rounded-xl bg-kat-primary text-kat-dark dark:text-slate-900 hover:brightness-105 px-4 py-2.5 text-[13px] font-black transition-[transform,filter] duration-150 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] active:scale-[0.97] motion-press"
                   >
                     <HugeiconsIcon icon={Briefcase01Icon} size={16} />
                     {t("home.packLuggage", "Chuẩn bị hành lý")}
@@ -923,7 +923,7 @@ export function HomeScreen({
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">
               {t("home.tripOverview")}
             </h3>
-            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 motion-card-enter motion-delay-3">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 motion-card-enter motion-delay-3">
               <ul className="space-y-4">
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20">
@@ -989,7 +989,7 @@ export function HomeScreen({
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">
               {t("home.docsAndBookings")}
             </h3>
-            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-card-enter motion-delay-4">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-card-enter motion-delay-4">
               {travelDocuments.length > 0 ? (
                 <div className="flex flex-col gap-1">
                   <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400">
@@ -1038,7 +1038,7 @@ export function HomeScreen({
                   {!isReadOnly && (
                     <button
                       onClick={() => onNavigateMore("documents")}
-                      className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-bold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-press"
+                      className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-bold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-press"
                     >
                       <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
                       {t("home.addDoc", "Thêm giấy tờ")}
@@ -1084,7 +1084,7 @@ export function HomeScreen({
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">
               {t("home.todaySchedule")}
             </h3>
-            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] space-y-4 motion-card-enter motion-delay-1">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] space-y-4 motion-card-enter motion-delay-1">
               {/* Phương án dự phòng hôm nay */}
               {todayBackupPlans.length > 0 && (
                 <div className="p-4 bg-indigo-50 dark:bg-indigo-950/20 rounded-2xl border border-indigo-100 dark:border-indigo-900/30 flex items-start gap-3">
@@ -1138,7 +1138,7 @@ export function HomeScreen({
                         }
                         className={`w-full min-h-[46px] flex items-center justify-between p-3 px-4 rounded-2xl border transition-all text-left group motion-press ${
                           item.completed
-                            ? "bg-white/20 dark:bg-white/5 backdrop-blur-sm border-slate-100/60 dark:border-slate-700/40 text-slate-400/80 dark:text-slate-500"
+                            ? "bg-white/20 dark:bg-white/5 backdrop-blur-xs border-slate-100/60 dark:border-slate-700/40 text-slate-400/80 dark:text-slate-500"
                             : "bg-white/40 dark:bg-white/5 backdrop-blur-md border-slate-200/60 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:bg-slate-50/60 dark:hover:bg-white/10 hover:border-[#00BFB7]/30"
                         }`}
                       >
@@ -1181,7 +1181,7 @@ export function HomeScreen({
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">
               {t("home.docsToCheck")}
             </h3>
-            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-card-enter motion-delay-2">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-card-enter motion-delay-2">
               {idDocs.length > 0 ? (
                 <div className="space-y-3.5">
                   <p className="text-[13.5px] font-semibold text-slate-500 dark:text-slate-400">
@@ -1221,7 +1221,7 @@ export function HomeScreen({
                   {!isReadOnly && (
                     <button
                       onClick={() => onNavigateMore("documents")}
-                      className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-extrabold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-press"
+                      className="mt-4 w-full flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/20 dark:border-slate-700/55 px-4 py-2.5 text-[13px] font-extrabold text-slate-700 dark:text-slate-200 transition-all duration-200 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-press"
                     >
                       <HugeiconsIcon icon={Add01Icon} className="h-4 w-4" />
                       {t("documents.addBtn", "Add Document")}
@@ -1240,7 +1240,7 @@ export function HomeScreen({
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">
               {t("home.tripOverview")}
             </h3>
-            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 motion-card-enter motion-delay-3">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-6 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-slate-200/60 dark:border-white/10 motion-card-enter motion-delay-3">
               <ul className="space-y-4">
                 <li className="flex items-start gap-4">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20">
@@ -1306,7 +1306,7 @@ export function HomeScreen({
             <h3 className="text-[17px] font-extrabold text-kat-text px-1 motion-title-enter">
               {t("home.missingPacking")}
             </h3>
-            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_8px_32px_rgba(3,13,46,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-card-enter motion-delay-4">
+            <div className="rounded-3xl bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-5 border border-slate-200/60 dark:border-white/10 shadow-soft dark:shadow-[0_8px_32px_rgba(0,0,0,0.2)] motion-card-enter motion-delay-4">
               {checklist.length === 0 ? (
                 <div className="p-4 rounded-2xl border border-slate-100/80 dark:border-kat-border/40 bg-white/40 dark:bg-white/5 backdrop-blur-md text-center">
                   <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500">
@@ -1323,7 +1323,7 @@ export function HomeScreen({
                       }
                       className={`w-full min-h-[46px] flex items-center justify-between p-3 px-4 rounded-2xl border transition-all text-left group motion-press ${
                         item.completed
-                          ? "bg-white/20 dark:bg-white/5 backdrop-blur-sm border-slate-100/60 dark:border-slate-700/40 text-slate-400/80 dark:text-slate-500"
+                          ? "bg-white/20 dark:bg-white/5 backdrop-blur-xs border-slate-100/60 dark:border-slate-700/40 text-slate-400/80 dark:text-slate-500"
                           : "bg-white/40 dark:bg-white/5 backdrop-blur-md border-slate-200/60 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:bg-slate-50/60 dark:hover:bg-white/10 hover:border-[#00BFB7]/30"
                       }`}
                     >

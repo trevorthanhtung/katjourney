@@ -20,7 +20,7 @@ export function PWAInstallInstructionsSheet({
   const { t } = useTranslation();
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-end justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-200 flex items-end justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fadeIn">
       {/* Click outside to close */}
       <div className="absolute inset-0 z-0" onClick={onClose} />
 
@@ -48,7 +48,7 @@ export function PWAInstallInstructionsSheet({
         <div className="py-5 space-y-5 flex-1 select-text">
           {/* Step 1 */}
           <div className="flex gap-3.5 items-start text-left">
-            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40 text-amber-600 dark:text-amber-400 font-black shrink-0 text-[13.5px] shadow-sm">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40 text-amber-600 dark:text-amber-400 font-black shrink-0 text-[13.5px] shadow-xs">
               1
             </div>
             <div className="space-y-1 pt-1">
@@ -90,7 +90,7 @@ export function PWAInstallInstructionsSheet({
 
           {/* Step 2 */}
           <div className="flex gap-3.5 items-start text-left">
-            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-teal-50 dark:bg-teal-950/30 border border-teal-100 dark:border-teal-900/40 text-teal-600 dark:text-teal-400 font-black shrink-0 text-[13.5px] shadow-sm">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-teal-50 dark:bg-teal-950/30 border border-teal-100 dark:border-teal-900/40 text-teal-600 dark:text-teal-400 font-black shrink-0 text-[13.5px] shadow-xs">
               2
             </div>
             <div className="space-y-1 pt-1">
@@ -131,7 +131,7 @@ export function PWAInstallInstructionsSheet({
 
           {/* Step 3 */}
           <div className="flex gap-3.5 items-start text-left">
-            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 text-indigo-600 dark:text-indigo-400 font-black shrink-0 text-[13.5px] shadow-sm">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 text-indigo-600 dark:text-indigo-400 font-black shrink-0 text-[13.5px] shadow-xs">
               3
             </div>
             <div className="space-y-1 pt-1">

@@ -322,7 +322,7 @@ const ActivityCard = React.memo(function ActivityCard({
                 {linkedExpenses?.map((exp) => (
                   <div
                     key={exp.id}
-                    className="flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 text-[12px] rounded-lg border border-rose-200 dark:border-rose-900/30 shadow-sm"
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 text-[12px] rounded-lg border border-rose-200 dark:border-rose-900/30 shadow-xs"
                   >
                     <span className="font-extrabold">{formatMoney(exp.amount)}</span>
                     <span className="text-rose-600 dark:text-rose-400/80 truncate max-w-[120px] font-medium">
@@ -368,10 +368,10 @@ function DayHeader({
   return (
     <div
       id={`day-section-${day}`}
-      className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 dark:bg-slate-900/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40 dark:border-slate-800/60"
+      className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-(--sticky-header-offset,60px) md:top-(--sticky-header-offset-md,68px) transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 dark:bg-slate-900/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40 dark:border-slate-800/60"
     >
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-dark dark:bg-slate-800 text-white dark:text-slate-200 font-black text-[14px] shadow-sm shrink-0">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-kat-dark dark:bg-slate-800 text-white dark:text-slate-200 font-black text-[14px] shadow-xs shrink-0">
           {index + 1}
         </div>
         <div>
@@ -384,7 +384,7 @@ function DayHeader({
                 href={mapUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/30 text-[11px] font-extrabold tracking-wide transition-all active:scale-95 shadow-sm"
+                className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100/50 dark:hover:bg-emerald-900/30 text-[11px] font-extrabold tracking-wide transition-all active:scale-95 shadow-xs"
                 title={t("timeline.openRouteMap")}
               >
                 <HugeiconsIcon
@@ -402,7 +402,7 @@ function DayHeader({
       </div>
       <div className="flex items-center gap-2">
         {totalExpense > 0 && (
-          <span className="text-[12.5px] font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border px-2.5 py-1 rounded-lg shadow-sm">
+          <span className="text-[12.5px] font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border px-2.5 py-1 rounded-lg shadow-xs">
             {t("timeline.spent", { amount: formatMoney(totalExpense) })}
           </span>
         )}
@@ -543,7 +543,7 @@ function EventForm({
             type="button"
             onClick={save}
             disabled={!form.title.trim()}
-            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
+            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-xs hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
           >
             <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" />
             {editing ? t("timeline.saveChanges") : t("timeline.addActivity")}
@@ -971,10 +971,10 @@ export function TimelineScreen({
           <div key="undated" className="space-y-4">
             <div
               id="day-section-undated"
-              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-[var(--sticky-header-offset,60px)] md:top-[var(--sticky-header-offset-md,68px)] transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 dark:bg-slate-900/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40 dark:border-slate-800/60"
+              className="scroll-mt-[110px] md:scroll-mt-[120px] sticky top-(--sticky-header-offset,60px) md:top-(--sticky-header-offset-md,68px) transition-[top] duration-300 ease-in-out z-20 -mx-4 mb-4 flex items-center justify-between bg-slate-50/95 dark:bg-slate-900/95 px-4 py-3 backdrop-blur-md border-b border-slate-200/40 dark:border-slate-800/60"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-400 dark:bg-slate-800 text-white dark:text-slate-400 font-black text-[14px] shadow-sm shrink-0">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-400 dark:bg-slate-800 text-white dark:text-slate-400 font-black text-[14px] shadow-xs shrink-0">
                   ?
                 </div>
                 <div>
@@ -1026,7 +1026,7 @@ export function TimelineScreen({
               className={classNames(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all motion-press border",
                 viewMode === "list"
-                  ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-kat-text shadow-sm border-slate-200/10 dark:border-slate-700/55"
+                  ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-kat-text shadow-xs border-slate-200/10 dark:border-slate-700/55"
                   : "text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-kat-text border-transparent"
               )}
             >
@@ -1037,7 +1037,7 @@ export function TimelineScreen({
               className={classNames(
                 "flex items-center justify-center w-9 h-8 rounded-lg transition-all motion-press border",
                 viewMode === "calendar"
-                  ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-kat-text shadow-sm border-slate-200/10 dark:border-slate-700/55"
+                  ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-kat-text shadow-xs border-slate-200/10 dark:border-slate-700/55"
                   : "text-slate-500 dark:text-slate-400 hover:text-kat-dark dark:hover:text-kat-text border-transparent"
               )}
               aria-label={t("timeline.listView")}
@@ -1141,7 +1141,7 @@ export function TimelineScreen({
         {/* Right Column: Dynamic smart widgets */}
         <div className="space-y-6">
           {/* Mini Trip Context Card */}
-          <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 shadow-sm border border-slate-100 dark:border-kat-border space-y-4">
+          <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 shadow-xs border border-slate-100 dark:border-kat-border space-y-4">
             <div className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-kat-primary-soft text-kat-primary">
                 <HugeiconsIcon icon={Route01Icon} className="h-4 w-4" />
@@ -1190,7 +1190,7 @@ export function TimelineScreen({
           />
 
           {/* General Backup Widget */}
-          <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 shadow-sm border border-slate-100 dark:border-kat-border space-y-4 min-w-0 overflow-hidden">
+          <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 shadow-xs border border-slate-100 dark:border-kat-border space-y-4 min-w-0 overflow-hidden">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400">
@@ -1260,7 +1260,7 @@ export function TimelineScreen({
 
           {/* Roadmap Widget */}
           {days.length > 0 && (
-            <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 shadow-sm border border-slate-100 dark:border-kat-border space-y-4 min-w-0 overflow-hidden">
+            <div className="rounded-3xl bg-white dark:bg-kat-surface p-5 shadow-xs border border-slate-100 dark:border-kat-border space-y-4 min-w-0 overflow-hidden">
               <div className="flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400">
                   <HugeiconsIcon icon={Route01Icon} className="h-4 w-4" />
@@ -1276,10 +1276,10 @@ export function TimelineScreen({
                   <button
                     type="button"
                     onClick={() => setIsRoadmapDayPickerOpen(true)}
-                    className="w-full relative overflow-hidden group flex items-center justify-between p-3 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50/50 dark:from-emerald-950/20 dark:to-teal-950/10 border border-emerald-100/60 dark:border-emerald-900/30 transition-all hover:border-emerald-200 hover:shadow-sm active:scale-[0.98]"
+                    className="w-full relative overflow-hidden group flex items-center justify-between p-3 rounded-2xl bg-linear-to-br from-emerald-50 to-teal-50/50 dark:from-emerald-950/20 dark:to-teal-950/10 border border-emerald-100/60 dark:border-emerald-900/30 transition-all hover:border-emerald-200 hover:shadow-xs active:scale-[0.98]"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-[14px] bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                      <div className="w-10 h-10 rounded-[14px] bg-white dark:bg-slate-800 shadow-xs flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                         <HugeiconsIcon icon={Calendar01Icon} className="w-5 h-5" />
                       </div>
                       <div className="text-left">
@@ -1296,7 +1296,7 @@ export function TimelineScreen({
                         </div>
                       </div>
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-sm transition-transform group-hover:scale-105">
+                    <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-xs transition-transform group-hover:scale-105">
                       <HugeiconsIcon icon={ChevronDownIcon} className="w-4 h-4" />
                     </div>
                   </button>
@@ -1360,7 +1360,7 @@ export function TimelineScreen({
                           href={ensureAbsoluteUrl(mapUrl)}
                           target="_blank"
                           rel="noreferrer"
-                          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer"
+                          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-[13.5px] shadow-xs transition-all duration-200 hover:shadow-md cursor-pointer"
                         >
                           <HugeiconsIcon icon={Route01Icon} className="w-4 h-4" />
                           {t("timeline.openRoute")} &rarr;
@@ -1379,7 +1379,7 @@ export function TimelineScreen({
                               setRoadmapEditDay(selectedRoadmapDay);
                               setIsRoadmapFormOpen(true);
                             }}
-                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border hover:bg-slate-50 dark:hover:bg-kat-surface/80 text-[12px] font-bold text-slate-600 dark:text-slate-350 shadow-sm transition-all cursor-pointer"
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white dark:bg-kat-surface border border-slate-200 dark:border-kat-border hover:bg-slate-50 dark:hover:bg-kat-surface/80 text-[12px] font-bold text-slate-600 dark:text-slate-350 shadow-xs transition-all cursor-pointer"
                           >
                             <HugeiconsIcon icon={Add01Icon} className="w-3.5 h-3.5" />
                             {t("timeline.attachRouteLink")}
@@ -1456,7 +1456,7 @@ export function TimelineScreen({
               value={roadmapInputLink}
               onChange={(e) => setRoadmapInputLink(e.target.value)}
               placeholder="https://www.google.com/maps/dir/..."
-              className="w-full px-4 py-3.5 bg-slate-50/80 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-xl text-[14px] font-medium text-kat-dark dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-kat-teal/20 focus:border-kat-teal transition-all truncate"
+              className="w-full px-4 py-3.5 bg-slate-50/80 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-xl text-[14px] font-medium text-kat-dark dark:text-slate-200 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-kat-teal/20 focus:border-kat-teal transition-all truncate"
             />
             {roadmapInputLink.trim() && (
               <div className="flex justify-end px-1">
@@ -1503,8 +1503,8 @@ export function TimelineScreen({
                 className={classNames(
                   "w-full flex items-center justify-between p-4 rounded-[16px] transition-all duration-200 active:scale-[0.98]",
                   isSelected
-                    ? "bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-100 dark:border-emerald-800/40 shadow-sm"
-                    : "bg-white hover:bg-slate-50 dark:bg-kat-surface hover:dark:bg-slate-800/40 border border-slate-100 hover:border-slate-200 dark:border-kat-border/40 hover:dark:border-kat-border/70"
+                    ? "bg-linear-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-100 dark:border-emerald-800/40 shadow-xs"
+                    : "bg-white hover:bg-slate-50 dark:bg-kat-surface dark:hover:bg-slate-800/40 border border-slate-100 hover:border-slate-200 dark:border-kat-border/40 dark:hover:border-kat-border/70"
                 )}
               >
                 <div className="flex items-center gap-3.5">
@@ -1512,7 +1512,7 @@ export function TimelineScreen({
                     className={classNames(
                       "w-9 h-9 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors",
                       isSelected
-                        ? "bg-emerald-600 text-white shadow-sm"
+                        ? "bg-emerald-600 text-white shadow-xs"
                         : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
                     )}
                   >

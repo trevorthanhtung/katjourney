@@ -58,7 +58,7 @@ export function ExchangeRatesSettings({ setView }: ExchangeRatesSettingsProps) {
               exchangeRates.map((rate, idx) => (
                 <div
                   key={rate.currencyCode}
-                  className="flex items-center justify-between p-3.5 rounded-[20px] border border-slate-100 dark:border-white/[0.04] bg-white/80 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all duration-300 animate-slideUpFade"
+                  className="flex items-center justify-between p-3.5 rounded-[20px] border border-slate-100 dark:border-white/4 bg-white/80 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all duration-300 animate-slideUpFade"
                   style={{ animationDelay: `${idx * 40}ms`, animationFillMode: "both" }}
                 >
                   <div className="flex items-center gap-3">
@@ -96,7 +96,7 @@ export function ExchangeRatesSettings({ setView }: ExchangeRatesSettingsProps) {
 
       <button
         onClick={() => setView("menu")}
-        className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
+        className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/4 dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
       >
         {t("settings.actions.backToMenu")}
       </button>

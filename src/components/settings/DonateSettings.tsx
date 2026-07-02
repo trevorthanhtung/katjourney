@@ -43,7 +43,7 @@ export function DonateSettings({ setView }: DonateSettingsProps) {
             </div>
 
             {/* Tabs */}
-            <div className="flex bg-slate-100/80 dark:bg-slate-900/50 backdrop-blur-md p-1 rounded-2xl w-[90%] max-w-[300px] mb-6 border border-slate-200/50 dark:border-white/[0.03]">
+            <div className="flex bg-slate-100/80 dark:bg-slate-900/50 backdrop-blur-md p-1 rounded-2xl w-[90%] max-w-[300px] mb-6 border border-slate-200/50 dark:border-white/3">
               <button
                 onClick={() => setDonateTab("vn")}
                 className={classNames(
@@ -73,11 +73,11 @@ export function DonateSettings({ setView }: DonateSettingsProps) {
               {donateTab === "vn" ? (
                 <div className="flex flex-col items-center animate-slideUpFade">
                   <div className="relative group w-[85%] max-w-[280px] p-4 bg-white dark:bg-slate-900/40 backdrop-blur-md border border-slate-200/80 dark:border-white/10 rounded-[28px] shadow-lg dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:border-amber-500/30">
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent dark:from-white/5 rounded-[28px] pointer-events-none" />
+                    <div className="absolute inset-0 bg-linear-to-b from-white/40 to-transparent dark:from-white/5 rounded-[28px] pointer-events-none" />
                     <img
                       src="/asset/donates.png"
                       alt="Donate QR Code"
-                      className="relative z-10 w-full h-auto rounded-[18px] object-contain aspect-square shadow-sm"
+                      className="relative z-10 w-full h-auto rounded-[18px] object-contain aspect-square shadow-xs"
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
                       }}
@@ -111,7 +111,7 @@ export function DonateSettings({ setView }: DonateSettingsProps) {
                     href="https://paypal.me/trevorthanhtung"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative overflow-hidden flex items-center justify-center w-full gap-2.5 py-4 px-6 rounded-[20px] bg-gradient-to-r from-[#00457C] to-[#0079C1] text-white font-black text-[15px] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,121,193,0.3)] hover:-translate-y-0.5 active:scale-[0.98] group"
+                    className="relative overflow-hidden flex items-center justify-center w-full gap-2.5 py-4 px-6 rounded-[20px] bg-linear-to-r from-[#00457C] to-[#0079C1] text-white font-black text-[15px] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,121,193,0.3)] hover:-translate-y-0.5 active:scale-[0.98] group"
                   >
                     <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                     <span className="relative z-10">
@@ -129,7 +129,7 @@ export function DonateSettings({ setView }: DonateSettingsProps) {
 
         <button
           onClick={() => setView("menu")}
-          className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80 mt-2"
+          className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/4 dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80 mt-2"
         >
           {t("settings.actions.backToMenu")}
         </button>
