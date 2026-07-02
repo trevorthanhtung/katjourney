@@ -580,7 +580,7 @@ export function TripManagerScreen({
                 key={idx}
                 whileHover={{ x: 6, scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                className="group relative flex items-center gap-4 p-3 rounded-2xl bg-white dark:bg-white/[0.02] border border-transparent hover:border-slate-200 dark:hover:border-white/10 hover:shadow-sm dark:hover:shadow-none hover:bg-slate-50 dark:hover:bg-white/[0.04] transition-colors cursor-default"
+                className="group relative z-10 flex items-center gap-4 p-3 rounded-2xl bg-white dark:bg-[#0D1424] border border-white/50 dark:border-white/5 shadow-sm dark:shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:border-slate-200 dark:hover:border-white/10 hover:shadow-md dark:hover:shadow-[0_4px_16px_rgba(0,0,0,0.2)] hover:bg-slate-50 dark:hover:bg-[#111A2E] transition-all cursor-default"
               >
                 <div className={`relative z-10 h-[40px] w-[40px] shrink-0 rounded-xl ${feature.bgClass} ${feature.colorClass} flex items-center justify-center border border-white dark:border-white/5 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
                   <HugeiconsIcon icon={feature.icon} size={20} strokeWidth={2} />
