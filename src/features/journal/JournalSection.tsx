@@ -1158,7 +1158,7 @@ export function JournalSection({
         createPortal(
           <button
             onClick={() => openNewForm()}
-            className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-slate-800/95 dark:bg-slate-900/80 backdrop-blur-2xl border border-slate-700/50 dark:border-slate-700/50 text-white dark:text-slate-200 shadow-lg motion-press hover:scale-105 duration-200"
+            className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
             style={{ bottom: "calc(6rem + var(--safe-bottom))" }}
             aria-label="Đăng bản tin"
           >
