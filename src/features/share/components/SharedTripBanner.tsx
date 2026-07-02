@@ -47,8 +47,8 @@ export function SharedTripBanner({
       className={classNames(
         "py-2.5 px-4 shadow-md select-none border-b",
         isDirectEdit
-          ? "text-emerald-900 border-emerald-200/50 bg-gradient-to-r from-emerald-50 via-emerald-100/80 to-teal-50/50 dark:text-white dark:border-white/5 dark:bg-gradient-to-r dark:from-[#003830] dark:via-[#005c56] dark:to-[#004c43]"
-          : "text-sky-900 border-sky-200/50 bg-gradient-to-r from-sky-50 via-sky-100/80 to-indigo-50/50 dark:text-white dark:border-white/5 dark:bg-gradient-to-r dark:from-[#0a122c] dark:via-[#0f1d4a] dark:to-[#161330]"
+          ? "text-emerald-900 border-emerald-200/50 bg-linear-to-r from-emerald-50 via-emerald-100/80 to-teal-50/50 dark:text-white dark:border-white/5 dark:bg-linear-to-r dark:from-[#003830] dark:via-[#005c56] dark:to-[#004c43]"
+          : "text-sky-900 border-sky-200/50 bg-linear-to-r from-sky-50 via-sky-100/80 to-indigo-50/50 dark:text-white dark:border-white/5 dark:bg-linear-to-r dark:from-[#0a122c] dark:via-[#0f1d4a] dark:to-[#161330]"
       )}
     >
       <div className="max-w-[1280px] mx-auto w-full flex items-center justify-between gap-4">

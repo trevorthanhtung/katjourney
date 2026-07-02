@@ -27,7 +27,7 @@ export function AboutSettings({ setView }: AboutSettingsProps) {
               />
             </div>
 
-            <h3 className="text-[24px] font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-kat-dark via-slate-800 to-kat-dark dark:from-white dark:via-cyan-100 dark:to-white drop-shadow-sm mb-1">
+            <h3 className="text-[24px] font-black tracking-tight bg-clip-text text-transparent bg-linear-to-r from-kat-dark via-slate-800 to-kat-dark dark:from-white dark:via-cyan-100 dark:to-white drop-shadow-xs mb-1">
               KAT Journey
             </h3>
 
@@ -43,7 +43,7 @@ export function AboutSettings({ setView }: AboutSettingsProps) {
             </p>
 
             <div
-              className="w-full rounded-[24px] border border-slate-200/60 dark:border-white/[0.05] bg-white/50 dark:bg-slate-800/30 p-5 text-left shadow-sm backdrop-blur-md animate-slideUpFade group hover:border-slate-300 dark:hover:border-white/10 transition-colors duration-300"
+              className="w-full rounded-[24px] border border-slate-200/60 dark:border-white/5 bg-white/50 dark:bg-slate-800/30 p-5 text-left shadow-xs backdrop-blur-md animate-slideUpFade group hover:border-slate-300 dark:hover:border-white/10 transition-colors duration-300"
               style={{ animationDelay: "200ms", animationFillMode: "both" }}
             >
               <h4 className="text-[14px] font-black text-slate-800 dark:text-white mb-2">
@@ -81,7 +81,7 @@ export function AboutSettings({ setView }: AboutSettingsProps) {
 
         <button
           onClick={() => setView("menu")}
-          className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
+          className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/4 dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
         >
           {t("settings.actions.backToMenu")}
         </button>

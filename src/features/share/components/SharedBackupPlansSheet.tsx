@@ -289,9 +289,9 @@ export function SharedBackupPlansSheet({
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-100 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm motion-modal-overlay"
+        className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs motion-modal-overlay"
         onClick={onClose}
       />
 
@@ -312,7 +312,7 @@ export function SharedBackupPlansSheet({
             {!isFormOpen && plans.length > 0 && isRequestEdit && (
               <button
                 onClick={handleOpenAdd}
-                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-indigo-600 text-white px-3.5 text-[13px] font-bold hover:brightness-105 active:scale-95 transition-all shadow-sm focus:outline-none"
+                className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-indigo-600 text-white px-3.5 text-[13px] font-bold hover:brightness-105 active:scale-95 transition-all shadow-xs focus:outline-hidden"
               >
                 <HugeiconsIcon icon={Add01Icon} className="w-4 h-4" strokeWidth={2.5} />
                 <span>{t("share.add")}</span>
@@ -320,7 +320,7 @@ export function SharedBackupPlansSheet({
             )}
             <button
               onClick={onClose}
-              className="flex shrink-0 h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none"
+              className="flex shrink-0 h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-hidden"
               title={t("share.close")}
               aria-label={t("share.close")}
             >
@@ -342,7 +342,7 @@ export function SharedBackupPlansSheet({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder={t("share.planNamePlaceholder")}
-                  className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 rounded-[16px] text-[15px] font-bold text-kat-dark dark:text-white focus:outline-none focus:border-kat-teal focus:ring-4 focus:ring-[#00BFB7]/15 focus:bg-white transition-all placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                  className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 rounded-[16px] text-[15px] font-bold text-kat-dark dark:text-white focus:outline-hidden focus:border-kat-teal focus:ring-4 focus:ring-[#00BFB7]/15 focus:bg-white transition-all placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
@@ -378,7 +378,7 @@ export function SharedBackupPlansSheet({
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   placeholder={t("share.whenToUsePlaceholder")}
-                  className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 rounded-[16px] text-[15px] font-bold text-kat-dark dark:text-white focus:outline-none focus:border-kat-teal focus:ring-4 focus:ring-[#00BFB7]/15 focus:bg-white transition-all placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                  className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 rounded-[16px] text-[15px] font-bold text-kat-dark dark:text-white focus:outline-hidden focus:border-kat-teal focus:ring-4 focus:ring-[#00BFB7]/15 focus:bg-white transition-all placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
@@ -386,7 +386,7 @@ export function SharedBackupPlansSheet({
                 <button
                   type="button"
                   onClick={() => setShowAdditionalInfo(!showAdditionalInfo)}
-                  className="w-full flex items-center justify-between text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:text-kat-dark dark:hover:text-white focus:outline-none transition-colors"
+                  className="w-full flex items-center justify-between text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:text-kat-dark dark:hover:text-white focus:outline-hidden transition-colors"
                 >
                   <span>{t("share.additionalInfo")}</span>
                   <HugeiconsIcon
@@ -407,7 +407,7 @@ export function SharedBackupPlansSheet({
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
                         placeholder={t("share.locationPlaceholder")}
-                        className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 rounded-[16px] text-[15px] font-bold text-kat-dark dark:text-white focus:outline-none focus:border-kat-teal focus:ring-4 focus:ring-[#00BFB7]/15 focus:bg-white transition-all placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                        className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 rounded-[16px] text-[15px] font-bold text-kat-dark dark:text-white focus:outline-hidden focus:border-kat-teal focus:ring-4 focus:ring-[#00BFB7]/15 focus:bg-white transition-all placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </div>
 
@@ -433,7 +433,7 @@ export function SharedBackupPlansSheet({
                         value={mapLink}
                         onChange={(e) => setMapLink(e.target.value)}
                         placeholder={t("share.googleMapsPlaceholder")}
-                        className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 rounded-[16px] text-[15px] font-bold text-kat-dark dark:text-white focus:outline-none focus:border-kat-teal focus:ring-4 focus:ring-[#00BFB7]/15 focus:bg-white transition-all placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                        className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 rounded-[16px] text-[15px] font-bold text-kat-dark dark:text-white focus:outline-hidden focus:border-kat-teal focus:ring-4 focus:ring-[#00BFB7]/15 focus:bg-white transition-all placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </div>
 
@@ -447,7 +447,7 @@ export function SharedBackupPlansSheet({
                         value={estimatedCost}
                         onChange={(e) => setEstimatedCost(e.target.value)}
                         placeholder={t("share.estimatedCostPlaceholder")}
-                        className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 rounded-[16px] text-[15px] font-bold text-kat-dark dark:text-white focus:outline-none focus:border-kat-teal focus:ring-4 focus:ring-[#00BFB7]/15 focus:bg-white transition-all placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                        className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 rounded-[16px] text-[15px] font-bold text-kat-dark dark:text-white focus:outline-hidden focus:border-kat-teal focus:ring-4 focus:ring-[#00BFB7]/15 focus:bg-white transition-all placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500"
                       />
                     </div>
 
@@ -461,7 +461,7 @@ export function SharedBackupPlansSheet({
                         onChange={(e) => setNote(e.target.value)}
                         placeholder={t("share.notesPlaceholder")}
                         rows={3}
-                        className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 rounded-[16px] text-[15px] font-bold text-kat-dark dark:text-white focus:outline-none focus:border-kat-teal focus:ring-4 focus:ring-[#00BFB7]/15 focus:bg-white transition-all placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500 resize-none"
+                        className="w-full px-4 py-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/5 rounded-[16px] text-[15px] font-bold text-kat-dark dark:text-white focus:outline-hidden focus:border-kat-teal focus:ring-4 focus:ring-[#00BFB7]/15 focus:bg-white transition-all placeholder:font-medium placeholder:text-slate-400 dark:placeholder:text-slate-500 resize-none"
                       />
                     </div>
                   </div>
@@ -471,13 +471,13 @@ export function SharedBackupPlansSheet({
               <div className="flex items-center gap-3 pt-2">
                 <button
                   onClick={() => setIsFormOpen(false)}
-                  className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-slate-650 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors motion-press focus:outline-none"
+                  className="flex-1 py-3.5 rounded-xl text-[14.5px] font-bold text-slate-650 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors motion-press focus:outline-hidden"
                 >
                   {t("share.cancel")}
                 </button>
                 <button
                   onClick={handleSave}
-                  className="flex-1 py-4 rounded-[16px] text-[15px] font-extrabold text-white bg-kat-teal hover:bg-[#00a89f] shadow-[0_8px_20px_rgba(0,191,183,0.3)] hover:shadow-[0_10px_25px_rgba(0,191,183,0.4)] hover:-translate-y-0.5 transition-all motion-press focus:outline-none"
+                  className="flex-1 py-4 rounded-[16px] text-[15px] font-extrabold text-white bg-kat-teal hover:bg-[#00a89f] shadow-[0_8px_20px_rgba(0,191,183,0.3)] hover:shadow-[0_10px_25px_rgba(0,191,183,0.4)] hover:-translate-y-0.5 transition-all motion-press focus:outline-hidden"
                 >
                   {isDirectEdit ? t("share.savePlan") : t("share.sendProposal")}
                 </button>
@@ -485,7 +485,7 @@ export function SharedBackupPlansSheet({
             </div>
           ) : plans.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="relative w-24 h-24 rounded-full bg-gradient-to-tr from-[#00BFB7]/20 to-[#00BFB7]/5 dark:from-[#00BFB7]/30 dark:to-transparent flex items-center justify-center text-kat-teal mb-6 shadow-[0_0_40px_rgba(0,191,183,0.15)] ring-1 ring-[#00BFB7]/20">
+              <div className="relative w-24 h-24 rounded-full bg-linear-to-tr from-[#00BFB7]/20 to-[#00BFB7]/5 dark:from-[#00BFB7]/30 dark:to-transparent flex items-center justify-center text-kat-teal mb-6 shadow-[0_0_40px_rgba(0,191,183,0.15)] ring-1 ring-[#00BFB7]/20">
                 <div
                   className="absolute inset-0 rounded-full animate-ping opacity-20 bg-[#00BFB7]"
                   style={{ animationDuration: "3s" }}
@@ -616,7 +616,7 @@ export function SharedBackupPlansSheet({
                                 plan.mapLink || plan.location || "",
                                 plan.location
                               ) && (
-                                <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-sm bg-slate-100 relative min-h-[140px]">
+                                <div className="w-full overflow-hidden rounded-xl border border-slate-200 shadow-xs bg-slate-100 relative min-h-[140px]">
                                   <div className="absolute inset-0 flex items-center justify-center text-slate-400">
                                     <span className="text-[12px] font-medium animate-pulse">
                                       {t("share.loadingMap")}
@@ -690,7 +690,7 @@ export function SharedBackupPlansSheet({
                             <div className="flex items-center gap-2 shrink-0">
                               <button
                                 onClick={() => handleOpenEdit(plan)}
-                                className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-slate-650 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-white active:scale-95 transition-all border border-slate-200/40 dark:border-slate-700/50 motion-press focus:outline-none"
+                                className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-slate-650 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-white active:scale-95 transition-all border border-slate-200/40 dark:border-slate-700/50 motion-press focus:outline-hidden"
                                 title={t("share.editPlan")}
                               >
                                 <HugeiconsIcon icon={PencilEdit01Icon} className="w-3.5 h-3.5" />
@@ -703,7 +703,7 @@ export function SharedBackupPlansSheet({
                                   setPlanToDelete(plan);
                                   setIsDeleteConfirmOpen(true);
                                 }}
-                                className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-900/20 active:scale-95 transition-all border border-rose-200/40 dark:border-rose-900/30 motion-press focus:outline-none"
+                                className="flex h-9 items-center justify-center gap-1.5 px-3 rounded-xl text-[12.5px] font-black text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-900/20 active:scale-95 transition-all border border-rose-200/40 dark:border-rose-900/30 motion-press focus:outline-hidden"
                                 title={t("share.deletePlan")}
                               >
                                 <HugeiconsIcon icon={Delete01Icon} className="w-3.5 h-3.5" />

@@ -106,12 +106,12 @@ export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
       ))}
 
       {/* Dark Overlay for contrast */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/80 group-hover:from-black/50 transition-all duration-500"></div>
+      <div className="absolute inset-0 bg-linear-to-b from-black/40 via-black/20 to-black/80 group-hover:from-black/50 transition-all duration-500"></div>
 
       {/* Top Left Badge */}
       <div className="absolute top-6 left-6 z-10">
         <div
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border backdrop-blur-md text-[11px] font-bold tracking-widest uppercase shadow-sm ${
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border backdrop-blur-md text-[11px] font-bold tracking-widest uppercase shadow-xs ${
             isLive
               ? "bg-black/40 border-emerald-500/30 text-emerald-400"
               : "bg-black/30 border-amber-500/30 text-amber-400"
@@ -130,7 +130,7 @@ export function HeroTripCard({ trip, onOpenTrip }: HeroTripCardProps) {
 
       {/* Center Title */}
       <div className="absolute inset-0 flex items-center justify-center z-10 px-6 pb-28 sm:pb-32 lg:pb-36">
-        <h2 className="text-white text-5xl sm:text-7xl lg:text-[90px] font-[900] tracking-tighter text-center leading-tight drop-shadow-2xl group-hover:scale-105 transition-transform duration-700">
+        <h2 className="text-white text-5xl sm:text-7xl lg:text-[90px] font-black tracking-tighter text-center leading-tight drop-shadow-2xl group-hover:scale-105 transition-transform duration-700">
           {trip.title}
         </h2>
       </div>

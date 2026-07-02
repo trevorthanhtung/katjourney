@@ -82,11 +82,11 @@ export function SettingsMenu({
       {isInstallable && !isStandalone && (
         <button
           onClick={handleInstallPWA}
-          className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-teal-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-teal-500/50 focus:outline-none mb-2"
+          className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-xs transition-all hover:border-teal-300 hover:shadow-md active:scale-[0.98] dark:border-white/4 dark:bg-slate-800/40 dark:hover:border-teal-500/50 focus:outline-hidden mb-2"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-teal-500/10"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-teal-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-teal-500/10"></div>
           <div className="flex items-center gap-4 relative z-10">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-100 to-teal-50 text-teal-600 shadow-inner dark:from-teal-900/40 dark:to-teal-800/20 dark:text-teal-400 border border-teal-200 dark:border-teal-800/60 ring-1 ring-white/50 dark:ring-white/5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-teal-100 to-teal-50 text-teal-600 shadow-inner dark:from-teal-900/40 dark:to-teal-800/20 dark:text-teal-400 border border-teal-200 dark:border-teal-800/60 ring-1 ring-white/50 dark:ring-white/5">
               <HugeiconsIcon
                 icon={Download01Icon}
                 className="h-5.5 w-5.5 transition-transform group-hover:scale-110"
@@ -109,7 +109,7 @@ export function SettingsMenu({
       )}
 
       {/* Hệ thống (System Group) */}
-      <div className="mb-2 rounded-[24px] border border-slate-200/60 bg-white p-2 shadow-sm dark:border-white/[0.04] dark:bg-slate-800/40">
+      <div className="mb-2 rounded-[24px] border border-slate-200/60 bg-white p-2 shadow-xs dark:border-white/4 dark:bg-slate-800/40">
         <div className="px-4 pt-3 pb-2">
           <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             {t("settings.section.system", "System")}
@@ -120,10 +120,10 @@ export function SettingsMenu({
           {/* Giao diện (Theme Selector Row) */}
           <button
             onClick={() => setView("theme")}
-            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-violet-50 dark:hover:bg-violet-500/10 active:scale-[0.98] focus:outline-none"
+            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-violet-50 dark:hover:bg-violet-500/10 active:scale-[0.98] focus:outline-hidden"
           >
             <div className="flex items-center gap-4 relative z-10">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-100 to-violet-50 text-violet-600 shadow-inner dark:from-violet-900/40 dark:to-violet-800/20 dark:text-violet-400 border border-violet-200 dark:border-violet-800/60 ring-1 ring-white/50 dark:ring-white/5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-violet-100 to-violet-50 text-violet-600 shadow-inner dark:from-violet-900/40 dark:to-violet-800/20 dark:text-violet-400 border border-violet-200 dark:border-violet-800/60 ring-1 ring-white/50 dark:ring-white/5">
                 <HugeiconsIcon
                   icon={ColorsIcon}
                   className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -147,10 +147,10 @@ export function SettingsMenu({
           {/* Language Selector Row */}
           <button
             onClick={() => setView("language")}
-            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-sky-50 dark:hover:bg-sky-500/10 active:scale-[0.98] focus:outline-none"
+            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-sky-50 dark:hover:bg-sky-500/10 active:scale-[0.98] focus:outline-hidden"
           >
             <div className="flex items-center gap-4 relative z-10">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-100 to-sky-50 text-sky-600 shadow-inner dark:from-sky-900/40 dark:to-sky-800/20 dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 ring-1 ring-white/50 dark:ring-white/5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-sky-100 to-sky-50 text-sky-600 shadow-inner dark:from-sky-900/40 dark:to-sky-800/20 dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 ring-1 ring-white/50 dark:ring-white/5">
                 <HugeiconsIcon
                   icon={LanguageSkillIcon}
                   className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -174,7 +174,7 @@ export function SettingsMenu({
           {/* Temperature Unit */}
           <div className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-orange-50 dark:hover:bg-orange-500/10">
             <div className="flex items-center gap-4 relative z-10">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-orange-100 to-orange-50 text-orange-600 shadow-inner dark:from-orange-900/40 dark:to-orange-800/20 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60 ring-1 ring-white/50 dark:ring-white/5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-orange-100 to-orange-50 text-orange-600 shadow-inner dark:from-orange-900/40 dark:to-orange-800/20 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60 ring-1 ring-white/50 dark:ring-white/5">
                 <HugeiconsIcon
                   icon={Sun01Icon}
                   className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -204,10 +204,10 @@ export function SettingsMenu({
         const isNotificationActive =
           isNotificationSupported && notificationPermission === "granted" && notificationEnabled;
         return (
-          <div className="group relative flex items-center justify-between w-full p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-sm transition-all hover:border-emerald-300 hover:shadow-md dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-emerald-500/50 mb-2">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-emerald-500/10"></div>
+          <div className="group relative flex items-center justify-between w-full p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-xs transition-all hover:border-emerald-300 hover:shadow-md dark:border-white/4 dark:bg-slate-800/40 dark:hover:border-emerald-500/50 mb-2">
+            <div className="absolute inset-0 bg-linear-to-br from-emerald-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-emerald-500/10"></div>
             <div className="flex items-center gap-4 relative z-10 min-w-0">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-600 shadow-inner dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 ring-1 ring-white/50 dark:ring-white/5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-emerald-100 to-emerald-50 text-emerald-600 shadow-inner dark:from-emerald-900/40 dark:to-emerald-800/20 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 ring-1 ring-white/50 dark:ring-white/5">
                 <HugeiconsIcon
                   icon={Notification01Icon}
                   className="h-5.5 w-5.5 transition-transform group-hover:scale-110"
@@ -249,12 +249,12 @@ export function SettingsMenu({
                   }
                 }
               }}
-              className={`relative z-10 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+              className={`relative z-10 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
                 isNotificationActive ? "bg-kat-primary" : "bg-slate-200 dark:bg-slate-700"
               } ${!isNotificationSupported ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <span
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
                   isNotificationActive ? "translate-x-5" : "translate-x-0"
                 }`}
               />
@@ -264,10 +264,10 @@ export function SettingsMenu({
       })()}
 
       {/* GPS Setting */}
-      <div className="group relative flex items-center justify-between p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-sm transition-all hover:border-indigo-300 hover:shadow-md dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-indigo-500/50 mb-2">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-indigo-500/10"></div>
+      <div className="group relative flex items-center justify-between p-4 rounded-[24px] border border-slate-200/60 bg-white shadow-xs transition-all hover:border-indigo-300 hover:shadow-md dark:border-white/4 dark:bg-slate-800/40 dark:hover:border-indigo-500/50 mb-2">
+        <div className="absolute inset-0 bg-linear-to-br from-indigo-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-indigo-500/10"></div>
         <div className="flex items-center gap-4 relative z-10 min-w-0">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-600 shadow-inner dark:from-indigo-900/40 dark:to-indigo-800/20 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/60 ring-1 ring-white/50 dark:ring-white/5">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-100 to-indigo-50 text-indigo-600 shadow-inner dark:from-indigo-900/40 dark:to-indigo-800/20 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/60 ring-1 ring-white/50 dark:ring-white/5">
             <HugeiconsIcon
               icon={Location01Icon}
               className="h-5.5 w-5.5 transition-transform group-hover:scale-110"
@@ -296,12 +296,12 @@ export function SettingsMenu({
               "success"
             );
           }}
-          className={`relative z-10 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+          className={`relative z-10 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
             gpsEnabled ? "bg-kat-primary" : "bg-slate-200 dark:bg-slate-700"
           }`}
         >
           <span
-            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
               gpsEnabled ? "translate-x-5" : "translate-x-0"
             }`}
           />
@@ -311,11 +311,11 @@ export function SettingsMenu({
       {/* Exchange Rates */}
       <button
         onClick={() => setView("exchangeRates")}
-        className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-cyan-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-cyan-500/50 focus:outline-none mb-2"
+        className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-xs transition-all hover:border-cyan-300 hover:shadow-md active:scale-[0.98] dark:border-white/4 dark:bg-slate-800/40 dark:hover:border-cyan-500/50 focus:outline-hidden mb-2"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-cyan-500/10"></div>
+        <div className="absolute inset-0 bg-linear-to-br from-cyan-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-cyan-500/10"></div>
         <div className="flex items-center gap-4 relative z-10">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-100 to-cyan-50 text-cyan-600 shadow-inner dark:from-cyan-900/40 dark:to-cyan-800/20 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800/60 ring-1 ring-white/50 dark:ring-white/5">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-cyan-100 to-cyan-50 text-cyan-600 shadow-inner dark:from-cyan-900/40 dark:to-cyan-800/20 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800/60 ring-1 ring-white/50 dark:ring-white/5">
             <HugeiconsIcon
               icon={Coins01Icon}
               className="h-5.5 w-5.5 transition-transform group-hover:scale-110"
@@ -337,7 +337,7 @@ export function SettingsMenu({
       </button>
 
       {/* Thông tin & Hỗ trợ (Info Group) */}
-      <div className="mb-2 rounded-[24px] border border-slate-200/60 bg-white p-2 shadow-sm dark:border-white/[0.04] dark:bg-slate-800/40">
+      <div className="mb-2 rounded-[24px] border border-slate-200/60 bg-white p-2 shadow-xs dark:border-white/4 dark:bg-slate-800/40">
         <div className="px-4 pt-3 pb-2">
           <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             {t("settings.section.info", "Info & Support")}
@@ -348,10 +348,10 @@ export function SettingsMenu({
           {/* Privacy */}
           <button
             onClick={() => setView("privacy")}
-            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-blue-50 dark:hover:bg-blue-500/10 active:scale-[0.98] focus:outline-none"
+            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-blue-50 dark:hover:bg-blue-500/10 active:scale-[0.98] focus:outline-hidden"
           >
             <div className="flex items-center gap-4 relative z-10">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 shadow-inner dark:from-blue-900/40 dark:to-blue-800/20 dark:text-blue-400 border border-blue-200 dark:border-blue-800/60 ring-1 ring-white/50 dark:ring-white/5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-100 to-blue-50 text-blue-600 shadow-inner dark:from-blue-900/40 dark:to-blue-800/20 dark:text-blue-400 border border-blue-200 dark:border-blue-800/60 ring-1 ring-white/50 dark:ring-white/5">
                 <HugeiconsIcon
                   icon={LockIcon}
                   className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -375,10 +375,10 @@ export function SettingsMenu({
           {/* About App */}
           <button
             onClick={() => setView("about")}
-            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-fuchsia-50 dark:hover:bg-fuchsia-500/10 active:scale-[0.98] focus:outline-none"
+            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-fuchsia-50 dark:hover:bg-fuchsia-500/10 active:scale-[0.98] focus:outline-hidden"
           >
             <div className="flex items-center gap-4 relative z-10">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-fuchsia-100 to-fuchsia-50 text-fuchsia-600 shadow-inner dark:from-fuchsia-900/40 dark:to-fuchsia-800/20 dark:text-fuchsia-400 border border-fuchsia-200 dark:border-fuchsia-800/60 ring-1 ring-white/50 dark:ring-white/5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-fuchsia-100 to-fuchsia-50 text-fuchsia-600 shadow-inner dark:from-fuchsia-900/40 dark:to-fuchsia-800/20 dark:text-fuchsia-400 border border-fuchsia-200 dark:border-fuchsia-800/60 ring-1 ring-white/50 dark:ring-white/5">
                 <HugeiconsIcon
                   icon={InformationCircleIcon}
                   className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -402,10 +402,10 @@ export function SettingsMenu({
           {/* Support Author */}
           <button
             onClick={() => setView("donate")}
-            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-amber-50 dark:hover:bg-amber-500/10 active:scale-[0.98] focus:outline-none"
+            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-amber-50 dark:hover:bg-amber-500/10 active:scale-[0.98] focus:outline-hidden"
           >
             <div className="flex items-center gap-4 relative z-10">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 text-amber-600 shadow-inner dark:from-amber-900/40 dark:to-amber-800/20 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60 ring-1 ring-white/50 dark:ring-white/5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-amber-100 to-amber-50 text-amber-600 shadow-inner dark:from-amber-900/40 dark:to-amber-800/20 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60 ring-1 ring-white/50 dark:ring-white/5">
                 <HugeiconsIcon
                   icon={Coffee01Icon}
                   className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -429,10 +429,10 @@ export function SettingsMenu({
           {/* Send Feedback */}
           <a
             href="mailto:trevorthanhtung@gmail.com?subject=Phản hồi ứng dụng KAT Journey"
-            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-sky-50 dark:hover:bg-sky-500/10 active:scale-[0.98] focus:outline-none"
+            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-sky-50 dark:hover:bg-sky-500/10 active:scale-[0.98] focus:outline-hidden"
           >
             <div className="flex items-center gap-4 relative z-10">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-100 to-sky-50 text-sky-600 shadow-inner dark:from-sky-900/40 dark:to-sky-800/20 dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 ring-1 ring-white/50 dark:ring-white/5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-sky-100 to-sky-50 text-sky-600 shadow-inner dark:from-sky-900/40 dark:to-sky-800/20 dark:text-sky-400 border border-sky-200 dark:border-sky-800/60 ring-1 ring-white/50 dark:ring-white/5">
                 <HugeiconsIcon
                   icon={Mail01Icon}
                   className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -456,7 +456,7 @@ export function SettingsMenu({
           {/* Version */}
           <div className="group relative flex w-full items-center justify-between overflow-hidden rounded-[16px] p-3 transition-all hover:bg-slate-50 dark:hover:bg-slate-500/10">
             <div className="flex items-center gap-4 relative z-10">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 text-slate-600 shadow-inner dark:from-slate-800/40 dark:to-slate-700/40 dark:text-slate-400 border border-slate-200 dark:border-slate-700/60 ring-1 ring-white/50 dark:ring-white/5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-slate-100 to-slate-50 text-slate-600 shadow-inner dark:from-slate-800/40 dark:to-slate-700/40 dark:text-slate-400 border border-slate-200 dark:border-slate-700/60 ring-1 ring-white/50 dark:ring-white/5">
                 <HugeiconsIcon
                   icon={PackageIcon}
                   className="h-5 w-5 transition-transform group-hover:scale-110"
@@ -498,11 +498,11 @@ export function SettingsMenu({
               setIsClearingTemp(false);
             }
           }}
-          className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-rose-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-rose-500/50 disabled:opacity-70"
+          className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-xs transition-all hover:border-rose-300 hover:shadow-md active:scale-[0.98] dark:border-white/4 dark:bg-slate-800/40 dark:hover:border-rose-500/50 disabled:opacity-70"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-rose-500/10"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-rose-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-rose-500/10"></div>
           <div className="flex items-center gap-4 relative z-10">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-100 to-rose-50 text-rose-600 shadow-inner dark:from-rose-900/40 dark:to-rose-800/20 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 ring-1 ring-white/50 dark:ring-white/5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-rose-100 to-rose-50 text-rose-600 shadow-inner dark:from-rose-900/40 dark:to-rose-800/20 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 ring-1 ring-white/50 dark:ring-white/5">
               {isClearingTemp ? (
                 <HugeiconsIcon icon={Loading01Icon} className="h-5.5 w-5.5 animate-spin" />
               ) : (
@@ -522,7 +522,7 @@ export function SettingsMenu({
             </div>
           </div>
           {clearTempSuccess ? (
-            <span className="relative z-10 flex items-center gap-1.5 rounded-full bg-emerald-100/80 px-3 py-1 text-[11px] font-bold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 shadow-sm">
+            <span className="relative z-10 flex items-center gap-1.5 rounded-full bg-emerald-100/80 px-3 py-1 text-[11px] font-bold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 shadow-xs">
               {t("common.done")}
             </span>
           ) : (
@@ -533,10 +533,10 @@ export function SettingsMenu({
           )}
         </button>
 
-        <div className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-sm transition-all hover:border-lime-300 hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:hover:border-lime-500/50">
-          <div className="absolute inset-0 bg-gradient-to-br from-lime-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-lime-500/10"></div>
+        <div className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-slate-200/60 bg-white p-4 shadow-xs transition-all hover:border-lime-300 hover:shadow-md active:scale-[0.98] dark:border-white/4 dark:bg-slate-800/40 dark:hover:border-lime-500/50">
+          <div className="absolute inset-0 bg-linear-to-br from-lime-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-lime-500/10"></div>
           <div className="flex items-center gap-4 relative z-10">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-lime-100 to-lime-50 text-lime-600 shadow-inner dark:from-lime-900/40 dark:to-lime-800/20 dark:text-lime-400 border border-lime-200 dark:border-lime-800/60 ring-1 ring-white/50 dark:ring-white/5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-lime-100 to-lime-50 text-lime-600 shadow-inner dark:from-lime-900/40 dark:to-lime-800/20 dark:text-lime-400 border border-lime-200 dark:border-lime-800/60 ring-1 ring-white/50 dark:ring-white/5">
               {importing ? (
                 <HugeiconsIcon icon={Loading01Icon} className="h-5.5 w-5.5 animate-spin" />
               ) : (
@@ -582,11 +582,11 @@ export function SettingsMenu({
           <button
             type="button"
             onClick={() => setIsDeleteAccountOpen(true)}
-            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-red-200/60 bg-white p-4 shadow-sm transition-all hover:border-red-400 hover:shadow-md active:scale-[0.98] dark:border-rose-900/35 dark:bg-slate-800/40 dark:hover:border-rose-500/50"
+            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-red-200/60 bg-white p-4 shadow-xs transition-all hover:border-red-400 hover:shadow-md active:scale-[0.98] dark:border-rose-900/35 dark:bg-slate-800/40 dark:hover:border-rose-500/50"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-rose-500/10"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-red-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-rose-500/10"></div>
             <div className="flex items-center gap-4 relative z-10">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-red-100 to-red-50 text-red-600 shadow-inner dark:from-rose-950/40 dark:to-rose-900/20 dark:text-rose-400 border border-red-200 dark:border-rose-800/60 ring-1 ring-white/50 dark:ring-white/5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-red-100 to-red-50 text-red-600 shadow-inner dark:from-rose-950/40 dark:to-rose-900/20 dark:text-rose-400 border border-red-200 dark:border-rose-800/60 ring-1 ring-white/50 dark:ring-white/5">
                 <HugeiconsIcon
                   icon={UserRemove01Icon}
                   className="h-5.5 w-5.5 transition-transform group-hover:scale-110 group-hover:rotate-6"
@@ -610,11 +610,11 @@ export function SettingsMenu({
           <button
             type="button"
             onClick={() => setIsFactoryResetOpen(true)}
-            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-red-200/60 bg-white p-4 shadow-sm transition-all hover:border-red-400 hover:shadow-md active:scale-[0.98] dark:border-rose-900/35 dark:bg-slate-800/40 dark:hover:border-rose-500/50"
+            className="group relative flex w-full items-center justify-between overflow-hidden rounded-[24px] border border-red-200/60 bg-white p-4 shadow-xs transition-all hover:border-red-400 hover:shadow-md active:scale-[0.98] dark:border-rose-900/35 dark:bg-slate-800/40 dark:hover:border-rose-500/50"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-rose-500/10"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-red-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-rose-500/10"></div>
             <div className="flex items-center gap-4 relative z-10">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-red-100 to-red-50 text-red-600 shadow-inner dark:from-rose-950/40 dark:to-rose-900/20 dark:text-rose-400 border border-red-200 dark:border-rose-800/60 ring-1 ring-white/50 dark:ring-white/5">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-red-100 to-red-50 text-red-600 shadow-inner dark:from-rose-950/40 dark:to-rose-900/20 dark:text-rose-400 border border-red-200 dark:border-rose-800/60 ring-1 ring-white/50 dark:ring-white/5">
                 <HugeiconsIcon
                   icon={RotateLeft01Icon}
                   className="h-5.5 w-5.5 transition-transform group-hover:scale-110 group-hover:-rotate-12"

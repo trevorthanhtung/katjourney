@@ -264,7 +264,7 @@ function JournalForm({
             type="button"
             disabled={hasError}
             onClick={save}
-            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-sm hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
+            className="flex h-[52px] flex-1 items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 font-black shadow-xs hover:bg-kat-dark/95 dark:hover:bg-kat-primary-light active:scale-[0.98] transition-all border border-transparent disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:border-transparent disabled:cursor-not-allowed motion-press"
           >
             <HugeiconsIcon icon={FloppyDiskIcon} className="h-5 w-5" />
             {t("journal.submit")}
@@ -340,7 +340,7 @@ function JournalForm({
               <button
                 type="button"
                 onClick={fetchLocation}
-                className="flex items-center gap-1.5 text-[12.5px] font-bold text-slate-400 hover:text-kat-primary transition-colors focus:outline-none"
+                className="flex items-center gap-1.5 text-[12.5px] font-bold text-slate-400 hover:text-kat-primary transition-colors focus:outline-hidden"
               >
                 <HugeiconsIcon icon={Cancel01Icon} className="h-3.5 w-3.5" />
                 <span>{t("journal.locAttach")}</span>
@@ -369,7 +369,7 @@ function JournalForm({
                   }}
                   className={`flex items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-bold border transition-all duration-200 active:scale-95 ${
                     isActive
-                      ? "bg-kat-primary-soft dark:bg-kat-primary-soft/30 border-[#00BFB7] dark:border-kat-primary/50 text-kat-teal dark:text-kat-primary-usable shadow-sm"
+                      ? "bg-kat-primary-soft dark:bg-kat-primary-soft/30 border-[#00BFB7] dark:border-kat-primary/50 text-kat-teal dark:text-kat-primary-usable shadow-xs"
                       : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700/50 text-slate-650 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                   }`}
                 >
@@ -409,7 +409,7 @@ function JournalForm({
               <img
                 src={form.imageUrl}
                 alt="Uploaded"
-                className="w-full aspect-[4/3] object-contain"
+                className="w-full aspect-4/3 object-contain"
               />
               <button
                 onClick={() => {
@@ -434,7 +434,7 @@ function JournalForm({
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="w-full h-12 rounded-xl bg-indigo-50/80 dark:bg-indigo-500/[0.04] text-indigo-500 dark:text-indigo-400 font-bold text-[14px] hover:bg-indigo-100/80 dark:hover:bg-indigo-500/[0.08] transition-all flex items-center justify-center gap-2 group border border-indigo-100/50 dark:border-indigo-500/10 active:scale-[0.98]"
+                className="w-full h-12 rounded-xl bg-indigo-50/80 dark:bg-indigo-500/4 text-indigo-500 dark:text-indigo-400 font-bold text-[14px] hover:bg-indigo-100/80 dark:hover:bg-indigo-500/8 transition-all flex items-center justify-center gap-2 group border border-indigo-100/50 dark:border-indigo-500/10 active:scale-[0.98]"
               >
                 {uploading ? (
                   <>
@@ -495,7 +495,7 @@ function JournalEntryMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: 
     <div className="relative shrink-0" ref={menuRef}>
       <button
         type="button"
-        className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors focus:outline-none ${
+        className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors focus:outline-hidden ${
           isMenuOpen
             ? "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-200"
             : "text-slate-400 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200"
@@ -617,7 +617,7 @@ function JournalEmptyState({
               <button
                 key={prompt}
                 onClick={() => onPromptClick(prompt)}
-                className="text-left bg-white dark:bg-kat-surface p-4 rounded-[20px] border border-slate-200 dark:border-kat-border shadow-sm dark:shadow-none hover:shadow-md transition-all group active:scale-[0.99] flex flex-col justify-between min-h-[112px] w-[260px] md:w-full shrink-0 md:shrink-0 snap-center"
+                className="text-left bg-white dark:bg-kat-surface p-4 rounded-[20px] border border-slate-200 dark:border-kat-border shadow-xs dark:shadow-none hover:shadow-md transition-all group active:scale-[0.99] flex flex-col justify-between min-h-[112px] w-[260px] md:w-full shrink-0 md:shrink-0 snap-center"
               >
                 <div className="flex items-start gap-2.5">
                   <div
@@ -807,7 +807,7 @@ export function JournalSection({
               onClick={() => setJournalMode("posts")}
               className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${
                 journalMode === "posts"
-                  ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200/60 dark:border-slate-700 shadow-sm"
+                  ? "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200/60 dark:border-slate-700 shadow-xs"
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
               }`}
             >
@@ -817,7 +817,7 @@ export function JournalSection({
               onClick={() => setJournalMode("chat")}
               className={`flex-1 py-2.5 text-[14px] font-bold rounded-[12px] transition-all duration-200 flex items-center justify-center gap-2 border border-transparent ${
                 journalMode === "chat"
-                  ? "bg-white dark:bg-slate-800 text-kat-teal dark:text-kat-primary shadow-sm border-slate-200/60 dark:border-slate-700"
+                  ? "bg-white dark:bg-slate-800 text-kat-teal dark:text-kat-primary shadow-xs border-slate-200/60 dark:border-slate-700"
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
               }`}
             >
@@ -832,7 +832,7 @@ export function JournalSection({
           <button
             onClick={openNewForm}
             className={classNames(
-              "h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 text-[14px] font-black text-white dark:text-slate-950 transition-all hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 shadow-sm shrink-0 motion-press border border-transparent dark:border-kat-primary",
+              "h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary px-5 text-[14px] font-black text-white dark:text-slate-950 transition-all hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 shadow-xs shrink-0 motion-press border border-transparent dark:border-kat-primary",
               journals.length > 0 ? "hidden md:flex" : "flex w-full sm:w-auto"
             )}
           >
@@ -1004,7 +1004,7 @@ export function JournalSection({
                           )}
 
                           <div className="p-4 pt-3">
-                            <h4 className="text-[17px] font-black text-kat-dark dark:text-slate-200 leading-snug break-words">
+                            <h4 className="text-[17px] font-black text-kat-dark dark:text-slate-200 leading-snug wrap-break-word">
                               {entry.title || "Bản tin chuyến đi"}
                             </h4>
                             {entry.locationName && (
@@ -1128,7 +1128,7 @@ export function JournalSection({
                     className="flex items-center gap-3 py-2 px-2.5 rounded-xl hover:bg-slate-50/50 dark:hover:bg-slate-800/25 transition-all duration-200 group cursor-default border border-transparent"
                   >
                     <div
-                      className={`w-8 h-8 rounded-xl shrink-0 flex items-center justify-center font-black text-xs border shadow-sm ${avatarTheme} group-hover:scale-105 transition-transform duration-200`}
+                      className={`w-8 h-8 rounded-xl shrink-0 flex items-center justify-center font-black text-xs border shadow-xs ${avatarTheme} group-hover:scale-105 transition-transform duration-200`}
                     >
                       {member.name.charAt(0).toUpperCase()}
                     </div>

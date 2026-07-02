@@ -239,7 +239,7 @@ export function CalendarRangePicker({
       </div>
 
       {/* Calendar Card */}
-      <div className="rounded-[24px] bg-white dark:bg-[#0A0F1C]/60 border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden flex flex-col">
+      <div className="rounded-[24px] bg-white dark:bg-[#0A0F1C]/60 border border-slate-200/80 dark:border-white/10 shadow-xs overflow-hidden flex flex-col">
         {/* Date Summary Header */}
         <div className="px-5 pt-4 pb-3 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
           <div className="text-[18px] sm:text-[20px] font-bold text-kat-dark dark:text-white flex items-center flex-wrap gap-2">
@@ -365,9 +365,9 @@ export function CalendarRangePicker({
                   className={classNames(
                     "relative z-10 h-7 w-7 flex items-center justify-center rounded-full text-[13px] font-semibold transition-all active:scale-95",
                     (isStart || isEnd) && !isSingleDay
-                      ? "bg-kat-primary text-white dark:text-slate-950 font-bold shadow-sm"
+                      ? "bg-kat-primary text-white dark:text-slate-950 font-bold shadow-xs"
                       : isSingleDay
-                        ? "bg-kat-primary text-white dark:text-slate-950 font-bold shadow-sm"
+                        ? "bg-kat-primary text-white dark:text-slate-950 font-bold shadow-xs"
                         : inRange
                           ? "text-kat-primary dark:text-kat-teal font-semibold hover:bg-[#00BFB7]/10 dark:hover:bg-kat-teal/20"
                           : isToday

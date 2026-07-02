@@ -94,11 +94,11 @@ export function ReloadPrompt({ hasBottomNav = false }: { hasBottomNav?: boolean 
 
   return (
     <div
-      className={`fixed right-4 left-4 md:left-auto md:w-[380px] z-[9999] animate-slideUp transition-all duration-300 ${hasBottomNav ? "bottom-24 lg:bottom-6" : "bottom-6"}`}
+      className={`fixed right-4 left-4 md:left-auto md:w-[380px] z-9999 animate-slideUp transition-all duration-300 ${hasBottomNav ? "bottom-24 lg:bottom-6" : "bottom-6"}`}
     >
       <div className="backdrop-blur-xl bg-white/95 dark:bg-[#111A33]/90 border border-slate-200/50 dark:border-slate-800/60 shadow-[0_20px_50px_rgba(3,13,46,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.35)] rounded-[24px] p-5 flex flex-col gap-4.5 transition-all duration-300">
         <div className="flex items-start gap-3.5">
-          <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500/10 to-emerald-500/10 border border-teal-500/20 dark:border-teal-500/30 text-kat-teal shrink-0 shadow-inner">
+          <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-linear-to-br from-teal-500/10 to-emerald-500/10 border border-teal-500/20 dark:border-teal-500/30 text-kat-teal shrink-0 shadow-inner">
             <div className="absolute inset-0 rounded-2xl bg-kat-teal/5 animate-pulse" />
             <HugeiconsIcon
               icon={needRefresh ? SystemUpdate01Icon : Download01Icon}
@@ -125,7 +125,7 @@ export function ReloadPrompt({ hasBottomNav = false }: { hasBottomNav?: boolean 
           {needRefresh && (
             <button
               onClick={() => updateServiceWorker(true)}
-              className="px-5 py-2.5 text-xs font-black text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl shadow-md shadow-teal-500/10 hover:shadow-teal-500/25 hover:shadow-lg transition-all duration-200 active:scale-[0.97] hover:scale-[1.01]"
+              className="px-5 py-2.5 text-xs font-black text-white bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl shadow-md shadow-teal-500/10 hover:shadow-teal-500/25 hover:shadow-lg transition-all duration-200 active:scale-[0.97] hover:scale-[1.01]"
             >
               {t("pwa.updateNow")}
             </button>

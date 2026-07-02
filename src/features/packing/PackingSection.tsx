@@ -52,7 +52,7 @@ function PackingItemRow({
   return (
     <div
       className={classNames(
-        "flex items-center gap-3 rounded-[20px] bg-white p-3.5 shadow-sm border transition-all hover:shadow-md",
+        "flex items-center gap-3 rounded-[20px] bg-white p-3.5 shadow-xs border transition-all hover:shadow-md",
         item.completed ? "opacity-60 border-slate-100 bg-slate-50/50" : "border-slate-100"
       )}
     >
@@ -60,7 +60,7 @@ function PackingItemRow({
         className={classNames(
           "flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-300",
           item.completed
-            ? "bg-emerald-500 text-white shadow-sm"
+            ? "bg-emerald-500 text-white shadow-xs"
             : "bg-slate-100 text-slate-300 ring-1 ring-inset ring-slate-200 hover:bg-slate-200"
         )}
         onClick={() => db.packingItems.update(item.id!, { completed: !item.completed })}
@@ -71,7 +71,7 @@ function PackingItemRow({
       <div className="min-w-0 flex-1">
         <p
           className={classNames(
-            "break-words text-[15px] font-medium transition-all duration-300",
+            "wrap-break-word text-[15px] font-medium transition-all duration-300",
             item.completed ? "text-slate-500 line-through" : "text-slate-800"
           )}
         >
@@ -83,7 +83,7 @@ function PackingItemRow({
       <div className="relative shrink-0" ref={menuRef}>
         <button
           type="button"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-none"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus:outline-hidden"
           onClick={(e) => {
             e.stopPropagation();
             setIsMenuOpen(!isMenuOpen);
@@ -234,7 +234,7 @@ export function PackingSection({
             <HugeiconsIcon icon={Luggage01Icon} className="h-6 w-6" />
           </div>
           <h3 className="text-[18px] font-bold text-kat-text mb-1">{t("packing.pageTitle")}</h3>
-          <p className="text-[13px] font-bold text-kat-primary bg-kat-primary/10 px-4 py-1.5 rounded-full mb-3 shadow-sm">
+          <p className="text-[13px] font-bold text-kat-primary bg-kat-primary/10 px-4 py-1.5 rounded-full mb-3 shadow-xs">
             {t("packing.progressStatus", { completed: stats.completed, total: stats.total })}
           </p>
           <p className="text-[13.5px] font-medium text-kat-muted text-center">

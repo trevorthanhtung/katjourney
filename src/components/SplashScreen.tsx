@@ -10,7 +10,7 @@ export function SplashScreen({ isFading }: SplashScreenProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-[200] flex flex-col items-center justify-center bg-slate-50 dark:bg-[#060b19] transition-all duration-500 select-none ${
+      className={`fixed inset-0 z-200 flex flex-col items-center justify-center bg-slate-50 dark:bg-[#060b19] transition-all duration-500 select-none ${
         isFading ? "opacity-0 scale-[1.08] pointer-events-none" : "opacity-100 scale-100"
       }`}
       style={{
@@ -26,13 +26,13 @@ export function SplashScreen({ isFading }: SplashScreenProps) {
       />
 
       {/* Dynamic Ambient Glow Behind Logo */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-tr from-indigo-500/5 via-teal-500/5 to-transparent dark:from-indigo-500/10 dark:via-teal-500/10 dark:to-transparent rounded-full blur-[80px] animate-splash-glow pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-linear-to-tr from-indigo-500/5 via-teal-500/5 to-transparent dark:from-indigo-500/10 dark:via-teal-500/10 dark:to-transparent rounded-full blur-[80px] animate-splash-glow pointer-events-none" />
 
       {/* Main Logo Container */}
       <div className="relative flex flex-col items-center gap-6 z-10 animate-splash-logo">
         <div className="relative flex items-center justify-center rounded-[32px] p-1 overflow-hidden group shadow-[0_8px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_0_50px_rgba(0,191,183,0.15)]">
           {/* Subtle premium shimmer overlay over the logo container */}
-          <div className="absolute top-0 bottom-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer-sweep pointer-events-none z-20"></div>
+          <div className="absolute top-0 bottom-0 left-0 w-1/2 bg-linear-to-r from-transparent via-white/20 to-transparent animate-shimmer-sweep pointer-events-none z-20"></div>
 
           <img
             src="/asset/logo.png"
@@ -53,7 +53,7 @@ export function SplashScreen({ isFading }: SplashScreenProps) {
 
         {/* Elegant Loading Bar directly integrated under the tagline */}
         <div className="w-24 h-1 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden mt-2 relative">
-          <div className="absolute top-0 bottom-0 bg-gradient-to-r from-teal-400 to-[#00BFB7] rounded-full animate-splash-progress w-full" />
+          <div className="absolute top-0 bottom-0 bg-linear-to-r from-teal-400 to-[#00BFB7] rounded-full animate-splash-progress w-full" />
         </div>
       </div>
     </div>

@@ -150,7 +150,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
     return (
       <div className="bg-white/50 dark:bg-[#0A0F1C]/20 flex flex-col overflow-hidden h-full w-full">
         {/* Header */}
-        <div className="bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-4 text-kat-dark dark:text-white flex justify-between items-center shrink-0 border-b border-slate-200/60 dark:border-white/10 shadow-sm z-10">
+        <div className="bg-white/60 dark:bg-[#0A0F1C]/40 backdrop-blur-xl p-4 text-kat-dark dark:text-white flex justify-between items-center shrink-0 border-b border-slate-200/60 dark:border-white/10 shadow-xs z-10">
           <div className="flex items-center gap-3 min-w-0">
             {isMobileFullscreen && onBackClick && (
               <button
@@ -206,7 +206,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
             </div>
           ) : messages.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 select-none">
-              <div className="relative w-16 h-16 rounded-[22px] bg-[#00BFB7]/10 dark:bg-[#00BFB7]/20 flex items-center justify-center mb-5 border border-[#00BFB7]/30 dark:border-[#00BFB7]/40 shadow-sm shadow-[#00BFB7]/5">
+              <div className="relative w-16 h-16 rounded-[22px] bg-[#00BFB7]/10 dark:bg-[#00BFB7]/20 flex items-center justify-center mb-5 border border-[#00BFB7]/30 dark:border-[#00BFB7]/40 shadow-xs shadow-[#00BFB7]/5">
                 <HugeiconsIcon
                   icon={BubbleChatIcon}
                   className="w-8 h-8 text-[#00BFB7] dark:text-[#00BFB7] relative z-10"
@@ -246,7 +246,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                 <React.Fragment key={msg.id || index}>
                   {showDateSeparator && (
                     <div className="flex items-center justify-center my-4 select-none">
-                      <div className="bg-[#E2E8F0]/60 dark:bg-slate-800/60 text-kat-text dark:text-slate-350 text-[10px] font-bold px-3 py-1 rounded-full shadow-sm tracking-wider uppercase border border-kat-border/40 dark:border-slate-700/30">
+                      <div className="bg-[#E2E8F0]/60 dark:bg-slate-800/60 text-kat-text dark:text-slate-350 text-[10px] font-bold px-3 py-1 rounded-full shadow-xs tracking-wider uppercase border border-kat-border/40 dark:border-slate-700/30">
                         {dateStr}
                       </div>
                     </div>
@@ -264,7 +264,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                         className={classNames(
                           "w-8 h-8 rounded-full shrink-0 mr-2 mt-auto",
                           showAvatar && msg.senderAvatar
-                            ? "overflow-hidden bg-[#E2E8F0]/40 dark:bg-slate-800/40 border border-kat-border/60 dark:border-slate-700/40 shadow-sm transition-transform duration-200 hover:scale-110"
+                            ? "overflow-hidden bg-[#E2E8F0]/40 dark:bg-slate-800/40 border border-kat-border/60 dark:border-slate-700/40 shadow-xs transition-transform duration-200 hover:scale-110"
                             : ""
                         )}
                       >
@@ -287,10 +287,10 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                       <div
                         onClick={() => toggleTime(msgKey)}
                         className={classNames(
-                          "px-4 py-2.5 relative transition-all duration-300 break-words max-w-full shadow-[0_2px_8px_rgba(3,13,46,0.02)] cursor-pointer select-none",
+                          "px-4 py-2.5 relative transition-all duration-300 wrap-break-word max-w-full shadow-[0_2px_8px_rgba(3,13,46,0.02)] cursor-pointer select-none",
                           isMe
                             ? classNames(
-                                "bg-gradient-to-br from-kat-primary to-kat-primary-usable text-white hover:-translate-x-1 hover:shadow-md hover:shadow-kat-primary/15",
+                                "bg-linear-to-br from-kat-primary to-kat-primary-usable text-white hover:-translate-x-1 hover:shadow-md hover:shadow-kat-primary/15",
                                 isPrevSame && isNextSame
                                   ? "rounded-l-2xl rounded-r-md"
                                   : isPrevSame && !isNextSame
@@ -311,7 +311,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                               )
                         )}
                       >
-                        <p className="text-[13px] leading-relaxed whitespace-pre-wrap break-words">
+                        <p className="text-[13px] leading-relaxed whitespace-pre-wrap wrap-break-word">
                           {msg.text}
                         </p>
                       </div>
@@ -352,7 +352,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={t("chat.inputPlaceholder")}
-                className="flex-1 bg-transparent border-0 rounded-full px-3 py-2 text-[14px] font-medium text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none transition-all duration-200"
+                className="flex-1 bg-transparent border-0 rounded-full px-3 py-2 text-[14px] font-medium text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden transition-all duration-200"
               />
               <button
                 type="submit"
@@ -360,7 +360,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
                 className={classNames(
                   "w-10 h-10 rounded-[14px] text-white flex items-center justify-center transition-all duration-300 shrink-0 shadow-md active:scale-95 motion-press",
                   inputText.trim() && !sending
-                    ? "bg-gradient-to-r from-kat-primary to-kat-primary-usable hover:scale-105 shadow-kat-primary/20 hover:shadow-[0_4px_16px_rgba(0,191,183,0.3)]"
+                    ? "bg-linear-to-r from-kat-primary to-kat-primary-usable hover:scale-105 shadow-kat-primary/20 hover:shadow-[0_4px_16px_rgba(0,191,183,0.3)]"
                     : "bg-slate-200/60 dark:bg-slate-800 text-slate-400 dark:text-slate-600 shadow-none scale-100 cursor-not-allowed"
                 )}
               >
@@ -382,7 +382,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
       <>
         {/* Fullscreen Chat Modal on Mobile */}
         {isMobileModalOpen && (
-          <div className="fixed inset-0 bg-white dark:bg-kat-bg z-[999] flex flex-col animate-slideUp">
+          <div className="fixed inset-0 bg-white dark:bg-kat-bg z-999 flex flex-col animate-slideUp">
             {renderChatContent(true, () => setIsMobileModalOpen(false))}
           </div>
         )}
@@ -408,7 +408,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
             </p>
             <button
               onClick={() => setIsMobileModalOpen(true)}
-              className="bg-gradient-to-r from-kat-primary to-kat-primary-usable text-white px-8 py-3 rounded-full font-bold shadow-md hover:scale-105 active:scale-95 transition-all text-xs tracking-wider uppercase"
+              className="bg-linear-to-r from-kat-primary to-kat-primary-usable text-white px-8 py-3 rounded-full font-bold shadow-md hover:scale-105 active:scale-95 transition-all text-xs tracking-wider uppercase"
             >
               {t("chat.openBtn")}
             </button>
@@ -428,7 +428,7 @@ export function ChatBox({ token, currentUser, onClose, inline, isReadOnly = fals
     <>
       {/* Mobile view: Fullscreen overlay */}
       <div className="block sm:hidden">
-        <div className="fixed inset-0 bg-white dark:bg-kat-bg z-[999] flex flex-col">
+        <div className="fixed inset-0 bg-white dark:bg-kat-bg z-999 flex flex-col">
           {renderChatContent(true, onClose)}
         </div>
       </div>

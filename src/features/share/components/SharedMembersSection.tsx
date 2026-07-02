@@ -349,7 +349,7 @@ export function SharedMembersSection({
   return (
     <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden">
       {/* Ambient background glow */}
-      <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-blue-500/[0.03] dark:bg-blue-500/[0.05] blur-[30px] pointer-events-none" />
+      <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-blue-500/3 dark:bg-blue-500/5 blur-[30px] pointer-events-none" />
 
       {/* Header */}
       <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
@@ -376,7 +376,7 @@ export function SharedMembersSection({
             placeholder={t("members.searchMember")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-950 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+            className="block w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 py-2.5 pl-10 pr-10 text-[13.5px] font-semibold text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-950 focus:outline-hidden focus:ring-1 focus:ring-blue-500 transition-all"
           />
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 z-10">
             <HugeiconsIcon icon={Search01Icon} className="h-4.5 w-4.5 text-slate-400" />
@@ -433,55 +433,55 @@ export function SharedMembersSection({
               roleLower.includes("hành lý") || roleLower.includes("phụ trách hành lý");
 
             let cardBg =
-              "bg-gradient-to-br from-slate-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-slate-800/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+              "bg-linear-to-br from-slate-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-slate-800/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
             let borderAccent = "border-l-[3.5px] border-l-slate-400";
             let avatarRing = "ring-2 ring-slate-100 dark:ring-slate-800";
 
             if (member.isPendingCreate) {
               cardBg =
-                "bg-gradient-to-br from-sky-50/40 via-white/80 to-white/70 border-sky-200/80 backdrop-blur-md dark:from-sky-950/15 dark:via-slate-900/30 dark:to-slate-900/40 dark:border-white/5";
+                "bg-linear-to-br from-sky-50/40 via-white/80 to-white/70 border-sky-200/80 backdrop-blur-md dark:from-sky-950/15 dark:via-slate-900/30 dark:to-slate-900/40 dark:border-white/5";
               borderAccent = "border-l-[3.5px] border-l-sky-500";
               avatarRing =
                 "ring-2 ring-sky-400/60 dark:ring-sky-500/40 shadow-[0_0_8px_rgba(14,165,233,0.2)]";
             } else if (member.isPendingDelete) {
               cardBg =
-                "bg-gradient-to-br from-rose-50/40 via-white/80 to-white/70 border-rose-200/80 opacity-80 backdrop-blur-md dark:from-rose-950/15 dark:via-slate-900/30 dark:to-slate-900/40 dark:border-white/5";
+                "bg-linear-to-br from-rose-50/40 via-white/80 to-white/70 border-rose-200/80 opacity-80 backdrop-blur-md dark:from-rose-950/15 dark:via-slate-900/30 dark:to-slate-900/40 dark:border-white/5";
               borderAccent = "border-l-[3.5px] border-l-rose-500";
               avatarRing =
                 "ring-2 ring-rose-400/60 dark:ring-rose-500/40 shadow-[0_0_8px_rgba(244,63,94,0.2)]";
             } else if (isLeader) {
               cardBg =
-                "bg-gradient-to-br from-amber-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-amber-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+                "bg-linear-to-br from-amber-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-amber-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
               borderAccent = "border-l-[3.5px] border-l-amber-500";
               avatarRing =
                 "ring-2 ring-amber-400/60 dark:ring-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.2)]";
             } else if (isCost) {
               cardBg =
-                "bg-gradient-to-br from-emerald-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-emerald-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+                "bg-linear-to-br from-emerald-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-emerald-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
               borderAccent = "border-l-[3.5px] border-l-emerald-500";
               avatarRing =
                 "ring-2 ring-emerald-400/60 dark:ring-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.2)]";
             } else if (isDriver) {
               cardBg =
-                "bg-gradient-to-br from-blue-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-blue-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+                "bg-linear-to-br from-blue-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-blue-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
               borderAccent = "border-l-[3.5px] border-l-blue-500";
               avatarRing =
                 "ring-2 ring-blue-400/60 dark:ring-blue-500/40 shadow-[0_0_8px_rgba(59,130,246,0.2)]";
             } else if (isGuide) {
               cardBg =
-                "bg-gradient-to-br from-sky-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-sky-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+                "bg-linear-to-br from-sky-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-sky-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
               borderAccent = "border-l-[3.5px] border-l-sky-500";
               avatarRing =
                 "ring-2 ring-sky-400/60 dark:ring-sky-500/40 shadow-[0_0_8px_rgba(14,165,233,0.2)]";
             } else if (isLuggage) {
               cardBg =
-                "bg-gradient-to-br from-indigo-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-indigo-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+                "bg-linear-to-br from-indigo-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-indigo-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
               borderAccent = "border-l-[3.5px] border-l-indigo-500";
               avatarRing =
                 "ring-2 ring-indigo-400/60 dark:ring-indigo-500/40 shadow-[0_0_8px_rgba(99,102,241,0.2)]";
             } else if (member.isGroupLeader) {
               cardBg =
-                "bg-gradient-to-br from-teal-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-teal-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+                "bg-linear-to-br from-teal-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-teal-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
               borderAccent = "border-l-[3.5px] border-l-teal-500";
               avatarRing =
                 "ring-2 ring-teal-400/60 dark:ring-teal-500/40 shadow-[0_0_8px_rgba(20,184,166,0.2)]";
@@ -643,7 +643,7 @@ export function SharedMembersSection({
                             </span>
                           </p>
                           {member.isGroupLeader && (
-                            <span className="inline-flex items-center gap-1 rounded bg-teal-50 px-1.5 py-0.5 text-[10px] font-bold text-teal-600 border border-teal-100 dark:bg-teal-950/30 dark:border-teal-900/30 dark:text-teal-400 select-none">
+                            <span className="inline-flex items-center gap-1 rounded-sm bg-teal-50 px-1.5 py-0.5 text-[10px] font-bold text-teal-600 border border-teal-100 dark:bg-teal-950/30 dark:border-teal-900/30 dark:text-teal-400 select-none">
                               {t("more.representative", "Đại diện")}
                             </span>
                           )}
@@ -665,7 +665,7 @@ export function SharedMembersSection({
                         </div>
                       )}
                       {member.note && (
-                        <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 italic mt-2.5 border-l-2 border-slate-200 dark:border-slate-700/60 pl-3 py-0.5 max-w-full break-words leading-relaxed">
+                        <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 italic mt-2.5 border-l-2 border-slate-200 dark:border-slate-700/60 pl-3 py-0.5 max-w-full wrap-break-word leading-relaxed">
                           "{member.note}"
                         </p>
                       )}
@@ -700,7 +700,7 @@ export function SharedMembersSection({
                               });
                             }
                           }}
-                          className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/80 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-kat-teal/40"
+                          className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100/80 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors focus:outline-hidden focus:ring-2 focus:ring-kat-teal/40"
                           title={t("members.options")}
                         >
                           <HugeiconsIcon icon={MoreVerticalIcon} className="h-5 w-5" />
@@ -717,7 +717,7 @@ export function SharedMembersSection({
                         "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-all duration-200 hover:scale-[1.02] cursor-default",
                         assignedTasksCount === 0
                           ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-150 dark:border-white/5 text-slate-450 dark:text-slate-500 font-bold"
-                          : "bg-sky-500/[0.04] dark:bg-sky-500/[0.08] border-sky-500/10 text-sky-650 dark:text-sky-400 font-extrabold"
+                          : "bg-sky-500/4 dark:bg-sky-500/8 border-sky-500/10 text-sky-650 dark:text-sky-400 font-extrabold"
                       )}
                     >
                       <HugeiconsIcon
@@ -731,7 +731,7 @@ export function SharedMembersSection({
                         "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-all duration-200 hover:scale-[1.02] cursor-default",
                         totalSpent === 0
                           ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-150 dark:border-white/5 text-slate-450 dark:text-slate-500 font-bold"
-                          : "bg-emerald-500/[0.04] dark:bg-emerald-500/[0.08] border-emerald-500/10 text-emerald-650 dark:text-emerald-400 font-extrabold"
+                          : "bg-emerald-500/4 dark:bg-emerald-500/8 border-emerald-500/10 text-emerald-650 dark:text-emerald-400 font-extrabold"
                       )}
                     >
                       <HugeiconsIcon
@@ -802,14 +802,14 @@ export function SharedMembersSection({
         createPortal(
           <>
             <div
-              className="fixed inset-0 z-[998]"
+              className="fixed inset-0 z-998"
               onClick={() => {
                 setActiveMenuId(null);
                 setMenuPos(null);
               }}
             />
             <div
-              className="fixed z-[999] w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg dark:shadow-slate-900/50 py-1.5 animate-fadeIn"
+              className="fixed z-999 w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg dark:shadow-slate-900/50 py-1.5 animate-fadeIn"
               style={{ top: menuPos.top, right: menuPos.right }}
             >
               <button
@@ -854,7 +854,7 @@ export function SharedMembersSection({
       {isRequestEdit && (
         <button
           onClick={handleAdd}
-          className="flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-kat-dark/80 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border-2 border-dashed border-slate-200/80 dark:border-slate-700/50 hover:border-indigo-200 dark:hover:border-indigo-500/50 hover:text-indigo-700 dark:hover:text-indigo-400 rounded-2xl transition-all active:scale-[0.99] shadow-sm shadow-slate-100 dark:shadow-none"
+          className="flex h-12 w-full items-center justify-center gap-2 text-[14px] font-bold text-kat-dark/80 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 border-2 border-dashed border-slate-200/80 dark:border-slate-700/50 hover:border-indigo-200 dark:hover:border-indigo-500/50 hover:text-indigo-700 dark:hover:text-indigo-400 rounded-2xl transition-all active:scale-[0.99] shadow-xs shadow-slate-100 dark:shadow-none"
           title={t("members.btnSuggestAdd")}
         >
           <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" /> {t("members.btnSuggestAdd")}
@@ -893,7 +893,7 @@ export function SharedMembersSection({
                 className={classNames(
                   "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all border",
                   form.gender === "male"
-                    ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-slate-200 border-slate-200/60 dark:border-slate-700 shadow-sm"
+                    ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-slate-200 border-slate-200/60 dark:border-slate-700 shadow-xs"
                     : "bg-transparent border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
                 )}
               >
@@ -905,7 +905,7 @@ export function SharedMembersSection({
                 className={classNames(
                   "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all border",
                   form.gender === "female"
-                    ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-slate-200 border-slate-200/60 dark:border-slate-700 shadow-sm"
+                    ? "bg-white dark:bg-slate-800 text-kat-dark dark:text-slate-200 border-slate-200/60 dark:border-slate-700 shadow-xs"
                     : "bg-transparent border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
                 )}
               >
@@ -916,7 +916,7 @@ export function SharedMembersSection({
 
           <button
             onClick={handleSave}
-            className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-dark dark:bg-kat-primary font-black text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary/95 active:scale-[0.98] transition-all shadow-sm"
+            className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-dark dark:bg-kat-primary font-black text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary/95 active:scale-[0.98] transition-all shadow-xs"
           >
             {t("members.btnSuggestAdd")}
           </button>
@@ -976,7 +976,7 @@ export function SharedMembersSection({
                     className={classNames(
                       "py-2.5 px-3 text-left text-[12.5px] font-bold rounded-xl transition-all border",
                       isSelected
-                        ? "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 shadow-sm"
+                        ? "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 shadow-xs"
                         : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700/50 text-slate-650 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                     )}
                   >
@@ -991,7 +991,7 @@ export function SharedMembersSection({
 
           <button
             onClick={handleRoleChangeSubmit}
-            className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-dark dark:bg-kat-primary font-black text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary/95 active:scale-[0.98] transition-all shadow-sm"
+            className="mt-2 w-full h-[50px] rounded-[16px] bg-kat-dark dark:bg-kat-primary font-black text-white dark:text-slate-950 hover:bg-opacity-95 dark:hover:bg-kat-primary/95 active:scale-[0.98] transition-all shadow-xs"
           >
             {t("members.btnSuggestRole")}
           </button>

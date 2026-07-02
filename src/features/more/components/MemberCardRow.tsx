@@ -102,43 +102,43 @@ export function MemberCardRow({
   const isLuggage = roleLower.includes("hành lý") || roleLower.includes("phụ trách hành lý");
 
   let cardBg =
-    "bg-gradient-to-br from-slate-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-slate-800/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+    "bg-linear-to-br from-slate-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-slate-800/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
   let borderAccent = "border-l-[3.5px] border-l-slate-400";
   let avatarRing = "ring-2 ring-slate-100 dark:ring-slate-800";
 
   if (isLeader) {
     cardBg =
-      "bg-gradient-to-br from-amber-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-amber-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+      "bg-linear-to-br from-amber-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-amber-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
     borderAccent = "border-l-[3.5px] border-l-amber-500";
     avatarRing =
       "ring-2 ring-amber-400/60 dark:ring-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.2)]";
   } else if (isCost) {
     cardBg =
-      "bg-gradient-to-br from-emerald-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-emerald-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+      "bg-linear-to-br from-emerald-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-emerald-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
     borderAccent = "border-l-[3.5px] border-l-emerald-500";
     avatarRing =
       "ring-2 ring-emerald-400/60 dark:ring-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.2)]";
   } else if (isDriver) {
     cardBg =
-      "bg-gradient-to-br from-blue-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-blue-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+      "bg-linear-to-br from-blue-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-blue-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
     borderAccent = "border-l-[3.5px] border-l-blue-500";
     avatarRing =
       "ring-2 ring-blue-400/60 dark:ring-blue-500/40 shadow-[0_0_8px_rgba(59,130,246,0.2)]";
   } else if (isGuide) {
     cardBg =
-      "bg-gradient-to-br from-sky-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-sky-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+      "bg-linear-to-br from-sky-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-sky-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
     borderAccent = "border-l-[3.5px] border-l-sky-500";
     avatarRing =
       "ring-2 ring-sky-400/60 dark:ring-sky-500/40 shadow-[0_0_8px_rgba(14,165,233,0.2)]";
   } else if (isLuggage) {
     cardBg =
-      "bg-gradient-to-br from-indigo-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-indigo-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+      "bg-linear-to-br from-indigo-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-indigo-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
     borderAccent = "border-l-[3.5px] border-l-indigo-500";
     avatarRing =
       "ring-2 ring-indigo-400/60 dark:ring-indigo-500/40 shadow-[0_0_8px_rgba(99,102,241,0.2)]";
   } else if (member.isGroupLeader) {
     cardBg =
-      "bg-gradient-to-br from-teal-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-teal-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
+      "bg-linear-to-br from-teal-50/30 via-white/80 to-white/70 border-slate-200/55 dark:from-teal-950/10 dark:via-slate-900/30 dark:to-slate-900/40 backdrop-blur-md dark:border-white/5";
     borderAccent = "border-l-[3.5px] border-l-teal-500";
     avatarRing =
       "ring-2 ring-teal-400/60 dark:ring-teal-500/40 shadow-[0_0_8px_rgba(20,184,166,0.2)]";
@@ -286,14 +286,14 @@ export function MemberCardRow({
                   </span>
                 </p>
                 {member.isGroupLeader && (
-                  <span className="inline-flex items-center gap-1 rounded bg-teal-50 px-1.5 py-0.5 text-[10px] font-bold text-teal-600 border border-teal-100 dark:bg-teal-950/30 dark:border-teal-900/30 dark:text-teal-400 select-none">
+                  <span className="inline-flex items-center gap-1 rounded-sm bg-teal-50 px-1.5 py-0.5 text-[10px] font-bold text-teal-600 border border-teal-100 dark:bg-teal-950/30 dark:border-teal-900/30 dark:text-teal-400 select-none">
                     {t("more.representative", "Đại diện")}
                   </span>
                 )}
               </div>
             )}
             {member.note && (
-              <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 italic mt-2.5 border-l-2 border-slate-200 dark:border-slate-700/60 pl-3 py-0.5 max-w-full break-words leading-relaxed">
+              <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400 italic mt-2.5 border-l-2 border-slate-200 dark:border-slate-700/60 pl-3 py-0.5 max-w-full wrap-break-word leading-relaxed">
                 "{member.note}"
               </p>
             )}
@@ -305,7 +305,7 @@ export function MemberCardRow({
           <div className="relative shrink-0">
             <button
               type="button"
-              className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-kat-teal/40"
+              className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors focus:outline-hidden focus:ring-2 focus:ring-kat-teal/40"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsMenuOpen(!isMenuOpen);
@@ -367,7 +367,7 @@ export function MemberCardRow({
               "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-all duration-200 hover:scale-[1.02] cursor-default",
               assignedTasksCount === 0
                 ? "bg-slate-50/50 dark:bg-slate-800/20 border-slate-150 dark:border-white/5 text-slate-450 dark:text-slate-500 font-bold"
-                : "bg-sky-500/[0.04] dark:bg-sky-500/[0.08] border-sky-500/10 text-sky-650 dark:text-sky-400 font-extrabold"
+                : "bg-sky-500/4 dark:bg-sky-500/8 border-sky-500/10 text-sky-650 dark:text-sky-400 font-extrabold"
             )}
           >
             <HugeiconsIcon icon={Luggage01Icon} className="h-3.5 w-3.5 shrink-0 text-sky-500" />
@@ -377,7 +377,7 @@ export function MemberCardRow({
             className={classNames(
               "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12.5px] border transition-all duration-200 hover:scale-[1.02] cursor-default",
               totalSpent > 0
-                ? "bg-emerald-500/[0.04] dark:bg-emerald-500/[0.08] border-emerald-500/10 text-emerald-650 dark:text-emerald-400 font-extrabold"
+                ? "bg-emerald-500/4 dark:bg-emerald-500/8 border-emerald-500/10 text-emerald-650 dark:text-emerald-400 font-extrabold"
                 : "bg-slate-50/50 dark:bg-slate-800/20 border-slate-150 dark:border-white/5 text-slate-450 dark:text-slate-500 font-bold"
             )}
           >

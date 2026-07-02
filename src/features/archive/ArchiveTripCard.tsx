@@ -70,7 +70,7 @@ export function ArchiveTripCard({
       />
 
       {/* Background decorative compass */}
-      <div className="absolute -bottom-6 -right-6 opacity-[0.05] dark:opacity-[0.1] pointer-events-none rotate-12 group-hover:rotate-[24deg] group-hover:scale-110 transition-transform duration-1000 ease-out">
+      <div className="absolute -bottom-6 -right-6 opacity-[0.05] dark:opacity-[0.1] pointer-events-none rotate-12 group-hover:rotate-24 group-hover:scale-110 transition-transform duration-1000 ease-out">
         <HugeiconsIcon icon={CompassIcon} size={140} className="text-kat-primary" />
       </div>
 
@@ -83,23 +83,23 @@ export function ArchiveTripCard({
           <HugeiconsIcon
             icon={SparklesIcon}
             size={16}
-            className="text-kat-primary group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"
+            className="text-kat-primary group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300 drop-shadow-xs"
           />
         </div>
       </div>
 
       {/* Trip title */}
-      <h4 className="text-[20px] font-black text-kat-text leading-tight mb-5 line-clamp-2 tracking-tight group-hover:bg-gradient-to-r group-hover:from-kat-primary group-hover:to-teal-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300 relative z-10 w-fit">
+      <h4 className="text-[20px] font-black text-kat-text leading-tight mb-5 line-clamp-2 tracking-tight group-hover:bg-linear-to-r group-hover:from-kat-primary group-hover:to-teal-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300 relative z-10 w-fit">
         {trip.title}
       </h4>
 
       {/* Info grid */}
       <div className="grid grid-cols-2 gap-y-2.5 gap-x-3 mt-auto relative z-10">
-        <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[12px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-sm">
+        <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[12px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-xs">
           <HugeiconsIcon
             icon={Location01Icon}
             size={14}
-            className="text-kat-primary shrink-0 drop-shadow-sm"
+            className="text-kat-primary shrink-0 drop-shadow-xs"
           />
           <span className="text-[12px] font-black text-slate-700 dark:text-slate-200 truncate">
             {trip.destinations && trip.destinations.length > 1
@@ -111,31 +111,31 @@ export function ArchiveTripCard({
               : trip.location || t("common.unknownLocation")}
           </span>
         </div>
-        <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[12px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-sm">
+        <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[12px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-xs">
           <HugeiconsIcon
             icon={Calendar01Icon}
             size={14}
-            className="text-kat-primary shrink-0 drop-shadow-sm"
+            className="text-kat-primary shrink-0 drop-shadow-xs"
           />
           <span className="text-[12px] font-black text-slate-700 dark:text-slate-200 truncate">
             {formatDate(trip.startDate)}
           </span>
         </div>
-        <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[12px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-sm">
+        <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[12px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-xs">
           <HugeiconsIcon
             icon={UserGroupIcon}
             size={14}
-            className="text-kat-primary shrink-0 drop-shadow-sm"
+            className="text-kat-primary shrink-0 drop-shadow-xs"
           />
           <span className="text-[12px] font-black text-slate-700 dark:text-slate-200 truncate">
             {t("dashboard.peopleCount", { count: memberCounts[trip.id!] || 1 })}
           </span>
         </div>
-        <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[12px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-sm">
+        <div className="flex items-center gap-1.5 bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 px-2.5 py-1.5 rounded-[12px] min-w-0 transition-all group-hover:bg-white/60 dark:group-hover:bg-white/10 backdrop-blur-xs">
           <HugeiconsIcon
             icon={WalletCardsIcon}
             size={14}
-            className="text-kat-primary shrink-0 drop-shadow-sm"
+            className="text-kat-primary shrink-0 drop-shadow-xs"
           />
           <span className="text-[12px] font-black text-slate-700 dark:text-slate-200 truncate">
             {totalExpense > 0

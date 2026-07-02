@@ -81,11 +81,11 @@ export function RolesHelpSheet({ isOpen, onClose }: { isOpen: boolean; onClose: 
         {roles.map((role, idx) => (
           <div
             key={idx}
-            className="p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md flex flex-col gap-3 shadow-sm transition-all hover:bg-white/60 dark:hover:bg-white/10"
+            className="p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 bg-white/40 dark:bg-white/5 backdrop-blur-md flex flex-col gap-3 shadow-xs transition-all hover:bg-white/60 dark:hover:bg-white/10"
           >
             <div className="flex items-center gap-3">
               <div
-                className={`flex h-9 w-9 items-center justify-center rounded-xl border ${role.colorClass} shadow-sm shrink-0`}
+                className={`flex h-9 w-9 items-center justify-center rounded-xl border ${role.colorClass} shadow-xs shrink-0`}
               >
                 <HugeiconsIcon icon={role.icon} className="h-4.5 w-4.5" />
               </div>

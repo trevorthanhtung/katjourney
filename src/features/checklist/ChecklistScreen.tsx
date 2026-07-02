@@ -152,7 +152,7 @@ function ChecklistItemRow({
       className={`group flex items-start gap-3.5 p-3.5 rounded-[20px] border transition-all duration-200 ${
         item.completed
           ? "bg-slate-50/40 dark:bg-slate-900/20 border-slate-150 dark:border-white/5 opacity-70"
-          : "bg-white/50 dark:bg-slate-800/20 backdrop-blur-sm border-slate-200/55 dark:border-white/5 hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] shadow-[0_2px_8px_rgba(0,0,0,0.01)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.02)]"
+          : "bg-white/50 dark:bg-slate-800/20 backdrop-blur-xs border-slate-200/55 dark:border-white/5 hover:border-slate-300 dark:hover:border-slate-700 hover:scale-[1.01] shadow-[0_2px_8px_rgba(0,0,0,0.01)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.02)]"
       }`}
     >
       {/* Checkbox button */}
@@ -164,7 +164,7 @@ function ChecklistItemRow({
         disabled={isReadOnly}
         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] transition-all duration-200 border ${
           item.completed
-            ? "bg-emerald-550/15 text-emerald-600 border-transparent dark:text-emerald-400 shadow-sm"
+            ? "bg-emerald-550/15 text-emerald-600 border-transparent dark:text-emerald-400 shadow-xs"
             : "bg-slate-50/80 dark:bg-slate-800/40 border-slate-200 dark:border-white/5 text-transparent hover:text-kat-teal hover:border-kat-teal/40 hover:bg-white dark:hover:bg-slate-800 shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)] hover:scale-105 active:scale-95"
         }`}
         aria-label={t("packing.toggleChecklist")}
@@ -176,7 +176,7 @@ function ChecklistItemRow({
       <div className="min-w-0 flex-1 py-0.5">
         <div className="flex items-center flex-wrap gap-x-2 gap-y-1">
           <span
-            className={`text-[15px] font-bold tracking-wide break-words transition-all ${
+            className={`text-[15px] font-bold tracking-wide wrap-break-word transition-all ${
               item.completed
                 ? "text-slate-400 dark:text-slate-400/80 line-through font-medium"
                 : "text-slate-900 dark:text-slate-200"
@@ -239,7 +239,7 @@ function ChecklistItemRow({
         <div className="relative shrink-0 self-center" ref={menuRef}>
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-kat-teal/40"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300 transition-colors focus:outline-hidden focus:ring-2 focus:ring-kat-teal/40"
             onClick={(e) => {
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
@@ -510,7 +510,7 @@ export function ChecklistScreen({
     return (
       <div
         key={catName}
-        className={`bg-white/70 dark:bg-slate-900/30 backdrop-blur-md rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-sm space-y-4 hover:shadow-md transition-all duration-200 motion-card-enter motion-delay-${Math.min(
+        className={`bg-white/70 dark:bg-slate-900/30 backdrop-blur-md rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-xs space-y-4 hover:shadow-md transition-all duration-200 motion-card-enter motion-delay-${Math.min(
           catIdx + 1,
           5
         )}`}
@@ -631,7 +631,7 @@ export function ChecklistScreen({
             <div className="hidden md:block">
               <button
                 onClick={openAddForm}
-                className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 border border-transparent dark:border-kat-primary px-4 text-[13.5px] font-black shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press w-full sm:w-auto shrink-0"
+                className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 border border-transparent dark:border-kat-primary px-4 text-[13.5px] font-black shadow-xs dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press w-full sm:w-auto shrink-0"
               >
                 <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
                 <span>{t("packing.addItem")}</span>
@@ -660,21 +660,21 @@ export function ChecklistScreen({
               const added = isAdded(t(sug.titleKey));
               const sugColorMap: Record<string, string> = {
                 documents:
-                  "bg-blue-500/[0.04] dark:bg-blue-500/[0.08] text-blue-700 dark:text-blue-400 border-blue-500/10 hover:border-blue-500/30 hover:bg-blue-500/10",
+                  "bg-blue-500/4 dark:bg-blue-500/8 text-blue-700 dark:text-blue-400 border-blue-500/10 hover:border-blue-500/30 hover:bg-blue-500/10",
                 clothing:
-                  "bg-orange-500/[0.04] dark:bg-orange-500/[0.08] text-orange-700 dark:text-orange-400 border-orange-500/10 hover:border-orange-500/30 hover:bg-orange-500/10",
+                  "bg-orange-500/4 dark:bg-orange-500/8 text-orange-700 dark:text-orange-400 border-orange-500/10 hover:border-orange-500/30 hover:bg-orange-500/10",
                 personal:
-                  "bg-teal-500/[0.04] dark:bg-teal-500/[0.08] text-teal-700 dark:text-teal-400 border-teal-500/10 hover:border-teal-500/30 hover:bg-teal-500/10",
+                  "bg-teal-500/4 dark:bg-teal-500/8 text-teal-700 dark:text-teal-400 border-teal-500/10 hover:border-teal-500/30 hover:bg-teal-500/10",
                 electronics:
-                  "bg-purple-500/[0.04] dark:bg-purple-500/[0.08] text-purple-700 dark:text-purple-400 border-purple-500/10 hover:border-purple-500/30 hover:bg-purple-500/10",
+                  "bg-purple-500/4 dark:bg-purple-500/8 text-purple-700 dark:text-purple-400 border-purple-500/10 hover:border-purple-500/30 hover:bg-purple-500/10",
                 medical:
-                  "bg-green-500/[0.04] dark:bg-green-500/[0.08] text-green-700 dark:text-green-400 border-green-500/10 hover:border-green-500/30 hover:bg-green-500/10",
+                  "bg-green-500/4 dark:bg-green-500/8 text-green-700 dark:text-green-400 border-green-500/10 hover:border-green-500/30 hover:bg-green-500/10",
                 money:
-                  "bg-emerald-500/[0.04] dark:bg-[#10B981]/[0.08] text-emerald-700 dark:text-emerald-400 border-emerald-500/10 hover:border-emerald-500/30 hover:bg-emerald-500/10",
+                  "bg-emerald-500/4 dark:bg-[#10B981]/8 text-emerald-700 dark:text-emerald-400 border-emerald-500/10 hover:border-emerald-500/30 hover:bg-emerald-500/10",
                 snacks:
-                  "bg-amber-500/[0.04] dark:bg-amber-500/[0.08] text-amber-700 dark:text-amber-400 border-amber-500/10 hover:border-amber-500/30 hover:bg-amber-500/10",
+                  "bg-amber-500/4 dark:bg-amber-500/8 text-amber-700 dark:text-amber-400 border-amber-500/10 hover:border-amber-500/30 hover:bg-amber-500/10",
                 other:
-                  "bg-slate-500/[0.04] dark:bg-slate-500/[0.08] text-slate-700 dark:text-slate-400 border-slate-500/10 hover:border-slate-500/30 hover:bg-slate-500/10",
+                  "bg-slate-500/4 dark:bg-slate-500/8 text-slate-700 dark:text-slate-400 border-slate-500/10 hover:border-slate-500/30 hover:bg-slate-500/10",
               };
               const sugColor = sugColorMap[sug.category] || sugColorMap["other"];
 
@@ -686,7 +686,7 @@ export function ChecklistScreen({
                   className={`h-9 px-3.5 shrink-0 rounded-xl border text-[12px] font-extrabold flex items-center gap-1.5 transition-all duration-200 active:scale-95 ${
                     added
                       ? "bg-slate-100/50 dark:bg-slate-800/10 border-slate-200 dark:border-white/5 text-slate-400 dark:text-slate-655 cursor-not-allowed"
-                      : `${sugColor} shadow-sm hover:scale-[1.025]`
+                      : `${sugColor} shadow-xs hover:scale-[1.025]`
                   }`}
                 >
                   {added ? (
@@ -744,21 +744,21 @@ export function ChecklistScreen({
                   const added = isAdded(t(sug.titleKey));
                   const sugColorMap: Record<string, string> = {
                     documents:
-                      "bg-blue-500/[0.04] dark:bg-blue-500/[0.08] text-blue-700 dark:text-blue-400 border-blue-500/10 hover:border-blue-500/30 hover:bg-blue-500/10",
+                      "bg-blue-500/4 dark:bg-blue-500/8 text-blue-700 dark:text-blue-400 border-blue-500/10 hover:border-blue-500/30 hover:bg-blue-500/10",
                     clothing:
-                      "bg-orange-500/[0.04] dark:bg-orange-500/[0.08] text-orange-700 dark:text-orange-400 border-orange-500/10 hover:border-orange-500/30 hover:bg-orange-500/10",
+                      "bg-orange-500/4 dark:bg-orange-500/8 text-orange-700 dark:text-orange-400 border-orange-500/10 hover:border-orange-500/30 hover:bg-orange-500/10",
                     personal:
-                      "bg-teal-500/[0.04] dark:bg-teal-500/[0.08] text-teal-700 dark:text-teal-400 border-teal-500/10 hover:border-teal-500/30 hover:bg-teal-500/10",
+                      "bg-teal-500/4 dark:bg-teal-500/8 text-teal-700 dark:text-teal-400 border-teal-500/10 hover:border-teal-500/30 hover:bg-teal-500/10",
                     electronics:
-                      "bg-purple-500/[0.04] dark:bg-purple-500/[0.08] text-purple-700 dark:text-purple-400 border-purple-500/10 hover:border-purple-500/30 hover:bg-purple-500/10",
+                      "bg-purple-500/4 dark:bg-purple-500/8 text-purple-700 dark:text-purple-400 border-purple-500/10 hover:border-purple-500/30 hover:bg-purple-500/10",
                     medical:
-                      "bg-green-500/[0.04] dark:bg-green-500/[0.08] text-green-700 dark:text-green-400 border-green-500/10 hover:border-green-500/30 hover:bg-green-500/10",
+                      "bg-green-500/4 dark:bg-green-500/8 text-green-700 dark:text-green-400 border-green-500/10 hover:border-green-500/30 hover:bg-green-500/10",
                     money:
-                      "bg-emerald-500/[0.04] dark:bg-[#10B981]/[0.08] text-emerald-700 dark:text-emerald-400 border-emerald-500/10 hover:border-emerald-500/30 hover:bg-emerald-500/10",
+                      "bg-emerald-500/4 dark:bg-[#10B981]/8 text-emerald-700 dark:text-emerald-400 border-emerald-500/10 hover:border-emerald-500/30 hover:bg-emerald-500/10",
                     snacks:
-                      "bg-amber-500/[0.04] dark:bg-amber-500/[0.08] text-amber-700 dark:text-amber-400 border-amber-500/10 hover:border-amber-500/30 hover:bg-amber-500/10",
+                      "bg-amber-500/4 dark:bg-amber-500/8 text-amber-700 dark:text-amber-400 border-amber-500/10 hover:border-amber-500/30 hover:bg-amber-500/10",
                     other:
-                      "bg-slate-500/[0.04] dark:bg-slate-500/[0.08] text-slate-700 dark:text-slate-400 border-slate-500/10 hover:border-slate-500/30 hover:bg-slate-500/10",
+                      "bg-slate-500/4 dark:bg-slate-500/8 text-slate-700 dark:text-slate-400 border-slate-500/10 hover:border-slate-500/30 hover:bg-slate-500/10",
                   };
                   const sugColor = sugColorMap[sug.category] || sugColorMap["other"];
 
@@ -770,7 +770,7 @@ export function ChecklistScreen({
                       className={`h-[38px] px-3.5 rounded-xl border text-[12px] font-extrabold flex items-center gap-1.5 transition-all active:scale-95 duration-200 ${
                         added
                           ? "bg-slate-100/50 dark:bg-slate-800/10 border-slate-200 dark:border-white/5 text-slate-400 dark:text-slate-655 cursor-not-allowed"
-                          : `${sugColor} shadow-sm hover:scale-[1.025]`
+                          : `${sugColor} shadow-xs hover:scale-[1.025]`
                       }`}
                     >
                       {added ? (
@@ -838,7 +838,7 @@ export function ChecklistScreen({
           <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center p-0 md:p-6">
             {/* Backdrop */}
             <div
-              className="absolute inset-0 bg-slate-900/35 backdrop-blur-sm motion-modal-overlay"
+              className="absolute inset-0 bg-slate-900/35 backdrop-blur-xs motion-modal-overlay"
               onClick={() => setIsFormOpen(false)}
             />
 
@@ -874,7 +874,7 @@ export function ChecklistScreen({
                     {t("packing.itemNameLabel")}
                   </label>
                   <input
-                    className={`w-full rounded-[14px] border bg-slate-50/60 dark:bg-slate-800/50 px-4 h-[46px] text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-primary/50 ${
+                    className={`w-full rounded-[14px] border bg-slate-50/60 dark:bg-slate-800/50 px-4 h-[46px] text-[14px] font-semibold text-kat-text outline-hidden transition-all focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-primary/50 ${
                       showValidationError
                         ? "border-red-500 ring-1 ring-red-500 focus:ring-red-500 motion-error-shake"
                         : "border-kat-border dark:border-slate-700 focus:border-kat-primary"
@@ -914,7 +914,7 @@ export function ChecklistScreen({
                           onClick={() => setCategory(cat)}
                           className={`flex flex-col items-center justify-center min-h-[76px] p-2 rounded-[18px] border-2 transition-all duration-200 active:scale-95 cursor-pointer ${
                             isSelected
-                              ? "bg-kat-dark/5 dark:bg-slate-800/80 border-kat-dark dark:border-kat-primary text-kat-dark dark:text-kat-primary font-black shadow-sm"
+                              ? "bg-kat-dark/5 dark:bg-slate-800/80 border-kat-dark dark:border-kat-primary text-kat-dark dark:text-kat-primary font-black shadow-xs"
                               : "bg-white dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/60 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-650"
                           }`}
                         >
@@ -950,7 +950,7 @@ export function ChecklistScreen({
                     <button
                       type="button"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="flex h-8.5 w-8.5 items-center justify-center rounded-[12px] bg-white dark:bg-slate-800 text-kat-text dark:text-slate-200 border border-kat-border/60 dark:border-slate-700 shadow-sm active:scale-95 transition-all hover:bg-slate-50 dark:hover:bg-slate-700"
+                      className="flex h-8.5 w-8.5 items-center justify-center rounded-[12px] bg-white dark:bg-slate-800 text-kat-text dark:text-slate-200 border border-kat-border/60 dark:border-slate-700 shadow-xs active:scale-95 transition-all hover:bg-slate-50 dark:hover:bg-slate-700"
                     >
                       <HugeiconsIcon icon={MinusSignIcon} className="h-3.5 w-3.5" />
                     </button>
@@ -960,7 +960,7 @@ export function ChecklistScreen({
                     <button
                       type="button"
                       onClick={() => setQuantity(quantity + 1)}
-                      className="flex h-8.5 w-8.5 items-center justify-center rounded-[12px] bg-white dark:bg-slate-800 text-kat-text dark:text-slate-200 border border-kat-border/60 dark:border-slate-700 shadow-sm active:scale-95 transition-all hover:bg-slate-50 dark:hover:bg-slate-700"
+                      className="flex h-8.5 w-8.5 items-center justify-center rounded-[12px] bg-white dark:bg-slate-800 text-kat-text dark:text-slate-200 border border-kat-border/60 dark:border-slate-700 shadow-xs active:scale-95 transition-all hover:bg-slate-50 dark:hover:bg-slate-700"
                     >
                       <HugeiconsIcon icon={Add01Icon} className="h-3.5 w-3.5" />
                     </button>
@@ -1021,7 +1021,7 @@ export function ChecklistScreen({
                         {} as Record<string, string>
                       )}
                       placeholder={t("packing.companionSelect")}
-                      buttonClassName="w-full flex items-center justify-between rounded-[12px] border border-kat-border dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50 px-3.5 h-11 text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-primary"
+                      buttonClassName="w-full flex items-center justify-between rounded-[12px] border border-kat-border dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50 px-3.5 h-11 text-[14px] font-semibold text-kat-text outline-hidden transition-all focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-primary"
                     />
                   )}
                 </div>
@@ -1050,7 +1050,7 @@ export function ChecklistScreen({
                           onClick={() => setPriority(prio)}
                           className={`flex-1 py-1.5 rounded-lg text-[12.5px] font-bold transition-all ${
                             isSelected
-                              ? "bg-white dark:bg-slate-700 text-kat-text dark:text-slate-100 shadow-sm border border-kat-border/30 dark:border-slate-650"
+                              ? "bg-white dark:bg-slate-700 text-kat-text dark:text-slate-100 shadow-xs border border-kat-border/30 dark:border-slate-650"
                               : "text-slate-500 dark:text-slate-400 hover:text-kat-text dark:hover:text-slate-200"
                           }`}
                         >
@@ -1071,7 +1071,7 @@ export function ChecklistScreen({
                     {t("packing.noteLabel")}
                   </label>
                   <textarea
-                    className="w-full h-[72px] rounded-[14px] border border-kat-border dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50 px-4 py-3 text-[14px] font-semibold text-kat-text outline-none transition-all focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-primary/50 resize-none"
+                    className="w-full h-[72px] rounded-[14px] border border-kat-border dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50 px-4 py-3 text-[14px] font-semibold text-kat-text outline-hidden transition-all focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-kat-primary/50 resize-none"
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     placeholder={t("packing.notePlaceholder")}
@@ -1096,7 +1096,7 @@ export function ChecklistScreen({
                   <button
                     type="button"
                     onClick={() => setIsPrivate(!isPrivate)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
                       isPrivate ? "bg-purple-600" : "bg-slate-200 dark:bg-slate-700"
                     }`}
                   >
@@ -1121,7 +1121,7 @@ export function ChecklistScreen({
                 <button
                   type="button"
                   onClick={saveItem}
-                  className="flex-[2] h-[50px] inline-flex items-center justify-center gap-2 rounded-[16px] bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 font-black hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-kat-dark disabled:active:scale-100 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:opacity-100 shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] border border-transparent dark:border-kat-primary dark:disabled:border-transparent"
+                  className="flex-2 h-[50px] inline-flex items-center justify-center gap-2 rounded-[16px] bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 font-black hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-kat-dark disabled:active:scale-100 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 dark:disabled:opacity-100 shadow-xs dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] border border-transparent dark:border-kat-primary dark:disabled:border-transparent"
                   disabled={!title.trim()}
                 >
                   <HugeiconsIcon icon={CheckIcon} className="h-4.5 w-4.5" />

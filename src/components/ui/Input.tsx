@@ -44,7 +44,7 @@ export function Input({
       </span>
       <div className="relative mt-1.5">
         <input
-          className={`w-full rounded-xl border-0 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md px-4 h-[50px] text-[15px] font-medium text-kat-text outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 transition-shadow focus:bg-white/80 dark:focus:bg-white/5 focus:ring-2 focus:ring-kat-teal placeholder-slate-400 dark:placeholder-slate-500 ${
+          className={`w-full rounded-xl border-0 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md px-4 h-[50px] text-[15px] font-medium text-kat-text outline-hidden ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 transition-shadow focus:bg-white/80 dark:focus:bg-white/5 focus:ring-2 focus:ring-kat-teal placeholder-slate-400 dark:placeholder-slate-500 ${
             isDateOrTime
               ? "[&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer bg-white dark:bg-kat-surface"
               : ""
@@ -86,7 +86,7 @@ export function Textarea({
         {label}
       </span>
       <textarea
-        className="mt-1.5 min-h-[120px] w-full rounded-xl border-0 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md px-4 py-3.5 text-[15px] font-medium text-kat-text outline-none ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 transition-shadow focus:bg-white/80 dark:focus:bg-white/5 focus:ring-2 focus:ring-kat-teal placeholder-slate-400 dark:placeholder-slate-500"
+        className="mt-1.5 min-h-[120px] w-full rounded-xl border-0 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md px-4 py-3.5 text-[15px] font-medium text-kat-text outline-hidden ring-1 ring-inset ring-slate-200/60 dark:ring-white/10 transition-shadow focus:bg-white/80 dark:focus:bg-white/5 focus:ring-2 focus:ring-kat-teal placeholder-slate-400 dark:placeholder-slate-500"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}

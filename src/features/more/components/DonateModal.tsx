@@ -79,7 +79,7 @@ export function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
     <BottomSheet isOpen={isOpen} onClose={onClose} title={t("donateView.title")}>
       <div className="space-y-5 flex flex-col items-center text-center pb-4">
         {/* Coffee Icon */}
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 border border-amber-100 shadow-sm">
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 border border-amber-100 shadow-xs">
           <HugeiconsIcon icon={Coffee01Icon} className="h-5 w-5" />
         </div>
 
@@ -99,7 +99,7 @@ export function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
             className={classNames(
               "flex-1 py-1.5 text-[13px] font-bold rounded-lg transition-all",
               tab === "vn"
-                ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm"
+                ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-xs"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
             )}
           >
@@ -110,7 +110,7 @@ export function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
             className={classNames(
               "flex-1 py-1.5 text-[13px] font-bold rounded-lg transition-all",
               tab === "intl"
-                ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm"
+                ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-xs"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
             )}
           >
@@ -151,7 +151,7 @@ export function DonateModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
               href="https://paypal.me/trevorthanhtung"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center w-full gap-2 py-3.5 px-4 rounded-[16px] bg-[#00457C] text-white font-extrabold text-[14px] transition-all hover:bg-[#005a9e] active:scale-[0.98] shadow-sm"
+              className="flex items-center justify-center w-full gap-2 py-3.5 px-4 rounded-[16px] bg-[#00457C] text-white font-extrabold text-[14px] transition-all hover:bg-[#005a9e] active:scale-[0.98] shadow-xs"
             >
               <HugeiconsIcon icon={GlobeIcon} className="w-5 h-5" />
               {t("donateView.supportPayPal", "Support via PayPal")}

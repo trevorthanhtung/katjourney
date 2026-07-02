@@ -49,7 +49,7 @@ export function PrivacySettings({ setView }: PrivacySettingsProps) {
               ].map((item, idx) => (
                 <div
                   key={idx}
-                  className="bg-white/40 dark:bg-slate-800/20 rounded-2xl p-4 border border-slate-100 dark:border-white/[0.03] animate-slideUpFade"
+                  className="bg-white/40 dark:bg-slate-800/20 rounded-2xl p-4 border border-slate-100 dark:border-white/3 animate-slideUpFade"
                   style={{ animationDelay: `${idx * 100}ms`, animationFillMode: "both" }}
                 >
                   <p className="text-[14px] font-semibold text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -66,7 +66,7 @@ export function PrivacySettings({ setView }: PrivacySettingsProps) {
 
         <button
           onClick={() => setView("menu")}
-          className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
+          className="group relative flex w-full min-h-[50px] items-center justify-center overflow-hidden rounded-[20px] border border-slate-200/60 bg-slate-50 font-bold text-slate-700 shadow-xs transition-all hover:border-slate-300 hover:bg-white hover:shadow-md active:scale-[0.98] dark:border-white/4 dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50 dark:hover:bg-slate-800/80"
         >
           {t("settings.actions.backToMenu")}
         </button>

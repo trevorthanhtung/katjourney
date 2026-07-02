@@ -57,13 +57,13 @@ export function ExpenseSummaryBoard({
                   {t("expenses.totalTrip")}
                 </p>
               </div>
-              <p className="mt-1 break-words text-[36px] md:text-[44px] font-black leading-none tracking-tight text-kat-dark dark:text-white">
+              <p className="mt-1 wrap-break-word text-[36px] md:text-[44px] font-black leading-none tracking-tight text-kat-dark dark:text-white">
                 {formatMoney(totalExpense)}
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
-              <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex flex-col gap-1.5">
+              <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-xs flex flex-col gap-1.5">
                 <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                   <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700/50 shrink-0">
                     <HugeiconsIcon icon={UserGroupIcon} className="h-3.5 w-3.5" />
@@ -75,7 +75,7 @@ export function ExpenseSummaryBoard({
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex flex-col gap-1.5">
+              <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-xs flex flex-col gap-1.5">
                 <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                   <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700/50 shrink-0">
                     <HugeiconsIcon icon={UserIcon} className="h-3.5 w-3.5" />
@@ -89,7 +89,7 @@ export function ExpenseSummaryBoard({
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-sm flex flex-col gap-1.5">
+              <div className="bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4 shadow-xs flex flex-col gap-1.5">
                 <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                   <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700/50 shrink-0">
                     <HugeiconsIcon icon={CalculatorIcon} className="h-3.5 w-3.5" />
@@ -114,7 +114,7 @@ export function ExpenseSummaryBoard({
       </section>
 
       <div className="grid gap-4 sm:grid-cols-2 animate-fadeIn" style={{ animationDelay: "100ms" }}>
-        <section className="rounded-3xl border border-slate-100 dark:border-kat-border/40 bg-kat-surface p-6 shadow-sm">
+        <section className="rounded-3xl border border-slate-100 dark:border-kat-border/40 bg-kat-surface p-6 shadow-xs">
           <div className="flex items-center gap-2 mb-4">
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400">
               <HugeiconsIcon icon={PieChartIcon} className="h-4 w-4" />
@@ -131,7 +131,7 @@ export function ExpenseSummaryBoard({
           />
         </section>
 
-        <section className="rounded-3xl border border-slate-100 dark:border-kat-border/40 bg-kat-surface p-6 shadow-sm">
+        <section className="rounded-3xl border border-slate-100 dark:border-kat-border/40 bg-kat-surface p-6 shadow-xs">
           <div className="flex items-center gap-2 mb-4">
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400">
               <HugeiconsIcon icon={UserGroupIcon} className="h-4.5 w-4.5" />

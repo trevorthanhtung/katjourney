@@ -340,7 +340,7 @@ export function SharedDocumentsSection({
       type="button"
       onClick={save}
       disabled={isSaveDisabled}
-      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 px-4 text-[13.5px] font-extrabold shadow-sm transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed"
+      className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 px-4 text-[13.5px] font-extrabold shadow-xs transition-all active:scale-[0.97] disabled:bg-slate-100 disabled:text-slate-400 dark:disabled:bg-slate-800/40 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed"
     >
       {isUploading ? (
         <HugeiconsIcon icon={Loading01Icon} className="w-4 h-4 animate-spin text-slate-400" />
@@ -354,7 +354,7 @@ export function SharedDocumentsSection({
     <>
       <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden">
         {/* Ambient background glow */}
-        <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-rose-500/[0.03] dark:bg-rose-500/[0.05] blur-[30px] pointer-events-none" />
+        <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-rose-500/3 dark:bg-rose-500/5 blur-[30px] pointer-events-none" />
 
         {/* Header */}
         <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100 dark:border-slate-800/80">
@@ -386,7 +386,7 @@ export function SharedDocumentsSection({
             className={classNames(
               "flex-1 py-2 text-[13px] font-bold rounded-lg transition-all duration-300 text-center cursor-pointer",
               activeSubTab === "shared"
-                ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm"
+                ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-xs"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
             )}
           >
@@ -398,7 +398,7 @@ export function SharedDocumentsSection({
             className={classNames(
               "flex-1 py-2 text-[13px] font-bold rounded-lg transition-all duration-300 text-center cursor-pointer flex items-center justify-center gap-1.5",
               activeSubTab === "private"
-                ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm"
+                ? "bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-xs"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
             )}
           >
@@ -459,7 +459,7 @@ export function SharedDocumentsSection({
                             });
                           }
                         }}
-                        className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800 active:scale-90 transition-all focus:outline-none"
+                        className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800 active:scale-90 transition-all focus:outline-hidden"
                         title={t("packing.options")}
                       >
                         <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
@@ -470,7 +470,7 @@ export function SharedDocumentsSection({
                     !d.isPendingDelete && (
                       <button
                         onClick={() => handleDelete(d)}
-                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/20 border border-slate-200/60 dark:border-slate-700/60 transition-all active:scale-95 shadow-sm bg-white dark:bg-slate-800 shrink-0"
+                        className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/20 border border-slate-200/60 dark:border-slate-700/60 transition-all active:scale-95 shadow-xs bg-white dark:bg-slate-800 shrink-0"
                         title={t("share.suggestDelete")}
                       >
                         <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
@@ -574,7 +574,7 @@ export function SharedDocumentsSection({
         {activeSubTab === "private" && (
           <button
             onClick={startAdd}
-            className="hidden lg:flex mt-4 items-center justify-center gap-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100/80 dark:hover:bg-rose-950/30 active:scale-[0.99] rounded-xl transition-all shadow-sm shadow-rose-100/30 dark:shadow-none h-11 w-full"
+            className="hidden lg:flex mt-4 items-center justify-center gap-2 text-[13.5px] font-bold text-rose-600 dark:text-rose-450 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100/80 dark:hover:bg-rose-950/30 active:scale-[0.99] rounded-xl transition-all shadow-xs shadow-rose-100/30 dark:shadow-none h-11 w-full"
           >
             <HugeiconsIcon icon={Add01Icon} className="w-4.5 h-4.5" />
             {t("documents.addPrivate")}
@@ -680,7 +680,7 @@ export function SharedDocumentsSection({
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-kat-dark transition-colors focus:outline-none"
+              className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-kat-dark transition-colors focus:outline-hidden"
             >
               <span className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={Add01Icon} className="h-4 w-4 text-slate-400" />
@@ -752,7 +752,7 @@ export function SharedDocumentsSection({
                       </button>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center w-full h-28 border-[1.5px] border-dashed border-[#00BFB7]/40 dark:border-[#00BFB7]/30 rounded-[24px] bg-[#00BFB7]/[0.03] dark:bg-[#00BFB7]/[0.02] hover:bg-[#00BFB7]/[0.06] dark:hover:bg-[#00BFB7]/[0.04] transition-all cursor-pointer text-slate-500 dark:text-slate-400 group">
+                    <label className="flex flex-col items-center justify-center w-full h-28 border-[1.5px] border-dashed border-[#00BFB7]/40 dark:border-[#00BFB7]/30 rounded-[24px] bg-[#00BFB7]/3 dark:bg-[#00BFB7]/2 hover:bg-[#00BFB7]/6 dark:hover:bg-[#00BFB7]/4 transition-all cursor-pointer text-slate-500 dark:text-slate-400 group">
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <div className="relative mb-3">
                           <HugeiconsIcon
@@ -786,7 +786,7 @@ export function SharedDocumentsSection({
       {/* Lightbox */}
       {previewImage && (
         <div
-          className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4 cursor-pointer backdrop-blur-sm"
+          className="fixed inset-0 z-9999 bg-black/90 flex items-center justify-center p-4 cursor-pointer backdrop-blur-xs"
           onClick={(e) => {
             e.stopPropagation();
             setPreviewImage(null);
@@ -815,14 +815,14 @@ export function SharedDocumentsSection({
         createPortal(
           <>
             <div
-              className="fixed inset-0 z-[998]"
+              className="fixed inset-0 z-998"
               onClick={() => {
                 setActiveMenuId(null);
                 setMenuPos(null);
               }}
             />
             <div
-              className="fixed z-[999] w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 shadow-lg py-1.5 animate-fadeIn"
+              className="fixed z-999 w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 shadow-lg py-1.5 animate-fadeIn"
               style={{ top: menuPos.top, right: menuPos.right }}
             >
               <button

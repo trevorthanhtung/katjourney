@@ -264,10 +264,10 @@ export function DateRangePickerSheet({
                     ? ""
                     : "",
                   isStart && endDate && !isEnd
-                    ? "bg-gradient-to-r from-transparent to-[#00BFB7]/20"
+                    ? "bg-linear-to-r from-transparent to-[#00BFB7]/20"
                     : "",
                   isEnd && startDate && !isStart
-                    ? "bg-gradient-to-l from-transparent to-[#00BFB7]/20"
+                    ? "bg-linear-to-l from-transparent to-[#00BFB7]/20"
                     : ""
                 )}
                 onClick={() => handleDayClick(day)}

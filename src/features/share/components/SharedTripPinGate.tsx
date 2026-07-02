@@ -23,9 +23,9 @@ export function SharedTripPinGate({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-slate-100/90 dark:bg-[#060b19]/90 p-4 animate-fadeIn overflow-hidden z-50">
       {/* Animated background glows */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-indigo-500/[0.08] dark:bg-indigo-500/[0.05] blur-[80px] animate-pulse pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-indigo-500/8 dark:bg-indigo-500/5 blur-[80px] animate-pulse pointer-events-none" />
       <div
-        className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-purple-500/[0.08] dark:bg-purple-500/[0.05] blur-[80px] animate-pulse pointer-events-none"
+        className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-purple-500/8 dark:bg-purple-500/5 blur-[80px] animate-pulse pointer-events-none"
         style={{ animationDelay: "2s" }}
       />
 
@@ -64,7 +64,7 @@ export function SharedTripPinGate({
                     handlePinBackspace(e.key, i);
                   }}
                   className={classNames(
-                    "w-12 h-12 rounded-2xl border-2 text-center text-[20px] font-black focus:ring-4 focus:outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none shadow-sm",
+                    "w-12 h-12 rounded-2xl border-2 text-center text-[20px] font-black focus:ring-4 focus:outline-hidden transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none shadow-xs",
                     pinError
                       ? "border-rose-300 dark:border-rose-900/30 bg-rose-50 dark:bg-rose-950/20 text-rose-900 dark:text-rose-455 focus:border-rose-450 focus:ring-rose-500/15"
                       : "border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 text-slate-800 dark:text-slate-200 focus:border-indigo-500 focus:ring-indigo-500/15"

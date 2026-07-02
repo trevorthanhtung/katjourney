@@ -73,7 +73,7 @@ export function ArchiveGallery({
         <button
           onClick={onBack}
           aria-label={t("archive.back")}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/10 hover:border-[#00BFB7]/40 dark:hover:border-[#00BFB7]/50 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,191,183,0.12)] transition-all duration-300 shadow-sm group motion-press"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/60 dark:bg-[#0A0F1C]/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/10 hover:border-[#00BFB7]/40 dark:hover:border-[#00BFB7]/50 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,191,183,0.12)] transition-all duration-300 shadow-xs group motion-press"
         >
           <HugeiconsIcon
             icon={ArrowLeft01Icon}
@@ -82,7 +82,7 @@ export function ArchiveGallery({
           />
         </button>
         <div>
-          <h1 className="text-[24px] font-black bg-gradient-to-r from-kat-dark to-kat-primary dark:from-white dark:to-teal-300 bg-clip-text text-transparent drop-shadow-sm">
+          <h1 className="text-[24px] font-black bg-linear-to-r from-kat-dark to-kat-primary dark:from-white dark:to-teal-300 bg-clip-text text-transparent drop-shadow-xs">
             {t("archive.title")}
           </h1>
           <p className="text-[13.5px] font-semibold text-slate-600 dark:text-slate-300 mt-0.5">

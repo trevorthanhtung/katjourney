@@ -1,6 +1,203 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-background: #f8f9fa;
+
+  --color-kat-bg: var(--kat-bg);
+  --color-kat-surface: var(--kat-surface);
+  --color-kat-border: rgb(var(--kat-border-rgb));
+  --color-kat-primary: var(--kat-primary);
+  --color-kat-primary-light: var(--kat-primary-light, #80ead6);
+  --color-kat-primary-usable: var(--kat-primary-usable);
+  --color-kat-primary-soft: var(--kat-primary-soft);
+  --color-kat-hero-start: var(--kat-hero-start);
+  --color-kat-hero-end: var(--kat-hero-end);
+  --color-kat-text: var(--kat-text);
+  --color-kat-muted: var(--kat-muted);
+  --color-kat-accent-yellow: var(--kat-yellow);
+  --color-kat-accent-pink: var(--kat-pink);
+  --color-kat-accent-blue: var(--kat-blue);
+  --color-kat-yellow: #fca311;
+  --color-kat-pink: #ff6b6b;
+  --color-kat-blue: #00b4d8;
+  --color-kat-dark: var(--kat-text);
+  --color-kat-teal: var(--kat-primary);
+
+  --color-sand: #f8f9fa;
+
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-100: #d1fae5;
+  --color-emerald-200: #a7f3d0;
+  --color-emerald-300: #6ee7b7;
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+  --color-emerald-800: #065f46;
+  --color-emerald-900: #064e3b;
+  --color-emerald-950: #022c22;
+  --color-emerald: #047857;
+
+  --color-forest-50: #f0fdf4;
+  --color-forest-100: #dcfce7;
+  --color-forest-200: #bbf7d0;
+  --color-forest-300: #86efac;
+  --color-forest-400: #4ade80;
+  --color-forest-500: #22c55e;
+  --color-forest-600: #16a34a;
+  --color-forest-700: #15803d;
+  --color-forest-800: #166534;
+  --color-forest-900: #14532d;
+  --color-forest-950: #052e16;
+  --color-forest: #14532d;
+
+  --color-sunset-50: #fff7ed;
+  --color-sunset-100: #ffedd5;
+  --color-sunset-200: #fed7aa;
+  --color-sunset-300: #fdba74;
+  --color-sunset-400: #fb923c;
+  --color-sunset-500: #f97316;
+  --color-sunset-600: #ea580c;
+  --color-sunset-700: #c2410c;
+  --color-sunset-800: #9a3412;
+  --color-sunset-900: #7c2d12;
+  --color-sunset-950: #431407;
+  --color-sunset: #ea580c;
+
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-350: #94a3b8;
+  --color-slate-400: #94a3b8;
+  --color-slate-450: #78879c;
+  --color-slate-455: #78879c;
+  --color-slate-500: #64748b;
+  --color-slate-550: #536277;
+  --color-slate-600: #475569;
+  --color-slate-650: #3d4b5e;
+  --color-slate-655: #3d4b5e;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+
+  --color-rose-50: #fff1f2;
+  --color-rose-100: #ffe4e6;
+  --color-rose-200: #fecdd3;
+  --color-rose-300: #fda4af;
+  --color-rose-400: #fb7185;
+  --color-rose-500: #f43f5e;
+  --color-rose-600: #e11d48;
+  --color-rose-650: #d41c44;
+  --color-rose-700: #be123c;
+  --color-rose-800: #9f1239;
+  --color-rose-900: #881337;
+  --color-rose-950: #4c0519;
+
+  --color-amber-50: #fffbeb;
+  --color-amber-100: #fef3c7;
+  --color-amber-200: #fde68a;
+  --color-amber-250: #fdd96c;
+  --color-amber-300: #fcd34d;
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f59e0b;
+  --color-amber-600: #d97706;
+  --color-amber-650: #c66508;
+  --color-amber-700: #b45309;
+  --color-amber-800: #92400e;
+  --color-amber-900: #78350f;
+  --color-amber-950: #451a03;
+
+  --color-red-50: #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-200: #fecaca;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-655: #c62020;
+  --color-red-700: #b91c1c;
+  --color-red-800: #991b1b;
+  --color-red-900: #7f1d1d;
+  --color-red-950: #450a0a;
+
+  --font-sans:
+    "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-display:
+    "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  --shadow-soft: 0 8px 32px rgba(3, 13, 46, 0.04);
+  --shadow-floating: 0 16px 36px rgba(3, 13, 46, 0.08);
+
+  --animate-slideUp: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-fadeIn: fadeIn 0.2s ease-out;
+
+  @keyframes slideUp {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility pt-safe {
+  padding-top: var(--safe-top);
+}
+
+@utility pb-safe {
+  padding-bottom: var(--safe-bottom);
+}
+
+@utility px-safe {
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+
+@utility mb-safe {
+  margin-bottom: var(--safe-bottom);
+}
+
+@utility mobile-page-content {
+  padding-bottom: calc(
+    var(--mobile-bottom-nav-height) + var(--safe-bottom) + var(--mobile-page-bottom-gap)
+  );
+  @media (min-width: 768px) {
+    padding-bottom: 4rem;
+  }
+}
 
 @layer base {
   html {
@@ -17,32 +214,6 @@
       "wdth" 100,
       "opsz" 14; /* Variable font tweaks for headings */
     letter-spacing: -0.015em;
-  }
-}
-
-@layer utilities {
-  .pt-safe {
-    padding-top: var(--safe-top);
-  }
-  .pb-safe {
-    padding-bottom: var(--safe-bottom);
-  }
-  .px-safe {
-    padding-left: var(--safe-left);
-    padding-right: var(--safe-right);
-  }
-  .mb-safe {
-    margin-bottom: var(--safe-bottom);
-  }
-  .mobile-page-content {
-    padding-bottom: calc(
-      var(--mobile-bottom-nav-height) + var(--safe-bottom) + var(--mobile-page-bottom-gap)
-    );
-  }
-  @media (min-width: 768px) {
-    .mobile-page-content {
-      padding-bottom: 4rem;
-    }
   }
 }
 

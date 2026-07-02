@@ -94,7 +94,7 @@ export function AtlasScreen({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] bg-[#020617] overflow-hidden flex flex-col font-sans bg-cover bg-center"
+      className="fixed inset-0 z-100 bg-slate-950 overflow-hidden flex flex-col font-sans bg-cover bg-center"
       style={{ backgroundImage: 'url("//unpkg.com/three-globe/example/img/night-sky.png")' }}
     >
       {/* 2027 Spatial Nebula Background */}
@@ -218,7 +218,7 @@ export function AtlasScreen({
                 onClick={() => setIsStatsExpanded(true)}
                 className="bg-white/5 backdrop-blur-3xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.5)] px-6 py-3 rounded-full flex items-center gap-4 group relative overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-sky-500/20 via-pink-500/20 to-sky-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl"></div>
+                <div className="absolute inset-0 bg-linear-to-r from-sky-500/20 via-pink-500/20 to-sky-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl"></div>
 
                 {visitedCountries.length > 0 && (
                   <div className="flex -space-x-2 mr-2">
@@ -230,7 +230,7 @@ export function AtlasScreen({
                           key={id}
                           src={`https://flagcdn.com/w40/${alpha2.toLowerCase()}.png`}
                           alt={alpha2}
-                          className="w-6 h-6 rounded-full object-cover border border-white/30 shadow-sm relative"
+                          className="w-6 h-6 rounded-full object-cover border border-white/30 shadow-xs relative"
                           style={{ zIndex: 3 - idx }}
                         />
                       );
@@ -277,9 +277,9 @@ export function AtlasScreen({
                 animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                 exit={{ opacity: 0, y: 30, scale: 0.95, filter: "blur(10px)" }}
                 transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="w-full max-w-[1000px] mx-auto bg-[#0a0a0a]/60 backdrop-blur-[40px] p-2 sm:p-3 rounded-[2.5rem] border border-white/10 flex flex-col md:flex-row gap-2 sm:gap-3 relative shadow-[0_32px_80px_-12px_rgba(0,0,0,0.8)] items-stretch ring-1 ring-white/5"
+                className="w-full max-w-[1000px] mx-auto bg-[#0a0a0a]/60 backdrop-blur-2xl p-2 sm:p-3 rounded-[2.5rem] border border-white/10 flex flex-col md:flex-row gap-2 sm:gap-3 relative shadow-[0_32px_80px_-12px_rgba(0,0,0,0.8)] items-stretch ring-1 ring-white/5"
               >
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-sky-500/20 via-indigo-500/10 to-transparent rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-linear-to-br from-sky-500/20 via-indigo-500/10 to-transparent rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
 
                 <button
                   onClick={() => setIsStatsExpanded(false)}
@@ -296,8 +296,8 @@ export function AtlasScreen({
                 </button>
 
                 {/* Hero Card: Countries */}
-                <div className="flex-shrink-0 flex flex-col justify-between p-5 md:p-6 bg-white/[0.02] border border-white/10 hover:border-white/20 hover:bg-white/[0.04] rounded-[2rem] w-full md:w-[220px] relative overflow-hidden group shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] transition-all duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl"></div>
+                <div className="shrink-0 flex flex-col justify-between p-5 md:p-6 bg-white/2 border border-white/10 hover:border-white/20 hover:bg-white/4 rounded-4xl w-full md:w-[220px] relative overflow-hidden group shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] transition-all duration-300">
+                  <div className="absolute inset-0 bg-linear-to-br from-sky-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl"></div>
 
                   <div className="relative z-10 flex flex-col">
                     <div className="flex items-center gap-2 mb-1.5">
@@ -315,7 +315,7 @@ export function AtlasScreen({
                   </div>
 
                   <div className="relative z-10 flex items-end justify-between mt-6">
-                    <span className="text-6xl sm:text-[72px] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 tracking-tighter leading-[0.8] drop-shadow-md">
+                    <span className="text-6xl sm:text-[72px] font-black text-transparent bg-clip-text bg-linear-to-b from-white to-white/60 tracking-tighter leading-[0.8] drop-shadow-md">
                       {visitedCountries.length}
                     </span>
                     {visitedCountries.length > 0 && (
@@ -348,10 +348,10 @@ export function AtlasScreen({
                   ].map((stat, i) => (
                     <div
                       key={i}
-                      className="flex flex-col items-center justify-center p-3 bg-white/[0.02] hover:bg-white/[0.04] border border-white/10 hover:border-white/20 rounded-[1.5rem] transition-all duration-300 group shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] h-full relative overflow-hidden"
+                      className="flex flex-col items-center justify-center p-3 bg-white/2 hover:bg-white/4 border border-white/10 hover:border-white/20 rounded-3xl transition-all duration-300 group shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] h-full relative overflow-hidden"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-t from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                      <span className="text-3xl lg:text-[32px] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 mb-1 tabular-nums group-hover:scale-110 group-hover:from-sky-100 group-hover:to-sky-300 transition-all duration-300 drop-shadow-md">
+                      <div className="absolute inset-0 bg-linear-to-t from-white/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <span className="text-3xl lg:text-[32px] font-black text-transparent bg-clip-text bg-linear-to-b from-white to-white/70 mb-1 tabular-nums group-hover:scale-110 group-hover:from-sky-100 group-hover:to-sky-300 transition-all duration-300 drop-shadow-md">
                         {stat.value}
                       </span>
                       <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40 group-hover:text-white/60 text-center leading-tight transition-colors">
@@ -362,9 +362,9 @@ export function AtlasScreen({
                 </div>
 
                 {/* Last Trip Card */}
-                <div className="flex-shrink-0 flex flex-col justify-between p-5 md:p-6 bg-white/[0.02] border border-white/10 hover:border-white/20 hover:bg-white/[0.04] rounded-[2rem] w-full md:w-[220px] relative overflow-hidden group shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] transition-all duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-sky-400/5 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
-                  <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-sky-500/10 rounded-full blur-[40px] pointer-events-none group-hover:scale-150 transition-transform duration-700"></div>
+                <div className="shrink-0 flex flex-col justify-between p-5 md:p-6 bg-white/2 border border-white/10 hover:border-white/20 hover:bg-white/4 rounded-4xl w-full md:w-[220px] relative overflow-hidden group shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] transition-all duration-300">
+                  <div className="absolute inset-0 bg-linear-to-br from-sky-400/5 via-transparent to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+                  <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-transform duration-700"></div>
 
                   <div className="relative z-10 flex flex-col">
                     <span className="text-[10px] font-black uppercase tracking-[0.25em] text-sky-200/60 mb-1.5">
@@ -379,7 +379,7 @@ export function AtlasScreen({
                     <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-sky-200/60 mb-2">
                       {t("atlas.stats.tripsIn")} {new Date().getFullYear()}
                     </span>
-                    <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-sky-200 to-sky-500 tabular-nums drop-shadow-[0_0_20px_rgba(56,189,248,0.5)] leading-[0.8]">
+                    <span className="text-5xl font-black text-transparent bg-clip-text bg-linear-to-b from-sky-200 to-sky-500 tabular-nums drop-shadow-[0_0_20px_rgba(56,189,248,0.5)] leading-[0.8]">
                       {currentYearTrips}
                     </span>
                   </div>
@@ -392,11 +392,11 @@ export function AtlasScreen({
       {/* Floating Tooltip */}
       {tooltip && (
         <div
-          className={`fixed pointer-events-none z-[110] bg-[#030712]/70 backdrop-blur-[40px] rounded-[1.5rem] border border-cyan-500/30 shadow-[0_20px_60px_-15px_rgba(6,182,212,0.4)] ring-1 ring-white/10 transform -translate-x-1/2 -translate-y-[120%] overflow-hidden ${tooltip.isVisited ? "p-5" : "px-4 py-2"}`}
+          className={`fixed pointer-events-none z-110 bg-[#030712]/70 backdrop-blur-2xl rounded-3xl border border-cyan-500/30 shadow-[0_20px_60px_-15px_rgba(6,182,212,0.4)] ring-1 ring-white/10 transform -translate-x-1/2 translate-y-[-120%] overflow-hidden ${tooltip.isVisited ? "p-5" : "px-4 py-2"}`}
           style={{ left: tooltipPos.x, top: tooltipPos.y, transition: "opacity 0.2s ease-out" }}
         >
           {/* Ambient background glows */}
-          <div className="absolute -top-10 -left-10 w-24 h-24 bg-cyan-500/30 rounded-full blur-[40px]"></div>
+          <div className="absolute -top-10 -left-10 w-24 h-24 bg-cyan-500/30 rounded-full blur-2xl"></div>
 
           {tooltip.isVisited ? (
             <div className="flex flex-col items-center min-w-[160px] relative z-10">
@@ -406,7 +406,7 @@ export function AtlasScreen({
 
               <div className="grid grid-cols-2 gap-x-6 gap-y-4 w-full">
                 <div className="flex flex-col items-center">
-                  <span className="text-[32px] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-cyan-300 tabular-nums leading-none mb-1 drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+                  <span className="text-[32px] font-black text-transparent bg-clip-text bg-linear-to-b from-white to-cyan-300 tabular-nums leading-none mb-1 drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">
                     {tooltip.trips}
                   </span>
                   <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-100/60">
@@ -414,7 +414,7 @@ export function AtlasScreen({
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <span className="text-[32px] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-cyan-300 tabular-nums leading-none mb-1 drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+                  <span className="text-[32px] font-black text-transparent bg-clip-text bg-linear-to-b from-white to-cyan-300 tabular-nums leading-none mb-1 drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">
                     {tooltip.places}
                   </span>
                   <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-100/60">
@@ -422,7 +422,7 @@ export function AtlasScreen({
                   </span>
                 </div>
 
-                <div className="col-span-2 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent my-1"></div>
+                <div className="col-span-2 w-full h-px bg-linear-to-r from-transparent via-cyan-500/40 to-transparent my-1"></div>
 
                 <div className="flex flex-col items-center">
                   <span className="text-[8px] font-bold uppercase tracking-[0.25em] text-cyan-100/40 mb-1">

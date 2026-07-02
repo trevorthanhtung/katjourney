@@ -418,7 +418,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             </div>
             <button
               onClick={() => (window.location.href = "/")}
-              className="inline-flex min-h-[44px] w-fit items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 py-2.5 font-bold shadow-sm hover:bg-[#0a1a5c] dark:hover:brightness-110 active:scale-95 transition-all focus:outline-none"
+              className="inline-flex min-h-[44px] w-fit items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-6 py-2.5 font-bold shadow-xs hover:bg-[#0a1a5c] dark:hover:brightness-110 active:scale-95 transition-all focus:outline-hidden"
             >
               {t("share.backToHome")}
             </button>
@@ -698,7 +698,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
         >
           {/* Subtle World Map Watermark */}
           <div className="absolute inset-0 rounded-[32px] overflow-hidden pointer-events-none">
-            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] bg-size-[16px_16px]"></div>
           </div>
 
           <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -711,7 +711,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     ? t("trip.ongoing")
                     : t("trip.upcoming")}
               </span>
-              <h2 className="text-[28px] font-bold leading-tight tracking-tight drop-shadow-sm">
+              <h2 className="text-[28px] font-bold leading-tight tracking-tight drop-shadow-xs">
                 {trip.title}
               </h2>
               <div className="flex flex-wrap gap-2.5">
@@ -827,7 +827,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 <p className="text-[10px] font-semibold text-white/60 text-center">
                   {status === "past" ? t("trip.status") : t("trip.journey")}
                 </p>
-                <p className="mt-1 text-[17px] sm:text-[19px] font-bold text-white drop-shadow-sm tracking-tight leading-none text-center">
+                <p className="mt-1 text-[17px] sm:text-[19px] font-bold text-white drop-shadow-xs tracking-tight leading-none text-center">
                   {timing.label}
                 </p>
                 {status === "active" &&
@@ -855,7 +855,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                         </div>
                         <div className="relative h-1.5 w-full rounded-full bg-white/15 overflow-hidden border border-white/10">
                           <div
-                            className="absolute top-0 bottom-0 left-0 rounded-full bg-gradient-to-r from-teal-300 to-emerald-300 shadow-[0_0_6px_rgba(110,231,183,0.4)] transition-all duration-500"
+                            className="absolute top-0 bottom-0 left-0 rounded-full bg-linear-to-r from-teal-300 to-emerald-300 shadow-[0_0_6px_rgba(110,231,183,0.4)] transition-all duration-500"
                             style={{ width: `${progressPercent}%` }}
                           />
                           <div
@@ -939,7 +939,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
               ) : (
                 <div
                   onClick={() => setWeatherModalOpen(true)}
-                  className="flex flex-col items-stretch justify-center bg-white/[0.07] backdrop-blur-xl border border-white/[0.12] rounded-3xl p-3 gap-2 shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset,0_4px_24px_rgba(0,0,0,0.08)] hover:bg-white/[0.12] hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
+                  className="flex flex-col items-stretch justify-center bg-white/[0.07] backdrop-blur-xl border border-white/12 rounded-3xl p-3 gap-2 shadow-[0_0_0_1px_rgba(255,255,255,0.04)_inset,0_4px_24px_rgba(0,0,0,0.08)] hover:bg-white/12 hover:scale-[1.015] active:scale-[0.985] transition-all duration-300 flex-1 lg:flex-none lg:w-full text-left cursor-pointer select-none"
                 >
                   {/* Weather Info Block */}
                   <div className="flex flex-col w-full gap-2.5">
@@ -949,11 +949,11 @@ export default function SharedTripScreen({ token }: { token: string }) {
                         <div className="shrink-0 flex items-center justify-center">
                           {getWeatherIcon(
                             forecast.current?.weathercode || 0,
-                            "w-9 h-9 drop-shadow-sm"
+                            "w-9 h-9 drop-shadow-xs"
                           )}
                         </div>
                         <div className="flex flex-col min-w-0 justify-center">
-                          <span className="text-[32px] font-bold text-white drop-shadow-sm tracking-tighter leading-none">
+                          <span className="text-[32px] font-bold text-white drop-shadow-xs tracking-tighter leading-none">
                             {formatTemp(forecast.current?.temperature || 20)}°
                           </span>
                           <span className="text-[12px] font-medium text-white/90 tracking-wide mt-1.5 truncate uppercase">
@@ -995,7 +995,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           {/* Card 1: Lịch trình */}
           <div
             className={classNames(
-              "rounded-3xl border px-2 py-4 sm:p-5 text-center shadow-sm relative overflow-hidden flex flex-col items-center justify-center select-none w-full",
+              "rounded-3xl border px-2 py-4 sm:p-5 text-center shadow-xs relative overflow-hidden flex flex-col items-center justify-center select-none w-full",
               activities.length > 0
                 ? "border-emerald-500/10 dark:border-emerald-500/25 bg-white dark:bg-kat-surface"
                 : "border-slate-200/60 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/10"
@@ -1030,7 +1030,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           {data.includeExpenses && (
             <div
               className={classNames(
-                "rounded-3xl border px-2 py-4 sm:p-5 text-center shadow-sm relative overflow-hidden flex flex-col items-center justify-center select-none w-full",
+                "rounded-3xl border px-2 py-4 sm:p-5 text-center shadow-xs relative overflow-hidden flex flex-col items-center justify-center select-none w-full",
                 totalExpense > 0
                   ? "border-amber-500/10 dark:border-amber-500/25 bg-white dark:bg-kat-surface"
                   : "border-slate-200/60 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/10"
@@ -1081,7 +1081,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           {/* Card 3: Thành viên */}
           <div
             className={classNames(
-              "rounded-3xl border px-2 py-4 sm:p-5 text-center shadow-sm relative overflow-hidden flex flex-col items-center justify-center select-none w-full",
+              "rounded-3xl border px-2 py-4 sm:p-5 text-center shadow-xs relative overflow-hidden flex flex-col items-center justify-center select-none w-full",
               members.length > 0
                 ? "border-blue-500/10 dark:border-blue-500/25 bg-white dark:bg-kat-surface"
                 : "border-slate-200/60 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/10"
@@ -1113,7 +1113,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
           </div>
         </section>
 
-        <section className="hidden lg:flex gap-2 bg-slate-100/50 dark:bg-white/5 backdrop-blur-md p-1.5 rounded-full overflow-x-auto scrollbar-none border border-slate-200/50 dark:border-white/10 shadow-sm">
+        <section className="hidden lg:flex gap-2 bg-slate-100/50 dark:bg-white/5 backdrop-blur-md p-1.5 rounded-full overflow-x-auto scrollbar-none border border-slate-200/50 dark:border-white/10 shadow-xs">
           {tabsList.map((tab) => {
             const IconComponent = tab.icon;
             const isActive = activeTab === tab.id;
@@ -1131,7 +1131,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 {isActive && (
                   <motion.div
                     layoutId="shared-desktop-nav-active-pill"
-                    className="absolute inset-0 bg-white dark:bg-white/15 rounded-full shadow-sm ring-1 ring-black/5 dark:ring-white/10 -z-10"
+                    className="absolute inset-0 bg-white dark:bg-white/15 rounded-full shadow-xs ring-1 ring-black/5 dark:ring-white/10 -z-10"
                     transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.4 }}
                   />
                 )}
@@ -1326,10 +1326,10 @@ export default function SharedTripScreen({ token }: { token: string }) {
                         <button
                           type="button"
                           onClick={() => setIsRoadmapDayPickerOpen(true)}
-                          className="w-full relative overflow-hidden group flex items-center justify-between p-3 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50/50 dark:from-emerald-950/20 dark:to-teal-950/10 border border-emerald-100/60 dark:border-emerald-900/30 transition-all hover:border-emerald-200 dark:hover:border-emerald-800/40 hover:shadow-sm active:scale-[0.98]"
+                          className="w-full relative overflow-hidden group flex items-center justify-between p-3 rounded-2xl bg-linear-to-br from-emerald-50 to-teal-50/50 dark:from-emerald-950/20 dark:to-teal-950/10 border border-emerald-100/60 dark:border-emerald-900/30 transition-all hover:border-emerald-200 dark:hover:border-emerald-800/40 hover:shadow-xs active:scale-[0.98]"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-[14px] bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                            <div className="w-10 h-10 rounded-[14px] bg-white dark:bg-slate-800 shadow-xs flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                               <HugeiconsIcon icon={Calendar01Icon} className="w-5 h-5" />
                             </div>
                             <div className="text-left">
@@ -1343,7 +1343,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                               </div>
                             </div>
                           </div>
-                          <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-sm transition-transform group-hover:scale-105">
+                          <div className="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-xs transition-transform group-hover:scale-105">
                             <HugeiconsIcon icon={ChevronDownIcon} className="w-4 h-4" />
                           </div>
                         </button>
@@ -1416,7 +1416,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                 href={ensureAbsoluteUrl(mapUrl)}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-[13.5px] shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+                                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-[13.5px] shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer"
                               >
                                 <HugeiconsIcon icon={RouteIcon} className="w-4 h-4" />
                                 {t("share.openRoadmap")} &rarr;
@@ -1435,7 +1435,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                                     setRoadmapEditDay(selectedRoadmapDay);
                                     setIsRoadmapFormOpen(true);
                                   }}
-                                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-750 text-[12px] font-bold text-slate-655 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white shadow-sm transition-all cursor-pointer"
+                                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-750 text-[12px] font-bold text-slate-655 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white shadow-xs transition-all cursor-pointer"
                                 >
                                   <HugeiconsIcon icon={Add01Icon} className="w-3.5 h-3.5" />
                                   {t("share.attachRoadmap")}
@@ -1588,7 +1588,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
             rel="noreferrer"
             className="inline-flex items-center justify-center gap-2.5 rounded-full bg-white px-5 py-2.5 shadow-[0_2px_8px_rgb(0,0,0,0.06)] border border-slate-100 hover:shadow-[0_4px_16px_rgb(0,0,0,0.08)] transition-all cursor-pointer group active:scale-95 dark:bg-[#111A31] dark:border-slate-800"
           >
-            <div className="w-6 h-6 rounded flex items-center justify-center shrink-0 bg-white border border-slate-200 dark:border-slate-700 dark:bg-slate-800 overflow-hidden">
+            <div className="w-6 h-6 rounded-sm flex items-center justify-center shrink-0 bg-white border border-slate-200 dark:border-slate-700 dark:bg-slate-800 overflow-hidden">
               <img
                 src="/asset/favicons/favicon-32x32.png"
                 alt="KAT"
@@ -1671,7 +1671,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 }
               }}
               placeholder="https://www.google.com/maps/dir/..."
-              className="w-full pl-11 pr-4 py-4 bg-white dark:bg-slate-800/40 border-2 border-slate-200 dark:border-kat-border rounded-2xl text-[14px] font-semibold text-kat-dark dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-none focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 transition-all duration-200"
+              className="w-full pl-11 pr-4 py-4 bg-white dark:bg-slate-800/40 border-2 border-slate-200 dark:border-kat-border rounded-2xl text-[14px] font-semibold text-kat-dark dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-500 placeholder:font-normal focus:outline-hidden focus:border-kat-teal focus:ring-2 focus:ring-kat-teal/15 transition-all duration-200"
             />
           </div>
 
@@ -1716,8 +1716,8 @@ export default function SharedTripScreen({ token }: { token: string }) {
                 className={classNames(
                   "w-full flex items-center justify-between p-4 rounded-[16px] transition-all duration-200 active:scale-[0.98]",
                   isSelected
-                    ? "bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-100 dark:border-emerald-800/40 shadow-sm"
-                    : "bg-white hover:bg-slate-50 dark:bg-kat-surface hover:dark:bg-slate-800/40 border border-slate-100 hover:border-slate-200 dark:border-kat-border/40 hover:dark:border-kat-border/70"
+                    ? "bg-linear-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-100 dark:border-emerald-800/40 shadow-xs"
+                    : "bg-white hover:bg-slate-50 dark:bg-kat-surface dark:hover:bg-slate-800/40 border border-slate-100 hover:border-slate-200 dark:border-kat-border/40 dark:hover:border-kat-border/70"
                 )}
               >
                 <div className="flex items-center gap-3.5">
@@ -1725,7 +1725,7 @@ export default function SharedTripScreen({ token }: { token: string }) {
                     className={classNames(
                       "w-9 h-9 rounded-full flex items-center justify-center font-bold text-[14px] transition-colors",
                       isSelected
-                        ? "bg-emerald-600 text-white shadow-sm"
+                        ? "bg-emerald-600 text-white shadow-xs"
                         : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
                     )}
                   >

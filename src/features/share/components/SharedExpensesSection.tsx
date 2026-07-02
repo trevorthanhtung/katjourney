@@ -690,7 +690,7 @@ export function SharedExpensesSection({
             <button
               type="button"
               onClick={startAdd}
-              className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary hover:bg-opacity-95 dark:hover:brightness-110 text-white dark:text-slate-950 px-5 text-[14px] font-bold shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] motion-press h-[48px]"
+              className="hidden md:flex items-center justify-center gap-2 rounded-2xl bg-kat-dark dark:bg-kat-primary hover:bg-opacity-95 dark:hover:brightness-110 text-white dark:text-slate-950 px-5 text-[14px] font-bold shadow-xs dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] motion-press h-[48px]"
             >
               <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
               {isDirectEdit ? t("expenses.addExpense") : t("share.suggestAdd")}
@@ -728,7 +728,7 @@ export function SharedExpensesSection({
       {/* Expenses List */}
       <section className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-slate-200/50 dark:border-white/5 p-5 shadow-soft hover:shadow-md transition-all duration-300 relative overflow-hidden mt-6 animate-fadeIn">
         {/* Ambient background glow */}
-        <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-amber-500/[0.03] dark:bg-amber-500/[0.05] blur-[30px] pointer-events-none" />
+        <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-amber-500/3 dark:bg-amber-500/5 blur-[30px] pointer-events-none" />
 
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/80 mb-3">
@@ -796,14 +796,14 @@ export function SharedExpensesSection({
           createPortal(
             <>
               <div
-                className="fixed inset-0 z-[998]"
+                className="fixed inset-0 z-998"
                 onClick={() => {
                   setActiveMenuId(null);
                   setMenuPos(null);
                 }}
               />
               <div
-                className="fixed z-[999] w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg py-1.5 animate-fadeIn"
+                className="fixed z-999 w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg py-1.5 animate-fadeIn"
                 style={{ top: menuPos.top, right: menuPos.right }}
               >
                 <button
@@ -854,7 +854,7 @@ export function SharedExpensesSection({
               type="button"
               onClick={handleSave}
               disabled={isSaveDisabled || isSubmitting}
-              className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 text-white dark:text-slate-950 px-4 text-[13.5px] font-bold shadow-sm dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] transition-all active:scale-[0.97] disabled:bg-slate-100 dark:disabled:bg-slate-800/40 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed cursor-pointer"
+              className="inline-flex h-9 items-center justify-center rounded-xl bg-kat-dark dark:bg-kat-primary hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 text-white dark:text-slate-950 px-4 text-[13.5px] font-bold shadow-xs dark:shadow-[0_4px_14px_rgba(0,191,183,0.25)] transition-all active:scale-[0.97] disabled:bg-slate-100 dark:disabled:bg-slate-800/40 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-transparent disabled:cursor-not-allowed cursor-pointer"
             >
               {isSubmitting
                 ? t("expenses.savingNew")
@@ -877,7 +877,7 @@ export function SharedExpensesSection({
                   <button
                     type="button"
                     onClick={() => setIsCurrencyDropdownOpen(true)}
-                    className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1 text-kat-dark dark:text-slate-200 hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
+                    className="flex items-center gap-1.5 text-[12.5px] font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2.5 py-1 text-kat-dark dark:text-slate-200 hover:bg-slate-50 transition-colors shadow-xs cursor-pointer"
                   >
                     {form.currency}
                     <HugeiconsIcon icon={ChevronDownIcon} className="w-3.5 h-3.5 text-slate-400" />
@@ -963,7 +963,7 @@ export function SharedExpensesSection({
                     setForm({ ...form, amount: rawValue });
                     setErrors({ ...errors, amount: "" });
                   }}
-                  className="w-full text-center text-3xl font-black text-kat-dark dark:text-white bg-transparent border-none outline-none placeholder-slate-300 focus:ring-0"
+                  className="w-full text-center text-3xl font-black text-kat-dark dark:text-white bg-transparent border-none outline-hidden placeholder-slate-300 focus:ring-0"
                 />
               </div>
               {errors.amount && (
@@ -1054,7 +1054,7 @@ export function SharedExpensesSection({
               <button
                 type="button"
                 onClick={() => setShowAdvanced(!showAdvanced)}
-                className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-kat-dark transition-colors focus:outline-none"
+                className="flex w-full items-center justify-between py-2 text-sm font-bold text-slate-500 hover:text-kat-dark transition-colors focus:outline-hidden"
               >
                 <span className="flex items-center gap-1.5">
                   <HugeiconsIcon
@@ -1160,7 +1160,7 @@ export function SharedExpensesSection({
                         className={classNames(
                           "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
                           form.splitType === "shared"
-                            ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm border border-slate-200/10"
+                            ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-xs border border-slate-200/10"
                             : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                         )}
                       >
@@ -1175,7 +1175,7 @@ export function SharedExpensesSection({
                         className={classNames(
                           "flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all",
                           form.splitType === "personal"
-                            ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-sm border border-slate-200/10"
+                            ? "bg-white dark:bg-slate-700 text-kat-dark dark:text-white shadow-xs border border-slate-200/10"
                             : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                         )}
                       >
@@ -1219,7 +1219,7 @@ export function SharedExpensesSection({
                                   className={classNames(
                                     "px-2.5 py-1 text-[11px] font-bold rounded-md transition-all",
                                     form.splitMode === "perPerson"
-                                      ? "bg-white dark:bg-slate-600 text-kat-dark dark:text-white shadow-sm"
+                                      ? "bg-white dark:bg-slate-600 text-kat-dark dark:text-white shadow-xs"
                                       : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                                   )}
                                 >
@@ -1231,7 +1231,7 @@ export function SharedExpensesSection({
                                   className={classNames(
                                     "px-2.5 py-1 text-[11px] font-bold rounded-md transition-all",
                                     form.splitMode === "perGroup"
-                                      ? "bg-white dark:bg-slate-600 text-kat-dark dark:text-white shadow-sm"
+                                      ? "bg-white dark:bg-slate-600 text-kat-dark dark:text-white shadow-xs"
                                       : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                                   )}
                                 >

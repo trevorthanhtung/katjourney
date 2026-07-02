@@ -134,7 +134,7 @@ export function LocationInput({
           value={value}
           onChange={(e) => handleChange(e.target.value)}
           placeholder={t("trips.exampleLocation")}
-          className="w-full rounded-[14px] border border-slate-200 dark:border-white/10 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md pl-10 pr-10 py-3 text-[14px] font-medium text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-kat-primary focus:ring-2 focus:ring-kat-primary/20 dark:focus:bg-white/5 focus:outline-none transition-all"
+          className="w-full rounded-[14px] border border-slate-200 dark:border-white/10 bg-white/50 dark:bg-[#0A0F1C]/40 backdrop-blur-md pl-10 pr-10 py-3 text-[14px] font-medium text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-kat-primary focus:ring-2 focus:ring-kat-primary/20 dark:focus:bg-white/5 focus:outline-hidden transition-all"
           autoComplete="off"
         />
         {loading && (

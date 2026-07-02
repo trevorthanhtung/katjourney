@@ -300,10 +300,10 @@ export function TripForm({
               onClick={() => {
                 setForm((f) => ({ ...f, destinations: [...f.destinations, { name: "" }] }));
               }}
-              className="group relative flex items-center justify-center w-full py-3 mt-3 rounded-2xl bg-slate-100/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/60 dark:border-white/5 text-[14px] font-bold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-kat-primary dark:hover:text-kat-teal hover:border-kat-primary/30 dark:hover:border-kat-teal/30 hover:shadow-sm active:scale-[0.98] transition-all duration-300 overflow-hidden"
+              className="group relative flex items-center justify-center w-full py-3 mt-3 rounded-2xl bg-slate-100/80 dark:bg-slate-800/50 backdrop-blur-xs border border-slate-200/60 dark:border-white/5 text-[14px] font-bold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-kat-primary dark:hover:text-kat-teal hover:border-kat-primary/30 dark:hover:border-kat-teal/30 hover:shadow-xs active:scale-[0.98] transition-all duration-300 overflow-hidden"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 dark:via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out" />
-              <div className="relative z-10 flex items-center gap-1.5 drop-shadow-sm transition-transform duration-300 group-hover:scale-105">
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/40 dark:via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
+              <div className="relative z-10 flex items-center gap-1.5 drop-shadow-xs transition-transform duration-300 group-hover:scale-105">
                 <span className="text-[18px] leading-none mb-[2px] transition-transform duration-300 group-hover:rotate-90">
                   +
                 </span>

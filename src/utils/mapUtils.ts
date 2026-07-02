@@ -28,11 +28,13 @@ export function getEmbedMapUrl(input: string, fallbackLocation?: string): string
           }
         } else {
           // Try to extract coordinates @lat,lng from pathname or hash
-          const coordMatch = url.pathname.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) || url.hash.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+          const coordMatch =
+            url.pathname.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) ||
+            url.hash.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
           if (coordMatch) {
             query = `${coordMatch[1]},${coordMatch[2]}`;
           } else {
-            // If we can't parse the URL (like short links maps.app.goo.gl), 
+            // If we can't parse the URL (like short links maps.app.goo.gl),
             // we fallback to the location text if available
             if (fallbackLocation) {
               return getEmbedMapUrl(fallbackLocation);
@@ -53,12 +55,12 @@ export function getEmbedMapUrl(input: string, fallbackLocation?: string): string
       return "";
     }
   }
-  
+
   // If the query is still a URL (could not be parsed), do not render the iframe
   if (query.startsWith("http")) {
     return "";
   }
-  
+
   const baseUrl = "https://maps.google.com/maps";
   const encodedQuery = encodeURIComponent(query);
   return `${baseUrl}?q=${encodedQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
@@ -71,7 +73,7 @@ export function ensureAbsoluteUrl(url?: string): string {
 
   // Remove leading and trailing double/single quotes if the user copied them
   trimmed = trimmed.replace(/^["']|["']$/g, "").trim();
-  
+
   let absoluteUrl = trimmed;
   if (/^(https?:\/\/|mailto:|tel:)/i.test(trimmed)) {
     absoluteUrl = trimmed;
@@ -80,7 +82,7 @@ export function ensureAbsoluteUrl(url?: string): string {
   } else {
     absoluteUrl = `https://${trimmed}`;
   }
-  
+
   try {
     // encodeURI is safe to call on a full absolute URL.
     // It will encode spaces to %20 and other unsafe characters, while leaving protocol, slashes, query params intact.
@@ -93,7 +95,7 @@ export function ensureAbsoluteUrl(url?: string): string {
 /**
  * Dynamically determines the appropriate CSS filter class for Google Maps iframe embeds.
  * It implements "trời sáng nó sáng trời tối nó tối" (daytime map is light, nighttime map is dark).
- * 
+ *
  * @param timeStr Optional time of the activity (e.g. "08:00" or "19:30")
  * @returns Tailwind filter classes to apply to the iframe
  */
@@ -107,7 +109,8 @@ export function getMapFilterClass(timeStr?: string): string {
     }
   } else {
     // If no time is specified, follow global dark theme first
-    const isGlobalDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+    const isGlobalDark =
+      typeof document !== "undefined" && document.documentElement.classList.contains("dark");
     if (isGlobalDark) {
       isNight = true;
     } else {
@@ -120,14 +123,12 @@ export function getMapFilterClass(timeStr?: string): string {
   // Return custom filters:
   // In light mode, standard Google Maps colors are bright and perfect.
   // In dark mode, we apply a high-quality dark slate filter:
-  // - invert-[100%] flips colors completely (dark background, light text)
-  // - hue-rotate-[180deg] restores the original color spectrum (so the pin is restored to bright red, water to blue)
-  // - saturate-[110%] boosts the colors slightly to make the red pin pop and look bright red (đỏ tươi)
-  // - brightness-[90%] and contrast-[95%] ensure perfect readability
+  // - invert-100 flips colors completely (dark background, light text)
+  // - hue-rotate-180 restores the original color spectrum (so the pin is restored to bright red, water to blue)
+  // - saturate-110 boosts the colors slightly to make the red pin pop and look bright red (đỏ tươi)
+  // - brightness-90 and contrast-95 ensure perfect readability
   if (isNight) {
-    return "invert-[100%] hue-rotate-[180deg] saturate-[110%] brightness-[90%] contrast-[95%]";
+    return "invert-100 hue-rotate-180 saturate-110 brightness-90 contrast-95";
   }
   return "";
 }
-
-

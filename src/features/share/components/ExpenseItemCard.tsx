@@ -35,7 +35,7 @@ export function ExpenseItemCard({
   return (
     <div
       key={e.id || idx}
-      className="flex items-center justify-between p-3 bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50 shadow-sm"
+      className="flex items-center justify-between p-3 bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50 shadow-xs"
     >
       <div className="flex items-center gap-3 overflow-hidden">
         <span
@@ -51,7 +51,7 @@ export function ExpenseItemCard({
           <div className="flex items-center gap-2 flex-wrap">
             <span
               className={classNames(
-                "text-[14px] font-bold text-kat-dark dark:text-slate-200 break-words line-clamp-1",
+                "text-[14px] font-bold text-kat-dark dark:text-slate-200 wrap-break-word line-clamp-1",
                 e.isPendingDelete ? "line-through text-slate-400/60 dark:text-slate-600/60" : ""
               )}
             >
@@ -147,7 +147,7 @@ export function ExpenseItemCard({
                 const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect();
                 onMenuClick(String(e.id), rect);
               }}
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/60 active:scale-90 transition-all focus:outline-none cursor-pointer"
+              className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/60 active:scale-90 transition-all focus:outline-hidden cursor-pointer"
               title={t("expenses.suggestOption")}
             >
               <HugeiconsIcon icon={MoreVerticalIcon} className="h-4.5 w-4.5" />
