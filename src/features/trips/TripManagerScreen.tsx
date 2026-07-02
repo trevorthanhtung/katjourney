@@ -775,105 +775,47 @@ export function TripManagerScreen({
               {/* 5-Column Grid for perfect symmetry */}
               <div className="grid grid-cols-5 w-full h-full items-center justify-items-center">
                 {/* Tab 1: Kế hoạch */}
-                <button
+                <NavButton
+                  isActive={filterTab === "planned"}
                   onClick={() => setFilterTab("planned")}
-                  className="relative flex items-center justify-center w-full h-full motion-press"
-                >
-                  <div
-                    className={classNames(
-                      "flex items-center justify-center transition-all duration-300",
-                      filterTab === "planned"
-                        ? "text-kat-dark dark:text-white -translate-y-1.5 scale-110"
-                        : "text-gray-400 dark:text-gray-500 translate-y-0 scale-100"
-                    )}
-                  >
-                    <HugeiconsIcon icon={Calendar01Icon} className="w-[22px] h-[22px]" />
-                  </div>
-                  <span
-                    className={classNames(
-                      "absolute bottom-2 text-[9.5px] font-bold transition-all duration-300",
-                      filterTab === "planned"
-                        ? "text-kat-dark dark:text-white opacity-100 translate-y-0"
-                        : "text-gray-400 dark:text-gray-500 opacity-0 translate-y-2"
-                    )}
-                  >
-                    {t("dashboard.tabs.planned", "Planned")}
-                  </span>
-                </button>
+                  icon={Calendar01Icon}
+                  label={t("dashboard.tabs.planned", "Planned")}
+                  layoutIdPrefix="trip-manager-nav"
+                  compact
+                />
 
                 {/* Tab 2: Lưu trữ */}
-                <button
+                <NavButton
+                  isActive={filterTab === "archived"}
                   onClick={() => setFilterTab("archived")}
-                  className="relative flex items-center justify-center w-full h-full motion-press"
-                >
-                  <div
-                    className={classNames(
-                      "flex items-center justify-center transition-all duration-300",
-                      filterTab === "archived"
-                        ? "text-kat-dark dark:text-white -translate-y-1.5 scale-110"
-                        : "text-gray-400 dark:text-gray-500 translate-y-0 scale-100"
-                    )}
-                  >
-                    <HugeiconsIcon icon={Archive02Icon} className="w-[22px] h-[22px]" />
-                  </div>
-                  <span
-                    className={classNames(
-                      "absolute bottom-2 text-[9.5px] font-bold transition-all duration-300",
-                      filterTab === "archived"
-                        ? "text-kat-dark dark:text-white opacity-100 translate-y-0"
-                        : "text-gray-400 dark:text-gray-500 opacity-0 translate-y-2"
-                    )}
-                  >
-                    {t("dashboard.tabs.archived", "Archived")}
-                  </span>
-                </button>
+                  icon={Archive02Icon}
+                  label={t("dashboard.tabs.archived", "Archived")}
+                  layoutIdPrefix="trip-manager-nav"
+                  compact
+                />
 
                 {/* Tab 3: Empty space for FAB */}
                 <div className="w-full h-full pointer-events-none" />
 
                 {/* Tab 4: Đã qua */}
-                <button
+                <NavButton
+                  isActive={filterTab === "completed"}
                   onClick={() => setFilterTab("completed")}
-                  className="relative flex items-center justify-center w-full h-full motion-press"
-                >
-                  <div
-                    className={classNames(
-                      "flex items-center justify-center transition-all duration-300",
-                      filterTab === "completed"
-                        ? "text-kat-dark dark:text-white -translate-y-1.5 scale-110"
-                        : "text-gray-400 dark:text-gray-500 translate-y-0 scale-100"
-                    )}
-                  >
-                    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-[22px] h-[22px]" />
-                  </div>
-                  <span
-                    className={classNames(
-                      "absolute bottom-2 text-[9.5px] font-bold transition-all duration-300",
-                      filterTab === "completed"
-                        ? "text-kat-dark dark:text-white opacity-100 translate-y-0"
-                        : "text-gray-400 dark:text-gray-500 opacity-0 translate-y-2"
-                    )}
-                  >
-                    {t("dashboard.tabs.completed", "Past")}
-                  </span>
-                </button>
+                  icon={CheckmarkCircle02Icon}
+                  label={t("dashboard.tabs.completed", "Past")}
+                  layoutIdPrefix="trip-manager-nav"
+                  compact
+                />
 
                 {/* Tab 5: Đổi View */}
-                <button
+                <NavButton
+                  isActive={false}
                   onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-                  className="relative flex items-center justify-center w-full h-full motion-press"
-                >
-                  <div className="flex items-center justify-center transition-all duration-300 text-gray-400 dark:text-gray-500 hover:text-kat-dark dark:hover:text-white -translate-y-1.5 hover:-translate-y-2 scale-100 hover:scale-110">
-                    {viewMode === "grid" ? (
-                      <HugeiconsIcon icon={Menu01Icon} className="w-[22px] h-[22px]" />
-                    ) : (
-                      <HugeiconsIcon icon={DashboardSquare01Icon} className="w-[22px] h-[22px]" />
-                    )}
-                  </div>
-                  <span className="absolute bottom-2 text-[9.5px] font-bold text-gray-400 dark:text-gray-500 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-                    {t("dashboard.tabs.view", "View")}
-                  </span>
-                </button>
+                  icon={viewMode === "grid" ? Menu01Icon : DashboardSquare01Icon}
+                  label={t("dashboard.tabs.view", "View")}
+                  layoutIdPrefix="trip-manager-nav"
+                  compact
+                />
               </div>
 
               {/* Absolute Center FAB - Floats prominently */}
