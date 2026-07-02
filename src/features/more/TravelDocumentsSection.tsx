@@ -39,6 +39,7 @@ import {
   DatePicker,
   DeleteConfirmModal,
   classNames,
+  FAB,
 } from "../../components/ui";
 import { processLocalImage } from "../../services/storageService";
 import { useModalHistory } from "../../hooks/useModalHistory";
@@ -795,7 +796,7 @@ export function TravelDocumentsSection({
             </p>
           </div>
         </div>
-        {!isReadOnly && (
+        {!isReadOnly && documents.length === 0 && (
           <button
             onClick={openNewForm}
             className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-5 text-[13.5px] font-bold hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center border border-transparent dark:border-kat-primary"
@@ -889,6 +890,16 @@ export function TravelDocumentsSection({
         onClose={() => setFormOpen(false)}
         onShowToast={onShowToast}
       />
+
+      {/* FAB for adding documents when there are existing documents */}
+      {!isReadOnly && documents.length > 0 && (
+        <FAB
+          icon={<HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />}
+          label={t("documents.addBtn")}
+          onClick={openNewForm}
+          className="h-14 w-14 bg-kat-primary hover:scale-105 text-slate-950"
+        />
+      )}
     </div>
   );
 }
