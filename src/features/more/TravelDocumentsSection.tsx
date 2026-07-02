@@ -1,5 +1,6 @@
 import i18n from "../../i18n";
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowLeft01Icon,
@@ -39,7 +40,6 @@ import {
   DatePicker,
   DeleteConfirmModal,
   classNames,
-  FAB,
 } from "../../components/ui";
 import { processLocalImage } from "../../services/storageService";
 import { useModalHistory } from "../../hooks/useModalHistory";
@@ -892,14 +892,19 @@ export function TravelDocumentsSection({
       />
 
       {/* FAB for adding documents when there are existing documents */}
-      {!isReadOnly && documents.length > 0 && (
-        <FAB
-          icon={<HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />}
-          label={t("documents.addBtn")}
-          onClick={openNewForm}
-          className="h-14 w-14 bg-kat-primary hover:scale-105 text-slate-950"
-        />
-      )}
+      {!isReadOnly &&
+        documents.length > 0 &&
+        createPortal(
+          <button
+            onClick={() => openNewForm()}
+            className="md:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200"
+            style={{ bottom: "calc(6rem + var(--safe-bottom))" }}
+            aria-label={t("documents.addBtn")}
+          >
+            <HugeiconsIcon icon={Add01Icon} className="h-6 w-6" />
+          </button>,
+          document.body
+        )}
     </div>
   );
 }
