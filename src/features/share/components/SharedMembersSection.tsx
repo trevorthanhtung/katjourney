@@ -370,7 +370,7 @@ export function SharedMembersSection({
 
       {/* Search Input Bar */}
       {mergedMembers.length > 0 && (
-        <div className="relative">
+        <div className="relative mb-4">
           <input
             type="text"
             placeholder={t("members.searchMember")}
