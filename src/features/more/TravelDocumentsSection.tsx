@@ -796,10 +796,13 @@ export function TravelDocumentsSection({
             </p>
           </div>
         </div>
-        {!isReadOnly && documents.length === 0 && (
+        {!isReadOnly && (
           <button
             onClick={openNewForm}
-            className="flex h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-5 text-[13.5px] font-bold hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center border border-transparent dark:border-kat-primary"
+            className={classNames(
+              "h-11 items-center justify-center gap-1.5 rounded-2xl bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 px-5 text-[13.5px] font-bold hover:bg-kat-dark dark:hover:brightness-110 bg-opacity-90 active:scale-95 transition-all motion-press shadow-sm shrink-0 w-full sm:w-auto self-stretch sm:self-center border border-transparent dark:border-kat-primary",
+              documents.length > 0 ? "hidden md:flex" : "flex"
+            )}
           >
             <HugeiconsIcon icon={Add01Icon} className="h-4.5 w-4.5" />
             <span>{t("documents.addBtn")}</span>
