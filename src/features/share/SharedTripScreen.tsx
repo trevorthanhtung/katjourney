@@ -135,20 +135,24 @@ export default function SharedTripScreen({ token }: { token: string }) {
     switchUser,
   } = useSharedTripIdentity(data);
 
+  const [weatherModalOpen, setWeatherModalOpen] = useState(false);
+  const [selectedDestIndex, setSelectedDestIndex] = useState(0);
+
+  const activeDestIndex = selectedDestIndex ?? 0;
+  const activeDest = data?.trip?.destinations?.[activeDestIndex] || {
+    name: data?.trip?.destination || data?.trip?.location,
+    latitude: data?.trip?.latitude,
+    longitude: data?.trip?.longitude,
+    countryCode: data?.trip?.countryCode,
+  };
+
   // Weather states
   const {
     forecast,
     loading: weatherLoading,
     error: weatherError,
-  } = useWeather(
-    data?.trip?.destination || data?.trip?.location,
-    data?.trip?.latitude,
-    data?.trip?.longitude,
-    1
-  );
+  } = useWeather(activeDest.name, activeDest.latitude, activeDest.longitude, 1);
   const { forecast: myForecast, locationName: myLocationName } = useCurrentLocationWeather();
-  const [weatherModalOpen, setWeatherModalOpen] = useState(false);
-  const [selectedDestIndex, setSelectedDestIndex] = useState(0);
   const { formatTemp } = usePreferences();
 
   // Packing tip based on GPS vs destination temp
@@ -1708,6 +1712,9 @@ export default function SharedTripScreen({ token }: { token: string }) {
         forecast={forecast}
         currentLocationForecast={myForecast}
         currentLocationName={myLocationName}
+        destinations={trip.destinations}
+        selectedDestIndex={selectedDestIndex}
+        onSelectDestIndex={setSelectedDestIndex}
       />
 
       {/* Mobile Bottom Navigation Bar */}
