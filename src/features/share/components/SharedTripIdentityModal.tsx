@@ -88,8 +88,8 @@ export function SharedTripIdentityModal({
             </p>
           </div>
 
-          {/* Search bar — scrolls with header */}
-          <div className="px-4 sm:px-6 py-3">
+          {/* Search bar — sticks when scrolled */}
+          <div className="sticky top-0 z-10 px-4 sm:px-6 py-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-transparent">
             <div className="relative">
               <input
                 type="text"
