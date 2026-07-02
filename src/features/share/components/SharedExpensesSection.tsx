@@ -1397,6 +1397,20 @@ export function SharedExpensesSection({
           })()}
         />
       </section>
+
+      {/* Mobile Floating Action Button (FAB) */}
+      {isRequestEdit && (
+        <button
+          type="button"
+          onClick={startAdd}
+          className="lg:hidden fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/15 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/40 dark:border-slate-700/50 text-kat-dark dark:text-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] motion-press hover:scale-105 hover:bg-white/25 duration-200 cursor-pointer"
+          style={{ bottom: "calc(6rem + env(safe-area-inset-bottom))" }}
+          aria-label={isDirectEdit ? t("expenses.addExpense") : t("share.suggestAdd")}
+          title={isDirectEdit ? t("expenses.addExpense") : t("share.suggestAdd")}
+        >
+          <HugeiconsIcon icon={Add01Icon} className="h-6 w-6 stroke-[2.5]" />
+        </button>
+      )}
     </div>
   );
 }
