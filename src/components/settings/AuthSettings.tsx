@@ -285,7 +285,7 @@ export function AuthSettings({
               <button
                 onClick={handleGoogleSignIn}
                 disabled={actionLoading !== null}
-                className="group relative flex w-full items-center justify-center gap-3 min-h-[50px] overflow-hidden rounded-[20px] border border-slate-200/60 bg-white font-bold text-[15px] text-kat-dark shadow-sm transition-all hover:border-slate-300 hover:shadow-md active:scale-[0.98] disabled:opacity-60 dark:border-white/[0.04] dark:bg-slate-800/40 dark:text-slate-200 dark:hover:border-slate-500/50"
+                className="group relative flex w-full items-center justify-center gap-3 min-h-[50px] overflow-hidden rounded-[20px] bg-kat-teal font-black text-[15px] text-kat-dark shadow-sm transition-all hover:bg-opacity-90 hover:shadow-md active:scale-[0.98] disabled:opacity-60 dark:bg-kat-teal dark:text-slate-900"
               >
                 {actionLoading === "google" ? (
                   <HugeiconsIcon
@@ -301,21 +301,18 @@ export function AuthSettings({
               <button
                 onClick={handleGuestSignIn}
                 disabled={actionLoading !== null}
-                className="w-full flex items-center justify-center gap-3 min-h-[50px] rounded-[16px] bg-kat-teal hover:bg-kat-teal bg-opacity-90 text-kat-dark transition-all font-black text-[15px] active:scale-[0.98] shadow-sm disabled:opacity-60"
+                className="w-full flex items-center justify-center gap-2 min-h-[44px] rounded-[16px] bg-transparent text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-all font-semibold text-[14px] active:scale-[0.98] disabled:opacity-60"
               >
-                {actionLoading === "guest" ? (
+                {actionLoading === "guest" && (
                   <HugeiconsIcon
                     icon={Loading01Icon}
-                    className="h-5 w-5 text-kat-dark animate-spin"
+                    className="h-4 w-4 text-slate-500 animate-spin"
                   />
-                ) : (
-                  <HugeiconsIcon icon={UserIcon} className="h-5 w-5" />
                 )}
                 {t("settings.authView.continueGuest")}
               </button>
             </div>
           </div>
-          {renderBackupSection()}
         </>
       ) : (
         <div className="space-y-6">

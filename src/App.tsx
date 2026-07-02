@@ -81,6 +81,7 @@ import { ShareChangeRequestsSheet } from "./features/share/components/ShareChang
 import { SettingsSheet } from "./components/SettingsSheet";
 import { ImportTripSheet } from "./components/modals/ImportTripSheet";
 import { SplashScreen } from "./components/SplashScreen";
+import { WelcomeScreen } from "./components/WelcomeScreen";
 import { ChatBox } from "./features/share/components/ChatBox";
 import { useAuth } from "./hooks/useAuth";
 import { useCloudBackup } from "./hooks/useCloudBackup";
@@ -557,6 +558,14 @@ function App() {
   return (
     <>
       {showSplash && <SplashScreen isFading={isSplashFading} />}
+
+      {showWelcome && (
+        <WelcomeScreen
+          onDismiss={() => {
+            setShowWelcome(false);
+          }}
+        />
+      )}
 
       {!isShareRoute && (
         <div

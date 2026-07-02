@@ -140,9 +140,9 @@
     "authView": {
       "loading": "Loading account status...",
       "welcome": "Welcome to KAT Journey",
-      "guestDesc": "Guests can use the app normally on this device. Google login will support data syncing in future versions.",
+      "guestDesc": "Your trip data is currently stored only on this device. Sign in with Google to sync to the Cloud and access it across multiple devices.",
       "continueGoogle": "Continue with Google",
-      "continueGuest": "Continue as Guest",
+      "continueGuest": "Maybe later",
       "displayName": "Display name...",
       "localAccount": "Local account",
       "anonymousAccount": "Anonymous account",

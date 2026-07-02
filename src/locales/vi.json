@@ -140,9 +140,9 @@
     "authView": {
       "loading": "Đang tải trạng thái tài khoản...",
       "welcome": "Chào mừng đến với KAT Journey",
-      "guestDesc": "Khách có thể sử dụng ứng dụng bình thường trên thiết bị hiện tại. Đăng nhập Google sẽ hỗ trợ đồng bộ dữ liệu trong các phiên bản tương lai.",
+      "guestDesc": "Lịch trình của bạn đang chỉ được lưu tạm trên thiết bị này. Hãy đăng nhập bằng Google để đồng bộ lên Cloud và sử dụng trên nhiều thiết bị.",
       "continueGoogle": "Tiếp tục với Google",
-      "continueGuest": "Tiếp tục với Khách",
+      "continueGuest": "Để sau",
       "displayName": "Tên hiển thị...",
       "localAccount": "Tài khoản cục bộ",
       "anonymousAccount": "Tài khoản ẩn danh",
