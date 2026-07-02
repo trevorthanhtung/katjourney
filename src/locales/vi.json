@@ -942,7 +942,9 @@
     "noMembersAction": "Thêm người đồng hành",
     "noExpensesTitle": "Chưa ghi chép chi phí nhóm",
     "noExpensesDesc": "Ghi lại các khoản chi chung để app tính toán tự động quyết toán tiền cho cả nhóm.",
-    "noExpensesAction": "Ghi chi phí"
+    "noExpensesAction": "Ghi chi phí",
+    "noRemindersTitle": "Tuyệt vời! Không có nhắc nhở",
+    "noRemindersDesc": "Hành trình của bạn đã sẵn sàng."
   },
   "search": {
     "placeholder": "Tìm kiếm trong chuyến đi...",

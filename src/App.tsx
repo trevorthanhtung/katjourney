@@ -427,9 +427,9 @@ function App() {
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 mb-2.5 border border-emerald-100 dark:border-emerald-900/30">
             <HugeiconsIcon icon={CheckIcon} className="h-5 w-5" strokeWidth={3} />
           </div>
-          <p className="text-[14px] font-bold text-kat-dark">Tuyệt vời! Không có nhắc nhở</p>
+          <p className="text-[14px] font-bold text-kat-dark">{t("reminders.noRemindersTitle")}</p>
           <p className="text-[12px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
-            Hành trình của bạn đã sẵn sàng.
+            {t("reminders.noRemindersDesc")}
           </p>
         </div>
       );
