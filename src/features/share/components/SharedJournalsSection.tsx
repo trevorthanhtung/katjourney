@@ -923,7 +923,7 @@ export function SharedJournalsSection({
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploading}
-                    className="w-full h-12 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 font-bold text-[14px] hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-kat-teal dark:hover:text-kat-primary transition-colors flex items-center justify-center gap-2"
+                    className="w-full h-12 rounded-xl bg-indigo-50/80 dark:bg-indigo-500/[0.04] text-indigo-500 dark:text-indigo-400 font-bold text-[14px] hover:bg-indigo-100/80 dark:hover:bg-indigo-500/[0.08] transition-all flex items-center justify-center gap-2 group border border-indigo-100/50 dark:border-indigo-500/10 active:scale-[0.98]"
                   >
                     {uploading ? (
                       <>

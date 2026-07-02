@@ -450,18 +450,19 @@ function DocumentForm({ tripId, editing, isOpen, onClose, onShowToast }: Documen
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-200 dark:border-slate-700/50 rounded-xl bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors cursor-pointer text-slate-500 dark:text-slate-400">
+                  <label className="flex flex-col items-center justify-center w-full h-28 border-[1.5px] border-dashed border-[#00BFB7]/40 dark:border-[#00BFB7]/30 rounded-[24px] bg-[#00BFB7]/[0.03] dark:bg-[#00BFB7]/[0.02] hover:bg-[#00BFB7]/[0.06] dark:hover:bg-[#00BFB7]/[0.04] transition-all cursor-pointer text-slate-500 dark:text-slate-400 group">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <HugeiconsIcon
-                        icon={ImageAdd01Icon}
-                        className="w-6 h-6 mb-2 text-slate-400"
-                      />
-                      <p className="text-[13px]">
-                        <span className="font-semibold text-kat-primary-usable">
-                          {t("documents.uploadBtn")}
-                        </span>
+                      <div className="relative mb-3">
+                        <HugeiconsIcon
+                          icon={ImageAdd01Icon}
+                          className="w-7 h-7 text-[#00BFB7] dark:text-[#00BFB7] relative z-10 transition-transform group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 rounded-full bg-[#00BFB7]/20 blur-md scale-150 transition-opacity group-hover:opacity-80 opacity-50"></div>
+                      </div>
+                      <p className="text-[14px] font-bold text-[#00BFB7] dark:text-[#00BFB7]">
+                        {t("documents.uploadBtn")}
                       </p>
-                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">
+                      <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5 font-medium">
                         {t("documents.uploadAcceptedFormats")}
                       </p>
                     </div>
