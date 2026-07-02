@@ -606,7 +606,7 @@ function JournalEmptyState({
             {t("journal.swipe")}
           </span>
         </div>
-        <div className="flex flex-nowrap gap-3 overflow-x-auto pb-1.5 px-1 touch-pan-x snap-x snap-mandatory scrollbar-none md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4 md:overflow-visible md:pb-0 md:px-0">
+        <div className="flex flex-nowrap gap-3 overflow-x-auto pb-4 -mx-4 px-4 touch-pan-x snap-x snap-mandatory scrollbar-none md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0">
           {prompts.map((prompt, idx) => {
             const icons = [StarIcon, Camera01Icon, Location01Icon, CompassIcon];
             const colors = ["text-amber-500", "text-rose-500", "text-emerald-500", "text-sky-500"];
