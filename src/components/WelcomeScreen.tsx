@@ -329,15 +329,10 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             </span>
           </div>
 
-          <div className="w-full p-6 sm:p-8 backdrop-blur-2xl bg-white/95 dark:bg-[#0F172A]/70 lg:backdrop-blur-none lg:bg-white dark:lg:bg-[#0F172A]/40 rounded-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.2)] lg:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.08)] border border-white/20 dark:border-slate-800/80 flex flex-col items-center relative z-10 animate-scaleUp">
-            {/* Desktop Only: Static Title */}
-            <h2 className="hidden lg:block text-[22px] font-black text-kat-dark dark:text-white mb-6 tracking-tight text-center">
-              {t("welcomeScreen.getStarted")}
-            </h2>
-
-            {/* Mobile Only: Onboarding Carousel */}
+          {/* Mobile Only: Onboarding Carousel */}
+          <div className="w-full lg:hidden mb-6 relative z-10">
             <div
-              className="w-full lg:hidden overflow-x-hidden overflow-y-visible mb-4 relative cursor-grab active:cursor-grabbing select-none pt-2"
+              className="w-full overflow-x-hidden overflow-y-visible cursor-grab active:cursor-grabbing select-none"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
@@ -348,19 +343,19 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                   return (
                     <div
                       key={idx}
-                      className="w-full shrink-0 flex flex-col items-center text-center px-1"
+                      className="w-full shrink-0 flex flex-col items-center text-center px-4"
                     >
                       {/* Icon */}
                       <div className="relative mb-3 flex items-center justify-center">
-                        <div className="flex items-center justify-center h-14 w-14 rounded-[18px] bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm animate-float-slow">
-                          <HugeiconsIcon icon={IconComp} size={22} className={slide.iconColor} />
+                        <div className="flex items-center justify-center h-14 w-14 rounded-[18px] bg-white/10 backdrop-blur-md border border-white/20 shadow-sm animate-float-slow">
+                          <HugeiconsIcon icon={IconComp} size={24} className="text-white" />
                         </div>
                       </div>
 
-                      <h3 className="text-[18px] font-black tracking-tight text-kat-dark leading-tight mb-1.5 text-balance">
+                      <h3 className="text-[20px] font-black tracking-tight text-white leading-tight mb-2 text-balance drop-shadow-md">
                         {t(slide.titleKey)}
                       </h3>
-                      <p className="text-[12.5px] font-semibold text-slate-500 dark:text-slate-400 leading-relaxed max-w-[280px] mx-auto">
+                      <p className="text-[13.5px] font-medium text-slate-200 leading-relaxed max-w-[280px] mx-auto drop-shadow-sm">
                         {t(slide.descKey)}
                       </p>
                     </div>
@@ -370,7 +365,7 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
             </div>
 
             {/* Liquid Dots Indicators (Mobile Only) */}
-            <div className="flex lg:hidden items-center justify-center gap-1.5 mb-5 select-none">
+            <div className="flex items-center justify-center gap-1.5 mt-5 select-none">
               {onboardingSlides.map((_, idx) => (
                 <button
                   key={idx}
@@ -379,15 +374,20 @@ export function WelcomeScreen({ onDismiss }: WelcomeScreenProps) {
                     setActiveSlide(idx);
                     startAutoPlay();
                   }}
-                  className={`h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 liquid-dot ${
-                    activeSlide === idx
-                      ? "w-5 bg-kat-primary"
-                      : "w-1.5 hover:bg-slate-400 dark:hover:bg-slate-500"
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    activeSlide === idx ? "w-6 bg-white" : "w-1.5 bg-white/30 hover:bg-white/50"
                   }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
               ))}
             </div>
+          </div>
+
+          <div className="w-full p-6 sm:p-8 backdrop-blur-2xl bg-white/95 dark:bg-[#0F172A]/70 lg:backdrop-blur-none lg:bg-white dark:lg:bg-[#0F172A]/40 rounded-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.2)] lg:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.08)] border border-white/20 dark:border-slate-800/80 flex flex-col items-center relative z-10 animate-scaleUp">
+            {/* Title (Mobile & Desktop) */}
+            <h2 className="text-[22px] font-black text-kat-dark dark:text-white mb-6 tracking-tight text-center">
+              {t("welcomeScreen.getStarted")}
+            </h2>
 
             {/* Error display */}
             {errorMsg && (
