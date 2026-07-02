@@ -777,24 +777,24 @@ export function TripManagerScreen({
                 {/* Tab 1: Kế hoạch */}
                 <button
                   onClick={() => setFilterTab("planned")}
-                  className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
+                  className="relative flex items-center justify-center w-full h-full motion-press"
                 >
                   <div
                     className={classNames(
                       "flex items-center justify-center transition-all duration-300",
                       filterTab === "planned"
-                        ? "text-kat-dark dark:text-white scale-110"
-                        : "text-gray-400 dark:text-gray-500"
+                        ? "text-kat-dark dark:text-white -translate-y-1.5 scale-110"
+                        : "text-gray-400 dark:text-gray-500 translate-y-0 scale-100"
                     )}
                   >
                     <HugeiconsIcon icon={Calendar01Icon} className="w-[22px] h-[22px]" />
                   </div>
                   <span
                     className={classNames(
-                      "text-[9px] font-bold transition-all duration-300",
+                      "absolute bottom-2 text-[9.5px] font-bold transition-all duration-300",
                       filterTab === "planned"
-                        ? "text-kat-dark dark:text-white opacity-100"
-                        : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
+                        ? "text-kat-dark dark:text-white opacity-100 translate-y-0"
+                        : "text-gray-400 dark:text-gray-500 opacity-0 translate-y-2"
                     )}
                   >
                     {t("dashboard.tabs.planned", "Planned")}
@@ -804,24 +804,24 @@ export function TripManagerScreen({
                 {/* Tab 2: Lưu trữ */}
                 <button
                   onClick={() => setFilterTab("archived")}
-                  className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
+                  className="relative flex items-center justify-center w-full h-full motion-press"
                 >
                   <div
                     className={classNames(
                       "flex items-center justify-center transition-all duration-300",
                       filterTab === "archived"
-                        ? "text-kat-dark dark:text-white scale-110"
-                        : "text-gray-400 dark:text-gray-500"
+                        ? "text-kat-dark dark:text-white -translate-y-1.5 scale-110"
+                        : "text-gray-400 dark:text-gray-500 translate-y-0 scale-100"
                     )}
                   >
                     <HugeiconsIcon icon={Archive02Icon} className="w-[22px] h-[22px]" />
                   </div>
                   <span
                     className={classNames(
-                      "text-[9px] font-bold transition-all duration-300",
+                      "absolute bottom-2 text-[9.5px] font-bold transition-all duration-300",
                       filterTab === "archived"
-                        ? "text-kat-dark dark:text-white opacity-100"
-                        : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
+                        ? "text-kat-dark dark:text-white opacity-100 translate-y-0"
+                        : "text-gray-400 dark:text-gray-500 opacity-0 translate-y-2"
                     )}
                   >
                     {t("dashboard.tabs.archived", "Archived")}
@@ -834,24 +834,24 @@ export function TripManagerScreen({
                 {/* Tab 4: Đã qua */}
                 <button
                   onClick={() => setFilterTab("completed")}
-                  className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
+                  className="relative flex items-center justify-center w-full h-full motion-press"
                 >
                   <div
                     className={classNames(
                       "flex items-center justify-center transition-all duration-300",
                       filterTab === "completed"
-                        ? "text-kat-dark dark:text-white scale-110"
-                        : "text-gray-400 dark:text-gray-500"
+                        ? "text-kat-dark dark:text-white -translate-y-1.5 scale-110"
+                        : "text-gray-400 dark:text-gray-500 translate-y-0 scale-100"
                     )}
                   >
                     <HugeiconsIcon icon={CheckmarkCircle02Icon} className="w-[22px] h-[22px]" />
                   </div>
                   <span
                     className={classNames(
-                      "text-[9px] font-bold transition-all duration-300",
+                      "absolute bottom-2 text-[9.5px] font-bold transition-all duration-300",
                       filterTab === "completed"
-                        ? "text-kat-dark dark:text-white opacity-100"
-                        : "text-gray-400 dark:text-gray-500 opacity-0 h-0"
+                        ? "text-kat-dark dark:text-white opacity-100 translate-y-0"
+                        : "text-gray-400 dark:text-gray-500 opacity-0 translate-y-2"
                     )}
                   >
                     {t("dashboard.tabs.completed", "Past")}
@@ -861,16 +861,16 @@ export function TripManagerScreen({
                 {/* Tab 5: Đổi View */}
                 <button
                   onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-                  className="flex flex-col items-center justify-center w-full h-full gap-1 motion-press"
+                  className="relative flex items-center justify-center w-full h-full motion-press"
                 >
-                  <div className="flex items-center justify-center transition-all duration-300 text-gray-400 dark:text-gray-500 hover:text-kat-dark dark:hover:text-white">
+                  <div className="flex items-center justify-center transition-all duration-300 text-gray-400 dark:text-gray-500 hover:text-kat-dark dark:hover:text-white -translate-y-1.5 hover:-translate-y-2 scale-100 hover:scale-110">
                     {viewMode === "grid" ? (
                       <HugeiconsIcon icon={Menu01Icon} className="w-[22px] h-[22px]" />
                     ) : (
                       <HugeiconsIcon icon={DashboardSquare01Icon} className="w-[22px] h-[22px]" />
                     )}
                   </div>
-                  <span className="text-[9px] font-bold text-gray-400 dark:text-gray-500 opacity-0 h-0 transition-all duration-300">
+                  <span className="absolute bottom-2 text-[9.5px] font-bold text-gray-400 dark:text-gray-500 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
                     {t("dashboard.tabs.view", "View")}
                   </span>
                 </button>
@@ -880,10 +880,10 @@ export function TripManagerScreen({
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-[-60%] z-20 pointer-events-auto">
                 <button
                   onClick={onCreateNew}
-                  className="flex items-center justify-center w-[54px] h-[54px] rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_8px_20px_rgba(3,13,46,0.3)] dark:shadow-[0_8px_20px_rgba(0,191,183,0.35)] hover:shadow-[0_12px_28px_rgba(3,13,46,0.4)] dark:hover:shadow-[0_12px_28px_rgba(0,191,183,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-press border-4 border-white dark:border-slate-900"
+                  className="flex items-center justify-center w-[50px] h-[50px] rounded-full bg-kat-dark dark:bg-kat-primary text-white dark:text-slate-950 shadow-[0_4px_12px_rgba(2,6,23,0.15)] dark:shadow-[0_4px_12px_rgba(0,191,183,0.25)] hover:shadow-[0_8px_20px_rgba(2,6,23,0.2)] dark:hover:shadow-[0_8px_20px_rgba(0,191,183,0.35)] hover:scale-105 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-press border-[3px] border-white dark:border-slate-900"
                   aria-label="Thêm chuyến đi"
                 >
-                  <HugeiconsIcon icon={PlusSignIcon} className="w-6 h-6" />
+                  <HugeiconsIcon icon={PlusSignIcon} className="w-5 h-5" />
                 </button>
               </div>
             </div>
